@@ -53,7 +53,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="documenti">
+                    <linkit:sql-table-mapping name="documenti"
+                                              comment="Elenco degli allegati associati agli accordi di servizio">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="ruolo"/>
                             <linkit:sql-table-unique-field name="tipo"/>
@@ -76,6 +77,12 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ruolo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Identifica la tipologia di documento:
+- 'allegato': rappresenta un file generico
+- 'specificaSemiformale': rappresenta una specifica semiformale che descrive il servizio
+- 'specificaLivelloServizio': rappresenta una specifica dei livelli di qualità del servizio
+- 'specificaSicurezza': rappresenta una specifica dei requisiti sulla sicurezza del servizio
+- 'specificaCoordinamento': descrive un processo definito all'interno di un accordo di cooperazione]]></linkit:sql-ddl-column-comment> 
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -86,6 +93,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo del documento (es. xsd,xml ...)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[tipo (es. xsd,xml...)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -97,6 +105,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del documento all'interno dell'accordo</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[nome documento]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -108,6 +117,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="contenuto"/>
+                                <linkit:sql-ddl-column-comment>Dati raw che compongono il documento</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[contenuto documento]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -119,6 +129,11 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_proprietario"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'accordo che contiene questo documento. FK verso tabella <TABELLA>(id) dove <TABELLA> varia in funzione del valore presente nella colonna 'tipo_proprietario':
+- 'accordoServizio': accordi
+- 'accordoCooperazione': accordi_cooperazione
+- 'servizio': servizi
+- 'servizioCorrelato': servizi]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[idOggettoProprietarioDocumento]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -130,6 +145,11 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_proprietario"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il tipo di accordo che contiene il documento definito in questa riga:
+- 'accordoServizio': Accordo di Servizio Parte Comune
+- 'accordoCooperazione': Accordo di Cooperazione
+- 'servizio': Accordo di Servizio Parte Specifica
+- 'servizioCorrelato': Accordo di Servizio Parte Specifica utilizzato come servizio correlato per un profilo asincrono]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[tipoProprietario]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -141,6 +161,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati del documento, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -176,7 +197,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="accordi">
+                    <linkit:sql-table-mapping name="accordi"
+                                              comment="Accordi di Servizio Parte Comune">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome"/>
                             <linkit:sql-table-unique-field name="id_referente"/>
@@ -194,6 +216,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome dell'accordo di servizio (insieme alla versione ed al soggetto referente formano l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -204,6 +227,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica dell'accordo di servizio parte comune</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -214,6 +238,11 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il profilo di collaborazione di default (può essere ridefinito nei vari port-types ed azioni interne all'accordo):
+- 'oneway': indica una operazione che prevede solo un messaggio di input
+- 'sincrono': indica una operazione che prevede lo scambio di due messaggi (input/output)
+- 'asincronoAsimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda chi ha generato la richiesta chiede al server se è pronta la risposta (polling)
+- 'asincronoSimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda è il server che ha ricevuto la richiesta che si occupa di inviare al richiedente la risposta]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -224,6 +253,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_definitorio" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>File XSD che definisce i messaggi scambiati come richiesta o risposta nelle azioni del servizio (altri schemi XSD possono essere definiti come allegati)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -234,6 +264,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_concettuale" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce l'interfaccia del servizio in formato WSDL. Questo documento differisce dal documento presente nella colonna 'wsdl_logico_erogatore' solo se il profilo dell'accordo è asincrono. In  tal caso il wsdl concettuale è l'unione delle interfacce definite nei documenti presenti nelle colonne 'wsdl_logico_erogatore' e 'wsdl_logico_fruitore'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -244,6 +275,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_logico_erogatore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce l'interfaccia del servizio in formato WSDL</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -254,6 +286,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_logico_fruitore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce l'interfaccia del servizio correlato, utilizzato nei profili asincroni, nel formato WSDL.</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -264,6 +297,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="spec_conv_concettuale" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce il flusso di interscambio dei messaggi per i profili asincroni</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -274,6 +308,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="spec_conv_erogatore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce il flusso di interscambio dei messaggi per i profili asincroni, dal punto di vista dell'erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -284,6 +319,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="spec_conv_fruitore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce il flusso di interscambio dei messaggi per i profili asincroni, dal punto di vista del fruitore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -294,6 +330,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="filtro_duplicati"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Filtro dei Duplicati' è abilitata per default sul servizio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -304,6 +341,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="conferma_ricezione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Conferma Ricezione (Riscontri)' è abilitata per default sul servizio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -314,6 +352,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Collaborazione', che si occupa di correlare tra di loro differenti transazioni, è abilitata per default sul servizio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -324,6 +363,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="consegna_in_ordine"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Consegna in Ordine' è abilitata per default sul servizio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -334,6 +374,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="scadenza"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Scadenza' è abilitata per default sul servizio ed in tal caso la colonna contiene il numero di minuti dopo il quale un messaggio risulta scaduto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -344,6 +385,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica dei dati dell'accordo, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -354,6 +396,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_referente"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto che possiede l'accordo (insieme al nome ed alla versione formano l'identificativo univoco) [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[id del soggetto referente]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -365,6 +408,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="versione"/>
+                                <linkit:sql-ddl-column-comment>Versione dell'accordo di servizio (insieme al nome ed al soggetto referente formano l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -375,6 +419,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="utilizzo_senza_azione"/>
+                                <linkit:sql-ddl-column-comment>Indica se l'accordo (il servizio che non implementa alcun port type) è invocabile senza indicare alcuna azione</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (vero/falso) indica se questo accordo di servizio e' utilizzabile in mancanza di azioni associate]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -386,6 +431,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="privato"/>
+                                <linkit:sql-ddl-column-comment>Indica se l'accordo ha una visibilità di pubblico dominio oppure è privato (1:privato, 0:pubblico)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (true/false) indica se il soggetto e' privato/pubblico]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -397,6 +443,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati dell'accordo, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -407,6 +454,10 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica lo stato all'interno del ciclo di vita dell'accordo:
+- 'bozza': l'accordo è in fase di definizione e può essere ignorato dalla Porta di Dominio per l'operatività
+- 'operativo': l'accordo è utilizzabile in una sessione operativa, ma può ancora subire modifiche
+- 'finale': l'accordo è stato completato e non è soggetto a future modifiche]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -427,7 +478,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="accordi_azioni">
+                    <linkit:sql-table-mapping name="accordi_azioni"
+                                              comment="Elenco delle azioni associate direttamente all'accordo (il servizio non implementa in questo caso nessun port type)">
                         <linkit:sql-table-foreign-key
                             reference-object-name="accordi"
                             reference-object-type="accordi"
@@ -450,6 +502,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_accordo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo [FK verso tabella accordi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -460,6 +513,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo unico dell'azione all'interno dell'accordo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -470,6 +524,11 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il profilo di collaborazione associato all'azione (se la colonna 'profilo_azione' assume il valore 'ridefinito'):
+- 'oneway': indica una operazione che prevede solo un messaggio di input
+- 'sincrono': indica una operazione che prevede lo scambio di due messaggi (input/output)
+- 'asincronoAsimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda chi ha generato la richiesta chiede al server se è pronta la risposta (polling)
+- 'asincronoSimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda è il server che ha ricevuto la richiesta che si occupa di inviare al richiedente la risposta]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -480,6 +539,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="filtro_duplicati"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Filtro dei Duplicati' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -490,6 +550,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="conferma_ricezione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Conferma Ricezione (Riscontri)' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -500,6 +561,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Collaborazione', che si occupa di correlare tra di loro differenti transazioni, è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -510,6 +572,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="consegna_in_ordine"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Consegna in Ordine' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -520,6 +583,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="scadenza"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Scadenza' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito', ed in tal caso la colonna contiene il numero di minuti dopo il quale un messaggio risulta scaduto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -530,6 +594,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="correlata"/>
+                                <linkit:sql-ddl-column-comment>Identifica un'altra azione di questo accordo a cui l'azione è correlata (funzionalità utilizzata nei profili asincroni)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -540,6 +605,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo_azione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se le funzionalità di protocollo (FiltroDuplicati,ConfermaRicezione,Collaborazione,ConsegnaOrdine,Scadenza) sono ereditate dall'impostazione attuate sull'accordo o vengono ridefinite (ridefinito/default)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[ridefinito/default]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -555,7 +621,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="port_type">
+                    <linkit:sql-table-mapping name="port_type"
+                                              comment="Servizi definiti all'interno dell'accordo di servizio (Corrispondono ai port-type di un wsdl)">
                         <linkit:sql-table-foreign-key
                             reference-object-name="accordi"
                             reference-object-type="accordi"
@@ -578,6 +645,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_accordo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo [FK verso tabella accordi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -588,6 +656,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco del servizio all'interno dell'accordo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -598,6 +667,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -608,6 +678,11 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il profilo di collaborazione associato al servizio (se la colonna 'profilo_pt' assume il valore 'ridefinito'):
+- 'oneway': indica una operazione che prevede solo un messaggio di input
+- 'sincrono': indica una operazione che prevede lo scambio di due messaggi (input/output)
+- 'asincronoAsimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda chi ha generato la richiesta chiede al server se è pronta la risposta (polling)
+- 'asincronoSimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda è il server che ha ricevuto la richiesta che si occupa di inviare al richiedente la risposta]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -618,6 +693,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="filtro_duplicati"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Filtro dei Duplicati' è abilitata per il servizio, se la colonna 'profilo_pt' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -628,6 +704,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="conferma_ricezione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Conferma Ricezione (Riscontri)' è abilitata per il servizio, se la colonna 'profilo_pt' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -638,6 +715,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Collaborazione', che si occupa di correlare tra di loro differenti transazioni, è abilitata per il servizio, se la colonna 'profilo_pt' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -648,6 +726,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="consegna_in_ordine"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Consegna in Ordine' è abilitata per il servizio, se la colonna 'profilo_pt' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -658,6 +737,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="scadenza"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Scadenza' è abilitata per il servizio, se la colonna 'profilo_pt' assume il valore 'ridefinito', ed in tal caso la colonna contiene il numero di minuti dopo il quale un messaggio risulta scaduto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -668,6 +748,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo_pt"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se le funzionalità di protocollo (FiltroDuplicati,ConfermaRicezione,Collaborazione,ConsegnaOrdine,Scadenza) sono ereditate dall'impostazione attuate sull'accordo o vengono ridefinite (ridefinito/default)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[ridefinito/default]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -679,6 +760,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_style"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sul tipo (style) di servizio soap (document/rpc)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[document/RPC]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -693,7 +775,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="port_type_azioni">
+                    <linkit:sql-table-mapping name="port_type_azioni"
+                                              comment="Elenco delle azioni di un servizio">
                         <linkit:sql-table-foreign-key
                             reference-object-name="port-type"
                             reference-object-type="port-type"
@@ -716,6 +799,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_port_type"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio di un accordo [FK verso tabella port_type(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -726,6 +810,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco dell'azione all'interno del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -736,6 +821,11 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il profilo di collaborazione associato all'azione del servizio (se la colonna 'profilo_pt_azione' assume il valore 'ridefinito'):
+- 'oneway': indica una operazione che prevede solo un messaggio di input
+- 'sincrono': indica una operazione che prevede lo scambio di due messaggi (input/output)
+- 'asincronoAsimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda chi ha generato la richiesta chiede al server se è pronta la risposta (polling)
+- 'asincronoSimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda è il server che ha ricevuto la richiesta che si occupa di inviare al richiedente la risposta]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -746,6 +836,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="filtro_duplicati"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Filtro dei Duplicati' è abilitata per l'azione del servizio, se la colonna 'profilo_pt_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -756,6 +847,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="conferma_ricezione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Conferma Ricezione (Riscontri)' è abilitata per l'azione del servizio, se la colonna 'profilo_pt_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -766,6 +858,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Collaborazione', che si occupa di correlare tra di loro differenti transazioni, è abilitata per l'azione del servizio, se la colonna 'profilo_pt_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -776,6 +869,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="consegna_in_ordine"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Consegna in Ordine' è abilitata per l'azione del servizio, se la colonna 'profilo_pt_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -786,6 +880,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="scadenza"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Scadenza' è abilitata per l'azione del servizio, se la colonna 'profilo_pt_azione' assume il valore 'ridefinito', ed in tal caso la colonna contiene il numero di minuti dopo il quale un messaggio risulta scaduto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -796,6 +891,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="correlata_servizio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo di un altro servizio dell'accordo, correlato al servizio proprietario dell'azione definita in questa riga (funzionalità utilizzata nei profili asincroni)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -806,6 +902,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="correlata"/>
+                                <linkit:sql-ddl-column-comment>Identificativo di un'azione correlata all'azione definita in questa riga (funzionalità utilizzata nei profili asincroni)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -816,6 +913,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo_pt_azione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se le funzionalità di protocollo (FiltroDuplicati,ConfermaRicezione,Collaborazione,ConsegnaOrdine,Scadenza) sono ereditate dall'impostazione attuate sul servizio (e sull'accordo) o vengono ridefinite (ridefinito/default)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[ridefinito/default]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -827,6 +925,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_style"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sul tipo (style) di servizio soap (document/rpc)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[document/rpc]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -838,6 +937,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_action"/>
+                                <linkit:sql-ddl-column-comment>SOAPAction associata all'azione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -848,6 +948,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_use_msg_input"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se sugli elementi xml del messaggio di richiesta è presente la tipizzazione degli elementi (literal/encoded)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[literal/encoded]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -859,6 +960,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_namespace_msg_input"/>
+                                <linkit:sql-ddl-column-comment>Namespace del messaggio di richiesta utilizzato in caso di tipo di servizio rpc</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[namespace utilizzato per RPC]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -870,6 +972,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_use_msg_output"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se sugli elementi xml del messaggio di risposta è presente la tipizzazione degli elementi (literal/encoded)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[literal/encoded]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -881,6 +984,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soap_namespace_msg_output"/>
+                                <linkit:sql-ddl-column-comment>Namespace del messaggio di risposta utilizzato in caso di tipo di servizio rpc</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[namespace utilizzato per RPC]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -896,7 +1000,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="operation_messages">
+                    <linkit:sql-table-mapping name="operation_messages"
+                                              comment="Definizione dei messaggi associati alle azioni di un servizio">
                         <linkit:sql-table-foreign-key
                             reference-object-name="port-type-azioni"
                             reference-object-type="port-type-azioni"
@@ -919,6 +1024,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_port_type_azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'azione di un servizio [FK verso tabella port_type_azioni(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -929,6 +1035,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="input_message"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il messaggio definito in questa riga definisce una richiesta o una risposta (1:richiesta, 0:risposta)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[true(1)/false(0), true indica un input-message, false un output-message]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -940,6 +1047,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="name"/>
+                                <linkit:sql-ddl-column-comment>Identificativo unico del messaggio all'interno dell'azione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -950,6 +1058,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="element_name"/>
+                                <linkit:sql-ddl-column-comment>Nome del root-element del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -960,6 +1069,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="element_namespace"/>
+                                <linkit:sql-ddl-column-comment>Namespace del root-element del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -970,6 +1080,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="type_name"/>
+                                <linkit:sql-ddl-column-comment>Tipo del complex-type del messaggio (utilizzato con tipo rpc)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -980,6 +1091,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="type_namespace"/>
+                                <linkit:sql-ddl-column-comment>Namespace del complex-type del messaggio (utilizzato con tipo rpc)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -997,7 +1109,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="accordi_cooperazione">
+                    <linkit:sql-table-mapping name="accordi_cooperazione"
+                                              comment="Accordi di Cooperazione">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome"/>
                             <linkit:sql-table-unique-field name="id_referente"/>
@@ -1015,6 +1128,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome dell'accordo (insieme alla versione formano l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1025,6 +1139,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica dell'accordo di cooperazione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1035,6 +1150,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_referente"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto che possiede l'accordo [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[id del soggetto referente]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -1046,6 +1162,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="versione"/>
+                                <linkit:sql-ddl-column-comment>Versione dell'accordo (insieme al nome formano l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1056,6 +1173,10 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica lo stato all'interno del ciclo di vita dell'accordo:
+- 'bozza': l'accordo è in fase di definizione e può essere ignorato dalla Porta di Dominio per l'operatività
+- 'operativo': l'accordo è utilizzabile in una sessione operativa, ma può ancora subire modifiche
+- 'finale': l'accordo è stato completato e non è soggetto a future modifiche]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1066,6 +1187,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="privato"/>
+                                <linkit:sql-ddl-column-comment>Indica se l'accordo ha una visibilità di pubblico dominio oppure è privato (1:privato, 0:pubblico)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (true/false) indica se il soggetto e' privato/pubblico]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -1077,6 +1199,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica dei dati dell'accordo, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1087,6 +1210,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati dell'accordo, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1105,7 +1229,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="accordi_coop_partecipanti">
+                    <linkit:sql-table-mapping name="accordi_coop_partecipanti"
+                                              comment="Elenco dei soggetti che partecipano alla cooperazione">
                         <linkit:sql-table-constraint unique="unique_acc_coop_part" index="idx_acc_coop_part"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="accordi-cooperazione"
@@ -1136,6 +1261,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_accordo_cooperazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo di cooperazione [FK verso tabella accordi_cooperazione(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1146,6 +1272,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1162,7 +1289,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="servizi">
+                    <linkit:sql-table-mapping name="servizi"
+                                              comment="Accordi di Servizio Parte Specifica; rappresentano una implementazione di un accordo parte comune da parte di un soggetto erogatore">
                         <linkit:sql-table-foreign-key
                             reference-object-name="accordi"
                             reference-object-type="accordi"
@@ -1195,6 +1323,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_servizio"/>
+                                <linkit:sql-ddl-column-comment>Nome del servizio (insieme al tipo ed al soggetto erogatore, indicato nella colonna 'id_soggetto', formano l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1205,6 +1334,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_servizio"/>
+                                <linkit:sql-ddl-column-comment>Tipo del servizio (insieme al nome ed al soggetto erogatore, indicato nella colonna 'id_soggetto', formano l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1225,6 +1355,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto (insieme al tipo ed al nome formano l'identificativo univoco) [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1235,6 +1366,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_accordo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo di servizio parte comune implementato [FK verso tabella accordi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1245,6 +1377,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="servizio_correlato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il servizio rappresenta un servizio correlato in un profilo asincrono (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1255,6 +1388,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore [FK verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1265,6 +1399,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_implementativo_erogatore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce il binding del servizio in formato WSDL</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1275,6 +1410,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_implementativo_fruitore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Definisce il binding del servizio correlato in formato WSDL (presente solo per i profili asincroni quando il servizio è di tipo correlato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1285,6 +1421,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica dei dati del servizio, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1295,6 +1432,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="privato"/>
+                                <linkit:sql-ddl-column-comment>Indica se l'accordo ha una visibilità di pubblico dominio oppure è privato (1:privato, 0:pubblico)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (true/false) indica se il soggetto e' privato/pubblico]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -1306,6 +1444,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati del servizio, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1316,6 +1455,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="port_type"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio implementato [FK logica verso tabella port_type(nome)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1326,6 +1466,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="profilo"/>
+                                <linkit:sql-ddl-column-comment>Versione del protocollo che deve essere utilizzata durante l'interazione con le altre porte di dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1336,6 +1477,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Generica descrizione del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1346,6 +1488,10 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica lo stato all'interno del ciclo di vita dell'accordo:
+- 'bozza': l'accordo è in fase di definizione e può essere ignorato dalla Porta di Dominio per l'operatività
+- 'operativo': l'accordo è utilizzabile in una sessione operativa, ma può ancora subire modifiche
+- 'finale': l'accordo è stato completato e non è soggetto a future modifiche]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1363,7 +1509,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="servizi_fruitori">
+                    <linkit:sql-table-mapping name="servizi_fruitori"
+                                              comment="Elenco dei fruitori del servizio">
                         <linkit:sql-table-foreign-key
                             reference-object-name="servizi"
                             reference-object-type="servizi"
@@ -1394,6 +1541,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio fruito [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1404,6 +1552,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto fruitore [FK logica verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1414,6 +1563,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore [FK logica verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1424,6 +1574,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_implementativo_erogatore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Ridefinisce il binding del servizio, in formato WSDL, per lo specifico fruitore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1434,6 +1585,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="wsdl_implementativo_fruitore" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Ridefinisce il binding del servizio correlato, in formato WSDL, per lo specifico fruitore (presente solo per i profili asincroni quando il servizio è di tipo correlato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1444,6 +1596,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati della fruizione, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1464,6 +1617,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="client_auth"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se è abilitato il controllo sul certificato client utilizzato dalla Porta (abilitato/disabilitato) quando il soggetto mittente è il fruitore definito in questa riga</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[client auth: disabilitato/abilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -1475,6 +1629,10 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica lo stato all'interno del ciclo di vita dell'accordo:
+- 'bozza': l'accordo è in fase di definizione e può essere ignorato dalla Porta di Dominio per l'operatività
+- 'operativo': l'accordo è utilizzabile in una sessione operativa, ma può ancora subire modifiche
+- 'finale': l'accordo è stato completato e non è soggetto a future modifiche]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1489,7 +1647,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="servizi_azioni">
+                    <linkit:sql-table-mapping name="servizi_azioni"
+                                              comment="Definisce configurazioni personalizzazione per alcune azioni di un servizio">
                         <linkit:sql-table-foreign-key
                             reference-object-name="servizi"
                             reference-object-type="servizi"
@@ -1516,6 +1675,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo unico dell'azione all'interno del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1526,6 +1686,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio fruito [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1536,6 +1697,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore [FK logica verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1555,7 +1717,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="acc_serv_composti">
+                    <linkit:sql-table-mapping name="acc_serv_composti"
+                                              comment="Elenco dei servizi la cui implementazione (servizio composto) è basata sull'utilizzo di altri servizi (componenti)">
                         <linkit:sql-table-foreign-key
                             reference-object-name="accordi"
                             reference-object-type="accordi"
@@ -1586,6 +1749,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_accordo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo implementato [FK logica verso tabella accordi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1596,6 +1760,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_accordo_cooperazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo di cooperazione a cui appartiene [FK logica verso tabella accordi_cooperazione(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1611,7 +1776,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="acc_serv_componenti">
+                    <linkit:sql-table-mapping name="acc_serv_componenti"
+                                              comment="Elenco di servizi (denominati componenti) che vengono utilizzati da un altro servizio (composto) all'interno di un processo di cooperazione">
                         <linkit:sql-table-foreign-key
                             reference-object-name="acc-serv-composti"
                             reference-object-type="acc-serv-composti"
@@ -1639,6 +1805,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio_composto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio composto [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1649,6 +1816,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio_componente"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio componente [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1659,6 +1827,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo unico dell'azione all'interno del servizio componente</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
