@@ -299,7 +299,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="servizio_correlato"/>
-                                <linkit:sql-ddl-column-comment>Identificativo del servizio correlato alla richiesta in essere descritta dalla traccia (utilizzato nei profili di collaborazione Asincroni)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio correlato alla richiesta descritta dalla traccia (utilizzato nei profili di collaborazione Asincroni)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -310,7 +310,7 @@ Il valore presente in questo campo contiene la rappresentazione del profilo di c
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_servizio_correlato"/>
-                                <linkit:sql-ddl-column-comment>Tipo del servizio correlato alla richiesta in essere descritta dalla traccia (utilizzato nei profili di collaborazione Asincroni)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Tipo del servizio correlato alla richiesta descritta dalla traccia (utilizzato nei profili di collaborazione Asincroni)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

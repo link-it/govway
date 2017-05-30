@@ -37,7 +37,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="ruoli">
+                    <linkit:sql-table-mapping name="ruoli"
+                                              comment="Ruoli, utilizzati per il processo di autorizzazione, associabili ai servizi applicativi ed ai soggetti">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome" />
                         </linkit:sql-table-unique>
@@ -47,25 +48,60 @@
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="nome" type="xsd:string"/>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Identificativo univoco del ruolo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="descrizione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica del ruolo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tipologia" type="RuoloTipologia" default="qualsiasi"/>
-                <xsd:element name="contesto_utilizzo" type="RuoloContesto" default="qualsiasi"/>
+                <xsd:element name="tipologia" type="RuoloTipologia" default="qualsiasi">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica la fonte del ruolo:
+- 'interno': indica un ruolo registrato internamente alla porta di dominio
+- 'esterno': indica un ruolo registrato all'interno del realm dell'application server
+- 'qualsiasi': il ruolo è sia censilto internamente alla porta di dominio che all'interno del realm dell'application server]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="contesto_utilizzo" type="RuoloContesto" default="qualsiasi">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il contesto dove è utilizzabile il ruolo:
+- 'portaDelegata': il ruolo è uti<linkit:sql-ddl-column-comment>lizzabile solamente per autorizzare l'utilizzo di una porta delegata
+- 'portaApplicativa': il ruolo è utilizzabile solamente per autorizzare l'utilizzo di una porta applicativa
+- 'qualsiasi': il ruolo è utilizzabile per autorizzare l'utilizzo sia di una porta delegata che di una porta applicativa]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="superuser" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica dei dati del ruolo, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -76,6 +112,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati del ruolo, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
