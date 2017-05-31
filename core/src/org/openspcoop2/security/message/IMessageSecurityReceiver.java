@@ -85,7 +85,7 @@ public interface IMessageSecurityReceiver {
 			
 	
 	public void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2SoapMessage message, List<Reference> elementsToClean,
-			boolean detachHeaderWSSecurity) throws SecurityException;
+			boolean detachHeaderWSSecurity, boolean removeAllIdRef) throws SecurityException;
 	
 	public String getCertificate() throws SecurityException;
 	

@@ -72,6 +72,8 @@ public abstract class MessageSecurityContext{
 	
 	protected String prefixWsuId;
 	
+	protected boolean removeAllWsuIdRef;
+	
 	protected String securityEngine;
 	protected IMessageSecurityContext messageSecurityContext;
 	protected IMessageSecuritySender messageSecuritySender;
@@ -130,6 +132,7 @@ public abstract class MessageSecurityContext{
     		this.log = LoggerWrapperFactory.getLogger(MessageSecurityContext.class);
     	this.functionAsClient = messageSecurityContextParameters.isFunctionAsClient();
     	this.prefixWsuId = messageSecurityContextParameters.getPrefixWsuId();
+    	this.removeAllWsuIdRef = messageSecurityContextParameters.isRemoveAllWsuIdRef();
     	this.idFruitore = messageSecurityContextParameters.getIdFruitore();
     	this.idServizio = messageSecurityContextParameters.getIdServizio();
     	this.pddFruitore = messageSecurityContextParameters.getPddFruitore();
@@ -157,6 +160,11 @@ public abstract class MessageSecurityContext{
 	}
 	
 
+	/**  indicazione se rimuovere tutti gli attributi WsuId negli elementi 'toccati' dalla sicurezza */
+	public boolean isRemoveAllWsuIdRef() {
+		return this.removeAllWsuIdRef;
+	}
+	
 	
 	
 	/** GetValues ottenuti dopo il processamento */

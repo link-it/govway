@@ -9128,6 +9128,30 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.prefixWsuId;
 	}
 	
+	private static Boolean removeAllWsuIdRef = null;
+	public boolean isRemoveAllWsuIdRef(){
+
+		if(OpenSPCoop2Properties.removeAllWsuIdRef==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.removeAllWsuIdRef = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef' non impostata, viene utilizzato il default 'false'");
+					OpenSPCoop2Properties.removeAllWsuIdRef = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef' non impostata, viene utilizzato il default 'false', errore:"+e.getMessage());
+				OpenSPCoop2Properties.removeAllWsuIdRef = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.removeAllWsuIdRef;
+	}
+	
 	private static String externalPWCallback = null;
 	private static Boolean externalPWCallbackReaded = null;
 	public String getExternalPWCallbackPropertyFile(){

@@ -435,7 +435,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 
 	@Override
-	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> references, boolean detachHeaderWSSecurity) throws MessageException,MessageNotSupportedException {
+	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> references, boolean detachHeaderWSSecurity, boolean removeAllIdRef) throws MessageException,MessageNotSupportedException {
 		
 		try{
 		
@@ -477,16 +477,24 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 						}
 						if(!found) {
 							
-							String valoreRefSignature = elementToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
-							// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
-							//System.out.println("CHECK TYPE_SIGNATURE ["+valoreRefSignature+"] ["+reference.getReference()+"]");
 							boolean removeIdRefSignature = false;
-							if(valoreRefSignature!=null && valoreRefSignature.equals(reference.getReference())){
+							if(removeAllIdRef){
+								// alcune implementazioni vecchie generano degli attributi wsu:Id 'zombie' che quindi non possono essere ripuliti controllandoli con le reference.
+								// Per poter interoperare con tali implementazioni è possibile abilitare tale opzione
 								removeIdRefSignature = true;
-							}
-							
-							if(removeIdRefSignature){
 								elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
+							}
+							else{
+								String valoreRefSignature = elementToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
+								// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
+								//System.out.println("CHECK TYPE_SIGNATURE ["+valoreRefSignature+"] ["+reference.getReference()+"]");
+								if(valoreRefSignature!=null && valoreRefSignature.equals(reference.getReference())){
+									removeIdRefSignature = true;
+								}
+								
+								if(removeIdRefSignature){
+									elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
+								}
 							}
 										
 							Iterator<?> prefixes = elementToClean.getNamespacePrefixes();
@@ -515,16 +523,24 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 						for(int y=0; y<prefixesToRemoveContent.size(); y++)
 							elementToClean.removeNamespaceDeclaration(prefixesToRemoveContent.get(y));
 						
-						String valoreRefEncContent = elementToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
-						// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
-						//System.out.println("CHECK TYPE_ENCRYPT_CONTENT ["+valoreRefEncContent+"] ["+reference.getReference()+"]");
 						boolean removeIdRefEncContent = false;
-						if(valoreRefEncContent!=null && valoreRefEncContent.equals(reference.getReference())){
+						if(removeAllIdRef){
+							// alcune implementazioni vecchie generano degli attributi wsu:Id 'zombie' che quindi non possono essere ripuliti controllandoli con le reference.
+							// Per poter interoperare con tali implementazioni è possibile abilitare tale opzione
 							removeIdRefEncContent = true;
-						}
-						
-						if(removeIdRefEncContent){
 							elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
+						}
+						else{
+							String valoreRefEncContent = elementToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
+							// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
+							//System.out.println("CHECK TYPE_ENCRYPT_CONTENT ["+valoreRefEncContent+"] ["+reference.getReference()+"]");
+							if(valoreRefEncContent!=null && valoreRefEncContent.equals(reference.getReference())){
+								removeIdRefEncContent = true;
+							}
+							
+							if(removeIdRefEncContent){
+								elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
+							}
 						}
 											
 						prefixesContent = elementToClean.getNamespacePrefixes();
@@ -561,16 +577,24 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 								for(int y=0; y<prefixesToRemoveElement.size(); y++)
 									childToClean.removeNamespaceDeclaration(prefixesToRemoveElement.get(y));
 								
-								String valoreRefEncElement = childToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
-								// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
-								//System.out.println("CHECK TYPE_ENCRYPT_ELEMENT ["+valoreRefEncElement+"] ["+reference.getReference()+"]");
 								boolean removeIdRefEncElement = false;
-								if(valoreRefEncElement!=null && valoreRefEncElement.equals(reference.getReference())){
-									removeIdRefEncElement = true;
-								}
-								
-								if(removeIdRefEncElement){
+								if(removeAllIdRef){
+									// alcune implementazioni vecchie generano degli attributi wsu:Id 'zombie' che quindi non possono essere ripuliti controllandoli con le reference.
+									// Per poter interoperare con tali implementazioni è possibile abilitare tale opzione
+									removeIdRefEncContent = true;
 									childToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
+								}
+								else{
+									String valoreRefEncElement = childToClean.getAttributeNS(WSS4JConstants.WSU_NS, "Id");
+									// fix: l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. Controllo il valore.
+									//System.out.println("CHECK TYPE_ENCRYPT_ELEMENT ["+valoreRefEncElement+"] ["+reference.getReference()+"]");
+									if(valoreRefEncElement!=null && valoreRefEncElement.equals(reference.getReference())){
+										removeIdRefEncElement = true;
+									}
+									
+									if(removeIdRefEncElement){
+										childToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
+									}
 								}
 													
 								prefixesElement = childToClean.getNamespacePrefixes();

@@ -110,7 +110,7 @@ public interface OpenSPCoop2SoapMessage extends OpenSPCoop2Message {
 	
 	public List<Reference> getWSSDirtyElements(String actor, boolean mustUnderstand) throws MessageException,MessageNotSupportedException;
 	
-	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> elementsToClean, boolean detachHeaderWSSecurity) throws MessageException,MessageNotSupportedException;
+	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> elementsToClean, boolean detachHeaderWSSecurity, boolean removeAllIdRef) throws MessageException,MessageNotSupportedException;
 	
 	
 	/* Ws Security (SoapBox) */

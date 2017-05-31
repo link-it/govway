@@ -703,6 +703,7 @@ public class InoltroRisposte extends GenericLib{
 						contextParameters.setLog(this.log);
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
+						contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 						contextParameters.setIdFruitore(soggettoMittente);
 						contextParameters.setIdServizio(idServizio);
 						contextParameters.setPddFruitore(registroServiziManager.getIdPortaDominio(soggettoMittente, null));

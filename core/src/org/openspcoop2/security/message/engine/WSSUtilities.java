@@ -71,7 +71,7 @@ public class WSSUtilities {
 	}
 	
 	public static void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2SoapMessage message, List<Reference> elementsToClean,
-			boolean detachHeaderWSSecurity) throws SecurityException{
+			boolean detachHeaderWSSecurity, boolean removeAllIdRef) throws SecurityException{
 		try{
 			
 			boolean mustUnderstandValue = false;
@@ -83,7 +83,7 @@ public class WSSUtilities {
 			if("".equals(messageSecurityContext.getActor()))
 				actor = null;
 			
-			message.cleanWSSDirtyElements(actor, mustUnderstandValue, elementsToClean, detachHeaderWSSecurity);
+			message.cleanWSSDirtyElements(actor, mustUnderstandValue, elementsToClean, detachHeaderWSSecurity, removeAllIdRef);
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);

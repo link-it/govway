@@ -304,9 +304,9 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 	public void cleanDirtyElements(
 			org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,
 			OpenSPCoop2SoapMessage message, List<Reference> elementsToClean,
-			boolean detachHeaderWSSecurity)
+			boolean detachHeaderWSSecurity, boolean removeAllIdRef)
 			throws SecurityException {
-		WSSUtilities.cleanDirtyElements(messageSecurityContext, message, elementsToClean,detachHeaderWSSecurity);
+		WSSUtilities.cleanDirtyElements(messageSecurityContext, message, elementsToClean,detachHeaderWSSecurity,removeAllIdRef);
 		
 	}
 }

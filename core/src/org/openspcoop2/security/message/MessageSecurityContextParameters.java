@@ -38,6 +38,7 @@ public class MessageSecurityContextParameters {
 	private Logger log;
 	private boolean functionAsClient;
 	private String prefixWsuId;
+	private boolean removeAllWsuIdRef;
 	
 	private IDSoggetto idFruitore;
 	private String pddFruitore;
@@ -74,6 +75,12 @@ public class MessageSecurityContextParameters {
 	}
 	public void setPrefixWsuId(String prefixWsuId) {
 		this.prefixWsuId = prefixWsuId;
+	}
+	public boolean isRemoveAllWsuIdRef() {
+		return this.removeAllWsuIdRef;
+	}
+	public void setRemoveAllWsuIdRef(boolean removeAllWsuIdRef) {
+		this.removeAllWsuIdRef = removeAllWsuIdRef;
 	}
 	public IDSoggetto getIdFruitore() {
 		return this.idFruitore;

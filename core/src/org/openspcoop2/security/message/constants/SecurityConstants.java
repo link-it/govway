@@ -248,6 +248,13 @@ public class SecurityConstants {
     
     public static final String DETACH_HEADER_WSS = "detachHeaderWSSecurity";
     
+    // l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. 
+    // Se si abilita questa opzione in caso di presenza di differenti header wssecurity con actor differenti, 
+    // la sicurezza può andare in errore sull'ultimo nodo, essendo state eliminate tutte le reference
+    // Questa opzione serve però abilitarla dove sono presenti vecchi soap engine della sicurezza che lasciavano 'zomibie' degli id non riferiti ed utilizzati nell'header WSS
+    // Questi attributi 'zombie' possono poi far fallire una eventuale validazione dei contenuti applicativi ad esempio (caso pdc)
+    public static final String REMOVE_ALL_WSU_ID_REF = "removeAllWsuIdRef"; 
+    
     public static final String TRUE = "true";
     public static final String FALSE = "false";
 

@@ -1434,6 +1434,7 @@ public class InoltroBuste extends GenericLib{
 						contextParameters.setLog(this.log);
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
+						contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 						contextParameters.setIdFruitore(soggettoFruitore);
 						contextParameters.setIdServizio(idServizio);
 						contextParameters.setPddFruitore(registroServiziManager.getIdPortaDominio(soggettoFruitore, null));
@@ -2593,6 +2594,7 @@ public class InoltroBuste extends GenericLib{
 								contextParameters.setLog(this.log);
 								contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 								contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
+								contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 								contextParameters.setIdFruitore(soggettoFruitore);
 								contextParameters.setIdServizio(idServizio);
 								contextParameters.setPddFruitore(registroServiziManager.getIdPortaDominio(soggettoFruitore, null));

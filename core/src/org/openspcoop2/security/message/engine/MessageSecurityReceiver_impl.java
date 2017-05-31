@@ -239,9 +239,17 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 				if(detach!=null){
 					detachValue = Boolean.parseBoolean((String)detach);
 				}
-				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-					receiverInterface.cleanDirtyElements(this.messageSecurityContext, message.castAsSoap(), elementsToClean, detachValue);
+				
+				boolean removeAllIdRefValue = this.messageSecurityContext.isRemoveAllWsuIdRef();
+				Object removeAllIdRef = this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.REMOVE_ALL_WSU_ID_REF);
+				if(removeAllIdRef!=null){
+					removeAllIdRefValue = Boolean.parseBoolean((String)removeAllIdRef);
 				}
+				
+				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+					receiverInterface.cleanDirtyElements(this.messageSecurityContext, message.castAsSoap(), elementsToClean, detachValue, removeAllIdRefValue);
+				}
+
 			} catch (SecurityException e) {
 				this.messageSecurityContext.getLog().error("Errore durante il clean del messaggio: " + e.getMessage(), e);
 				throw new Exception("Errore durante la cleanMessage: " + e.getMessage());

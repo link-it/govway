@@ -2482,6 +2482,7 @@ public class RicezioneBuste {
 			contextParameters.setLog(logCore);
 			contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 			contextParameters.setPrefixWsuId(propertiesReader.getPrefixWsuId());
+			contextParameters.setRemoveAllWsuIdRef(propertiesReader.isRemoveAllWsuIdRef());
 			contextParameters.setIdFruitore(soggettoFruitore);
 			contextParameters.setPddFruitore(idPdDMittente);
 			contextParameters.setIdServizio(idServizio);

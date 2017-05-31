@@ -311,6 +311,7 @@ public class LocalForwardEngine {
 						contextParameters.setLog(this.localForwardParameter.getLog());
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
+						contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 						contextParameters.setIdFruitore(this.richiestaDelegata.getIdSoggettoFruitore());
 						contextParameters.setIdServizio(this.richiestaDelegata.getIdServizio());
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());
@@ -473,6 +474,7 @@ public class LocalForwardEngine {
 						contextParameters.setLog(this.localForwardParameter.getLog());
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
+						contextParameters.setRemoveAllWsuIdRef(this.propertiesReader.isRemoveAllWsuIdRef());
 						contextParameters.setIdFruitore(this.richiestaDelegata.getIdSoggettoFruitore());
 						contextParameters.setIdServizio(this.richiestaDelegata.getIdServizio());
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());

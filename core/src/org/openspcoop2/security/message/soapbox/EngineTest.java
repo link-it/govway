@@ -336,7 +336,7 @@ public class EngineTest {
 				throw new Exception("Riscontrati " + listaErroriRiscontrati.size() + "nel processamento");
 			}
 			
-			openspcoop2Message.cleanWSSDirtyElements(actorWSS, mustUnderstand, elementsToClean, true);
+			openspcoop2Message.cleanWSSDirtyElements(actorWSS, mustUnderstand, elementsToClean, true, false);
 
 			
 			// Aggiorno attachments
