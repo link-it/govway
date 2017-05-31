@@ -29,6 +29,11 @@
       <property name="jslib" location="../lib/js"/>
       <!-- web-content -->
       <property name="commons_webcontent" location="../lib/web-content"/>
+      <!-- Directory dove sono definiti i file css della console da valorizzare con i colori definiti nel file di properties temaConsoleProperties -->
+      <property name="commons_temaConsole" value="${commons_webcontent}/tema_css" />
+	  <property name="commons_webcontent_properties" value="${commons_webcontent}/properties" />
+	  <!-- File di properties dove sono definiti i colori da utilizzare nel css -->
+      <property name="temaConsoleProperties" value="tema.css.properties" />
 
       
       <!-- Specifica se inserire le informazioni di debug nelle classi -->

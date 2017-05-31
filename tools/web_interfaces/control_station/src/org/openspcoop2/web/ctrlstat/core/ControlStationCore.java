@@ -207,6 +207,10 @@ public class ControlStationCore {
 	private String consoleNomeEstesoSuffix = null;
 	private String consoleCSS = null;
 	private String consoleLanguage = null;
+	private int consoleLunghezzaLabel = 50;
+	private String logoHeaderImage = null;
+	private String logoHeaderTitolo = null;
+	private String logoHeaderLink = null;
 	
 	public String getConsoleNomeSintesi() {
 		return this.consoleNomeSintesi;
@@ -235,6 +239,22 @@ public class ControlStationCore {
 	}
 	public String getConsoleLanguage() {
 		return this.consoleLanguage;
+	}
+
+	public int getConsoleLunghezzaLabel() {
+		return this.consoleLunghezzaLabel;
+	}
+	
+	public String getLogoHeaderImage() {
+		return this.logoHeaderImage;
+	}
+
+	public String getLogoHeaderTitolo() {
+		return this.logoHeaderTitolo;
+	}
+
+	public String getLogoHeaderLink() {
+		return this.logoHeaderLink;
 	}
 
 	/** Tipo del Database */
@@ -1087,6 +1107,10 @@ public class ControlStationCore {
 		this.consoleNomeEstesoSuffix = core.consoleNomeEstesoSuffix;
 		this.consoleCSS = core.consoleCSS;
 		this.consoleLanguage = core.consoleLanguage;
+		this.consoleLunghezzaLabel = core.consoleLunghezzaLabel;
+		this.logoHeaderImage = core.logoHeaderImage;
+		this.logoHeaderLink = core.logoHeaderLink;
+		this.logoHeaderTitolo = core.logoHeaderTitolo;
 
 		/** Tipo del Database */
 		this.tipoDB = core.tipoDB;
@@ -1365,6 +1389,10 @@ public class ControlStationCore {
 			this.consoleNomeEstesoSuffix = consoleProperties.getConsoleNomeEstesoSuffix();
 			this.consoleCSS = consoleProperties.getConsoleCSS();
 			this.consoleLanguage = consoleProperties.getConsoleLanguage();
+			this.consoleLunghezzaLabel = consoleProperties.getConsoleLunghezzaLabel();
+			this.logoHeaderImage = consoleProperties.getLogoHeaderImage();
+			this.logoHeaderLink = consoleProperties.getLogoHeaderLink();
+			this.logoHeaderTitolo = consoleProperties.getLogoHeaderTitolo();
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();

@@ -19,6 +19,7 @@
 
 
 
+<%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
@@ -35,8 +36,34 @@ if (iddati != null && !iddati.equals("notdefined"))
 else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
-%>
 
+String logoImage = gd.getLogoHeaderImage();
+String logoLink = gd.getLogoHeaderLink();
+String logoTitolo = gd.getLogoHeaderTitolo();
+%>
+<% if(StringUtils.isNotEmpty(logoImage)){ %>
+<!-- TR Logo -->
+<!-- TR1: Header1 -->
+<tr class="trPageHeaderLogo">
+ 	<td colspan="2" class="tdPageHeaderLogo">
+		<table style="width:100%;">
+			<tbody>
+				 <tr>
+				 	<td colspan="2" align="left">
+				 		<% if(StringUtils.isNotEmpty(logoLink)){%>
+				 			<a href="<%=logoLink %>" target="_blank">
+				 				<img src="<%=logoImage %>" alt="<%=logoTitolo %>" title="<%=logoTitolo %>">
+				 			</a>
+				 		<% } else {%>
+				 			<img src="<%=logoImage %>" alt="<%=logoTitolo %>" title="<%=logoTitolo %>">
+				 		<% } %>
+				 	</td>
+			 	</tr>
+		 	</tbody>
+	 	</table>
+ 	</td>
+</tr>
+<% } %>
 <!-- TR1: Header1 -->
 <tr class="trPageHeader">
  	<td colspan="2" class="tdPageHeader">

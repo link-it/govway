@@ -92,6 +92,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
@@ -229,6 +230,9 @@ public class ConsoleHelper {
 				file.delete();
 		}
 	}
+	
+	/** Lunghezza label */
+	protected int size = 50;
 
 	public ConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
@@ -288,6 +292,7 @@ public class ConsoleHelper {
 				}
 			}
 			
+			this.size = ConsoleProperties.getInstance().getConsoleLunghezzaLabel();
 		} catch (Exception e) {
 			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
 		}
@@ -320,7 +325,7 @@ public class ConsoleHelper {
 	}
 	
 	public int getSize() {
-		return 50;
+		return this.size;
 	}
 
 	private String getBodyPartName (BodyPart bodyPart) throws Exception{

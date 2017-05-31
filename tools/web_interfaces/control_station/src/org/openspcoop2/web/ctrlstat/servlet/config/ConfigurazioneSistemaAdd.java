@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -134,6 +135,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			String descrizioneAlias = confCore.getJmxPdD_descrizione(alias);
 		
 			String messagePerOperazioneEffettuata = null;
+			boolean rilevatoErrore = false;
 			
 			if(nomeCache!=null && !"".equals(nomeCache) &&
 					nomeMetodo!=null && !"".equals(nomeMetodo)){
@@ -170,6 +172,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							}catch(Exception e){
 								ControlStationCore.logError("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
 								stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+								rilevatoErrore = true;
 							}
 							
 							if("abilitata".equals(stato)){
@@ -185,6 +188,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 									String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"]: "+e.getMessage();
 									ControlStationCore.getLog().error(errorMessage,e);
 									result = errorMessage;
+									rilevatoErrore = true;
 								}
 								bf.append("Cache ["+cache+"]: "+result);
 							}
@@ -203,6 +207,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"]: "+e.getMessage();
 						ControlStationCore.getLog().error(errorMessage,e);
 						messagePerOperazioneEffettuata = errorMessage;
+						rilevatoErrore = true;
 					}
 				}
 			}
@@ -267,11 +272,15 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					else{
 						messagePerOperazioneEffettuata = errorMessage;
 					}
+					rilevatoErrore = true;
 				}
 			}
 			
 			if(messagePerOperazioneEffettuata!=null){
-				pd.setMessage(messagePerOperazioneEffettuata);
+				if(rilevatoErrore)
+					pd.setMessage(messagePerOperazioneEffettuata);
+				else 
+					pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
 			}
 			
 			// setto la barra del titolo

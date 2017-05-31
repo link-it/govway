@@ -27,7 +27,6 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.message.xml.XMLDiff;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -40,7 +39,10 @@ import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB_LIB;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.gestori.GestoriStartupThread;
+import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementParameter;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
+import org.slf4j.Logger;
 
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie alla
@@ -231,6 +233,16 @@ public class InitListener implements ServletContextListener {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 		
+		InitListener.log.info("Inizializzazione DataElement in corso...");
+		try{
+			int consoleLunghezzaLabel = consoleProperties.getConsoleLunghezzaLabel();
+			DataElementParameter dep = new DataElementParameter();
+			dep.setSize(consoleLunghezzaLabel);
+			DataElement.initialize(dep);
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		InitListener.log.info("Inizializzazione DataElement effettuata con successo");
 	}
 
 	public static void setInitialized(boolean initialized) {

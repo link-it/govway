@@ -407,6 +407,23 @@ public class ConsoleProperties {
 		return this.readProperty(true, "console.language");
 	}
 	
+	public int getConsoleLunghezzaLabel() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "console.lunghezzaLabel");
+		return Integer.parseInt(lunghezzaS); 
+	}
+	
+	public String getLogoHeaderImage() throws Exception{
+		return this.readProperty(false,"console.header.logo.image");
+	}
+
+	public String getLogoHeaderTitolo() throws Exception{
+		return this.readProperty(false,"console.header.logo.titolo");
+	}
+
+	public String getLogoHeaderLink() throws Exception{
+		return this.readProperty(false,"console.header.logo.link");
+	}
+	
 	/* ----- Opzioni Accesso JMX della PdD ------- */
 	
 	public List<String> getJmxPdD_aliases() throws UtilsException {

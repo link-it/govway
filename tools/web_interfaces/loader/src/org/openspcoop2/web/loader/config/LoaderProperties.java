@@ -349,4 +349,21 @@ public class LoaderProperties {
 	public String getConsoleLanguage() throws UtilsException{
 		return this.readProperty(true, "loader.language"); 
 	}
+	
+	public int getConsoleLunghezzaLabel() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "loader.lunghezzaLabel");
+		return Integer.parseInt(lunghezzaS); 
+	}
+	
+	public String getLogoHeaderImage() throws Exception{
+		return this.readProperty(false,"console.header.logo.image");
+	}
+
+	public String getLogoHeaderTitolo() throws Exception{
+		return this.readProperty(false,"console.header.logo.titolo");
+	}
+
+	public String getLogoHeaderLink() throws Exception{
+		return this.readProperty(false,"console.header.logo.link");
+	}
 }

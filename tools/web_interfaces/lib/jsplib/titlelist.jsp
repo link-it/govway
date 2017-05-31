@@ -51,11 +51,11 @@ String pageDescription = pd.getPageDescription();
 		<tr>
 			<td>
 				<div id="breadcrumb-ct">
-					<div id="crumbs">
 					<%
-					Vector<GeneralLink> titlelist = pd.getTitleList();
-					if (titlelist != null && titlelist.size() > 0) {
+						Vector<GeneralLink> titlelist = pd.getTitleList();
+						if (titlelist != null && titlelist.size() > 0) {
 						%>
+					<div id="crumbs">
 						<ul>
 						<%
 						GeneralLink l;
@@ -98,10 +98,10 @@ String pageDescription = pd.getPageDescription();
 						}
 						%>
 						</ul>
-						<%
-					}
-					%>
 					</div>
+				<%
+				}
+				%>
 				</div>
 			</td>
 		</tr>

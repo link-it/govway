@@ -32,6 +32,7 @@ import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -64,6 +65,11 @@ public class LoaderCore{
 	private String loaderNomeEstesoSuffix = null;
 	private String loaderCSS = null;
 	private String loaderLanguage = null;
+	private int consoleLunghezzaLabel = 50;
+	private String logoHeaderImage = null;
+	private String logoHeaderTitolo = null;
+	private String logoHeaderLink = null;
+	
 	public String getLoaderNomeSintesi() {
 		return this.loaderNomeSintesi;
 	}
@@ -75,11 +81,36 @@ public class LoaderCore{
 			return this.loaderNomeEsteso;
 		}
 	}
+	public String getProductVersion(){
+		if(this.loaderNomeEstesoSuffix!=null){
+			if(this.loaderNomeEstesoSuffix.trim().startsWith("-")){
+				return "PdDOpenSPCoopEnterprise "+ this.loaderNomeEstesoSuffix.trim().substring(1).trim();
+			}
+			else{
+				return this.loaderNomeEstesoSuffix;
+			}
+		}
+		return "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+	}
 	public String getLoaderCSS() {
 		return this.loaderCSS;
 	}
 	public String getLoaderLanguage() {
 		return this.loaderLanguage;
+	}
+	public int getConsoleLunghezzaLabel() {
+		return this.consoleLunghezzaLabel;
+	}
+	public String getLogoHeaderImage() {
+		return this.logoHeaderImage;
+	}
+
+	public String getLogoHeaderTitolo() {
+		return this.logoHeaderTitolo;
+	}
+
+	public String getLogoHeaderLink() {
+		return this.logoHeaderLink;
 	}
 	
 	private String nomePdDOperativaCtrlstatSinglePdD = null;
@@ -162,11 +193,54 @@ public class LoaderCore{
 			this.loaderNomeEstesoSuffix = loaderProperties.getConsoleNomeEstesoSuffix();
 			this.loaderCSS = loaderProperties.getConsoleCSS();
 			this.loaderLanguage = loaderProperties.getConsoleLanguage();
+			this.consoleLunghezzaLabel = loaderProperties.getConsoleLunghezzaLabel();
+			this.logoHeaderImage = loaderProperties.getLogoHeaderImage();
+			this.logoHeaderLink = loaderProperties.getLogoHeaderLink();
+			this.logoHeaderTitolo = loaderProperties.getLogoHeaderTitolo();
 			
 		} catch (java.lang.Exception e) {
 			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());
 			throw new Exception("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());
 		} 
+		
+		this.xmlUtils = XMLUtils.getInstance();
+	}
+	
+	public LoaderCore(LoaderCore core) throws Exception{
+		// RegistroServizi
+		this.dataSourceRegistroServizi = core.dataSourceRegistroServizi;
+		this.tipoDatabaseRegistroServizi = core.tipoDatabaseRegistroServizi;
+		this.ctxDatasourceRegistroServizi = core.ctxDatasourceRegistroServizi;
+
+		// ConfigurazionePdD
+		this.dataSourceConfigurazionePdD = core.dataSourceConfigurazionePdD;
+		this.tipoDatabaseConfigurazionePdD = core.tipoDatabaseConfigurazionePdD;
+		this.ctxDatasourceConfigurazionePdD = core.ctxDatasourceConfigurazionePdD;	
+		
+		this.nomePdDOperativaCtrlstatSinglePdD = core.nomePdDOperativaCtrlstatSinglePdD;	
+		if(this.nomePdDOperativaCtrlstatSinglePdD==null){
+			this.nomePdDOperativaCtrlstatSinglePdD = this.getNomePddOperativa();
+		}
+		this.gestioneSoggetti = core.gestioneSoggetti;
+		this.mantieniFruitoriServizi = core.mantieniFruitoriServizi;
+		this.searchUserIntoRegistro = core.searchUserIntoRegistro;
+		this.statoAccordo = core.statoAccordo;
+		this.tipoPdD = core.tipoPdD;
+		if(this.tipoPdD==null){
+			this.tipoPdD = Costanti.PDD_TIPOLOGIA_ESTERNA;
+		}
+		this.protocolloDefault = core.protocolloDefault;
+
+		// Impostazioni grafiche
+		this.loaderNomeSintesi =core.loaderNomeSintesi;
+		this.loaderNomeEsteso = core.loaderNomeEsteso;
+		this.loaderNomeEstesoSuffix = core.loaderNomeEstesoSuffix;
+		this.loaderCSS = core.loaderCSS;
+		this.loaderLanguage = core.loaderLanguage;
+		this.consoleLunghezzaLabel = core.consoleLunghezzaLabel;
+		this.logoHeaderImage = core.logoHeaderImage;
+		this.logoHeaderLink = core.logoHeaderLink;
+		this.logoHeaderTitolo =  core.logoHeaderTitolo;
 		
 		this.xmlUtils = XMLUtils.getInstance();
 	}

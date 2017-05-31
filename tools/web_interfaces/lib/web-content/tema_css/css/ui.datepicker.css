@@ -4,12 +4,12 @@
 	font-size: 14px;
 	padding: 0;
 	margin: 0;
-	background: #ddd;
+	background: ${input.calendar.widget.header.background.color};
 	width: 185px;
 }
 #datepicker_div {
 	display: none;
-	border: 1px solid #777;
+	border: 1px solid ${input.calendar.widget.external.border.color};
 	z-index: 10; /*must have*/
 }
 .datepicker_inline {
@@ -19,7 +19,7 @@
 }
 .datepicker_dialog {
 	padding: 5px !important;
-	border: 4px ridge #ddd !important;
+	border: 4px ridge ${input.calendar.widget.external.border.color} !important;
 }
 button.datepicker_trigger {
 	width: 25px;
@@ -31,8 +31,8 @@ img.datepicker_trigger {
 .datepicker_prompt {
 	float: left;
 	padding: 2px;
-	background: #ddd;
-	color: #000;
+	background: ${input.calendar.widget.header.background.color};
+	color: ${input.calendar.widget.color};
 }
 * html .datepicker_prompt {
 	width: 185px;
@@ -41,14 +41,14 @@ img.datepicker_trigger {
 	clear: both;
 	float: left;
 	width: 100%;
-	color: #fff;
+	color: ${input.calendar.widget.color};
 }
 .datepicker_control {
-	background-color: #c2c2ca;
+	background-color: ${input.calendar.widget.header.background.color};
 	padding: 2px 0px;
 }
 .datepicker_links {
-	background: #c2c2ca;
+	background: ${input.calendar.widget.header.background.color};
 	padding: 2px 0px;
 }
 .datepicker_control, .datepicker_links {
@@ -58,7 +58,7 @@ img.datepicker_trigger {
 }
 .datepicker_links label { /* disabled links */
 	padding: 2px 5px;
-	color: #888;
+	color: ${label.color};
 }
 .datepicker_clear, .datepicker_prev {
 	float: left;
@@ -76,20 +76,20 @@ img.datepicker_trigger {
 }
 .datepicker_header {
 	padding: 1px 0 3px;
-	background: #f6f6fc;
+	background: ${input.calendar.widget.header.background.color};
 	text-align: center;
 	font-weight: bold;
 	height: 1.3em;
-	color: #000000;
+	color: ${input.calendar.widget.header.color};
 }
 .datepicker_header select {
-	background: #f6f6fc;
-	color: #000;
+	background: ${input.calendar.widget.header.background.color};
+	color: ${input.calendar.widget.header.color};
 	border: 0px;
 	font-weight: bold;
 }
 .datepicker {
-	background: #ccc;
+	background: ${input.calendar.widget.footer.background.color};
 	text-align: center;
 	font-size: 100%;
 }
@@ -98,48 +98,48 @@ img.datepicker_trigger {
 	width: 100%;
 }
 .datepicker_titleRow {
-	background: #f6f6fc;
+	background: ${input.calendar.widget.footer.background.color};
 }
 .datepicker_daysRow {
-	background: #fff;
-	color: #666;
+	background: ${input.calendar.widget.cell.background.color};
+	color: ${input.calendar.widget.header.color};
 }
 .datepicker_weekCol {
-	background: #777;
-	color: #fff;
+	background: ${input.calendar.widget.cell.holiday.background.color};
+	color: ${input.calendar.widget.cell.holiday.color};
 }
 .datepicker_daysCell {
-	color: #000;
-	border: 1px solid #c2c2ca;
+	color: ${input.calendar.widget.color};
+	border: 1px solid ${input.calendar.widget.cell.border.color};
 }
 .datepicker_daysCell a{
 	display: block;
 }
 .datepicker_weekEndCell {
-	background-color: #ffe6d2;
-    color: #F0641e;
+	background-color: ${input.calendar.widget.cell.holiday.background.color};
+    color: ${input.calendar.widget.cell.holiday.color};
 }
 .datepicker_weekEndCell a{
-    color: #F0641e;
+    color: ${input.calendar.widget.cell.holiday.color} !important;
 }
 .datepicker_daysCellOver {
-	background: #f6f6fc;
-	color: #000;
-	border: 1px solid #c2c2ca;
+	background: ${input.calendar.widget.cell.hover.background.color};
+	color: ${input.calendar.widget.cell.hover.color};
+	border: 1px solid ${input.calendar.widget.cell.border.color};
 }
 .datepicker_unselectable {
-	color: #888;
+	color: ${input.calendar.widget.color};
 }
 .datepicker_today {
-	background-color: #F0641e !important;
-    color: #ffe6d2 !important;
+	background-color: ${input.calendar.widget.cell.today.background.color} !important;
+    color: ${input.calendar.widget.cell.today.color} !important;
 }
 .datepicker_today a{
-    color: #ffe6d2 !important;
+    color: ${input.calendar.widget.cell.today.color} !important;
 }
 
 .datepicker_currentDay {
-	background: #c2c2ca !important;
+	background: ${input.calendar.widget.cell.selected.background.color} !important;
 }
 
 /* ________ Datepicker Links _______
@@ -150,25 +150,25 @@ img.datepicker_trigger {
 	margin: 0;
 	padding: 0;
 	background: none;
-	color: #000;
+	color: ${input.calendar.widget.color};
 }
 .datepicker_inline .datepicker_links a {
 	padding: 0 5px !important;
 }
 .datepicker_control a, .datepicker_links a {
 	padding: 2px 5px !important;
-	color: #000000 !important;
+	color: ${input.calendar.widget.color} !important;
 }
 .datepicker_titleRow a {
-	color: #000000 !important;
+	color: ${input.calendar.widget.color} !important;
 }
 .datepicker_control a:hover {
-	background: #F5F5F5 !important;
-	color: #000000 !important;
+	background: ${input.calendar.widget.editor.button.hover.background.color} !important;
+	color: ${input.calendar.widget.color} !important;
 }
 .datepicker_links a:hover, .datepicker_titleRow a:hover {
-	background: #ddd !important;
-	color: #333 !important;
+	background: ${input.calendar.widget.editor.button.hover.background.color} !important;
+	color: ${input.calendar.widget.color} !important;
 }
 
 /* ___________ MULTIPLE MONTHS _________*/

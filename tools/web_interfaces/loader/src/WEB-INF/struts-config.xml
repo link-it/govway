@@ -55,6 +55,14 @@
 		    <forward name="eliminazioneXmlCheckError" path="/jsplib/addElement.jsp" />
 			<forward name="eliminazioneXmlError" path="/jsplib/addElement.jsp" />
 	    </action>
+	    
+       	<!-- About  -->
+    
+        <action path="/about" type="org.openspcoop2.web.loader.servlet.about.About" 
+        	scope="request" validate="true">
+            <forward name="aboutOk" path="/jsplib/addElement.jsp"/>
+            <forward name="aboutError" path="/jsplib/info.jsp"/>
+        </action>
 	
   </action-mappings>
     	

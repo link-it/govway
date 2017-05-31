@@ -134,6 +134,9 @@ public class GeneralHelper {
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
 		gd.setTitle(this.core.getConsoleNomeEsteso(false));
+		gd.setLogoHeaderImage(this.core.getLogoHeaderImage());
+		gd.setLogoHeaderLink(this.core.getLogoHeaderLink());
+		gd.setLogoHeaderTitolo(this.core.getLogoHeaderTitolo()); 
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout) {
@@ -146,7 +149,7 @@ public class GeneralHelper {
 				link.addElement(gl1);
 			}else{
 				// Ordine dei link da visualizzare nel menu'
-				
+
 				// 1. Utente collegato
 				if (displayUtente){
 					GeneralLink glUtente = new GeneralLink();
@@ -154,7 +157,7 @@ public class GeneralHelper {
 					glUtente.setUrl("");
 					link.addElement(glUtente);
 				}
-				
+
 				// 2. modalita' standard/avanzata
 				GeneralLink glUtente = new GeneralLink();
 				InterfaceType tipoInterfaccia = u.getInterfaceType();
@@ -166,7 +169,7 @@ public class GeneralHelper {
 							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
 							);
-					
+
 				} else {
 					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
 					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_MODALITA_AVANZATA);
@@ -176,13 +179,13 @@ public class GeneralHelper {
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
 				}
 				link.addElement(glUtente);
-				
+
 				// 3. informazioni/about
 				GeneralLink glO = new GeneralLink();
 				glO.setLabel(LoginCostanti.LABEL_MENU_UTENTE_INFORMAZIONI);
 				glO.setUrl(AboutCostanti.SERVLET_NAME_ABOUT);
 				link.addElement(glO);
-				
+
 				// 4. profilo utente
 				if (displayUtente){
 					GeneralLink glProfiloUtente = new GeneralLink();
@@ -191,7 +194,7 @@ public class GeneralHelper {
 					link.addElement(glProfiloUtente);
 				}
 			}
-			
+
 			// 5. logout
 			if (displayLogout) {
 				GeneralLink gl2 = new GeneralLink();
@@ -199,7 +202,7 @@ public class GeneralHelper {
 				gl2.setUrl(LoginCostanti.SERVLET_NAME_LOGOUT);
 				link.addElement(gl2);
 			}
-			
+
 			gd.setHeaderLinks(link);
 		}
 
@@ -207,19 +210,25 @@ public class GeneralHelper {
 	}
 
 	public PageData initPageData() {
+		return  initPageData(null);		
+	}
+
+	public PageData initPageData(String breadcrumb) {
 		PageData pd = new PageData();
-		Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
-		GeneralLink tl1 = new GeneralLink();
-		tl1.setLabel(LoginCostanti.LABEL_LOGIN);
-		titlelist.addElement(tl1);
-		pd.setTitleList(titlelist);
+		if(breadcrumb != null) {
+			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
+			GeneralLink tl1 = new GeneralLink();
+			tl1.setLabel(breadcrumb);
+			titlelist.addElement(tl1);
+			pd.setTitleList(titlelist);
+		}
 		Vector<DataElement> dati = new Vector<DataElement>();
 		// titolo sezione login 
 		DataElement titoloSezione = new DataElement();
 		titoloSezione.setLabel(LoginCostanti.LABEL_LOGIN);
 		titoloSezione.setType(DataElementType.TITLE);
 		titoloSezione.setName("");
-		
+
 		DataElement login = new DataElement();
 		login.setLabel(LoginCostanti.LABEL_LOGIN);
 		login.setType(DataElementType.TEXT_EDIT);
@@ -230,12 +239,11 @@ public class GeneralHelper {
 		pwd.setType(DataElementType.CRYPT);
 		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PASSWORD);
 		pwd.setStyleClass(Costanti.INPUT_CSS_CLASS);
-		
+
 		dati.addElement(titoloSezione);
 		dati.addElement(login);
 		dati.addElement(pwd);
-		pd.setDati(dati);		
-		
+		pd.setDati(dati);
 		return pd;
 	}
 

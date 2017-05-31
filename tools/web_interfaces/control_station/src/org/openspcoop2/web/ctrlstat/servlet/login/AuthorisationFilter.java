@@ -105,8 +105,7 @@ public final class AuthorisationFilter implements Filter {
 						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP,null);
 					}
 					else{
-						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, 
-						LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA);
+						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA);
 					}
 					
 					// return so that we do not chain to other filters
@@ -140,8 +139,7 @@ public final class AuthorisationFilter implements Filter {
 							if (!LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
 								if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta,request, session)==false){
 									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
-									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP,
-											LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA);
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA);
 									// return so that we do not chain to other filters
 									return;
 								}
@@ -152,8 +150,7 @@ public final class AuthorisationFilter implements Filter {
 						} catch (Exception e) {
 							ControlStationCore.logError("Errore durante il processo di autorizzazione della servlet ["+urlRichiesta
 									+"] per l'utente ["+userLogin+"] : " + e.getMessage(),e);
-							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP,
-								LoginCostanti.LABEL_LOGIN_ERRORE);
+							setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE);
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -168,8 +165,7 @@ public final class AuthorisationFilter implements Filter {
 							&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
 							&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1) {
 
-						this.setErrorMsg(generalHelper, session, request, response, "/jsplib/login.jsp", 
-							LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA);
+						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA);
 						// return so that we do not chain to other filters
 						return;
 					}
@@ -181,8 +177,7 @@ public final class AuthorisationFilter implements Filter {
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
 			try{
-				this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, 
-					LoginCostanti.LABEL_LOGIN_ERRORE);
+				this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE);
 				// return so that we do not chain to other filters
 				return;
 			}catch(Exception eClose){
@@ -220,6 +215,17 @@ public final class AuthorisationFilter implements Filter {
 
 		// Inizializzo GeneralData
 		GeneralData gd = gh.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
+		
+		// se l'utente e' loggato faccio vedere il menu'
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
+		if(userLogin != null){
+			try{
+			LoginHelper lH = new LoginHelper(request, pd, session);
+			lH.makeMenu();
+			}catch(Exception e){
+				throw new ServletException(e);
+			}
+		}
 		
 		if(msgErrore!=null)
 			pd.setMessage(msgErrore);

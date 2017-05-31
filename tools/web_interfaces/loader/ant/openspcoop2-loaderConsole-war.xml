@@ -11,7 +11,7 @@
 	</taskdef>
 	
 
-	<target name="war_openspcoop2_loaderConsole">
+	<target name="war_openspcoop2_loaderConsole" depends="applicaTemaCss">
 
 		<!-- DataSource Properties -->
 		<copy file="${cfg}/loader.datasource.properties" todir="${build_loaderConsole}/tmp" />
@@ -34,6 +34,7 @@
 			<zipfileset dir="${commons_webcontent}/css" prefix="css" />
 			<zipfileset dir="${commons_webcontent}/fonts" prefix="fonts" />
 			<zipfileset dir="${commons_webcontent}/images" prefix="images" />
+			<zipfileset dir="${build_loaderConsole}/tmp/tmp_css" prefix="css" />
 
 			<zipfileset dir="${jsp}" prefix="jsp"/>
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
@@ -104,6 +105,24 @@
 		</war>
 		<delete dir="${build_loaderConsole}/tmp" />
 		
+	</target>
+	
+	<target name="applicaTemaCss">
+		<mkdir dir="${build_loaderConsole}/tmp/tmp_css"/>
+		<copy todir="${build_loaderConsole}/tmp/tmp_css">
+			<fileset dir="${commons_temaConsole}/css"/>
+		</copy>
+		<property file="${commons_webcontent_properties}/${temaConsoleProperties}" prefix="temalink."/>
+		<propertyselector property="cssProperties" match="temalink\.(.*)" select="\1"/>
+		<property file="${commons_webcontent_properties}/${temaConsoleProperties}" />
+		<for list="${cssProperties}" param="cssKey">
+			<sequential>
+				<!--  <echo message="key[@{cssKey}] value[${@{cssKey}}]"/>  -->
+				<replace dir="${build_loaderConsole}/tmp/tmp_css" 
+	                     token="$${@{cssKey}}" 
+	                     value="${@{cssKey}}"/>
+	       	</sequential>
+		</for>
 	</target>
 	
 </project>

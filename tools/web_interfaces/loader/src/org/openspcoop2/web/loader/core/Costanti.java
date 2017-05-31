@@ -112,6 +112,7 @@ public class Costanti {
 	public final static String LABEL_IMPORTAZIONE_EFFETTUATA_CORRETTAMENTE ="L'importazione dei dati, contenuti nel file xml, è avvenuta con successo";
 	public final static String LABEL_ELIMINAZIONE_EFFETTUATA_CORRETTAMENTE ="L'eliminazione delle configurazioni, contenute nel file xml, è avvenuta con successo";
 	
+	public final static String LABEL_MENU_UTENTE_INFORMAZIONI = "Informazioni";
 	public final static String LABEL_LOGIN = "Login";
 	public final static String LABEL_LOGOUT = "Logout";
 	public final static String LABEL_PASSWORD = "Password";

@@ -38,6 +38,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.loader.core.Costanti;
 import org.openspcoop2.web.loader.servlet.GeneralHelper;
+import org.openspcoop2.web.loader.servlet.LoaderHelper;
 
 /**
  * AuthorisationFilter
@@ -83,8 +84,7 @@ public final class AuthorisationFilter implements Filter {
 						this.setErrorMsg(generalHelper, session, request, response, Costanti.LOGIN_JSP,null);
 					}
 					else{
-						this.setErrorMsg(generalHelper, session, request, response, Costanti.LOGIN_JSP, 
-								Costanti.LABEL_LOGIN_SESSIONE_SCADUTA);
+						this.setErrorMsg(generalHelper, session, request, response, Costanti.LOGIN_JSP, Costanti.LABEL_LOGIN_SESSIONE_SCADUTA);
 					}
 					
 					// return so that we do not chain to other filters
@@ -96,7 +96,15 @@ public final class AuthorisationFilter implements Filter {
 			chain.doFilter(request, response);
 		} 
 		catch(Exception e){
-			generalHelper.log.error("Errore durante il dispatcher",e);
+//			generalHelper.log.error("Errore durante il dispatcher",e);
+			generalHelper.log.error("Errore rilevato durante l'authorizationFilter",e);
+			try{
+				this.setErrorMsg(generalHelper, session, request, response, Costanti.INFO_JSP, Costanti.LABEL_LOGIN_ERRORE);
+				// return so that we do not chain to other filters
+				return;
+			}catch(Exception eClose){
+				generalHelper.log.error("Errore rilevato durante l'authorizationFilter (segnalazione errore)",e);
+			}
 		}
 	}
 
@@ -117,6 +125,17 @@ public final class AuthorisationFilter implements Filter {
 		
 		if(msgErrore!=null)
 			pd.setMessage(msgErrore);
+		
+		// se l'utente e' loggato faccio vedere il menu'
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
+		if(userLogin != null){
+			try{
+			LoaderHelper loaderHelper = new LoaderHelper(request,pd,session);
+			loaderHelper.makeMenu();
+			}catch(Exception e){
+				throw new ServletException(e);
+			}
+		}
 		
 		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

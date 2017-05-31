@@ -33,8 +33,10 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.GeneralLink;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.loader.config.LoaderProperties;
 import org.openspcoop2.web.loader.core.Costanti;
 import org.openspcoop2.web.loader.core.LoaderCore;
+import org.openspcoop2.web.loader.servlet.about.AboutCostanti;
 import org.slf4j.Logger;
 
 
@@ -58,10 +60,14 @@ public class GeneralHelper {
 	public Logger log;
 	private LoaderCore loaderCore;
 
+	/** Lunghezza label */
+	protected int size = 50;
+
 	public GeneralHelper(HttpSession session) {
 		this.session = session;
 		try {
 			this.loaderCore = new LoaderCore();
+			this.size = LoaderProperties.getInstance().getConsoleLunghezzaLabel();
 		} catch (Exception e) {
 			this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -69,8 +75,8 @@ public class GeneralHelper {
 		this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");	
 	}
 
-	
-	
+
+
 	public GeneralData initGeneralData(HttpServletRequest request){
 		String baseUrl = request.getRequestURI();
 		return this.initGeneralData_engine(baseUrl);
@@ -110,6 +116,9 @@ public class GeneralHelper {
 		gd.setTitle(this.loaderCore.getLoaderNomeEsteso(false));
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
+		gd.setLogoHeaderImage(this.loaderCore.getLogoHeaderImage());
+		gd.setLogoHeaderLink(this.loaderCore.getLogoHeaderLink());
+		gd.setLogoHeaderTitolo(this.loaderCore.getLogoHeaderTitolo()); 
 		if (displayLogin || displayLogout) {
 			Vector<GeneralLink> link = new Vector<GeneralLink>();
 			// 1. Utente collegato
@@ -120,6 +129,12 @@ public class GeneralHelper {
 				link.addElement(glUtente);
 			}
 			
+			// 3. informazioni/about
+			GeneralLink glO = new GeneralLink();
+			glO.setLabel(Costanti.LABEL_MENU_UTENTE_INFORMAZIONI);
+			glO.setUrl(AboutCostanti.SERVLET_NAME_ABOUT);
+			link.addElement(glO);
+
 			if (displayLogin) {
 				GeneralLink gl1 = new GeneralLink();
 				gl1.setLabel(Costanti.LABEL_LOGIN);
@@ -142,21 +157,37 @@ public class GeneralHelper {
 	}
 
 	public PageData initPageData() {
+		return  initPageData(null);		
+	}
+
+	public PageData initPageData(String breadcrumb) {
 		PageData pd = new PageData();
-		Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
-		GeneralLink tl1 = new GeneralLink();
-		tl1.setLabel(Costanti.LABEL_LOGIN);
-		titlelist.addElement(tl1);
-		pd.setTitleList(titlelist);
+		if(breadcrumb != null) {
+			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
+			GeneralLink tl1 = new GeneralLink();
+			tl1.setLabel(breadcrumb);
+			titlelist.addElement(tl1);
+			pd.setTitleList(titlelist);
+		}
+		// titolo sezione login 
+		DataElement titoloSezione = new DataElement();
+		titoloSezione.setLabel(Costanti.LABEL_LOGIN);
+		titoloSezione.setType(DataElementType.TITLE);
+		titoloSezione.setName("");
+		
 		Vector<DataElement> dati = new Vector<DataElement>();
 		DataElement login = new DataElement();
 		login.setLabel(Costanti.LABEL_LOGIN);
 		login.setType(DataElementType.TEXT_EDIT);
 		login.setName(Costanti.PARAMETRO_UTENTE_LOGIN);
+		login.setStyleClass(org.openspcoop2.web.lib.mvc.Costanti.INPUT_CSS_CLASS);
 		DataElement pwd = new DataElement();
 		pwd.setLabel(Costanti.LABEL_PASSWORD);
 		pwd.setType(DataElementType.CRYPT);
 		pwd.setName(Costanti.PARAMETRO_UTENTE_PASSWORD);
+		pwd.setStyleClass(org.openspcoop2.web.lib.mvc.Costanti.INPUT_CSS_CLASS);
+		
+		dati.addElement(titoloSezione);
 		dati.addElement(login);
 		dati.addElement(pwd);
 		pd.setDati(dati);
@@ -164,6 +195,6 @@ public class GeneralHelper {
 	}
 
 	public int getSize() {
-		return 50;
+		return this.size;
 	}
 }

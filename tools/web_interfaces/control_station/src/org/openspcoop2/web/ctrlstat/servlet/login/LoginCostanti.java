@@ -71,6 +71,7 @@ public class LoginCostanti {
 	public final static String LABEL_LOGIN_SESSIONE_SCADUTA = "La sessione &egrave; scaduta. Effettuare il login";
 	public final static String LABEL_LOGIN_AUTORIZZAZIONE_NEGATA = "Autorizzazione negata";
 	public final static String LABEL_LOGIN_ERRORE = "L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile.<BR><BR>Effettuare nuovamente il login";
+	public final static String LABEL_ERRORE = "Errore";
 	
 	/* LABEL MENU' AZIONI UTENTE */
 	

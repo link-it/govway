@@ -41,6 +41,7 @@ import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.loader.core.Costanti;
 import org.openspcoop2.web.loader.core.LoaderCore;
+import org.openspcoop2.web.loader.servlet.about.AboutCore;
 import org.openspcoop2.web.loader.servlet.archivi.ImportaXML;
 
 /**
@@ -54,11 +55,11 @@ import org.openspcoop2.web.loader.servlet.archivi.ImportaXML;
  * 
  */
 public class LoaderHelper {
-	HttpServletRequest request;
-	PageData pd;
-	HttpSession session;
-
-	LoaderCore core;
+	protected HttpServletRequest request;
+	protected PageData pd;
+	protected HttpSession session;
+	protected LoaderCore core;
+	protected AboutCore aboutCore;
 
 	Password passwordManager;
 
@@ -77,6 +78,7 @@ public class LoaderHelper {
 		this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
 		try {
 			this.core = new LoaderCore();
+			this.aboutCore = new AboutCore(this.core);
 		} catch (Exception e) {
 			this.log.error("Exception OpenSPCoopLoaderHelper: " + e.getMessage(), e);
 		}

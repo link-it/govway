@@ -20,6 +20,8 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -92,7 +94,13 @@ public class Parameter {
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.name).append("=").append(this.value);
+		String val = null;
+		try {
+			val = URLEncoder.encode(this.value, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			val = this.value;
+		}
+		sb.append(this.name).append("=").append(val);
 		return sb.toString();
 	}
 

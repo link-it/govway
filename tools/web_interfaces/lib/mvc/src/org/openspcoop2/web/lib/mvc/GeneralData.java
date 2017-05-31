@@ -45,6 +45,9 @@ public class GeneralData {
 	String linkFoot;
 	Vector<GeneralLink> headerLinks;
 	private String contextName;
+	private String logoHeaderImage;
+	private String logoHeaderTitolo;
+	private String logoHeaderLink;
 
 	public GeneralData(String linkFoot) {
 		this.product = "";
@@ -54,6 +57,9 @@ public class GeneralData {
 		this.title = "";
 		this.linkFoot = linkFoot;
 		this.headerLinks = new Vector<GeneralLink>();
+		this.logoHeaderImage = "";
+		this.logoHeaderLink= "";
+		this.logoHeaderTitolo= "";
 	}
 	public GeneralData() {
 		this("http://www.link.it");
@@ -118,4 +124,23 @@ public class GeneralData {
 	public String getContextName(){
 		return this.contextName;
 	}
+	public String getLogoHeaderImage() {
+		return this.logoHeaderImage;
+	}
+	public void setLogoHeaderImage(String logoHeaderImage) {
+		this.logoHeaderImage = logoHeaderImage;
+	}
+	public String getLogoHeaderTitolo() {
+		return this.logoHeaderTitolo;
+	}
+	public void setLogoHeaderTitolo(String logoHeaderTitolo) {
+		this.logoHeaderTitolo = logoHeaderTitolo;
+	}
+	public String getLogoHeaderLink() {
+		return this.logoHeaderLink;
+	}
+	public void setLogoHeaderLink(String logoHeaderLink) {
+		this.logoHeaderLink = logoHeaderLink;
+	}
+	
 }

@@ -27,12 +27,14 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementParameter;
 import org.openspcoop2.web.loader.config.DatasourceProperties;
 import org.openspcoop2.web.loader.config.LoaderProperties;
+import org.slf4j.Logger;
 
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie alla
@@ -124,6 +126,18 @@ public class LoaderStartup implements ServletContextListener {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 		LoaderStartup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
+		
+		LoaderStartup.log.info("Inizializzazione DataElement in corso...");
+		try{
+			LoaderProperties loaderProperties = LoaderProperties.getInstance();
+			int consoleLunghezzaLabel = loaderProperties.getConsoleLunghezzaLabel();
+			DataElementParameter dep = new DataElementParameter();
+			dep.setSize(consoleLunghezzaLabel);
+			DataElement.initialize(dep);
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		LoaderStartup.log.info("Inizializzazione DataElement effettuata con successo");
 
 	}
 

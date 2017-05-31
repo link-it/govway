@@ -45,6 +45,24 @@ public class DataElement {
 	
 	private static Map<String, String> escapeMap = null;
 	
+	private static int DATA_ELEMENT_SIZE = 50;
+	private static int DATA_ELEMENT_COLS = 15;
+	private static int DATA_ELEMENT_ROWS = 5;
+	public static void initialize(DataElementParameter p){
+		if(p.getSize()!= null && p.getSize().intValue() > 0) {
+			DataElement.DATA_ELEMENT_SIZE = p.getSize();
+		}
+		
+		if(p.getCols()!= null && p.getCols().intValue() > 0) {
+			DataElement.DATA_ELEMENT_COLS = p.getCols();
+		}
+		
+		if(p.getRows()!= null && p.getRows().intValue() > 0) {
+			DataElement.DATA_ELEMENT_ROWS = p.getRows();
+		}
+	}
+	
+	
 	static{
 		DataElement.escapeMap = new HashMap<String,String>();
 		
@@ -92,13 +110,14 @@ public class DataElement {
 		this.onChange = "";
 		this.selected = "";
 		this.toolTip="";
-		this.size = 30;
-		this.cols = 15;
-		this.rows = 5;
+		this.size = DataElement.DATA_ELEMENT_SIZE;
+		this.cols = DataElement.DATA_ELEMENT_COLS;
+		this.rows = DataElement.DATA_ELEMENT_ROWS;
 		this.affiancato = false;
 		this.labelAffiancata = true;
 		this.note = "";
 		this.styleClass = Costanti.INPUT_LONG_CSS_CLASS;
+		
 	}
 
 	public void setId(int i) {
