@@ -38,7 +38,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="audit_operations" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="audit_operations" sequence-cycle="true"
+                                              comment="Registrazione delle operazioni effettuate dagli utenti tramite la console">
                         <linkit:sql-table-index name="audit_filter_time">
                             <linkit:sql-table-index-field name="time_request" order="DESC" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
@@ -67,6 +68,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_operazione"/>
+                                <linkit:sql-ddl-column-comment>Definisce il tipo di operazione (ADD/DEL/CHANGE/LOGIN/LOGOUT)</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -78,6 +80,7 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
                                 <linkit:sql-column-comment><![CDATA[non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
+                                <linkit:sql-ddl-column-comment>Definisce il tipo di oggetto gestito dall'utente (es. soggetto,accordo,...) (non presente in caso di LOGIN/LOGOUT)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -88,6 +91,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="object_id" />
+                                <linkit:sql-ddl-column-comment>Identificativo dell'oggetto gestito dall'utente (non presente in caso di LOGIN/LOGOUT)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -99,6 +103,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="object_old_id" />
+                                <linkit:sql-ddl-column-comment>Precedente identificativo dell'oggetto modificato dall'utente (non presente in caso di LOGIN/LOGOUT)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -109,6 +114,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="utente"/>
+                                <linkit:sql-ddl-column-comment>Login dell'utente</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -119,6 +125,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Definisce lo stato dell'operazione (requesting,error,completed)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -129,6 +136,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="object_details" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Contiene i dati dell'oggetto gestito dall'utente (dati forniti tramite rappresentazione JSON o XML)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Dettaglio oggetto in gestione (Rappresentazione tramite JSON o XML format)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -140,6 +148,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="object_class"/>
+                                <linkit:sql-ddl-column-comment>Classe che rappresenta l'oggetto serializzato nella colonna 'object_details' (informazione utile per effettuare operazione di unmarshall)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Class, serve eventualmente per riottenere l'oggetto dal dettaglio
 non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             </linkit:generator>
@@ -152,6 +161,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="error" text="true"/>
+                                <linkit:sql-ddl-column-comment>Eventuale errore avvenuto durante la gestione dell'oggetto</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Eventuale messaggio di errore]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -163,6 +173,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="time_request"/>
+                                <linkit:sql-ddl-column-comment>Data in cui l'operazione è stata richiesta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -173,6 +184,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="time_execute"/>
+                                <linkit:sql-ddl-column-comment>Data in cui l'operazione è stata eseguita</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -204,7 +216,8 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="audit_binaries" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="audit_binaries" sequence-cycle="true"
+                                               comment="Informazioni sui documenti appartenenti all'oggetto gestito tramite console">
                         <linkit:sql-table-foreign-key
                             reference-object-name="audit-operations"
                             reference-object-type="audit-operations"
@@ -227,6 +240,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="binary_id"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del documento</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -237,6 +251,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="checksum"/>
+                                <linkit:sql-ddl-column-comment>Checksum del documento</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -247,6 +262,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_audit_operation"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'operazione (FK verso tabella audit_operations(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -257,6 +273,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="time_rec" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione del documento</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

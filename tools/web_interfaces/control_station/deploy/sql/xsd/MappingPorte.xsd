@@ -38,7 +38,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="mapping_fruizione_pd">
+                    <linkit:sql-table-mapping name="mapping_fruizione_pd"
+                                              comment="Associazione tra una fruizione di servizio e la corrispondente porta delegata">
                         <linkit:sql-table-foreign-key reference-table="servizi_fruitori">
                             <linkit:sql-table-fk-field name="id_fruizione"/>
                             <linkit:sql-table-fk-reference-column name="id"/>
@@ -62,7 +63,8 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_fruizione"/>
-                           </linkit:generator>
+                                <linkit:sql-ddl-column-comment>Identificativo della fruizione [FK verso tabella servizi_fruitori(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
@@ -72,6 +74,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -88,7 +91,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="mapping_erogazione_pa">
+                    <linkit:sql-table-mapping name="mapping_erogazione_pa"
+                                              comment="Associazione tra una erogazione di servizio e la corrispondente porta applicativa">
                         <linkit:sql-table-foreign-key reference-table="servizi">
                             <linkit:sql-table-fk-field name="id_erogazione"/>
                             <linkit:sql-table-fk-reference-column name="id"/>
@@ -112,6 +116,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_erogazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'erogazione di servizio [FK verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -122,6 +127,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

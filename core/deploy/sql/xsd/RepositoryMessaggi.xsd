@@ -41,7 +41,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="MESSAGGI" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="MESSAGGI" sequence-cycle="true"
+                                              comment="Messaggi presi in carico dalla Porta di Dominio">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="id_messaggio"/>
                             <linkit:sql-table-pk-field name="tipo"/>
@@ -72,6 +73,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ID_MESSAGGIO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del messaggio (insieme al tipo rappresenta l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -82,6 +84,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO"/>
+                                <linkit:sql-ddl-column-comment>Tipo del messaggio (insieme all'identificativo rappresenta l'identificativo univoco)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -92,6 +95,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="RIFERIMENTO_MSG"/>
+                                <linkit:sql-ddl-column-comment>Riferimento ad un altro messaggio che contiene la richiesta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -102,6 +106,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ERRORE_PROCESSAMENTO" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Eventuale dettaglio dell'errore avvenuto durante la gestione del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -112,6 +117,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="RISPEDIZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data dalla quale il msg può essere rispedito, in caso la precedente consegna non sia andata a buon fine</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[data dalla quale il msg puo' essere rispedito in caso di errori]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -123,6 +129,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ORA_REGISTRAZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -133,6 +140,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROPRIETARIO"/>
+                                <linkit:sql-ddl-column-comment>Modulo funzionale che possiede il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -143,6 +151,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_RICEZ_CONT_APPLICATIVI"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'RicezioneContenutiApplicativi' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[le colonne seguenti servono per il servizio di TransactionManager]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -154,6 +163,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_RICEZ_BUSTE"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'RicezioneBuste' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -164,6 +174,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_INOLTRO_BUSTE"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'InoltroBuste' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -174,6 +185,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_INOLTRO_RISPOSTE"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'InoltroRisposte' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -184,6 +196,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_IMBUSTAMENTO"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'Imbustamento' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -194,6 +207,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_IMBUSTAMENTO_RISPOSTE"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'ImbustamentoRisposte' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -204,6 +218,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_SBUSTAMENTO"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'Sbustamento' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -214,6 +229,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_SBUSTAMENTO_RISPOSTE"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'SbustamentoRisposte' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -224,6 +240,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SCHEDULING"/>
+                                <linkit:sql-ddl-column-comment>Utilizzato dal modulo 'Thread Pool' per impedire la gestione dei messaggi già schedulati</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Thread Pool:impedisce la gestione di messaggi gia schedulati]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -235,6 +252,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="REDELIVERY_DELAY"/>
+                                <linkit:sql-ddl-column-comment>Data di riconsegna del messaggio</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[permette la riconsegna del messaggio dopo tot tempo]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -246,6 +264,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="REDELIVERY_COUNT"/>
+                                <linkit:sql-ddl-column-comment>Numero di riconsegne del messaggio effettuate</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[numero di riconsegne effettuate]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -257,6 +276,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="CLUSTER_ID"/>
+                                <linkit:sql-ddl-column-comment>Id del nodo del cluster che deve gestire questo messaggio</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[id del nodo del cluster che deve gestire questo messaggio.]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -268,6 +288,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SCHEDULING_TIME"/>
+                                <linkit:sql-ddl-column-comment>Memorizza l'ora in cui il messaggio è stato schedulato la prima volta</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[memorizza l'ora in cui il messaggio e stato schedulato la prima volta]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -279,6 +300,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MSG_BYTES"/>
+                                <linkit:sql-ddl-column-comment>Contenuto del messaggio serializzato</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[contiene un messaggio serializzato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -290,6 +312,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="CORRELAZIONE_APPLICATIVA"/>
+                                <linkit:sql-ddl-column-comment>Informazione applicativa estratta dal messaggio di richiesta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -300,6 +323,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="CORRELAZIONE_RISPOSTA"/>
+                                <linkit:sql-ddl-column-comment>Informazione applicativa estratta dal messaggio di risposta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -310,6 +334,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROTOCOLLO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del protocollo utilizzato nella transazione applicativa</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -323,7 +348,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="MSG_SERVIZI_APPLICATIVI" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="MSG_SERVIZI_APPLICATIVI" sequence-cycle="true"
+                                              comment="Identità dei Servizi Applicativi associati ai messaggi presi in carico dalla Porta di Dominio">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="id_messaggio"/>
                             <linkit:sql-table-pk-field name="servizio_applicativo"/>
@@ -356,6 +382,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ID_MESSAGGIO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del messaggio (insieme al tipo rappresenta l'identificativo univoco) [FK verso tabella MESSAGGI(id_messaggio,tipo)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -366,6 +393,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO"/>
+                                <linkit:sql-ddl-column-comment>Tipo del messaggio (insieme all'identificativo rappresenta l'identificativo univoco) [FK verso tabella MESSAGGI(id_messaggio,tipo)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -376,6 +404,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SERVIZIO_APPLICATIVO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio applicativo per cui è destinato il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -386,6 +415,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SBUSTAMENTO_SOAP"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto inviato all'applicativo debba essere sbustato della parte soap (1:true, 0:false)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -396,6 +426,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SBUSTAMENTO_INFO_PROTOCOL"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto inviato all'applicativo debba essere sbustato delle informazioni di protocollo (1:true, 0:false)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -406,6 +437,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="INTEGRATION_MANAGER"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto può essere prelevato dall'applicativo attraverso il servizio MessageBox di IntegrationManager (1:true, 0:false)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -416,6 +448,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MOD_CONSEGNA_CONT_APPLICATIVI"/>
+                                <linkit:sql-ddl-column-comment>Gestione della transazione relativa al modulo 'ConsegnaContenutiApplicativi' attuata dal componente 'TransactionManager'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -426,6 +459,10 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO_CONSEGNA"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica la modalità di consegna del messaggio al servizio applicativo:
+- 'Connettore': indica una consegna effettuata tramite un connettore
+- 'ConnectionReply': indica una consegna da attuare come connectionReply
+- 'IntegrationManager': indica che il contenuto verrà prelevato dall'applicativo attraverso il servizio MessageBox di IntegrationManager]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Assume il valore 'Connettore' se la consegna avviente tramite un connettore,
 'ConnectionReply' se viene ritornato tramite connectionReply,
 'IntegrationManager' se e' solo ottenibile tramite IntegrationManager]]></linkit:sql-column-comment>
@@ -439,6 +476,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ERRORE_PROCESSAMENTO" text="true"/>
+                                <linkit:sql-ddl-column-comment>Eventuale dettaglio dell'errore avvenuto durante la consegna del messaggio al servizio applicativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -449,6 +487,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="RISPEDIZIONE"/>
+                                <linkit:sql-ddl-column-comment>Data dalla quale il msg può essere rispedito, in caso la precedente consegna non sia andata a buon fine</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[data dalla quale il msg puo' essere rispedito in caso di errori]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -460,6 +499,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="NOME_PORTA" />
+                                <linkit:sql-ddl-column-comment>Nome della porta (delegata o applicativa) da utilizzare per la consegna in caso di profili asincroni</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -473,7 +513,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="DEFINIZIONE_MESSAGGI" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="DEFINIZIONE_MESSAGGI" sequence-cycle="true"
+                                              comment="Definisce il contenuto e gli header di trasporto di un messaggio">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="id_messaggio"/>
                             <linkit:sql-table-pk-field name="tipo"/>
@@ -497,6 +538,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ID_MESSAGGIO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del messaggio (insieme al tipo rappresenta l'identificativo univoco) [FK verso tabella MESSAGGI(id_messaggio,tipo)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -507,6 +549,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO"/>
+                                <linkit:sql-ddl-column-comment>Tipo del messaggio (insieme all'identificativo rappresenta l'identificativo univoco) [FK verso tabella MESSAGGI(id_messaggio,tipo)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -517,6 +560,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SOAP_ACTION"/>
+                                <linkit:sql-ddl-column-comment>SOAPAction associata al messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -527,6 +571,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="CONTENT_TYPE"/>
+                                <linkit:sql-ddl-column-comment>MimeType del messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -537,6 +582,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="CONTENT_LOCATION"/>
+                                <linkit:sql-ddl-column-comment>Eventuale header 'Content-Location' presente in un messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -547,6 +593,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MSG_BYTES"/>
+                                <linkit:sql-ddl-column-comment>Bytes che definiscono il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -561,7 +608,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="CORRELAZIONE_APPLICATIVA" sequence-cycle="true"> 
+                    <linkit:sql-table-mapping name="CORRELAZIONE_APPLICATIVA" sequence-cycle="true"
+                                               comment="Regole che permettono di generare uno stesso identificativo di protocollo a fronte di un medesimo id applicativo per un dato servizio"> 
                         <linkit:sql-table-index name="CORR_APPL_SCADUTE">
                             <linkit:sql-table-index-field name="scadenza" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
@@ -580,6 +628,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ID_MESSAGGIO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo di protocollo associato al messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -590,6 +639,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ID_APPLICATIVO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo applicativo associato al messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -600,6 +650,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SERVIZIO_APPLICATIVO"/>
+                                <linkit:sql-ddl-column-comment>Identità del servizio applicativo che ha generato la richiesta di servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -610,6 +661,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO_MITTENTE"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del soggetto mittente che ha generato il messaggio a cui la correlazione si riferisce</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -620,6 +672,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="MITTENTE"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del soggetto mittente che ha generato il messaggio a cui la correlazione si riferisce</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -630,6 +683,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO_DESTINATARIO"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del soggetto destinatario a cui è destinato il messaggio a cui la correlazione si riferisce</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -640,6 +694,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="DESTINATARIO"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del soggetto destinatario a cui è destinato il messaggio a cui la correlazione si riferisce</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -650,6 +705,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="TIPO_SERVIZIO"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del servizio associato al messaggio a cui la correlazione si riferisce</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -660,6 +716,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SERVIZIO"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del servizio associato al messaggio a cui la correlazione si riferisce</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -680,6 +737,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="AZIONE"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' dell'azione associata al messaggio a cui la correlazione si riferisce</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -690,6 +748,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="SCADENZA"/>
+                                <linkit:sql-ddl-column-comment>Data di scadenza della regola di correlazione definita in questa riga</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -700,6 +759,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della regola di correlazione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

@@ -38,7 +38,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="operations" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="operations" sequence-cycle="true"
+                                              comment="Storico delle operazioni propagate dalla console di configurazione remota">
                         <linkit:sql-table-index name="operations_superuser">
                             <linkit:sql-table-index-field name="superuser"/>
                         </linkit:sql-table-index>
@@ -63,6 +64,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="operation"/>
+                                <linkit:sql-ddl-column-comment>Tipo di operazione (add/change/del)</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -73,6 +75,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo dell'oggetto per cui è stata richiesta l'operazione definita nella colonna 'operation'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -83,6 +86,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha richiesta l'operazione definita nella colonna 'operation'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -93,6 +97,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="hostname"/>
+                                <linkit:sql-ddl-column-comment>Hostname verso cui l'operazione è stata propagata</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -103,6 +108,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="status"/>
+                                <linkit:sql-ddl-column-comment>Stato dell'operazione (indica se l'operazione è andata a buon fine o meno)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -113,6 +119,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="details" text="true"/>
+                                <linkit:sql-ddl-column-comment>Dettaglio sull'esito dell'operazione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -123,6 +130,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="timereq"/>
+                                <linkit:sql-ddl-column-comment>Data in cui l'operazione è stata richiesta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -133,6 +141,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="timexecute"/>
+                                <linkit:sql-ddl-column-comment>Data in cui l'operazione è stata eseguita</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -143,6 +152,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="deleted"/>
+                                <linkit:sql-ddl-column-comment>Indica che l'operazione è eliminabile poichè completata</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -158,7 +168,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="parameters" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="parameters" sequence-cycle="true"
+                                               comment="Parametri delle operazioni propagate dalla console di configurazione remota">
                         <linkit:sql-table-foreign-key
                             reference-object-name="operations"
                             reference-object-type="operations"
@@ -181,6 +192,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_operations"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'operazione [FK verso tabella operations(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -191,6 +203,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="name"/>
+                                <linkit:sql-ddl-column-comment>Nome del parametro</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -201,6 +214,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="value"/>
+                                <linkit:sql-ddl-column-comment>Valore del parametro</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

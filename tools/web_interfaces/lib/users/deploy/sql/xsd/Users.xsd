@@ -37,7 +37,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="users">
+                    <linkit:sql-table-mapping name="users"
+                                              comment="Utenti che possono accedere alla console di gestione">
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="login"/>
                         </linkit:sql-table-unique>
@@ -53,6 +54,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="login"/>
+                                <linkit:sql-ddl-column-comment>Login dell'utente</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -63,6 +65,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="password"/>
+                                <linkit:sql-ddl-column-comment>Password dell'utente</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -73,6 +76,9 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_interfaccia"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sulla modalità di utilizzo dell'interfaccia:
+- 'standard': l'utente dovrà fornire solamente le informazioni minime per configurare fruizioni e/o erogazioni
+- 'avanzata': l'utente potrà beneficiare di funzionalità avanzate della console]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -83,6 +89,14 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="permessi"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Rappresentano i ruoli associati ad un utente:
+- 'S': possibilità di configurare i servizi sia in termini di accordi che per quanto concerne gli aspetti di integrazione
+- 'P': possibilità di configurare gli accordi di cooperazione
+- 'C': permette all'utente di gestire aspetti di configurazione della Porta di Dominio
+- 'D': possibilità di consultare la diagnostica emessa dalla Porta di Dominio
+- 'M': possibilità di visionare e/o eliminare i messaggi in carico sulla Porta di Dominio
+- 'A': permette di visionare lo storico delle operazioni intraprese sulla console dagli utenti
+- 'U': permette la gestione degli utenti che si possono collegare alla console]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

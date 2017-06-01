@@ -44,7 +44,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="ID_MESSAGGIO" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="ID_MESSAGGIO" sequence-cycle="true"
+                                              comment="Tabella di appoggio per la generazione di identificativi univoci di tipo numerico">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="protocollo"/>
                         </linkit:sql-table-primary-key>
@@ -60,6 +61,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="COUNTER"/>
+                                <linkit:sql-ddl-column-comment>Ultimo valore generato</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -70,6 +72,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROTOCOLLO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo di protocollo per cui viene generato l'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -80,6 +83,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di generazione dell'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -93,7 +97,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="ID_MESSAGGIO_RELATIVO" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="ID_MESSAGGIO_RELATIVO" sequence-cycle="true"
+                                              comment="Tabella di appoggio per la generazione di identificativi univoci di tipo numerico relativi ad un'informazione associata">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="protocollo"/>
                             <linkit:sql-table-pk-field name="info-associata"/>
@@ -110,6 +115,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="COUNTER"/>
+                                <linkit:sql-ddl-column-comment>Ultimo valore generato</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -120,6 +126,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROTOCOLLO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo di protocollo per cui viene generato l'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -130,6 +137,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="INFO_ASSOCIATA"/>
+                                <linkit:sql-ddl-column-comment>Informazione associata all'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -140,6 +148,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di generazione dell'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -153,7 +162,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="ID_MESSAGGIO_PRG" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="ID_MESSAGGIO_PRG" sequence-cycle="true"
+                                              comment="Tabella di appoggio per la generazione di identificativi univoci di tipo alfanumerici">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="protocollo"/>
                         </linkit:sql-table-primary-key>
@@ -169,6 +179,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROGRESSIVO"/>
+                                <linkit:sql-ddl-column-comment>Ultimo valore generato</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -179,6 +190,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROTOCOLLO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo di protocollo per cui viene generato l'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -189,6 +201,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di generazione dell'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -202,7 +215,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="ID_MESSAGGIO_RELATIVO_PRG" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="ID_MESSAGGIO_RELATIVO_PRG" sequence-cycle="true"
+                                              comment="Tabella di appoggio per la generazione di identificativi univoci di tipo alfanumerici relativi ad un'informazione associata">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="protocollo"/>
                             <linkit:sql-table-pk-field name="info-associata"/>
@@ -219,6 +233,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROGRESSIVO"/>
+                                <linkit:sql-ddl-column-comment>Ultimo valore generato</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -229,6 +244,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="PROTOCOLLO"/>
+                                <linkit:sql-ddl-column-comment>Identificativo di protocollo per cui viene generato l'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -239,6 +255,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="INFO_ASSOCIATA"/>
+                                <linkit:sql-ddl-column-comment>Informazione associata all'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -249,6 +266,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di generazione dell'identificativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

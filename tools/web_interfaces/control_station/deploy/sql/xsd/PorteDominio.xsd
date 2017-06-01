@@ -37,7 +37,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pdd">
+                    <linkit:sql-table-mapping name="pdd"
+                                               comment="Elenco delle porte di dominio censite con cui la PdD interagisce">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
@@ -53,6 +54,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Indentificativo univoco della Porta di Dominio</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -63,6 +65,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica della Porta di Dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -73,6 +76,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ip"/>
+                                <linkit:sql-ddl-column-comment>Indirizzo IP (o hostname) utilizzabile per raggiungere la porta di dominio sui servizi PD/PA</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[ip pubblico]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -84,6 +88,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="porta"/>
+                                <linkit:sql-ddl-column-comment>Porta utilizzabile per raggiungere la porta di dominio sui servizi PD/PA</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[porta pubblico]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -95,6 +100,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="protocollo"/>
+                                <linkit:sql-ddl-column-comment>Protocollo utilizzabile per raggiungere la porta di dominio sui servizi PD/PA (http/https)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[protocollo pubblico]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -106,6 +112,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ip_gestione"/>
+                                <linkit:sql-ddl-column-comment>Indirizzo IP (o hostname) utilizzabile per raggiungere la porta di dominio sui servizi di gestione</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[ip gestione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -117,6 +124,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="porta_gestione"/>
+                                <linkit:sql-ddl-column-comment>Porta utilizzabile per raggiungere la porta di dominio sui servizi di gestione</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[porta gestione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -128,6 +136,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="protocollo_gestione"/>
+                                <linkit:sql-ddl-column-comment>Protocollo utilizzabile per raggiungere la porta di dominio sui servizi di gestione (http/https)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[protocollo gestione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -139,6 +148,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo della Porta di Dominio (operativo/nonoperativo/esterno)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Tipo della Porta]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -150,6 +160,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="implementazione"/>
+                                <linkit:sql-ddl-column-comment>Indica una versione del software che realizza la Porta di Dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -160,6 +171,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="subject"/>
+                                <linkit:sql-ddl-column-comment>Subject del certificato client utilizzato dalla Porta di Dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -170,6 +182,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="password"/>
+                                <linkit:sql-ddl-column-comment>Eventuale password da abbinare all'informazione presente nella colonna 'subject' se si volesse fornire delle credenziali basic alla Porta di Dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -181,6 +194,7 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="client_auth"/>
                                 <linkit:sql-column-comment><![CDATA[client auth: disabilitato/abilitato]]></linkit:sql-column-comment>
+                                <linkit:sql-ddl-column-comment>Indicazione se è abilitato il controllo sul certificato client utilizzato dalla Porta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -191,6 +205,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati della Porta di Dominio, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -201,6 +216,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica dei dati della Porta di Dominio, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

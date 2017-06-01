@@ -40,7 +40,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="audit_conf"/>    
+                    <linkit:sql-table-mapping name="audit_conf"
+                                              comment="Configurazione per la registrazione delle operazioni effettuate dagli utenti tramite la console"/>    
                 </linkit:generator>
             </xsd:appinfo>
         </xsd:annotation>
@@ -52,6 +53,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="audit_engine"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'audit delle operazioni è abilitato (1:abilitato, 0:disabilitato)</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -62,6 +64,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="enabled"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'audit la regola di default è abilitata (l'audit può essere abilitato/disabilitato anche in specifiche regole definite nella tabella 'audit_filters') (1:abilitato, 0:disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -72,6 +75,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="dump"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se oltre a registrare l'operazione effettuata devono anche essere registrati tutti i dati che riguardano l'operazione (1:abilitato, 0:disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -82,6 +86,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="dump_format"/>
+                                <linkit:sql-ddl-column-comment>Formato dei dati salvati (vedi colonna 'dump') (JSON/XML)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -97,7 +102,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="audit_filters"/>
+                    <linkit:sql-table-mapping name="audit_filters"
+                                              comment="Regole specifiche di abilitazione/disabilitazione dell'audit"/>
                 </linkit:generator>
             </xsd:appinfo>
         </xsd:annotation>
@@ -109,6 +115,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="username"/>
+                                <linkit:sql-ddl-column-comment>Login dell'utente</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Filter]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -120,6 +127,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_operazione"/>
+                                <linkit:sql-ddl-column-comment>Definisce il tipo di operazione (ADD/DEL/CHANGE)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -130,6 +138,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Definisce il tipo di oggetto gestito dall'utente (es. soggetto,accordo,...)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -140,6 +149,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Definisce lo stato dell'operazione (requesting,error,completed)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -150,6 +160,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="dump_search"/>
+                                <linkit:sql-ddl-column-comment>Stringa che viene ricercata tra i dati salvati dell'oggetto gestito durante l'operazione (richiede il dump abilitato nella tabella 'audit_conf')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Filtri basati su contenuto utilizzabili solo se il dump della configurazione generale e' abilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -161,6 +172,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="dump_expr"/>
+                                <linkit:sql-ddl-column-comment>Definisce se l'eventuale stringa di ricerca definita nella colonna 'dump_search' rappresenta una espressione regolare o una semplice stringa da cercare all'interno dei dati registrati (1:regularExpr, 0:contains)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1(espressione regolare)/0(semplice stringa da ricercare)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -172,6 +184,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="enabled"/>
+                                <linkit:sql-ddl-column-comment>Definisce se l'audit è abilitato per l'operazione che ha un match con i criteri definiti nelle colonne precedenti (1:abilitato, 0:disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Action]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -183,6 +196,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="dump"/>
+                                <linkit:sql-ddl-column-comment>Definisce se oltre a registrare l'operazione effettuata devono anche essere registrati tutti i dati che riguardano l'operazione; indicazione che vale per l'operazione che ha un match con i criteri definiti nelle colonne precedenti (1:abilitato, 0:disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -193,6 +207,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di registrazione della regola</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Tempo di registrazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -223,7 +238,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="audit_appender">
+                    <linkit:sql-table-mapping name="audit_appender"
+                        comment="Registro degli appender. Ogni appender si occupa di rendere persistente le informazioni di audit nel formato e nelle risorse che gli competono (db, fileSystem, ...)">
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="name"/>
                         </linkit:sql-table-unique>
@@ -239,6 +255,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="name"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -249,6 +266,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="class"/>
+                                <linkit:sql-ddl-column-comment>Classe che definisce l'appender</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -264,7 +282,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="audit_appender_prop">
+                    <linkit:sql-table-mapping name="audit_appender_prop"
+                                              comment="Definisce le proprietà (nome/valore) che permettono all'appender associato di attivare e poter salvare le informazioni di audit sul backend di propria competenza">
                         <linkit:sql-table-foreign-key
                             reference-object-name="audit-appender"
                             reference-object-type="audit-appender"
@@ -283,6 +302,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="name"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -293,6 +313,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="value"/>
+                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -303,6 +324,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_audit_appender"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender (FK verso tabella audit_appender(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
