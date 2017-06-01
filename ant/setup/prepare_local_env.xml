@@ -57,13 +57,15 @@
 	<property name="jsplib" value="${rootDir}/tools/web_interfaces/lib/jsplib" />
 	<property name="jslib" value="${rootDir}/tools/web_interfaces/lib/js" />
 	<property name="commons_webcontent" location="${rootDir}/tools/web_interfaces/lib/web-content"/>
+	<property name="commons_temaConsole" value="${commons_webcontent}/tema_css" />
+	<property name="commons_webcontent_properties" value="${commons_webcontent}/properties" />
 	
 	<!-- PddConsole -->
 	<property name="pddConsole" value="${rootDir}/tools/web_interfaces/control_station/" />
 	<property name="src_pddConsole" value="${pddConsole}/src" />
 	<property name="required_lib_pddConsole" value="${required_lib}"/>
 	<import file="${pddConsole}/build.xml"/>
-	
+
 	<!-- Loader -->
 	<property name="loaderConsole" value="${rootDir}/tools/web_interfaces/loader/" />
 	<property name="src_loaderConsole" value="${loaderConsole}/src" />

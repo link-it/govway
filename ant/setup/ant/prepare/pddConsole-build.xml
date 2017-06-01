@@ -38,6 +38,8 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_pddConsole" value="${src_pddConsole}"/>
 			<param name="commons_webcontent" value="${commons_webcontent}"/>
+			<param name="commons_temaConsole" value="${commons_temaConsole}"/>
+			<param name="commons_webcontent_properties" value="${commons_webcontent_properties}"/>
 			<param name="images" value="${pddConsole}/deploy/images"/>
 			<param name="jsp" value="${pddConsole}/deploy/jsp"/>
 			<param name="jsplib" value="${jsplib}"/>
