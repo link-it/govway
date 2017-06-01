@@ -181,6 +181,7 @@
 		<mkdir dir="${build_loaderConsole}" />
 		<mkdir dir="${build_loaderConsole}/loaderConsole" />
 		<mkdir dir="${build_loaderConsole}/tmp" />
+		<mkdir dir="${build_loaderConsole}/tmp_css" />
 		<mkdir dir="${dist_loaderConsole}" />
 	</target>
 	

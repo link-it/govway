@@ -217,6 +217,7 @@
 	<target name="init_compile_pddConsole">
 		<mkdir dir="${build_pddConsole}" />
 		<mkdir dir="${build_pddConsole}/tmp" />
+		<mkdir dir="${build_pddConsole}/tmp_css" />
 		<mkdir dir="${dist_pddConsole}" />
 	</target>
 	

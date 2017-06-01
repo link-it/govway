@@ -13,7 +13,7 @@
 	<import file="../../../../ant/commons/utils.xml" />
 
 	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
-	<target name="war_openspcoop2_pddConsole" depends="applicaTemaCss">
+	<target name="war_openspcoop2_pddConsole" depends="css_openspcoop2_pddConsole">
 
 		<!-- Properties -->
 		<copy file="${cfg}/console.datasource.properties" todir="${build_pddConsole}/tmp" />
@@ -289,7 +289,7 @@
 			<zipfileset dir="${commons_webcontent}/css" prefix="css" />
 			<zipfileset dir="${commons_webcontent}/fonts" prefix="fonts" />
 			<zipfileset dir="${commons_webcontent}/images" prefix="images" />
-			<zipfileset dir="${build_pddConsole}/tmp/tmp_css" prefix="css" />
+			<zipfileset dir="${build_pddConsole}/tmp_css" prefix="css" />
 
 			<zipfileset dir="${jsp}" prefix="jsp" />
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
@@ -405,9 +405,9 @@
 		
 	</target>
 	
-	<target name="applicaTemaCss">
-		<mkdir dir="${build_pddConsole}/tmp/tmp_css"/>
-		<copy todir="${build_pddConsole}/tmp/tmp_css">
+	<target name="css_openspcoop2_pddConsole">
+		<mkdir dir="${build_pddConsole}/tmp_css"/>
+		<copy todir="${build_pddConsole}/tmp_css">
 			<fileset dir="${commons_temaConsole}/css"/>
 		</copy>
 		<property file="${commons_webcontent_properties}/${temaConsoleProperties}" prefix="temalink."/>
@@ -416,7 +416,7 @@
 		<for list="${cssProperties}" param="cssKey">
 			<sequential>
 				<!--  <echo message="key[@{cssKey}] value[${@{cssKey}}]"/>  -->
-				<replace dir="${build_pddConsole}/tmp/tmp_css" 
+				<replace dir="${build_pddConsole}/tmp_css" 
 	                     token="$${@{cssKey}}" 
 	                     value="${@{cssKey}}"/>
 	       	</sequential>
