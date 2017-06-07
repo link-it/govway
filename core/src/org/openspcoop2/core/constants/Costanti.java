@@ -58,6 +58,7 @@ public class Costanti {
 	public final static String CREDENZIALI_INVOCAZIONE = "CREDENZIALI_INVOCAZIONE";
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
 	public final static String REQUEST_INFO = "REQUEST_INFO";
+	public final static String EXTENDED_INFO_TRANSAZIONE = "EXTENDED_INFO_TRANSAZIONE";
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.CLUSTER_ID,Costanti.PROTOCOLLO,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,
