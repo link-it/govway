@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.basic.tracciamento;
 
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.slf4j.Logger;
@@ -36,6 +36,6 @@ public interface ITracciamentoConverter {
 
 	public Traccia convert(Logger log, String rawValue) throws DriverTracciamentoException;
 	
-	public Traccia convert(Logger log, String rawValue, TipoTraccia tipoTraccia) throws DriverTracciamentoException;
+	public Traccia convert(Logger log, String rawValue, RuoloMessaggio ruoloMessaggio) throws DriverTracciamentoException;
 	
 }
