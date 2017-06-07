@@ -70,9 +70,9 @@ public class FiltroRicercaDiagnostici implements Serializable{
     
     protected String codice;
     
-	private String messaggioCercatoInternamenteTestoDiagnostico;
+    protected String messaggioCercatoInternamenteTestoDiagnostico;
     
-    private String protocollo;
+    protected String protocollo;
     
     protected Hashtable<String, String> properties;
 	

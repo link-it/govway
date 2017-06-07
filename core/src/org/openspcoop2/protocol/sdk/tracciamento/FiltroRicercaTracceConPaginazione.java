@@ -23,7 +23,6 @@
 package org.openspcoop2.protocol.sdk.tracciamento;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
 
 /**
  * Oggetto contenente informazioni per la ricerca di loggedEntry
@@ -46,6 +45,36 @@ public class FiltroRicercaTracceConPaginazione extends FiltroRicercaTracce imple
 	    
     public FiltroRicercaTracceConPaginazione() {
     	super();
+	}
+    public FiltroRicercaTracceConPaginazione(FiltroRicercaTracce filtroTracce) {
+    	super();
+    	
+    	this.maxDate = filtroTracce.maxDate;
+    	this.minDate = filtroTracce.minDate;
+
+    	this.tipoTraccia = filtroTracce.tipoTraccia;
+    	this.tipoPdD = filtroTracce.tipoPdD;
+    	this.dominio = filtroTracce.dominio;
+
+    	this.idBusta = filtroTracce.idBusta;
+    	this.idBustaRichiesta = filtroTracce.idBustaRichiesta;
+    	this.idBustaRisposta = filtroTracce.idBustaRisposta;
+    	this.riferimentoMessaggio = filtroTracce.riferimentoMessaggio;
+    	this.ricercaSoloBusteErrore = filtroTracce.ricercaSoloBusteErrore;
+    	this.informazioniProtocollo = filtroTracce.informazioniProtocollo;
+
+    	this.servizioApplicativoFruitore = filtroTracce.servizioApplicativoFruitore;
+    	this.servizioApplicativoErogatore = filtroTracce.servizioApplicativoErogatore;
+
+    	this.idCorrelazioneApplicativa = filtroTracce.idCorrelazioneApplicativa;
+    	this.idCorrelazioneApplicativaRisposta = filtroTracce.idCorrelazioneApplicativaRisposta;
+    	this.idCorrelazioneApplicativaOrMatch = filtroTracce.idCorrelazioneApplicativaOrMatch;
+
+    	this.protocollo = filtroTracce.protocollo;
+
+    	this.properties = filtroTracce.properties;
+
+    	this.filtroSoggetti = filtroTracce.filtroSoggetti;
 	}
     
     
@@ -70,18 +99,11 @@ public class FiltroRicercaTracceConPaginazione extends FiltroRicercaTracce imple
 	}
 	
 	@Override
-	public String toString() {
-				
-		String pattern=
-				" offset [{1}]" +
-				" limit  [{2}]" +
-				" asc  [{3}]";
-				
-		return super.toString() + " " + MessageFormat.format(pattern,
-				this.offset,
-				this.limit,
-				this.asc
-				);
+	public String toString() {	
+		return super.toString() + " " +  
+			" offset ["+this.offset+"]" +
+			" limit  ["+this.limit+"]" +
+			" asc  ["+this.asc+"]";
 	}
 
  

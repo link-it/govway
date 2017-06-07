@@ -23,7 +23,6 @@
 package org.openspcoop2.protocol.sdk.diagnostica;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
 
 /**
  * Oggetto contenente informazioni per la ricerca di diagnostici
@@ -49,6 +48,41 @@ public class FiltroRicercaDiagnosticiConPaginazione extends FiltroRicercaDiagnos
     
     public FiltroRicercaDiagnosticiConPaginazione() {
     	super();
+	}
+    public FiltroRicercaDiagnosticiConPaginazione(FiltroRicercaDiagnostici filtro) {
+    	super();
+    	
+        this.dataFine = filtro.dataFine;
+        this.dataInizio = filtro.dataInizio;
+    	
+        this.delegata = filtro.delegata;
+        this.nomePorta = filtro.nomePorta;
+        this.idFunzione = filtro.idFunzione;
+        this.dominio = filtro.dominio;
+        
+        this.ricercaSoloMessaggiCorrelatiInformazioniProtocollo = filtro.ricercaSoloMessaggiCorrelatiInformazioniProtocollo;
+    	
+        this.idBustaRichiesta = filtro.idBustaRichiesta;
+        this.idBustaRisposta = filtro.idBustaRisposta;
+        this.busta = filtro.busta;
+    	
+        this.servizioApplicativo = filtro.servizioApplicativo;
+        
+        this.correlazioneApplicativa = filtro.correlazioneApplicativa;
+        this.correlazioneApplicativaRisposta = filtro.correlazioneApplicativaRisposta;
+        this.correlazioneApplicativaOrMatch = filtro.correlazioneApplicativaOrMatch;
+    		
+        this.severita = filtro.severita;
+        
+        this.codice = filtro.codice;
+        
+        this.messaggioCercatoInternamenteTestoDiagnostico = filtro.messaggioCercatoInternamenteTestoDiagnostico;
+        
+        this.protocollo = filtro.protocollo;
+        
+        this.properties = filtro.properties;
+    	
+        this.filtroSoggetti = filtro.filtroSoggetti;
 	}
     
   
@@ -104,17 +138,10 @@ public class FiltroRicercaDiagnosticiConPaginazione extends FiltroRicercaDiagnos
 	
 	@Override
 	public String toString() {
-				
-		String pattern=
-				" offset [{0}]" +
-				" limit  [{1}]" +
-				" asc  [{2}]";
-				
-		return super.toString() + " " + MessageFormat.format(pattern,
-				this.offset,
-				this.limit,
-				this.asc
-				);
+		return super.toString() + " " + 
+			" offset ["+this.offset+"]" +
+			" limit  ["+this.limit+"]" +
+			" asc  ["+this.asc+"]";
 	}
 
  

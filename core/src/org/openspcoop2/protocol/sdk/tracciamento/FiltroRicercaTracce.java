@@ -52,7 +52,7 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	protected Date minDate;
 
 	protected RuoloMessaggio tipoTraccia;
-	private TipoPdD tipoPdD;
+	protected TipoPdD tipoPdD;
 	protected IDSoggetto dominio;
 
 	protected String idBusta; // utilizzabile con tipo traccia
@@ -62,14 +62,14 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	protected boolean ricercaSoloBusteErrore;
 	protected InformazioniProtocollo informazioniProtocollo;
 
-	private String servizioApplicativoFruitore;
-	private String servizioApplicativoErogatore;
+	protected String servizioApplicativoFruitore;
+	protected String servizioApplicativoErogatore;
 
 	protected String idCorrelazioneApplicativa;
 	protected String idCorrelazioneApplicativaRisposta;
 	protected boolean idCorrelazioneApplicativaOrMatch = false;
 
-	private String protocollo;
+	protected String protocollo;
 
 	protected Hashtable<String, String> properties;
 
