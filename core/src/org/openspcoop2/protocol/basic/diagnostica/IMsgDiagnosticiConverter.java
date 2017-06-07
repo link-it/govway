@@ -17,24 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.web.loader.servlet.about;
 
-import org.openspcoop2.web.loader.core.LoaderCore;
+package org.openspcoop2.protocol.basic.diagnostica;
+
+import java.util.List;
+
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.slf4j.Logger;
 
 /**
- * AboutCore
+ * MsgDiagnosticiConverter
  *
- * @author Poli Andrea (apoli@link.it)
- * @author Pintori Giuliano (pintori@link.it)
+ * @author Andrea Poli <poli@link.it>
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AboutCore extends LoaderCore {
+public interface IMsgDiagnosticiConverter {
 
-	public AboutCore() throws Exception {
-		super();
-	}
-	public AboutCore(LoaderCore core) throws Exception {
-		super(core);
-	}
+	public MsgDiagnostico convert(Logger log, String rawValue) throws DriverMsgDiagnosticiException;
+	
+	public List<MsgDiagnostico> convertToList(Logger log, String rawValue) throws DriverMsgDiagnosticiException;
+	
 }

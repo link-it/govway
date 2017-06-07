@@ -29,8 +29,8 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13033 $, $Date: 2017-05-29 15:40:35 +0200(lun, 29 mag 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AboutCostanti {
 

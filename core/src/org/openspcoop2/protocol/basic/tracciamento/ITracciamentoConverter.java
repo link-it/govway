@@ -17,24 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.web.loader.servlet.about;
 
-import org.openspcoop2.web.loader.core.LoaderCore;
+package org.openspcoop2.protocol.basic.tracciamento;
+
+import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
+import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.slf4j.Logger;
 
 /**
- * AboutCore
+ * TracciamentoConverter
  *
- * @author Poli Andrea (apoli@link.it)
- * @author Pintori Giuliano (pintori@link.it)
+ * @author Andrea Poli <poli@link.it>
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AboutCore extends LoaderCore {
+public interface ITracciamentoConverter {
 
-	public AboutCore() throws Exception {
-		super();
-	}
-	public AboutCore(LoaderCore core) throws Exception {
-		super(core);
-	}
+	public Traccia convert(Logger log, String rawValue) throws DriverTracciamentoException;
+	
+	public Traccia convert(Logger log, String rawValue, TipoTraccia tipoTraccia) throws DriverTracciamentoException;
+	
 }

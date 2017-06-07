@@ -46,8 +46,8 @@ import org.openspcoop2.web.loader.servlet.GeneralHelper;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12989 $, $Date: 2017-05-16 10:05:34 +0200(mar, 16 mag 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class About extends Action{
 
