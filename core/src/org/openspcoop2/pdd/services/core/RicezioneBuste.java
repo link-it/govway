@@ -2141,6 +2141,12 @@ public class RicezioneBuste {
 			// overriding busta
 			bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 		}
+		else{
+			// altrimenti se è valorizzato internamente alla busta (poichè previsto dal protocollo (es. pdc)) e non capito tramite informazioni di integrazione uso quello
+			if(bustaRichiesta.getServizioApplicativoFruitore()!=null){
+				servizioApplicativoFruitore = bustaRichiesta.getServizioApplicativoFruitore();
+			}
+		}
 		String idMessageRequest = bustaRichiesta.getID();
 
 		TipoPdD tipoPorta = TipoPdD.APPLICATIVA;
