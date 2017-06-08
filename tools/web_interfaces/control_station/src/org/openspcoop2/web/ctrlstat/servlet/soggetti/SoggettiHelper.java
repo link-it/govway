@@ -109,9 +109,15 @@ public class SoggettiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 
+		
+		DataElement de = new DataElement();
+		de.setLabel(SoggettiCostanti.LABEL_SOGGETTO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
 		if(TipoOperazione.ADD.equals(tipoOp)){
 			if(this.core.isRegistroServiziLocale()){
-				DataElement de = new DataElement();
+				de = new DataElement();
 				de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
 				de.setType(DataElementType.SELECT);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
@@ -133,7 +139,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		else{		
 			if(this.core.isSinglePdD()){
 				if(this.core.isRegistroServiziLocale()){
-					DataElement de = new DataElement();
+					de = new DataElement();
 					de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
 					de.setType(DataElementType.SELECT);
 					de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
@@ -143,7 +149,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					dati.addElement(de);
 				}
 			}else{
-				DataElement de = new DataElement();
+				de = new DataElement();
 				de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
 				de.setType(DataElementType.TEXT);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
@@ -151,11 +157,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}
 		}
-
-		DataElement de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_SOGGETTO);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
 
 
 		de = new DataElement();
@@ -280,7 +281,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		User user = ServletUtils.getUserFromSession(this.session);
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
-		de.setName("percentuale_"+SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO); // [TODO] togliere
+		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
 
 		if(this.core.isRegistroServiziLocale() && InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
 			de.setValues(versioniLabel);
@@ -418,6 +419,18 @@ public class SoggettiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
+			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) == false) {	
+				de.setType(DataElementType.TEXT_EDIT);
+			}else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+			de.setValue(pd_url_prefix_rewriter);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
 					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,id+""),
@@ -430,32 +443,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) == false) {	
-				de.setType(DataElementType.TEXT_EDIT);
-			}else{
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			de.setValue(pd_url_prefix_rewriter);
-			de.setSize(this.getSize());
-			dati.addElement(de);
-
-			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_SERVER);
 			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,id+""),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,oldnomeprov),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,oldtipoprov));
-			if (contaListe) {
-				ServletUtils.setDataElementVisualizzaLabel(de,numPA);
-			} else
-				ServletUtils.setDataElementVisualizzaLabel(de);
 			dati.addElement(de);
 
 			de = new DataElement();
@@ -468,6 +457,18 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
 			de.setValue(pa_url_prefix_rewriter);
 			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,id+""),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,oldnomeprov),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,oldtipoprov));
+			if (contaListe) {
+				ServletUtils.setDataElementVisualizzaLabel(de,numPA);
+			} else
+				ServletUtils.setDataElementVisualizzaLabel(de);
 			dati.addElement(de);
 
 		}

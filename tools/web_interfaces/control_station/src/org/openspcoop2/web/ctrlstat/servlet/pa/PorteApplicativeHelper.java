@@ -766,6 +766,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		// *************** Nome/Descrizione *********************
 		
 		DataElement de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 		if (nomePorta == null) {
 			de.setValue("");
@@ -798,16 +803,21 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 		
 		
+
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
 		
 		
 		
 		// *************** Soggetto Virtuale *********************
-
+		
 		if (soggVirt) {
 		
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
-			de.setType(DataElementType.TITLE);
+			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
 		}
@@ -841,7 +851,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		//}else{
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
 		//}
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -880,7 +890,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-			de.setType(DataElementType.TITLE);
+			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 
 			de = new DataElement();
@@ -1018,6 +1028,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		
 		
 		// *************** Controllo degli Accessi *********************
+		
+		this.controlloAccessi(dati);
 		
 		this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti);
 		

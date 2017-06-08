@@ -691,6 +691,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		// *************** Controllo degli Accessi *********************
 		
+		this.controlloAccessi(dati);
+		
 		boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
 		
 		this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, true);

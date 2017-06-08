@@ -33,7 +33,6 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -545,6 +544,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_ALLEGATO);
+			dati.addElement(de);
+			
+			de = new DataElement();
 			if(TipoOperazione.ADD.equals(tipoOperazione)){
 				de.setValue(idAccordo);
 				de.setType(DataElementType.SELECT);
@@ -995,6 +999,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			dati.addElement(de);
 
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_AZIONE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			de.setValue(nomeop);
@@ -1604,6 +1613,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPE);
+			dati.addElement(de);
+			
+			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			de.setValue(nomept);
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -2145,6 +2159,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_AZIONE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 		de.setValue(nomeaz);
 		if (tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -2376,6 +2395,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String oldwsdl,String statoPackage,boolean validazioneDocumenti, String tipologiaDocumentoScaricare){
 
 		DataElement de = new DataElement();
+		if(label.contains(" di ")){
+			de.setLabel(label.split(" di")[0]);
+		}else{
+			de.setLabel(tipologiaDocumentoScaricare.toUpperCase().charAt(0)+tipologiaDocumentoScaricare.substring(1));
+		}
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
@@ -2427,7 +2455,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setValue(oldwsdl);
 				de.setRows(30);
 				de.setCols(110);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE +":");
+				//de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE );
 				dati.addElement(de);
 				
 				DataElement saveAs = new DataElement();
@@ -2448,7 +2476,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			}else {
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE +":");
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE );
 				de.setType(DataElementType.TEXT);
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_WSDL_NOT_FOUND);
 				dati.addElement(de);
@@ -2469,7 +2497,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			//			de.setLabel(label.replace(" di ", " di <BR/>")+"<BR/>Nuovo:");
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_NUOVO +":");
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_NUOVO );
 			de.setValue("");
 			de.setType(DataElementType.FILE);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
@@ -2632,6 +2660,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		dati.addElement(de);
 
+		de = new DataElement();
+		String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo);
+		labelAccordoServizio = labelAccordoServizio.replace("Accordi", "Accordo");
+		de.setLabel(labelAccordoServizio);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
 		// Protocollo
 
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
@@ -4396,8 +4431,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// setto le label delle colonne
-			String l1 = AccordiServizioParteSpecificaCostanti.LABEL_APS; 
-			String[] labels = { l1, AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO };
+			//String l1 = AccordiServizioParteSpecificaCostanti.LABEL_APS; 
+			String[] labels = { 
+					//l1, 
+					AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO,
+					AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE
+					};
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -4410,16 +4449,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
+//					DataElement de = new DataElement();
+//					IDServizio idServizio = new IDServizio(componente.getTipoSoggetto(),componente.getNomeSoggetto(),
+//							componente.getTipo(),componente.getNome());
+//					IDAccordo idAccordoParteSpecifica = this.apsCore.getIDAccordoServizioParteSpecifica(idServizio);
+//					de.setValue(this.idAccordoFactory.getUriFromIDAccordo(idAccordoParteSpecifica));
+//					de.setIdToRemove(""+componente.getIdServizioComponente());
+//					e.addElement(de);
+
 					DataElement de = new DataElement();
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(componente.getTipo(),componente.getNome(), 
-							componente.getTipoSoggetto(),componente.getNomeSoggetto(), 
-							componente.getVersione());
-					de.setValue(IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
+					de.setValue(componente.getTipo()+"/"+componente.getNome());
 					de.setIdToRemove(""+componente.getIdServizioComponente());
 					e.addElement(de);
-
+					
 					de = new DataElement();
-					de.setValue(componente.getTipo()+"/"+componente.getNome());
+					de.setValue(componente.getTipoSoggetto()+"/"+componente.getNomeSoggetto());
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -4448,8 +4492,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String idServizioComponente, String tipoAccordo,
 			String[] serviziList, String[] serviziListLabel,
 			Vector<DataElement> dati) {
+		
 		DataElement de = new DataElement();
-
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_COMPONENTE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setValue(idAccordo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);

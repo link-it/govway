@@ -205,6 +205,9 @@ public class PorteApplicativeCostanti {
 
 	public final static String LABEL_PA_MENU_VISUALE_AGGREGATA = "Porte Applicative";
 	
+	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI = "Dati Generali";
+	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO = "Dati Servizio";
+	
 	/* PARAMETRI */
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ID = "id";

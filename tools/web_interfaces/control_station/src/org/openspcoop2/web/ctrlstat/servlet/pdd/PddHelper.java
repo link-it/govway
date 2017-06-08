@@ -92,9 +92,14 @@ public class PddHelper extends ConsoleHelper {
 			TipoOperazione tipoOp, String[] protocolli, String protocollo, String protocolloGestione, int porta, String descrizione, 
 			String ipGestione, int portaGestione, String implementazione, String clientAuth, boolean singlePdd) throws DriverRegistroServiziException {
 		
+		DataElement de = new DataElement();
+		de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
 		/** Id della Porta di Dominio */
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
-			DataElement de = new DataElement();
+			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_ID);
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
@@ -103,7 +108,7 @@ public class PddHelper extends ConsoleHelper {
 		}
 		
 		/** Nome della Porta di Dominio */
-		DataElement de = new DataElement();
+		de = new DataElement();
 		de.setLabel(PddCostanti.LABEL_PDD_NOME);
 		if (tipoOp.equals(TipoOperazione.ADD) || this.core.isSinglePdD()) {
 			de.setType(DataElementType.TEXT_EDIT);

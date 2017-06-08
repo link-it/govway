@@ -1099,6 +1099,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setValue(doc.getRuolo());
 		de.setLabel("Ruolo");
 		de.setType(DataElementType.TEXT);
@@ -1190,6 +1195,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
@@ -1224,15 +1234,20 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 	public Vector<DataElement> addPartecipanteToDati(TipoOperazione tipoOp, String id,
 			String[] partecipantiNonInseriti, Vector<DataElement> dati) {
+		
 		DataElement de = new DataElement();
-
+		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE);
+		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 		de.setValues(partecipantiNonInseriti );
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);

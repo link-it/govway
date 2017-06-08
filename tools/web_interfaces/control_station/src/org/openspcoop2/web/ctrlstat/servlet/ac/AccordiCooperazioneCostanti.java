@@ -95,6 +95,7 @@ public class AccordiCooperazioneCostanti {
 	public final static String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE  = "Partecipante";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI  = "Partecipanti";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_ALLEGATI = "Allegati";
+	public final static String LABEL_ACCORDI_COOPERAZIONE_ALLEGATO = "Allegato";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI = "Esporta Selezionati";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI_CLICK_EVENT ="Esporta('"+ArchiveType.ACCORDO_COOPERAZIONE.name()+"')";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE_12 = "referenteLabelAccordo1.2";
@@ -141,6 +142,7 @@ public class AccordiCooperazioneCostanti {
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO = "Visibilit&agrave; accordo";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE = "Soggetto";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "Documento";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = "Protocollo";
 	

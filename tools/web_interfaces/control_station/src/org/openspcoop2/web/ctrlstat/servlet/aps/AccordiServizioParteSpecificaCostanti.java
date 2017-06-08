@@ -121,6 +121,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_SERVIZI = "Servizi";
 	public final static String LABEL_APS_FRUITORI = "Fruitori";
 	public final static String LABEL_APS_FRUITORE = "Fruitore";
+	public final static String LABEL_PARAMETRO_VISUALIZZA_DATI_FRUITORE = "Visualizza Dati Soggetto";
 	public final static String LABEL_APS_CORRELATO = "Correlato";
 	public final static String LABEL_APS_FUITORI_DI = "Fruitori di ";
 	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI = "WSDL Implementativo Erogatore di "; 
@@ -129,6 +130,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_DOWNLOAD = "Download";
 	public final static String LABEL_APS_SERVIZIO = "Servizio";
 	public final static String LABEL_APS_ALLEGATI = "Allegati";
+	public final static String LABEL_APS_ALLEGATO = "Allegato";
 	public final static String LABEL_APS_PORTE_APPLICATIVE = "Porte Applicative";
 	public final static String LABEL_APS_PORTE_DELEGATE = "Porte Delegate";
 	public final static String LABEL_APS_STATO = "Stato";
@@ -144,7 +146,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_SERVIZIO_APPLICATIVO_FRUITORE = "Servizio Applicativo Fruitore";
 	public final static String LABEL_APS_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_DI = "WSDL Implementativo di ";
-	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Warning: ";
+	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
 	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invia' senza selezionare alcun file"; //fornirne un'altra versione";
 	public final static String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento WSDL";
 	public final static String LABEL_WSDL_NOT_FOUND = "non fornito";
@@ -245,7 +247,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE = "Versione";
 	public final static String LABEL_PARAMETRO_APS_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APS_PROVIDER_EROGATORE = "Nome";
-	public final static String LABEL_PARAMETRO_APS_PROVIDER_FRUITORE = "Soggetto Fruitore";
+	public final static String LABEL_PARAMETRO_APS_PROVIDER_FRUITORE = "Nome";
 	public final static String LABEL_PARAMETRO_APS_VERSIONE = "Versione";
 	public final static String LABEL_PARAMETRO_APS_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_APS_SERVIZIO_CORRELATO = "Correlato";

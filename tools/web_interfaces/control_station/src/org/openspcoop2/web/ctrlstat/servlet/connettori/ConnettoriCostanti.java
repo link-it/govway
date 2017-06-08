@@ -64,8 +64,8 @@ public class ConnettoriCostanti {
 	public final static String LABEL_CONNETTORE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String LABEL_CONNETTORE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONNETTORE_AUTENTICAZIONE = "Autenticazione Https";
-	public final static String LABEL_CONNETTORE_AUTENTICAZIONE_SERVER = "Autenticazione Https Server";
-	public final static String LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT = "Autenticazione Https Client";
+	public final static String LABEL_CONNETTORE_AUTENTICAZIONE_SERVER = "Autenticazione Server";
+	public final static String LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT = "Autenticazione Client";
 	public final static String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CODA = "Dati Configurazione Coda";
 	public final static String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONNESIONE = "Dati Configurazione Connessione";
 	public final static String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI = "Contesto JNDI";

@@ -2581,13 +2581,18 @@ public class ConsoleHelper {
 		// Nome
 		if(ruoliDaFarScegliere.size()>0){
 			
+			DataElement de = new DataElement();
+			de.setLabel(RuoliCostanti.LABEL_RUOLO);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
 			List<String> ruoli = new ArrayList<>();
 			if(addSelezioneVuota){
 				ruoli.add("-");
 			}
 			ruoli.addAll(ruoliDaFarScegliere);
 			
-			DataElement de = new DataElement();
+			de = new DataElement();
 			de.setLabel(labelParametro);
 			de.setValue(nome);
 			if (tipoOp.equals(TipoOperazione.ADD) || enableUpdate) {
@@ -2632,13 +2637,22 @@ public class ConsoleHelper {
 		}
 	}
 	
+	public void controlloAccessi(Vector<DataElement> dati) throws Exception{
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI);
+		dati.addElement(de);
+		
+	}
+	
 	public void controlloAccessiAutenticazione(Vector<DataElement> dati, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti){
 		
 		if(isSupportatoAutenticazioneSoggetti){
 			
 			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE);
+			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);
 			dati.addElement(de);
 		
@@ -2704,7 +2718,7 @@ public class ConsoleHelper {
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata) throws Exception{
 		
 		DataElement de = new DataElement();
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
 		dati.addElement(de);
 		
@@ -2903,7 +2917,7 @@ public class ConsoleHelper {
 		
 		if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
 			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE);
+			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 			dati.addElement(de);
 		}

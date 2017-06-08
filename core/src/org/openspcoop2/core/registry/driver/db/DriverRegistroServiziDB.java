@@ -14672,10 +14672,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			sqlQueryObject.setANDLogicOperator(true);
 
-			sqlQueryObject.addOrderBy("tipo_soggetto");
-			sqlQueryObject.addOrderBy("nome_soggetto");
 			sqlQueryObject.addOrderBy("tipo_servizio");
 			sqlQueryObject.addOrderBy("nome_servizio");
+			sqlQueryObject.addOrderBy("tipo_soggetto");
+			sqlQueryObject.addOrderBy("nome_soggetto");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);

@@ -136,6 +136,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER = "Soggetto";
+	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_VISUALIZZA_DATI_PROVIDER = "Visualizza Dati Soggetto";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP = "Sbustamento SOAP";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO = "Sbustamento";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO = "Sbustamento Protocollo";

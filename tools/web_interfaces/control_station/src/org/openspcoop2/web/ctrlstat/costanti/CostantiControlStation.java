@@ -131,16 +131,16 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ALL = "tutti";
 	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ANY = "almeno uno";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI = "Controllo degli Accessi";
-	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE = "Controllo degli Accessi - Autenticazione";
-	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE = "Controllo degli Accessi - Autorizzazione";
-	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI = "Controllo degli Accessi - Autorizzazione Contenuti";
-	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Autenticazione";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE = "Autenticazione";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE = "Autorizzazione";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE = "Opzionale";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE = "Autorizzazione";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Servizi Applicativi Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE = "Stato";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Applicativi Autenticati";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Soggetti Autenticati";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "Ruoli";
-	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
+	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Stato";
 	
 	
 	/** PARAMETERS **/

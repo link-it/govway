@@ -56,8 +56,13 @@ public class RuoliHelper extends ConsoleHelper{
 
 	public Vector<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,
 			String contesto, Vector<DataElement> dati) {
+		
 		DataElement de = new DataElement();
-
+		de.setLabel(RuoliCostanti.LABEL_RUOLO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		if(ruoloId!=null){
 			de = new DataElement();
 			de.setLabel(RuoliCostanti.PARAMETRO_RUOLO_ID);

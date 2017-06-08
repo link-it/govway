@@ -186,6 +186,18 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 
+			String label = null;
+			if(apcCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){
+				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE)){
+					label = AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle;
+				}
+				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE)){
+					label = AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI + tmpTitle;
+				}
+			}else{
+				label = AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_DI + tmpTitle;
+			}
+			
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
 			String tipologiaDocumentoScaricare = null; 
@@ -223,13 +235,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(parameterAPSChange);
-				if(apcCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){
-					if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE))
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle , null));
-					if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI + tmpTitle , null));
-				}else 
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_DI + tmpTitle , null));
+				lstParm.add(new Parameter(label , null));
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
@@ -242,7 +248,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 
 				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER, apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti,
-						dati, tipologiaDocumentoScaricare);
+						dati, tipologiaDocumentoScaricare, label);
 
 				pd.setDati(dati);
 
@@ -260,10 +266,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(parameterAPSChange);
-				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE))
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle , null));
-				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE))
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI + tmpTitle , null));
+				lstParm.add(new Parameter(label , null));
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
@@ -275,7 +278,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
-				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER,  apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti, dati, tipologiaDocumentoScaricare);
+				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER,  apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti, 
+						dati, tipologiaDocumentoScaricare, label);
 
 				pd.setDati(dati);
 

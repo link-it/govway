@@ -341,7 +341,7 @@ public class ConnettoreHTTPSUtils {
 
 		de = new DataElement();
 		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_SERVER);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -393,7 +393,7 @@ public class ConnettoreHTTPSUtils {
 
 		de = new DataElement();
 		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();

@@ -223,6 +223,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 
 		DataElement de = new DataElement();
+		de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+
+				
+		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 		de.setValue(nome);
 		de.setSize(this.getSize());
@@ -235,88 +242,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 		dati.addElement(de);
 
-		ServizioApplicativo sa = null;
-		String nomePdd = null;
 
-		// se operazione change visualizzo i link per invocazione servizio,
-		// risposta asincrona
-		// e ruoli
-		if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
-
-			sa = this.saCore.getServizioApplicativo(idSA);
-			String tipoSoggetto = null;
-			String nomeSoggetto = null;
-			if(this.core.isRegistroServiziLocale()){
-				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
-				tipoSoggetto = soggetto.getTipo();
-				nomeSoggetto = soggetto.getNome();
-				nomePdd = soggetto.getPortaDominio();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
-				tipoSoggetto = soggetto.getTipo();
-				nomeSoggetto = soggetto.getNome();
-			}
-
-			// soggetto proprietario
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-			de.setValue(tipoENomeSoggetto);
-			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getIdSoggetto()+""),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO, tipoSoggetto),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO, nomeSoggetto)
-					);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
-			de.setValue(provider);
-			dati.addElement(de);
-			
-		}else{
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
-			// Aggiunta di un servizio applicativo passando dal menu' 
-			if(!useIdSogg){
-				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
-				
-				de.setValues(soggettiList);
-				de.setLabels(soggettiListLabel);
-				// selezion il provider (se)/che era stato precedentemente
-				// selezionato
-				// fix 2866
-				if ((provider != null) && !provider.equals("")) {
-					de.setSelected(provider);
-				}
-			} else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(provider);
-				dati.addElement(de);
-
-				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-
-				// Aggiunta di un servizio applicativo passando dalla schermata soggetti
-				de.setType(DataElementType.TEXT);
-				int find = -1;
-				for(int i= 0 ; i < soggettiList.length ; i++)
-					if(Integer.parseInt(soggettiList[i]) == Integer.parseInt(provider)){
-						find = i;
-						break;
-					}
-
-				de.setValue(soggettiListLabel[find]);
-				de.setSize(this.getSize());
-
-			}
-			dati.addElement(de);
-
-		}
 		
 		
 		if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -381,6 +307,98 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 		}
+		
+		
+		
+		
+		
+		ServizioApplicativo sa = null;
+		String nomePdd = null;
+		// se operazione change visualizzo i link per invocazione servizio,
+		// risposta asincrona
+		// e ruoli
+		if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
+
+			sa = this.saCore.getServizioApplicativo(idSA);
+			String tipoSoggetto = null;
+			String nomeSoggetto = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
+				tipoSoggetto = soggetto.getTipo();
+				nomeSoggetto = soggetto.getNome();
+				nomePdd = soggetto.getPortaDominio();
+			}
+			else{
+				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
+				tipoSoggetto = soggetto.getTipo();
+				nomeSoggetto = soggetto.getNome();
+			}
+
+			// soggetto proprietario
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			de.setValue(tipoENomeSoggetto);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setValue(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_VISUALIZZA_DATI_PROVIDER);
+			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getIdSoggetto()+""),
+					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO, tipoSoggetto),
+					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO, nomeSoggetto)
+					);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
+			de.setValue(provider);
+			dati.addElement(de);
+			
+		}else{
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
+			// Aggiunta di un servizio applicativo passando dal menu' 
+			if(!useIdSogg){
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+				
+				de.setValues(soggettiList);
+				de.setLabels(soggettiListLabel);
+				// selezion il provider (se)/che era stato precedentemente
+				// selezionato
+				// fix 2866
+				if ((provider != null) && !provider.equals("")) {
+					de.setSelected(provider);
+				}
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(provider);
+				dati.addElement(de);
+
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+
+				// Aggiunta di un servizio applicativo passando dalla schermata soggetti
+				de.setType(DataElementType.TEXT);
+				int find = -1;
+				for(int i= 0 ; i < soggettiList.length ; i++)
+					if(Integer.parseInt(soggettiList[i]) == Integer.parseInt(provider)){
+						find = i;
+						break;
+					}
+
+				de.setValue(soggettiListLabel[find]);
+				de.setSize(this.getSize());
+
+			}
+			dati.addElement(de);
+
+		}
+		
 		
 		
 		
@@ -598,7 +616,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		// se operazione change visualizzo i link per invocazione servizio,
 		// risposta asincrona
 		// e ruoli
-		if (TipoOperazione.CHANGE.equals(tipoOperazione) && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+		if (TipoOperazione.CHANGE.equals(tipoOperazione) && InterfaceType.AVANZATA.equals(user.getInterfaceType()) && !this.pddCore.isPddEsterna(nomePdd)) {
 
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_INFO_INTEGRAZIONE);
@@ -638,18 +656,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setLabel(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
-
-			if ((connettoreRis == null || TipiConnettore.DISABILITATO.getNome().equals(connettoreRis.getTipo())) && CostantiConfigurazione.DISABILITATO.equals(getMSGRisp)) {
-				// de.setValue(CostantiConfigurazione.DISABILITATO);
-				de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (disabilitato)");
-			} else {
-				// de.setValue("visualizza");
-				de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (visualizza)");
+			if(this.pddCore.isPddEsterna(nomePdd)){
+				de.setType(DataElementType.TEXT);
+				de.setValue("(non presente)");
 			}
-			de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO,sa.getNome()),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+			else{
+				if ((connettoreRis == null || TipiConnettore.DISABILITATO.getNome().equals(connettoreRis.getTipo())) && CostantiConfigurazione.DISABILITATO.equals(getMSGRisp)) {
+					// de.setValue(CostantiConfigurazione.DISABILITATO);
+					de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (disabilitato)");
+				} else {
+					// de.setValue("visualizza");
+					de.setValue(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA+" (visualizza)");
+				}
+				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO,sa.getNome()),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+			}
 
 			dati.addElement(de);
 
@@ -1289,7 +1312,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						// se la pdd e' esterna non e' possibile modificare il
 						// connettore invocazione servizio
 						if (pddEsterna) {
-							de.setValue("");// non visualizzo nulla e il link e'
+							de.setValue("-");// non visualizzo nulla e il link e'
 							// disabilitato
 						} else {
 							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
