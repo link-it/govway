@@ -123,7 +123,7 @@ public class InformazioniProtocollo implements Serializable{
 						this.versioneServizio!=null ? this.versioneServizio : "not set",
 						this.azione!=null ? this.azione : "not set",
 						this.profiloCollaborazioneProtocollo!=null ? this.profiloCollaborazioneProtocollo : "not set",
-						this.profiloCollaborazioneEngine!=null ? this.profiloCollaborazioneEngine : "not set"	);
+						this.profiloCollaborazioneEngine!=null ? this.profiloCollaborazioneEngine.getEngineValue() : "not set"	);
 	}
 }
 
