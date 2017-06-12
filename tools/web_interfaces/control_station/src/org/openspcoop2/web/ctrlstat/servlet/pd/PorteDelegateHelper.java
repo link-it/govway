@@ -388,7 +388,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					dati.addElement(de);
 				} else {
 					
-					List<String> tipiServizio = this.apsCore.getTipiServiziGestitiProtocollo(protocollo);
+					List<String> tipiServizio = this.apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 					
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
