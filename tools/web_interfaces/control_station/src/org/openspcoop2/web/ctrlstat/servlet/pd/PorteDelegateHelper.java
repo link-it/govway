@@ -205,9 +205,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					configurazioneStandardSoggettoErogatore = true;
 				}
 				else{
-					de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
+					de.setLabel(null);
+					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 					de.setType(DataElementType.TEXT);
-					de.setValue(" ");
 					configurazioneStandardNonApplicabile = true;
 				}
 			}
@@ -238,8 +238,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					dati.addElement(de);
 					
 					de = new DataElement();
-					de.setLabel(soggid);
-					de.setType(DataElementType.NOTE);
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					de.setValue(soggid);
+					de.setType(DataElementType.TEXT);
 				}else{
 					de.setType(DataElementType.SELECT);
 					de.setValues(soggettiList);
@@ -258,13 +259,17 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
 					dati.addElement(de);
 				} else {
+					
+					List<String> tipiSoggetto = this.soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
+					
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
+					de.setValues(tipiSoggetto);
 					de.setValue(tiposp);
-					de.setType(DataElementType.TEXT_EDIT);
+					de.setSelected(tiposp);
+					de.setType(DataElementType.SELECT);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
 					de.setSize(alternativeSize);
-					de.setRequired(true);
 					dati.addElement(de);
 				}
 	
@@ -319,9 +324,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					configurazioneStandardServizio = true;
 				}
 				else{
-					de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
+					de.setLabel(null);
+					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 					de.setType(DataElementType.TEXT);
-					de.setValue(" ");
 					configurazioneStandardNonApplicabile = true;
 				}
 			}
@@ -361,8 +366,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					dati.addElement(de);
 					
 					de = new DataElement();
-					de.setLabel(servid);
-					de.setType(DataElementType.NOTE);
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					de.setValue(servid);
+					de.setType(DataElementType.TEXT);
 				}else{
 					de.setType(DataElementType.SELECT);
 					de.setValues(serviziList);
@@ -381,13 +387,17 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
 					dati.addElement(de);
 				} else {
+					
+					List<String> tipiServizio = this.apsCore.getTipiServiziGestitiProtocollo(protocollo);
+					
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
+					de.setValues(tipiServizio);
+					de.setSelected(tiposervizio);
 					de.setValue(tiposervizio);
-					de.setType(DataElementType.TEXT_EDIT);
+					de.setType(DataElementType.SELECT);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
 					de.setSize(alternativeSize);
-					de.setRequired(true);
 					dati.addElement(de);
 				}
 	
@@ -485,9 +495,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
+			de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 			de.setType(DataElementType.TEXT);
-			de.setValue(" ");
 			dati.addElement(de);
 			
 		}
@@ -543,19 +552,20 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setType(DataElementType.NOTE);
+				de.setType(DataElementType.TEXT);
 				boolean tutteAzioni = false;
 				if ((modeaz != null) && (modeaz.equals(IdentificazioneView.URL_BASED.toString()))){
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE);
+					de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE);
 					tutteAzioni = true;
 				}
 				else{
 					// static o registry
 					if(azione==null || "".equals(azione) || "-".equals(azione)){
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE);
+						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE);
 						tutteAzioni = true;
 					}else{
-						de.setLabel(azione);
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+						de.setValue(azione);
 					}
 				}
 				dati.addElement(de);

@@ -296,7 +296,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA = "Ricevuta Asincrona Asimmetrica";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN = "Pattern";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO = "Servizio";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "Tipo Servizio";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "Tipo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "Versione Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
