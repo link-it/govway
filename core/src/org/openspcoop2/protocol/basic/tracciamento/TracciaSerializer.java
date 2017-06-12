@@ -36,6 +36,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.XMLRootElement;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -318,5 +319,12 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 			return protocolTraduttore.toString(org.openspcoop2.protocol.sdk.constants.LivelloRilevanza.UNKNOWN);
 		}
 		return null;
+	}
+
+
+
+	@Override
+	public XMLRootElement getXMLRootElement() throws ProtocolException {
+		return new TracciaXMLRootElement();
 	}
 }

@@ -26,6 +26,7 @@ import org.openspcoop2.core.diagnostica.utils.XMLUtils;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.XMLRootElement;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.w3c.dom.Element;
@@ -124,5 +125,10 @@ public class DiagnosticSerializer extends BasicComponentFactory implements org.o
 				msgDiag.addProperty(DiagnosticDriver.IDDIAGNOSTICI, tmpId);
 			}
 		}
+	}
+
+	@Override
+	public XMLRootElement getXMLRootElement() throws ProtocolException {
+		return new DiagnosticXMLRootElement();
 	}
 }

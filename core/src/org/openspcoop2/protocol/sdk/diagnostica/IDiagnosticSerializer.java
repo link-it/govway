@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.sdk.diagnostica;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.XMLRootElement;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.w3c.dom.Element;
@@ -67,4 +68,11 @@ public interface IDiagnosticSerializer extends IComponentFactory {
 	 */
 	public byte[] toByteArray(MsgDiagnostico msgDiag, TipoSerializzazione tipoSerializzazione) throws ProtocolException;
 	
+	/**
+	 * Indicazione sul xml contenitore dei messaggi diagnostici
+	 * 
+	 * @return Indicazione sul xml contenitore dei messaggi diagnostici
+	 * @throws ProtocolException
+	 */
+	public XMLRootElement getXMLRootElement() throws ProtocolException;
 }

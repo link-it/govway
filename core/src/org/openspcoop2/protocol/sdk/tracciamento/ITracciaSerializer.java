@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.sdk.tracciamento;
 
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.XMLRootElement;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.w3c.dom.Element;
 
@@ -61,5 +62,13 @@ public interface ITracciaSerializer extends IComponentFactory {
 	 * @return Traccia serializzato nel tipo indicato nel parametro
 	 */
 	public byte[] toByteArray(Traccia traccia, TipoSerializzazione tipoSerializzazione) throws ProtocolException;
+	
+	/**
+	 * Indicazione sul xml contenitore delle tracce
+	 * 
+	 * @return Indicazione sul xml contenitore delle tracce
+	 * @throws ProtocolException
+	 */
+	public XMLRootElement getXMLRootElement() throws ProtocolException;
 	
 }
