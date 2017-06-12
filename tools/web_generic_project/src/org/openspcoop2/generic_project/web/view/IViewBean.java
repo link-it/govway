@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.generic_project.web.view;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.openspcoop2.generic_project.web.factory.FactoryException;
@@ -34,7 +35,7 @@ import org.openspcoop2.generic_project.web.output.OutputField;
  * @version $Rev$, $Date$ 
  *
  */
-public interface IViewBean<DTOType,KeyType>  {
+public interface IViewBean<DTOType,KeyType> extends Serializable  {
 
 	// Metodo di init dei componenti del bean
 	public void init() throws Exception;

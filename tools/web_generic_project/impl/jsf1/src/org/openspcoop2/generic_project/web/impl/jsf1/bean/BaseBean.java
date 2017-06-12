@@ -43,6 +43,11 @@ import org.openspcoop2.generic_project.web.view.IViewBean;
  */
 public abstract class BaseBean<DTOType, KeyType>  implements IViewBean<DTOType, KeyType> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Map<String, OutputField<?>> fields = null;
 
 	protected DTOType dto  ;

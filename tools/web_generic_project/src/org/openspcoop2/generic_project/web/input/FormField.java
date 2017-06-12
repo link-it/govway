@@ -173,4 +173,7 @@ public interface FormField<T> extends Serializable{
 	public void setAffineTransform(AffineTransform affineTransform);
 	public FontRenderContext getFontRenderContext();
 	public void setFontRenderContext(FontRenderContext fontRenderContext);
+	
+	public boolean isLimitToList();
+	public void setLimitToList(boolean limitToList);
 }

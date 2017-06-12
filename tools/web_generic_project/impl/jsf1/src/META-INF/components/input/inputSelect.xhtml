@@ -40,7 +40,7 @@
 				requiredMessage="#{field.requiredMessage}" width="#{field.width}"   >
 				<f:selectItems value="#{field.elencoSelectItems}" />
 				<a4j:support status="mainStatus" event="onselect"
-					reRender="#{field.fieldsToUpdate}"
+					reRender="#{field.fieldsToUpdate}" limitToList="#{field.limitToList}"
 					actionListener="#{field.fieldSelected}" />
 			</rich:comboBox>
 		</c:if>

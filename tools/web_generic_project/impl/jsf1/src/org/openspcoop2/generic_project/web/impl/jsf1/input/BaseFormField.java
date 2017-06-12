@@ -117,6 +117,8 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	protected int fontStyle, fontSize;
 
 	protected ActionListener actionListener;	
+	
+	protected boolean limitToList ;
 
 	@Override
 	public boolean isAutoComplete() {
@@ -162,6 +164,7 @@ public abstract class BaseFormField<T> implements FormField<T>{
 		this.fontSize = 11;
 		this.fontStyle = Font.PLAIN;
 		this.labelStyleClass = "";
+		this.limitToList = false;
 	}
 
 	@Override
@@ -612,5 +615,16 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	public void setLabelStyleClass(String labelStyleClass) {
 		this.labelStyleClass = labelStyleClass;
 	}
+
+	@Override
+	public boolean isLimitToList() {
+		return this.limitToList;
+	}
+
+	@Override
+	public void setLimitToList(boolean limitToList) {
+		this.limitToList = limitToList;
+	}
+	
 	
 }

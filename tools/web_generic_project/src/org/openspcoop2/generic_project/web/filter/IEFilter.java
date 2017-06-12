@@ -31,7 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.generic_project.web.utils.BrowserInfo;
+import org.openspcoop2.generic_project.web.utils.BrowserInfo.BrowserFamily;
 import org.openspcoop2.generic_project.web.utils.BrowserUtils;
+
 
 /****
 * IEFilter Filtro JSF che fissa la visualizzazione dell'applicazione in modalita IE-8 Compatibile, per i browser con versione >=8
@@ -43,10 +47,21 @@ import org.openspcoop2.generic_project.web.utils.BrowserUtils;
  */
 public class IEFilter implements Filter {
 
-
+	private static boolean FORZA_COMPATIBILITA_IE8 = false;
+	private static String FORZA_COMPATIBILITA_IE8_KEY = "forzaCompatibilitaIE8";
+	
+	public static void initialize(boolean forzaCompatibilitaIE8){
+		IEFilter.FORZA_COMPATIBILITA_IE8 = forzaCompatibilitaIE8;
+	}
+	
 	@Override
-
 	public void init(FilterConfig filterConfig) throws ServletException {
+		if(filterConfig != null){
+			String forzaCompatibilitaIE8S = filterConfig.getInitParameter(FORZA_COMPATIBILITA_IE8_KEY);
+			if(StringUtils.isNotEmpty(forzaCompatibilitaIE8S)){
+				IEFilter.FORZA_COMPATIBILITA_IE8 = Boolean.parseBoolean(forzaCompatibilitaIE8S);
+			}
+		}
 	}
 
 	@Override
@@ -61,15 +76,18 @@ public class IEFilter implements Filter {
 			try{
 
 				//log.info("Decodifica Browser da Header UserAgent ["+userAgent+"]");
-				String info[] = BrowserUtils.getBrowserInfo(userAgent);
-				String browsername = info[0];
-				//String browserversion = info[1];
+				BrowserInfo browserInfo = BrowserUtils.getBrowserInfo(userAgent);
+				
+//				String browsername = browserInfo.getBrowserName();
+//				Double browserversion = browserInfo.getVersion();
 
-				//log.info("BrowserName ["+browsername+"] + Version ["+browserversion+"]");
+				//log.info("Browser Riconosciuto: Name ["+browsername+"] Version ["+browserversion+"].");
 
-				if(browsername.equalsIgnoreCase("MSIE") || browsername.equalsIgnoreCase("rv")|| browsername.equalsIgnoreCase("Trident")){
-					//Imposto l'header http necessario per forzare la visualizzazione.
-					((HttpServletResponse) response).setHeader("X-UA-Compatible", "IE=EmulateIE8");
+				if(browserInfo.getBrowserFamily().equals(BrowserFamily.IE)){
+					
+					//Imposto l'header http necessario per forzare la visualizzazione. se previsto dalla configurazione
+					if(IEFilter.FORZA_COMPATIBILITA_IE8)
+						((HttpServletResponse) response).setHeader("X-UA-Compatible", "IE=EmulateIE8");
 
 					// Risolvo anche il problema di ie9 che non visualizza il contenuto dei file css della libreria Richfaces.
 					// Esso invia solo "text/css" all'interno dell' Accept header.
