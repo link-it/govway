@@ -48,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -299,7 +300,7 @@ public final class PddChange extends Action {
 						// sincronizzo la pdd
 						sinc.syncAll(pdd);
 						 */
-						pd.setMessage("Sincronizzazione Porta di Dominio " + pdd.getNome() + " Effettuata correttamente.");
+						pd.setMessage("Sincronizzazione Porta di Dominio " + pdd.getNome() + " Effettuata correttamente.",Costanti.MESSAGE_TYPE_INFO);
 
 					} catch (Exception e) {
 						pd.setMessage("Sincronizzazione Porta di Dominio " + pdd.getNome() + " Non effettuata a causa di errori");

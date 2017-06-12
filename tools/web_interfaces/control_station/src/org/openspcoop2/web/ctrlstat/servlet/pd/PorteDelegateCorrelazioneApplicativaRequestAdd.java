@@ -132,7 +132,12 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
 									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
 									),
-									new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome, 
+							 new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome,
+									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nome)),
+									new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + nome, 
 											PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
 											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
 											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
@@ -145,7 +150,12 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST),
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome, 
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome,
+									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nome)),
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + nome, 
 									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
 									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
 									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
@@ -173,7 +183,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.correlazioneApplicativaCheckData(TipoOperazione.ADD,true);
+			boolean isOk = porteDelegateHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD,true);
 			if (!isOk) {
 
 				if(useIdSogg){
@@ -185,7 +195,12 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
 									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
 									),
-									new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome, 
+							 new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome,
+										PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nome)),
+									new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + nome, 
 											PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
 											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
 											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
@@ -198,7 +213,12 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST),
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome, 
+							 new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nome,
+										PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nome)),
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + nome, 
 									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
 									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
 									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),

@@ -389,7 +389,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							String msg = "Attenzione, l'accordo ["+uriAccordo+"] contiene la definizione di "+as.sizePortTypeList()+" servizi e "+(as.sizeAllegatoList()+as.sizeSpecificaSemiformaleList())+" allegati. <BR/>"+
 									"Il caricamento del wsdl comporter&agrave; l'aggiornamento dei servizi/allegati esistenti e/o la creazione di nuovi servizi/allegati. Procedere?";
 								
-							pd.setMessage(msg);
+							pd.setMessage(msg, Costanti.MESSAGE_TYPE_INFO);
 
 							// Bottoni
 							String[][] bottoni = { 

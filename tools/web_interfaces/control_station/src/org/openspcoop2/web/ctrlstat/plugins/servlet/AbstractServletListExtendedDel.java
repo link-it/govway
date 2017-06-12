@@ -174,7 +174,10 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 				msgCompletato = msgErrore;
 			}
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
-				pd.setMessage(msgCompletato);
+				if(msgErrore!=null && !"".equals(msgErrore))
+					pd.setMessage(msgCompletato);
+				else
+					pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
 			}
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

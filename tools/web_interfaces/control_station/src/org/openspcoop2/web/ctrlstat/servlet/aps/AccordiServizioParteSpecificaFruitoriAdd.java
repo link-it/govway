@@ -578,7 +578,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 				if(soggettiListVector.size()<=0){
 
-					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_FRUITORI_COMPLETATA);
+					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_FRUITORI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
 
 					pd.disableEditMode();
 

@@ -2065,9 +2065,97 @@ public class ConsoleHelper {
 
 		return dati;
 	}
+	
+	// Dati schermata correlazione applicativa
+	public Vector<DataElement> addCorrelazioneApplicativaToDati(Vector<DataElement> dati,boolean portaDelegata,
+			boolean riusoID,String scadcorr, String urlRichiesta, String urlRisposta, Boolean contaListe, int numCorrelazioneReq, int numCorrelazioneRes) {
 
-	// Controlla i dati della correlazione applicativa della porta delegata
-	public boolean correlazioneApplicativaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
+		DataElement de = new DataElement();
+		
+		User user = ServletUtils.getUserFromSession(this.session);
+		
+		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
+		dati.addElement(de);
+		
+		if(portaDelegata){		
+			if (riusoID && numCorrelazioneReq > 0 && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
+				de.setValue(scadcorr);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
+				dati.addElement(de);
+			} else {
+				this.pd.disableOnlyButton();
+			}
+		} else {
+			if (numCorrelazioneReq > 0 && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
+				de.setValue(scadcorr);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
+				dati.addElement(de);
+			} else {
+				this.pd.disableOnlyButton();
+			}
+		}
+		
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(urlRichiesta);
+
+		if (contaListe) {
+			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA,new Long(numCorrelazioneReq));
+		} else
+			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA);
+
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(urlRisposta);
+
+		if (contaListe) {
+			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA,new Long(numCorrelazioneRes));
+		} else
+			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA);
+
+		dati.addElement(de);
+
+		return dati;
+	}
+	
+	// Controlla i dati della correlazione applicativa
+	public boolean correlazioneApplicativaCheckData(TipoOperazione tipoOp,boolean portaDelegata,String scadcorr) throws Exception {
+		try{
+			// scadenza correlazione intero > 0 opzionale
+			if(scadcorr != null && !scadcorr.equals("")){
+				int scadCorrInt = -1;
+				try{
+					scadCorrInt = Integer.parseInt(scadcorr);
+				}catch(Exception e){
+					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore o uguale a zero.");
+					return false;
+				}
+				
+				if(scadCorrInt < 0){
+					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore o uguale a zero.");
+					return false;
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	// Controlla i dati della correlazione applicativa richiesta della porta delegata
+	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
 		try {
 			String id = this.request.getParameter("id");
 			int idInt = Integer.parseInt(id);

@@ -222,7 +222,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 
 			confHelper.prepareRoutingList(ricerca, lista);
 
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO);
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

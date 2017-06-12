@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -200,7 +201,7 @@ public final class ConfigurazioneRegistriChange extends Action {
 
 			confHelper.prepareRegistriList(ricerca, lista);
 
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO);
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

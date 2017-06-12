@@ -888,9 +888,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 					String msg = "&Egrave; stato richiesto di ripristinare lo stato dell soggetto fruitore [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
-
-					pd.setMessage(MessageFormat.format(msg, fruitoreLabel));
-
+					pd.setMessage(MessageFormat.format(msg, fruitoreLabel), Costanti.MESSAGE_TYPE_INFO);
+					
 					pd.setDati(dati);
 
 					String[][] bottoni = { 

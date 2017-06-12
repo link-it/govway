@@ -983,7 +983,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setValue(" ");
 				
 				this.pd.disableEditMode();
-				this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE);
+				this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
 			}
 			else if( (  (AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS.equals(objectName) && TipoOperazione.CHANGE.equals(tipoOperazione))
 					|| 

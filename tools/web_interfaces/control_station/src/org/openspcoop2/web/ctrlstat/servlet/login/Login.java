@@ -74,7 +74,7 @@ public final class Login extends Action {
 	
 			if(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione){
 				
-				pd.setMessage("<b>Attenzione</b>: è in esecuzione un controllo sulla consistenza dei dati; attendere il completamento dell'operazione");
+				pd.setMessage("<b>Attenzione</b>: è in esecuzione un controllo sulla consistenza dei dati; attendere il completamento dell'operazione", Costanti.MESSAGE_TYPE_INFO);
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
 				
@@ -111,7 +111,7 @@ public final class Login extends Action {
 			loginHelper.makeMenu();
 	
 			if(GestoreConsistenzaDati.gestoreConsistenzaDatiEseguitoConErrore){
-				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli");
+				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli",Costanti.MESSAGE_TYPE_INFO);
 			}
 			else{
 				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO);

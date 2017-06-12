@@ -42,6 +42,7 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -180,7 +181,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 				
 				pd.setDati(dati);
 				
-				pd.setMessage(testModificaEffettuata);
+				pd.setMessage(testModificaEffettuata,Costanti.MESSAGE_TYPE_INFO);
 				
 				pd.disableEditMode();
 				

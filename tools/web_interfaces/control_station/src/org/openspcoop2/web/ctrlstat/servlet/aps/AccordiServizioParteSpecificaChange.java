@@ -1011,7 +1011,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					String msg = "&Egrave; stato richiesto di ripristinare lo stato dell''accordo [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
 					
-					pd.setMessage(MessageFormat.format(msg, uriAccordo));
+					pd.setMessage(MessageFormat.format(msg, uriAccordo), Costanti.MESSAGE_TYPE_INFO);
 					
 					pd.setDati(dati);
 					

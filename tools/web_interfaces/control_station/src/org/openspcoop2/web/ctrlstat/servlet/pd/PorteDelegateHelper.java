@@ -1110,7 +1110,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 	
 		if(configurazioneStandardNonApplicabile){
-			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE);
+			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
 			this.pd.disableEditMode();
 		}
 		
@@ -1949,8 +1949,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM);
 			//}
-			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA); 
-			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_BR_RISPOSTA); 
+			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				labelsList.add(extendedServletList.getListTitle(this));
 			}
@@ -2087,34 +2086,49 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 					de = new DataElement();
 					de.setUrl(
-							PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
+							PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
-							);
-					if (contaListe) {
-						int numCorrelazione = 0;
-						if (pd.getCorrelazioneApplicativa() != null)
-							numCorrelazione = pd.getCorrelazioneApplicativa().sizeElementoList();
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()) );
+					
+					boolean isCorrelazioneApplicativaAbilitataReq = false;
+					boolean isCorrelazioneApplicativaAbilitataRes = false;
+					
+					if (pd.getCorrelazioneApplicativa() != null)
+						isCorrelazioneApplicativaAbilitataReq = pd.getCorrelazioneApplicativa().sizeElementoList() > 0;
+
+					if (pd.getCorrelazioneApplicativaRisposta() != null)
+						isCorrelazioneApplicativaAbilitataRes = pd.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+						
+					if(isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
+						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA);
+					else 
+						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.addElement(de);
 
-					de = new DataElement();
-					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST,
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
-							);
-					if (contaListe) {
-						int numCorrelazione = 0;
-						if (pd.getCorrelazioneApplicativaRisposta() != null)
-							numCorrelazione = pd.getCorrelazioneApplicativaRisposta().sizeElementoList();
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					//[TODO] spostare nella servlet nuova
+//					if (contaListe) {
+//						int numCorrelazione = 0;
+//						if (pd.getCorrelazioneApplicativa() != null)
+//							numCorrelazione = pd.getCorrelazioneApplicativa().sizeElementoList();
+//						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
+//					} else
+//						ServletUtils.setDataElementVisualizzaLabel(de);
+//					e.addElement(de);
+//
+//					de = new DataElement();
+//					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST,
+//							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
+//							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
+//							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
+//							);
+//					if (contaListe) {
+//						int numCorrelazione = 0;
+//						if (pd.getCorrelazioneApplicativaRisposta() != null)
+//							numCorrelazione = pd.getCorrelazioneApplicativaRisposta().sizeElementoList();
+//						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
+//					} else
+//						ServletUtils.setDataElementVisualizzaLabel(de);
+//					e.addElement(de);
 
 					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 						de = new DataElement();
@@ -2576,13 +2590,19 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
 			}
+			
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + idporta,
+					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+			new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
+			new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
+			new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, idporta)));
 
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
-				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + idporta,null));
+				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + idporta,null));
 			}
 			else{
-				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + idporta,
+				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + idporta,
 						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
@@ -2896,6 +2916,12 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
 			}
+			
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + idporta,
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+				new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
+				new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
+				new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, idporta)));
 
 			if(search.equals("")){
 				this.pd.setSearchDescription("");

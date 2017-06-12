@@ -967,6 +967,16 @@
             <forward name="porteDelegateRuoliDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateRuoliError" path="/jsplib/info.jsp"/>
         </action>
+        
+   		<!--  Porte Delegate (Correlazione Applicativa) -->
+
+        <action path="/porteDelegateCorrelazioneApplicativa" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCorrelazioneApplicativa"
+            scope="request" validate="true">
+            <forward name="porteDelegateCorrelazioneApplicativaForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateCorrelazioneApplicativaError" path="/jsplib/info.jsp"/>
+        </action>
 
 		<!--  Porte Delegate (Correlazione Applicativa Request Flow) -->
 
@@ -1249,6 +1259,16 @@
             scope="request" validate="true">
             <forward name="porteApplicativeRuoliDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        
+  		<!--  Porte Applicative (Correlazione Applicativa) -->
+
+        <action path="/porteApplicativeCorrelazioneApplicativa" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCorrelazioneApplicativa"
+            scope="request" validate="true">
+            <forward name="porteApplicativeCorrelazioneApplicativaForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeCorrelazioneApplicativaError" path="/jsplib/info.jsp"/>
         </action>
 
 		<!--  Porte Applicative (Correlazione Applicativa Request Flow) -->

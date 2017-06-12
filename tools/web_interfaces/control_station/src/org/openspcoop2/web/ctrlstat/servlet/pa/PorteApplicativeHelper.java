@@ -1410,7 +1410,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		
 		
 		if(configurazioneStandardNonApplicabile){
-			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE);
+			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
 			this.pd.disableEditMode();
 		}
 		
@@ -1514,8 +1514,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			//if(isModalitaAvanzata){
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 			//}
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA);
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RISPOSTA);
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 			if(isModalitaAvanzata)
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 			if(this.core.isRegistroServiziLocale()){
@@ -1641,25 +1640,21 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					//}
 
 					de = new DataElement();
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST, pIdSogg, pIdPorta, pIdNome);
-					if (contaListe) {
-						int numCorrelazione = 0;
-						if (pa.getCorrelazioneApplicativa() != null)
-							numCorrelazione = pa.getCorrelazioneApplicativa().sizeElementoList();
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome);
+					
+					boolean isCorrelazioneApplicativaAbilitataReq = false;
+					boolean isCorrelazioneApplicativaAbilitataRes = false;
+					
+					if (pa.getCorrelazioneApplicativa() != null)
+						isCorrelazioneApplicativaAbilitataReq = pa.getCorrelazioneApplicativa().sizeElementoList() > 0;
 
-					de = new DataElement();
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST, pIdSogg, pIdPorta, pIdNome);
-					if (contaListe) {
-						int numCorrelazione = 0;
-						if (pa.getCorrelazioneApplicativaRisposta() != null)
-							numCorrelazione = pa.getCorrelazioneApplicativaRisposta().sizeElementoList();
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
+					if (pa.getCorrelazioneApplicativaRisposta() != null)
+						isCorrelazioneApplicativaAbilitataRes = pa.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+					
+					if(isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA);
+					else 
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.addElement(de);
 
 					if(isModalitaAvanzata){
@@ -2033,11 +2028,18 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST));
 
 			}
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_DI + idporta,
+					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, 
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, idporta)
+					));
+			
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
-				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_DI + idporta,null));
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + idporta,null));
 			}else{
-				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_DI + idporta,
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI + idporta,
 						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST ,
 						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
 						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
@@ -2159,6 +2161,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST));
 
 			}
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_DI + idporta,
+					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, 
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, idporta)
+					));
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI + idporta,null));
@@ -2475,9 +2483,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			String elemxml, String mode, String pattern, String gif,
 			String riusoIdMessaggio, Vector<DataElement> dati) {
 		DataElement de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
+		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE);
 		de.setSize(80);
 		if (elemxml == null) {
 			de.setValue("");
@@ -2546,8 +2555,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			String elemxml, String mode, String pattern, String gif,
 			Vector<DataElement> dati) {
 		DataElement de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setType(DataElementType.TEXT_EDIT);
+		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setSize(80);
 		if (elemxml == null) {

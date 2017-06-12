@@ -595,8 +595,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(lista.get(0).getSoggettoReferente().getTipo());
 					}
 					else{
-
-						pd.setMessage("Non esistono accordi di servizio parte comune");
+						pd.setMessage("Non esistono accordi di servizio parte comune", Costanti.MESSAGE_TYPE_INFO);
 						pd.disableEditMode();
 
 						Vector<DataElement> dati = new Vector<DataElement>();

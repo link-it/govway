@@ -1643,8 +1643,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 			//}
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RICHIESTA);
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_BR_RISPOSTA);
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 			if(isModalitaAvanzata)
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 			listaLabel.add(labelServizio);
@@ -1767,27 +1766,23 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				e.addElement(de);
 				
 				de = new DataElement();
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST, pIdSogg, pIdPorta, pIdNome);
-				if (contaListe) {
-					int numCorrelazione = 0;
-					if (pa.getCorrelazioneApplicativa() != null)
-						numCorrelazione = pa.getCorrelazioneApplicativa().sizeElementoList();
-					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome);
+				
+				boolean isCorrelazioneApplicativaAbilitataReq = false;
+				boolean isCorrelazioneApplicativaAbilitataRes = false;
+				
+				if (pa.getCorrelazioneApplicativa() != null)
+					isCorrelazioneApplicativaAbilitataReq = pa.getCorrelazioneApplicativa().sizeElementoList() > 0;
 
-				de = new DataElement();
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST, pIdSogg, pIdPorta, pIdNome);
-				if (contaListe) {
-					int numCorrelazione = 0;
-					if (pa.getCorrelazioneApplicativaRisposta() != null)
-						numCorrelazione = pa.getCorrelazioneApplicativaRisposta().sizeElementoList();
-					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
+				if (pa.getCorrelazioneApplicativaRisposta() != null)
+					isCorrelazioneApplicativaAbilitataRes = pa.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+				
+				if(isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
+					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA);
+				else 
+					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 				e.addElement(de);
-
+				
 				if(isModalitaAvanzata){
 					de = new DataElement();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale

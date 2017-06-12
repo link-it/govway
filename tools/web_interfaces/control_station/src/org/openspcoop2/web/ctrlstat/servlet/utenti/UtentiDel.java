@@ -284,7 +284,7 @@ public final class UtentiDel extends Action {
 				utentiHelper.addChooseUtenteForPermessiSToDati(dati, objToRemove, paginaSuServizi, uws , paginaSuAccordi , uwp);
 					
 				pd.setDati(dati);
-				pd.setMessage(msg);
+				pd.setMessage(msg, Costanti.MESSAGE_TYPE_INFO);
 	
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 //				session.setAttribute("PageDataOld", pdold);

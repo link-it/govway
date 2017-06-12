@@ -49,6 +49,9 @@ public class PorteApplicativeCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_RUOLI = "porteApplicativeRuoli";
 	
+	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "porteApplicativeCorrelazioneApplicativa";
+	public final static ForwardParams TIPO_OPERAZIONE_CORRELAZIONE_APPLICATIVA = ForwardParams.OTHER("");
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteApplicativeCorrelazioneApplicativaRequest";
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteApplicativeCorrelazioneApplicativaResponse";
 	
@@ -123,6 +126,8 @@ public class PorteApplicativeCostanti {
 		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST);
 	}
 
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA+".do";
+	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_ADD = OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"Add.do";
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_CHANGE = OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"Change.do";
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"Del.do";
@@ -292,11 +297,13 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI = "MTOM request-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_DI = "Correlazioni Applicative di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazioni Applicative Richiesta di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazioni Applicative per la risposta di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Gestione identificazione fallita";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = "Elemento xml";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR = "Elemento xml<BR/>(Il campo vuoto indica qualsiasi elemento)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE = "Il campo vuoto indica qualsiasi elemento";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = "Validazione Contenuti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = "Tipo Validazione";
@@ -318,6 +325,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Identificazione Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA = "Scadenza Correlazione Applicativa<BR/>(Riuso ID Protocollo)";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitata";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitata";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO = "abilitato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO = "disabilitato";

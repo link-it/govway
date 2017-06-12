@@ -365,7 +365,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 					this.wsdl, this.validazioneDocumenti, myFru, dati,
 					idServ+"", tipologiaDocumentoScaricare, true, label);
 
-			pd.setMessage("Modifica effettuata con successo");
+			pd.setMessage("Modifica effettuata con successo", Costanti.MESSAGE_TYPE_INFO);
 			
 			pd.setDati(dati);
 

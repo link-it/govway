@@ -230,7 +230,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			lista = confCore.filtriList(ricerca);
 
 			ah.prepareFiltriList(ricerca, lista, Liste.FILTRI);
-			pd.setMessage(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA);
+			pd.setMessage(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA, Costanti.MESSAGE_TYPE_INFO);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

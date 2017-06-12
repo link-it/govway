@@ -128,6 +128,7 @@ if(elementsRequiredEnabled){
 
 
 String classSpanNoEdit="spanNoEdit";
+String classDivNoEdit="divNoEdit";
 boolean fieldsetOpen = false;
 for (int i = 0; i < dati.size(); i++) {
 	DataElement de = (DataElement) dati.elementAt(i);
@@ -187,8 +188,10 @@ for (int i = 0; i < dati.size(); i++) {
 	            				%>
 	                			<div class="prop">
 	                				<label><%=deLabel %></label>
-	                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
-	                				<input type="hidden" name="<%= de.getName() %>" value="<%= de.getValue() %>"/>
+	                				<div class="<%=classDivNoEdit %>"> 
+		                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
+		                				<input type="hidden" name="<%= de.getName() %>" value="<%= de.getValue() %>"/>
+		                			</div>
 	                				<% if(!deNote.equals("")){ %>
 							      		<p class="note"><%=deNote %></p>
 							      	<% } %>
@@ -202,7 +205,9 @@ for (int i = 0; i < dati.size(); i++) {
 	                    				<%
 								    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 								    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-								    		%><span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span><%
+								    		%><div class="<%=classDivNoEdit %>"> 
+								    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
+								    			</div><%
 								    	} else {
 								      		%><input type="text" name="<%= de.getName() %>" value="<%= de.getValue() %>" class="<%= classInput %>">
 								      	<%
@@ -220,7 +225,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                        				<label><%=deLabel %></label>
 	                        				<%
 						          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-												%><span class="<%=classSpanNoEdit %>">********</span><%
+												%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>">********</span></div><%
 						   					} else {
 												%><input class="<%= classInput %>" type="password" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"><%
 						   					}
@@ -242,7 +247,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                            				<%
 						     					if ((pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) && de.isLabelAffiancata()) {
 						     						String taValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-						     						%><span class="<%=classSpanNoEdit %>"><%= taValNoEdit %></span><%
+						     						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= taValNoEdit %></span></div><%
 						     					} else {
 						     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
 						     						%><textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>" class="<%= classInput %>"><%= de.getValue() %></textarea><%
@@ -273,7 +278,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                                    				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 	                                    	     			String fileValue = (de.getValue() != null && !de.getValue().equals("")) ? de.getValue() : "not defined";
 	                                    	            	%> 
-	                                    	            	<span class="<%=classSpanNoEdit %>"><%=fileValue %></span><%
+	                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=fileValue %></span></div><%
 	                                    	      		} else {
 	                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= de.getName()  %>" class="<%= classInput %>"  
 										  	<%
@@ -296,7 +301,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                                        				<%
 	                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 	                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-	                                      						%><span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span><%
+	                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 	                               							} else {
 	                               								String selSubType = !de.getSubType().equals("") ? (" size='"+de.getRows()+"' " + de.getSubType() + " ") : " ";
 	                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + de.getOnChange() + "\" " ) : " ";
@@ -330,22 +335,16 @@ for (int i = 0; i < dati.size(); i++) {
 	                                            				<label><%=deLabel %></label>
 	                                            				<%
 						    									String chkEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + de.getOnClick() + "\" ") :" ";
-						    									String chkValNoEdit = de.getSelected().equals("yes") ? "ON" : "OFF";
 						    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
+						    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 						    									
-						    									if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-						    										%><span class="<%=classSpanNoEdit %>"><%=chkValNoEdit %></span><%
-						    									} else {
-						   										%>	<table class="controlset">
+						    									%>	<table class="controlset">
 				    													<tr> 
 				    														<td>
-						   														<input type="checkbox" name="<%= de.getName()  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> >
+						   														<input type="checkbox" name="<%= de.getName()  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> <%=disVal %> >
 						   													</td>
 					   													</tr>
 					   												</table>
-						   											<%
-						 										}
-						  										%>
 						  										<% if(!deNote.equals("")){ %>
 								      								<p class="note"><%=deNote %></p>
 								      							<% } %>
@@ -359,7 +358,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                                                				<%
 				   	        										if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 				   	        											String radioValNoEdit = !de.getSelected().equals("") ? de.getSelected() : "not defined";
-				    													%><span class="<%=classSpanNoEdit %>"><%=radioValNoEdit %></span><%
+				    													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=radioValNoEdit %></span></div><%
 				    												} else {
 				    													%>
 				    													<table class="controlset">

@@ -782,7 +782,11 @@ p.note-ricerca {
 }
 
 .spanNoEdit {
-	vertical-align: middle;
+/* 	vertical-align: middle; */
+}
+
+.divNoEdit {
+	padding-top: 2px;
 }
 
 .subtitle {

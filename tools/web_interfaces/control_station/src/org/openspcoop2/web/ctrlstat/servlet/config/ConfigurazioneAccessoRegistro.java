@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -176,7 +177,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 			pd.setDati(dati);
 			
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO);
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

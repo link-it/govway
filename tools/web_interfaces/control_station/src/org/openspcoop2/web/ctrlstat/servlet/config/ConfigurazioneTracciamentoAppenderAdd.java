@@ -164,7 +164,7 @@ public final class ConfigurazioneTracciamentoAppenderAdd extends Action {
 
 			confHelper.prepareTracciamentoAppenderList(t.getOpenspcoopAppenderList());
 
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO);
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

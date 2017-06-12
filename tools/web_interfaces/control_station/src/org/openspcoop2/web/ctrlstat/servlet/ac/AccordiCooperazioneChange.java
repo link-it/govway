@@ -446,7 +446,7 @@ public final class AccordiCooperazioneChange extends Action {
 				String msg = "Attenzione, esistono Accordi di Servizio Composto che riferiscono l''Accordo di Cooperazione [{0}] che si sta modificando, continuare?";
 				String uriAccordo = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoOLD);
 
-				pd.setMessage(MessageFormat.format(msg, uriAccordo));
+				pd.setMessage(MessageFormat.format(msg, uriAccordo),Costanti.MESSAGE_TYPE_INFO);
 
 				String[][] bottoni = { 
 						{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 

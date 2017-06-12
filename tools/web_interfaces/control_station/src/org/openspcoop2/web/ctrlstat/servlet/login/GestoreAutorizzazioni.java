@@ -214,6 +214,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_SERVIZIO_APPLICATIVO);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_RUOLI);
+		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM);
@@ -232,6 +233,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI);
+		this.servletPorteDelegate.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO);

@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -188,7 +189,7 @@ public final class ConfigurazioneDiagnosticaAppenderChange extends Action {
 
 			confHelper.prepareDiagnosticaAppenderList(md.getOpenspcoopAppenderList());
 
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO);
+			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

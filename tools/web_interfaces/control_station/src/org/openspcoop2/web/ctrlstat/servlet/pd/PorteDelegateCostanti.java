@@ -49,6 +49,8 @@ public class PorteDelegateCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_RUOLI = "porteDelegateRuoli";
 	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = "porteDelegateCorrelazioneApplicativa";
+	public final static ForwardParams TIPO_OPERAZIONE_CORRELAZIONE_APPLICATIVA = ForwardParams.OTHER("");
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteDelegateCorrelazioneApplicativaRequest";
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteDelegateCorrelazioneApplicativaResponse";
 	
@@ -121,6 +123,8 @@ public class PorteDelegateCostanti {
 		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST);
 	}
 
+	public final static String SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA+".do";
+	
 	public final static String SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_ADD = OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST+"Add.do";
 	public final static String SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_CHANGE = OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST+"Change.do";
 	public final static String SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_DELETE = OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST+"Del.do";
@@ -230,7 +234,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_SP = "sp";
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_SP = "tiposp";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_SP = "modesp";
-	public final static String PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
+	public final static String PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA = CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA;
 	public final static String PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = "integrazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME = "nome";
 	public final static String PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD = "oldNomePD";
@@ -255,7 +259,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
 
 	public final static String ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO = CostantiControlStation.PARAMETRO_USAIDSOGG;
-
+	
 
 	/* LABEL PARAMETRI */
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ID = "Id";
@@ -272,6 +276,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_REQUEST_FLOW_DI = "MTOM request-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI = "Correlazioni Applicative di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazioni Applicative per la richiesta di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazioni Applicative per la risposta di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
@@ -311,6 +316,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Identificazione Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA = "Scadenza Correlazione Applicativa<BR/>(Riuso ID Protocollo)";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitata";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitata";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO = "Servizio Applicativo";

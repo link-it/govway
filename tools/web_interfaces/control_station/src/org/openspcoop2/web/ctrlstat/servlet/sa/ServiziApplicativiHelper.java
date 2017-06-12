@@ -748,7 +748,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		
 		if(configurazioneStandardNonApplicabile){
-			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE);
+			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE,Costanti.MESSAGE_TYPE_INFO);
 			this.pd.disableEditMode();
 		}
 		

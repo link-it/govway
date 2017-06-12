@@ -40,6 +40,7 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -172,7 +173,7 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 
 			String msgCompletato = extendedServlet.getTestoModificaEffettuata(TipoOperazione.ADD, consoleHelper);
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
-				pd.setMessage(msgCompletato);
+				pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
 			}
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

@@ -457,7 +457,7 @@ public final class SoggettiChange extends Action {
 
 							bf.append("<br>");
 							isOk = false;
-							pd.setMessage(bf.toString());
+							pd.setMessage(bf.toString(), Costanti.MESSAGE_TYPE_INFO);
 						} 
 					}
 				}
@@ -497,7 +497,7 @@ public final class SoggettiChange extends Action {
 
 						bf.append("<br>");
 						isOk = false;
-						pd.setMessage(bf.toString());
+						pd.setMessage(bf.toString(),Costanti.MESSAGE_TYPE_INFO);
 					} 
 				}
 			}

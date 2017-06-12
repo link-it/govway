@@ -286,8 +286,17 @@ public class PageData {
     }
     
     public boolean isPageBodyEmpty(){
-    	if(this.dati.size() > 0) 
-    		return false; // dati presenti.
+    	if(this.dati.size() > 0) {
+    		// conto i campi non hidden
+    		int nonHidden = 0;
+    		for(int i = 0; i < this.dati.size(); i++){
+    			DataElement de = (DataElement) this.dati.get(i);
+    			if(!de.getType().equals(DataElementType.HIDDEN.toString()))
+    				nonHidden ++;
+    		}
+    			
+    		return nonHidden == 0; // dati presenti se c'e' almeno un elemento non hidden.
+    	}
 
    		if(this.mode.equals(Costanti.DATA_ELEMENT_VIEW_NAME))
     		return false; // c'e' sempre qualcosa o bottoni o tasto edit

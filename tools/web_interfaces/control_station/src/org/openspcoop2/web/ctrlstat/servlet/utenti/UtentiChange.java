@@ -340,7 +340,7 @@ public final class UtentiChange extends Action {
 						isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi,  uws, paginaSuAccordi, uwp);
 
 				pd.setDati(dati);
-				pd.setMessage(msg);
+				pd.setMessage(msg,Costanti.MESSAGE_TYPE_INFO);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

@@ -468,7 +468,7 @@ public final class ConfigurazioneGenerale extends Action {
 
 				pd.setDati(dati);
 
-				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO);
+				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
 				pd.disableEditMode();
 				
