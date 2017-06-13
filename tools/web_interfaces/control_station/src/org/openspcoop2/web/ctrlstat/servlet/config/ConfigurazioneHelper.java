@@ -3086,9 +3086,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 	
+	private void addInformazioneNonDisponibile(Vector<DataElement> dati, String label){
+		DataElement de = new DataElement();
+		de.setLabel(label);
+		de.setValue(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+		de.setType(DataElementType.TEXT);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+	}
+	
 	public Vector<DataElement> addConfigurazioneSistema(Vector<DataElement> dati, String alias) throws Exception {
+	
+		
+		Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
+		
+		
 		
 		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME);
+		dati.addElement(de);
+				
+		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setType(DataElementType.HIDDEN);
@@ -3105,10 +3124,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
-		
-		Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
-		
-		
+
 		boolean resetAllCaches = false;
 		List<String> caches = this.confCore.getJmxPdD_caches(alias);
 		if(caches!=null && caches.size()>0){
@@ -3153,10 +3169,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		}		
 		
-		
-		
 
-		
+				
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI);
 		de.setType(DataElementType.TITLE);
@@ -3197,7 +3211,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(versioneBaseDati!=null){
 					versioneBaseDati = StringEscapeUtils.escapeHtml(versioneBaseDati);
 				}
-				versioneBaseDati = versioneBaseDati.replaceAll("\n", "<br/>");
+				//versioneBaseDati = versioneBaseDati.replaceAll("\n", "<br/>");
 			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della versione della base dati (jmxResourcePdD): "+e.getMessage(),e);
@@ -3206,8 +3220,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
 		de.setValue(versioneBaseDati);
-		de.setType(DataElementType.TEXT);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
+		de.setRows(4);
+		de.setCols(60);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
@@ -3225,7 +3241,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(confDir!=null){
 					confDir = StringEscapeUtils.escapeHtml(confDir);
 				}
-				confDir = confDir.replaceAll("\n", "<br/>");
+				//confDir = confDir.replaceAll("\n", "<br/>");
 			}
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura della directory di configurazione (jmxResourcePdD): "+e.getMessage(),e);
@@ -3234,8 +3250,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
 		de.setValue(confDir);
-		de.setType(DataElementType.TEXT);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
+		de.setRows(4);
+		de.setCols(60);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
@@ -3320,6 +3338,81 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI);
+		dati.addElement(de);
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
+			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
+		}
+		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
+			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
+		}
+			
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(alias));
+			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sullo stato del servizio Integration Manager (jmxResourcePdD): "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
+		}
+		
+		
+		
+		
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -3344,12 +3437,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 		}
 		
 		try{
@@ -3378,12 +3466,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul livello dei diagnostici log4j (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 		}
 		
 		try{
@@ -3394,7 +3477,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -3402,12 +3486,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL);
 		}
 		
 		try{
@@ -3418,7 +3497,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -3426,12 +3506,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2.log (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL);
 		}
 		
 		try{
@@ -3442,7 +3517,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -3450,12 +3526,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL);
 		}
 
 		
@@ -3493,12 +3564,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul tracciamento (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 		}
 		
 		try{
@@ -3526,12 +3592,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul dump applicativo (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
 		}
 			
 		try{
@@ -3543,7 +3604,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -3553,12 +3615,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
 		}
 			
 		try{
@@ -3570,7 +3627,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -3580,12 +3638,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL);
 		}
 		
 		try{
@@ -3596,7 +3649,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -3604,12 +3658,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL);
 		}
 		
 		try{
@@ -3620,7 +3669,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -3628,12 +3678,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_dump.log (jmxResourcePdD): "+e.getMessage(),e);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
 		}
 
 		
@@ -3658,11 +3703,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoDatabase==null || infoDatabase.length<=0){
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, "");
 		}
 		else{
 			for (int i = 0; i < infoDatabase.length; i++) {
@@ -3709,11 +3750,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoSSL==null || infoSSL.length<=0){
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, "");
 		}
 		else{
 			for (int i = 0; i < infoSSL.length; i++) {
@@ -3762,11 +3799,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
 			}
 			if(infoCryptoKeyLength==null || infoCryptoKeyLength.length<=0){
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-				de.setType(DataElementType.NOTE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+				addInformazioneNonDisponibile(dati, "");
 			}
 			else{
 				for (int i = 0; i < infoCryptoKeyLength.length; i++) {
@@ -3816,11 +3849,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoInternazionalizzazione==null || infoInternazionalizzazione.length<=0){
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, "");
 		}
 		else{
 			for (int i = 0; i < infoInternazionalizzazione.length; i++) {
@@ -3877,11 +3906,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoTimezone==null || infoTimezone.length<=0){
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, "");
 		}
 		else{
 			for (int i = 0; i < infoTimezone.length; i++) {
@@ -3933,11 +3958,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura delle informazioni sui protocolli (jmxResourcePdD): "+e.getMessage(),e);
 		}
 		if(infoProtocolli==null || infoProtocolli.length<=0){
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			addInformazioneNonDisponibile(dati, "");
 		}
 		else{
 			boolean addProtocollo = false;
@@ -3996,22 +4017,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(!addProtocollo){
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-				de.setType(DataElementType.NOTE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+				addInformazioneNonDisponibile(dati, "");
 			}
 		}
 		
 		caches = this.confCore.getJmxPdD_caches(alias);
 		if(caches!=null && caches.size()>0){
 			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
 			for (String cache : caches) {
 			
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE+cache);
-				de.setType(DataElementType.TITLE);
+				de.setLabel(cache);
+				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 				
 				String stato = null;
@@ -4032,15 +4054,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
 					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 				}
-				
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
-				de.setValue(stato);
-				de.setType(DataElementType.TEXT);
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-				
+								
 				if("abilitata".equals(stato)){
 					
 					de = new DataElement();
@@ -4054,6 +4068,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 					de.setSize(this.getSize());
 					dati.addElement(de);
+					
+				}
+				
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
+				de.setValue(stato);
+				de.setType(DataElementType.TEXT);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				if("abilitata".equals(stato)){
 					
 					String [] params = null;
 					try{
@@ -4101,9 +4127,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		
 		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		String stato = null;
@@ -4132,10 +4164,51 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
+			if(this.isErroreHttp(stato, "stato delle connessioni JMS")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
+		
+		
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		stato = null;
@@ -4165,10 +4238,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		stato = null;
@@ -4196,39 +4268,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setCols(80);
 		dati.addElement(de);
 		
-		
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-		
-		stato = null;
-		try{
-			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
-			if(this.isErroreHttp(stato, "stato delle connessioni JMS")){
-				// e' un errore
-				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-			}
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura dello stato delle connessioni JMS (jmxResourcePdD): "+e.getMessage(),e);
-			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
-		de.setValue(stato);
-		de.setLabelAffiancata(false);
-		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS);
-		de.setSize(this.getSize());
-		de.setRows(6);
-		de.setCols(80);
-		dati.addElement(de);
-		
-		
+
 		return dati;
 	}
 

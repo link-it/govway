@@ -98,27 +98,27 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 //	private String componenteIM = CostantiConfigurazione.ABILITATO.getValue();
 	
 	// uso anzi sempre la lettura effettiva, altrimenti si creano situazioni di stallo quando una cache della configurazione media il salvataggio reale
-	private String getComponentePD(){
+	public String getComponentePD(){
 		return StatoServiziPdD.isPDServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 	}
-	private String getComponentePD_abilitazioniPuntuali(){
+	public String getComponentePD_abilitazioniPuntuali(){
 		return visualizzaFiltriAbilitazioniServizioPortaDelegata();
 	}
-	private String getComponentePD_disabilitazioniPuntuali(){
+	public String getComponentePD_disabilitazioniPuntuali(){
 		return visualizzaFiltriDisabilitazioniServizioPortaDelegata();
 	}
 	
-	private String getComponentePA(){
+	public String getComponentePA(){
 		return StatoServiziPdD.isPAServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 	}
-	private String getComponentePA_abilitazioniPuntuali(){
+	public String getComponentePA_abilitazioniPuntuali(){
 		return visualizzaFiltriAbilitazioniServizioPortaApplicativa();
 	}
-	private String getComponentePA_disabilitazioniPuntuali(){
+	public String getComponentePA_disabilitazioniPuntuali(){
 		return visualizzaFiltriDisabilitazioniServizioPortaApplicativa();
 	}
 	
-	private String getComponenteIM(){
+	public String getComponenteIM(){
 		return StatoServiziPdD.isIMServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 	}
 
@@ -559,7 +559,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 
 
 	/* Costruttore */
-	public StatoServiziJMXResource() throws Exception{
+	public StatoServiziJMXResource() {
 
 		
 	}

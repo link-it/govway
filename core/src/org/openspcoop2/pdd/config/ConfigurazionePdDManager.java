@@ -386,6 +386,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getLocalForward_NomePortaApplicativa(pd);
 	}
 	
+	public boolean isPortaAbilitata(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.isPortaAbilitata(pd);
+	}
+	
 	public List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pd);
 	}
@@ -565,6 +569,10 @@ public class ConfigurazionePdDManager {
 	public boolean autorizzazioneRoles(PortaApplicativa pa, Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazioneRoles(pa, soggetto, infoConnettoreIngresso, checkRuoloRegistro, checkRuoloEsterno);
+	}
+	
+	public boolean isPortaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.isPortaAbilitata(pa);
 	}
 	
 	public List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{

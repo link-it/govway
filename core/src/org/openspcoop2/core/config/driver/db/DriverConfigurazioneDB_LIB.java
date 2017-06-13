@@ -1366,6 +1366,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("local_forward", "?");
 				sqlQueryObject.addInsertField("local_forward_pa", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
@@ -1431,6 +1432,9 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
 				
+				// Stato
+				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
+				
 				//idaccordo
 				stm.setLong(index++, aPD.getIdAccordo()!=null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() !=null ? aPD.getIdPortType() : -1L);
@@ -1449,7 +1453,11 @@ public class DriverConfigurazioneDB_LIB {
 								(aPD.getValidazioneContenutiApplicativi()!=null ? aPD.getValidazioneContenutiApplicativi().getStato() : null),
 								(aPD.getValidazioneContenutiApplicativi()!=null ? aPD.getValidazioneContenutiApplicativi().getTipo() : null),
 								(aPD.getValidazioneContenutiApplicativi()!=null ? aPD.getValidazioneContenutiApplicativi().getAcceptMtomMessage() : null),
-								aPD.getAllegaBody(),aPD.getScartaBody(),aPD.getGestioneManifest(),aPD.getStateless(),aPD.getLocalForward(),aPD.getIdAccordo(),aPD.getIdPortType()));
+								aPD.getAllegaBody(),aPD.getScartaBody(),aPD.getGestioneManifest(),aPD.getStateless(),aPD.getLocalForward(),
+								(aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
+										aPD.getRuoli().getMatch().getValue() : null),
+								aPD.getStato(),
+								aPD.getIdAccordo(),aPD.getIdPortType()));
 				n = stm.executeUpdate();
 				stm.close();
 
@@ -1840,6 +1848,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("local_forward", "?");
 				sqlQueryObject.addUpdateField("local_forward_pa", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addWhereCondition("id=?");
@@ -1901,6 +1910,8 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
+				// Stato
+				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
 				//idAccordo
 				stm.setLong(index++,aPD.getIdAccordo() != null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() != null ? aPD.getIdPortType() : -1L);
@@ -3280,6 +3291,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("autorizzazione", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
 				sqlQueryObject.addInsertField("scadenza_correlazione_appl", "?");
@@ -3343,6 +3355,9 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				
+				// Stato
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
 				
 				//idaccordo
 				stm.setLong(index++, aPA.getIdAccordo()!=null ? aPA.getIdAccordo() : -1L);
@@ -3731,6 +3746,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addUpdateField("scadenza_correlazione_appl", "?");
@@ -3801,6 +3817,8 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				// Stato
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
 				// id
 				stm.setLong(index++, aPA.getIdAccordo() !=null ? aPA.getIdAccordo() : -1L);
 				stm.setLong(index++, aPA.getIdPortType() !=null ? aPA.getIdPortType() : -1L);

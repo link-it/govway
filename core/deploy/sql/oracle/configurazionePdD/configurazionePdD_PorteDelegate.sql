@@ -75,6 +75,8 @@ CREATE TABLE porte_delegate
 	local_forward_pa VARCHAR2(255),
 	-- all/any
 	ruoli_match VARCHAR2(255),
+	-- abilitato/disabilitato
+	stato VARCHAR2(255),
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,

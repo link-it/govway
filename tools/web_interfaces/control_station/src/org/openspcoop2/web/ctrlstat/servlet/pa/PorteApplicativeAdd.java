@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -111,6 +112,7 @@ public final class PorteApplicativeAdd extends Action {
 			String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
+			String statoPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA);
 			String soggvirt = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
 			if (soggvirt == null || "".equals(soggvirt)) {
 				soggvirt = "-";
@@ -466,7 +468,8 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
-						servS,as);
+						servS,as,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -507,7 +510,8 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
-						servS,as);
+						servS,as,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -523,6 +527,12 @@ public final class PorteApplicativeAdd extends Action {
 			pa.setNomeSoggettoProprietario(nomeSoggettoProprietario);
 			pa.setTipoSoggettoProprietario(tipoSoggettoProprietario);
 			pa.setDescrizione(descr);
+			if(statoPorta==null || "".equals(statoPorta) || CostantiConfigurazione.ABILITATO.toString().equals(statoPorta)){
+				pa.setStato(StatoFunzionalita.ABILITATO);
+			}
+			else{
+				pa.setStato(StatoFunzionalita.DISABILITATO);
+			}
 			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			
 			if (autenticazione == null ||

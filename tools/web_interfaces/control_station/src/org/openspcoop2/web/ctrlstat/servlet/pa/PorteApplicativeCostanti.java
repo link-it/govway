@@ -212,10 +212,12 @@ public class PorteApplicativeCostanti {
 	
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI = "Dati Generali";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO = "Dati Servizio";
+	public final static String LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA = "Abilitato";
 	
 	/* PARAMETRI */
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ID = "id";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA = "statoPorta";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA = "nomePorta";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO = "idsogg";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_PROVIDER = "provider";
@@ -268,6 +270,7 @@ public class PorteApplicativeCostanti {
 	/* LABEL PARAMETRI */
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID = "Id";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO = "IdSogg";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA = "idCorr";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI = "Soggetti";

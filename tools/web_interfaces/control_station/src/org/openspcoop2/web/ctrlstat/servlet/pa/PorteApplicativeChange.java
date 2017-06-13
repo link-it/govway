@@ -44,6 +44,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -119,6 +120,7 @@ public final class PorteApplicativeChange extends Action {
 			String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
+			String statoPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA);
 			String soggvirt = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
 			IDSoggetto idSoggettoVirtuale = null;
 			if ((soggvirt != null) && !soggvirt.equals("") && !soggvirt.equals("-")) {
@@ -289,6 +291,9 @@ public final class PorteApplicativeChange extends Action {
 
 				if (descr == null) {
 					descr = pa.getDescrizione();
+				}
+				if (statoPorta == null) {
+					statoPorta = pa.getStato()!=null ? pa.getStato().getValue() : CostantiConfigurazione.ABILITATO.getValue();
 				}
 				if (stateless == null) {
 					if(pa.getStateless()!=null)
@@ -668,7 +673,8 @@ public final class PorteApplicativeChange extends Action {
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
-						servS,as);
+						servS,as,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -872,7 +878,8 @@ public final class PorteApplicativeChange extends Action {
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
-						servS,as);
+						servS,as,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -888,6 +895,12 @@ public final class PorteApplicativeChange extends Action {
 			oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
 			pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 			pa.setDescrizione(descr);
+			if(statoPorta==null || "".equals(statoPorta) || CostantiConfigurazione.ABILITATO.toString().equals(statoPorta)){
+				pa.setStato(StatoFunzionalita.ABILITATO);
+			}
+			else{
+				pa.setStato(StatoFunzionalita.DISABILITATO);
+			}
 			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			
 			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))

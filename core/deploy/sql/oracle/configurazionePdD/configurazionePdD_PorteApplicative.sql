@@ -64,6 +64,8 @@ CREATE TABLE porte_applicative
 	autorizzazione_contenuto VARCHAR2(255),
 	-- all/any
 	ruoli_match VARCHAR2(255),
+	-- abilitato/disabilitato
+	stato VARCHAR2(255),
 	-- proprietario porta applicativa
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,

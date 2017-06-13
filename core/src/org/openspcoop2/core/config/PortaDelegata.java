@@ -71,6 +71,7 @@ import java.util.List;
  * 		&lt;attribute name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -490,6 +491,26 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.stateless = stateless;
   }
 
+  public void set_value_stato(String value) {
+    this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_stato() {
+    if(this.stato == null){
+    	return null;
+    }else{
+    	return this.stato.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getStato() {
+    return this.stato;
+  }
+
+  public void setStato(org.openspcoop2.core.config.constants.StatoFunzionalita stato) {
+    this.stato = stato;
+  }
+
   public java.util.Date getOraRegistrazione() {
     return this.oraRegistrazione;
   }
@@ -696,6 +717,12 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlAttribute(name="stateless",required=false)
   protected StatoFunzionalita stateless;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_stato;
+
+  @XmlAttribute(name="stato",required=false)
+  protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

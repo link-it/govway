@@ -65,6 +65,7 @@
     <value name="scarta-body" field="scartaBody" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="gestione-manifest" field="gestioneManifest" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="stateless" field="stateless" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="stato" field="stato" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="soggetto-erogatore" class="org.openspcoop2.core.config.PortaDelegataSoggettoErogatore">
@@ -131,6 +132,7 @@
     <value name="autenticazione-opzionale" field="autenticazioneOpzionale" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="autorizzazione" field="autorizzazione" default="authenticated" usage="optional" style="attribute"/>
     <value name="autorizzazione-contenuto" field="autorizzazioneContenuto" usage="optional" style="attribute"/>
+    <value name="stato" field="stato" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="soggetto-virtuale" class="org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale">

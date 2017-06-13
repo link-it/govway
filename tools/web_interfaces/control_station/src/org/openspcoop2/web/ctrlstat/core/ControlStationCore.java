@@ -679,6 +679,20 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = new Hashtable<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
 	private Map<String, String> jmxPdD_cache_type = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_cache_nomeAttributo_cacheAbilitata = new Hashtable<String, String>();
@@ -851,6 +865,48 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager.get(alias);
 	}
 	public List<String> getJmxPdD_caches(String alias) {
 		return this.jmxPdD_caches.get(alias);
@@ -1276,6 +1332,20 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump;
+		this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali;
+		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager;
 		this.jmxPdD_caches = core.jmxPdD_caches;
 		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
 		this.jmxPdD_cache_nomeAttributo_cacheAbilitata = core.jmxPdD_cache_nomeAttributo_cacheAbilitata;
@@ -1588,6 +1658,20 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jIntegrationManager(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jTracciamento(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(alias));
+					this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(alias));
+					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioIntegrationManager(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
 					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));
 					this.jmxPdD_cache_nomeAttributo_cacheAbilitata.put(alias, consoleProperties.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));

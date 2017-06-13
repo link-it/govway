@@ -125,6 +125,9 @@
 		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita"/>
 		<xsd:attribute name="stateless" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
 		</xsd:attribute>
@@ -228,6 +231,9 @@
 			
 		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
 		</xsd:attribute>

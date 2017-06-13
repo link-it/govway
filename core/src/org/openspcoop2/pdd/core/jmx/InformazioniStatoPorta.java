@@ -32,6 +32,9 @@ public class InformazioniStatoPorta {
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
 			String confDir, String versioneJava, String vendorJava, String messageFactory,
+			String statoServizioPD,String statoServizioPD_abilitazioni,String statoServizioPD_disabilitazioni,
+			String statoServizioPA,String statoServizioPA_abilitazioni,String statoServizioPA_disabilitazioni,
+			String statoServizioIM,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA,
@@ -40,6 +43,9 @@ public class InformazioniStatoPorta {
 			String infoInternazionalizzazione, String infoTimeZone,  String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
 		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
+				statoServizioPD,statoServizioPD_abilitazioni,statoServizioPD_disabilitazioni,
+				statoServizioPA,statoServizioPA_abilitazioni,statoServizioPA_disabilitazioni,
+				statoServizioIM,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
 				tracciamento, dumpApplicativo, dumpPD, dumpPA,
@@ -53,6 +59,9 @@ public class InformazioniStatoPorta {
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
 			String confDir, String versioneJava, String vendorJava, String messageFactory,
+			String statoServizioPD,String statoServizioPD_abilitazioni,String statoServizioPD_disabilitazioni,
+			String statoServizioPA,String statoServizioPA_abilitazioni,String statoServizioPA_disabilitazioni,
+			String statoServizioIM,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA, 
@@ -82,6 +91,26 @@ public class InformazioniStatoPorta {
 		format(bf, versioneJava, "Versione Java");
 		bf.append("\n");
 		format(bf, messageFactory, "Message Factory");
+		bf.append("\n");
+		
+		bf.append("\n");
+		bf.append("================================\n");
+		bf.append("Stato Servizi Porta di Dominio\n");
+		bf.append("================================\n");
+		bf.append("\n");
+		format(bf, statoServizioPD, "Porta Delegata");
+		bf.append("\n");
+		format(bf, statoServizioPD_abilitazioni, "Porta Delegata (abilitazioni puntuali)");
+		bf.append("\n");
+		format(bf, statoServizioPD_disabilitazioni, "Porta Delegata (disabilitazioni puntuali)");
+		bf.append("\n");
+		format(bf, statoServizioPA, "Porta Applicativa");
+		bf.append("\n");
+		format(bf, statoServizioPA_abilitazioni, "Porta Applicativa (abilitazioni puntuali)");
+		bf.append("\n");
+		format(bf, statoServizioPA_disabilitazioni, "Porta Applicativa (disabilitazioni puntuali)");
+		bf.append("\n");
+		format(bf, statoServizioIM, "Integration Manager");
 		bf.append("\n");
 		
 		bf.append("===========================\n");

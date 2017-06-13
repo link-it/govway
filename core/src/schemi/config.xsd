@@ -80,6 +80,7 @@
 		<xsd:attribute name="scarta-body" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita" />
 		<xsd:attribute name="stateless" type="StatoFunzionalita" />
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato" />
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.SoggettoErogatore -->
@@ -141,6 +142,7 @@
 		<xsd:attribute name="autenticazione-opzionale" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="autorizzazione" type="xsd:string" default="authenticated"/>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato" />
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa.SoggettoVirtuale -->

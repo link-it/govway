@@ -215,6 +215,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			if(nomeParametroPostBack!=null && !"".equals(nomeParametroPostBack)){
 			
 				String nomeAttributo = null;
+				String nomeMetodoJmx = null;
 				Object nuovoStato = null;
 				String tipo = null;
 				try{
@@ -248,6 +249,36 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA));
 						tipo = "stato del dump binario della Porta Applicativa";
 					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD.equals(nomeParametroPostBack)){
+						nuovoStato = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
+						if(CostantiConfigurazione.ABILITATO.getValue().equals(nuovoStato)){
+							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaDelegata(alias);
+						}
+						else{
+							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaDelegata(alias);
+						}
+						tipo = "stato del servizio Porta Applicativa";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA.equals(nomeParametroPostBack)){
+						nuovoStato = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
+						if(CostantiConfigurazione.ABILITATO.getValue().equals(nuovoStato)){
+							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioPortaApplicativa(alias);
+						}
+						else{
+							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa(alias);
+						}
+						tipo = "stato del servizio Integration Manager";
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM.equals(nomeParametroPostBack)){
+						nuovoStato = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
+						if(CostantiConfigurazione.ABILITATO.getValue().equals(nuovoStato)){
+							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(alias);
+						}
+						else{
+							nomeMetodoJmx = confCore.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(alias);
+						}
+						tipo = "stato del servizio Porta Delegata";
+					}
 				
 					if(nomeAttributo!=null){
 						confCore.setJMXAttribute(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
@@ -256,6 +287,18 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							nuovoStato);
 						String tmp = "Configurazione aggiornata con successo ("+tipo+"): "+nuovoStato;
 						tmp += ConfigurazioneCostanti.TEMPORANEE;
+						if(messagePerOperazioneEffettuata!=null){
+							messagePerOperazioneEffettuata+="\n"+tmp;
+						}
+						else{
+							messagePerOperazioneEffettuata = tmp;
+						}
+					}
+					else if(nomeMetodoJmx!=null){
+						String tmp = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(alias),alias, confCore.getJmxPdD_cache_type(alias), 
+								confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias), 
+								nomeMetodoJmx);
+						tmp += ConfigurazioneCostanti.PERSISTENTI;
 						if(messagePerOperazioneEffettuata!=null){
 							messagePerOperazioneEffettuata+="\n"+tmp;
 						}

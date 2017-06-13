@@ -745,7 +745,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			String autenticazioneOpzionale, String autenticazioneCustom, String autorizzazioneCustom,
 			boolean isSupportatoAutenticazioneSoggetti,
 			String autorizzazioneAutenticati,String autorizzazioneRuoli,String autorizzazioneRuoliTipologia,
-			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc) throws Exception {
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,
+			String statoPorta) throws Exception {
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -800,6 +801,19 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		de.setSize(alternativeSize);
 		dati.addElement(de);
 
+		List<String> statoValues = new ArrayList<>();
+		statoValues.add(CostantiConfigurazione.ABILITATO.toString());
+		statoValues.add(CostantiConfigurazione.DISABILITATO.toString());
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA);
+		de.setValues(statoValues);
+		if(statoPorta==null || "".equals(statoPorta)){
+			statoPorta = CostantiConfigurazione.ABILITATO.toString();
+		}
+		de.setSelected(statoPorta);
+		de.setType(DataElementType.SELECT);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA);
+		dati.addElement(de);
 
 		
 		
@@ -1054,9 +1068,13 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE;
 		}
 		
+		int sizeFruitori = 0;
+		if(asps!=null){
+			sizeFruitori = asps.sizeFruitoreList();
+		}
 		this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,
 				autenticazione, autorizzazione, autorizzazioneCustom, 
-				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, asps.sizeFruitoreList(), null, null,
+				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 				autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 				autorizzazioneRuoliTipologia, ruoloMatch,
 				confPers, isSupportatoAutenticazioneSoggetti, contaListe, false);
@@ -1522,6 +1540,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			if(useIdSogg==false){
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
 			}
+
 			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
 			if(isModalitaAvanzata){
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
@@ -1541,6 +1560,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				listaLabel.add(extendedServletList.getListTitle(this));
 			}
+			
+			listaLabel.add(PorteApplicativeCostanti.LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA);
 			
 			String[] labels = listaLabel.toArray(new String[listaLabel.size()]);
 			this.pd.setLabels(labels);
@@ -1580,7 +1601,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						de.setValue(pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario());
 						e.addElement(de);
 					}
-
+					
 //					de = new DataElement();
 //					de.setValue(pa.getDescrizione());
 //					e.addElement(de);
@@ -1746,6 +1767,14 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
 					}
+					
+					de = new DataElement();
+					boolean abilitatoPorta = pa.getStato()!=null ? CostantiConfigurazione.ABILITATO.equals(pa.getStato()) : true;
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(abilitatoPorta);
+					de.setToolTip(abilitatoPorta?CostantiConfigurazione.ABILITATO.getValue():CostantiConfigurazione.DISABILITATO.getValue());
+					de.setValue(abilitatoPorta+"");
+					e.addElement(de);
 					
 					dati.addElement(e);
 				}

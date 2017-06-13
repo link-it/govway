@@ -103,7 +103,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			int numSA, int numRuoli, String ruoloMatch, String statoMessageSecurity,String statoMTOM ,int numCorrelazioneReq , 
 			int numCorrelazioneRes,String forceWsdlBased, String applicaMTOM,
 			boolean riusoId,
-			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,ServiceBinding serviceBinding) throws Exception {
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,ServiceBinding serviceBinding,
+			String statoPorta) throws Exception {
 
 
 
@@ -131,6 +132,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 		dati.addElement(de);
+		
+
+		
 
 		
 		// *************** Dati Generali: Nome/Descrizione *********************
@@ -160,6 +164,20 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 		de.setSize(alternativeSize);
+		dati.addElement(de);
+		
+		List<String> statoValues = new ArrayList<>();
+		statoValues.add(CostantiConfigurazione.ABILITATO.toString());
+		statoValues.add(CostantiConfigurazione.DISABILITATO.toString());
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
+		de.setValues(statoValues);
+		if(statoPorta==null || "".equals(statoPorta)){
+			statoPorta = CostantiConfigurazione.ABILITATO.toString();
+		}
+		de.setSelected(statoPorta);
+		de.setType(DataElementType.SELECT);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
 		dati.addElement(de);
 
 		
@@ -1978,7 +1996,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				labelsList.add(extendedServletList.getListTitle(this));
 			}
-
+			labelsList.add(PorteDelegateCostanti.LABEL_COLUMN_PORTE_DELEGATE_STATO_PORTA);
+			
 			String[] labels = labelsList.toArray(new String[labelsList.size()]);
 
 			this.pd.setLabels(labels);
@@ -2017,7 +2036,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 						de.setValue(pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario());
 						e.addElement(de);
 					}
-					
+										
 //					de = new DataElement();
 //					de.setValue(pd.getDescrizione());
 //					e.addElement(de);
@@ -2169,6 +2188,14 @@ public class PorteDelegateHelper extends ConsoleHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
 					}
+					
+					de = new DataElement();
+					boolean abilitatoPorta = pd.getStato()!=null ? CostantiConfigurazione.ABILITATO.equals(pd.getStato()) : true;
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(abilitatoPorta);
+					de.setToolTip(abilitatoPorta?CostantiConfigurazione.ABILITATO.getValue():CostantiConfigurazione.DISABILITATO.getValue());
+					de.setValue(abilitatoPorta+"");
+					e.addElement(de);
 					
 					dati.addElement(e);
 				}

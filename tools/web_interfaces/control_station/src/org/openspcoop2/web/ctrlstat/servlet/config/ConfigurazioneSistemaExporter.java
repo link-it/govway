@@ -169,6 +169,76 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String statoServizioPD = null;
+		try{
+			statoServizioPD = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
+			statoServizioPD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoServizioPD_abilitazioni = null;
+		try{
+			statoServizioPD_abilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataAbilitazioniPuntuali(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Delegata 'Abilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
+			statoServizioPD_abilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoServizioPD_disabilitazioni = null;
+		try{
+			statoServizioPD_disabilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegataDisabilitazioniPuntuali(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Delegata 'Disabilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
+			statoServizioPD_disabilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoServizioPA = null;
+		try{
+			statoServizioPA = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Applicativa (jmxResourcePdD): "+e.getMessage(),e);
+			statoServizioPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoServizioPA_abilitazioni = null;
+		try{
+			statoServizioPA_abilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaAbilitazioniPuntuali(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Applicativa 'Abilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
+			statoServizioPA_abilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoServizioPA_disabilitazioni = null;
+		try{
+			statoServizioPA_disabilitazioni = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativaDisabilitazioniPuntuali(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Porta Applicativa 'Disabilitazioni Puntuali' (jmxResourcePdD): "+e.getMessage(),e);
+			statoServizioPA_disabilitazioni = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoServizioIM = null;
+		try{
+			statoServizioIM = confCore.readJMXAttribute(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaApplicativa(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del servizio Integration Manager (jmxResourcePdD): "+e.getMessage(),e);
+			statoServizioIM = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String livelloSeveritaDiagnostici = null;
 		try{
 			livelloSeveritaDiagnostici = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -420,6 +490,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		}
 		
 		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
+				statoServizioPD,statoServizioPD_abilitazioni,statoServizioPD_disabilitazioni,
+				statoServizioPA,statoServizioPA_abilitazioni,statoServizioPA_disabilitazioni,
+				statoServizioIM,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
 				"true".equals(tracciamento), "true".equals(dumpApplicativo), "true".equals(dumpPD), "true".equals(dumpPA),

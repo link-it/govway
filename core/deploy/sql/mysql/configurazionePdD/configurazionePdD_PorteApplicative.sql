@@ -62,6 +62,8 @@ CREATE TABLE porte_applicative
 	autorizzazione_contenuto VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
+	-- abilitato/disabilitato
+	stato VARCHAR(255),
 	-- proprietario porta applicativa
 	id_soggetto BIGINT NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'

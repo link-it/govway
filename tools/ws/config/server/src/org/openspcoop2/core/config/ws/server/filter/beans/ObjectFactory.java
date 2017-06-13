@@ -42,73 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link InvocazioneCredenziali }
+     * Create an instance of {@link MtomProcessor }
      */
-    public InvocazioneCredenziali createInvocazioneCredenziali() {
-        return new InvocazioneCredenziali();
-    }
-    
-    /**
-     * Create an instance of {@link PortaApplicativaAzione }
-     */
-    public PortaApplicativaAzione createPortaApplicativaAzione() {
-        return new PortaApplicativaAzione();
-    }
-    
-    /**
-     * Create an instance of {@link PortaApplicativaSoggettoVirtuale }
-     */
-    public PortaApplicativaSoggettoVirtuale createPortaApplicativaSoggettoVirtuale() {
-        return new PortaApplicativaSoggettoVirtuale();
-    }
-    
-    /**
-     * Create an instance of {@link PortaApplicativaServizio }
-     */
-    public PortaApplicativaServizio createPortaApplicativaServizio() {
-        return new PortaApplicativaServizio();
-    }
-    
-    /**
-     * Create an instance of {@link AutorizzazioneRuoli }
-     */
-    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
-        return new AutorizzazioneRuoli();
-    }
-    
-    /**
-     * Create an instance of {@link InvocazionePortaGestioneErrore }
-     */
-    public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
-        return new InvocazionePortaGestioneErrore();
-    }
-    
-    /**
-     * Create an instance of {@link MtomProcessorFlow }
-     */
-    public MtomProcessorFlow createMtomProcessorFlow() {
-        return new MtomProcessorFlow();
-    }
-    
-    /**
-     * Create an instance of {@link PortaDelegataSoggettoErogatore }
-     */
-    public PortaDelegataSoggettoErogatore createPortaDelegataSoggettoErogatore() {
-        return new PortaDelegataSoggettoErogatore();
-    }
-    
-    /**
-     * Create an instance of {@link PortaDelegataAzione }
-     */
-    public PortaDelegataAzione createPortaDelegataAzione() {
-        return new PortaDelegataAzione();
-    }
-    
-    /**
-     * Create an instance of {@link RispostaAsincrona }
-     */
-    public RispostaAsincrona createRispostaAsincrona() {
-        return new RispostaAsincrona();
+    public MtomProcessor createMtomProcessor() {
+        return new MtomProcessor();
     }
     
     /**
@@ -119,20 +56,6 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link PortaDelegataLocalForward }
-     */
-    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
-        return new PortaDelegataLocalForward();
-    }
-    
-    /**
-     * Create an instance of {@link ValidazioneContenutiApplicativi }
-     */
-    public ValidazioneContenutiApplicativi createValidazioneContenutiApplicativi() {
-        return new ValidazioneContenutiApplicativi();
-    }
-    
-    /**
      * Create an instance of {@link PortaDelegataServizio }
      */
     public PortaDelegataServizio createPortaDelegataServizio() {
@@ -140,10 +63,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link MtomProcessor }
+     * Create an instance of {@link InvocazioneServizio }
      */
-    public MtomProcessor createMtomProcessor() {
-        return new MtomProcessor();
+    public InvocazioneServizio createInvocazioneServizio() {
+        return new InvocazioneServizio();
+    }
+    
+    /**
+     * Create an instance of {@link PortaDelegataAzione }
+     */
+    public PortaDelegataAzione createPortaDelegataAzione() {
+        return new PortaDelegataAzione();
     }
     
     /**
@@ -154,10 +84,80 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link InvocazioneServizio }
+     * Create an instance of {@link InvocazionePortaGestioneErrore }
      */
-    public InvocazioneServizio createInvocazioneServizio() {
-        return new InvocazioneServizio();
+    public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
+        return new InvocazionePortaGestioneErrore();
+    }
+    
+    /**
+     * Create an instance of {@link ValidazioneContenutiApplicativi }
+     */
+    public ValidazioneContenutiApplicativi createValidazioneContenutiApplicativi() {
+        return new ValidazioneContenutiApplicativi();
+    }
+    
+    /**
+     * Create an instance of {@link InvocazioneCredenziali }
+     */
+    public InvocazioneCredenziali createInvocazioneCredenziali() {
+        return new InvocazioneCredenziali();
+    }
+    
+    /**
+     * Create an instance of {@link PortaDelegataLocalForward }
+     */
+    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
+        return new PortaDelegataLocalForward();
+    }
+    
+    /**
+     * Create an instance of {@link PortaApplicativaAzione }
+     */
+    public PortaApplicativaAzione createPortaApplicativaAzione() {
+        return new PortaApplicativaAzione();
+    }
+    
+    /**
+     * Create an instance of {@link MtomProcessorFlow }
+     */
+    public MtomProcessorFlow createMtomProcessorFlow() {
+        return new MtomProcessorFlow();
+    }
+    
+    /**
+     * Create an instance of {@link RispostaAsincrona }
+     */
+    public RispostaAsincrona createRispostaAsincrona() {
+        return new RispostaAsincrona();
+    }
+    
+    /**
+     * Create an instance of {@link PortaApplicativaServizio }
+     */
+    public PortaApplicativaServizio createPortaApplicativaServizio() {
+        return new PortaApplicativaServizio();
+    }
+    
+    /**
+     * Create an instance of {@link PortaApplicativaSoggettoVirtuale }
+     */
+    public PortaApplicativaSoggettoVirtuale createPortaApplicativaSoggettoVirtuale() {
+        return new PortaApplicativaSoggettoVirtuale();
+    }
+    
+    /**
+     * Create an instance of {@link AutorizzazioneRuoli }
+     */
+    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
+        return new AutorizzazioneRuoli();
+    }
+    
+    /**
+     * Create an instance of {@link PortaDelegataSoggettoErogatore }
+     */
+    public PortaDelegataSoggettoErogatore createPortaDelegataSoggettoErogatore() {
+        return new PortaDelegataSoggettoErogatore();
     }
     
 

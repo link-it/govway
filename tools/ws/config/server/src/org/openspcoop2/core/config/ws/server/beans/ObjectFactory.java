@@ -49,20 +49,6 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link WrapperIdSoggetto }
-     */
-    public WrapperIdSoggetto createWrapperIdSoggetto() {
-        return new WrapperIdSoggetto();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdPortaDelegata }
-     */
-    public WrapperIdPortaDelegata createWrapperIdPortaDelegata() {
-        return new WrapperIdPortaDelegata();
-    }
-    
-    /**
      * Create an instance of {@link IdEntity }
      */
     public IdEntity createIdEntity() {
@@ -77,6 +63,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link WrapperIdServizioApplicativo }
+     */
+    public WrapperIdServizioApplicativo createWrapperIdServizioApplicativo() {
+        return new WrapperIdServizioApplicativo();
+    }
+    
+    /**
      * Create an instance of {@link UseInfo }
      */
     public UseInfo createUseInfo() {
@@ -84,10 +77,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link WrapperIdServizioApplicativo }
+     * Create an instance of {@link WrapperIdPortaDelegata }
      */
-    public WrapperIdServizioApplicativo createWrapperIdServizioApplicativo() {
-        return new WrapperIdServizioApplicativo();
+    public WrapperIdPortaDelegata createWrapperIdPortaDelegata() {
+        return new WrapperIdPortaDelegata();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdSoggetto }
+     */
+    public WrapperIdSoggetto createWrapperIdSoggetto() {
+        return new WrapperIdSoggetto();
     }
     
 

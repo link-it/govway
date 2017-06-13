@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -122,6 +123,7 @@ public final class PorteDelegateChange extends Action {
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
+			String statoPorta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
 			String autenticazione = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE );
 			String autenticazioneOpzionale = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE );
 			String autenticazioneCustom = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
@@ -286,6 +288,9 @@ public final class PorteDelegateChange extends Action {
 
 				if (descr == null) {
 					descr = pde.getDescrizione();
+				}
+				if (statoPorta == null) {
+					statoPorta = pde.getStato()!=null ? pde.getStato().getValue() : CostantiConfigurazione.ABILITATO.getValue();
 				}
 				if (stateless == null) {
 					if(pde.getStateless()!=null){
@@ -708,7 +713,8 @@ public final class PorteDelegateChange extends Action {
 						statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,riusoID,
-						servS, as,serviceBinding);
+						servS, as,serviceBinding,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -902,7 +908,8 @@ public final class PorteDelegateChange extends Action {
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,
-						servS, as,serviceBinding);
+						servS, as,serviceBinding,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -944,6 +951,12 @@ public final class PorteDelegateChange extends Action {
 			oldIDPortaDelegataForUpdate.setNome(oldPD.getNome());
 			portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 			portaDelegata.setDescrizione(descr);
+			if(statoPorta==null || "".equals(statoPorta) || CostantiConfigurazione.ABILITATO.toString().equals(statoPorta)){
+				portaDelegata.setStato(StatoFunzionalita.ABILITATO);
+			}
+			else{
+				portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
+			}
 			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
 			else

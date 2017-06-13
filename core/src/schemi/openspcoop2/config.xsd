@@ -282,6 +282,16 @@
 		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita" />
 		<xsd:attribute name="stateless" type="StatoFunzionalita" />
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -507,6 +517,16 @@
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			<xsd:annotation>
 				<xsd:appinfo>

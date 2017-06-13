@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -114,6 +115,7 @@ public final class PorteDelegateAdd extends Action {
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
+			String statoPorta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
 			String autenticazione = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneOpzionale = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
 			String autenticazioneCustom = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
@@ -473,7 +475,8 @@ public final class PorteDelegateAdd extends Action {
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,false,
-						servS,as,serviceBinding);
+						servS,as,serviceBinding,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -519,7 +522,8 @@ public final class PorteDelegateAdd extends Action {
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,false,
-						servS,as,serviceBinding);
+						servS,as,serviceBinding,
+						statoPorta);
 
 				pd.setDati(dati);
 
@@ -546,6 +550,12 @@ public final class PorteDelegateAdd extends Action {
 			PortaDelegata portaDelegata = new PortaDelegata();
 			portaDelegata.setNome(nomePD);
 			portaDelegata.setDescrizione(descr);
+			if(statoPorta==null || "".equals(statoPorta) || CostantiConfigurazione.ABILITATO.toString().equals(statoPorta)){
+				portaDelegata.setStato(StatoFunzionalita.ABILITATO);
+			}
+			else{
+				portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
+			}
 			if (autenticazione == null ||
 					!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);

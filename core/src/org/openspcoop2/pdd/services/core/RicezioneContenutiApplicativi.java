@@ -1400,25 +1400,36 @@ public class RicezioneContenutiApplicativi {
 		 * ---------------- Verifico che il servizio di RicezioneContenutiApplicativi sia abilitato ---------------------
 		 */
 		boolean serviceIsEnabled = false;
+		boolean portaEnabled = false;
 		Exception serviceIsEnabledExceptionProcessamento = null;
 		try{
 			serviceIsEnabled = StatoServiziPdD.isEnabledPortaDelegata(soggettoFruitore, richiestaDelegata.getIdServizio());
+			if(serviceIsEnabled){
+				portaEnabled = configurazionePdDReader.isPortaAbilitata(pd);
+			}
 		}catch(Exception e){
 			serviceIsEnabledExceptionProcessamento = e;
 		}
-		if (!serviceIsEnabled || serviceIsEnabledExceptionProcessamento!=null) {
+		if (!serviceIsEnabled || !portaEnabled  || serviceIsEnabledExceptionProcessamento!=null) {
+			ErroreIntegrazione errore = null;
 			if(serviceIsEnabledExceptionProcessamento!=null){
 				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] Comprensione stato servizio di ricezione contenuti applicativi non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
 				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione contenuti applicativi non riuscita", "PD");
+				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 			}else{
-				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] Servizio di ricezione contenuti applicativi disabilitato");
-				msgDiag.logErroreGenerico("Servizio di ricezione contenuti applicativi disabilitato", "PD");
+				String msg = "Servizio di ricezione contenuti applicativi disabilitato";
+				if(serviceIsEnabled){
+					msg = "Porta Delegata ["+pd.getNome()+"] disabilitata";
+				}
+				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] "+msg);
+				msgDiag.logErroreGenerico(msg, "PD");
+				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE);
 			}
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE),serviceIsEnabledExceptionProcessamento,null)));
+						errore,serviceIsEnabledExceptionProcessamento,null)));
 			}
 			return;
 		}

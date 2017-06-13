@@ -50,6 +50,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
@@ -107,6 +108,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiAp
     "autenticazioneOpzionale",
     "autorizzazione",
     "autorizzazioneContenuto",
+    "stato",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
     "orCondition",
@@ -401,6 +403,18 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	
 	public String getAutorizzazioneContenuto(){
 		return this.autorizzazioneContenuto;
+	}
+	
+	
+	@XmlElement(name="stato",required=false,nillable=false)
+	private StatoFunzionalita stato;
+	
+	public void setStato(StatoFunzionalita stato){
+		this.stato = stato;
+	}
+	
+	public StatoFunzionalita getStato(){
+		return this.stato;
 	}
 	
 	

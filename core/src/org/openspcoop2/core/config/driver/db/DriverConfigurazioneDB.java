@@ -11167,6 +11167,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -11353,6 +11354,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				pa.setAutenticazioneOpzionale(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("autenticazione_opzionale")));
 				pa.setAutorizzazione(rs.getString("autorizzazione"));
 				pa.setAutorizzazioneContenuto(rs.getString("autorizzazione_contenuto"));
+
+				
+				
+				// Stato
+				if(rs.getString("stato")!=null){
+					pa.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato")));
+				}
+
 
 				//mtom
 				MtomProcessor mtomProcessor = null;
@@ -11785,6 +11794,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("local_forward");
 			sqlQueryObject.addSelectField("local_forward_pa");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -12017,6 +12027,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				pdLocalForward.setPortaApplicativa(rs.getString("local_forward_pa"));
 				pd.setLocalForward(pdLocalForward);
 				
+				// Stato
+				if(rs.getString("stato")!=null){
+					pd.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato")));
+				}
+				
+
 				// messageSecurity			
 				String ws_security = rs.getString("ws_security");
 				String ws_security_mtom_req = rs.getString("ws_security_mtom_req");

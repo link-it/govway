@@ -1521,6 +1521,23 @@ public class ConfigurazionePdDReader {
 		return pd.getLocalForward().getPortaApplicativa();
 	}
 
+	protected boolean isPortaAbilitata(PortaDelegata pd) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		if(pd==null){
+			//configurazione di default
+			return true; 
+		}
+
+		if( CostantiConfigurazione.ABILITATO.equals(pd.getStato())  )
+			return true;
+		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getStato())  )
+			return false;
+		else {
+			//configurazione di default
+			return true; 
+		}
+	}
+	
 	protected List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
 
 		if(pd == null || pd.sizeExtendedInfoList()<=0)
@@ -2184,6 +2201,23 @@ public class ConfigurazionePdDReader {
 
 	}
 
+	protected boolean isPortaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+				
+		if(pa==null){
+			//configurazione di default
+			return true; 
+		}
+
+		if( CostantiConfigurazione.ABILITATO.equals(pa.getStato())  )
+			return true;
+		else if( CostantiConfigurazione.DISABILITATO.equals(pa.getStato())  )
+			return false;
+		else {
+			//configurazione di default
+			return true; 
+		}
+	}
+	
 	protected List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		if(pa == null || pa.sizeExtendedInfoList()<=0)

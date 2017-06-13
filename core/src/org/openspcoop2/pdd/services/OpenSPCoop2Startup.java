@@ -71,6 +71,7 @@ import org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema;
 import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
+import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -1350,10 +1351,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_repositoryMessaggi);
 			
 			ConfigurazioneSistema infoConfigSistema = new ConfigurazioneSistema();
+			StatoServiziJMXResource statoServiziPdD = new StatoServiziJMXResource();
 			OpenSPCoop2Logger.getLoggerOpenSPCoopConfigurazioneSistema().
 				info(informazioniStatoPorta.formatStatoPorta(infoConfigSistema.getVersionePdD(), 
 						infoConfigSistema.getVersioneBaseDati(), infoConfigSistema.getDirectoryConfigurazione(), 
 						infoConfigSistema.getVersioneJava(), infoConfigSistema.getVendorJava(), infoConfigSistema.getMessageFactory(),
+						statoServiziPdD.getComponentePD(), statoServiziPdD.getComponentePD_abilitazioniPuntuali(), statoServiziPdD.getComponentePD_disabilitazioniPuntuali(),
+						statoServiziPdD.getComponentePA(), statoServiziPdD.getComponentePA_abilitazioniPuntuali(), statoServiziPdD.getComponentePA_disabilitazioniPuntuali(),
+						statoServiziPdD.getComponenteIM(),
 						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici(),true),
 						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici(),true),
 						OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato, OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato, OpenSPCoop2Logger.loggerIntegrationManagerAbilitato,

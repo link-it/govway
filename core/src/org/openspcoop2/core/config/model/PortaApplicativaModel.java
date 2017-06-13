@@ -71,6 +71,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.AUTENTICAZIONE_OPZIONALE = new Field("autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE = new Field("autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new Field("autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.STATO = new Field("stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
 	}
@@ -110,6 +111,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.AUTENTICAZIONE_OPZIONALE = new ComplexField(father,"autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE = new ComplexField(father,"autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new ComplexField(father,"autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
 	}
@@ -177,6 +179,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField AUTORIZZAZIONE = null;
 	 
 	public IField AUTORIZZAZIONE_CONTENUTO = null;
+	 
+	public IField STATO = null;
 	 
 	public IField ORA_REGISTRAZIONE = null;
 	 

@@ -200,11 +200,13 @@ public class PorteDelegateCostanti {
 	
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI = "Dati Generali";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO = "Dati Servizio";
+	public final static String LABEL_COLUMN_PORTE_DELEGATE_STATO_PORTA = "Abilitato";
 	
 
 	/* PARAMETRI */
 
 	public final static String PARAMETRO_PORTE_DELEGATE_ID = "id";
+	public final static String PARAMETRO_PORTE_DELEGATE_STATO_PORTA = "statoPorta";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME_PORTA = "nomePorta";
 	public final static String PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO = "idsogg";
 	public final static String PARAMETRO_PORTE_DELEGATE_PROVIDER = "provider";
@@ -264,6 +266,7 @@ public class PorteDelegateCostanti {
 	
 	/* LABEL PARAMETRI */
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ID = "Id";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATO_PORTA = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO = "IdSogg";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE = "Soggetto Erogatore";
