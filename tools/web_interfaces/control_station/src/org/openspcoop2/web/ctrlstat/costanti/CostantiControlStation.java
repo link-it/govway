@@ -183,6 +183,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "autorizzazioneRuoli";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
+	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
 	
 	
 	/** DEFAULT VALUES **/

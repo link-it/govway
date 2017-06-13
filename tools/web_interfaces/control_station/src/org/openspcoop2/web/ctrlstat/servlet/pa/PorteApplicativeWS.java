@@ -90,7 +90,9 @@ public final class PorteApplicativeWS extends Action {
 			String statoMessageSecurity = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
 			String applicaMTOMRichiesta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RICHIESTA);
 			String applicaMTOMRisposta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RISPOSTA);
-
+			String applicaModificaS = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA);
+			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -177,7 +179,7 @@ public final class PorteApplicativeWS extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (ServletUtils.isEditModeInProgress(request) && !applicaModifica) {
 
 
 				// preparo i campi

@@ -80,6 +80,8 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 			String algoritmocache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_REGISTRY);
 			String idlecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY);
 			String lifecache = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY);
+			String applicaModificaS = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA);
+			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
@@ -100,7 +102,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 			// Se statohid == null, visualizzo la pagina per la modifica dati
 			// In caso contrario, modifico i dati della porta di dominio nel db
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (ServletUtils.isEditModeInProgress(request) && !applicaModifica) {
 				Cache arc = ar.getCache();
 				if (arc == null) {
 					if (statocache == null) {

@@ -85,6 +85,8 @@ public class PorteDelegateMTOM extends Action {
 			int soggInt = Integer.parseInt(idsogg);
 			String mtomRichiesta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MTOM_RICHIESTA);
 			String mtomRisposta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MTOM_RISPOSTA);
+			String applicaModificaS = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA);
+			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -203,7 +205,7 @@ public class PorteDelegateMTOM extends Action {
 			Parameter url1 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM_REQUEST_LIST , urlParms);
 			Parameter url2 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM_RESPONSE_LIST , urlParms);
 
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
 
 
 				// preparo i campi

@@ -91,7 +91,9 @@ public final class PorteDelegateWS extends Action {
 			String statoMessageSecurity = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY);
 			String applicaMTOMRichiesta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM_RICHIESTA);
 			String applicaMTOMRisposta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM_RISPOSTA);
-
+			String applicaModificaS = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA);
+			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -185,7 +187,7 @@ public final class PorteDelegateWS extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

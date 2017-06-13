@@ -40,9 +40,9 @@ import org.openspcoop2.core.config.RouteRegistro;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDefault;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -89,6 +89,8 @@ public final class ConfigurazioneRouting extends Action {
 			String nomesoggrotta = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
 			String registrorotta = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA);
 			String rottaenabled = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ROTTA_ENABLED);
+			String applicaModificaS = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA);
+			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(confCore);
@@ -117,7 +119,7 @@ public final class ConfigurazioneRouting extends Action {
 			tipiSoggetti.add("-");
 			tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestiti());
 			String[] tipiSoggettiLabel = tipiSoggetti.toArray(new String[1]);
-			
+
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
@@ -126,11 +128,20 @@ public final class ConfigurazioneRouting extends Action {
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
+			String postBackElementName = ServletUtils.getPostBackElementName(request);
+
+			// Controllo se ho modificato il protocollo, resetto il referente
+			if(postBackElementName != null ){
+				if(postBackElementName.equalsIgnoreCase(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ROTTA_ENABLED)){
+					applicaModifica = false;
+				}
+			}
+
 
 			// Se tiporottahid != null, modifico i dati della porta di dominio
 			// nel
 			// db
-			if (!ServletUtils.isEditModeInProgress(request)) {
+			if (!(ServletUtils.isEditModeInProgress(request) && !applicaModifica)) {
 				// Controlli sui campi immessi
 				boolean isOk = confHelper.routingCheckData(registriList);
 				if (!isOk) {
@@ -145,7 +156,7 @@ public final class ConfigurazioneRouting extends Action {
 
 
 					pd.setDati(dati);
-					
+
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
@@ -159,13 +170,13 @@ public final class ConfigurazioneRouting extends Action {
 					rt.setAbilitata(false);
 				} else {
 					rt.setAbilitata(true);
-					
+
 					Route defaultRoute = null;
 					if ( rt.getDefault()!=null && rt.getDefault().sizeRouteList() > 0) {
 						defaultRoute = rt.getDefault().removeRoute(0);
 					} else
 						defaultRoute = new Route();
-					
+
 					// Route r = new Route();
 					if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
 						RouteGateway rg = new RouteGateway();
@@ -181,14 +192,14 @@ public final class ConfigurazioneRouting extends Action {
 						defaultRoute.setRegistro(rr);
 						defaultRoute.setGateway(null);
 					}
-					
+
 					rt.setDefault(new RoutingTableDefault());
 					rt.getDefault().addRoute(defaultRoute);
-					
+
 				}
 
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), rt);
-				
+
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati = confHelper.addRoutingToDati(TipoOperazione.OTHER, tiporotta, tiposoggrotta, nomesoggrotta, 
@@ -196,16 +207,16 @@ public final class ConfigurazioneRouting extends Action {
 
 
 				pd.setDati(dati);
-				
+
 				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-				
+
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ROUTING,
 						ConfigurazioneCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_ROUTING
 						);
-				
+
 			}
 
 			if (rottaenabled == null) {

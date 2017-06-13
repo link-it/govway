@@ -259,8 +259,9 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
 
 	public final static String ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO = CostantiControlStation.PARAMETRO_USAIDSOGG;
-	
+	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
 
+	
 	/* LABEL PARAMETRI */
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ID = "Id";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO = "IdSogg";

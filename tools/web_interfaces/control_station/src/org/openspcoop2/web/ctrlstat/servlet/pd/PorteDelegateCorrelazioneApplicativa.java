@@ -86,6 +86,8 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String scadcorr = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA);
+			String applicaModificaS = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA);
+			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -152,7 +154,7 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			Parameter urlRichiesta = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST, urlParms);
 			Parameter urlRisposta = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST , urlParms);
 
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
 				if ((scadcorr == null) && (ca != null)) {
 					scadcorr = ca.getScadenza();
 				}

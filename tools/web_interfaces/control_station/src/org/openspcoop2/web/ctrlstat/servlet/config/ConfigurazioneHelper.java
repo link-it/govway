@@ -252,6 +252,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.disableEditMode();
 		}
 		
+		dati = this.addParameterApplicaModifica(dati);
+		
 		return dati;
 	}
 
@@ -2466,6 +2468,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINAZIONI);
 			dati.addElement(de);
 		}
+		
+		dati = this.addParameterApplicaModifica(dati);
 
 		return dati;
 	}

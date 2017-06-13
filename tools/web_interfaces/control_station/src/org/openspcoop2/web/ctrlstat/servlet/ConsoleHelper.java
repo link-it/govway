@@ -2003,6 +2003,8 @@ public class ConsoleHelper {
 			dati.addElement(de);
 		}
 
+		dati = addParameterApplicaModifica(dati);
+		
 		return dati;
 	}
 
@@ -2067,6 +2069,8 @@ public class ConsoleHelper {
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
 			dati.addElement(de);
 		}
+		
+		dati = addParameterApplicaModifica(dati);
 
 		return dati;
 	}
@@ -2140,7 +2144,19 @@ public class ConsoleHelper {
 			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 
 		dati.addElement(de);
+		
+		dati = addParameterApplicaModifica(dati);
 
+		return dati;
+	}
+
+	public Vector<DataElement> addParameterApplicaModifica(Vector<DataElement> dati) {
+		DataElement de;
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_APPLICA_MODIFICA); 
+		de.setValue(Costanti.CHECK_BOX_ENABLED);
+		dati.addElement(de);
 		return dati;
 	}
 	

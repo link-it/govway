@@ -263,6 +263,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA;
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
 
 	/* LABEL PARAMETRI */
 	

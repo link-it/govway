@@ -2021,7 +2021,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 //					de = new DataElement();
 //					de.setValue(pd.getDescrizione());
 //					e.addElement(de);
-
+					
 					de = new DataElement();
 					if(TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione()) 
 							|| 

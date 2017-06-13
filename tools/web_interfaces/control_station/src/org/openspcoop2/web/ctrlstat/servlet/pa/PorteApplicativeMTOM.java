@@ -84,7 +84,9 @@ public class PorteApplicativeMTOM extends Action {
 			int soggInt = Integer.parseInt(idsogg);
 			String mtomRichiesta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MTOM_RICHIESTA);
 			String mtomRisposta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MTOM_RISPOSTA);
-
+			String applicaModificaS = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA);
+			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -201,7 +203,7 @@ public class PorteApplicativeMTOM extends Action {
 			Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST , urlParms);
 			Parameter url2 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_LIST , urlParms);
 
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
 
 
 				// preparo i campi
