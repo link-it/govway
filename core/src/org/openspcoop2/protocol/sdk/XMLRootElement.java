@@ -41,11 +41,12 @@ public abstract class XMLRootElement implements Serializable{
 	private String prefix;
 	
 	protected XMLRootElement(String localName,String namespace,String prefix){
-		
-	}
-	protected XMLRootElement(String localName,String namespace){
 		this.localName = localName;
 		this.namespace = namespace;
+		this.prefix = prefix;
+	}
+	protected XMLRootElement(String localName,String namespace){
+		this(localName, namespace, null);
 	}
 	protected XMLRootElement(){}
 	
@@ -86,7 +87,7 @@ public abstract class XMLRootElement implements Serializable{
 		StringBuffer bf = new StringBuffer();
 		bf.append("<");
 		if(!start){
-			bf.append("</");
+			bf.append("/");
 		}
 		if(this.prefix!=null && !"".equals(this.prefix)){
 			bf.append(this.prefix).append(":");

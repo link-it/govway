@@ -45,8 +45,6 @@ public class BrowserUtils {
 	 * 
 	 * Decodifica il browser e la versione a partire dalla stringa dello UserAgent
 	 * 
-	 * @param userAgent il contenuto dell'header 'User-Agent' da analizzare
-	 * @return la coppia di valori <BrowserName,Versione>
 	 */
 	public static BrowserInfo getBrowserInfo(String Information) {
 		BrowserInfo browserInfo = new BrowserInfo();
@@ -124,8 +122,6 @@ public class BrowserUtils {
 	 * 
 	 * Decodifica il browser e la versione a partire dalla stringa dello UserAgent
 	 * 
-	 * @param request HttpServletRequest da analizzare.
-	 * @return la coppia di valori <BrowserName,Versione>
 	 */
 	public static BrowserInfo getBrowserInfo(FacesContext context) throws Exception{
 		if(context != null){
@@ -144,8 +140,6 @@ public class BrowserUtils {
 	 * 
 	 * Decodifica il browser e la versione a partire dalla stringa dello UserAgent
 	 * 
-	 * @param request HttpServletRequest da analizzare.
-	 * @return la coppia di valori <BrowserName,Versione>
 	 */
 	public static BrowserInfo getBrowserInfo(HttpServletRequest request) {
 		
