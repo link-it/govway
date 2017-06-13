@@ -44,7 +44,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /***
@@ -77,6 +76,7 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 		try{
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			@SuppressWarnings("unused")
 			User user = ServletUtils.getUserFromSession(session);
 
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
