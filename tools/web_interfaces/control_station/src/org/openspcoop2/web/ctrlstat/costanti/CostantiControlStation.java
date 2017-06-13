@@ -104,6 +104,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE_COLUMN = "Non standard";
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE = "Configurazione non visualizzabile";
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE = "Attenzione: Configurazione non standard (Utilizzare l'interfaccia avanzata)";
+	public final static String LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO = "Aggiornamento effettuato con successo";
 	public final static String LABEL_STRUMENTI = "Strumenti";
 	public final static String LABEL_LINKIT_WEB = "http://www.link.it";
 	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop.org";
@@ -122,8 +123,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PATTERN = "Pattern";
 	public final static String LABEL_PARAMETRO_CONTENT_TYPE = "Content-Type";
 	public final static String LABEL_PARAMETRO_PARAMETRI = "Parametri";
-	public final static String LABEL_PARAMETRO_APPLICA_MTOM = "Applica MTOM/XOP-Message";
-	public final static String LABEL_PARAMETRO_ACCETTA_MTOM = "Accetta MTOM/XOP-Message";
+	public final static String LABEL_PARAMETRO_APPLICA_MTOM = "Applica MTOM";
+	public final static String LABEL_PARAMETRO_ACCETTA_MTOM = "Accetta MTOM";
 	public final static String LABEL_PARAMETRO_RUOLO = "Nome";
 	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = "Fonte";
 	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY = "Fonte Ruoli";
@@ -140,11 +141,12 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Applicativi Autenticati";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Soggetti Autenticati";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "Ruoli";
-	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Stato";
+	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Tipo";
 	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
-	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Identificazione Richiesta";
-	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Identificazione Risposta";
-	public final static String LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "Scadenza Correlazione Applicativa<BR/>(Riuso ID Protocollo)";
+	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Regole";
+	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Regole";
+	public final static String LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL = "Scadenza (minuti)";
+	public final static String LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE = "Definisce una scadenza per il riuso del solito ID Protocollo";
 	
 	/** PARAMETERS **/
 	

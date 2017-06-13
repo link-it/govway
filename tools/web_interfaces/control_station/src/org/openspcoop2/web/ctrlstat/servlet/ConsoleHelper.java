@@ -1918,7 +1918,12 @@ public class ConsoleHelper {
 			boolean showApplicaMTOMRes, String applicaMTOMRes) {
 
 		DataElement de = new DataElement();
-
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_SECURITY);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		
+		de = new DataElement();
 		String[] tipoWS = {
 				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_ABILITATO, 
 				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_DISABILITATO
@@ -2076,13 +2081,15 @@ public class ConsoleHelper {
 		
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
+		//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RICHIESTA);
 		dati.addElement(de);
 		
 		if(portaDelegata){		
 			if (riusoID && numCorrelazioneReq > 0 && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
+				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
@@ -2091,9 +2098,11 @@ public class ConsoleHelper {
 				this.pd.disableOnlyButton();
 			}
 		} else {
-			if (numCorrelazioneReq > 0 && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+			boolean riuso = false; // riuso non abilitato nella porta applicativa
+			if (riuso && numCorrelazioneReq > 0 && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
+				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
@@ -2114,6 +2123,13 @@ public class ConsoleHelper {
 
 		dati.addElement(de);
 
+		
+		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISPOSTA);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
 		de.setUrl(urlRisposta);
@@ -2137,12 +2153,12 @@ public class ConsoleHelper {
 				try{
 					scadCorrInt = Integer.parseInt(scadcorr);
 				}catch(Exception e){
-					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore o uguale a zero.");
+					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore di zero");
 					return false;
 				}
 				
-				if(scadCorrInt < 0){
-					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore o uguale a zero.");
+				if(scadCorrInt <= 0){
+					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore di zero");
 					return false;
 				}
 			}

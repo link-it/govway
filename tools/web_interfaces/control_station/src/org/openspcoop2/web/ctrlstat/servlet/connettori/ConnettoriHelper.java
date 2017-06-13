@@ -995,9 +995,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setSelected(true);
 				}
 				else{
+					de.setLabel(null);
 					de.setType(DataElementType.TEXT);
-					de.setLabel(TipiConnettore.DISABILITATO.toString());
-					de.setValue(" ");
+					de.setValue(TipiConnettore.DISABILITATO.toString());
 				}
 			}else{
 				de.setType(DataElementType.CHECKBOX);
