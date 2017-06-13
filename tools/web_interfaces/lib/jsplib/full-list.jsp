@@ -396,7 +396,14 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 													%><br/><%
 									              }
 										    	}
-									  		} // end radio
+									  		} else { 
+									  			 if (de.getType().equals("checkbox")) {
+									  				 String image = de.getSelected().equals("yes") ? "check_green.png" : "check_red.png";
+									  				 String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
+									  				 
+									  				%><div style="text-align: center;"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
+									  			 } // enc checkbox
+									  		} // end else radio
 										} // end else image
 						      		} // end else hidden
 						    	} // end else text
