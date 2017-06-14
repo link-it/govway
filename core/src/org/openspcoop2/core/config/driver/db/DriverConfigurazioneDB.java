@@ -16396,6 +16396,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo = ?");
+				if(filtroRicerca.getStato()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".stato = ?");
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -16457,6 +16459,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(filtroRicerca.getIdRuolo()!=null){
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getStato()!=null){
+					this.log.debug("ruolo stmt.setString("+filtroRicerca.getStato().getValue()+")");
+					stm.setString(indexStmt, filtroRicerca.getStato().getValue());
 					indexStmt++;
 				}
 			}
@@ -16574,6 +16581,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo = ?");
+				if(filtroRicerca.getStato()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".stato = ?");
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -16635,6 +16644,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(filtroRicerca.getIdRuolo()!=null){
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getStato()!=null){
+					this.log.debug("ruolo stmt.setString("+filtroRicerca.getStato().getValue()+")");
+					stm.setString(indexStmt, filtroRicerca.getStato().getValue());
 					indexStmt++;
 				}
 			}

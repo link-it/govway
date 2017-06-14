@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.BeanUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -811,6 +812,18 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}
+					// Filtro By Stato
+					if(filtroRicerca.getStato()!=null){
+						if(pd.getStato()==null){
+							// equivale a abilitato
+							if(!StatoFunzionalita.ABILITATO.equals(filtroRicerca.getStato())){
+								continue;
+							}
+						}				
+						else if(!pd.getStato().equals(filtroRicerca.getStato())){
+							continue;
+						}
+					}
 				}
 				
 				pd.setTipoSoggettoProprietario(soggetto.getTipo());
@@ -1191,6 +1204,18 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							}
 						}
 						if(!contains){
+							continue;
+						}
+					}
+					// Filtro By Stato
+					if(filtroRicerca.getStato()!=null){
+						if(pa.getStato()==null){
+							// equivale a abilitato
+							if(!StatoFunzionalita.ABILITATO.equals(filtroRicerca.getStato())){
+								continue;
+							}
+						}				
+						else if(!pa.getStato().equals(filtroRicerca.getStato())){
 							continue;
 						}
 					}

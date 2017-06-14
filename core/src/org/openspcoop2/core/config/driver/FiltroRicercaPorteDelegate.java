@@ -24,6 +24,7 @@ package org.openspcoop2.core.config.driver;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDRuolo;
 
 /**
@@ -67,6 +68,9 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 
 	/** Ruolo */
 	private IDRuolo idRuolo;
+	
+	/** Stato */
+	private StatoFunzionalita stato;
 		
 	@Override
 	public String toString(){
@@ -88,6 +92,8 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 			bf.append(" [azione:"+this.azione+"]");
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.stato!=null)
+			bf.append(" [stato:"+this.stato+"]");
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();
@@ -168,5 +174,13 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 
 	public void setIdRuolo(IDRuolo idRuolo) {
 		this.idRuolo = idRuolo;
+	}
+	
+	public StatoFunzionalita getStato() {
+		return this.stato;
+	}
+
+	public void setStato(StatoFunzionalita stato) {
+		this.stato = stato;
 	}
 }
