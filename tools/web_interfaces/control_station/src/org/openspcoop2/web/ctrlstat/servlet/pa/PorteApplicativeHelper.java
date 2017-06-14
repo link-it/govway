@@ -2673,6 +2673,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			boolean isShowSelectList_PA_ProtocolProperties  , String nome, String valore, Vector<DataElement> dati) {
 
 		DataElement de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 		de.setValue(nome);
 		if(TipoOperazione.ADD.equals(tipoOp)){

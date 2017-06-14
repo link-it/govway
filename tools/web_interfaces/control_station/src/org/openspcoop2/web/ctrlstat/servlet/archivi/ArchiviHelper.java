@@ -2168,7 +2168,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO_LABEL);
+		de.setNote(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO_NOTE);
 		de.setValue(datainizio != null ? datainizio : "");
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
@@ -2176,7 +2177,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_FINE);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_FINE_LABEL);
+		de.setNote(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_FINE_NOTE);
 		de.setValue(datafine != null ? datafine : "");
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
@@ -2993,8 +2995,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}else{
 			de.setValue(msgDiag.getMessaggio());
 		}
-		de.setType(DataElementType.TEXT);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_MESSAGGIO);
+		de.setRows(6);
+		de.setCols(80);
 		dati.addElement(de);
 	}
 
@@ -3033,7 +3037,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO_LABEL);
+		de.setNote(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO_NOTE);
 		de.setValue(datainizio != null ? datainizio : "");
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
@@ -3041,7 +3046,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_FINE);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_FINE_LABEL);
+		de.setNote(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_DATA_FINE_NOTE);
 		de.setValue(datafine != null ? datafine : "");
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);

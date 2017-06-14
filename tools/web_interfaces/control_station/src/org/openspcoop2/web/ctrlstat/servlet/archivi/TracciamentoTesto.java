@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -147,15 +146,6 @@ public class TracciamentoTesto extends Action {
 							pDs, pProfColl, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg),
 					new Parameter(ArchiviCostanti.LABEL_TRACCIA+" "+idMessaggio,null));
 
-			String TIPO_NOME_PATTERN_BR = "<b>"+ArchiviCostanti.LABEL_TIPO_MESSAGGIO+":</b> {0} <br><b>"+ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_NOME_DATASOURCE+":</b> {1}";
-			String CORRELAZIONE_PATTERN_BR = "<b>"+ArchiviCostanti.LABEL_RICHIESTA+":</b> {0} <br><b>"+ArchiviCostanti.LABEL_RISPOSTA+":</b> {1}";
-			//String TIPO_NOME_PATTERN = "<b>Tipo:</b> {0} <b>Nome:</b> {1}";
-			//String TIPO_NOME_IND_TELEMATICO_PATTERN = "<b>Tipo:</b> {0} <b>Nome:</b> {1} <b>Indirizzo Telematico:</b> {2}";
-			
-			String SOGGETTO_PATTERN = "<b>"+ArchiviCostanti.LABEL_TIPO_SOGGETTO+
-					":</b> {0} <br><b>"+ArchiviCostanti.LABEL_NOME_SOGGETTO+
-					":</b> {1} <br><b>"+ArchiviCostanti.LABEL_ID_PORTA_SOGGETTO+
-					":</b> {2} <br><b>"+ArchiviCostanti.LABEL_INDIRIZZO_SOGGETTO+":</b> {3}";
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
 
@@ -167,30 +157,118 @@ public class TracciamentoTesto extends Action {
 			ITraduttore traduttore = protocolFactory.createTraduttore();
 			
 			// ************ mittente ****************
-			String tipoMittente = busta.getTipoMittente()!=null ? busta.getTipoMittente() : "-";
-			String nomeMittente = busta.getMittente()!=null ? busta.getMittente() : "-";
-			String idPortaMittente = busta.getIdentificativoPortaMittente()!=null ? busta.getIdentificativoPortaMittente() : "-";
-			String indirizzoMittente = busta.getIndirizzoMittente()!=null ? busta.getIndirizzoMittente() : "-";
+			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_MITTENTE);
-			de.setValue(MessageFormat.format(SOGGETTO_PATTERN, tipoMittente,nomeMittente,idPortaMittente,indirizzoMittente));
-			dati.add(de);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			String tipoMittente = busta.getTipoMittente()!=null ? busta.getTipoMittente() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_TIPO_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(tipoMittente);
+			dati.addElement(de);
+			
+			String nomeMittente = busta.getMittente()!=null ? busta.getMittente() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_NOME_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(nomeMittente);
+			dati.addElement(de);
+			
+			String idPortaMittente = busta.getIdentificativoPortaMittente()!=null ? busta.getIdentificativoPortaMittente() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_ID_PORTA_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(idPortaMittente);
+			dati.addElement(de);
+			
+			String indirizzoMittente = busta.getIndirizzoMittente()!=null ? busta.getIndirizzoMittente() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_INDIRIZZO_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(indirizzoMittente);
+			dati.addElement(de);
 			
 			
 			// ************ destinatario ************ 
-			String tipoDestinatario = busta.getTipoDestinatario()!=null ? busta.getTipoDestinatario() : "-";
-			String nomeDestinatario = busta.getDestinatario()!=null ? busta.getDestinatario() : "-";
-			String idPortaDestinatario = busta.getIdentificativoPortaDestinatario()!=null ? busta.getIdentificativoPortaDestinatario() : "-";
-			String indirizzoDestinatario = busta.getIndirizzoDestinatario()!=null ? busta.getIndirizzoDestinatario() : "-";
+			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_DESTINATARIO);
-			de.setValue(MessageFormat.format(SOGGETTO_PATTERN, tipoDestinatario,nomeDestinatario,idPortaDestinatario,indirizzoDestinatario));
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			String tipoDestinatario = busta.getTipoDestinatario()!=null ? busta.getTipoDestinatario() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_TIPO_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(tipoDestinatario);
+			dati.addElement(de);
+			
+			String nomeDestinatario = busta.getDestinatario()!=null ? busta.getDestinatario() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_NOME_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(nomeDestinatario);
+			dati.addElement(de);
+			
+			String idPortaDestinatario = busta.getIdentificativoPortaDestinatario()!=null ? busta.getIdentificativoPortaDestinatario() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_ID_PORTA_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(idPortaDestinatario);
+			dati.addElement(de);
+			
+			String indirizzoDestinatario = busta.getIndirizzoDestinatario()!=null ? busta.getIndirizzoDestinatario() : "-";
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_INDIRIZZO_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(indirizzoDestinatario);
+			dati.addElement(de);
+			
+			
+			// ******** servizio e azione ************
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_SERVIZIO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_TIPO_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(this.getValue(busta.getTipoServizio()));
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_NOME_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(this.getValue(busta.getServizio()));
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_VERSIONE);
+			de.setType(DataElementType.TEXT);
+			de.setValue(busta.getVersioneServizio()>0 ? busta.getVersioneServizio()+"" : "-");
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_AZIONE);
+			de.setType(DataElementType.TEXT);
+			de.setValue(this.getValue(busta.getAzione()));
 			dati.add(de);
 			
 						
 			// ******** profilo collaborazione ************
+			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_NOME_SOGGETTO);
 			if(busta.getProfiloDiCollaborazioneValue()!=null)
 				de.setValue(busta.getProfiloDiCollaborazioneValue());
 			else if(busta.getProfiloDiCollaborazione()!=null)
@@ -198,46 +276,58 @@ public class TracciamentoTesto extends Action {
 			else
 				de.setValue("-");
 			dati.add(de);
+			
 			// servizio correlato
 			if(busta.getTipoServizioCorrelato()!=null || busta.getServizioCorrelato()!=null){
+				
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_SERVIZIO_CORRELATO);
-				de.setValue(MessageFormat.format(TIPO_NOME_PATTERN_BR, 
-						this.getValue(busta.getTipoServizioCorrelato()), 
-						this.getValue(busta.getServizioCorrelato())));
-				dati.add(de);
+				de.setLabel(ArchiviCostanti.LABEL_TIPO_SERVIZIO_CORRELATO);
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getValue(busta.getTipoServizioCorrelato()));
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(ArchiviCostanti.LABEL_NOME_SERVIZIO_CORRELATO);
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getValue(busta.getServizioCorrelato()));
+				dati.addElement(de);
+				
 			}
 			
-			// ******* collaborazione **************
-			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_COLLABORAZIONE);
-			de.setValue(this.getValue(busta.getCollaborazione()));
-			dati.add(de);
-			
-			// ******** servizio ************
-			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_SERVIZIO);
-			de.setValue(MessageFormat.format(TIPO_NOME_PATTERN_BR, this.getValue(busta.getTipoServizio()), this.getValue(busta.getServizio())));
-			dati.add(de);
-
-			// ********* azione *************
-			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_AZIONE);
-			de.setValue(this.getValue(busta.getAzione()));
-			dati.add(de);
 
 			// *********** identificativi ***************
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IDENTIFICATIVI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO);
+			de.setType(DataElementType.TEXT);
 			de.setValue(this.getValue(busta.getID()));
 			dati.add(de);
 
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO_RISPOSTA);
+			de.setType(DataElementType.TEXT);
 			de.setValue(this.getValue(busta.getRiferimentoMessaggio()));
 			dati.add(de);
 			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_COLLABORAZIONE);
+			de.setType(DataElementType.TEXT);
+			de.setValue(this.getValue(busta.getCollaborazione()));
+			dati.add(de);
+			
+			
 			// ********** date *******************
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_INFORMAZIONI_TEMPORALI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_SORGENTE_TEMPORALE);
 			if(busta.getTipoOraRegistrazioneValue()!=null)
@@ -256,6 +346,7 @@ public class TracciamentoTesto extends Action {
 			else
 				de.setValue("-");
 			dati.add(de);
+			
 			// scadenza
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_SCADENZA);
@@ -266,10 +357,16 @@ public class TracciamentoTesto extends Action {
 			}
 			dati.add(de);
 			
+						
+			// ************ profilo trasmissione / sequenza / digest ******************
 			
-			// ************ profilo trasmissione ******************
 			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_PROFILO_TRASMISSIONE);
+			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_ALTRE_INFORMAZIONI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_PROFILO_TRASMISSIONE_INOLTRO);
 			String inoltro = null;
 			if(busta.getInoltroValue()!=null){
 				inoltro = busta.getInoltroValue();
@@ -278,11 +375,16 @@ public class TracciamentoTesto extends Action {
 			}else{
 				inoltro = "-";
 			}
-			de.setValue("<b>"+ArchiviCostanti.LABEL_PROFILO_TRASMISSIONE_INOLTRO+":</b> " + inoltro + 
-					" <br><b>"+ArchiviCostanti.LABEL_PROFILO_TRASMISSIONE_CONFERMA_RICEZIONE+":</b> " + busta.isConfermaRicezione());
+			de.setType(DataElementType.TEXT);
+			de.setValue(inoltro);
+			dati.add(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_PROFILO_TRASMISSIONE_CONFERMA_RICEZIONE);
+			de.setType(DataElementType.TEXT);
+			de.setValue(busta.isConfermaRicezione()+"");
 			dati.add(de);
 
-			// *********** sequenza ****************
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_SEQUENZA);
 			if (busta.getSequenza() > 0) {
@@ -292,7 +394,6 @@ public class TracciamentoTesto extends Action {
 			}
 			dati.add(de);
 			
-			// *********** digest ****************
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_DIGEST);
 			de.setValue(this.getValue(busta.getDigest()));
@@ -302,16 +403,26 @@ public class TracciamentoTesto extends Action {
 			// ************ lista riscontri ****************
 			if (busta.sizeListaRiscontri() > 0) {
 
-				de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				de.setLabel(ArchiviCostanti.LABEL_LISTA_RISCONTRI);
-				dati.add(de);
-
 				for (int i = 0; i < busta.sizeListaRiscontri(); i++) {
-					Riscontro riscontro = busta.getRiscontro(i);
-					de = new DataElement();
-					de.setLabel(this.getValue(riscontro.getID()));
 					
+					Riscontro riscontro = busta.getRiscontro(i);
+					
+					de = new DataElement();
+					de.setType(DataElementType.TITLE);
+					de.setLabel(ArchiviCostanti.LABEL_RISCONTRO+" "+formatter.format(riscontro.getOraRegistrazione()));
+					dati.add(de);
+					
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(riscontro.getID());
+					dati.addElement(de);
+										
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_INFORMAZIONI_TEMPORALI);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
+
 					String tipoOraRegistrazione = null;
 					if(riscontro.getTipoOraRegistrazioneValue(protocolFactory)!=null){
 						tipoOraRegistrazione = riscontro.getTipoOraRegistrazioneValue(protocolFactory);
@@ -321,6 +432,10 @@ public class TracciamentoTesto extends Action {
 					}else{
 						tipoOraRegistrazione = "-";
 					}
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_SORGENTE_TEMPORALE);
+					de.setValue(tipoOraRegistrazione);
+					dati.add(de);
 					
 					String oraRegistrazione = null;
 					if(riscontro.getOraRegistrazione()!=null){
@@ -328,37 +443,99 @@ public class TracciamentoTesto extends Action {
 					}else{
 						oraRegistrazione = "-";
 					}
-					
-					de.setValue("<b>"+ArchiviCostanti.LABEL_SORGENTE_TEMPORALE+"</b>:" + tipoOraRegistrazione 
-							+ "<br><b>"+ArchiviCostanti.LABEL_ORA_REGISTRAZIONE+"</b>:" + oraRegistrazione);
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ORA_REGISTRAZIONE);
+					de.setValue(oraRegistrazione);
 					dati.add(de);
+
 				}
 			}
 
 			// lista trasmissioni
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(ArchiviCostanti.LABEL_LISTA_TRASMISSIONI);
-			dati.add(de);
 			if (busta.sizeListaTrasmissioni() > 0) {
 
 				for (int i = 0; i < busta.sizeListaTrasmissioni(); i++) {
 					Trasmissione trasm = busta.getTrasmissione(i);
+					
 					de = new DataElement();
-					de.setLabel(ArchiviCostanti.LABEL_REGISTRAZIONE+": " + formatter.format(trasm.getOraRegistrazione()));
+					de.setType(DataElementType.TITLE);
+					de.setLabel(ArchiviCostanti.LABEL_TRASMISSIONE+" "+formatter.format(trasm.getOraRegistrazione()));
+					dati.add(de);
+					
 
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_MITTENTE);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
+					
 					String tipoTrOrigine = trasm.getTipoOrigine()!=null ? trasm.getTipoOrigine() : "-";
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_TIPO_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(tipoTrOrigine);
+					dati.addElement(de);
+					
 					String nomeTrOrigine = trasm.getOrigine()!=null ? trasm.getOrigine() : "-";
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_NOME_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(nomeTrOrigine);
+					dati.addElement(de);
+					
 					String idPortaTrOrigine = trasm.getIdentificativoPortaOrigine()!=null ? trasm.getIdentificativoPortaOrigine() : "-";
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ID_PORTA_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(idPortaTrOrigine);
+					dati.addElement(de);
+					
 					String indirizzoTrOrigine = trasm.getIndirizzoOrigine()!=null ? trasm.getIndirizzoOrigine() : "-";
-					String origine = MessageFormat.format(SOGGETTO_PATTERN, tipoTrOrigine,nomeTrOrigine,idPortaTrOrigine,indirizzoTrOrigine);
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_INDIRIZZO_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(indirizzoTrOrigine);
+					dati.addElement(de);
+					
+									
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_DESTINATARIO);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
 					
 					String tipoTrDestinazione = trasm.getTipoDestinazione()!=null ? trasm.getTipoDestinazione() : "-";
-					String nomeTrDestinazione = trasm.getDestinazione()!=null ? trasm.getDestinazione() : "-";
-					String idPortaTrDestinazione = trasm.getIdentificativoPortaDestinazione()!=null ? trasm.getIdentificativoPortaDestinazione() : "-";
-					String indirizzoTrDestinazione = trasm.getIndirizzoDestinazione()!=null ? trasm.getIndirizzoDestinazione() : "-";
-					String destinazione = MessageFormat.format(SOGGETTO_PATTERN, tipoTrDestinazione,nomeTrDestinazione,idPortaTrDestinazione,indirizzoTrDestinazione);
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_TIPO_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(tipoTrDestinazione);
+					dati.addElement(de);
 					
+					String nomeTrDestinazione = trasm.getDestinazione()!=null ? trasm.getDestinazione() : "-";
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_NOME_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(nomeTrDestinazione);
+					dati.addElement(de);
+					
+					String idPortaTrDestinazione = trasm.getIdentificativoPortaDestinazione()!=null ? trasm.getIdentificativoPortaDestinazione() : "-";
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ID_PORTA_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(idPortaTrDestinazione);
+					dati.addElement(de);
+					
+					String indirizzoTrDestinazione = trasm.getIndirizzoDestinazione()!=null ? trasm.getIndirizzoDestinazione() : "-";
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_INDIRIZZO_SOGGETTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(indirizzoTrDestinazione);
+					dati.addElement(de);
+					
+					
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_INFORMAZIONI_TEMPORALI);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
+
 					String sorgenteTemporale =  null;
 					if(trasm.getTempoValue(protocolFactory)!=null)
 						sorgenteTemporale = trasm.getTempoValue(protocolFactory);
@@ -366,19 +543,21 @@ public class TracciamentoTesto extends Action {
 						sorgenteTemporale = traduttore.toString(trasm.getTempo());
 					else
 						sorgenteTemporale = "-";
-					String sorgenteTemporaleConLabel =  "<b>"+ArchiviCostanti.LABEL_SORGENTE_TEMPORALE+":</b>"+sorgenteTemporale;
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_SORGENTE_TEMPORALE);
+					de.setValue(sorgenteTemporale);
+					dati.add(de);
 					
 					String oraRegistrazione = null;
 					if(trasm.getOraRegistrazione()!=null)
 						oraRegistrazione = formatter.format(trasm.getOraRegistrazione());
 					else
 						oraRegistrazione = "-";
-					
-					String oraRegistrazioneConLabel =  "<b>"+ArchiviCostanti.LABEL_ORA_REGISTRAZIONE+":</b>"+oraRegistrazione;
-					
-					de.setValue(origine + "<br>" + destinazione + "<br>" + sorgenteTemporaleConLabel + "<br>" + oraRegistrazioneConLabel);
-					
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ORA_REGISTRAZIONE);
+					de.setValue(oraRegistrazione);
 					dati.add(de);
+					
 				}
 			} else {
 				de = new DataElement();
@@ -388,26 +567,42 @@ public class TracciamentoTesto extends Action {
 			}
 
 			// lista eccezioni
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(ArchiviCostanti.LABEL_LISTA_ECCEZIONI);
-			dati.add(de);
 			if (busta.sizeListaEccezioni() > 0) {
 				for (int i = 0; i < busta.sizeListaEccezioni(); i++) {
 					Eccezione eccezione = busta.getEccezione(i);
+					
 					de = new DataElement();
-										
-					de.setLabel(ArchiviCostanti.LABEL_ECCEZIONE_RILEVANZA+": " + this.getValue(eccezione.getRilevanzaValue(protocolFactory)));
-					de.setValue("<b>"+ArchiviCostanti.LABEL_ECCEZIONE_CODICE+":</b>" + this.getValue(eccezione.getCodiceEccezioneValue(protocolFactory) )
-							+ " <b>"+ArchiviCostanti.LABEL_ECCEZIONE_CONTESTO+":</b>" + this.getValue(eccezione.getContestoCodificaValue(protocolFactory)) 
-							+ "<br><b>"+ArchiviCostanti.LABEL_ECCEZIONE_POSIZIONE+":</b>" + this.getValue(eccezione.getDescrizione(protocolFactory)));
+					de.setType(DataElementType.TITLE);
+					de.setLabel(ArchiviCostanti.LABEL_ECCEZIONE+" "+this.getValue(eccezione.getCodiceEccezioneValue(protocolFactory)));
 					dati.add(de);
+
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ECCEZIONE_RILEVANZA);
+					de.setType(DataElementType.TEXT);
+					de.setValue(this.getValue(eccezione.getRilevanzaValue(protocolFactory)));
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ECCEZIONE_CODICE);
+					de.setType(DataElementType.TEXT);
+					de.setValue(this.getValue(eccezione.getCodiceEccezioneValue(protocolFactory)));
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ECCEZIONE_CONTESTO);
+					de.setType(DataElementType.TEXT);
+					de.setValue(this.getValue(eccezione.getContestoCodificaValue(protocolFactory)));
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(ArchiviCostanti.LABEL_ECCEZIONE_POSIZIONE);
+					de.setValue(this.getValue(eccezione.getDescrizione(protocolFactory)));
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setRows(6);
+					de.setCols(80);
+					dati.addElement(de);
+					
 				}
-			} else {
-				de = new DataElement();
-				de.setLabel("-");
-				de.setValue("-");
-				dati.add(de);
 			}
 
 			
@@ -434,7 +629,14 @@ public class TracciamentoTesto extends Action {
 				java.util.Collections.sort(listKeys);
 				for (String key : listKeys) {
 					de = new DataElement();
-					de.setLabel(key);
+					if(key.length()>20){
+						de.setLabel(key.substring(0, 18)+"...");
+						de.setNote(key);
+					}else{
+						de.setLabel(key);
+					}
+					de.setToolTip(key);
+					de.setType(DataElementType.TEXT);
 					de.setValue(busta.getProperty(key));
 					dati.addElement(de);
 				}
@@ -450,26 +652,58 @@ public class TracciamentoTesto extends Action {
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 						
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_DOMINIO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_RUOLO_PDD);
+			de.setType(DataElementType.TEXT);
 			de.setValue(traccia.getTipoPdD().toString());
-			dati.add(de);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_TIPO_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(traccia.getIdSoggetto().getTipo());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_NOME_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			de.setValue(traccia.getIdSoggetto().getNome());
+			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_ID_PORTA_SOGGETTO);
+			de.setType(DataElementType.TEXT);
 			de.setValue(traccia.getIdSoggetto().getCodicePorta());
-			dati.add(de);
+			dati.addElement(de);
+			
+			if(traccia.getLocation()!=null){
+				de = new DataElement();
+				de.setLabel(ArchiviCostanti.LABEL_TRACCIA_LOCATION_LABEL);
+				if(traccia.getLocation().startsWith(ArchiviCostanti.PARAMETRO_TRACCIA_LOCATION_IN)){
+					de.setNote(ArchiviCostanti.LABEL_TRACCIA_LOCATION_IN);
+					de.setValue(traccia.getLocation().substring(3,traccia.getLocation().length()));
+				}else if(traccia.getLocation().startsWith(ArchiviCostanti.PARAMETRO_TRACCIA_LOCATION_OUT)){
+					de.setNote(ArchiviCostanti.LABEL_TRACCIA_LOCATION_OUT);
+					de.setValue(traccia.getLocation());
+					de.setValue(traccia.getLocation().substring(4,traccia.getLocation().length()));
+				}else{
+					de.setNote(ArchiviCostanti.LABEL_TRACCIA_LOCATION);
+					de.setValue(traccia.getLocation());
+				}
+				dati.add(de);
+			}
+
 			
 			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_SOGGETTO_PORTA);
-			de.setValue(MessageFormat.format(TIPO_NOME_PATTERN_BR, traccia.getIdSoggetto().getTipo(), 
-					traccia.getIdSoggetto().getNome()));
-			dati.add(de);
-			
-			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_TIPO_MESSAGGIO_2);
-			de.setValue(traccia.getTipoMessaggio().getTipo());
-			dati.add(de);
+			de.setLabel(ArchiviCostanti.LABEL_DETTAGLI_ELABORAZIONE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_ESITO_ELABORAZIONE);
@@ -482,8 +716,23 @@ public class TracciamentoTesto extends Action {
 			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_DETTAGLIO_ESITO_ELABORAZIONE);
-			de.setValue(org.apache.commons.lang.StringEscapeUtils.escapeXml(this.getValue(traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio())).replaceAll("\n", "<br/>"));
+			String dettaglio = this.getValue(traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio());
+			de.setValue(org.apache.commons.lang.StringEscapeUtils.escapeXml(dettaglio));
+			if(dettaglio!=null && !"-".equals(dettaglio)){
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				de.setRows(6);
+				de.setCols(80);
+			}
+			else{
+				de.setType(DataElementType.TEXT);
+			}
 			dati.add(de);
+			
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_SERVIZI_APPLICATIVI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_SERVIZIO_APPLICATIVO_FRUITORE);
@@ -495,39 +744,45 @@ public class TracciamentoTesto extends Action {
 			de.setValue(this.getValue(busta.getServizioApplicativoErogatore()));
 			dati.add(de);
 			
+			
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_CORRELAZIONE_APPLICATIVA);
-			de.setValue(MessageFormat.format(CORRELAZIONE_PATTERN_BR, this.getValue(traccia.getCorrelazioneApplicativa()),
-					this.getValue(traccia.getCorrelazioneApplicativaRisposta())));
-			dati.add(de);
-					
-			if(traccia.getLocation()!=null){
-					de = new DataElement();
-					if(traccia.getLocation().startsWith(ArchiviCostanti.PARAMETRO_TRACCIA_LOCATION_IN)){
-						de.setLabel(ArchiviCostanti.LABEL_TRACCIA_LOCATION_IN);
-						de.setValue(traccia.getLocation().substring(3,traccia.getLocation().length()));
-					}else if(traccia.getLocation().startsWith(ArchiviCostanti.PARAMETRO_TRACCIA_LOCATION_OUT)){
-						de.setLabel(ArchiviCostanti.LABEL_TRACCIA_LOCATION_OUT);
-						de.setValue(traccia.getLocation());
-						de.setValue(traccia.getLocation().substring(4,traccia.getLocation().length()));
-					}else{
-						de.setLabel(ArchiviCostanti.LABEL_TRACCIA_LOCATION);
-						de.setValue(traccia.getLocation());
-					}
-					dati.add(de);
-			}
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
 			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA);
+			de.setValue(this.getValue(traccia.getCorrelazioneApplicativa()));
+			dati.add(de);
+			
+			de = new DataElement();
+			de.setLabel(ArchiviCostanti.LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA);
+			de.setValue(this.getValue(traccia.getCorrelazioneApplicativaRisposta()));
+			dati.add(de);
+			
+			
+
 			
 			// lista allegati
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(ArchiviCostanti.LABEL_LISTA_INFO_ALLEGATI);
-			dati.add(de);
+
 			if (traccia.sizeListaAllegati() > 0) {
 				for (int i = 0; i < traccia.sizeListaAllegati(); i++) {
 					Allegato allegato = traccia.getAllegato(i);
+					
 					de = new DataElement();
-										
+					de.setType(DataElementType.TITLE);
+					if(allegato.getContentId()!=null){
+						de.setLabel(ArchiviCostanti.LABEL_ALLEGATO+" "+allegato.getContentId());
+					}
+					else if(allegato.getContentLocation()!=null){
+						de.setLabel(ArchiviCostanti.LABEL_ALLEGATO+" "+allegato.getContentLocation());
+					}
+					else if(allegato.getContentLocation()!=null){
+						de.setLabel(ArchiviCostanti.LABEL_ALLEGATO+" "+(i+1));
+					}
+					dati.add(de);
+					
+							
 					de = new DataElement();
 					de.setLabel(ArchiviCostanti.LABEL_ALLEGATO_CONTENT_ID);
 					de.setValue(StringEscapeUtils.escapeHtml(this.getValue(allegato.getContentId())));
@@ -548,12 +803,8 @@ public class TracciamentoTesto extends Action {
 					de.setValue(StringEscapeUtils.escapeHtml(this.getValue(allegato.getDigest())));
 					dati.add(de);
 				}
-			} else {
-				de = new DataElement();
-				de.setLabel("-");
-				de.setValue("-");
-				dati.add(de);
-			}
+			} 
+			
 			
 			pd.disableEditMode();
 			pd.setDati(dati);

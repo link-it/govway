@@ -784,9 +784,19 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
 		if(this.core.isShowJ2eeOptions()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoStateless);
-			de.setSelected(stateless);
+			if(configurazioneStandardNonApplicabile){
+				de.setType(DataElementType.TEXT);
+				if(stateless!=null && !"".equals(stateless)){
+					de.setValue(stateless);
+				}
+				else{
+					de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT);
+				}
+			}else{
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoStateless);
+				de.setSelected(stateless);
+			}
 			deIntegrazione.addElement(de);
 		}else{
 			de.setType(DataElementType.HIDDEN);
