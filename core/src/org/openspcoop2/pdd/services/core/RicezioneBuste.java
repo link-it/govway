@@ -4081,7 +4081,8 @@ public class RicezioneBuste {
 						boolean readWSDL = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo());
 						msgDiag.mediumDebug("Validazione xsd della richiesta (initValidator)...");
 						ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
-							new ValidatoreMessaggiApplicativi(registroServiziReader,idServizio,requestMessage,readWSDL);
+							new ValidatoreMessaggiApplicativi(registroServiziReader,idServizio,requestMessage,readWSDL,
+									propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione());
 
 						// Validazione WSDL 
 						if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
@@ -4095,6 +4096,16 @@ public class RicezioneBuste {
 						// Validazione XSD
 						msgDiag.mediumDebug("Validazione xsd della richiesta (validazione)...");
 						validatoreMessaggiApplicativi.validateWithWsdlDefinitorio(true);
+												
+						// Validazione WSDL (Restore Original Document)
+						if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo())
+							|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
+							if(propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione() &&
+									propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione()){
+								msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della richiesta ...");
+								validatoreMessaggiApplicativi.restoreOriginalDocument(true);
+							}
+						}
 						
 						// Ripristino struttura messaggio con xom
 						if(xomReferences!=null && xomReferences.size()>0){

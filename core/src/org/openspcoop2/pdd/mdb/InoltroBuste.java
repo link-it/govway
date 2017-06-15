@@ -3897,7 +3897,8 @@ public class InoltroBuste extends GenericLib{
 									msgDiag.mediumDebug("Validazione xsd della risposta (initValidator)...");
 									ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 										new ValidatoreMessaggiApplicativi(registroServiziManager,richiestaDelegata.getIdServizio(),
-												responseMessage,readWSDL);
+												responseMessage,readWSDL,
+												this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione());
 
 									// Validazione WSDL 
 									if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
@@ -3911,6 +3912,16 @@ public class InoltroBuste extends GenericLib{
 									// Validazione XSD
 									msgDiag.mediumDebug("Validazione xsd della risposta (validazione)...");
 									validatoreMessaggiApplicativi.validateWithWsdlDefinitorio(false);
+									
+									// Validazione WSDL (Restore Original Document)
+									if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo())
+										|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
+										if(this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione() &&
+												this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione()){
+											msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della risposta ...");
+											validatoreMessaggiApplicativi.restoreOriginalDocument(false);
+										}
+									}
 									
 									// Ripristino struttura messaggio con xom
 									if(xomReferences!=null && xomReferences.size()>0){

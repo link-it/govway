@@ -110,7 +110,7 @@ public class ValidatoreMessaggiApplicativi {
 	
 	/* ------ Costruttore -------------- */
 	public ValidatoreMessaggiApplicativi(RegistroServiziManager registro,IDServizio idServizio,
-			OpenSPCoop2Message message,boolean readWSDLAccordoServizio)throws ValidatoreMessaggiApplicativiException{
+			OpenSPCoop2Message message,boolean readWSDLAccordoServizio, boolean gestioneXsiType_rpcLiteral)throws ValidatoreMessaggiApplicativiException{
 		
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
@@ -216,7 +216,7 @@ public class ValidatoreMessaggiApplicativi {
 		}
 		
 		try{
-			this.wsdlValidator = new WSDLValidator(this.message.getMessageType(), this.element, this.xmlUtils, this.accordoServizioWrapper, this.logger);
+			this.wsdlValidator = new WSDLValidator(this.message.getMessageType(), this.element, this.xmlUtils, this.accordoServizioWrapper, this.logger, gestioneXsiType_rpcLiteral);
 		}catch(Exception e){
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
@@ -298,6 +298,29 @@ public class ValidatoreMessaggiApplicativi {
 			}
 			
 			this.wsdlValidator.wsdlConformanceCheck(isRichiesta, this.message.castAsSoap().getSoapAction(), this.idServizio.getAzione());
+		}catch(Exception e ){ // WSDLValidatorException
+			ValidatoreMessaggiApplicativiException ex 
+				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+			if(isRichiesta){
+				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.getErrore418_ValidazioneWSDLRichiesta(CostantiPdD.WSDL_FRUITORE));
+				else
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.getErrore418_ValidazioneWSDLRichiesta(CostantiPdD.WSDL_EROGATORE));
+			}else{
+				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.getErrore419_ValidazioneWSDLRisposta(CostantiPdD.WSDL_FRUITORE));
+				else
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.getErrore419_ValidazioneWSDLRisposta(CostantiPdD.WSDL_EROGATORE));
+			}
+			throw ex;
+		}
+		
+	}
+	
+	public void restoreOriginalDocument(boolean isRichiesta) throws ValidatoreMessaggiApplicativiException {
+		
+		try{
+			this.wsdlValidator.wsdlConformanceCheck_restoreOriginalDocument();
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());

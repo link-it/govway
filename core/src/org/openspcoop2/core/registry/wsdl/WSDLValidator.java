@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
@@ -69,6 +70,10 @@ import org.w3c.dom.Text;
 
 public class WSDLValidator {
 
+	public static final String XMLSCHEMA_INSTANCE_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+	public static final String XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE = "type";
+	private static final String PREFIX_RPC_AGGIUNTO = "op2RPC";
+	
 	/** SOAPVersion */
 	MessageType messageType;
 	/** Element */
@@ -80,6 +85,13 @@ public class WSDLValidator {
 	/** XMLUtils */
 	AbstractXMLUtils xmlUtils = null;
 	
+	/** Nodo xsiType Aggiunto */
+	private boolean gestioneXsiType_rpcLiteral;
+	private SOAPElement rpcChildElement;
+	private QName rpcChildElementNamespaceAggiunto;
+	private QName rpcChildElementXSITypeAggiunto;
+	
+	
 	
 
 	
@@ -87,7 +99,8 @@ public class WSDLValidator {
 	
 	
 	/* ------ Costruttore -------------- */
-	public WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log)throws WSDLException{
+	public WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
+			boolean gestioneXsiType_rpcLiteral)throws WSDLException{
 		
 		this.messageType = messageType;
 		
@@ -113,11 +126,37 @@ public class WSDLValidator {
 		this.logger = log;
 		this.xmlUtils = xmlUtils;
 		this.accordoServizioWrapper = accordoServizioWrapper;
+		
+		this.gestioneXsiType_rpcLiteral = gestioneXsiType_rpcLiteral;
 	}
 	
 	
 	
 	
+	
+	
+	
+	/* -------------- FINALIZE --------------------- */
+	public void wsdlConformanceCheck_restoreOriginalDocument(){
+		if(this.gestioneXsiType_rpcLiteral && this.rpcChildElement!=null){
+			try{
+				if(this.rpcChildElementXSITypeAggiunto!=null){
+					this.rpcChildElement.removeAttribute(this.rpcChildElementXSITypeAggiunto);
+				}
+			}catch(Exception e){
+				this.logger.error("Errore durante l'eliminazione dell'attributo ["+this.rpcChildElementXSITypeAggiunto+"] dal rpc element");
+			}
+			try{
+				if(this.rpcChildElementNamespaceAggiunto!=null){
+					// alcune implementazioni usano l'uno o l'altro per eliminarlo
+					this.rpcChildElement.removeAttribute(this.rpcChildElementNamespaceAggiunto);
+					this.rpcChildElement.removeNamespaceDeclaration(PREFIX_RPC_AGGIUNTO);
+				}
+			}catch(Exception e){
+				this.logger.error("Errore durante l'eliminazione dell'attributo ["+this.rpcChildElementNamespaceAggiunto+"] dal rpc element");
+			}
+		}
+	}
 	
 	
 	
@@ -853,9 +892,54 @@ public class WSDLValidator {
 							}
 	
 							if (!find) { //tipi non concordi nella sequenza
-								eccezioni.append("\nParametro di "+tipo+" '"+argomentoAtteso+"' richiesto nel wsdl ma non trovato nei root-element ("+numeroBodyElements+") presenti nel body: "+bodyElements);
-								this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Atteso "+argomentoAtteso+" body "+bodyElements);
-								break;
+								boolean error = true;
+								if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(style) && CostantiRegistroServizi.WSDL_USE_LITERAL.equals(use) &&
+										tipoXSIAtteso!=null &&
+										elementRootBody.size()==1 && // elementi nel body sono uno
+										argumentsOperation.sizePartList()==1 // elementi attesi nel wsdl uno 
+										){
+									
+									SOAPElement rpcOperation = SoapUtils.getNotEmptyFirstChildSOAPElement(body);
+									if(rpcOperation!=null){
+										SOAPElement childRpc = SoapUtils.getNotEmptyFirstChildSOAPElement(rpcOperation);
+										if(this.gestioneXsiType_rpcLiteral && 
+												childRpc!=null && nomeElementAtteso!=null && nomeElementAtteso.equals(childRpc.getLocalName())){
+											try{
+//												System.out.println("PRIMA: "+org.openspcoop2.message.OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11).
+//														getAsString(childRpc, false));
+												
+												QName namespaceId = new QName("xmlns:"+PREFIX_RPC_AGGIUNTO);
+												childRpc.addAttribute(namespaceId, namespaceElementAtteso);
+												this.rpcChildElementNamespaceAggiunto = namespaceId;
+											
+												QName id = new QName(XMLSCHEMA_INSTANCE_NAMESPACE,XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE,"xsi");
+												String value = PREFIX_RPC_AGGIUNTO+":"+tipoXSIAtteso;
+												childRpc.addAttribute(id, value);
+												this.rpcChildElementXSITypeAggiunto = id;
+											
+//												System.out.println("DOPO: "+org.openspcoop2.message.OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11).
+//														getAsString(childRpc, false));
+												error= false;
+												this.rpcChildElement = childRpc;
+											}catch(Exception e){
+												this.logger.error("Errore durante la registrazione degli attributi richiesti per la validazione rpc con type: "+e.getMessage(),e);
+												try{
+													if(this.rpcChildElementNamespaceAggiunto!=null){
+														// ripulisco
+														// alcune implementazioni usano l'uno o l'altro per eliminarlo
+														this.rpcChildElement.removeAttribute(this.rpcChildElementNamespaceAggiunto);
+														this.rpcChildElement.removeNamespaceDeclaration(PREFIX_RPC_AGGIUNTO);
+													}
+												}catch(Exception eClose){}
+											}
+										}
+									}
+								}
+								if(error){
+									eccezioni.append("\nParametro di "+tipo+" '"+argomentoAtteso+"' richiesto nel wsdl ma non trovato nei root-element ("+numeroBodyElements+") presenti nel body: "+bodyElements);
+									this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Atteso "+argomentoAtteso+" body "+bodyElements);
+									break;
+								}
 							}
 						}
 						if (wsdlIndex == soapBodyArguments) {
@@ -1163,10 +1247,7 @@ class RootElementBody{
 	
 	// Questo elemento viene valorizzato solo nei casi di wsdl encoded dove gli elementi vengono definiti con wsdl:part element e non type.
 	private String namespaceElementoCheContieneXSIType;
-	
-	public static final String XMLSCHEMA_INSTANCE_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
-	public static final String XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE = "type";
-	
+		
 	public RootElementBody(SOAPEnvelope soapEnvelope,Node nodoPadre,boolean rpc, Node n) throws Exception{
 		
 		NamedNodeMap attributes = n.getAttributes();
@@ -1184,8 +1265,8 @@ class RootElementBody{
 					String attrNamespace = a.getNamespaceURI(); // http://www.w3.org/2001/XMLSchema-instance
 					String value = a.getNodeValue(); // messaggioSII:esitoProcessMessaggioSIIType
 					//System.out.println("ATTRNAME["+attrName+"] ATTRPREFIX["+attrPrefix+"] ATTRNAMESPACE["+attrNamespace+"] VALUE["+value+"]");
-					if(RootElementBody.XMLSCHEMA_INSTANCE_NAMESPACE.equals(attrNamespace) &&
-							RootElementBody.XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE.equals(attrLocalName) && 
+					if(WSDLValidator.XMLSCHEMA_INSTANCE_NAMESPACE.equals(attrNamespace) &&
+							WSDLValidator.XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE.equals(attrLocalName) && 
 							value!=null){
 						String prefix = "";
 						String typeName = value;

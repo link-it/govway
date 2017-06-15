@@ -637,7 +637,7 @@ public class AccordoServizioWrapperUtilities {
 				if(envelope==null){
 					throw new DriverRegistroServiziException("Envelope non fornita");
 				}
-				WSDLValidator wsdlValidator = new WSDLValidator(message.getMessageType(),envelope, this.xmlUtils, this.accordoServizioWrapper, this.logger);
+				WSDLValidator wsdlValidator = new WSDLValidator(message.getMessageType(),envelope, this.xmlUtils, this.accordoServizioWrapper, this.logger, false);
 				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
 					PortType pt = this.accordoServizioWrapper.getPortType(i);
 					if(portType!=null){

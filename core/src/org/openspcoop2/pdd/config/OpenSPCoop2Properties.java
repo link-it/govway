@@ -10307,5 +10307,61 @@ public class OpenSPCoop2Properties {
 		}
 		return OpenSPCoop2Properties.extendedInfoPortaApplicativa;
 	}
+	
+	
+	
+	
+	
+	
+	
+	/* ------------- Validazione Contenuti Applicativi ---------------------*/
+	
+	private static Boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = null;
+	public boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(){
+
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione;
+	}
+	
+	private static Boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = null;
+	public boolean isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione(){
+
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione;
+	}
 }
 
