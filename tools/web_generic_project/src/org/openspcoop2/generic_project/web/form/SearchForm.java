@@ -61,4 +61,8 @@ public interface SearchForm extends Form {
 	public Integer getTotalCount();
 	public void setTotalCount(Integer totalCount);
 	
+	// Indica se e' una nuova richiesta dall'utente con il tasto filtra
+	public boolean isNewSearch();
+	public void setNewSearch(boolean newSearch);
+	
 }

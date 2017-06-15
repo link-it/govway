@@ -112,7 +112,7 @@ public abstract class ParameterizedDataModel<DTOType, KeyType, BeanType extends 
 	@Override
 	public int getRowCount() {
 		if(this.rowCount==null){
-		//	if(this.getDataProvider().getForm().isNewSearch()){
+			if(this.getDataProvider().getForm().isNewSearch()){
 				try {
 					this.rowCount = this.getDataProvider().totalCount();
 					this.getDataProvider().getForm().setTotalCount(this.rowCount);
@@ -120,11 +120,11 @@ public abstract class ParameterizedDataModel<DTOType, KeyType, BeanType extends 
 					this.getDataProvider().getForm().setTotalCount(0);
 					return 0;
 				}
-				//this.getDataProvider().getForm().setNewSearch(false); 
-		//	}
-		//	else {
-		//		this.rowCount = this.getDataProvider().getForm().getTotalCount();
-		//	}
+				this.getDataProvider().getForm().setNewSearch(false); 
+			}
+			else {
+				this.rowCount = this.getDataProvider().getForm().getTotalCount();
+			}
 		}
 		return this.rowCount;
 	}

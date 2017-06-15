@@ -128,12 +128,11 @@ public abstract class BaseSearchForm extends BaseForm implements SearchForm {
 		this.limit = limit;
 	}
 
-	// Eliminare
-	
+	@Override
 	public boolean isNewSearch() {
 		return this.newSearch;
 	}
-
+	@Override
 	public void setNewSearch(boolean newSearch) {
 		this.newSearch = newSearch;
 	}

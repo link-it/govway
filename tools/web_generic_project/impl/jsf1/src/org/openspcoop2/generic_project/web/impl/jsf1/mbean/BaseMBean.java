@@ -388,7 +388,8 @@ public abstract class BaseMBean<BeanType,KeyType,SearchFormType extends SearchFo
 	@Override
 	public String azioneFiltra() throws FiltraException {
 		try{
-			// do nothing
+			if(this.search != null)
+				this.search.setNewSearch(true);
 		}catch(Exception e){
 			throw new FiltraException(e);
 		}
