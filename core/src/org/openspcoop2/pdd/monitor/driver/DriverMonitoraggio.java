@@ -735,6 +735,10 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 							datiConsegna.setSbustamentoSoap(true);
 						else
 							datiConsegna.setSbustamentoSoap(false);
+						if(rs.getInt("SBUSTAMENTO_INFO_PROTOCOL")==1)
+							datiConsegna.setSbustamentoInformazioniProtocollo(true);
+						else
+							datiConsegna.setSbustamentoInformazioniProtocollo(false);
 						if(rs.getInt("INTEGRATION_MANAGER")==1)
 							datiConsegna.setAutorizzazioneIntegrationManager(true);
 						else

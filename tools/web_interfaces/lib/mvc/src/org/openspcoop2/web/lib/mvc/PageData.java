@@ -66,7 +66,7 @@ public class PageData {
     	this.searchDescription = "";
     	this.mode = "";
     	this.message = "";
-    	this.messageType = Costanti.MESSAGE_TYPE_ERROR;
+    	this.messageType = MessageType.ERROR.toString();
     	this.page = "";
     	this.op = "";
     	this.titlelist = new Vector<GeneralLink>();
@@ -129,11 +129,11 @@ public class PageData {
     }
 
     public void setMessage(String s) {
-    	this.setMessage(s, Costanti.MESSAGE_TYPE_ERROR); 
+    	this.setMessage(s, MessageType.ERROR); 
     }
-    public void setMessage(String s,String type) {
+    public void setMessage(String s,MessageType type) {
     	this.message = s;
-    	this.messageType = type;
+    	this.messageType = type.toString();
     }
     
     public String getMessage() {

@@ -84,6 +84,7 @@
     <value name="errore-processamento" field="erroreProcessamento" usage="optional"/>
     <value name="nome" field="nome" usage="required"/>
     <value name="sbustamento-soap" field="sbustamentoSoap" default="false" usage="required"/>
+    <value name="sbustamento-informazioni-protocollo" field="sbustamentoInformazioniProtocollo" default="true" usage="required"/>
     <value name="tipo-consegna" field="tipoConsegna" usage="required"/>
   </mapping>
   <mapping name="busta-info" class="org.openspcoop2.pdd.monitor.Busta" abstract="false">

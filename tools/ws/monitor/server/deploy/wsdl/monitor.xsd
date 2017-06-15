@@ -163,6 +163,7 @@
 			<xsd:element minOccurs="0" name="errore-processamento" type="xsd:string"/>
 			<xsd:element name="nome" type="xsd:string"/>
 			<xsd:element default="false" name="sbustamento-soap" type="xsd:boolean"/>
+			<xsd:element default="true" name="sbustamento-informazioni-protocollo" type="xsd:boolean"/>
 			<xsd:element name="tipo-consegna" type="xsd:string"/>
 		</xsd:sequence>
 	</xsd:complexType>

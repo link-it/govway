@@ -180,6 +180,10 @@ public class LoaderHelper {
 	public void addImportaXMLtoDati(Vector<DataElement> dati,String tipoxml){
 		
 		DataElement de = new DataElement();
+		de.setLabel(Costanti.LABEL_IMPORTA);
+		de.setType(DataElementType.TITLE);
+		
+		de = new DataElement();
 		de.setLabel(Costanti.LABEL_TIPOLOGIA_XML);
 		de.setType(DataElementType.SELECT);
 		String [] stati = new String[2];
@@ -203,6 +207,10 @@ public class LoaderHelper {
 	public void addEliminazioneXMLtoDati(Vector<DataElement> dati,String tipoxml){
 		
 		DataElement de = new DataElement();
+		de.setLabel(Costanti.LABEL_ELIMINA);
+		de.setType(DataElementType.TITLE);
+		
+		de = new DataElement();
 		de.setLabel(Costanti.LABEL_TIPOLOGIA_XML);
 		de.setType(DataElementType.SELECT);
 		String [] stati = new String[2];

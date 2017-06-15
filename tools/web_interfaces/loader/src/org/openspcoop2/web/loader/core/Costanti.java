@@ -138,11 +138,7 @@ public class Costanti {
 	public final static String PARAMETRO_ARCHIVI_TIPO_XML = "tipoxml";
 	public final static String PARAMETRO_ARCHIVI_FILE = "theFile";
 	
-	
-	/* TIPI MESSAGGIO ERRORE */
-	public final static String MESSAGE_TYPE_ERROR = "errors";
-	public final static String MESSAGE_TYPE_INFO = "info";
-	
+
 	
 	/* LABEL PARAMETRI */
 	

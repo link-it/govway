@@ -1678,6 +1678,14 @@ public final class Monitor extends Action {
 					de.setValue("" + sac1.isSbustamentoSoap());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_SBUSTAMENTO);
 					dati.add(de);
+					
+					// sbustamento informazioni protocollo
+					de = new DataElement();
+					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO);
+					de.setType(DataElementType.TEXT);
+					de.setValue("" + sac1.isSbustamentoInformazioniProtocollo());
+					de.setName(MonitorCostanti.PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO);
+					dati.add(de);
 				}
 
 			} else {

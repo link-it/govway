@@ -876,7 +876,8 @@ public class MonitorConsole {
 							List<ServizioApplicativoConsegna> sc = lista.get(i).getDettaglio().getServizioApplicativoConsegnaList();
 							for(int j=0; j<sc.size(); j++){
 								System.out.println("\tServizioApplicativo: "+sc.get(j).getNome());
-								System.out.println("\t\tsbustamento: "+sc.get(j).isSbustamentoSoap());
+								System.out.println("\t\tsbustamento soap: "+sc.get(j).isSbustamentoSoap());
+								System.out.println("\t\tsbustamento protocollo: "+sc.get(j).isSbustamentoInformazioniProtocollo());
 								System.out.println("\t\tautorizzazione I.M.: "+sc.get(j).isAutorizzazioneIntegrationManager());
 								System.out.println("\t\ttipo consegna: "+sc.get(j).getTipoConsegna());
 								if(sc.get(j).getErroreProcessamento()!=null)

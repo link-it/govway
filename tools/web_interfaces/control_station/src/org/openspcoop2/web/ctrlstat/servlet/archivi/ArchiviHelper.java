@@ -129,6 +129,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String cascadeServiziApplicativi, String cascadePorteDelegate, String cascadePorteApplicative,
 			String cascadeAc, String cascadeAspc, String cascadeAsc, String cascadeAsps, String cascadeFruizioni){
 		
+		DataElement dataElement = new DataElement();
+		dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_EXPORT);
+		dataElement.setType(DataElementType.TITLE);
+		dati.add(dataElement);
+		
 		DataElement de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO);
 		// Non sembra necessario far vedere la lista dei protocolli anche se sono maggiore di uno.
@@ -639,6 +644,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			List<ArchiveModeType> importTypes,String importType,
 			boolean deleter){
 
+		DataElement dataElement = new DataElement();
+		dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_IMPORT);
+		dataElement.setType(DataElementType.TITLE);
+		dati.add(dataElement);
+		
 		User user = ServletUtils.getUserFromSession(this.session);
 
 		DataElement de = new DataElement();
@@ -1207,7 +1217,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				stepDescription+="/"+wizard.getStep();
 			}
 			stepDescription+=")";
-			this.pd.setMessage(wizard.getDescrizione()+stepDescription+oldMessage);
+			this.pd.setMessage(wizard.getDescrizione()+stepDescription+oldMessage,Costanti.MESSAGE_TYPE_INFO);
 			
 			showIntestazioneArchivio = wizard.getIntestazioneOriginale();
 			

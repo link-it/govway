@@ -44,6 +44,7 @@ public class ServizioApplicativoConsegnaModel extends AbstractModel<ServizioAppl
 		this.ERRORE_PROCESSAMENTO = new Field("errore-processamento",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.NOME = new Field("nome",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.SBUSTAMENTO_SOAP = new Field("sbustamento-soap",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = new Field("sbustamento-informazioni-protocollo",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.TIPO_CONSEGNA = new Field("tipo-consegna",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 	
 	}
@@ -56,6 +57,7 @@ public class ServizioApplicativoConsegnaModel extends AbstractModel<ServizioAppl
 		this.ERRORE_PROCESSAMENTO = new ComplexField(father,"errore-processamento",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.SBUSTAMENTO_SOAP = new ComplexField(father,"sbustamento-soap",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
+		this.SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = new ComplexField(father,"sbustamento-informazioni-protocollo",boolean.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 		this.TIPO_CONSEGNA = new ComplexField(father,"tipo-consegna",java.lang.String.class,"servizio-applicativo-consegna",ServizioApplicativoConsegna.class);
 	
 	}
@@ -69,6 +71,8 @@ public class ServizioApplicativoConsegnaModel extends AbstractModel<ServizioAppl
 	public IField NOME = null;
 	 
 	public IField SBUSTAMENTO_SOAP = null;
+	 
+	public IField SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = null;
 	 
 	public IField TIPO_CONSEGNA = null;
 	 

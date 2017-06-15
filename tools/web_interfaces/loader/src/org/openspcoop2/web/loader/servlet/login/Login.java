@@ -31,6 +31,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.loader.core.Costanti;
@@ -93,7 +94,7 @@ public final class Login extends Action {
 			// Preparo il menu
 			loaderHelper.makeMenu();
 	
-			pd.setMessage(Costanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage(Costanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,MessageType.INFO);
 	
 			// Inizializzo di nuovo GeneralData, dopo aver messo
 			// in sessione la login dell'utente

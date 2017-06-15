@@ -178,8 +178,8 @@ public class Costanti {
 	
 	/** PAGE DATA TITLE */
 	
-	public final static String MESSAGE_TYPE_ERROR = "errors";
-	public final static String MESSAGE_TYPE_INFO = "info";
+	public final static MessageType MESSAGE_TYPE_ERROR = MessageType.ERROR;
+	public final static MessageType MESSAGE_TYPE_INFO = MessageType.INFO;
 	
 	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";

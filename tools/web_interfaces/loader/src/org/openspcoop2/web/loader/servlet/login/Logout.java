@@ -34,6 +34,7 @@ import org.openspcoop2.web.loader.core.LoaderCore;
 import org.openspcoop2.web.loader.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -66,7 +67,7 @@ public final class Logout extends Action {
 
 			ServletUtils.removeUserLoginFromSession(session);
 
-			pd.setMessage(Costanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage(Costanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,MessageType.INFO);
 
 			// Inizializzo di nuovo GeneralData, dopo aver rimosso
 			// dalla sessione la login dell'utente

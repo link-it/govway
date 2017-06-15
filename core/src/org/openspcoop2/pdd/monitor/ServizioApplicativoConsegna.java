@@ -39,6 +39,7 @@ import java.io.Serializable;
  * 			&lt;element name="errore-processamento" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="sbustamento-soap" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
+ * 			&lt;element name="sbustamento-informazioni-protocollo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/>
  * 			&lt;element name="tipo-consegna" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -57,6 +58,7 @@ import java.io.Serializable;
   	"erroreProcessamento",
   	"nome",
   	"sbustamentoSoap",
+  	"sbustamentoInformazioniProtocollo",
   	"tipoConsegna"
   }
 )
@@ -121,6 +123,18 @@ public class ServizioApplicativoConsegna extends org.openspcoop2.utils.beans.Bas
     this.sbustamentoSoap = sbustamentoSoap;
   }
 
+  public boolean isSbustamentoInformazioniProtocollo() {
+    return this.sbustamentoInformazioniProtocollo;
+  }
+
+  public boolean getSbustamentoInformazioniProtocollo() {
+    return this.sbustamentoInformazioniProtocollo;
+  }
+
+  public void setSbustamentoInformazioniProtocollo(boolean sbustamentoInformazioniProtocollo) {
+    this.sbustamentoInformazioniProtocollo = sbustamentoInformazioniProtocollo;
+  }
+
   public java.lang.String getTipoConsegna() {
     return this.tipoConsegna;
   }
@@ -151,6 +165,10 @@ public class ServizioApplicativoConsegna extends org.openspcoop2.utils.beans.Bas
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="sbustamento-soap",required=true,nillable=false,defaultValue="false")
   protected boolean sbustamentoSoap = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="sbustamento-informazioni-protocollo",required=true,nillable=false,defaultValue="true")
+  protected boolean sbustamentoInformazioniProtocollo = true;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-consegna",required=true,nillable=false)

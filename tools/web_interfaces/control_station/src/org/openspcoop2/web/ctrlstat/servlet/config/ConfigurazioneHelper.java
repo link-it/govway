@@ -92,7 +92,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	public Vector<DataElement> addTipoTracciamentoAppenderToDati(TipoOperazione tipoOp, String tipo,
 			Vector<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
+		
 		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
 		de.setValue(tipo);
 		de.setType(DataElementType.TEXT_EDIT);
@@ -260,7 +266,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	public Vector<DataElement> addTipoDiagnosticaAppenderToDati(TipoOperazione tipoOp, String tipo,
 			Vector<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
+		
 		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
 		de.setValue(tipo);
 		de.setType(DataElementType.TEXT_EDIT);
@@ -288,7 +300,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	public Vector<DataElement>   addDiagnosticaDatasourceToDati(TipoOperazione tipoOp, String nome, String nomeJndi,
 			String tipoDatabase, String[] tipoDbList, Vector<DataElement> dati, String idSorgenteDati, int dimensioneSorgenteDati) {
+		
 		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
@@ -336,7 +354,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	public Vector<DataElement>   addTracciamentoDatasourceToDati(TipoOperazione tipoOp, String nome, String nomeJndi,
 			String tipoDatabase, String[] tipoDbList, Vector<DataElement> dati, String idSorgenteDati, int dimensioneSorgenteDati) {
+
 		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
@@ -2366,14 +2390,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String rottaenabled,  
 			String[] registriList, String[] registriListLabel, String[] tipiSoggettiLabel,
 			Vector<DataElement> dati) throws DriverRegistroServiziException {
+		
+		DataElement dataElement = new DataElement();
+		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE);
+		dataElement.setType(DataElementType.TITLE);
+		dati.add(dataElement);
+		
 		DataElement de = new DataElement();
-
 		String[] tipoRouting = {
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE_STATO);
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ROTTA_ENABLED);
 		de.setValues(tipoRouting);
@@ -2477,8 +2506,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public Vector<DataElement> addRegistroToDati(TipoOperazione tipoOP, String nome, String location, String tipo,
 			String utente, String password, String confpw,
 			Vector<DataElement> dati) {
+		
+		DataElement dataElement = new DataElement();
+		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO);
+		dataElement.setType(DataElementType.TITLE);
+		dati.add(dataElement);
+		
 		DataElement de = new DataElement();
-
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
 		de.setValue(nome);
@@ -2715,9 +2749,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if (configurazione.getMessaggiDiagnostici() != null)
 						totAppender =
 						configurazione.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
 				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, null);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
 				dati.addElement(de);
 			}
 			if (this.confCore.isMsgDiagnostici_showSorgentiDatiDatabase()) {
@@ -2729,9 +2763,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if (configurazione.getMessaggiDiagnostici() != null)
 						totDs =
 						configurazione.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
 				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
 				dati.addElement(de);
 			}
 		}
@@ -2825,9 +2859,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if (configurazione.getTracciamento() != null)
 						totAppender =
 						configurazione.getTracciamento().sizeOpenspcoopAppenderList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
 				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, null);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
 				dati.addElement(de);
 			}
 			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
@@ -2839,9 +2873,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if (configurazione.getTracciamento() != null)
 						totDs =
 						configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
 				} else
-					ServletUtils.setDataElementVisualizzaCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
 				dati.addElement(de);
 			}
 		}

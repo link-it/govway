@@ -41,6 +41,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -122,6 +123,11 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesAdd extends Action
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
+				
 				dati = confHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, "", "",  false);
 
 				dati = confHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, null, null, dati);
@@ -158,6 +164,11 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesAdd extends Action
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				
+				DataElement dataElement = new DataElement();
+				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setType(DataElementType.TITLE);
+				dati.add(dataElement);
 				
 				dati = confHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, nome, valore,  false);
 

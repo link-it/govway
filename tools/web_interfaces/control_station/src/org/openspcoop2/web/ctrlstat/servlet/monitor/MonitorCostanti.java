@@ -134,6 +134,7 @@ public class MonitorCostanti {
 	public final static String PARAMETRO_MONITOR_NOME_CONSEGNA = "nomeConsegna";
 	public final static String PARAMETRO_MONITOR_AUTORIZZAZIONE = "autorizzazione";
 	public final static String PARAMETRO_MONITOR_SBUSTAMENTO = "sbustamento";
+	public final static String PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = "sbustamentoProtocollo";
 	public final static String PARAMETRO_MONITOR_ORA_REGISTRAZIONE = "oraReg";
 	public final static String PARAMETRO_MONITOR_ORA_ATTUALE = "oraAtt";
 	public final static String PARAMETRO_MONITOR_MITTENTE = "mittente";
@@ -170,6 +171,7 @@ public class MonitorCostanti {
 	public final static String LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA = "Nome";
 	public final static String LABEL_PARAMETRO_MONITOR_AUTORIZZAZIONE = "Authz MessageBox";
 	public final static String LABEL_PARAMETRO_MONITOR_SBUSTAMENTO = "Sbustamento SOAP";
+	public final static String LABEL_PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = "Sbustamento Protocollo";
 	public final static String LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE = "Ora Registrazione";
 	public final static String LABEL_PARAMETRO_MONITOR_ORA_ATTUALE = "Ora Attuale";
 	public final static String LABEL_PARAMETRO_MONITOR_MITTENTE = "Mittente";

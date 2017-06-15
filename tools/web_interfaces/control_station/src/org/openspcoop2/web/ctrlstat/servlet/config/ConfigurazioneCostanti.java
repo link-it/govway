@@ -258,10 +258,10 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_GENERALE = "Generale";
 	
-	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_TRACCIAMENTO = "Elenco appender tracciamento";
-	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI = "Elenco appender messaggi diagnostici";
-	public final static String LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO = "Elenco sorgenti dati tracciamento";
-	public final static String LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_MESSAGGI_DIAGNOSTICI = "Elenco sorgenti dati messaggi diagnostici";
+	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_TRACCIAMENTO = "Elenco Appender Tracciamento";
+	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI = "Elenco Appender Messaggi Diagnostici";
+	public final static String LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO = "Elenco Sorgenti Dati Tracciamento";
+	public final static String LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_MESSAGGI_DIAGNOSTICI = "Elenco Sorgenti Dati Messaggi Diagnostici";
 	
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA = "Propriet&agrave; di Sistema";
@@ -270,25 +270,26 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_DESTINAZIONI = "Destinazioni";
 	public final static String LABEL_CONFIGURAZIONE_ROTTA = "Rotta";
-	public final static String LABEL_CONFIGURAZIONE_ROTTA_DI_DEFAULT = "Rotta di default";
+	public final static String LABEL_CONFIGURAZIONE_ROTTA_DI_DEFAULT = "Rotta di Default";
 	public final static String LABEL_CONFIGURAZIONE_ROTTE_STATICHE = "Rotte statiche";
 	public final static String LABEL_CONFIGURAZIONE_DESTINATARIO = "Destinatario";
 	public final static String LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING = "Tabella di Routing";
-	public final static String LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE = "Routing delle buste";
+	public final static String LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE = "Routing delle Buste";
+	public final static String LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE_STATO = "Stato";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO = "Registro";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_REGISTRI = "Elenco registri";
-	public final static String LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI = "Messaggi diagnostici";
+	public final static String LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI = "Messaggi Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO = "Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER = "Integration Manager";
 	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI = "Validazione Contenuti Applicativi";
 	
-	public final static String LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE = "Inoltro buste non riscontrate";
-	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE_BUSTE = "Validazione buste";
-	public final static String LABEL_CONFIGURAZIONE_APPENDER = "appender" ;
-	public final static String LABEL_CONFIGURAZIONE_SORGENTI_DATI = "sorgenti dati" ;
+	public final static String LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE = "Inoltro Buste non Riscontrate";
+	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE_BUSTE = "Validazione Buste";
+	public final static String LABEL_CONFIGURAZIONE_APPENDER = "Appender" ;
+	public final static String LABEL_CONFIGURAZIONE_SORGENTI_DATI = "Sorgenti Dati" ;
 	public final static String LABEL_CONFIGURAZIONE_RISPOSTE = "Risposte";
 	public final static String LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO = "Indirizzo Telematico";
-	public final static String LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS = "Manifest attachments";
+	public final static String LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS = "Manifest Attachments";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache";
@@ -439,7 +440,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PASSWORD = "Password";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD = "Conferma Password";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOCATION = "Location";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN = "Cadenza (min)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN = "Cadenza (minuti)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO = "Controllo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J = "Livello Severit&agrave; Log4J";
