@@ -108,11 +108,13 @@ public final class AuditingDettaglioInfo extends Action {
 
 			// setto la barra del titolo
 			String label = "";
-			if (type.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR))
-				label = AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE + " di " + idop;
-			else
-				label = AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO + " di " + idop;
-
+			if (type.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR)){
+				//label = AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE + " di " + idop;
+				label = AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE;
+			}else{
+				//label = AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO + " di " + idop;
+				label = AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO;
+			}
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_REPORTISTICA, null));

@@ -93,21 +93,25 @@ public class AuditCostanti {
 
 	public final static String LABEL_AUDIT = "Auditing";
 	public final static String LABEL_AUDIT_FILTRI = "Filtri";
-	public final static String LABEL_AUDIT_FILTRO_GENERICO = "Filtro generico";
-	public final static String LABEL_AUDIT_FILTRO_CONTENUTO = "Filtro per contenuto";
+	public final static String LABEL_AUDIT_FILTRO_GENERICO = "Filtro Generico";
+	public final static String LABEL_AUDIT_FILTRO_CONTENUTO = "Filtro per Contenuto";
 	public final static String LABEL_AUDIT_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_AUDIT_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_AUDIT_VISUALIZZA = "Visualizza";
-	public final static String LABEL_AUDIT_COMPORTAMENTO_DI_DEFAULT = "Comportamento di default";
+	public final static String LABEL_AUDIT_COMPORTAMENTO_DI_DEFAULT = "Comportamento di Default";
 	public final static String LABEL_AUDIT_AZIONE = "Azione";
 	public final static String LABEL_AUDIT_REPORTISTICA = "Reportistica";
 	public final static String LABEL_AUDIT_OPERAZIONI = "Operazioni";
+	public final static String LABEL_AUDIT_OPERAZIONE = "Operazione";
 	public final static String LABEL_AUDIT_DETTAGLIO = "Dettaglio";
-	public final static String LABEL_AUDIT_DOCUMENTI_BINARI = "Documenti binari";
+	public final static String LABEL_AUDIT_DETTAGLIO_OPERAZIONE = "Dettaglio Operazione";
+	public final static String LABEL_AUDIT_DETTAGLIO_OGGETTO = "Dettaglio Oggetto";
+	public final static String LABEL_AUDIT_DOCUMENTI_BINARI = "Documenti Binari";
 	public final static String LABEL_AUDIT_MOTIVO_ERRORE = "Motivo errore";
-	public final static String LABEL_AUDIT_DETTAGLIO_OGGETTO = "Dettaglio oggetto";
 	public final static String LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA = "Configurazione Audit modificata con successo<BR><b>Attenzione:</b> Le modifiche verranno utilizzate dal prossimo accesso alla console";
-
+	public final static String LABEL_AUDIT_CRITERI_RICERCA = "Criteri di Ricerca";
+	
+	
 	/* PARAMETRI */
 
 	public final static String PARAMETRO_AUDIT_FORMATO_DUMP = "formatodump";
@@ -154,14 +158,20 @@ public class AuditCostanti {
 	public final static String LABEL_PARAMETRO_AUDIT_DUMP_AZIONE = "Dump azione";
 	public final static String LABEL_PARAMETRO_AUDIT_STATO_AZIONE = "Stato azione";
 	public final static String LABEL_PARAMETRO_AUDIT_ID_UPPER_CASE = "ID";
-	public final static String LABEL_PARAMETRO_AUDIT_ID = "Id";
+	public final static String LABEL_PARAMETRO_AUDIT_ID = "Identificativo";
 	public final static String LABEL_PARAMETRO_AUDIT_OPERAZIONE = "Operazione";
 	public final static String LABEL_PARAMETRO_AUDIT_OGGETTO = "Oggetto";
 	public final static String LABEL_PARAMETRO_AUDIT_CHECKSUM = "Checksum";
 	public final static String LABEL_PARAMETRO_AUDIT_OPERATION_TIME_EXECUTE = "Time execute";
 	public final static String LABEL_PARAMETRO_AUDIT_OPERATION_TIME_REQUEST = "Time request";
-	public final static String LABEL_PARAMETRO_AUDIT_OPERATION_OLD_ID = "Old id";
-
+	public final static String LABEL_PARAMETRO_AUDIT_OPERATION_OLD_ID = "Id precedente alla modifica";
+	public final static String LABEL_PARAMETRO_AUDIT_DATA_INIZIO_LABEL = "Inizio intervallo";
+	public final static String LABEL_PARAMETRO_AUDIT_DATA_INIZIO_NOTE = "Indicare una data nel formato 'yyyy-MM-dd'";
+	public final static String LABEL_PARAMETRO_AUDIT_DATA_FINE_LABEL = "Fine intervallo";
+	public final static String LABEL_PARAMETRO_AUDIT_DATA_FINE_NOTE = "Indicare una data nel formato 'yyyy-MM-dd'";
+	public static final String LABEL_PARAMETRO_AUDIT_CONTENUTO_OGGETTO = "Contenuto";
+	
+	
 	/* DEFAULT VALUES */
 
 	public final static String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_NOME = "log4jAppender";

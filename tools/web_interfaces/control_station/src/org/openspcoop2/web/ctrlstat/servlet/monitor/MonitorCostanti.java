@@ -88,7 +88,7 @@ public class MonitorCostanti {
 	public final static String LABEL_MONITOR_NESSUN_MESSAGGIO_CONSEGNA = "Nessun Messaggio in Consegna";
 	public final static String LABEL_MONITOR_NESSUN_MESSAGGIO_SPEDIZIONE_ = "Nessun Messaggio in Spedizione";
 	public final static String LABEL_MONITOR_MESSAGGI_PROCESSAMENTO = "Messaggi in Processamento";
-	public final static String LABEL_MONITOR_TOTALE_MESSAGGI_PROCESSAMENTO = "Totale Messaggi in Processamento";
+	public final static String LABEL_MONITOR_TOTALE_MESSAGGI_PROCESSAMENTO = "Totale Messaggi";
 	public final static String LABEL_MONITOR_NESSUN_MESSAGGIO_PROCESSAMENTO =  "Nessun Messaggio in Processamento";
 	public final static String LABEL_MONITOR_MESSAGGI_DUPLICATI = "Messaggi Duplicati";
 	public final static String LABEL_MONITOR_NESSUN_MESSAGGIO_DUPLICATO = "Nessun Messaggio Duplicato";
@@ -156,7 +156,8 @@ public class MonitorCostanti {
 	public final static String LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO = "Tipo Servizio";
 	public final static String LABEL_PARAMETRO_MONITOR_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_MONITOR_AZIONE = "Azione";
-	public final static String LABEL_PARAMETRO_MONITOR_SOGLIA = "Messaggi piu' vecchi di (minuti)";
+	public final static String LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL = "Anzianità Messaggi (Minuti)";
+	public final static String LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE = "Permette di selezionare i messaggi più vecchi dei minuti indicati";
 	public final static String LABEL_PARAMETRO_MONITOR_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_MONITOR_PDD = "Pdd";
 	public final static String LABEL_PARAMETRO_MONITOR_RISCONTRO = "In Attesa di Riscontro";
@@ -167,7 +168,7 @@ public class MonitorCostanti {
 	public final static String LABEL_PARAMETRO_MONITOR_ERRORE = "Errore Processamento";
 	public final static String LABEL_PARAMETRO_MONITOR_TIPO_CONSEGNA = "Tipo";
 	public final static String LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA = "Nome";
-	public final static String LABEL_PARAMETRO_MONITOR_AUTORIZZAZIONE = "Autorizzazione Integration Manager";
+	public final static String LABEL_PARAMETRO_MONITOR_AUTORIZZAZIONE = "Authz MessageBox";
 	public final static String LABEL_PARAMETRO_MONITOR_SBUSTAMENTO = "Sbustamento SOAP";
 	public final static String LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE = "Ora Registrazione";
 	public final static String LABEL_PARAMETRO_MONITOR_ORA_ATTUALE = "Ora Attuale";

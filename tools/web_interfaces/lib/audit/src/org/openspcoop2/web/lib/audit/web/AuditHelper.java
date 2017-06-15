@@ -85,7 +85,10 @@ public class AuditHelper {
 			String[] tipiLabels = { AuditCostanti.DEFAULT_VALUE_ABILITATO, AuditCostanti.DEFAULT_VALUE_DISABILITATO };
 
 			DataElement de = new DataElement();
-
+			de.setLabel(AuditCostanti.LABEL_AUDIT);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO_AUDIT);
 			de.setType(DataElementType.SELECT);
@@ -560,30 +563,32 @@ public class AuditHelper {
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			DataElement de = new DataElement();
-			de.setLabel("Criteri di ricerca");
+			de.setLabel(AuditCostanti.LABEL_AUDIT_CRITERI_RICERCA);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
 			int valueSize = 40;
 
 			de = new DataElement();
-			de.setLabel("Inizio intervallo (aaaa-mm-gg)");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_DATA_INIZIO_LABEL);
+			de.setNote(AuditCostanti.LABEL_PARAMETRO_AUDIT_DATA_INIZIO_NOTE);
 			de.setValue(datainizio != null ? datainizio : "");
 			de.setType(DataElementType.TEXT_EDIT);
-			de.setName("datainizio");
+			de.setName(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
 			de.setSize(valueSize);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Fine intervallo (aaaa-mm-gg)");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_DATA_FINE_LABEL);
+			de.setNote(AuditCostanti.LABEL_PARAMETRO_AUDIT_DATA_FINE_NOTE);
 			de.setValue(datafine != null ? datafine : "");
 			de.setType(DataElementType.TEXT_EDIT);
-			de.setName("datafine");
+			de.setName(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
 			de.setSize(valueSize);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Utente");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_UTENTE);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(utente);
@@ -591,7 +596,7 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Operazione");
+			de.setLabel(AuditCostanti.LABEL_AUDIT_OPERAZIONE);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -602,7 +607,7 @@ public class AuditHelper {
 					TipoOperazione.LOGIN.toString(),
 					TipoOperazione.LOGOUT.toString() };
 			de = new DataElement();
-			de.setLabel("Tipo");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipiOp);
@@ -616,7 +621,7 @@ public class AuditHelper {
 					StatoOperazione.error.toString(),
 					StatoOperazione.completed.toString() };
 			de = new DataElement();
-			de.setLabel("Stato");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipiStatoOp);
@@ -626,12 +631,12 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Oggetto");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_OGGETTO);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Tipo");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipiOgg);
@@ -641,7 +646,7 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Identificativo");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_ID);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_ID);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(id);
@@ -649,7 +654,7 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Id precedente alla modifica");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_OPERATION_OLD_ID);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(oldid);
@@ -657,7 +662,7 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel("Contenuto");
+			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(contoggetto);
@@ -985,6 +990,11 @@ public class AuditHelper {
 			Parameter pTypeErrore = new Parameter(AuditCostanti.PARAMETRO_AUDIT_TYPE, AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR);
 
 			DataElement de = new DataElement();
+			de.setLabel(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OPERAZIONE);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_OPERATION_TIME_REQUEST);
 			de.setValue(""+op.getTimeRequest());
 			de.setType(DataElementType.TEXT);
@@ -1110,10 +1120,15 @@ public class AuditHelper {
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			DataElement de = new DataElement();
+			de.setLabel(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
 			if (type.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR))
 				de.setLabel(AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE);
-			else
-				de.setLabel(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO);
+//			else
+//				de.setLabel(AuditCostanti.LABEL_AUDIT_DETTAGLIO_OGGETTO);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 			de.setValue(info);
 			de.setRows(30);
@@ -1151,7 +1166,7 @@ public class AuditHelper {
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_OPERAZIONI, AuditCostanti.SERVLET_NAME_AUDITING, params));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_DETTAGLIO +" di " + singleOp.getId(), 
 					AuditCostanti.SERVLET_NAME_AUDITING_DETTAGLIO, params2)); 
-			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_DOCUMENTI_BINARI + " di "+singleOp.getId(), null));
+			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_DOCUMENTI_BINARI, null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 

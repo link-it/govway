@@ -968,8 +968,13 @@ public final class Monitor extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-			// select method
 			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(MonitorCostanti.LABEL_MONITOR);
+			dati.addElement(de);
+			
+			// select method
+			de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_METHOD);
 			de.setType(DataElementType.SELECT);
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
@@ -1024,7 +1029,8 @@ public final class Monitor extends Action {
 
 			// Soglia
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA);
+			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL);
+			de.setNote(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA);
@@ -1456,8 +1462,15 @@ public final class Monitor extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			monitorHelper.makeMenu();
+			
 			Vector<DataElement> dati = new Vector<DataElement>();
+			
 			DataElement de = new DataElement();
+			de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
+			de.setType(DataElementType.TITLE);
+			dati.add(de);
+			
+			de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO);
 			de.setValue(messaggio.getIdMessaggio());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
@@ -1588,7 +1601,7 @@ public final class Monitor extends Action {
 				dati.add(de);
 			}
 
-			SimpleDateFormat formatter = new SimpleDateFormat("yy.MM.dd hh:mm aaa"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
 			// ora registrazione
 			de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE);
@@ -1625,6 +1638,7 @@ public final class Monitor extends Action {
 					de.setValue(sac1.getNome());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_CONSEGNA);
 					dati.add(de);
+					
 					// tipo consegna
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_CONSEGNA);
@@ -1632,13 +1646,20 @@ public final class Monitor extends Action {
 					de.setValue(sac1.getTipoConsegna());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_CONSEGNA);
 					dati.add(de);
+					
 					// errore processamento
 					if (erroreProcessamento != null) {
 						de = new DataElement();
 						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ERRORE);
-						de.setType(DataElementType.TEXT);
 						de.setValue(erroreProcessamento);
 						de.setName(MonitorCostanti.PARAMETRO_MONITOR_ERRORE);
+						if(erroreProcessamento!=null && !"".equals(erroreProcessamento)){
+							de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+							de.setRows(6);
+							de.setCols(80);
+						}else{
+							de.setType(DataElementType.TEXT);
+						}
 						dati.add(de);
 					}
 
@@ -1649,6 +1670,7 @@ public final class Monitor extends Action {
 					de.setValue("" + sac1.isAutorizzazioneIntegrationManager());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_AUTORIZZAZIONE);
 					dati.add(de);
+					
 					// sbustamento soap
 					de = new DataElement();
 					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SBUSTAMENTO);
@@ -1660,12 +1682,16 @@ public final class Monitor extends Action {
 
 			} else {
 				// Errore processamento
-				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ERRORE );
-				de.setType(DataElementType.TEXT);
-				de.setValue(erroreProcessamento);
-				de.setName(MonitorCostanti.PARAMETRO_MONITOR_ERRORE);
-				dati.add(de);
+				if(erroreProcessamento!=null && !"".equals(erroreProcessamento)){
+					de = new DataElement();
+					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ERRORE );
+					de.setValue(erroreProcessamento);
+					de.setName(MonitorCostanti.PARAMETRO_MONITOR_ERRORE);			
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setRows(6);
+					de.setCols(80);
+					dati.add(de);
+				}
 			}
 
 			pd.setDati(dati);
@@ -1840,8 +1866,13 @@ public final class Monitor extends Action {
 					de = new DataElement();
 					String erroreProcessamento = "";
 					if (dettaglio.getServizioApplicativoConsegnaList().size()>0) {
-						ServizioApplicativoConsegna sac1 = dettaglio.getServizioApplicativoConsegnaList().get(0);
-						erroreProcessamento = sac1.getErroreProcessamento();
+						for (int j = 0; j < dettaglio.getServizioApplicativoConsegnaList().size(); j++) {
+							ServizioApplicativoConsegna sac = dettaglio.getServizioApplicativoConsegnaList().get(j);
+							if(sac.getErroreProcessamento()!=null){
+								erroreProcessamento = sac.getErroreProcessamento();
+								break;
+							}
+						}
 					} else {
 						erroreProcessamento = messaggio.getDettaglio().getErroreProcessamento();
 					}

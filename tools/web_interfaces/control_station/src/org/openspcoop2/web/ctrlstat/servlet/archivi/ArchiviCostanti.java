@@ -136,6 +136,7 @@ public class ArchiviCostanti {
 	public final static String LABEL_DETTAGLIO_DIAGNOSTICO = "Dettaglio";
 	public final static String LABEL_INFORMAZIONI_PROTOCOLLO = "Informazioni Protocollo";
 	public final static String LABEL_SERVIZIO_AZIONE = "Servizio[@Azione]";
+	public final static String LABEL_AZIONE = "Azione";
 	public final static String LABEL_TIPO_MESSAGGIO = "Tipo";
 	public final static String LABEL_TIPO_MESSAGGIO_2 = "Tipo Messaggio";
 	public final static String LABEL_TRACCIA = "Traccia";

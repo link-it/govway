@@ -2636,7 +2636,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO, 
 					ArchiviCostanti.LABEL_MITTENTE, 
 					ArchiviCostanti.LABEL_DESTINATARIO, 
-					ArchiviCostanti.LABEL_SERVIZIO_AZIONE,
+					//ArchiviCostanti.LABEL_SERVIZIO_AZIONE,
+					ArchiviCostanti.LABEL_SERVIZIO,
+					ArchiviCostanti.LABEL_AZIONE,
 					ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO,
 					ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO_RISPOSTA_BREVE,
 					ArchiviCostanti.LABEL_TIPO_MESSAGGIO};
@@ -2866,9 +2868,21 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				String tipo_servizio_db = busta.getTipoServizio();
 				String servizio_db = busta.getServizio();
 				String azione_db = busta.getAzione();
+//				de = new DataElement();
+//				if(tipo_servizio_db!=null && servizio_db!=null)
+//					de.setValue(tipo_servizio_db + "/" + servizio_db + (azione_db != null ? "[@" + azione_db + "]" : ""));
+//				else
+//					de.setValue("");
+//				e.addElement(de);
 				de = new DataElement();
 				if(tipo_servizio_db!=null && servizio_db!=null)
-					de.setValue(tipo_servizio_db + "/" + servizio_db + (azione_db != null ? "[@" + azione_db + "]" : ""));
+					de.setValue(tipo_servizio_db + "/" + servizio_db);
+				else
+					de.setValue("");
+				e.addElement(de);
+				de = new DataElement();
+				if(azione_db!=null)
+					de.setValue(azione_db);
 				else
 					de.setValue("");
 				e.addElement(de);
