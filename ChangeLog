@@ -1,3 +1,14 @@
+2017-06-15  Giuliano Pintori <pintori@link.it>
+	
+	* [WebGenericProject]
+	Risolto Bug OP-633
+	Le schermate di tipo lista presentano una tabella con gestione della paginazione dei risultati.
+	Il framework Richfaces mantiene lo stato della paginazione tra le variabili da controllare quando viene aggiornata dinamicamente la
+	pagina, anche se il componente tabella non viene deve essere aggiornato esplicitamente.
+	Questo controllo provoca l'esecuzione di una count non necessaria per verificare che non sia cambiata la pagina mostrata.
+	La libreria WebGenericProject tiene in sessione il valore attuale della count eseguita dall'utente e restituituisce il valore al
+	framework per effettuare i controlli previsti.
+
 2017-06-13  Andrea Poli <apoli@link.it>
 
 	* [Pdd, PddConsole]
