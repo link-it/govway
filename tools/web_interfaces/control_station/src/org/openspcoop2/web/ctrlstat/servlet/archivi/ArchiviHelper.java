@@ -645,7 +645,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			boolean deleter){
 
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_IMPORT);
+		if(deleter){
+			dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_ELIMINA);
+		}
+		else{
+			dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_IMPORT);
+		}
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		

@@ -182,6 +182,7 @@ public class LoaderHelper {
 		DataElement de = new DataElement();
 		de.setLabel(Costanti.LABEL_IMPORTA);
 		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setLabel(Costanti.LABEL_TIPOLOGIA_XML);
@@ -209,6 +210,7 @@ public class LoaderHelper {
 		DataElement de = new DataElement();
 		de.setLabel(Costanti.LABEL_ELIMINA);
 		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setLabel(Costanti.LABEL_TIPOLOGIA_XML);

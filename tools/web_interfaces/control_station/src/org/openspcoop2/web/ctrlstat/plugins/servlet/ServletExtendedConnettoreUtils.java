@@ -189,6 +189,7 @@ public class ServletExtendedConnettoreUtils {
 							de = new DataElement();
 							de.setName(id);
 							de.setLabel(extendedConnettoreItem.getLabel());
+							de.setNote(extendedConnettoreItem.getNote());
 							de.setValue(extendedConnettoreItem.getValue());
 							de.setRequired(extendedConnettoreItem.isRequired());
 							de.setType(DataElementType.TEXT_EDIT);

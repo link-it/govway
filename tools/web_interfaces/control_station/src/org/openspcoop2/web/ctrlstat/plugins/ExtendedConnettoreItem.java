@@ -33,6 +33,7 @@ public class ExtendedConnettoreItem {
 	
 	private String id;
 	private String label;
+	private String note;
 	private String value;
 	private boolean required;
 	private String regularExpression;
@@ -62,6 +63,12 @@ public class ExtendedConnettoreItem {
 	}
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	public String getNote() {
+		return this.note;
+	}
+	public void setNote(String note) {
+		this.note = note;
 	}
 	public String getValue() {
 		return this.value;
