@@ -91,7 +91,7 @@ public class PaginatedExpressionImpl extends ExpressionImpl implements IPaginate
 	/* ToString */
 	@Override
 	public String toString(){
-		String s = super.toString();
+		String s = super.toString(false);
 		if(s==null){
 			return s;
 		}
@@ -106,6 +106,8 @@ public class PaginatedExpressionImpl extends ExpressionImpl implements IPaginate
 			if(this.offset!=null && this.offset>=0){
 				bf.append(" OFFSET "+this.offset);
 			}
+			
+			this.printForceIndex(bf);
 			
 			return bf.toString();
 		}

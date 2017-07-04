@@ -39,6 +39,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
+import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.expression.impl.BetweenExpressionImpl;
@@ -142,6 +143,59 @@ public class ExpressionSQL extends ExpressionImpl {
 	
 	
 	/* ************ TO SQL ENGINE *********** */
+	
+	
+	// SQL FORCE INDEX
+
+	private String toSqlForceIndex()throws ExpressionException{
+		
+		return ExpressionSQL.sqlForceIndex(this.sqlFieldConverter, this.getForceIndexes());
+
+	}
+	
+	protected static String sqlForceIndex(ISQLFieldConverter fieldConverter,List<Index> forceIndexes) throws ExpressionException{
+		try{
+			
+			StringBuffer bf = new StringBuffer();
+			
+			if(forceIndexes.size()>0){
+				for (Iterator<Index> iterator =forceIndexes.iterator(); iterator.hasNext();) {
+					Index forceIndex = iterator.next();
+					String forceIndexSql = "/*+ index("+fieldConverter.toTable(forceIndex.getModel(),false)+" "+forceIndex.getName()+") */";
+					bf.append(" ");
+					bf.append(forceIndexSql);
+				}
+			}
+				
+			return bf.toString();
+			
+		}catch(Exception e){
+			throw new ExpressionException(e);
+		}
+	}
+	
+	private void toSqlForceIndex(ISQLQueryObject sqlQueryObject)throws ExpressionException{
+	
+		ExpressionSQL.sqlForceIndex(this.sqlFieldConverter, sqlQueryObject,this.getForceIndexes());
+		
+	}
+	
+	protected static void sqlForceIndex(ISQLFieldConverter fieldConverter, ISQLQueryObject sqlQueryObject,List<Index> forceIndexes) throws ExpressionException{
+		try{
+			
+			if(forceIndexes.size()>0){
+				for (Iterator<Index> iterator =forceIndexes.iterator(); iterator.hasNext();) {
+					Index forceIndex = iterator.next();
+					sqlQueryObject.addSelectForceIndex(fieldConverter.toTable(forceIndex.getModel(),false), forceIndex.getName());
+				}
+			}
+			
+		}catch(Exception e){
+			throw new ExpressionException(e);
+		}
+	}
+	
+	
 	
 	
 	
@@ -927,6 +981,7 @@ public class ExpressionSQL extends ExpressionImpl {
 		
 		bf.append(toSqlGroupBy());
 		bf.append(toSqlOrder());
+		bf.append(toSqlForceIndex()); // Lo metto in fondo tanto sono commenti
 		
 		return bf.toString();
 	}
@@ -949,6 +1004,7 @@ public class ExpressionSQL extends ExpressionImpl {
 		
 		bf.append(toSqlGroupBy());
 		bf.append(toSqlOrder());
+		bf.append(toSqlForceIndex()); // Lo metto in fondo tanto sono commenti
 		
 		return bf.toString();
 	}
@@ -971,6 +1027,7 @@ public class ExpressionSQL extends ExpressionImpl {
 		
 		bf.append(toSqlGroupBy());
 		bf.append(toSqlOrder());
+		bf.append(toSqlForceIndex()); // Lo metto in fondo tanto sono commenti
 		
 		return bf.toString();
 	}
@@ -997,6 +1054,9 @@ public class ExpressionSQL extends ExpressionImpl {
 		
 		// Aggiungo select field relativi all'aggregazione
 		toSqlGroupBySelectField(sqlQueryObject);
+		
+		// ForceIndex
+		toSqlForceIndex(sqlQueryObject);
 	}
 	
 	public void toSqlWithFromCondition(ISQLQueryObject sqlQueryObject,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
@@ -1031,6 +1091,9 @@ public class ExpressionSQL extends ExpressionImpl {
 		
 		// Aggiungo select field relativi all'aggregazione
 		toSqlGroupBySelectField(sqlQueryObject);
+		
+		// ForceIndex
+		toSqlForceIndex(sqlQueryObject);
 	}
 	
 	protected void toSqlPreparedStatementWithFromCondition(ISQLQueryObject sqlQueryObject,List<Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{
@@ -1066,6 +1129,9 @@ public class ExpressionSQL extends ExpressionImpl {
 				
 		// Aggiungo select field relativi all'aggregazione
 		toSqlGroupBySelectField(sqlQueryObject);
+		
+		// ForceIndex
+		toSqlForceIndex(sqlQueryObject);
 	}
 	
 	protected void toSqlJPAWithFromCondition(ISQLQueryObject sqlQueryObject,Hashtable<String, Object> oggetti,String tableNamePrincipale) throws ExpressionException, ExpressionNotImplementedException{

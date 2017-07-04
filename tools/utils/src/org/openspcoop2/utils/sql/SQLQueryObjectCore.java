@@ -809,15 +809,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 */
 	@Override
 	public ISQLQueryObject addSelectForceIndex(String nomeTabella,String indexName) throws SQLQueryObjectException{
-		if(nomeTabella==null || "".equals(nomeTabella))
-			throw new SQLQueryObjectException("Nome tabela is null or empty string");
-		if(indexName==null || "".equals(indexName))
-			throw new SQLQueryObjectException("Nome indice is null or empty string");
-		String forceIndex = "/*+ index("+nomeTabella+" "+indexName+") */";
-		if(this.forceIndexTableNames.contains(forceIndex)){
-			throw new SQLQueryObjectException("Forzatura all'utilizzo dell'indice ("+forceIndex+") gia inserito tra le forzature");
-		}
-		this.forceIndexTableNames.add(forceIndex);
+		// per adesso implementato solamente per oracle
 		return this;
 	}
 

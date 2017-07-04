@@ -39,6 +39,7 @@ import org.openspcoop2.generic_project.exception.ExpressionNotImplementedExcepti
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.expression.impl.ExpressionImpl;
@@ -78,7 +79,7 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  */
 public class ClientTest {
 
-	private static String tipoDatabase = "oracle";
+	private static String tipoDatabase = "oracle"; // uso oracle almeno ho la complessita' di limit/offse e anche forceIndex
 	
 	/**
 	 * @param args
@@ -461,6 +462,8 @@ public class ClientTest {
 		ClientTest.or(author);
 		
 		ClientTest.not(author);
+		
+		ClientTest.forceIndex(author);
 		
 		ClientTest.order(author);
 		
@@ -2312,6 +2315,25 @@ public class ClientTest {
 		IExpression exprA = ClientTest.newExpressionImplForAuthor().equals(Author.model().NAME,"NAME-2");
 		expr = ClientTest.newExpressionImplForAuthor().equals(Author.model().NAME,"NAME").not(exprA);
 		System.out.println("- test 3: "+ClientTest.toString(expr));
+						
+	}
+	
+	public static void forceIndex(Author author) throws ExpressionNotImplementedException, ExpressionException{
+		
+		System.out.println("\n **************** forceIndex ************************* ");
+		
+		IExpression expr = ClientTest.newExpressionImplForAuthor().equals(Author.model().NAME,"NAME");
+		expr.addForceIndex(new Index(Author.model(), "INDEX1"));
+		System.out.println("- test 1: "+ClientTest.toString(expr));
+		
+		expr = ClientTest.newExpressionImplForAuthor().not(expr);
+		expr.addForceIndex(new Index(Author.model(), "INDEX1"));
+		expr.addForceIndex(new Index(Author.model(), "INDEX2"));
+		System.out.println("- test 2: "+ClientTest.toString(expr));
+		
+		IPaginatedExpression pagExpr = (IPaginatedExpression) ClientTest.newPaginatedExpressionImplForAuthor().equals(Author.model().NAME,"NAME");
+		pagExpr.addForceIndex(new Index(Author.model(), "PAGINDEX1"));
+		System.out.println("- test 3: "+ClientTest.toString(pagExpr));
 						
 	}
 	

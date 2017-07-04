@@ -33,6 +33,7 @@ import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotFoundException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.expression.impl.formatter.IObjectFormatter;
@@ -75,6 +76,7 @@ public class ExpressionImpl implements IExpression {
 		this._sortOrder = expr.getSortOrder();
 		this.groupByFields = expr.groupByFields;
 		this.throwExpressionNotInitialized = expr.throwExpressionNotInitialized;
+		this.forceIndexes = expr.forceIndexes;
 	}
 	
 	protected boolean andLogicOperator = true;
@@ -91,6 +93,8 @@ public class ExpressionImpl implements IExpression {
 	
 	protected List<IField> groupByFields = new ArrayList<IField>();
 	
+	protected List<Index> forceIndexes = new ArrayList<Index>();
+
 	
 	
 	
@@ -939,11 +943,49 @@ public class ExpressionImpl implements IExpression {
 	
 	
 	
+	/* ************ INDEX *********** */
+	
+	/**
+	 * Force use index
+	 * 
+	 * @param index index
+	 * @return the instance of itself
+	 * @throws ExpressionNotImplementedException Method not implemented
+	 * @throws ExpressionException Error Processing
+	 */
+	@Override
+	public IExpression addForceIndex(Index index) throws ExpressionNotImplementedException,ExpressionException{
+		this.forceIndexes.add(index);
+		return this;
+	}
+	
+	/**
+	 * Return the force indexes
+	 * 
+	 * @return list force indexes
+	 * @throws ExpressionNotImplementedException Method not implemented
+	 * @throws ExpressionException Error Processing
+	 */
+	public List<Index> getForceIndexes() {
+		return this.forceIndexes;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/* ************ TO STRING *********** */
 	
 	@Override
 	public String toString(){
+		return this.toString(true);
+	}
+	protected String toString(boolean printForceIndex){
 		String s = super.toString();
 		if(s==null){
 			return s;
@@ -1024,8 +1066,22 @@ public class ExpressionImpl implements IExpression {
 					bf.append(this.getSortOrder().name());
 				}
 			}
-						
+				
+			if(printForceIndex){
+				this.printForceIndex(bf);
+			}
+			
 			return bf.toString();
+		}
+	}
+	protected void printForceIndex(StringBuffer bf){
+		if(this.forceIndexes.size()>0){
+			for (Iterator<Index> iterator =this.forceIndexes.iterator(); iterator.hasNext();) {
+				Index forceIndex = iterator.next();			
+				String forceIndexSql = "/*+ index("+forceIndex.getModel().getModeledClass().getSimpleName()+" "+forceIndex.getName()+") */";
+				bf.append(" ");
+				bf.append(forceIndexSql);
+			}
 		}
 	}
 	

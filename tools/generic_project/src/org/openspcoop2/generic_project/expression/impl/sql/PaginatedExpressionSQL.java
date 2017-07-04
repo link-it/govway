@@ -174,6 +174,8 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 			}
 		}
 		
+		bf.append(ExpressionSQL.sqlForceIndex(this.sqlFieldConverter, this.getForceIndexes())); // Lo metto in fondo tanto sono commenti
+		
 		return bf.toString();
 		
 	}
@@ -227,6 +229,9 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 					sqlQueryObject.setOffset(this.getOffset());
 				}
 			}
+			
+			// ForceIndex
+			ExpressionSQL.sqlForceIndex(this.sqlFieldConverter, sqlQueryObject, this.getForceIndexes());
 			
 		}catch(Exception e){
 			throw new ExpressionException(e);

@@ -522,4 +522,21 @@ public interface IExpression {
 	 * @throws ExpressionException Error Processing
 	 */
 	public boolean isWhereConditionsPresent() throws ExpressionNotImplementedException, ExpressionException;
+	
+	
+	
+	
+	/* ************ INDEX *********** */
+	
+	/**
+	 * Force use index
+	 * 
+	 * @param index index
+	 * @return the instance of itself
+	 * @throws ExpressionNotImplementedException Method not implemented
+	 * @throws ExpressionException Error Processing
+	 */
+	public IExpression addForceIndex(Index index) throws ExpressionNotImplementedException,ExpressionException;
+	
+
 }

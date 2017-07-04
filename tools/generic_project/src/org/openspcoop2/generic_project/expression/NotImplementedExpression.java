@@ -268,4 +268,9 @@ public class NotImplementedExpression implements IExpression {
 		throw new ExpressionNotImplementedException("Not Implemented");
 	}
 
+	@Override
+	public IExpression addForceIndex(Index index) throws ExpressionNotImplementedException, ExpressionException {
+		throw new ExpressionNotImplementedException("Not Implemented");
+	}
+
 }
