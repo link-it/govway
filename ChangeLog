@@ -5,6 +5,38 @@
 	L'installer non supportava la modalità 'Service Name' di Oracle (necessaria per il funzionamento su cluster oracle).
 	E' stata aggiunta la possibilità di gestire l'opzione 'SID/ServiceName' in modo da generare la corretta jdbc url nei datasource.
 
+2017-06-26  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole]
+	Aggiunta funzionalità OP-590
+	Aggiunta la possibilità di registrare i ruoli associabili ai servizi applicativi ed ai soggetti fruitori.
+	I ruoli prima di poter essere assegnati devono essere registrati tramite la pddConsole e possono essere di due fonti:
+	- registro: ruolo interno al contesto della porta di dominio
+	- esterno: ruolo registrato all'interno del container (application server) reso disponibile alla PdD tramite le api HttpServletRequest.isUserInRole()
+	Estese anche le possibili tipologie di autorizzazione attivabili sulle porte delegate e adesso anche puntualmente sulle porte applicative:
+	- 'autorizzazione dei client autenticati': verranno autorizzati solamente i servizi applicativi registrati sulla porta delegata o i soggetti fruitori del servizio
+	- 'autorizzazione basata sui ruoli': verranno autorizzati solamente i servizi applicativi od i soggetti fruitori che possiedono i ruoli definiti nella PD o PA
+	- 'xacmlPolicy': verranno autorizzati solamente i servizi applicativi od i soggetti fruitori che soddisfano la policy associata al servizio
+	Infine è stata estesa anche l'aggiunta di una fruizione di servizio o la creazione di un accordo di servizio parte specifica
+	in modo da poter indicare immediatamente il tipo di autorizzazione desiderato.
+
+2017-06-25  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole]
+	Aggiunta funzionalità OP-507
+	Estese le tipologie di credenziali associabili ad un servizio applicativo introducendo un nuovo tipo di autenticazione 'principal'.
+	L'autenticazione è a carico dell'application server il quale una volta autenticato il client veicola il suo principal tramite le api 
+	fornite in HttpServletRequest.getUserPrincipal().
+	Anche l'autenticazione attivabile sulla porta delegata è stata estesa per supportare la nuova modalità 'principal'.
+	Per quanto concerne la fruizione, infine, è stata aggiunta anche la possibilità di indicare il tipo di autenticazione desiderato
+	direttamente durante la fase di registrazione del fruitore.
+	Tutte le funzionalità di autenticazione sono inoltre state riportate anche sul lato della porta applicativa 
+	se un protocollo supporta l'autenticazione dei soggetti. Il protocollo trasparente permette di autenticare i soggetti 
+	e quindi durante la registrazione di quest'ultimi è possibile associare loro credenziali di tipo basic/ssl/principal.
+	Nella porta applicativa, per il protocollo trasparente, si potrà indicare il tipo di autenticazione desiderato.
+	Infine per quanto concerne l'erogazione, è stata aggiunta la possibilità di indicare il tipo di autenticazione dei soggetti fruitori
+	anche direttamente durante la definizione dell'accordo di servizio parte specifica.
+
 2017-06-16  Giuliano Pintori <pintori@link.it>
 
 	* [PddLoader, PddConsole]
