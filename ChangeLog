@@ -1,3 +1,10 @@
+2017-07-05  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug OP-635
+	L'installer non supportava la modalità 'Service Name' di Oracle (necessaria per il funzionamento su cluster oracle).
+	E' stata aggiunta la possibilità di gestire l'opzione 'SID/ServiceName' in modo da generare la corretta jdbc url nei datasource.
+
 2017-06-16  Giuliano Pintori <pintori@link.it>
 
 	* [PddLoader, PddConsole]
