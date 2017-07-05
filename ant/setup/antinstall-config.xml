@@ -70,7 +70,32 @@
         
      </page> 
 
-    <page name="informazionidibasexml" type="input" displayText="Configurazioni DBMS">
+    <page name="infoDB_oracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}==oracle">
+        <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
+            regex=".+"/>
+        <hidden property="porta-db" value="1521"/>
+        <hidden property="TABLESPACE" value="XE"/>
+        <hidden property="antinstaller_driver_jdbc" value="oracle.jdbc.OracleDriver"/>
+        <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport"
+            displayText="Porta"/>
+
+ 	<large-select defaultValue="SID" property="antinstaller_oracle_mode" displayText="Tipo Accesso">
+            <option value="SID" text="SID"/>
+            <option value="serviceName" text="Service Name"/>
+        </large-select>
+        <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="openspcoop2" property="antinstaller_dbusername"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="openspcoop2" property="antinstaller_dbpassword"
+            displayText="Password" regex=".+"/>
+        <!--<password property="antinstaller_dbpassword" defaultValue="openspcoop2"
+                displayText="Password:" regex="^.+$" textMask="true"/>
+         <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="openspcoop2" regex="^.+$" textMask="true"/>-->
+    </page>
+
+ <page name="infoDB_notOracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}!=oracle">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
             regex=".+"/>
         <conditional ifProperty="${antinstaller_tipo_database}=postgresql">
@@ -82,11 +107,6 @@
             <hidden property="porta-db" value="3306"/>
             <hidden property="TABLESPACE" value="openspcoop2"/>
             <hidden property="antinstaller_driver_jdbc" value="com.mysql.jdbc.Driver"/>
-        </conditional>
-        <conditional ifProperty="${antinstaller_tipo_database}=oracle">
-            <hidden property="porta-db" value="1521"/>
-            <hidden property="TABLESPACE" value="XE"/>
-            <hidden property="antinstaller_driver_jdbc" value="oracle.jdbc.OracleDriver"/>
         </conditional>
         <conditional ifProperty="${antinstaller_tipo_database}=hsql">
             <hidden property="porta-db" value="9001"/>

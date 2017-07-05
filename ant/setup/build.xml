@@ -63,6 +63,7 @@
 			antinstaller_dbport=5432
 			antinstaller_dbusername=openspcoop
 			antinstaller_dbpassword=openspcoop
+			antinstaller_oracle_mode=SID/serviceName
 			
 		Cooperazione Applicativa
 			antinstaller_protocollo_spcoop=true

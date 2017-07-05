@@ -17,11 +17,23 @@
 		<if>
 			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
 			<then>
-				<antcall target="replace_token">
-		    		<param name="file" value="${file}"/>
-					<param name="token" value="@INSTANCE@"/>
-					<param name="value" value="${antinstaller_dbname}"/>
-				</antcall>
+				<if>
+					<equals arg1="${antinstaller_oracle_mode}" arg2="serviceName" />
+					<then>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value=":@INSTANCE@"/>
+							<param name="value" value="/${antinstaller_dbname}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value="@INSTANCE@"/>
+							<param name="value" value="${antinstaller_dbname}"/>
+						</antcall>
+					</else>
+				</if>
 			</then>
 		</if>
 		<antcall target="replace_token">
