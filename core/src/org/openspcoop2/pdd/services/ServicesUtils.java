@@ -126,6 +126,24 @@ public class ServicesUtils {
 		}
 		informazioniErrori.setContenutoRispostaNonRiconosciuto(erroreContenutoRispostaNonRiconosciuto);
 		
+		boolean erroreAutenticazione = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE);
+			if(o!=null && (o instanceof Boolean)){
+				erroreAutenticazione = (Boolean) o;
+			}
+		}
+		informazioniErrori.setErroreAutenticazione(erroreAutenticazione);
+		
+		boolean erroreAutorizzazione = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE);
+			if(o!=null && (o instanceof Boolean)){
+				erroreAutorizzazione = (Boolean) o;
+			}
+		}
+		informazioniErrori.setErroreAutorizzazione(erroreAutorizzazione);
+		
 		return informazioniErrori;
 	}
 	

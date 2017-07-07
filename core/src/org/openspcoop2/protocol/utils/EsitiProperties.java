@@ -390,6 +390,23 @@ public class EsitiProperties {
 		return EsitiProperties.esitiCodeOk;
 	}
 	
+	private static List<Integer> esitiCodeOk_senzaFaultApplicativo = null;
+	public List<Integer> getEsitiCodeOk_senzaFaultApplicativo() throws ProtocolException {
+		if(EsitiProperties.esitiCodeOk_senzaFaultApplicativo == null){
+			List<Integer> tmp = this.getEsitiCodeOk();
+			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
+			List<Integer> esitiOk = new ArrayList<Integer>();
+			for (Integer e : tmp) {
+				if(e!=codeFaultApplicativo){
+					esitiOk.add(e);
+				}
+			}
+			EsitiProperties.esitiCodeOk_senzaFaultApplicativo = esitiOk; 	   
+		}
+
+		return EsitiProperties.esitiCodeOk_senzaFaultApplicativo;
+	}
+	
 	private static List<Integer> esitiCodeKo = null;
 	public List<Integer> getEsitiCodeKo() throws ProtocolException {
 		if(EsitiProperties.esitiCodeKo == null){
@@ -411,6 +428,34 @@ public class EsitiProperties {
 		}
 
 		return EsitiProperties.esitiCodeKo;
+	}
+	
+	private static List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
+	public List<Integer> getEsitiCodeKo_senzaFaultApplicativo() throws ProtocolException { // serve ad essere sicuri che anche se si è registrato un faultApplicativo tra gli errori, cmq non viene ritornato
+		if(EsitiProperties.esitiCodeKo_senzaFaultApplicativo == null){
+			List<Integer> tmp = this.getEsitiCodeKo();
+			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
+			List<Integer> esitiKo = new ArrayList<Integer>();
+			for (Integer e : tmp) {
+				if(e!=codeFaultApplicativo){
+					esitiKo.add(e);
+				}
+			}
+			EsitiProperties.esitiCodeKo_senzaFaultApplicativo = esitiKo; 	   
+		}
+
+		return EsitiProperties.esitiCodeKo_senzaFaultApplicativo;
+	}
+	
+	private static List<Integer> esitiCodeFaultApplicativo = null;
+	public List<Integer> getEsitiCodeFaultApplicativo() throws ProtocolException {
+		if(EsitiProperties.esitiCodeFaultApplicativo == null){
+			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
+			EsitiProperties.esitiCodeFaultApplicativo = new ArrayList<Integer>();
+			EsitiProperties.esitiCodeFaultApplicativo.add(codeFaultApplicativo);
+		}
+
+		return EsitiProperties.esitiCodeFaultApplicativo;
 	}
 	
 	private static List<Integer> esitiCodeForSoapFaultIdentificationMode = null;

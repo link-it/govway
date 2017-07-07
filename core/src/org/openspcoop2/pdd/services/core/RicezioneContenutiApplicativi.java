@@ -1138,6 +1138,7 @@ public class RicezioneContenutiApplicativi {
 					errore = esito.getErroreIntegrazione();
 					eAutenticazione = esito.getEccezioneProcessamento();
 					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenziali.toString(true)); // Aggiungo la password se presente
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
 				}
 				else{
 					msgDiag.logPersonalizzato("autenticazioneEffettuata");
@@ -1717,6 +1718,7 @@ public class RicezioneContenutiApplicativi {
 				if (esito.isAutorizzato() == false) {
 					errore = esito.getErroreIntegrazione();
 					eAutorizzazione = esito.getEccezioneProcessamento();
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
 				}
 				else{
 					msgDiag.logPersonalizzato("autorizzazioneEffettuata");
@@ -2377,6 +2379,7 @@ public class RicezioneContenutiApplicativi {
 					if (esito.isAutorizzato() == false) {
 						errore = esito.getErroreIntegrazione();
 						eAutorizzazione = esito.getEccezioneProcessamento();
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
 					}
 					else{
 						msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");

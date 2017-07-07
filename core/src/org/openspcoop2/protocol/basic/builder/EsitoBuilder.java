@@ -218,6 +218,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			else if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
+			else if(informazioniErroriInfrastrutturali.isErroreAutenticazione()){
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_AUTENTICAZIONE, tipoContext);
+			}
+			else if(informazioniErroriInfrastrutturali.isErroreAutorizzazione()){
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE, tipoContext);
+			}
 			else if(body==null){
 				return this.esitiProperties.convertToEsitoTransazione(esitoOK, tipoContext); // oneway
 			}

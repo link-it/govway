@@ -1992,6 +1992,7 @@ public class RicezioneBuste {
 							erroreIntegrazione = esito.getErroreIntegrazione();
 							eAutenticazione = esito.getEccezioneProcessamento();
 							msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, credenziali.toString(true)); // Aggiungo la password se presente
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
 						}
 						else{
 							msgDiag.logPersonalizzato("autenticazioneEffettuata");
@@ -3809,6 +3810,7 @@ public class RicezioneBuste {
 					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 				}
 				if(esito.isAutorizzato()==false){
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
 					String descrizioneErrore = null;
 					try{
 						if(esito.getErroreCooperazione()!=null){
@@ -4277,6 +4279,7 @@ public class RicezioneBuste {
 							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 						}
 						if(esito.isAutorizzato()==false){
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
 							try{
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esito.getErroreCooperazione().getDescrizione(protocolFactory));
 							}catch(Exception e){
