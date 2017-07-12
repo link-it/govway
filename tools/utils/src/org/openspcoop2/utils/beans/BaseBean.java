@@ -28,6 +28,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.serialization.Filter;
 import org.openspcoop2.utils.serialization.JSonSerializer;
@@ -388,8 +390,42 @@ public abstract class BaseBean {
 	
 	/* ********** TO STRING ********* */
 	
+	private static ToStringStyle DEFAULT_TO_STRING_STYLE =  ToStringStyle.MULTI_LINE_STYLE;
+	private static boolean DEFAULT_TO_STRING_OUTPUT_TRANSIENTS =  false;
+	private static boolean DEFAULT_TO_STRING_OUTPUT_STATICS =  false;
+	public static void setDefaultStyleToString(ToStringStyle style,boolean outputTransients,boolean outputStatics){
+		// Il default statico serve per impostare uno "stile" che viene ereditato da tutti gli oggetti che estendono il base bean.
+		// In questa maniera gli oggetti interni all'oggetto stesso vengono serializzati con lo stile impostato.
+		DEFAULT_TO_STRING_STYLE = style;
+		DEFAULT_TO_STRING_OUTPUT_TRANSIENTS = outputTransients;
+		DEFAULT_TO_STRING_OUTPUT_STATICS = outputStatics;
+	}
 	@Override
 	public String toString(){
+		return this.toString(DEFAULT_TO_STRING_STYLE, DEFAULT_TO_STRING_OUTPUT_TRANSIENTS, DEFAULT_TO_STRING_OUTPUT_STATICS, null);
+	}
+	public String toString(ToStringStyle style){
+		return this.toString(style, false, false, null);
+	}
+	public String toString(ToStringStyle style,boolean outputTransients,boolean outputStatics){
+		return this.toString(style, outputTransients, outputStatics, null);
+	}
+	public String toString(ToStringStyle style,boolean outputTransients,boolean outputStatics,Class<?>reflectUpToClass){
+		StringBuffer buffer = new StringBuffer();
+		this.toString(style, buffer, outputTransients, outputStatics, reflectUpToClass);
+		return buffer.toString();
+	}
+	public void toString(ToStringStyle style,StringBuffer buffer,boolean outputTransients,boolean outputStatics){
+		this.toString(style, buffer, outputTransients, outputStatics, null);
+	}
+	public void toString(ToStringStyle style,StringBuffer buffer,boolean outputTransients,boolean outputStatics,Class<?>reflectUpToClass){
+		ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, style, buffer, reflectUpToClass, outputTransients, outputStatics);
+		builder.toString();
+	}
+	
+	
+	// Old Method
+	public String toString_oldMethod(){
 		return _toStringEngine(false, null);
 	}
 	public String toString(boolean reportHTML){
