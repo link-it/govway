@@ -312,9 +312,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Creazione URL
 			if(this.debug)
 				this.logger.debug("Creazione URL...");
-
-			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);			
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, TipiConnettore.HTTP.toString(), this.propertiesUrlBased, this.location);			
+			this.buildLocation();		
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");
 			URL url = new URL( this.location );	
@@ -849,14 +847,27 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
      */
     @Override
 	public String getLocation(){
-    	String l = new String(this.location);
-    	if(this.routeRedirect!=null){
-    		l = l+" [redirects route path: "+this.routeRedirect+"]";
+    	if(this.location==null){
+    		// può darsi che per un errore non sia ancora stata inizializzata la location
+    		try{
+    			this.buildLocation();
+    		}catch(Throwable t){}
     	}
-    	if(this.proxyType!=null){
-    		l = l+" [proxy: "+this.proxyHostname+":"+this.proxyPort+"]";
+    	if(this.location!=null){
+	    	String l = new String(this.location);
+	    	if(this.routeRedirect!=null){
+	    		l = l+" [redirects route path: "+this.routeRedirect+"]";
+	    	}
+	    	if(this.proxyType!=null){
+	    		l = l+" [proxy: "+this.proxyHostname+":"+this.proxyPort+"]";
+	    	}
+	    	return l;
     	}
-    	return l;
+    	return null;
+    }
+    private void buildLocation() throws ConnettoreException {
+    	this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);			
+		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, TipiConnettore.HTTP.toString(), this.propertiesUrlBased, this.location);
     }
     
 
