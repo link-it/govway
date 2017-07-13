@@ -1,3 +1,10 @@
+2017-07-13  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-640
+	Nel caso di fallimento dell'handshake ssl durante l'utilizzo di un connettore di tipo 'https',
+	la transazione andava in errore con un 'NullPointerException' durante il calcolo della url contattata (metodo getLocation).
+
 2017-07-05  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
