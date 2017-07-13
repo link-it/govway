@@ -49,8 +49,8 @@
                 <request>
                     <param name="idTrasmissionePROVA2Required" style="query" required="true" type="xs:long"/>
                     <param name="idTrasmissionePROVA2headerRequired" style="header" required="true" type="xs:long"/>
-                    <param name="idTrasmissionePROVA2" style="query" type="xs:long"/>
-                    <param name="idTrasmissionePROVA2header" style="header" type="xs:long"/>
+                    <param name="idTrasmissionePROVA2" style="query" type="xs:boolean"/>
+                    <param name="idTrasmissionePROVA2header" style="header" type="xs:boolean"/>
                 </request>
                 <response>
                     <representation mediaType="text/plain"/>
@@ -87,7 +87,7 @@
                     <request>
                         <representation mediaType="application/xml" element="test2:test"/>
                     </request>
-                    <response>
+                    <response status="200">
                         <representation mediaType="application/xml" element="test2:test"/>
                     </response>
                 </method>
@@ -119,15 +119,42 @@
                     </response>
                 </method>
             </resource>
-             <resource path="${idDinamico}">
+            <resource path="${idDinamico}">
                 <method name="GET">
                  	<request>
                         <param required="true" style="template" name="idDinamico"/>
                     </request>
-                    <response>
+                    <response status="200">
                         <representation mediaType="application/xml" element="inline:film"/>
                     </response>
                 </method>
+	            <resource path="/ulterioreParametro">
+	                <method name="GET">
+	                    <response status="200">
+	                        <representation mediaType="application/json" element="inline:film"/>
+	                    </response>
+	                </method>
+	                <method name="POST">
+	                    <request>
+	                    	<param required="true" style="template" name="idDinamico"/>
+	                        <representation mediaType="application/json" element="include:raccolta"/>
+	                    </request>
+	                    <response status="200">
+	                        <representation mediaType="application/json" element="inline:film"/>
+	                    </response>
+	                </method>
+		            <resource path="${idDinamicoSecondoLivello}">
+		                <method name="GET">
+		                 	<request>
+		                        <param required="true" style="template" name="idDinamico"/>
+	                        	<param required="true" style="template" name="idDinamicoSecondoLivello"/>
+		                    </request>
+		                    <response status="200">
+		                        <representation mediaType="application/xml" element="inline:film"/>
+		                    </response>
+		                </method>
+		            </resource>
+	             </resource>
             </resource>
             <resource path="/getStatoTrasmissioniJSON">
                 <method name="GET">
@@ -139,7 +166,7 @@
                     <request>
                         <representation mediaType="application/json" element="include:raccolta"/>
                     </request>
-                    <response>
+                    <response status="200">
                         <representation mediaType="application/json" element="inline:film"/>
                     </response>
                 </method>

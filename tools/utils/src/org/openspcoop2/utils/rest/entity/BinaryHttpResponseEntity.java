@@ -18,15 +18,15 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
+package org.openspcoop2.utils.rest.entity;
 
 /**
  * BinaryHttpRequestEntity
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100 (Wed, 11 Jan 2017) $
  */
 public class BinaryHttpResponseEntity extends HttpBaseResponseEntity<byte[]> {
 

@@ -350,6 +350,21 @@
 					<param name="build" value="${build_utils}"/>
 				</antcall>
 
+				<!-- org.openspcoop.2.utils.beans -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.beans" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/beans"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-beans"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.beans"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
 				<!-- org.openspcoop.2.utils.security -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.security" />
 				<antcall target="compile_src_openspcoop2">
@@ -379,10 +394,26 @@
 					<param name="dist" value="${dist_utils}"/>
 					<param name="build" value="${build_utils}"/>
 				</antcall>
+
+				<!-- org.openspcoop2.utils.rest -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.rest" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.rest.entity" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.rest.api" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/rest"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-rest"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.rest"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
 				
 				<!-- org.openspcoop2.utils.wadl -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl.entity" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl.validator" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
@@ -412,22 +443,7 @@
 					<param name="dist" value="${dist_utils}"/>
 					<param name="build" value="${build_utils}"/>
 				</antcall>
-				
-				<!-- org.openspcoop.2.utils.beans -->
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.beans" />
-				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/beans"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-beans"/>
-					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
-					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
-					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
-					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.beans"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
-					<param name="dist" value="${dist_utils}"/>
-					<param name="build" value="${build_utils}"/>
-				</antcall>
-				
+								
 				<!-- org.openspcoop2.utils.mail -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.mail" />
 				<antcall target="compile_src_openspcoop2">

@@ -18,17 +18,35 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
+package org.openspcoop2.utils.rest.api;
 
 /**
- * TextHttpRequestEntity
+ * ApiRequestBodyParameter
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
-public class TextHttpRequestEntity extends HttpBaseRequestEntity<String> {
+public class ApiRequestBodyParameter extends AbstractApiRequestParameter {
 
-		
+	private String mediaType;
+	private Object element;
+
+	public ApiRequestBodyParameter(String name) {
+		super(name);
+	}
+	
+	public Object getElement() {
+		return this.element;
+	}
+	public void setElement(Object element) {
+		this.element = element;
+	}
+	public String getMediaType() {
+		return this.mediaType;
+	}
+	public void setMediaType(String mediaType) {
+		this.mediaType = mediaType;
+	}
 }

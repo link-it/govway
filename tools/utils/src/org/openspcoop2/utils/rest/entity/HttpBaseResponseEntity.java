@@ -18,19 +18,26 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
-
-import org.w3c.dom.Document;
+package org.openspcoop2.utils.rest.entity;
 
 /**
- * DocumentHttpRequestEntity
+ * HttpBaseResponseEntity
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100 (Wed, 11 Jan 2017) $
  */
-public class DocumentHttpRequestEntity extends HttpBaseRequestEntity<Document> {
+public abstract class HttpBaseResponseEntity<T> extends HttpBaseEntity<T> {
 
-		
+	private int status;
+
+	public int getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
 }

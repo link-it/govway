@@ -37,7 +37,14 @@ import org.jvnet.ws.wadl.ast.PathSegment;
 import org.jvnet.ws.wadl.ast.RepresentationNode;
 import org.jvnet.ws.wadl.ast.ResourceNode;
 import org.jvnet.ws.wadl.ast.WadlAstBuilder;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 
@@ -84,7 +91,19 @@ public class Test {
 			String namespace = (String) keys.nextElement();
 			String key = callback.getMappingNamespaceLocations().get(namespace);
 			System.out.println("Schema ["+key+"]: "+namespace);
-		}   
+		}  
+        
+        IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.WADL);
+        apiReader.init(LoggerWrapperFactory.getLogger(Test.class), uri, new ApiReaderConfig());
+        Api api = apiReader.read();
+        System.out.println("API: "+api);
+        
+        // http://localhost:8080/smartproxy/ws/rest/allineamentopendenze
+        String test = "http://localhost:8080/smartproxy/ws/rest/allineamentopendenze/id23/ulterioreParametro/id45";
+        System.out.println("API-Op ["+test+"]: "+api.findOperation(HttpRequestMethod.GET, test));
+        
+        String testSenzaBaseUri = "/allineamentopendenze/id23/ulterioreParametro/id45";
+        System.out.println("API-Op ["+testSenzaBaseUri+"]: "+api.findOperation(HttpRequestMethod.GET, testSenzaBaseUri));
 	}
 
 	private static void print(ResourceNode resourceNode, String indent){

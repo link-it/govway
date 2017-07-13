@@ -18,41 +18,31 @@
  *
  */
 
-
-
-package org.openspcoop2.utils.wadl;
-
-import org.openspcoop2.utils.rest.ProcessingException;
+package org.openspcoop2.utils.rest.api;
 
 /**
- * Eccezione che si puo' verificare durante la creazione dei wsdl 
- * 
- * @author Lorenzo Nardi (nardi@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * ApiRequestBodyParameter
  *
+ *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
+public class ApiRequestQueryParameter extends AbstractApiRequestParameter {
 
-public class WADLException extends ProcessingException {
+	private String type;
 
-	private static final long serialVersionUID = 1L;
-
-	public WADLException(String message, Throwable cause)
-	{
-		super(message, cause);
-		// TODO Auto-generated constructor stub
+	public ApiRequestQueryParameter(String name, String type){
+		super(name);
+		this.type = type;
 	}
-	public WADLException(Throwable cause)
-	{
-		super(cause);
-		// TODO Auto-generated constructor stub
+	
+	public String getType() {
+		return this.type;
 	}
 
-	public WADLException() {
-		super();
+	public void setType(String type) {
+		this.type = type;
 	}
-	public WADLException(String msg) {
-		super(msg);
-	}
+	
 }
-

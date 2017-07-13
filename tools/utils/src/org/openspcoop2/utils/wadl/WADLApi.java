@@ -19,40 +19,32 @@
  */
 
 
-
 package org.openspcoop2.utils.wadl;
 
-import org.openspcoop2.utils.rest.ProcessingException;
+import org.openspcoop2.utils.rest.api.Api;
+
 
 /**
- * Eccezione che si puo' verificare durante la creazione dei wsdl 
+ * WADLApi
  * 
- * @author Lorenzo Nardi (nardi@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Andrea Poli (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  *
  */
-
-public class WADLException extends ProcessingException {
-
-	private static final long serialVersionUID = 1L;
-
-	public WADLException(String message, Throwable cause)
-	{
-		super(message, cause);
-		// TODO Auto-generated constructor stub
+public class WADLApi extends Api {
+	
+	private ApplicationWrapper applicationWadlWrapper;
+	
+	public WADLApi(ApplicationWrapper applicationWadlWrapper){
+		this.applicationWadlWrapper = applicationWadlWrapper;
 	}
-	public WADLException(Throwable cause)
-	{
-		super(cause);
-		// TODO Auto-generated constructor stub
+	
+	public ApplicationWrapper getApplicationWadlWrapper() {
+		return this.applicationWadlWrapper;
 	}
 
-	public WADLException() {
-		super();
-	}
-	public WADLException(String msg) {
-		super(msg);
+	public void setApplicationWadlWrapper(ApplicationWrapper applicationWadlWrapper) {
+		this.applicationWadlWrapper = applicationWadlWrapper;
 	}
 }
-

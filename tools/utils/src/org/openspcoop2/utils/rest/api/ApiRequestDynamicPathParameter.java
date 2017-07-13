@@ -18,19 +18,31 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
-
-import java.io.InputStream;
+package org.openspcoop2.utils.rest.api;
 
 /**
- * InputStreamHttpResponseEntity
+ * ApiRequestBodyParameter
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
-public class InputStreamHttpResponseEntity extends HttpBaseResponseEntity<InputStream> {
+public class ApiRequestDynamicPathParameter extends AbstractApiRequestParameter {
 
-		
+	private String type;
+
+	public ApiRequestDynamicPathParameter(String name, String type){
+		super(name);
+		this.type = type;
+	}
+	
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 }

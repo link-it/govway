@@ -18,41 +18,19 @@
  *
  */
 
+package org.openspcoop2.utils.rest.entity;
 
-
-package org.openspcoop2.utils.wadl;
-
-import org.openspcoop2.utils.rest.ProcessingException;
+import java.io.InputStream;
 
 /**
- * Eccezione che si puo' verificare durante la creazione dei wsdl 
- * 
- * @author Lorenzo Nardi (nardi@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * InputStreamHttpResponseEntity
  *
+ *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100 (Wed, 11 Jan 2017) $
  */
+public class InputStreamHttpResponseEntity extends HttpBaseResponseEntity<InputStream> {
 
-public class WADLException extends ProcessingException {
-
-	private static final long serialVersionUID = 1L;
-
-	public WADLException(String message, Throwable cause)
-	{
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
-	public WADLException(Throwable cause)
-	{
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
-
-	public WADLException() {
-		super();
-	}
-	public WADLException(String msg) {
-		super(msg);
-	}
+		
 }
-

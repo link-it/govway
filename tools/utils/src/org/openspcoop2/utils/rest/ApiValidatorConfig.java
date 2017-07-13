@@ -18,26 +18,36 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
+package org.openspcoop2.utils.rest;
+
+import org.openspcoop2.utils.beans.BaseBean;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.utils.xml.XMLUtils;
 
 /**
- * HttpBaseResponseEntity
+ * ApiValidatorConfig
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
-public abstract class HttpBaseResponseEntity<T> extends HttpBaseEntity<T> {
+public class ApiValidatorConfig extends BaseBean {
 
-	private int status;
-
-	public int getStatus() {
-		return this.status;
+	private boolean verbose = false;
+	private AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
+	
+	public AbstractXMLUtils getXmlUtils() {
+		return this.xmlUtils;
 	}
-
-	public void setStatus(int status) {
-		this.status = status;
+	public void setXmlUtils(AbstractXMLUtils xmlUtils) {
+		this.xmlUtils = xmlUtils;
+	}
+	public boolean isVerbose() {
+		return this.verbose;
+	}
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 	
 }

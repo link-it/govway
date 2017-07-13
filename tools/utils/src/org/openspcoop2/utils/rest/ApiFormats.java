@@ -19,40 +19,21 @@
  */
 
 
+package org.openspcoop2.utils.rest;
 
-package org.openspcoop2.utils.wadl;
-
-import org.openspcoop2.utils.rest.ProcessingException;
+import java.io.Serializable;
 
 /**
- * Eccezione che si puo' verificare durante la creazione dei wsdl 
- * 
- * @author Lorenzo Nardi (nardi@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * ApiFormats
  *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author: mergefairy $
+ * @version $Rev: 13002 $, $Date: 2017-05-19 18:37:46 +0200 (Fri, 19 May 2017) $
  */
 
-public class WADLException extends ProcessingException {
 
-	private static final long serialVersionUID = 1L;
+public enum ApiFormats implements Serializable{
 
-	public WADLException(String message, Throwable cause)
-	{
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
-	public WADLException(Throwable cause)
-	{
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
-
-	public WADLException() {
-		super();
-	}
-	public WADLException(String msg) {
-		super(msg);
-	}
+	WADL, SWAGGER
+	
 }
-

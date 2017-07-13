@@ -27,13 +27,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.jvnet.ws.wadl.HTTPMethods;
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.jvnet.ws.wadl.ast.MethodNode;
 import org.jvnet.ws.wadl.ast.ResourceNode;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
-import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -645,13 +646,13 @@ public class WADLUtilities {
 
 	}
 
-	public static MethodNode findMethodNode(ResourceNode resourceNode,HTTPMethods httpMethod) throws org.openspcoop2.utils.wadl.WADLException{
+	public static MethodNode findMethodNode(ResourceNode resourceNode,HttpRequestMethod httpMethod) throws org.openspcoop2.utils.wadl.WADLException{
 
 		if(httpMethod == null)
 			throw new WADLException("Metodo HTTP da cercare non fornito");
 
 		for(MethodNode method: resourceNode.getMethods()) {
-			if(httpMethod.value().equals(method.getName())) {
+			if(httpMethod.name().equalsIgnoreCase(method.getName())) {
 				return method;
 			}
 		} 

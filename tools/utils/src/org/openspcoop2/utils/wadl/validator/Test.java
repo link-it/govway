@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.utils.wadl.validator;
 
-import java.io.File;
 import java.net.URI;
 import java.util.Properties;
 
@@ -27,15 +26,20 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.slf4j.Logger;
-import org.jvnet.ws.wadl.HTTPMethods;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.openspcoop2.utils.wadl.ApplicationWrapper;
-import org.openspcoop2.utils.wadl.WADLUtilities;
-import org.openspcoop2.utils.wadl.entity.DocumentHttpRequestEntity;
-import org.openspcoop2.utils.wadl.entity.DocumentHttpResponseEntity;
-import org.openspcoop2.utils.wadl.entity.TextHttpRequestEntity;
+import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.ApiValidatorConfig;
+import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.IApiValidator;
+import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.entity.DocumentHttpRequestEntity;
+import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.wadl.WADLApi;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.w3c.dom.Document;
@@ -59,29 +63,41 @@ public class Test {
 		
 		URI uri = Test.class.getResource("/org/openspcoop2/utils/wadl/test.wadl").toURI();
 		Logger log = LoggerWrapperFactory.getLogger(Test.class);
-		WADLUtilities wadlUtilities = WADLUtilities.getInstance(xmlUtils);
+		//org.openspcoop2.utils.wadl.WADLUtilities wadlUtilities = org.openspcoop2.utils.wadl.WADLUtilities.getInstance(xmlUtils);
 		
-		//ApplicationWrapper wr = wadlUtilities.readWADLFromURI(log, uri, true, true, true);
-		ApplicationWrapper wr = wadlUtilities.readWADLFromBytes(log, FileSystemUtilities.readBytesFromFile(new File(uri)), true, false, true);
-		wr.addResource("test2.xsd", Utilities.getAsByteArray(Test.class.getResourceAsStream("/org/openspcoop2/utils/wadl/test2.xsd")));
+		IApiReader reader = ApiFactory.newApiReader(ApiFormats.WADL);
+		
+		//org.openspcoop2.utils.wadl.ApplicationWrapper wr = wadlUtilities.readWADLFromURI(log, uri, true, true, true);
+		//org.openspcoop2.utils.wadl.ApplicationWrapper wr = wadlUtilities.readWADLFromBytes(log, org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(new java.io.File(uri)), true, false, true);
+		ApiReaderConfig readerConfig = new ApiReaderConfig();
+		readerConfig.setVerbose(true);
+		readerConfig.setProcessInclude(false);
+		readerConfig.setProcessInlineSchema(true);
+		reader.init(log, uri, readerConfig);
+		Api api = reader.read();
+		WADLApi wadlApi = (WADLApi) api;
+		
+		wadlApi.getApplicationWadlWrapper().addResource("test2.xsd", Utilities.getAsByteArray(Test.class.getResourceAsStream("/org/openspcoop2/utils/wadl/test2.xsd")));
 		
 		System.out.println("Inizializzazione dell'oggetto ApplicationWrapper completata");
 		
-		Validator validator = new Validator(log, wr);
+		ApiValidatorConfig config = new ApiValidatorConfig();
+		IApiValidator validator = ApiFactory.newApiValidator(ApiFormats.WADL);
+		validator.init(log, wadlApi, config);
 		
 		
 		System.out.println("Test #1 (Richiesta GET con due parametri obbligatori)");
 		
 		TextHttpRequestEntity httpEntity = new TextHttpRequestEntity();
 		httpEntity.setUrl("/prova2");
-		httpEntity.setMethod(HTTPMethods.GET);
+		httpEntity.setMethod(HttpRequestMethod.GET);
 		Properties parametersFormBased = new Properties();
-		parametersFormBased.put("idTrasmissionePROVA2Required", "true");
+		parametersFormBased.put("idTrasmissionePROVA2Required", "24");
 		parametersFormBased.put("idTrasmissionePROVA2NOTRequired", "true");
 		httpEntity.setParametersFormBased(parametersFormBased);
 
 		Properties parametersTrasporto = new Properties();
-		parametersTrasporto.put("idTrasmissionePROVA2headerRequired", "true");
+		parametersTrasporto.put("idTrasmissionePROVA2headerRequired", "67");
 		parametersTrasporto.put("idTrasmissionePROVA2headerNOTRequired", "true");
 		httpEntity.setParametersTrasporto(parametersTrasporto);
 		
@@ -108,7 +124,7 @@ public class Test {
 		
 		httpEntity2.setContentType("application/xml");
 		httpEntity2.setUrl("/allineamentopendenze/getStatoTrasmissioni");
-		httpEntity2.setMethod(HTTPMethods.POST);
+		httpEntity2.setMethod(HttpRequestMethod.POST);
 		
 		validator.validate(httpEntity2);
 		System.out.println("Test #2 completato");
@@ -138,7 +154,7 @@ public class Test {
 		
 		httpEntity3.setContentType("application/xml");
 		httpEntity3.setUrl("/allineamentopendenze/getStatoTrasmissioniConPiuResponse");
-		httpEntity3.setMethod(HTTPMethods.POST);
+		httpEntity3.setMethod(HttpRequestMethod.POST);
 		
 		validator.validate(httpEntity3);
 
@@ -163,7 +179,7 @@ public class Test {
 		
 		httpEntity4.setContentType("application/xml");
 		httpEntity4.setUrl("/allineamentopendenze/getStatoTrasmissioniConPiuResponse");
-		httpEntity4.setMethod(HTTPMethods.POST);
+		httpEntity4.setMethod(HttpRequestMethod.POST);
 		
 		validator.validate(httpEntity4);
 		
@@ -182,7 +198,7 @@ public class Test {
 		
 		httpEntity5.setContentType("application/xml");
 		httpEntity5.setUrl("/allineamentopendenze/getStatoTrasmissioniConPiuResponse");
-		httpEntity5.setMethod(HTTPMethods.POST);
+		httpEntity5.setMethod(HttpRequestMethod.POST);
 
 		try {
 			validator.validate(httpEntity5);

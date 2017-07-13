@@ -18,17 +18,24 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
+package org.openspcoop2.utils.rest;
+
+import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
+import org.slf4j.Logger;
 
 /**
- * HttpBaseRequestEntity
+ * IApiValidator
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
-public abstract class HttpBaseRequestEntity<T> extends HttpBaseEntity<T> {
+public interface IApiValidator {
 
+	public void init(Logger log, Api api, ApiValidatorConfig config) throws ProcessingException;
 	
+	public void validate(HttpBaseEntity<?> httpEntity) throws ProcessingException, ValidatorException;
+		
 }

@@ -18,20 +18,22 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
+package org.openspcoop2.utils.rest.entity;
+
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * HttpBaseEntity
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100 (Wed, 11 Jan 2017) $
  */
 public abstract class HttpBaseEntity<T> {
 
 	private String url;
-	private org.jvnet.ws.wadl.HTTPMethods method;
+	private HttpRequestMethod method;
 	private String contentType;
 	/* ---- Coppie nome/valori di invocazione form-based --- */
 	private java.util.Properties parametersFormBased;
@@ -53,10 +55,10 @@ public abstract class HttpBaseEntity<T> {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public org.jvnet.ws.wadl.HTTPMethods getMethod() {
+	public HttpRequestMethod getMethod() {
 		return this.method;
 	}
-	public void setMethod(org.jvnet.ws.wadl.HTTPMethods method) {
+	public void setMethod(HttpRequestMethod method) {
 		this.method = method;
 	}
 	public String getContentType() {

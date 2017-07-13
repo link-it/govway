@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.wadl.validator;
 
+import org.openspcoop2.utils.rest.ValidatorException;
 
 /**	
  * Contiene la definizione di una eccezione lanciata dalla classe ValidatoreMessaggiApplicativi
@@ -32,7 +33,7 @@ package org.openspcoop2.utils.wadl.validator;
  */
 
 
-public class WADLValidatorException extends Exception {
+public class WADLValidatorException extends ValidatorException {
 	
 	/**
 	 * SerialUID

@@ -18,17 +18,43 @@
  *
  */
 
-package org.openspcoop2.utils.wadl.entity;
 
-/**
- * BinaryHttpRequestEntity
- *
+
+package org.openspcoop2.utils.rest;
+
+
+/**	
+ * Contiene la definizione di una eccezione lanciata dalla classe ValidatoreMessaggiApplicativi
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
-public class BinaryHttpRequestEntity extends HttpBaseRequestEntity<byte[]> {
 
-		
+
+public class ProcessingException extends Exception {
+	
+	/**
+	 * SerialUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ProcessingException(String message, Throwable cause)
+	{
+		super(message, cause);
+		// TODO Auto-generated constructor stub
+	}
+	public ProcessingException(Throwable cause)
+	{
+		super(cause);
+		// TODO Auto-generated constructor stub
+	}
+
+	public ProcessingException() {
+		super();
+	}
+	public ProcessingException(String msg) {
+		super(msg);
+	}
+
 }

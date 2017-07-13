@@ -20,39 +20,41 @@
 
 
 
-package org.openspcoop2.utils.wadl;
+package org.openspcoop2.utils.rest;
 
-import org.openspcoop2.utils.rest.ProcessingException;
 
-/**
- * Eccezione che si puo' verificare durante la creazione dei wsdl 
- * 
- * @author Lorenzo Nardi (nardi@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+/**	
+ * Contiene la definizione di una eccezione lanciata dalla classe ValidatoreMessaggiApplicativi
  *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
 
-public class WADLException extends ProcessingException {
 
+public class ValidatorException extends Exception {
+	
+	/**
+	 * SerialUID
+	 */
 	private static final long serialVersionUID = 1L;
 
-	public WADLException(String message, Throwable cause)
+	public ValidatorException(String message, Throwable cause)
 	{
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
-	public WADLException(Throwable cause)
+	public ValidatorException(Throwable cause)
 	{
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}
 
-	public WADLException() {
+	public ValidatorException() {
 		super();
 	}
-	public WADLException(String msg) {
+	public ValidatorException(String msg) {
 		super(msg);
 	}
-}
 
+}
