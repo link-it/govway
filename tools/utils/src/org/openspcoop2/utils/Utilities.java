@@ -410,6 +410,10 @@ public class Utilities {
 	 * @return String unix_timestamp
 	 */
 	public static String convertSystemTimeIntoString_millisecondi(long time,boolean millisecondiCheck){
+		return convertSystemTimeIntoString_millisecondi(time, millisecondiCheck, true, ":",".","");
+	}
+	public static String convertSystemTimeIntoString_millisecondi(long time,boolean millisecondiCheck, boolean printZeroValues, 
+			String separatorUnit,String separatorMs, String separatorValue){
 		//System.out.println("VALORE PASSATO: ["+time+"]");
 		long millisecondi = time % 1000;
 		//System.out.println("Millisecondi (Valore%1000): ["+millisecondi+"]");
@@ -424,69 +428,101 @@ public class Utilities {
 		StringBuffer bf = new StringBuffer();
 
 		long giorni = ore/24;
-		long oreInUnGiorno = giorni%24;
+		long oreRimaste = ore%24;
 
 		if(giorni>0){
-			bf.append(giorni+"d");
+			bf.append(giorni);
+			bf.append(separatorValue);
+			bf.append("d");
 		}
 		else{
 			// Nothing
 		}
 
 		if(giorni>0){
-			if(oreInUnGiorno>0){
-				if(bf.length()>0)
-					bf.append(":");
-				bf.append(oreInUnGiorno+"h");
-			}else{
+			if(oreRimaste>0){
 				if(bf.length()>0){
-					bf.append(":0h");
+					bf.append(separatorUnit);
+				}
+				bf.append(oreRimaste);
+				bf.append(separatorValue);
+				bf.append("h");
+			}else{
+				if(printZeroValues && bf.length()>0){
+					bf.append(separatorUnit);
+					bf.append("0");
+					bf.append(separatorValue);
+					bf.append("h");
 				}
 			}
 		}
 		else{
 			if(ore>0){
-				if(bf.length()>0)
-					bf.append(":");
-				bf.append(ore+"h");
-			}else{
 				if(bf.length()>0){
-					bf.append(":0h");
+					bf.append(separatorUnit);
+				}
+				bf.append(ore);
+				bf.append(separatorValue);
+				bf.append("h");
+			}else{
+				if(printZeroValues && bf.length()>0){
+					bf.append(separatorUnit);
+					bf.append("0");
+					bf.append(separatorValue);
+					bf.append("h");
 				}
 			}
 		}
 
 
 		if(minuti>0){
-			if(bf.length()>0)
-				bf.append(":");
-			bf.append(minuti+"m");
-		}else{
 			if(bf.length()>0){
-				bf.append(":0m");
+				bf.append(separatorUnit);
+			}
+			bf.append(minuti);
+			bf.append(separatorValue);
+			bf.append("m");
+		}else{
+			if(printZeroValues && bf.length()>0){
+				bf.append(separatorUnit);
+				bf.append("0");
+				bf.append(separatorValue);
+				bf.append("m");
 			}
 		}
 
 		if(secondi>0){
-			if(bf.length()>0)
-				bf.append(":");
-			bf.append(secondi+"s");
+			if(bf.length()>0){
+				bf.append(separatorUnit);
+			}
+			bf.append(secondi);
+			bf.append(separatorValue);
+			bf.append("s");
 		}
 		else{
-			if(bf.length()>0){
-				bf.append(":0s");
+			if(printZeroValues && bf.length()>0){
+				bf.append(separatorUnit);
+				bf.append("0");
+				bf.append(separatorValue);
+				bf.append("s");
 			}
 		}
 
 		if(millisecondiCheck){
 			if(millisecondi>=0){
-				if(bf.length()>0)
-					bf.append(".");
-				bf.append(millisecondi+"ms");
+				if(bf.length()>0){
+					bf.append(separatorMs);
+				}
+				bf.append(millisecondi);
+				bf.append(separatorValue);
+				bf.append("ms");
 			}
 			else{
-				if(bf.length()>0){
-					bf.append(".0ms");
+				if(printZeroValues && bf.length()>0){
+					bf.append(separatorMs);
+					bf.append("0");
+					bf.append(separatorValue);
+					bf.append("ms");
 				}
 			}
 		}
@@ -498,11 +534,54 @@ public class Utilities {
 
 		return bf.toString();
 	}
+	
+	public static long convertSystemTimeInNumeroOre(long time){
+		if(time < 0)
+			time = 0;
+				
+		// tempo in millisecondi diviso mille -> tempo in secondi
+		long diff = (time)/1000;
+		// tempo in ore = tempo in secondi / 60 * 60
+		long ore = diff/3600;
+		
+		// controllo che non ci siano parti di ora residue
+		if((diff%3600) != 0)
+			ore ++;
+			
+		return ore;
+	}
+	
+	public static long convertSystemTimeInNumeroGiorni(long time){
+		if(time < 0)
+			time = 0;
+				
+		// tempo in millisecondi diviso mille -> tempo in secondi
+		long diff = (time)/1000;
+		// tempo in ore = tempo in secondi / 60 * 60
+		long ore = diff/3600;
+		
+		// controllo che non ci siano parti di ora residue
+		if((diff%3600) != 0)
+			ore ++;
+		
+		long giorni = ore/24;
+		long oreRimaste = ore%24;
+		
+		if(oreRimaste != 0)
+			giorni ++;
+		
+		return giorni;
+	}
+	
 
 
 	private final static double KB = 1024;
 	private final static double MB = 1048576;
+	private final static double GB = 1073741824;
 	public static String convertBytesToFormatString(long value) {
+		return convertBytesToFormatString(value, false, "");
+	}
+	public static String convertBytesToFormatString(long value, boolean upperCase, String separator) {
 
 		MessageFormat mf = new MessageFormat("{0,number,#.##}");
 		Double len = null;
@@ -514,19 +593,33 @@ public class Utilities {
 			//byte
 			Object[] objs = {len};
 			res = mf.format(objs);
+			res +=separator;
 			res += "b";
 		}else if(d>1 && d<1000){
 			//kilo byte
 			Object[] objs = {len/Utilities.KB};
 			res = mf.format(objs);
+			res +=separator;
 			res += "kb";
-		}else{
+		}else  if (d >= 1000 && d < 1000000){
 			//mega byte
 			Object[] objs = {len/Utilities.MB};
 			res = mf.format(objs);
+			res +=separator;
 			res += "mb";
 		}
+		else{
+			// giga byte
+			Object[] objs = { len/Utilities.GB };
+			res = mf.format(objs);
+			res +=separator;
+			res +="gb";
+		}
 
+		if(upperCase){
+			res = res.toUpperCase();
+		}
+		
 		return res;
 	}
 
