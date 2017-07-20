@@ -104,6 +104,9 @@ public class Test {
         
         String testSenzaBaseUri = "/allineamentopendenze/id23/ulterioreParametro/id45";
         System.out.println("API-Op ["+testSenzaBaseUri+"]: "+api.findOperation(HttpRequestMethod.GET, testSenzaBaseUri));
+        
+        String testParametriRisposta = "/prova2";
+        System.out.println("API-Op ["+testParametriRisposta+"]: "+api.findOperation(HttpRequestMethod.GET, testParametriRisposta));
 	}
 
 	private static void print(ResourceNode resourceNode, String indent){
@@ -177,6 +180,10 @@ public class Test {
     		for (RepresentationNode representationNode : param.getSupportedInputs()) {
     			System.out.println(indent+"       mediaType ["+representationNode.getMediaType()+"]");
     			System.out.println(indent+"       element ["+representationNode.getElement()+"]");
+    			if(representationNode.getParam()!=null){
+    				System.out.println(indent+"    inputParams.size ["+representationNode.getParam().size()+"]");
+    	    		printParams(representationNode.getParam(), indent+"    ");
+    			}
 			}
     		
     		System.out.println(indent+"    getSupportedOutputs.size ["+param.getSupportedOutputs().size()+"]");
@@ -189,6 +196,10 @@ public class Test {
 					System.out.println(indent+"       status ["+listLong.get(i)+"]");
 					System.out.println(indent+"         mediaType ["+representationNode.get(i).getMediaType()+"]");
 	    			System.out.println(indent+"         element ["+representationNode.get(i).getElement()+"]");
+	    			if(representationNode.get(i).getParam()!=null){
+	    				System.out.println(indent+"    outputParams.size ["+representationNode.get(i).getParam().size()+"]");
+	    	    		printParams(representationNode.get(i).getParam(), indent+"    ");
+	    			}
 				}
 			}
     		
@@ -202,6 +213,10 @@ public class Test {
 					System.out.println(indent+"       status ["+listLong.get(i)+"]");
 					System.out.println(indent+"         mediaType ["+faultNode.get(i).getMediaType()+"]");
 	    			System.out.println(indent+"         element ["+faultNode.get(i).getElement()+"]");
+	    			if(faultNode.get(i).getParam()!=null){
+	    				System.out.println(indent+"    faultParams.size ["+faultNode.get(i).getParam().size()+"]");
+	    	    		printParams(faultNode.get(i).getParam(), indent+"    ");
+	    			}
 				}
 			}
 		}

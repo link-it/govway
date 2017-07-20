@@ -28,11 +28,11 @@ package org.openspcoop2.utils.rest.api;
  * @author $Author: apoli $
  * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
-public class ApiRequestHeaderParameter extends AbstractApiRequestParameter {
+public class ApiRequestFormParameter extends AbstractApiRequestParameter {
 
 	private String type;
 
-	public ApiRequestHeaderParameter(String name, String type){
+	public ApiRequestFormParameter(String name, String type){
 		super(name);
 		this.type = type;
 	}

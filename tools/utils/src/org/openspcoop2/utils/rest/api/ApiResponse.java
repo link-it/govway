@@ -20,6 +20,9 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.utils.beans.BaseBean;
 
 /**
@@ -38,6 +41,9 @@ public class ApiResponse extends BaseBean {
 	private String mediaType;
 	private Object element;
 
+	private List<ApiCookieParameter> cookieParameters = new ArrayList<>();
+	private List<ApiHeaderParameter> headerParameters = new ArrayList<>();
+	
 	public String getName() {
 		return this.name;
 	}
@@ -67,5 +73,54 @@ public class ApiResponse extends BaseBean {
 	}
 	public void setElement(Object element) {
 		this.element = element;
+	}
+	
+	public void addCookieParameter(ApiCookieParameter parameter) {
+		this.cookieParameters.add(parameter);
+	}
+
+	public ApiCookieParameter getCookieParameter(int index) {
+		return this.cookieParameters.get( index );
+	}
+
+	public ApiCookieParameter removeCookieParameter(int index) {
+		return this.cookieParameters.remove( index );
+	}
+
+	public List<ApiCookieParameter> getCookieParameters() {
+		return this.cookieParameters;
+	}
+
+	public void setCookieParameters(List<ApiCookieParameter> parameters) {
+		this.cookieParameters=parameters;
+	}
+
+	public int sizeCookieParameters() {
+		return this.cookieParameters.size();
+	}
+	
+	
+	public void addHeaderParameter(ApiHeaderParameter parameter) {
+		this.headerParameters.add(parameter);
+	}
+
+	public ApiHeaderParameter getHeaderParameter(int index) {
+		return this.headerParameters.get( index );
+	}
+
+	public ApiHeaderParameter removeHeaderParameter(int index) {
+		return this.headerParameters.remove( index );
+	}
+
+	public List<ApiHeaderParameter> getHeaderParameters() {
+		return this.headerParameters;
+	}
+
+	public void setHeaderParameters(List<ApiHeaderParameter> parameters) {
+		this.headerParameters=parameters;
+	}
+
+	public int sizeHeaderParameters() {
+		return this.headerParameters.size();
 	}
 }

@@ -35,29 +35,56 @@ import org.openspcoop2.utils.beans.BaseBean;
  */
 public class ApiRequest extends BaseBean {
 
-	private List<ApiRequestHeaderParameter> headerParameters = new ArrayList<>();
+	private List<ApiCookieParameter> cookieParameters = new ArrayList<>();
+	private List<ApiHeaderParameter> headerParameters = new ArrayList<>();
 	private List<ApiRequestQueryParameter> queryParameters = new ArrayList<>();
 	private List<ApiRequestDynamicPathParameter> dynamicPathParameters = new ArrayList<>();
+	private List<ApiRequestFormParameter> formParameters = new ArrayList<>();
 	private List<ApiRequestBodyParameter> bodyParameters = new ArrayList<>();
 		
 	
-	public void addHeaderParameter(ApiRequestHeaderParameter parameter) {
+	public void addCookieParameter(ApiCookieParameter parameter) {
+		this.cookieParameters.add(parameter);
+	}
+
+	public ApiCookieParameter getCookieParameter(int index) {
+		return this.cookieParameters.get( index );
+	}
+
+	public ApiCookieParameter removeCookieParameter(int index) {
+		return this.cookieParameters.remove( index );
+	}
+
+	public List<ApiCookieParameter> getCookieParameters() {
+		return this.cookieParameters;
+	}
+
+	public void setCookieParameters(List<ApiCookieParameter> parameters) {
+		this.cookieParameters=parameters;
+	}
+
+	public int sizeCookieParameters() {
+		return this.cookieParameters.size();
+	}
+	
+	
+	public void addHeaderParameter(ApiHeaderParameter parameter) {
 		this.headerParameters.add(parameter);
 	}
 
-	public ApiRequestHeaderParameter getHeaderParameter(int index) {
+	public ApiHeaderParameter getHeaderParameter(int index) {
 		return this.headerParameters.get( index );
 	}
 
-	public ApiRequestHeaderParameter removeHeaderParameter(int index) {
+	public ApiHeaderParameter removeHeaderParameter(int index) {
 		return this.headerParameters.remove( index );
 	}
 
-	public List<ApiRequestHeaderParameter> getHeaderParameters() {
+	public List<ApiHeaderParameter> getHeaderParameters() {
 		return this.headerParameters;
 	}
 
-	public void setHeaderParameters(List<ApiRequestHeaderParameter> parameters) {
+	public void setHeaderParameters(List<ApiHeaderParameter> parameters) {
 		this.headerParameters=parameters;
 	}
 
@@ -117,6 +144,29 @@ public class ApiRequest extends BaseBean {
 	}
 
 	
+	public void addFormParameter(ApiRequestFormParameter parameter) {
+		this.formParameters.add(parameter);
+	}
+
+	public ApiRequestFormParameter getFormParameter(int index) {
+		return this.formParameters.get( index );
+	}
+
+	public ApiRequestFormParameter removeFormParameter(int index) {
+		return this.formParameters.remove( index );
+	}
+
+	public List<ApiRequestFormParameter> getFormParameters() {
+		return this.formParameters;
+	}
+
+	public void setFormParameters(List<ApiRequestFormParameter> parameters) {
+		this.formParameters=parameters;
+	}
+
+	public int sizeFormParameters() {
+		return this.formParameters.size();
+	}
 	
 	
 	public void addBodyParameter(ApiRequestBodyParameter parameter) {

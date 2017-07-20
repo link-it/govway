@@ -94,7 +94,7 @@ public class Test {
 		Properties parametersFormBased = new Properties();
 		parametersFormBased.put("idTrasmissionePROVA2Required", "24");
 		parametersFormBased.put("idTrasmissionePROVA2NOTRequired", "true");
-		httpEntity.setParametersFormBased(parametersFormBased);
+		httpEntity.setParametersQuery(parametersFormBased);
 
 		Properties parametersTrasporto = new Properties();
 		parametersTrasporto.put("idTrasmissionePROVA2headerRequired", "67");

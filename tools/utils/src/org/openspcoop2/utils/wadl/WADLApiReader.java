@@ -44,7 +44,7 @@ import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiRequest;
 import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
-import org.openspcoop2.utils.rest.api.ApiRequestHeaderParameter;
+import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -164,7 +164,7 @@ public class WADLApiReader implements IApiReader {
 									operation.setRequest(new ApiRequest());
 								}
 								for (Param param : lHeaders) {
-									ApiRequestHeaderParameter header = new ApiRequestHeaderParameter(param.getName(),param.getType().toString());
+									ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
 									header.setRequired(param.isRequired());
 									operation.getRequest().addHeaderParameter(header);
 								}
@@ -224,6 +224,15 @@ public class WADLApiReader implements IApiReader {
 										apiResponse.setHttpReturnCode(listLong.get(i).intValue());
 										apiResponse.setMediaType(representationNode.get(i).getMediaType());
 										apiResponse.setElement(representationNode.get(i).getElement());
+										
+										if(representationNode.get(i).getParam()!=null){
+											for (Param param : representationNode.get(i).getParam()) {
+												ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
+												header.setRequired(param.isRequired());
+												apiResponse.addHeaderParameter(header);
+											}
+						    			}
+										
 										operation.addResponse(apiResponse);
 									}
 								}
@@ -240,6 +249,15 @@ public class WADLApiReader implements IApiReader {
 										apiResponse.setHttpReturnCode(listLong.get(i).intValue());
 										apiResponse.setMediaType(representationNode.get(i).getMediaType());
 										apiResponse.setElement(representationNode.get(i).getElement());
+										
+										if(representationNode.get(i).getParam()!=null){
+											for (Param param : representationNode.get(i).getParam()) {
+												ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
+												header.setRequired(param.isRequired());
+												apiResponse.addHeaderParameter(header);
+											}
+						    			}
+										
 										operation.addResponse(apiResponse);
 									}
 								}

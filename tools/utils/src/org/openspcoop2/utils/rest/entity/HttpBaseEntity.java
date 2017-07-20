@@ -20,6 +20,9 @@
 
 package org.openspcoop2.utils.rest.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
@@ -35,10 +38,14 @@ public abstract class HttpBaseEntity<T> {
 	private String url;
 	private HttpRequestMethod method;
 	private String contentType;
-	/* ---- Coppie nome/valori di invocazione form-based --- */
-	private java.util.Properties parametersFormBased;
+	/* ---- Coppie nome/valori di invocazione della query --- */
+	private java.util.Properties parametersQuery;
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
 	private java.util.Properties parametersTrasporto;
+	/* ---- Coppie nome/valori di invocazione form ----- */
+	private java.util.Properties parametersForm;
+	/* ---- Cookies ----- */
+	private List<Cookie> cookies = new ArrayList<>();
 	
 	private T content;
 	
@@ -67,16 +74,28 @@ public abstract class HttpBaseEntity<T> {
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
-	public java.util.Properties getParametersFormBased() {
-		return this.parametersFormBased;
+	public java.util.Properties getParametersQuery() {
+		return this.parametersQuery;
 	}
-	public void setParametersFormBased(java.util.Properties parametersFormBased) {
-		this.parametersFormBased = parametersFormBased;
+	public void setParametersQuery(java.util.Properties parametersQuery) {
+		this.parametersQuery = parametersQuery;
+	}
+	public java.util.Properties getParametersForm() {
+		return this.parametersForm;
+	}
+	public void setParametersForm(java.util.Properties parametersForm) {
+		this.parametersForm = parametersForm;
 	}
 	public java.util.Properties getParametersTrasporto() {
 		return this.parametersTrasporto;
 	}
 	public void setParametersTrasporto(java.util.Properties parametersTrasporto) {
 		this.parametersTrasporto = parametersTrasporto;
+	}
+	public List<Cookie> getCookies() {
+		return this.cookies;
+	}
+	public void setCookies(List<Cookie> cookies) {
+		this.cookies = cookies;
 	}
 }

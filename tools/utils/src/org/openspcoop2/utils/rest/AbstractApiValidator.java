@@ -23,12 +23,15 @@ package org.openspcoop2.utils.rest;
 import java.util.List;
 
 import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
-import org.openspcoop2.utils.rest.api.ApiRequestHeaderParameter;
+import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
+import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
@@ -70,6 +73,8 @@ public abstract class AbstractApiValidator   {
 	private void validateConformanceCheck(HttpBaseEntity<?> httpEntity,ApiOperation operation) throws ProcessingException,ValidatorException{
 
 		try{
+			
+			
 			
 			if(httpEntity.getContentType() != null) {
 				boolean contentTypeSupported = false;
@@ -119,7 +124,7 @@ public abstract class AbstractApiValidator   {
 				HttpBaseRequestEntity<?> request = (HttpBaseRequestEntity<?>) httpEntity;
 				
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeHeaderParameters()>0){
-					for (ApiRequestHeaderParameter paramHeader : operation.getRequest().getHeaderParameters()) {
+					for (ApiHeaderParameter paramHeader : operation.getRequest().getHeaderParameters()) {
 						String name = paramHeader.getName();
 						String value = request.getParametersTrasporto().getProperty(name);
 						if(value==null){
@@ -143,15 +148,41 @@ public abstract class AbstractApiValidator   {
 					}
 				}
 				
+				if(operation.getRequest()!=null &&  operation.getRequest().sizeCookieParameters()>0){
+					for (ApiCookieParameter paramCookie : operation.getRequest().getCookieParameters()) {
+						String name = paramCookie.getName();
+						String value = null;
+						if(request.getCookies()!=null){
+							for (Cookie cookie : request.getCookies()) {
+								if(name.equalsIgnoreCase(cookie.getName())){
+									value = cookie.getValue();
+								}
+							}
+						}
+						if(value==null){
+							if(paramCookie.isRequired()){
+								throw new ValidatorException("Required Cookie ["+name+"] not found");
+							}
+						}
+						if(value!=null){
+							try{
+								validateValueAsType(value,paramCookie.getType());
+							}catch(ValidatorException val){
+								throw new ValidatorException("Cookie ["+name+"] with value ["+value+"] not valid (expected type ["+paramCookie.getType()+"]): "+val.getMessage(),val);
+							}
+						}
+					}
+				}
+				
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeQueryParameters()>0){
 					for (ApiRequestQueryParameter paramQuery : operation.getRequest().getQueryParameters()) {
 						String name = paramQuery.getName();
-						String value = request.getParametersFormBased().getProperty(name);
+						String value = request.getParametersQuery().getProperty(name);
 						if(value==null){
-							value = request.getParametersFormBased().getProperty(name.toLowerCase());
+							value = request.getParametersQuery().getProperty(name.toLowerCase());
 						}
 						if(value==null){
-							value = request.getParametersFormBased().getProperty(name.toUpperCase());
+							value = request.getParametersQuery().getProperty(name.toUpperCase());
 						}
 						if(value==null){
 							if(paramQuery.isRequired()){
@@ -167,7 +198,7 @@ public abstract class AbstractApiValidator   {
 						}
 					}
 				}
-				
+								
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeDynamicPathParameters()>0){
 					for (ApiRequestDynamicPathParameter paramDynamicPath : operation.getRequest().getDynamicPathParameters()) {
 						boolean find = false;
@@ -190,6 +221,100 @@ public abstract class AbstractApiValidator   {
 								validateValueAsType(valueFound,paramDynamicPath.getType());
 							}catch(ValidatorException val){
 								throw new ValidatorException("DynamicPath ["+paramDynamicPath.getName()+"] with value ["+valueFound+"] not valid (expected type ["+paramDynamicPath.getType()+"]): "+val.getMessage(),val);
+							}
+						}
+					}
+				}
+				
+				if(operation.getRequest()!=null &&  operation.getRequest().sizeFormParameters()>0){
+					for (ApiRequestFormParameter paramForm : operation.getRequest().getFormParameters()) {
+						String name = paramForm.getName();
+						String value = request.getParametersForm().getProperty(name);
+						if(value==null){
+							value = request.getParametersForm().getProperty(name.toLowerCase());
+						}
+						if(value==null){
+							value = request.getParametersForm().getProperty(name.toUpperCase());
+						}
+						if(value==null){
+							if(paramForm.isRequired()){
+								throw new ValidatorException("Required FormParameter ["+name+"] not found");
+							}
+						}
+						if(value!=null){
+							try{
+								validateValueAsType(value,paramForm.getType());
+							}catch(ValidatorException val){
+								throw new ValidatorException("FormParameter ["+name+"] with value ["+value+"] not valid (expected type ["+paramForm.getType()+"]): "+val.getMessage(),val);
+							}
+						}
+					}
+				}
+				
+			}
+			
+			if(httpEntity instanceof HttpBaseResponseEntity<?>) {
+				
+				HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
+				ApiResponse apiResponseFound = null;
+				
+				for (ApiResponse apiResponse : operation.getResponses()) {
+					if(response.getStatus() == apiResponse.getHttpReturnCode()){
+						apiResponseFound = apiResponse;
+						break;
+					}										
+				}
+				
+				if(apiResponseFound==null){
+					throw new ValidatorException("HttpReturnCode ["+response.getStatus()+"] unsupported");
+				}
+				
+				if(apiResponseFound.sizeHeaderParameters()>0){
+					for (ApiHeaderParameter paramHeader : apiResponseFound.getHeaderParameters()) {
+						String name = paramHeader.getName();
+						String value = response.getParametersTrasporto().getProperty(name);
+						if(value==null){
+							value = response.getParametersTrasporto().getProperty(name.toLowerCase());
+						}
+						if(value==null){
+							value = response.getParametersTrasporto().getProperty(name.toUpperCase());
+						}
+						if(value==null){
+							if(paramHeader.isRequired()){
+								throw new ValidatorException("Required HttpHeader ["+name+"] not found");
+							}
+						}
+						if(value!=null){
+							try{
+								validateValueAsType(value,paramHeader.getType());
+							}catch(ValidatorException val){
+								throw new ValidatorException("HttpHeader ["+name+"] with value ["+value+"] not valid (expected type ["+paramHeader.getType()+"]): "+val.getMessage(),val);
+							}
+						}
+					}
+				}
+				
+				if(apiResponseFound.sizeCookieParameters()>0){
+					for (ApiCookieParameter paramCookie : apiResponseFound.getCookieParameters()) {
+						String name = paramCookie.getName();
+						String value = null;
+						if(response.getCookies()!=null){
+							for (Cookie cookie : response.getCookies()) {
+								if(name.equalsIgnoreCase(cookie.getName())){
+									value = cookie.getValue();
+								}
+							}
+						}
+						if(value==null){
+							if(paramCookie.isRequired()){
+								throw new ValidatorException("Required Cookie ["+name+"] not found");
+							}
+						}
+						if(value!=null){
+							try{
+								validateValueAsType(value,paramCookie.getType());
+							}catch(ValidatorException val){
+								throw new ValidatorException("Cookie ["+name+"] with value ["+value+"] not valid (expected type ["+paramCookie.getType()+"]): "+val.getMessage(),val);
 							}
 						}
 					}

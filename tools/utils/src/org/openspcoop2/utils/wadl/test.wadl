@@ -52,8 +52,25 @@
                     <param name="idTrasmissionePROVA2" style="query" type="xs:boolean"/>
                     <param name="idTrasmissionePROVA2header" style="header" type="xs:boolean"/>
                 </request>
-                <response>
-                    <representation mediaType="text/plain"/>
+                <response status="200">
+                    <representation mediaType="text/plain">
+                    	<param name="rispostaProvaheaderRequired" style="header" required="true" type="xs:long">
+               	 		 	<link rel="self"/>  
+               	 		</param>
+                    	<param name="rispostaProvaheader" style="header" type="xs:boolean">
+                    		<link rel="self"/>  
+               	 		</param>
+                    </representation>
+                </response>
+                <response status="500">
+                    <representation mediaType="text/plain">
+                    	<param name="rispostaERROREProvaheaderRequired" style="header" required="true" type="xs:long">
+               	 		 	<link rel="self"/>  
+               	 		</param>
+                    	<param name="rispostaERROREProvaheader" style="header" type="xs:boolean">
+                    		<link rel="self"/>  
+               	 		</param>
+                    </representation>
                 </response>
             </method>
             <method href="#provaEsterna"/>
@@ -63,7 +80,7 @@
                 <request>
                     <param name="idTrasmissione" style="query" type="xs:long"/>
                 </request>
-                <response>
+                <response status="200">
                     <representation mediaType="text/plain"/>
                 </response>
             </method>
@@ -72,14 +89,14 @@
                     <request>
                         <param name="idTrasmissione" style="query" type="xs:long"/>
                     </request>
-                    <response>
+                    <response status="200">
                         <representation mediaType="text/plain"/>
                     </response>
                 </method>
             </resource>
             <resource path="/getStatoTrasmissioni">
                 <method name="GET">
-                    <response>
+                    <response status="200">
                         <representation mediaType="application/xml" element="inline:film"/>
                     </response>
                 </method>
@@ -94,7 +111,7 @@
             </resource>
             <resource path="/getStatoTrasmissioniConPiuResponse">
                 <method name="GET">
-                    <response>
+                    <response status="200">
                         <representation mediaType="application/xml" element="inline:film"/>
                     </response>
                 </method>
@@ -158,7 +175,7 @@
             </resource>
             <resource path="/getStatoTrasmissioniJSON">
                 <method name="GET">
-                    <response>
+                    <response status="200">
                         <representation mediaType="application/json" element="inline:film"/>
                     </response>
                 </method>
@@ -179,7 +196,7 @@
         <request>
             <param name="idTrasmissionePROVAEsterna" style="query" type="xs:long"/>
         </request>
-        <response>
+        <response status="200">
             <representation mediaType="text/plain"/>
         </response>
     </method>
