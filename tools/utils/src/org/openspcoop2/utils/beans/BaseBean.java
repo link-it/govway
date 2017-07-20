@@ -1020,6 +1020,14 @@ public abstract class BaseBean {
 						//setto il field clonato nel clone
 						this.setFieldValue(field.getName(), clone, field.getType(), fieldValue);
 					}
+					else if(isSupportedCloneList(field)){
+						List<?> listOriginale = (List<?>) fieldValue;
+						if(listOriginale!=null){
+							List<?> listClone  = this.cloneList(listOriginale);
+							//setto il field clonato nel clone
+							this.setFieldValue(field.getName(), clone, field.getType(), listClone);
+						}
+					}
 					else {
 						//recupero interfacce implementate da questo field
 						Class<?>[] interfacce = field.getType().getInterfaces();
@@ -1046,5 +1054,54 @@ public abstract class BaseBean {
 		return clone;
 	}
 
+	private boolean isSupportedCloneList(java.lang.reflect.Field field){
+		if(field.getType().getName().equals(java.util.List.class.getName()) ||
+				field.getType().getName().equals(java.util.ArrayList.class.getName())  ||
+				field.getType().getName().equals(java.util.Vector.class.getName()) ||
+				field.getType().getName().equals(java.util.Stack.class.getName()) ||
+				field.getType().getName().equals(java.util.LinkedList.class.getName()) ||
+				field.getType().getName().equals(java.util.concurrent.CopyOnWriteArrayList.class.getName())){
+			return true;
+		}
+		return false;
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List cloneList(List<?> listOriginale) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		List listClone  = null;
+		if(java.util.ArrayList.class.getName().equals(listOriginale.getClass().getName())){
+			listClone = new java.util.ArrayList<>();
+		}
+		else if(java.util.Vector.class.getName().equals(listOriginale.getClass().getName())){
+			listClone = new java.util.Vector<>();
+		}
+		else if(java.util.Stack.class.getName().equals(listOriginale.getClass().getName())){
+			listClone = new java.util.Stack<>();
+		}
+		else if(java.util.LinkedList.class.getName().equals(listOriginale.getClass().getName())){
+			listClone = new java.util.LinkedList<>();
+		}
+		else if(java.util.concurrent.CopyOnWriteArrayList.class.getName().equals(listOriginale.getClass().getName())){
+			listClone = new java.util.concurrent.CopyOnWriteArrayList<>();
+		}
+		if(listClone!=null){
+			for (int j = 0; j < listOriginale.size(); j++) {
+				Object oOriginale = listOriginale.get(j);
+				if(oOriginale!=null){
+					if(oOriginale instanceof java.lang.Cloneable){
+						//recupero il metodo clone dal field
+						java.lang.reflect.Method method =  oOriginale.getClass().getMethod("clone");
+						//effettuo il clone del field
+						java.lang.Cloneable oCloned =  (java.lang.Cloneable) method.invoke(oOriginale);
+						//aggiungo il field clonato nella lista
+						listClone.add(oCloned);
+					}
+				}
+				else{
+					listClone.add(null);
+				}
+			}
+		}
+		return listClone;
+	}
 }
 
