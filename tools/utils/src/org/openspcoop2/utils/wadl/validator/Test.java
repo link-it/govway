@@ -185,26 +185,35 @@ public class Test {
 		
 		System.out.println("Test #4 completato");
 
-		System.out.println("Test #5 (Risposta POST con differenti tipi di XML a seconda dello stato, caso di XML sbagliato)");
+		System.out.println("Test #5 (Richiesta GET con parametro dinamico)");
+		
+		TextHttpRequestEntity httpEntity5 = new TextHttpRequestEntity();
+		httpEntity5.setUrl("/allineamentopendenze/id23");
+		httpEntity5.setMethod(HttpRequestMethod.GET);
+		validator.validate(httpEntity5);
 
-		DocumentHttpResponseEntity httpEntity5 = new DocumentHttpResponseEntity();
-		httpEntity5.setStatus(200);
+		System.out.println("Test #5 completato");	
+		
+		System.out.println("Test #6 (Risposta POST con differenti tipi di XML a seconda dello stato, caso di XML sbagliato)");
+
+		DocumentHttpResponseEntity httpEntity6 = new DocumentHttpResponseEntity();
+		httpEntity6.setStatus(200);
 		Document document3 = builder.newDocument();
 		
 		Element root3 = (Element) document3.createElement("sbagliato");
 		
 		document3.appendChild(root3);
-		httpEntity5.setContent(document3);
+		httpEntity6.setContent(document3);
 		
-		httpEntity5.setContentType("application/xml");
-		httpEntity5.setUrl("/allineamentopendenze/getStatoTrasmissioniConPiuResponse");
-		httpEntity5.setMethod(HttpRequestMethod.POST);
+		httpEntity6.setContentType("application/xml");
+		httpEntity6.setUrl("/allineamentopendenze/getStatoTrasmissioniConPiuResponse");
+		httpEntity6.setMethod(HttpRequestMethod.POST);
 
 		try {
-			validator.validate(httpEntity5);
+			validator.validate(httpEntity6);
 			throw new Exception("Errore: Attesa " + WADLValidatorException.class.getName());
 		} catch(WADLValidatorException e) {
-			System.out.println("Test #5 completato");
+			System.out.println("Test #6 completato");
 		}
 		
 	}

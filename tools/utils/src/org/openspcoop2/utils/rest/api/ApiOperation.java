@@ -96,7 +96,7 @@ public class ApiOperation extends BaseBean {
 			throw new ProcessingException("Path ["+this.path+"] (split:"+tmp.size()+") non contiene posizione indicata ("+position+")");
 		}
 		String p = tmp.get(position);
-		return p.substring(p.length()-1).substring(1);
+		return p.substring(0,p.length()-1).substring(1);
 	}
 	public boolean isDynamicPath(){
 		return this.path.contains("{");
