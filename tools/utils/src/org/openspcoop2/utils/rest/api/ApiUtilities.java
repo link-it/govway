@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,19 +40,19 @@ public class ApiUtilities extends BaseBean {
 
 	public static ApiOperation findOperation(Api api, HttpRequestMethod httpMethod, String url, boolean exactlyLength) throws ProcessingException{
 
-		String[] urlList = extractUrlList(api.getBaseURL().toString(), url);
+		String[] urlList = extractUrlList(api.getBaseURL(), url);
 
 		return getOperation(urlList, api, httpMethod, exactlyLength);
 	}
-	private static String[] extractUrlList(String baseURI, String url) throws ProcessingException{
+	public static String[] extractUrlList(URL baseURI, String url) throws ProcessingException{
 		if(url == null)
 			throw new ProcessingException("URL non fornita");
 
 		List<String> urlList = new ArrayList<String>();
 
 		if(baseURI != null) {
-			if(url.startsWith(baseURI)) {
-				url = url.substring(baseURI.length(), url.length());
+			if(url.startsWith(baseURI.toString())) {
+				url = url.substring(baseURI.toString().length(), url.length());
 			}
 		}
 

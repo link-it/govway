@@ -105,6 +105,9 @@ public class Test {
         String testSenzaBaseUri = "/allineamentopendenze/id23/ulterioreParametro/id45";
         System.out.println("API-Op ["+testSenzaBaseUri+"]: "+api.findOperation(HttpRequestMethod.GET, testSenzaBaseUri));
         
+        String testParametroDinamico = "/allineamentopendenze/id23";
+        System.out.println("API-Op ["+testParametroDinamico+"]: "+api.findOperation(HttpRequestMethod.GET, testParametroDinamico));
+        
         String testParametriRisposta = "/prova2";
         System.out.println("API-Op ["+testParametriRisposta+"]: "+api.findOperation(HttpRequestMethod.GET, testParametriRisposta));
 	}

@@ -139,7 +139,7 @@
             <resource path="${idDinamico}">
                 <method name="GET">
                  	<request>
-                        <param required="true" style="template" name="idDinamico"/>
+                        <param required="true" style="template" name="idDinamico" type="xs:long"/>
                     </request>
                     <response status="200">
                         <representation mediaType="application/xml" element="inline:film"/>
@@ -163,8 +163,8 @@
 		            <resource path="${idDinamicoSecondoLivello}">
 		                <method name="GET">
 		                 	<request>
-		                        <param required="true" style="template" name="idDinamico"/>
-	                        	<param required="true" style="template" name="idDinamicoSecondoLivello"/>
+		                        <param required="true" style="template" name="idDinamico" type="xs:long"/>
+	                        	<param required="true" style="template" name="idDinamicoSecondoLivello" type="xs:long"/>
 		                    </request>
 		                    <response status="200">
 		                        <representation mediaType="application/xml" element="inline:film"/>

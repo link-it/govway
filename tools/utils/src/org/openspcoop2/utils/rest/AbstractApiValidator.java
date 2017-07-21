@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.rest;
 
+import java.net.URL;
 import java.util.List;
 
 import org.openspcoop2.utils.rest.api.Api;
@@ -31,6 +32,7 @@ import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.rest.api.ApiUtilities;
 import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
@@ -63,14 +65,14 @@ public abstract class AbstractApiValidator   {
 		// es. xsd
 		validatePreConformanceCheck(httpEntity, operation, args);
 		
-		validateConformanceCheck(httpEntity, operation);
+		validateConformanceCheck(httpEntity, operation, api.getBaseURL());
 		
 		// es. elementi specifici come nomi nel xsd etc..
 		validatePostConformanceCheck(httpEntity, operation, args);
 		
 	}
 	
-	private void validateConformanceCheck(HttpBaseEntity<?> httpEntity,ApiOperation operation) throws ProcessingException,ValidatorException{
+	private void validateConformanceCheck(HttpBaseEntity<?> httpEntity,ApiOperation operation, URL baseUrl) throws ProcessingException,ValidatorException{
 
 		try{
 			
@@ -203,13 +205,19 @@ public abstract class AbstractApiValidator   {
 					for (ApiRequestDynamicPathParameter paramDynamicPath : operation.getRequest().getDynamicPathParameters()) {
 						boolean find = false;
 						String valueFound = null;
-						for (int i = 0; i < operation.sizePath(); i++) {
-							if(operation.isDynamicPath()){
-								String idDinamic = operation.getDynamicPathId(i);
-								if(paramDynamicPath.getName().equals(idDinamic)){
-									find = true;
-									valueFound = operation.getPath(i);
-									break;
+						if(operation.isDynamicPath()){
+							for (int i = 0; i < operation.sizePath(); i++) {
+								if(operation.isDynamicPath()){
+									String idDinamic = operation.getDynamicPathId(i);
+									if(paramDynamicPath.getName().equals(idDinamic)){
+										String [] urlList = ApiUtilities.extractUrlList(baseUrl, request.getUrl());
+										if(i>=urlList.length){
+											throw new ValidatorException("DynamicPath ["+paramDynamicPath.getName()+"] not found (position:"+i+", urlLenght:"+urlList.length+")");
+										}
+										find = true;
+										valueFound = urlList[i];
+										break;
+									}
 								}
 							}
 						}
