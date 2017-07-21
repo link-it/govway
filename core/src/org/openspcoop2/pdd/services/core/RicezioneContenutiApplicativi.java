@@ -1138,7 +1138,9 @@ public class RicezioneContenutiApplicativi {
 					errore = esito.getErroreIntegrazione();
 					eAutenticazione = esito.getEccezioneProcessamento();
 					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenziali.toString(true)); // Aggiungo la password se presente
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+					if(autenticazioneOpzionale==false){
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+					}
 				}
 				else{
 					msgDiag.logPersonalizzato("autenticazioneEffettuata");
