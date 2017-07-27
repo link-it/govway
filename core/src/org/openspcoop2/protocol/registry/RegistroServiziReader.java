@@ -465,6 +465,9 @@ public class RegistroServiziReader {
 				break;
 			}
 		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
 		return r;
 	}
 	
@@ -484,6 +487,9 @@ public class RegistroServiziReader {
 				break;
 			}
 		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
 		return r;
 	}
 	
@@ -501,6 +507,9 @@ public class RegistroServiziReader {
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
 		}
 		return r;
 	}
@@ -525,6 +534,9 @@ public class RegistroServiziReader {
 				break;
 			}
 		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
 		return r;
 	}
 	
@@ -548,6 +560,9 @@ public class RegistroServiziReader {
 				break;
 			}
 		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
 		return r;
 	}
 	
@@ -570,6 +585,9 @@ public class RegistroServiziReader {
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
 		}
 		return r;
 	}
