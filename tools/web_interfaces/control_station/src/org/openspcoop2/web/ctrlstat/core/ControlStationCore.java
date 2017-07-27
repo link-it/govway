@@ -694,10 +694,12 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = new Hashtable<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
+	private Map<String, List<String>> jmxPdD_caches_prefill = new Hashtable<String, List<String>>();
 	private Map<String, String> jmxPdD_cache_type = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_cache_nomeAttributo_cacheAbilitata = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_cache_nomeMetodo_statoCache = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_cache_nomeMetodo_resetCache = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_cache_nomeMetodo_prefillCache = new Hashtable<String, String>();
 	
 	public List<String> getJmxPdD_aliases() {
 		return this.jmxPdD_aliases;
@@ -911,6 +913,9 @@ public class ControlStationCore {
 	public List<String> getJmxPdD_caches(String alias) {
 		return this.jmxPdD_caches.get(alias);
 	}
+	public List<String> getJmxPdD_caches_prefill(String alias) {
+		return this.jmxPdD_caches_prefill.get(alias);
+	}
 	public String getJmxPdD_cache_type(String alias) {
 		return this.jmxPdD_cache_type.get(alias);
 	}
@@ -922,6 +927,9 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) {
 		return this.jmxPdD_cache_nomeMetodo_resetCache.get(alias);
+	}
+	public String getJmxPdD_cache_nomeMetodo_prefillCache(String alias) {
+		return this.jmxPdD_cache_nomeMetodo_prefillCache.get(alias);
 	}
 	
 	public Object getGestoreRisorseJMX(String alias)  throws Exception{
@@ -1347,10 +1355,12 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager;
 		this.jmxPdD_caches = core.jmxPdD_caches;
+		this.jmxPdD_caches_prefill = core.jmxPdD_caches_prefill;
 		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
 		this.jmxPdD_cache_nomeAttributo_cacheAbilitata = core.jmxPdD_cache_nomeAttributo_cacheAbilitata;
 		this.jmxPdD_cache_nomeMetodo_statoCache = core.jmxPdD_cache_nomeMetodo_statoCache;
 		this.jmxPdD_cache_nomeMetodo_resetCache = core.jmxPdD_cache_nomeMetodo_resetCache;
+		this.jmxPdD_cache_nomeMetodo_prefillCache = core.jmxPdD_cache_nomeMetodo_prefillCache;
 	}
 
 
@@ -1673,10 +1683,14 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
+					this.jmxPdD_caches_prefill.put(alias, consoleProperties.getJmxPdD_caches_prefill(alias));
 					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));
 					this.jmxPdD_cache_nomeAttributo_cacheAbilitata.put(alias, consoleProperties.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
 					this.jmxPdD_cache_nomeMetodo_statoCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_statoCache(alias));
 					this.jmxPdD_cache_nomeMetodo_resetCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_resetCache(alias));
+					if(this.jmxPdD_caches_prefill.get(alias).size()>0){
+						this.jmxPdD_cache_nomeMetodo_prefillCache.put(alias, consoleProperties.getJmxPdD_cache_nomeMetodo_prefillCache(alias));
+					}
 				}
 			}
 

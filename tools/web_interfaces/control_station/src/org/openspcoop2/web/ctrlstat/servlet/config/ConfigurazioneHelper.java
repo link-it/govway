@@ -4103,6 +4103,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setSize(this.getSize());
 					dati.addElement(de);
 					
+					if(this.confCore.getJmxPdD_caches_prefill(alias).contains(cache)){
+						de = new DataElement();
+						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+								"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+cache+
+								"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+this.confCore.getJmxPdD_cache_nomeMetodo_prefillCache(alias));
+						de.setType(DataElementType.LINK);
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
+						de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+					}
+					
 				}
 				
 				de = new DataElement();

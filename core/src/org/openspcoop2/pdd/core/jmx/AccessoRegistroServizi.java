@@ -21,7 +21,9 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -165,6 +167,10 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 			return this.resetCache();
 		}
 		
+		if(actionName.equals(JMXUtils.CACHE_METHOD_NAME_PREFILL)){
+			return this.prefillCache();
+		}
+		
 		if(actionName.equals(JMXUtils.CACHE_METHOD_NAME_PRINT_STATS)){
 			return this.printStatCache();
 		}
@@ -262,6 +268,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		// MetaData per l'operazione resetCache
 		MBeanOperationInfo resetCacheOP = JMXUtils.MBEAN_OPERATION_RESET_CACHE;
 		
+		// MetaData per l'operazione prefillCache
+		MBeanOperationInfo prefillCacheOP = JMXUtils.MBEAN_OPERATION_PREFILL_CACHE;
+		
 		// MetaData per l'operazione printStatCache
 		MBeanOperationInfo printStatCacheOP = JMXUtils.MBEAN_OPERATION_PRINT_STATS_CACHE;
 		
@@ -290,7 +299,18 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 		
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP,removeObjectCacheOP};
+		List<MBeanOperationInfo> listOperation = new ArrayList<>();
+		listOperation.add(resetCacheOP);
+		if(this.openspcoopProperties.isConfigurazioneCache_RegistryPrefill()){
+			listOperation.add(prefillCacheOP);
+		}
+		listOperation.add(printStatCacheOP);
+		listOperation.add(disabilitaCacheOP);
+		listOperation.add(abilitaCacheParametriOP);
+		listOperation.add(listKeysCacheOP);
+		listOperation.add(getObjectCacheOP);
+		listOperation.add(removeObjectCacheOP);
+		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -298,11 +318,13 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	/* Variabili per la gestione JMX */
 	private Logger log;
 	org.openspcoop2.pdd.config.ConfigurazionePdDManager configReader = null;
+	org.openspcoop2.pdd.config.OpenSPCoop2Properties openspcoopProperties = null;
 	
 	/* Costruttore */
 	public AccessoRegistroServizi(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		this.configReader = org.openspcoop2.pdd.config.ConfigurazionePdDManager.getInstance();
+		this.openspcoopProperties = org.openspcoop2.pdd.config.OpenSPCoop2Properties.getInstance();
 		
 		// Registro
 		this.cacheAbilitata =  this.configReader.getAccessoRegistroServizi().getCache() != null;
@@ -331,6 +353,18 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				throw new Exception("Cache non abilitata");
 			org.openspcoop2.protocol.registry.RegistroServiziReader.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String prefillCache(){
+		try{
+			if(this.cacheAbilitata==false)
+				throw new Exception("Cache non abilitata");
+			org.openspcoop2.protocol.registry.RegistroServiziReader.prefillCache();
+			return JMXUtils.MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

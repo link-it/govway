@@ -96,6 +96,7 @@ import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
@@ -164,6 +165,17 @@ public class ConfigurazionePdDReader {
 			}
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Reset della cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+		}
+	}
+	public static void prefillCache() throws DriverConfigurazioneException{
+		try{
+			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
+			if(configurazionePdDReader!=null && configurazionePdDReader.configurazionePdD!=null){
+				configurazionePdDReader.configurazionePdD.prefillCache(null, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+				configurazionePdDReader.configurazionePdD.prefillCacheConInformazioniRegistro(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Prefill della cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static String printStatsCache(String separator) throws DriverConfigurazioneException{
@@ -267,11 +279,11 @@ public class ConfigurazionePdDReader {
 	 */
 	public static boolean initialize(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
-			boolean useOp2UtilsDatasource, boolean bindJMX){
+			boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache){
 
 		try {
 			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD, 
-					forceDisableCache, useOp2UtilsDatasource, bindJMX);	
+					forceDisableCache, useOp2UtilsDatasource, bindJMX, prefillCache);	
 			return ConfigurazionePdDReader.initialize;
 		}
 		catch(Exception e) {
@@ -279,6 +291,10 @@ public class ConfigurazionePdDReader {
 			aLogconsole.error(e.getMessage());
 			return false;
 		}
+	}
+	
+	public static void prefillCacheConInformazioniRegistro(Logger aLogconsole){
+		getInstance().configurazionePdD.prefillCacheConInformazioniRegistro(aLogconsole);
 	}
 
 	/**
@@ -320,14 +336,14 @@ public class ConfigurazionePdDReader {
 	 */
 	public ConfigurazionePdDReader(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
-			boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverConfigurazioneException{
+			boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverConfigurazioneException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
 			else
 				this.log = LoggerWrapperFactory.getLogger(ConfigurazionePdDReader.class);
 			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
-					useOp2UtilsDatasource, bindJMX);
+					useOp2UtilsDatasource, bindJMX, prefillCache);
 
 			// OpenSPCoop Properties
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();

@@ -412,6 +412,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "infoProtocolloContesto_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "ResetCache";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL = "PrefillCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB = "connessioniDB";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS = "connessioniJMS";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD = "connessioniPD";
@@ -495,6 +496,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "contesti: ";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Reset Cache";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL = "Prefill Cache";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 		

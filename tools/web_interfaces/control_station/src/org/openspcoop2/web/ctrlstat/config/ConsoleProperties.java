@@ -630,8 +630,14 @@ public class ConsoleProperties {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioIntegrationManager");
 	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
+		return this.read_jmx_caches(alias, "risorseJmxPdd.caches");
+	}
+	public List<String> getJmxPdD_caches_prefill(String alias) throws UtilsException {
+		return this.read_jmx_caches(alias, "risorseJmxPdd.caches.prefill");
+	}
+	private List<String> read_jmx_caches(String alias,String property) throws UtilsException {
 		List<String> list = new ArrayList<String>();
-		String tipo = _getJmxPdD_value(false, alias, "risorseJmxPdd.caches");
+		String tipo = _getJmxPdD_value(false, alias, property);
 		if(tipo!=null && !"".equals(tipo)){
 			String [] tmp = tipo.split(",");
 			for (int i = 0; i < tmp.length; i++) {
@@ -651,6 +657,9 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdD_cache_nomeMetodo_resetCache(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeMetodo.resetCache");
+	}
+	public String getJmxPdD_cache_nomeMetodo_prefillCache(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.cache.nomeMetodo.prefillCache");
 	}
 	
 	

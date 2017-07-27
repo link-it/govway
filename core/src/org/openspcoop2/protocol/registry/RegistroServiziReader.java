@@ -72,7 +72,9 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -117,6 +119,16 @@ public class RegistroServiziReader {
 			}
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Reset della cache di accesso ai registri dei servizi non riuscita: "+e.getMessage(),e);
+		}
+	}
+	public static void prefillCache() throws DriverRegistroServiziException{
+		try{
+			RegistroServiziReader registroServiziReader = org.openspcoop2.protocol.registry.RegistroServiziReader.getInstance();
+			if(registroServiziReader!=null && registroServiziReader.registroServizi!=null){
+				registroServiziReader.registroServizi.prefillCache(null, registroServiziReader.log);
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Prefill della cache di accesso ai registri dei servizi non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static String printStatsCache(String separator) throws DriverRegistroServiziException{
@@ -223,12 +235,12 @@ public class RegistroServiziReader {
 	 */
 	public static boolean initialize(AccessoRegistro accessoRegistro,Logger aLog,Logger aLogconsole,
 			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
-			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX){
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache){
 
 		try {
 			RegistroServiziReader.registroServiziReader = 
 				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
-						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX);	
+						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX, prefillCache);	
 			return RegistroServiziReader.initialize;
 		}
 		catch(Exception e) {
@@ -275,14 +287,14 @@ public class RegistroServiziReader {
 	 */
 	public RegistroServiziReader(AccessoRegistro accessoRegistro,Logger aLog,
 			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
-			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverRegistroServiziException{
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverRegistroServiziException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
 			else
 				this.log = LoggerWrapperFactory.getLogger(RegistroServiziReader.class);
 			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
-					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX);
+					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX, prefillCache);
 			RegistroServiziReader.initialize = true;
 		}catch(Exception e){
 			RegistroServiziReader.initialize = false;
@@ -424,11 +436,355 @@ public class RegistroServiziReader {
 	
 	
 	protected void verificaConsistenzaRegistroServizi() throws DriverRegistroServiziException {
-		Object o = this.registroServizi.getDriverRegistroServizi();
-		if(o instanceof DriverRegistroServiziXML){
-			DriverRegistroServiziXML driver = (DriverRegistroServiziXML) o;
-			driver.refreshRegistroServiziXML();
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			Object o = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			if(o instanceof DriverRegistroServiziXML){
+				DriverRegistroServiziXML driver = (DriverRegistroServiziXML) o;
+				driver.refreshRegistroServiziXML();
+			}	
 		}
+	}
+	
+	
+	
+	/* ********  G E T   O G G E T T I   PRIMITIVI   NO CACHE ******** */ 
+	
+	public PortaDominio getPortaDominio_noCache(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		PortaDominio r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getPortaDominio(nome);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public Ruolo getRuolo_noCache(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		Ruolo r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				IDRuolo idRuolo = new IDRuolo(nome);
+				r = driver.getRuolo(idRuolo);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public Soggetto getSoggetto_noCache(IDSoggetto idSoggetto,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		Soggetto r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getSoggetto(idSoggetto);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public AccordoServizioParteComune getAccordoServizioParteComune_noCache(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		AccordoServizioParteComune r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				if(driver instanceof DriverRegistroServiziDB){
+					r = ((DriverRegistroServiziDB)driver).getAccordoServizioParteComune(idAccordo,readContenutiAllegati);
+				}
+				else{
+					r = driver.getAccordoServizioParteComune(idAccordo);
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica_noCache(IDServizio idServizio,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		AccordoServizioParteSpecifica r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				if(driver instanceof DriverRegistroServiziDB){
+					r = ((DriverRegistroServiziDB)driver).getAccordoServizioParteSpecifica(idServizio,readContenutiAllegati);
+				}
+				else{
+					r = driver.getAccordoServizioParteSpecifica(idServizio);
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public AccordoCooperazione getAccordoCooperazione_noCache(IDAccordoCooperazione idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		AccordoCooperazione r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				if(driver instanceof DriverRegistroServiziDB){
+					r = ((DriverRegistroServiziDB)driver).getAccordoCooperazione(idAccordo,readContenutiAllegati);
+				}
+				else{
+					r = driver.getAccordoCooperazione(idAccordo);
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		return r;
+	}
+	
+	
+	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  NO CACHE  ******** */
+	
+	public List<String> getAllIdPorteDominio_noCache(FiltroRicerca filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		List<String> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdPorteDominio(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDRuolo> getAllIdRuoli_noCache(FiltroRicercaRuoli filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		List<IDRuolo> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdRuoli(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDSoggetto> getAllIdSoggetti_noCache(FiltroRicercaSoggetti filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		List<IDSoggetto> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdSoggetti(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDAccordoCooperazione> getAllIdAccordiCooperazione_noCache(FiltroRicercaAccordi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		List<IDAccordoCooperazione> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdAccordiCooperazione(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDAccordo> getAllIdAccordiServizioParteComune_noCache(FiltroRicercaAccordi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		List<IDAccordo> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdAccordiServizioParteComune(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDPortType> getAllIdPortType_noCache(FiltroRicercaPortTypes filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		List<IDPortType> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdPortType(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDPortTypeAzione> getAllIdAzionePortType_noCache(FiltroRicercaOperations filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		List<IDPortTypeAzione> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdAzionePortType(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDAccordoAzione> getAllIdAzioneAccordo_noCache(FiltroRicercaAzioni filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		List<IDAccordoAzione> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdAzioneAccordo(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDServizio> getAllIdServizi_noCache(FiltroRicercaServizi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		List<IDServizio> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdServizi(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
+	}
+	
+	public List<IDFruizione> getAllIdFruizioniServizio_noCache(FiltroRicercaFruizioniServizio filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		List<IDFruizione> r = null;
+		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
+			String nomeRegInLista= (String) en.nextElement();
+			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
+				continue;
+			}
+			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
+			try{
+				r = driver.getAllIdFruizioniServizio(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound){}
+			if(r!=null || nomeRegistro!=null){
+				break;
+			}
+		}
+		if(r==null){
+			throw new DriverRegistroServiziNotFound();
+		}
+		return r;
 	}
 	
 	

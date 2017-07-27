@@ -487,6 +487,8 @@ public class OpenSPCoop2Properties {
 
 			// (warning)
 			this.isConfigurazioneDinamica();
+			this.isConfigurazioneCache_ConfigPrefill();
+			this.isConfigurazioneCache_RegistryPrefill();
 
 			// DataSource
 			if (getJNDIName_DataSource() == null){		
@@ -2200,6 +2202,52 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isConfigurazioneDinamica_value;
+	}
+	
+	private static Boolean isConfigurazioneCache_ConfigPrefill_value = null;
+	public boolean isConfigurazioneCache_ConfigPrefill(){
+		if(OpenSPCoop2Properties.isConfigurazioneCache_ConfigPrefill_value==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cache.config.prefill"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isConfigurazioneCache_ConfigPrefill_value = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.config.prefill' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isConfigurazioneCache_ConfigPrefill_value = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.config.prefill' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isConfigurazioneCache_ConfigPrefill_value = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isConfigurazioneCache_ConfigPrefill_value;
+	}
+	
+	private static Boolean isConfigurazioneCache_RegistryPrefill_value = null;
+	public boolean isConfigurazioneCache_RegistryPrefill(){
+		if(OpenSPCoop2Properties.isConfigurazioneCache_RegistryPrefill_value==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cache.registry.prefill"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isConfigurazioneCache_RegistryPrefill_value = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.registry.prefill' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isConfigurazioneCache_RegistryPrefill_value = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.registry.prefill' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isConfigurazioneCache_RegistryPrefill_value = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isConfigurazioneCache_RegistryPrefill_value;
 	}
 
 

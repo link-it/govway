@@ -122,6 +122,11 @@ public class RegistroServiziManager {
 	}
 	
 
+	/* ********  READER  ******** */
+	
+	public RegistroServiziReader getRegistroServiziReader(){
+		return this.registroServiziReader;
+	}
 	
 	
 	/* ********  U T I L S  ******** */ 
@@ -287,7 +292,7 @@ public class RegistroServiziManager {
 	}
 
 	
-	
+		
 	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
 	
 	public List<String> getAllIdPorteDominio(FiltroRicerca filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
@@ -342,4 +347,6 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.pushGenericObject(keyObject, object);
 	}
 
+	
+	
 }

@@ -21,7 +21,9 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -248,6 +250,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.resetCache();
 		}
 		
+		if(actionName.equals(JMXUtils.CACHE_METHOD_NAME_PREFILL)){
+			return this.prefillCache();
+		}
+		
 		if(actionName.equals(JMXUtils.CACHE_METHOD_NAME_PRINT_STATS)){
 			return this.printStatCache();
 		}
@@ -416,6 +422,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		// MetaData per l'operazione resetCache
 		MBeanOperationInfo resetCacheOP = JMXUtils.MBEAN_OPERATION_RESET_CACHE;
+				
+		// MetaData per l'operazione prefillCache
+		MBeanOperationInfo prefillCacheOP = JMXUtils.MBEAN_OPERATION_PREFILL_CACHE;
 		
 		// MetaData per l'operazione printStatCache
 		MBeanOperationInfo printStatCacheOP = JMXUtils.MBEAN_OPERATION_PRINT_STATS_CACHE;
@@ -450,7 +459,18 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 		
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{resetCacheOP,printStatCacheOP,disabilitaCacheOP,abilitaCacheParametriOP,listKeysCacheOP,getObjectCacheOP,removeObjectCacheOP};
+		List<MBeanOperationInfo> listOperation = new ArrayList<>();
+		listOperation.add(resetCacheOP);
+		if(this.openspcoopProperties.isConfigurazioneCache_ConfigPrefill()){
+			listOperation.add(prefillCacheOP);
+		}
+		listOperation.add(printStatCacheOP);
+		listOperation.add(disabilitaCacheOP);
+		listOperation.add(abilitaCacheParametriOP);
+		listOperation.add(listKeysCacheOP);
+		listOperation.add(getObjectCacheOP);
+		listOperation.add(removeObjectCacheOP);
+		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
 	}
@@ -531,6 +551,18 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				throw new Exception("Cache non abilitata");
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.resetCache();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String prefillCache(){
+		try{
+			if(this.cacheAbilitata==false)
+				throw new Exception("Cache non abilitata");
+			org.openspcoop2.pdd.config.ConfigurazionePdDReader.prefillCache();
+			return JMXUtils.MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

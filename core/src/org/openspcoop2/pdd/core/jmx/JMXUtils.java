@@ -37,6 +37,7 @@ public class JMXUtils {
 	
 	/** Nomi metodi */
 	public final static String CACHE_METHOD_NAME_RESET = "resetCache"; 
+	public final static String CACHE_METHOD_NAME_PREFILL = "prefillCache"; 
 	public final static String CACHE_METHOD_NAME_PRINT_STATS = "printStatsCache"; 
 	public final static String CACHE_METHOD_NAME_ABILITA = "abilitaCache";
 	public final static String CACHE_METHOD_NAME_DISABILITA = "disabilitaCache";
@@ -47,6 +48,7 @@ public class JMXUtils {
 	/** Messaggi */
 	public final static String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
 	public final static String MSG_RESET_CACHE_EFFETTUATO_SUCCESSO = "Operazione di reset effettuata con successo";
+	public final static String MSG_PREFILL_CACHE_EFFETTUATO_SUCCESSO = "Operazione pre-fill cache effettuata con successo";
 	public final static String MSG_ABILITAZIONE_CACHE_EFFETTUATA = "Abilitazione cache effettuata con successo";
 	public final static String MSG_DISABILITAZIONE_CACHE_EFFETTUATA = "Disabilitazione cache effettuata con successo";
 	public final static String MSG_RIMOZIONE_CACHE_EFFETTUATA = "Rimozione elemento dalla cache effettuata con successo";
@@ -67,6 +69,14 @@ public class JMXUtils {
 	// Reset Cache
 	public final static MBeanOperationInfo MBEAN_OPERATION_RESET_CACHE 
 		= new MBeanOperationInfo(CACHE_METHOD_NAME_RESET,"Svuota la cache",
+				null,
+				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+				String.class.getName(),
+				MBeanOperationInfo.ACTION);
+	
+	// PreFill Cache
+	public final static MBeanOperationInfo MBEAN_OPERATION_PREFILL_CACHE 
+		= new MBeanOperationInfo(CACHE_METHOD_NAME_PREFILL,"Pre-fill della cache",
 				null,
 				//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 				String.class.getName(),

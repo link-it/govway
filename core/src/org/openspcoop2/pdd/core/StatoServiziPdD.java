@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.StatoServiziPdd;
@@ -44,6 +45,76 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 public class StatoServiziPdD {
 	
 	private static ConfigurazionePdDManager configPdDReader = ConfigurazionePdDManager.getInstance();
+	
+	
+	/* **************** INIT ***************** */
+	
+	public static void initialize() throws DriverConfigurazioneException {
+		
+		StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
+		
+		// *** aggiorno stato in ram ***
+		
+		// -- portaDelegata --
+		if(statoServiziPdd!=null && statoServiziPdd.getPortaDelegata()!=null){ 
+			if(CostantiConfigurazione.DISABILITATO.equals(statoServiziPdd.getPortaDelegata().getStato())){
+				activePDService = false;
+			}
+			else{
+				activePDService = true;
+			}
+			listaAbilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
+			listaDisabilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
+		}
+		// se non si inizializza, tutte le transazioni effettuano un nuovo accesso al db
+		if(activePDService==null){
+			activePDService = true;
+		}
+		if(listaAbilitazioniPDService==null){
+			listaAbilitazioniPDService = new ArrayList<TipoFiltroAbilitazioneServizi>();
+		}
+		if(listaDisabilitazioniPDService==null){
+			listaDisabilitazioniPDService = new ArrayList<TipoFiltroAbilitazioneServizi>();
+		}
+		
+		// -- portaApplicativa --	
+		if(statoServiziPdd!=null && statoServiziPdd.getPortaApplicativa()!=null){ 
+			if(CostantiConfigurazione.DISABILITATO.equals(statoServiziPdd.getPortaApplicativa().getStato())){
+				activePAService = false;
+			}
+			else{
+				activePAService = true;
+			}
+			listaAbilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList();
+			listaDisabilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList();
+		}
+		// se non si inizializza, tutte le transazioni effettuano un nuovo accesso al db
+		if(activePAService==null){
+			activePAService = true;
+		}
+		if(listaAbilitazioniPAService==null){
+			listaAbilitazioniPAService = new ArrayList<TipoFiltroAbilitazioneServizi>();
+		}
+		if(listaDisabilitazioniPAService==null){
+			listaDisabilitazioniPAService = new ArrayList<TipoFiltroAbilitazioneServizi>();
+		}
+		
+		// -- integrationManager --
+		if(statoServiziPdd!=null && statoServiziPdd.getIntegrationManager()!=null){ 
+			if(CostantiConfigurazione.DISABILITATO.equals(statoServiziPdd.getIntegrationManager().getStato())){
+				activeIMService = false;
+			}
+			else{
+				activeIMService = true;
+			}
+		}
+		if(activeIMService==null){
+			activeIMService = true;
+		}
+
+
+	}
+	
 	
 	
 	/* **************** PORTA DELEGATA (GET) ***************** */

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -52,6 +54,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -180,7 +183,7 @@ public class RegistroServizi  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheRegistriServizi(configurazioneCache,null);
+				initCacheRegistriServizi(configurazioneCache,null,false);
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -256,7 +259,7 @@ public class RegistroServizi  {
 	 */
 	public RegistroServizi(AccessoRegistro accessoRegistro,Logger alog,
 			Logger alogConsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
-			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverRegistroServiziException{
+			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverRegistroServiziException{
 
 		try{ 
 			this.driverRegistroServizi = new java.util.Hashtable<String,IDriverRegistroServiziGet>();
@@ -405,7 +408,7 @@ public class RegistroServizi  {
 
 			// Inizializzazione della Cache
 			if(accessoRegistro.getCache()!=null){
-				initCacheRegistriServizi(accessoRegistro.getCache(),alogConsole);
+				initCacheRegistriServizi(accessoRegistro.getCache(),alogConsole,prefillCache);
 			}
 
 		}catch(Exception e){
@@ -423,29 +426,59 @@ public class RegistroServizi  {
 
 
 
-	private void initCacheRegistriServizi(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole) throws Exception{
+	private void initCacheRegistriServizi(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache) throws Exception{
 		this.cache = new Cache(CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
 
 		if( (configurazioneCache.getDimensione()!=null) ||
 				(configurazioneCache.getAlgoritmo() != null) ){
 
-			if( configurazioneCache.getDimensione()!=null ){
-				int dimensione = -1;
-				try{
-					dimensione = Integer.parseInt(configurazioneCache.getDimensione());
+			try{
+				if( configurazioneCache.getDimensione()!=null ){
+					int dimensione = -1;				
+					if(prefillCache){
+						dimensione = Integer.MAX_VALUE;
+					}
+					else{
+						dimensione = Integer.parseInt(configurazioneCache.getDimensione());
+					}
 					String msg = "Dimensione della cache (RegistroServizi) impostata al valore: "+dimensione;
-					this.log.info(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
+					if(prefillCache){
+						msg = "[Prefill Enabled] " + msg;
+					}
+					if(prefillCache){
+						this.log.warn(msg);
+					}
+					else{
+						this.log.info(msg);
+					}
+					if(alogConsole!=null){
+						if(prefillCache){
+							alogConsole.warn(msg);
+						}
+						else{
+							alogConsole.info(msg);
+						}
+					}
 					this.cache.setCacheSize(dimensione);
-				}catch(Exception error){
-					String msg = "Parametro errato per la dimensione della cache (RegistroServizi): "+error.getMessage();
-					this.log.error(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
 				}
-
+				else{
+					if(prefillCache){
+						int dimensione = Integer.MAX_VALUE;
+						String msg = "[Prefill Enabled] Dimensione della cache (RegistroServizi) impostata al valore: "+dimensione;
+						this.log.warn(msg);
+						if(alogConsole!=null){
+							alogConsole.warn(msg);
+						}
+						this.cache.setCacheSize(dimensione);
+					}
+				}
+			}catch(Exception error){
+				String msg = "Parametro errato per la dimensione della cache (RegistroServizi): "+error.getMessage();
+				this.log.error(msg);
+				if(alogConsole!=null)
+					alogConsole.info(msg);
 			}
+			
 			if( configurazioneCache.getAlgoritmo() != null ){
 				String msg = "Algoritmo di cache (RegistroServizi) impostato al valore: "+configurazioneCache.getAlgoritmo();
 				this.log.info(msg);
@@ -461,39 +494,104 @@ public class RegistroServizi  {
 		if( (configurazioneCache.getItemIdleTime() != null) ||
 				(configurazioneCache.getItemLifeSecond() != null) ){
 
-			if( configurazioneCache.getItemIdleTime() != null  ){
-				int itemIdleTime = -1;
-				try{
-					itemIdleTime = Integer.parseInt(configurazioneCache.getItemIdleTime());
+			try{
+				if( configurazioneCache.getItemIdleTime() != null  ){
+					int itemIdleTime = -1;				
+					if(prefillCache){
+						itemIdleTime = -1;
+					}
+					else{
+						itemIdleTime = Integer.parseInt(configurazioneCache.getItemIdleTime());
+					}
 					String msg = "Attributo 'IdleTime' (RegistroServizi) impostato al valore: "+itemIdleTime;
-					this.log.info(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
+					if(prefillCache){
+						msg = "[Prefill Enabled] " + msg;
+					}
+					if(prefillCache){
+						this.log.warn(msg);
+					}
+					else{
+						this.log.info(msg);
+					}
+					if(alogConsole!=null){
+						if(prefillCache){
+							alogConsole.warn(msg);
+						}
+						else{
+							alogConsole.info(msg);
+						}
+					}
 					this.cache.setItemIdleTime(itemIdleTime);
-				}catch(Exception error){
-					String msg = "Parametro errato per l'attributo 'IdleTime' (RegistroServizi): "+error.getMessage();
-					this.log.error(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
 				}
+				else{
+					if(prefillCache){
+						int itemIdleTime = -1;
+						String msg = "[Prefill Enabled] Attributo 'IdleTime' (RegistroServizi) impostato al valore: "+itemIdleTime;
+						this.log.warn(msg);
+						if(alogConsole!=null){
+							alogConsole.warn(msg);
+						}
+						this.cache.setItemIdleTime(itemIdleTime);
+					}
+				}
+			}catch(Exception error){
+				String msg = "Parametro errato per l'attributo 'IdleTime' (RegistroServizi): "+error.getMessage();
+				this.log.error(msg);
+				if(alogConsole!=null)
+					alogConsole.info(msg);
 			}
-			if( configurazioneCache.getItemLifeSecond() != null  ){
-				int itemLifeSecond = -1;
-				try{
-					itemLifeSecond = Integer.parseInt(configurazioneCache.getItemLifeSecond());
+			
+			try{
+				if( configurazioneCache.getItemLifeSecond() != null  ){
+					int itemLifeSecond = -1;				
+					if(prefillCache){
+						itemLifeSecond = -1;
+					}
+					else{
+						itemLifeSecond = Integer.parseInt(configurazioneCache.getItemLifeSecond());
+					}
 					String msg = "Attributo 'MaxLifeSecond' (RegistroServizi) impostato al valore: "+itemLifeSecond;
-					this.log.info(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
+					if(prefillCache){
+						msg = "[Prefill Enabled] " + msg;
+					}
+					if(prefillCache){
+						this.log.warn(msg);
+					}
+					else{
+						this.log.info(msg);
+					}
+					if(alogConsole!=null){
+						if(prefillCache){
+							alogConsole.warn(msg);
+						}
+						else{
+							alogConsole.info(msg);
+						}
+					}
 					this.cache.setItemLifeTime(itemLifeSecond);
-				}catch(Exception error){
-					String msg = "Parametro errato per l'attributo 'MaxLifeSecond' (RegistroServizi): "+error.getMessage();
-					this.log.error(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
 				}
+				else{
+					if(prefillCache){
+						int itemLifeSecond = -1;
+						String msg = "Attributo 'MaxLifeSecond' (RegistroServizi) impostato al valore: "+itemLifeSecond;
+						this.log.warn(msg);
+						if(alogConsole!=null){
+							alogConsole.warn(msg);
+						}
+						this.cache.setItemLifeTime(itemLifeSecond);
+					}
+				}
+			}catch(Exception error){
+				String msg = "Parametro errato per l'attributo 'MaxLifeSecond' (RegistroServizi): "+error.getMessage();
+				this.log.error(msg);
+				if(alogConsole!=null)
+					alogConsole.info(msg);
 			}
 
+		}
+		
+		if(prefillCache){
+			this.prefillCache(null,alogConsole);
 		}
 	}
 
@@ -504,7 +602,392 @@ public class RegistroServizi  {
 		return this.driverRegistroServizi;
 	}
 
+	public void prefillCache(Connection connectionPdD,Logger alogConsole){
+		
+		String msg = "[Prefill] Inizializzazione cache (RegistroServizi) in corso ...";
+		this.log.info(msg);
+		if(alogConsole!=null){
+			alogConsole.info(msg);
+		}
+		
+		Set<String> registri = this.driverRegistroServizi.keySet();
+				
+		for (String nomeRegistro : registri) {
+		
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"]";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			
+			/* ********  R I C E R C A    S E R V I Z I  (utilizzo dei driver) ******** */
+			
+			FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
+			List<IDAccordo> listAccordi = null;
+			try{
+				listAccordi = this.driverRegistroServizi.get(nomeRegistro).getAllIdAccordiServizioParteComune(filtroAccordi);
+			}
+			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			if(listAccordi!=null && listAccordi.size()>0){
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listAccordi.size()+" accordi di servizio parte comune ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IDAccordo idAccordo : listAccordi) {
+					
+					try{
+						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, null));
+						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					try{
+						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, false));
+						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, false);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					try{
+						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, true));
+						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, true);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+					List<IDSoggetto> listSoggetti = null;
+					try{
+						listSoggetti = this.driverRegistroServizi.get(nomeRegistro).getAllIdSoggetti(filtroSoggetti);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					if(listSoggetti!=null && listSoggetti.size()>0){
+						for (IDSoggetto idSoggetto : listSoggetti) {
+							
+							try{
+								this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,null));
+								this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo);
+							}
+							catch(DriverRegistroServiziNotFound notFound){}
+							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							
+							try{
+								this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,false));
+								this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, false);
+							}
+							catch(DriverRegistroServiziNotFound notFound){}
+							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							
+							try{
+								this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,true));
+								this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, true);
+							}
+							catch(DriverRegistroServiziNotFound notFound){}
+							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							
+						}
+					}
+				}
+			}
+			
+			FiltroRicerca filtroPdd = new FiltroRicerca();
+			List<String> listPdd = null;
+			try{
+				listPdd = this.driverRegistroServizi.get(nomeRegistro).getAllIdPorteDominio(filtroPdd);
+			}
+			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			if(listPdd!=null && listPdd.size()>0){
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listPdd.size()+" pdd ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (String idPdd : listPdd) {
+					
+					try{
+						this.cache.remove(_getKey_getPortaDominio(idPdd));
+						this.getPortaDominio(connectionPdD, nomeRegistro, idPdd);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+				}
+			}
+			
+			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+			List<IDRuolo> listRuoli = null;
+			try{
+				listRuoli = this.driverRegistroServizi.get(nomeRegistro).getAllIdRuoli(filtroRuoli);
+			}
+			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			if(listRuoli!=null && listRuoli.size()>0){
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listRuoli.size()+" ruoli ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IDRuolo idRuolo : listRuoli) {
+					
+					try{
+						this.cache.remove(_getKey_getRuolo(idRuolo.getNome()));
+						this.getRuolo(connectionPdD, nomeRegistro, idRuolo.getNome());
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+				}
+			}
+			
+			FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+			List<IDSoggetto> listSoggetti = null;
+			try{
+				listSoggetti = this.driverRegistroServizi.get(nomeRegistro).getAllIdSoggetti(filtroSoggetti);
+			}
+			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			if(listSoggetti!=null && listSoggetti.size()>0){
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listSoggetti.size()+" soggetti ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IDSoggetto idSoggetto : listSoggetti) {
+					
+					try{
+						this.cache.remove(_getKey_getSoggetto(idSoggetto));
+						this.getSoggetto(connectionPdD, nomeRegistro, idSoggetto);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					Soggetto soggetto = null;
+					try{
+						soggetto = this.driverRegistroServizi.get(nomeRegistro).getSoggetto(idSoggetto);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					if(soggetto!=null){
+						if(soggetto.getCredenziali()!=null && soggetto.getCredenziali().getTipo()!=null){
+							if(CredenzialeTipo.BASIC.equals(soggetto.getCredenziali().getTipo())){
+								try{
+									this.cache.remove(_getKey_getSoggettoByCredenzialiBasic(soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword()));
+									this.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword());
+								}
+								catch(DriverRegistroServiziNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							}
+							else if(CredenzialeTipo.SSL.equals(soggetto.getCredenziali().getTipo())){
+								try{
+									this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(soggetto.getCredenziali().getSubject()));
+									this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, soggetto.getCredenziali().getSubject());
+								}
+								catch(DriverRegistroServiziNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							}
+							else if(CredenzialeTipo.PRINCIPAL.equals(soggetto.getCredenziali().getTipo())){
+								try{
+									this.cache.remove(_getKey_getSoggettoByCredenzialiPrincipal(soggetto.getCredenziali().getUser()));
+									this.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser());
+								}
+								catch(DriverRegistroServiziNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							}
+						}
+					}
+				}
+			}
+			
+			FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
+			List<IDServizio> listServizi = null;
+			try{
+				listServizi = this.driverRegistroServizi.get(nomeRegistro).getAllIdServizi(filtroServizi);
+			}
+			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			if(listServizi!=null && listServizi.size()>0){
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listServizi.size()+" servizi ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IDServizio idServizio : listServizi) {
+					
+					try{
+						this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,null));
+						this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										
+					try{
+						this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,false));
+						this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, false);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					try{
+						this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,true));
+						this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, true);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+					AccordoServizioParteSpecifica asps = null;
+					try{
+						asps = this.driverRegistroServizi.get(nomeRegistro).getAccordoServizioParteSpecifica(idServizio);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					try{
+						if(asps!=null && asps.getAccordoServizioParteComune()!=null){
+							IDAccordo idAPC = this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+							AccordoServizioParteComune apc = this.getAccordoServizioParteComune(connectionPdD,nomeRegistro,idAPC); // già aggiornato precedentemente
+							if(apc!=null){
+								if(asps.getPortType()!=null && !"".equals(asps.getPortType())){
+									if(apc.sizePortTypeList()>0){
+										for (PortType pt : apc.getPortTypeList()) {
+											if(pt.getNome().equals(asps.getPortType())){
+												if(pt.sizeAzioneList()>0){
+													for (Operation azione : pt.getAzioneList()) {
+														idServizio.setAzione(azione.getNome());
+														try{
+															this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,null));
+															this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio);
+														}
+														catch(DriverRegistroServiziNotFound notFound){}
+														catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+														
+														try{
+															this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,false));
+															this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, false);
+														}
+														catch(DriverRegistroServiziNotFound notFound){}
+														catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+														
+														try{
+															this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,true));
+															this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, true);
+														}
+														catch(DriverRegistroServiziNotFound notFound){}
+														catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+													}
+												}
+											}
+										}
+									}
+								}
+								else{
+									if(apc.sizeAzioneList()>0){
+										for (Azione azione : apc.getAzioneList()) {
+											idServizio.setAzione(azione.getNome());
+											try{
+												this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,null));
+												this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio);
+											}
+											catch(DriverRegistroServiziNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											
+											try{
+												this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,false));
+												this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, false);
+											}
+											catch(DriverRegistroServiziNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+											
+											try{
+												this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,true));
+												this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, true);
+											}
+											catch(DriverRegistroServiziNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										}
+									}
+								}
+							}
+						}
+					}catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					// Correlato implementato nella parte comune
+				}
+			}
+			
+			FiltroRicercaAccordi filtroAccordiCooperazione = new FiltroRicercaAccordi();
+			List<IDAccordoCooperazione> listAccordiCooperazione = null;
+			try{
+				listAccordiCooperazione = this.driverRegistroServizi.get(nomeRegistro).getAllIdAccordiCooperazione(filtroAccordiCooperazione);
+			}
+			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			if(listAccordiCooperazione!=null && listAccordiCooperazione.size()>0){
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listAccordiCooperazione.size()+" accordi di cooperazione ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IDAccordoCooperazione idAccordoCooperazione : listAccordiCooperazione) {
+					
+					try{
+						this.cache.remove(_getKey_getAccordoCooperazione(idAccordoCooperazione, null));
+						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					try{
+						this.cache.remove(_getKey_getAccordoCooperazione(idAccordoCooperazione, false));
+						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione, false);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					try{
+						this.cache.remove(_getKey_getAccordoCooperazione(idAccordoCooperazione, true));
+						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione, true);
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
+				}
+			}
+			
+			
+			
+			/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
+			
+			// Dipende dal filtro, non è possibile pre-inizializzarlo
+		}
+		
+		
+		msg = "[Prefill] Inizializzazione cache (RegistroServizi) completata";
+		this.log.info(msg);
+		if(alogConsole!=null){
+			alogConsole.info(msg);
+		}
+	}
 
 
 
@@ -927,17 +1410,14 @@ public class RegistroServizi  {
 
 	/* ********  R I C E R C A    S E R V I Z I  (utilizzo dei driver) ******** */ 
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteComune}, 
-	 * identificato grazie al parametro 
-	 * <var>idAccordo</var> 
-	 *
-	 * @param nomeRegistro nome del registro su cui effettuare la ricerca
-	 * @param idAccordo ID dell'accordo di Servizio
-	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.AccordoServizioParteComune} se la ricerca nel registro ha successo,
-	 *         null altrimenti.
-	 * 
-	 */
+	private String _getKey_getAccordoServizioParteComune(IDAccordo idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+		String uriAccordoServizio = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+		String key = "getAccordoServizio_" + uriAccordoServizio;
+		if(readContenutiAllegati!=null){
+			key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
+		}
+		return key;
+	}
 	public AccordoServizioParteComune getAccordoServizioParteComune(Connection connectionPdD,String nomeRegistro,IDAccordo idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, null);
 	}
@@ -949,15 +1429,10 @@ public class RegistroServizi  {
 		if(idAccordo.getNome() == null)
 			throw new DriverRegistroServiziException("[getAccordoServizioParteComune]: Nome accordo di servizio non definito");	
 		
-		String uriAccordoServizio = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getAccordoServizio_" + uriAccordoServizio;
-			if(readContenutiAllegati!=null){
-				key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
-			}
+			key = this._getKey_getAccordoServizioParteComune(idAccordo, readContenutiAllegati);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -991,15 +1466,9 @@ public class RegistroServizi  {
 	}
 
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.PortaDominio}, 
-	 * identificato grazie al parametro 
-	 * <var>nomePdD</var> 
-	 *
-	 * @param nomePdD Nome della Porta di Dominio
-	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.PortaDominio}.
-	 * 
-	 */
+	private String _getKey_getPortaDominio(String nomePdD) throws DriverRegistroServiziException{
+		return "getPortaDominio_" + nomePdD;
+	}
 	public org.openspcoop2.core.registry.PortaDominio getPortaDominio(Connection connectionPdD,String nomeRegistro,String nomePdD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		// Raccolta dati
@@ -1009,7 +1478,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getPortaDominio_" + nomePdD;
+			key = this._getKey_getPortaDominio(nomePdD);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1043,15 +1512,9 @@ public class RegistroServizi  {
 	}
 	
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Ruolo}, 
-	 * identificato grazie al parametro 
-	 * <var>nome</var> 
-	 *
-	 * @param nomeRuolo Nome del Ruolo
-	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Ruolo}.
-	 * 
-	 */
+	private String _getKey_getRuolo(String nomeRuolo) throws DriverRegistroServiziException{
+		return "getRuolo_" + nomeRuolo;
+	}
 	public org.openspcoop2.core.registry.Ruolo getRuolo(Connection connectionPdD,String nomeRegistro,String nomeRuolo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		// Raccolta dati
@@ -1061,7 +1524,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getRuolo_" + nomeRuolo;
+			key = this._getKey_getRuolo(nomeRuolo);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1094,17 +1557,9 @@ public class RegistroServizi  {
 
 	}
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
-	 * identificato grazie al parametro 
-	 * <var>idSoggetto</var> di tipo {@link org.openspcoop2.core.id.IDSoggetto}. 
-	 *
-	 * @param nomeRegistro nome del registro su cui effettuare la ricerca
-	 * @param idSoggetto Identificatore del Soggetto di tipo {@link org.openspcoop2.core.id.IDSoggetto}.
-	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} se la ricerca nel registro ha successo,
-	 *         null altrimenti.
-	 * 
-	 */
+	private String _getKey_getSoggetto(IDSoggetto idSoggetto) throws DriverRegistroServiziException{
+		return "getSoggetto_" + idSoggetto.getTipo() +"/" + idSoggetto.getNome();
+	}
 	public Soggetto getSoggetto(Connection connectionPdD,String nomeRegistro,IDSoggetto idSoggetto) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
@@ -1118,7 +1573,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggetto_" + tipoSP +"/" + codiceSP;
+			key = this._getKey_getSoggetto(idSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1148,6 +1603,9 @@ public class RegistroServizi  {
 
 	}
 
+	private String _getKey_getSoggettoByCredenzialiBasic(String user,String password) throws DriverRegistroServiziException{
+		return "getSoggettoByCredenzialiBasic_" + user +"_" + password;
+	}
 	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String nomeRegistro,String user,String password) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
@@ -1159,7 +1617,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggettoByCredenzialiBasic_" + user +"_" + password;
+			key = this._getKey_getSoggettoByCredenzialiBasic(user, password);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1189,6 +1647,9 @@ public class RegistroServizi  {
 
 	}
 	
+	private String _getKey_getSoggettoByCredenzialiSsl(String subject) throws DriverRegistroServiziException{
+		return "getSoggettoByCredenzialiSsl_" + subject;
+	}
 	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String nomeRegistro,String subject) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
@@ -1198,7 +1659,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggettoByCredenzialiSsl_" + subject;
+			key = this._getKey_getSoggettoByCredenzialiSsl(subject);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1228,6 +1689,9 @@ public class RegistroServizi  {
 
 	}
 	
+	private String _getKey_getSoggettoByCredenzialiPrincipal(String principal) throws DriverRegistroServiziException{
+		return "getSoggettoByCredenzialiPrincipal_" + principal;
+	}
 	public Soggetto getSoggettoByCredenzialiPrincipal(Connection connectionPdD,String nomeRegistro,String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
@@ -1237,7 +1701,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggettoByCredenzialiPrincipal_" + principal;
+			key = this._getKey_getSoggettoByCredenzialiPrincipal(principal);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1267,19 +1731,23 @@ public class RegistroServizi  {
 
 	}
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}
-	 * contenente le informazioni sulle funzionalita' associate
-	 * al servizio  identificato grazie ai fields Soggetto,
-	 * 'Servizio','TipoServizio' e 'Azione' impostati
-	 * all'interno del parametro <var>idService</var> di tipo {@link org.openspcoop2.core.id.IDServizio}. 
-	 *
-	 * @param nomeRegistro nome del registro su cui effettuare la ricerca
-	 * @param idService Identificatore del Servizio di tipo {@link org.openspcoop2.core.id.IDServizio}.
-	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica} se la ricerca nel registro ha successo,
-	 *         null altrimenti.
-	 * 
-	 */
+	private String _getKey_getAccordoServizioParteSpecifica(IDServizio idService,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+		String servizio = idService.getNome();
+		String tipoServizio = idService.getTipo();
+		Integer versioneServizio = idService.getVersione();
+		String azione = idService.getAzione();
+		String tipoSogg = idService.getSoggettoErogatore().getTipo();
+		String nomeSogg = idService.getSoggettoErogatore().getNome();
+		
+		String key = "getServizio_"+ tipoSogg +"/" + nomeSogg +
+				"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue();
+		if(azione !=null)
+			key = key + "_" + azione;	   
+		if(readContenutiAllegati!=null){
+			key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
+		}
+		return key;
+	}
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(Connection connectionPdD,String nomeRegistro,IDServizio idService) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return getAccordoServizioParteSpecifica(connectionPdD,nomeRegistro, idService, null);
 	}
@@ -1291,7 +1759,6 @@ public class RegistroServizi  {
 		String servizio = idService.getNome();
 		String tipoServizio = idService.getTipo();
 		Integer versioneServizio = idService.getVersione();
-		String azione = idService.getAzione();
 		if(servizio == null || tipoServizio == null || versioneServizio==null)
 			throw new DriverRegistroServiziException("[getAccordoServizioParteSpecifica] Parametri (Servizio) Non Validi");
 		String tipoSogg = idService.getSoggettoErogatore().getTipo();
@@ -1302,13 +1769,7 @@ public class RegistroServizi  {
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServizio_"+ tipoSogg +"/" + nomeSogg +
-			"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue();
-			if(azione !=null)
-				key = key + "_" + azione;	   
-			if(readContenutiAllegati!=null){
-				key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
-			}
+			key = this._getKey_getAccordoServizioParteSpecifica(idService, readContenutiAllegati);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1338,19 +1799,14 @@ public class RegistroServizi  {
 	}
 
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}
-	 * contenente le informazioni sulle funzionalita' associate
-	 * al servizio  correlato identificato grazie ai fields Soggetto
-	 * e nomeAccordo
-	 * 
-	 * @param nomeRegistro nome del registro su cui effettuare la ricerca
-	 * @param idSoggetto Identificatore del Soggetto di tipo {@link org.openspcoop2.core.id.IDSoggetto}.
-	 * @param idAccordo ID dell'accordo che deve implementare il servizio correlato
-	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica} se la ricerca nel registro ha successo,
-	 *         null altrimenti.
-	 * 
-	 */
+	private String _getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(IDSoggetto idSoggetto, IDAccordo idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+		String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+		String key = "getServizioCorrelato(RicercaPerAccordo)_"+ idSoggetto.getTipo() +"/" + idSoggetto.getNome() +"_" + uriAccordo;
+		if(readContenutiAllegati!=null){
+			key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
+		}
+		return key;
+	}
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica_ServizioCorrelato(Connection connectionPdD,String nomeRegistro,IDSoggetto idSoggetto, IDAccordo idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro, idSoggetto, idAccordo,null);
 	}
@@ -1365,15 +1821,10 @@ public class RegistroServizi  {
 		if(tipo == null || nome == null || idAccordo==null)
 			throw new DriverRegistroServiziException("[getAccordoServizioParteSpecifica_ServizioCorrelato] Parametri Non Validi");
 
-		String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
-		
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServizioCorrelato(RicercaPerAccordo)_"+ tipo +"/" + nome +"_" + uriAccordo;
-			if(readContenutiAllegati!=null){
-				key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
-			}
+			key = this._getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo, readContenutiAllegati);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1402,16 +1853,15 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica_ServizioCorrelato] ServizioCorrelato non trovato");
 	}
 	
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoCooperazione}
-	 * contenente le informazioni sulle funzionalita' associate
-	 * 
-	 * @param nomeRegistro nome del registro su cui effettuare la ricerca
-	 * @param idAccordo Identificatore dell'Accordo di tipo {@link org.openspcoop2.core.id.IDAccordoCooperazione}.
-	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.AccordoCooperazione} se la ricerca nel registro ha successo,
-	 *         null altrimenti.
-	 * 
-	 */
+	private String _getKey_getAccordoCooperazione(IDAccordoCooperazione idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+		String uriAccordoCooperazione = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo);
+
+		String key = "getAccordoCooperazione_" + uriAccordoCooperazione;   
+		if(readContenutiAllegati!=null){
+			key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
+		}
+		return key;
+	}
 	public AccordoCooperazione getAccordoCooperazione(Connection connectionPdD,String nomeRegistro,IDAccordoCooperazione idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return getAccordoCooperazione(connectionPdD,nomeRegistro, idAccordo, null);
 	}
@@ -1423,15 +1873,10 @@ public class RegistroServizi  {
 		if(idAccordo.getNome() == null)
 			throw new DriverRegistroServiziException("[getAccordoCooperazione]: Nome accordo di servizio non definito");	
 		
-		String uriAccordoCooperazione = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo);
-
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getAccordoCooperazione_" + uriAccordoCooperazione;   
-			if(readContenutiAllegati!=null){
-				key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
-			}
+			key = this._getKey_getAccordoCooperazione(idAccordo, readContenutiAllegati);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){

@@ -59,6 +59,7 @@ import org.openspcoop2.pdd.config.SystemPropertiesManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
@@ -729,7 +730,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,
 					propertiesReader.getJNDIName_DataSource(), false,
-					propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate());
+					propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
+					propertiesReader.isConfigurazioneCache_ConfigPrefill());
 			if(isInitializeConfig == false){
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;
@@ -1077,10 +1079,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				RegistroServiziReader.initialize(accessoRegistro,
 						logCore,OpenSPCoop2Startup.log,propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(),
 						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource(),
-						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate());
+						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
+						propertiesReader.isConfigurazioneCache_RegistryPrefill());
 			if(isInitializeRegistro == false){
 				msgDiag.logStartupError("Inizializzazione fallita","Accesso registro/i dei servizi");
 				return;
+			}
+			if(propertiesReader.isConfigurazioneCache_RegistryPrefill() && propertiesReader.isConfigurazioneCache_ConfigPrefill()){
+				try{
+					ConfigurazionePdDReader.prefillCacheConInformazioniRegistro(OpenSPCoop2Startup.log);
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Prefill ConfigurazionePdD e Registro Reader fallita");
+					return;
+				}
 			}
 
 			// Inizializza il reader del registro dei Servizi utilizzato nella configurazione
@@ -1204,6 +1215,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		
 			/* ----------- Inizializzazione Servizi Porta di Dominio ------------ */
 			try{
+				StatoServiziPdD.initialize();
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione stato servizi Porta di Dominio");
+				return;
+			}
+			try{
 				RicezioneContenutiApplicativi.initializeService(configurazionePdDReader, classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneContenutiApplicativi");
@@ -1215,7 +1232,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneBuste");
 				return;
 			}
-			
 			
 			
 			

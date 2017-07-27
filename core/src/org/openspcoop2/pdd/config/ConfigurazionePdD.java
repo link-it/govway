@@ -36,17 +36,25 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
@@ -55,6 +63,11 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -170,7 +183,7 @@ public class ConfigurazionePdD  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheConfigurazione(configurazioneCache, null);
+				initCacheConfigurazione(configurazioneCache, null, false);
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -243,7 +256,7 @@ public class ConfigurazionePdD  {
 	 * @param accessoConfigurazione Informazioni per accedere alla configurazione della PdD OpenSPCoop.
 	 */
 	public ConfigurazionePdD(AccessoConfigurazionePdD accessoConfigurazione,Logger alog,Logger alogConsole,Properties localProperties, 
-			String jndiNameDatasourcePdD, boolean forceDisableCache, boolean useOp2UtilsDatasource, boolean bindJMX)throws DriverConfigurazioneException{
+			String jndiNameDatasourcePdD, boolean forceDisableCache, boolean useOp2UtilsDatasource, boolean bindJMX, boolean prefillCache)throws DriverConfigurazioneException{
 
 		try{ 
 			// Inizializzo OpenSPCoopProperties
@@ -288,6 +301,10 @@ public class ConfigurazionePdD  {
 						accessoConfigurazione.getTipo()+" con location: "+accessoConfigurazione.getLocation());
 			}
 
+			
+			// Inizializzazione ConfigLocalProperties
+			this.configLocalProperties = new ConfigLocalProperties(this.log, this.openspcoopProperties.getRootDirectory(),localProperties);
+			
 
 			// Inizializzazione della Cache
 			AccessoConfigurazione accessoDatiConfigurazione = null;
@@ -296,12 +313,9 @@ public class ConfigurazionePdD  {
 			}catch(DriverConfigurazioneNotFound notFound){}
 			if(accessoDatiConfigurazione!=null && accessoDatiConfigurazione.getCache()!=null){
 				if(forceDisableCache==false){
-					initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole);
+					initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole, prefillCache);
 				}
 			}
-
-			// Inizializzazione ConfigLocalProperties
-			this.configLocalProperties = new ConfigLocalProperties(this.log, this.openspcoopProperties.getRootDirectory(),localProperties);
 
 		}catch(Exception e){
 			String msg = "Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop: "+e.getMessage();
@@ -312,26 +326,57 @@ public class ConfigurazionePdD  {
 		}
 	}
 
-	private void initCacheConfigurazione(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole)throws Exception{
+	private void initCacheConfigurazione(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache)throws Exception{
 		this.cache = new Cache(CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
 
 		String msg = null;
 		if( (configurazioneCache.getDimensione()!=null) ||
 				(configurazioneCache.getAlgoritmo() != null) ){
 
-			if( configurazioneCache.getDimensione()!=null ){
-				int dimensione = -1;
-				try{
-					dimensione = Integer.parseInt(configurazioneCache.getDimensione());
+			try{
+				if( configurazioneCache.getDimensione()!=null ){
+					int dimensione = -1;				
+					if(prefillCache){
+						dimensione = Integer.MAX_VALUE;
+					}
+					else{
+						dimensione = Integer.parseInt(configurazioneCache.getDimensione());
+					}
 					msg = "Dimensione della cache (ConfigurazionePdD) impostata al valore: "+dimensione;
-					this.log.info(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
+					if(prefillCache){
+						msg = "[Prefill Enabled] " + msg;
+					}
+					if(prefillCache){
+						this.log.warn(msg);
+					}
+					else{
+						this.log.info(msg);
+					}
+					if(alogConsole!=null){
+						if(prefillCache){
+							alogConsole.warn(msg);
+						}
+						else{
+							alogConsole.info(msg);
+						}
+					}
 					this.cache.setCacheSize(dimensione);
-				}catch(Exception error){
-					throw new DriverConfigurazioneException("Parametro errato per la dimensione della cache (ConfigurazionePdD): "+error.getMessage());
 				}
+				else{
+					if(prefillCache){
+						int dimensione = Integer.MAX_VALUE;
+						msg = "[Prefill Enabled] Dimensione della cache (ConfigurazionePdD) impostata al valore: "+dimensione;
+						this.log.warn(msg);
+						if(alogConsole!=null){
+							alogConsole.warn(msg);
+						}
+						this.cache.setCacheSize(dimensione);
+					}
+				}
+			}catch(Exception error){
+				throw new DriverConfigurazioneException("Parametro errato per la dimensione della cache (ConfigurazionePdD): "+error.getMessage());
 			}
+			
 			if( configurazioneCache.getAlgoritmo() != null ){
 				msg = "Algoritmo di cache (ConfigurazionePdD) impostato al valore: "+configurazioneCache.getAlgoritmo();
 				this.log.info(msg);
@@ -348,33 +393,98 @@ public class ConfigurazionePdD  {
 		if( (configurazioneCache.getItemIdleTime() != null) ||
 				(configurazioneCache.getItemLifeSecond() != null) ){
 
-			if( configurazioneCache.getItemIdleTime() != null  ){
-				int itemIdleTime = -1;
-				try{
-					itemIdleTime = Integer.parseInt(configurazioneCache.getItemIdleTime());
+			try{
+				if( configurazioneCache.getItemIdleTime() != null  ){
+					int itemIdleTime = -1;
+					if(prefillCache){
+						itemIdleTime = -1;
+					}
+					else{
+						itemIdleTime = Integer.parseInt(configurazioneCache.getItemIdleTime());
+					}
 					msg = "Attributo 'IdleTime' (ConfigurazionePdD) impostato al valore: "+itemIdleTime;
-					this.log.info(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
-					this.cache.setItemIdleTime(itemIdleTime);
-				}catch(Exception error){
-					throw new DriverConfigurazioneException("Parametro errato per l'attributo 'IdleTime' (ConfigurazionePdD): "+error.getMessage());
+					if(prefillCache){
+						msg = "[Prefill Enabled] " + msg;
+					}
+					if(prefillCache){
+						this.log.warn(msg);
+					}
+					else{
+						this.log.info(msg);
+					}
+					if(alogConsole!=null){
+						if(prefillCache){
+							alogConsole.warn(msg);
+						}
+						else{
+							alogConsole.info(msg);
+						}
+					}
+					this.cache.setItemIdleTime(itemIdleTime);	
 				}
+				else{
+					if(prefillCache){
+						int itemIdleTime = -1;
+						msg = "[Prefill Enabled] Attributo 'IdleTime' (ConfigurazionePdD) impostato al valore: "+itemIdleTime;
+						this.log.warn(msg);
+						if(alogConsole!=null){
+							alogConsole.warn(msg);
+						}
+						this.cache.setItemIdleTime(itemIdleTime);
+					}
+				}
+			}catch(Exception error){
+				throw new DriverConfigurazioneException("Parametro errato per l'attributo 'IdleTime' (ConfigurazionePdD): "+error.getMessage());
 			}
-			if( configurazioneCache.getItemLifeSecond() != null  ){
-				int itemLifeSecond = -1;
-				try{
-					itemLifeSecond = Integer.parseInt(configurazioneCache.getItemLifeSecond());
+			
+			try{
+				if( configurazioneCache.getItemLifeSecond() != null  ){
+					int itemLifeSecond = -1;				
+					if(prefillCache){
+						itemLifeSecond = -1;
+					}
+					else{
+						itemLifeSecond = Integer.parseInt(configurazioneCache.getItemLifeSecond());
+					}
 					msg = "Attributo 'MaxLifeSecond' (ConfigurazionePdD) impostato al valore: "+itemLifeSecond;
-					this.log.info(msg);
-					if(alogConsole!=null)
-						alogConsole.info(msg);
+					if(prefillCache){
+						msg = "[Prefill Enabled] " + msg;
+					}
+					if(prefillCache){
+						this.log.warn(msg);
+					}
+					else{
+						this.log.info(msg);
+					}
+					if(alogConsole!=null){
+						if(prefillCache){
+							alogConsole.warn(msg);
+						}
+						else{
+							alogConsole.info(msg);
+						}
+					}
 					this.cache.setItemLifeTime(itemLifeSecond);
-				}catch(Exception error){
-					throw new DriverConfigurazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (ConfigurazionePdD): "+error.getMessage());
 				}
+				else{
+					if(prefillCache){
+						int itemLifeSecond = -1;
+						msg = "Attributo 'MaxLifeSecond' (ConfigurazionePdD) impostato al valore: "+itemLifeSecond;
+						this.log.warn(msg);
+						if(alogConsole!=null){
+							alogConsole.warn(msg);
+						}
+						this.cache.setItemLifeTime(itemLifeSecond);
+					}
+				}
+			}catch(Exception error){
+				throw new DriverConfigurazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (ConfigurazionePdD): "+error.getMessage());
 			}
 
+		}
+		
+		if(prefillCache){
+			this.prefillCache(null,alogConsole);
 		}
 	}
 
@@ -384,10 +494,487 @@ public class ConfigurazionePdD  {
 	} 
 
 
+	
+	public void prefillCache(Connection connectionPdD,Logger alogConsole){
+		
+		String msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD) in corso ...";
+		this.log.info(msg);
+		if(alogConsole!=null){
+			alogConsole.info(msg);
+		}
+		
+		// *** Soggetti ***
+		FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
+		List<IDSoggetto> idSoggetti = null;
+		try{
+			idSoggetti = this.driverConfigurazionePdD.getAllIdSoggetti(filtroRicercaSoggetti);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		if(idSoggetti!=null && idSoggetti.size()>0){
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idSoggetti.size()+" soggetti ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			for (IDSoggetto idSoggetto : idSoggetti) {
+				
+				try{
+					this.cache.remove(_getKey_getSoggettoByID(idSoggetto));
+					this.getSoggetto(connectionPdD, idSoggetto);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+			}
+		}
+		
+		FiltroRicercaPorteDelegate filtroPorteDelegate = new FiltroRicercaPorteDelegate();
+		List<IDPortaDelegata> idPDs = null;
+		try{
+			idPDs = this.driverConfigurazionePdD.getAllIdPorteDelegate(filtroPorteDelegate);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		if(idPDs!=null && idPDs.size()>0){
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idPDs.size()+" porte delegate ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			for (IDPortaDelegata idPortaDelegata : idPDs) {
+				
+				try{
+					this.cache.remove(_getKey_getIDPortaDelegata(idPortaDelegata.getNome()));
+					this.getIDPortaDelegata(connectionPdD, idPortaDelegata.getNome());
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				try{
+					this.cache.remove(_getKey_getPortaDelegata(idPortaDelegata));
+					this.getPortaDelegata(connectionPdD, idPortaDelegata);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				PortaDelegata pd = null;
+				try{
+					pd = this.driverConfigurazionePdD.getPortaDelegata(idPortaDelegata);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				if(pd!=null){
+					
+					IDSoggetto idSoggettoProprietario = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+										
+					IDServizioApplicativo idSA_anonimo = new IDServizioApplicativo();
+					idSA_anonimo.setIdSoggettoProprietario(idSoggettoProprietario);
+					idSA_anonimo.setNome(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO);
+					try{
+						this.cache.remove(_getKey_getServizioApplicativo(idSA_anonimo));
+						this.getServizioApplicativo(connectionPdD, idSA_anonimo);
+					}
+					catch(DriverConfigurazioneNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					if(pd.sizeServizioApplicativoList()>0){
+						for (PortaDelegataServizioApplicativo saPD : pd.getServizioApplicativoList()) {
+							
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setIdSoggettoProprietario(idSoggettoProprietario);
+							idSA.setNome(saPD.getNome());
+							
+							try{
+								this.cache.remove(_getKey_getServizioApplicativo(idSA));
+								this.getServizioApplicativo(connectionPdD, idSA);
+							}
+							catch(DriverConfigurazioneNotFound notFound){}
+							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							
+							ServizioApplicativo sa = null;
+							try{
+								sa = this.driverConfigurazionePdD.getServizioApplicativo(idSA);
+							}
+							catch(DriverConfigurazioneNotFound notFound){}
+							catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+									
+							if(sa!=null){
+								if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0){
+									for (Credenziali credenziale : sa.getInvocazionePorta().getCredenzialiList()) {
+										if(CredenzialeTipo.BASIC.equals(credenziale.getTipo())){
+											try{
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
+												this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword());
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+										}
+										else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
+											try{
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject()));
+												this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject());
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+										}
+										else if(CredenzialeTipo.PRINCIPAL.equals(credenziale.getTipo())){
+											try{
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser()));
+												this.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, credenziale.getUser());
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di router/soggettiVirtuali ...";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
+		try{
+			this.cache.remove(this._getKey_getRouter());
+			this.getRouter(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getSoggettiVirtuali());
+			this.getSoggettiVirtuali(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getServizi_SoggettiVirtuali());
+			this.getServizi_SoggettiVirtuali(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		// *** PorteDelegate ***
+		// getPortaDelegata invocata precedentemente con i soggetti
+		
+		// *** PorteApplicative ***
+		FiltroRicercaPorteApplicative filtroPorteApplicative = new FiltroRicercaPorteApplicative();
+		List<IDPortaApplicativa> idPAs = null;
+		try{
+			idPAs = this.driverConfigurazionePdD.getAllIdPorteApplicative(filtroPorteApplicative);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		if(idPAs!=null && idPAs.size()>0){
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idPAs.size()+" porte applicative ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			for (IDPortaApplicativa idPA : idPAs) {
+								
+				try{
+					this.cache.remove(_getKey_getIDPortaApplicativa(idPA.getNome()));
+					this.getIDPortaApplicativa(connectionPdD, idPA.getNome());
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				try{
+					this.cache.remove(_getKey_getPortaApplicativa(idPA));
+					this.getPortaApplicativa(connectionPdD, idPA);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				PortaApplicativa pa  = null;
+				try{
+					pa  = this.driverConfigurazionePdD.getPortaApplicativa(idPA);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				if(pa!=null){
+					
+					if(pa!=null){
+						if(pa.sizeServizioApplicativoList()>0){
+							IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+							for (PortaApplicativaServizioApplicativo saPA : pa.getServizioApplicativoList()) {
+								try{
+									IDServizioApplicativo idSA = new IDServizioApplicativo();
+									idSA.setIdSoggettoProprietario(idSoggettoProprietario);
+									idSA.setNome(saPA.getNome());
+									this.cache.remove(_getKey_getServizioApplicativo(idSA));
+									this.getServizioApplicativo(connectionPdD, idSA);
+								}
+								catch(DriverConfigurazioneNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+							}
+						}
+					}
+					
+				}
+				
+			}
+		}
+		
+		// getPorteApplicative_SoggettiVirtuali non inizializzabile
+		
+		// *** ServiziApplicativi ***
+		// getServizioApplicativo(PD) invocata precedentemente con i soggetti
+		// getServizioApplicativo(PA) invocata precedentemente con le porte applicative
+		// getServizioApplicativoAutenticatoBasic(PD) invocata precedentemente con i soggetti
+		// getServizioApplicativoAutenticatoSsl(PD) invocata precedentemente con i soggetti
+		// getServizioApplicativoAutenticatoPrincipal(PD) invocata precedentemente con i soggetti
+		FiltroRicercaServiziApplicativi filtroServiziApplicativi = new FiltroRicercaServiziApplicativi();
+		List<IDServizioApplicativo> idSAs = null;
+		try{
+			idSAs = this.driverConfigurazionePdD.getAllIdServiziApplicativi(filtroServiziApplicativi);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		if(idSAs!=null && idSAs.size()>0){
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idSAs.size()+" servizi applicativi ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			for (IDServizioApplicativo idSA : idSAs) {
+				ServizioApplicativo sa = null;
+				try{
+					sa = this.driverConfigurazionePdD.getServizioApplicativo(idSA);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+						
+				if(sa!=null){
+					if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0){
+						for (Credenziali credenziale : sa.getInvocazionePorta().getCredenzialiList()) {
+							if(CredenzialeTipo.BASIC.equals(credenziale.getTipo())){
+								try{
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
+									this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword());
+								}
+								catch(DriverConfigurazioneNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+							}
+							else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
+								try{
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject()));
+									this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject());
+								}
+								catch(DriverConfigurazioneNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+							}
+							else if(CredenzialeTipo.PRINCIPAL.equals(credenziale.getTipo())){
+								try{
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser()));
+									this.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, credenziale.getUser());
+								}
+								catch(DriverConfigurazioneNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		// *** Configurazione ***
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura della configurazione della porta ...";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
+		try{
+			this.cache.remove(_getKey_getRoutingTable());
+			this.getRoutingTable(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getAccessoRegistro());
+			this.getAccessoRegistro(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getAccessoConfigurazione());
+			this.getAccessoConfigurazione(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getAccessoDatiAutorizzazione());
+			this.getAccessoDatiAutorizzazione(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getAccessoDatiAutenticazione());
+			this.getAccessoDatiAutenticazione(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getGestioneErrore(false));
+			this.getGestioneErroreComponenteIntegrazione(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getGestioneErrore(true));
+			this.getGestioneErroreComponenteCooperazione(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
+		try{
+			this.cache.remove(_getKey_getConfigurazioneGenerale());
+			this.getConfigurazioneGenerale(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getConfigurazioneWithOnlyExtendedInfo());
+			this.getConfigurazioneWithOnlyExtendedInfo(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
 
-
-
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD) completata";
+		this.log.info(msg);
+		if(alogConsole!=null){
+			alogConsole.info(msg);
+		}
+	}
+	
+	public void prefillCacheConInformazioniRegistro(Logger alogConsole){
+		
+		String msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD-RegistroServizi) in corso ...";
+		this.log.info(msg);
+		if(alogConsole!=null){
+			alogConsole.info(msg);
+		}
+		
+		RegistroServiziReader registroServiziReader = RegistroServiziManager.getInstance().getRegistroServiziReader();
+		
+		
+		org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti filtroSoggetti = new org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti();
+		List<IDSoggetto> listSoggetti = null;
+		try{
+			listSoggetti = registroServiziReader.getAllIdSoggetti_noCache(filtroSoggetti,null);
+		}
+		catch(DriverRegistroServiziNotFound notFound){}
+		catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		org.openspcoop2.core.registry.driver.FiltroRicercaServizi filtroServizi = new org.openspcoop2.core.registry.driver.FiltroRicercaServizi();
+		List<IDServizio> listIdServizi = null;
+		try{
+			listIdServizi = registroServiziReader.getAllIdServizi_noCache(filtroServizi,null);
+		}
+		catch(DriverRegistroServiziNotFound notFound){}
+		catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		if(listIdServizi!=null && listIdServizi.size()>0){
+		
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD-RegistroServizi), lettura di "+listIdServizi.size()+" servizi ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			for (IDServizio idServizio : listIdServizi) {
+			
+				try{
+					this.cache.remove(_getKey_getPorteApplicative(idServizio,false));
+					this.getPorteApplicative(null, idServizio, false);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				try{
+					this.cache.remove(_getKey_getPorteApplicative(idServizio,true));
+					this.getPorteApplicative(null, idServizio, true);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				try{
+					this.cache.remove(_getKey_getPorteApplicative_SoggettiVirtuali(idServizio));
+					this.getPorteApplicative_SoggettiVirtuali(null, idServizio, null, false);
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+				
+				if(listSoggetti!=null && listSoggetti.size()>0){
+				
+					msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD-RegistroServizi), lettura di "+listSoggetti.size()+" soggetto per il servizio ["+idServizio+"] ...";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
+					
+					for (IDSoggetto idSoggetto : listSoggetti) {
+						
+						try{
+							this.cache.remove(_getKey_getPorteApplicativeVirtuali(idSoggetto, idServizio,false));
+							this.getPorteApplicativeVirtuali(null, idSoggetto, idServizio, false);
+						}
+						catch(DriverConfigurazioneNotFound notFound){}
+						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+						
+						try{
+							this.cache.remove(_getKey_getPorteApplicativeVirtuali(idSoggetto, idServizio,true));
+							this.getPorteApplicativeVirtuali(null, idSoggetto, idServizio, true);
+						}
+						catch(DriverConfigurazioneNotFound notFound){}
+						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+						
+					}
+					
+				}
+			}
+		}
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD-RegistroServizi) completata";
+		this.log.info(msg);
+		if(alogConsole!=null){
+			alogConsole.info(msg);
+		}
+	}
+	
+	
+	
+	
+	
 	/**
 	 * Si occupa di effettuare una ricerca nella configurazione, e di inserire la ricerca in cache
 	 */
@@ -665,6 +1252,9 @@ public class ConfigurazionePdD  {
 
 	// SOGGETTO 
 
+	private String _getKey_getSoggettoByID(IDSoggetto aSoggetto){
+		return "getSoggetto_" + aSoggetto.getTipo() + aSoggetto.getNome();
+	}
 	public Soggetto getSoggetto(Connection connectionPdD,IDSoggetto aSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Raccolta dati
 		if(aSoggetto == null || aSoggetto.getNome()==null || aSoggetto.getTipo()==null)
@@ -673,7 +1263,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggetto_" + aSoggetto.getTipo() + aSoggetto.getNome();
+			key = this._getKey_getSoggettoByID(aSoggetto);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -702,12 +1292,15 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getSoggetto] Soggetto non trovato");
 	}
 
+	private String _getKey_getRouter(){
+		return "getRouter";
+	}
 	public Soggetto getRouter(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getRouter";
+			key = this._getKey_getRouter();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -736,13 +1329,16 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getRouter] Soggetto non trovato");
 	}
 
+	private String _getKey_getSoggettiVirtuali(){
+		return "getSoggettiVirtuali";
+	}
 	@SuppressWarnings(value = "unchecked")
 	public HashSet<String> getSoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggettiVirtuali";
+			key = this._getKey_getSoggettiVirtuali();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -771,12 +1367,16 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getSoggettiVirtuali] Lista Soggetti Virtuali non costruita");
 	}
 
+	private String _getKey_getServizi_SoggettiVirtuali(){
+		return "getServizi_SoggettiVirtuali";
+	}
 	@SuppressWarnings(value = "unchecked")
 	public HashSet<IDServizio> getServizi_SoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServizi_SoggettiVirtuali";
+			 key = this._getKey_getServizi_SoggettiVirtuali();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -809,8 +1409,12 @@ public class ConfigurazionePdD  {
 
 
 
+
 	// PORTA DELEGATA
 
+	private String _getKey_getIDPortaDelegata(String nome){
+		 return "getIDPortaDelegata_" + nome;
+	}
 	public IDPortaDelegata getIDPortaDelegata(Connection connectionPdD,String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -820,7 +1424,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getIDPortaDelegata_" + nome;
+			key = this._getKey_getIDPortaDelegata(nome);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -849,6 +1453,9 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Porta Delegata ["+nome+"] non esistente");
 	} 
 	
+	private String _getKey_getPortaDelegata(IDPortaDelegata idPD){
+		 return "getPortaDelegata_" + idPD.getNome();
+	}
 	public PortaDelegata getPortaDelegata(Connection connectionPdD,IDPortaDelegata idPD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -860,7 +1467,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getPortaDelegata_" + idPD.getNome();
+			key = this._getKey_getPortaDelegata(idPD);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -888,11 +1495,15 @@ public class ConfigurazionePdD  {
 		else
 			throw new DriverConfigurazioneNotFound("Porta Delegata ["+idPD.getNome()+"] non esistente");
 	} 
-
-
-
+	
+	
+	
+	
 	// PORTA APPLICATIVA
 	
+	private String _getKey_getIDPortaApplicativa(String nome){
+		 return "getIDPortaApplicativa_" + nome;
+	}
 	public IDPortaApplicativa getIDPortaApplicativa(Connection connectionPdD,String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -902,7 +1513,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getIDPortaApplicativa_" + nome;
+			key = this._getKey_getIDPortaApplicativa(nome);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -931,6 +1542,9 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Porta Applicativa ["+nome+"] non esistente");
 	} 
 	
+	private String _getKey_getPortaApplicativa(IDPortaApplicativa idPA){
+		 return "getPortaApplicativa_" + idPA.getNome();
+	}
 	public PortaApplicativa getPortaApplicativa(Connection connectionPdD,IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -942,7 +1556,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getPortaApplicativa_" + idPA.getNome();
+			key = this._getKey_getPortaApplicativa(idPA);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -976,6 +1590,14 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
+	private String _getKey_getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale){
+		String key = "getPorteApplicative_ricercaPuntuale("+ricercaPuntuale+")_" + 
+				idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
+				idServizio.getTipo() + idServizio.getNome()+ ":" + idServizio.getVersione();
+		if(idServizio.getAzione()!=null)
+			key = key + "_" + idServizio.getAzione();
+		return key;
+	}
 	@SuppressWarnings("unchecked")
 	public List<PortaApplicativa> getPorteApplicative(Connection connectionPdD,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
@@ -988,11 +1610,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getPorteApplicative_ricercaPuntuale("+ricercaPuntuale+")_" + 
-					idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
-					idServizio.getTipo() + idServizio.getNome()+ ":" + idServizio.getVersione();
-			if(idServizio.getAzione()!=null)
-				key = key + "_" + idServizio.getAzione();
+			key = this._getKey_getPorteApplicative(idServizio, ricercaPuntuale);
 			
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
@@ -1030,6 +1648,15 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
+	private String _getKey_getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale){
+		String key = "getPorteApplicativeVirtuali_ricercaPuntuale("+ricercaPuntuale+")_" + 
+				soggettoVirtuale.getTipo()+soggettoVirtuale.getNome()+"_"+
+				idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
+				idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
+		if(idServizio.getAzione()!=null)
+			key = key + "_" + idServizio.getAzione();
+		return key;
+	}
 	@SuppressWarnings("unchecked")
 	public List<PortaApplicativa> getPorteApplicativeVirtuali(Connection connectionPdD,IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
@@ -1045,12 +1672,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getPorteApplicativeVirtuali_ricercaPuntuale("+ricercaPuntuale+")_" + 
-					soggettoVirtuale.getTipo()+soggettoVirtuale.getNome()+"_"+
-					idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
-					idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
-			if(idServizio.getAzione()!=null)
-				key = key + "_" + idServizio.getAzione();
+			key = this._getKey_getPorteApplicativeVirtuali(soggettoVirtuale, idServizio, ricercaPuntuale);
 			
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
@@ -1088,6 +1710,13 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
+	private String _getKey_getPorteApplicative_SoggettiVirtuali(IDServizio idServizio){
+		String key = "getPorteApplicative_SoggettiVirtuali_" + idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
+				idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
+		if(idServizio.getAzione()!=null)
+			key = key + "_" + idServizio.getAzione();
+		return key;
+	}
 	@SuppressWarnings(value = "unchecked")
 	public Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(Connection connectionPdD,IDServizio idServizio,
 			Map<String, String> proprietaPresentiBustaRicevuta,boolean useFiltroProprieta)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -1101,10 +1730,7 @@ public class ConfigurazionePdD  {
 		String key = null;	
 		if(this.cache!=null){
 			this.log.debug("Search porte applicative soggetti virtuali in cache...");
-			key = "getPorteApplicative_SoggettiVirtuali_" + idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
-					idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
-			if(idServizio.getAzione()!=null)
-				key = key + "_" + idServizio.getAzione();
+			key = this._getKey_getPorteApplicative_SoggettiVirtuali(idServizio);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1298,15 +1924,18 @@ public class ConfigurazionePdD  {
 		else
 			return true;
 	}
-
-
-
-
-
-
-
+ 
+	 
+	 
+	
+	
 	// SERVIZIO APPLICATIVO
 	
+	private String _getKey_getServizioApplicativo(IDServizioApplicativo idServizioApplicativo){
+		String key = "getServizioApplicativo_" + idServizioApplicativo.getIdSoggettoProprietario().getTipo() + idServizioApplicativo.getIdSoggettoProprietario().getNome()+"_"+
+				idServizioApplicativo.getNome();
+		return key;
+	}
 	public ServizioApplicativo getServizioApplicativo(Connection connectionPdD,IDServizioApplicativo idServizioApplicativo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -1320,8 +1949,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServizioApplicativo_" + idServizioApplicativo.getIdSoggettoProprietario().getTipo() + idServizioApplicativo.getIdSoggettoProprietario().getNome()+"_"+
-					idServizioApplicativo.getNome();
+			key = this._getKey_getServizioApplicativo(idServizioApplicativo);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1350,6 +1978,11 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	private String _getKey_getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword){
+		String key = "getServizioApplicativoByCredenzialiBasic";
+		key = key +"_"+aUser+"_"+aPassword;
+		return key;
+	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -1361,8 +1994,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServizioApplicativoByCredenzialiBasic";
-			key = key +"_"+aUser+"_"+aPassword;
+			key = this._getKey_getServizioApplicativoByCredenzialiBasic(aUser, aPassword);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1391,6 +2023,11 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	private String _getKey_getServizioApplicativoByCredenzialiSsl(String aSubject){
+		String key = "getServizioApplicativoByCredenzialiSsl";
+		key = key +"_"+aSubject;
+		return key;
+	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -1400,8 +2037,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServizioApplicativoByCredenzialiSsl";
-			key = key +"_"+aSubject;
+			key = this._getKey_getServizioApplicativoByCredenzialiSsl(aSubject);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1430,6 +2066,11 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	private String _getKey_getServizioApplicativoByCredenzialiPrincipal(String principal){
+		String key = "getServizioApplicativoByCredenzialiPrincipal";
+		key = key +"_"+principal;
+		return key;
+	}
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(Connection connectionPdD,String principal)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
@@ -1439,8 +2080,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getServizioApplicativoByCredenzialiPrincipal";
-			key = key +"_"+principal;
+			key = this._getKey_getServizioApplicativoByCredenzialiPrincipal(principal);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1475,12 +2115,10 @@ public class ConfigurazionePdD  {
 
 	
 	// CONFIGURAZIONE
-	/**
-	 * Restituisce la RoutingTable definita nella Porta di Dominio 
-	 *
-	 * @return RoutingTable
-	 * 
-	 */
+
+	private String _getKey_getRoutingTable(){
+		return "getRoutingTable";
+	}
 	public RoutingTable getRoutingTable(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
@@ -1492,7 +2130,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getRoutingTable";
+			key = this._getKey_getRoutingTable();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1527,12 +2165,9 @@ public class ConfigurazionePdD  {
 		}
 	} 
 
-	/**
-	 * Restituisce l'accesso al registro definito nella Porta di Dominio 
-	 *
-	 * @return AccessoRegistro
-	 * 
-	 */
+	private String _getKey_getAccessoRegistro(){
+		return "getAccessoRegistro";
+	}
 	public AccessoRegistro getAccessoRegistro(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
@@ -1544,7 +2179,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getAccessoRegistro";
+			key = _getKey_getAccessoRegistro();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1579,6 +2214,9 @@ public class ConfigurazionePdD  {
 		}
 	} 
 
+	private String _getKey_getAccessoConfigurazione(){
+		return "getAccessoConfigurazione";
+	}
 	public AccessoConfigurazione getAccessoConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
@@ -1590,7 +2228,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getAccessoConfigurazione";
+			key = this._getKey_getAccessoConfigurazione();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1625,6 +2263,9 @@ public class ConfigurazionePdD  {
 		}
 	} 
 
+	private String _getKey_getAccessoDatiAutorizzazione(){
+		return "getAccessoDatiAutorizzazione";
+	}
 	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
@@ -1636,7 +2277,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getAccessoDatiAutorizzazione";
+			key = this._getKey_getAccessoDatiAutorizzazione();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1671,6 +2312,9 @@ public class ConfigurazionePdD  {
 		}
 	} 
 	
+	private String _getKey_getAccessoDatiAutenticazione(){
+		return "getAccessoDatiAutenticazione";
+	}
 	public AccessoDatiAutenticazione getAccessoDatiAutenticazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Se e' attiva una configurazione statica, la utilizzo.
@@ -1682,7 +2326,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getAccessoDatiAutenticazione";
+			key = _getKey_getAccessoDatiAutenticazione();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1719,33 +2363,23 @@ public class ConfigurazionePdD  {
 
 
 
-
-	/**
-	 * Restituisce la gestione dell'errore di default definita nella Porta di Dominio per il componente di cooperazione
-	 *
-	 * @return La gestione dell'errore
-	 * 
-	 */
 	public GestioneErrore getGestioneErroreComponenteCooperazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.getGestioneErrore(connectionPdD,true);
 	}
 
-	/**
-	 * Restituisce la gestione dell'errore di default definita nella Porta di Dominio per il componente di integrazione
-	 *
-	 * @return La gestione dell'errore
-	 * 
-	 */
 	public GestioneErrore getGestioneErroreComponenteIntegrazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.getGestioneErrore(connectionPdD,false);
 	}
 
-	/**
-	 * Restituisce la gestione dell'errore di default definita nella Porta di Dominio 
-	 *
-	 * @return  La gestione dell'errore
-	 * 
-	 */
+	private String _getKey_getGestioneErrore(boolean cooperazione){
+		String key = "getGestioneErrore";
+		if(cooperazione){
+			key = key + "ComponenteCooperazione";
+		}else{
+			key = key + "ComponenteIntegrazione";
+		}
+		return key;
+	}
 	private GestioneErrore getGestioneErrore(Connection connectionPdD,boolean cooperazione) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
@@ -1762,12 +2396,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getGestioneErrore";
-			if(cooperazione){
-				key = key + "ComponenteCooperazione";
-			}else{
-				key = key + "ComponenteIntegrazione";
-			}
+			key = this._getKey_getGestioneErrore(cooperazione);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1822,12 +2451,9 @@ public class ConfigurazionePdD  {
 	} 
 
 
-	/**
-	 * Restituisce la configurazione generale della Porta di Dominio 
-	 *
-	 * @return Configurazione
-	 * 
-	 */
+	private String _getKey_getConfigurazioneGenerale(){
+		return "getConfigurazioneGenerale";
+	}
 	public Configurazione getConfigurazioneGenerale(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Se e' attiva una configurazione statica, la utilizzo.
@@ -1840,7 +2466,7 @@ public class ConfigurazionePdD  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getConfigurazioneGenerale";
+			key = this._getKey_getConfigurazioneGenerale();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1895,12 +2521,15 @@ public class ConfigurazionePdD  {
 	}
 
 
+	private String _getKey_getConfigurazioneWithOnlyExtendedInfo(){
+		return "getConfigurazioneWithOnlyExtendedInfo";
+	}
 	public Configurazione getConfigurazioneWithOnlyExtendedInfo(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getConfigurazioneWithOnlyExtendedInfo";
+			key = this._getKey_getConfigurazioneWithOnlyExtendedInfo();
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
