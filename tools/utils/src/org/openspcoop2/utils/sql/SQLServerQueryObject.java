@@ -20,12 +20,10 @@
 
 package org.openspcoop2.utils.sql;
 
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Random;
 
 import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.date.DateManager;
 
 /**
  * SQLServerQueryObject
@@ -53,9 +51,24 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 		// Per questo motivo viene quindi prima richiesto al vendor se effettuare o meno la classica normalizzazione del field in base a tali valori
 		// sul field in essere
 		
-		if(normalizeField!=null && normalizeField.contains("(CAST(DATEDIFF(second,{d '1970-01-01'}") && 
-				normalizeField.contains("as BIGINT)*1000) + (DATEPART(ms") &&
-				normalizeField.contains("(CAST(DATEDIFF(HOUR,GETUTCDATE(),convert(datetime")
+		if(normalizeField!=null && 
+				// Con differenza su timezone:
+//				normalizeField.contains("(CAST(DATEDIFF(second,{d '1970-01-01'}") 
+//				&& 
+//				normalizeField.contains("as BIGINT)*1000) + (DATEPART(ms") 
+//				&&
+//				normalizeField.contains("(CAST(DATEDIFF(HOUR,GETUTCDATE(),convert(datetime")
+				
+				// senza differenza su timezone:
+//				normalizeField.contains("(CAST(DATEDIFF(second,{d '1970-01-01'}") 
+//				&& 
+//				normalizeField.contains("as BIGINT)*1000) + (DATEPART(ms") 
+				
+				// altro modo
+				normalizeField.contains("(CAST(DATEDIFF(s, '1970-01-01 00:00:00',")
+				&& 
+				normalizeField.contains("as BIGINT)*1000) + (DATEPART(ms") 
+				
 				){
 			return false;
 		}
@@ -69,16 +82,20 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	
 	@Override
 	public String getUnixTimestampConversion(String column){
-		String format = "yyyy-MM-dd HH:mm:ss";
-		SimpleDateFormat dateformat = new SimpleDateFormat (format);
-		return "("+
-		" (CAST(DATEDIFF(second,{d '1970-01-01'},"+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))"+
-		" - "+
-		// Per calcolare la differenza tra la data java e la data del database:
-		//" (CAST(DATEDIFF(HOUR,GETUTCDATE(),"+column+") as BIGINT)*60*60*1000) "+
-		//" (CAST(DATEDIFF(HOUR,GETUTCDATE(),{t '"+dateformat.format(DateManager.getDate())+"'}) as BIGINT)*60*60*1000) "+
-		" (CAST(DATEDIFF(HOUR,GETUTCDATE(),convert(datetime, '"+dateformat.format(DateManager.getDate())+"', 120)) as BIGINT)*60*60*1000) "+
-		")";
+		// Con differenza su timezone:
+//		String format = "yyyy-MM-dd HH:mm:ss";
+//		java.text.SimpleDateFormat dateformat = new java.text.SimpleDateFormat (format);
+//		return "("+
+//		" (CAST(DATEDIFF(second,{d '1970-01-01'},"+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))"+
+//		" - "+
+//		" (CAST(DATEDIFF(HOUR,GETUTCDATE(),convert(datetime, '"+dateformat.format(org.openspcoop2.utils.date.DateManager.getDate())+"', 120)) as BIGINT)*60*60*1000) "+
+//		")";
+		
+		// senza differenza su timezone:
+//		return " (CAST(DATEDIFF(second,{d '1970-01-01'},"+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))";
+		
+		// altro modo
+		return "(CAST(DATEDIFF(s, '1970-01-01 00:00:00', "+column+") as BIGINT)*1000) + (DATEPART(ms,"+column+"))";
 	}
 
 	@Override

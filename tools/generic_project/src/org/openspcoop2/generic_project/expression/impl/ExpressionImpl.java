@@ -160,6 +160,12 @@ public class ExpressionImpl implements IExpression {
 	
 	/* ************ COMPARATOR *********** */
 	
+	
+	// Serve nella implementazione sql per poter correggere alcuni comparator dipendenti da database
+	protected Comparator getCorrectComparator(Comparator comparator){
+		return comparator;
+	}
+	
 	/**
 	 * Create an expression of equality
 	 * Example:  (field = value)
@@ -173,7 +179,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression equals(IField field, Object value)
 		throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(field, value);
-		this.buildComparatorExpression(field, value, Comparator.EQUALS);
+		this.buildComparatorExpression(field, value, getCorrectComparator(Comparator.EQUALS));
 		return this;
 	}
 	
@@ -190,7 +196,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression notEquals(IField field, Object value)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(field, value);
-		this.buildComparatorExpression(field, value, Comparator.NOT_EQUALS);
+		this.buildComparatorExpression(field, value, getCorrectComparator(Comparator.NOT_EQUALS));
 		return this;
 	}
 
@@ -207,7 +213,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression allEquals(Map<IField, Object> propertyNameValues)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(propertyNameValues);
-		buildComparatorExpression(propertyNameValues, Comparator.EQUALS, true);
+		buildComparatorExpression(propertyNameValues, getCorrectComparator(Comparator.EQUALS), true);
 		return this;
 	}
 
@@ -224,7 +230,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression allNotEquals(Map<IField, Object> propertyNameValues)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(propertyNameValues);
-		buildComparatorExpression(propertyNameValues, Comparator.NOT_EQUALS, true);
+		buildComparatorExpression(propertyNameValues, getCorrectComparator(Comparator.NOT_EQUALS), true);
 		return this;
 	}
 
@@ -241,7 +247,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression allEquals(Map<IField, Object> propertyNameValues,boolean andConjunction)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(propertyNameValues);
-		buildComparatorExpression(propertyNameValues, Comparator.EQUALS, andConjunction);
+		buildComparatorExpression(propertyNameValues, getCorrectComparator(Comparator.EQUALS), andConjunction);
 		return this;
 	}
 
@@ -258,7 +264,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression allNotEquals(Map<IField, Object> propertyNameValues,boolean andConjunction)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(propertyNameValues);
-		buildComparatorExpression(propertyNameValues, Comparator.NOT_EQUALS, andConjunction);
+		buildComparatorExpression(propertyNameValues, getCorrectComparator(Comparator.NOT_EQUALS), andConjunction);
 		return this;
 	}
 	
@@ -275,7 +281,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression greaterThan(IField field, Object value)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(field, value);
-		this.buildComparatorExpression(field, value, Comparator.GREATER_THAN);
+		this.buildComparatorExpression(field, value, getCorrectComparator(Comparator.GREATER_THAN));
 		return this;
 	}
 
@@ -292,7 +298,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression greaterEquals(IField field, Object value)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(field, value);
-		this.buildComparatorExpression(field, value, Comparator.GREATER_EQUALS);
+		this.buildComparatorExpression(field, value, getCorrectComparator(Comparator.GREATER_EQUALS));
 		return this;
 	}
 
@@ -309,7 +315,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression lessThan(IField field, Object value)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(field, value);
-		this.buildComparatorExpression(field, value, Comparator.LESS_THAN);
+		this.buildComparatorExpression(field, value, getCorrectComparator(Comparator.LESS_THAN));
 		return this;
 	}
 
@@ -326,7 +332,7 @@ public class ExpressionImpl implements IExpression {
 	public IExpression lessEquals(IField field, Object value)
 	throws ExpressionNotImplementedException, ExpressionException {
 		checkArgoments(field, value);
-		this.buildComparatorExpression(field, value, Comparator.LESS_EQUALS);
+		this.buildComparatorExpression(field, value, getCorrectComparator(Comparator.LESS_EQUALS));
 		return this;
 	}
 
@@ -346,7 +352,7 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression isNull(IField field) throws ExpressionNotImplementedException,ExpressionException{
 		checkArgoments(field,false);
-		this.buildComparatorExpression(field, null, Comparator.IS_NULL);
+		this.buildComparatorExpression(field, null, getCorrectComparator(Comparator.IS_NULL));
 		return this;
 	}
 	
@@ -361,7 +367,7 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression isNotNull(IField field) throws ExpressionNotImplementedException,ExpressionException{
 		checkArgoments(field,false);
-		this.buildComparatorExpression(field, null, Comparator.IS_NOT_NULL);
+		this.buildComparatorExpression(field, null, getCorrectComparator(Comparator.IS_NOT_NULL));
 		return this;
 	}
 	
@@ -376,7 +382,7 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression isEmpty(IField field) throws ExpressionNotImplementedException,ExpressionException{
 		checkArgoments(field,false);
-		this.buildComparatorExpression(field, null, Comparator.IS_EMPTY);
+		this.buildComparatorExpression(field, null, getCorrectComparator(Comparator.IS_EMPTY));
 		return this;
 	}
 
@@ -391,10 +397,10 @@ public class ExpressionImpl implements IExpression {
 	@Override
 	public IExpression isNotEmpty(IField field) throws ExpressionNotImplementedException,ExpressionException{
 		checkArgoments(field,false);
-		this.buildComparatorExpression(field, null, Comparator.IS_NOT_EMPTY);
+		this.buildComparatorExpression(field, null, getCorrectComparator(Comparator.IS_NOT_EMPTY));
 		return this;
 	}
-	
+
 	
 	
 	

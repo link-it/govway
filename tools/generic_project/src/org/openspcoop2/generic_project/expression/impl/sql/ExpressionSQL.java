@@ -141,6 +141,24 @@ public class ExpressionSQL extends ExpressionImpl {
 	}
 	
 	
+	/* ************ COMPARATOR *********** */
+	
+	public static Comparator getCorrectComparator(Comparator comparator,TipiDatabase databaseType){
+		if(databaseType!=null && TipiDatabase.ORACLE.equals(databaseType)){
+			if(Comparator.IS_EMPTY.equals(comparator)){
+				return Comparator.IS_NULL; // le stringhe vuote in oracle vengono inserite come null
+			}
+			else if(Comparator.IS_NOT_EMPTY.equals(comparator)){
+				return Comparator.IS_NOT_NULL; // le stringhe vuote in oracle vengono inserite come null, inoltre la ricerca <> '' non funziona
+			}
+		}
+		return comparator;
+	}
+	
+	@Override
+	protected Comparator getCorrectComparator(Comparator comparator){
+		return ExpressionSQL.getCorrectComparator(comparator, this.databaseType);
+	}
 	
 	/* ************ TO SQL ENGINE *********** */
 	

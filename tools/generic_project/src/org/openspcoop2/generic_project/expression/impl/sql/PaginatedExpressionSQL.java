@@ -123,6 +123,14 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 		return ExpressionSQL.getFields(onlyWhereCondition, super.getFields(onlyWhereCondition), this.getFieldsManuallyAdd(),this.checkFieldManuallyAdd);
 	}
 	
+	
+	/* ************ COMPARATOR *********** */
+	
+	@Override
+	protected Comparator getCorrectComparator(Comparator comparator){
+		return ExpressionSQL.getCorrectComparator(comparator, this.databaseType);
+	}
+	
 
 	
 	/* ************ TO SQL *********** */
