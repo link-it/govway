@@ -1889,6 +1889,7 @@ public class RicezioneContenutiApplicativi {
 				}
 
 				// Se non trovato genero errore
+				msgDiag.highDebug("Controllo dati individuati ...");
 				if (infoServizio == null && erroreRicerca == null)
 					throw new DriverRegistroServiziNotFound(
 							"Servizio Correlato non trovato ne tramite la normale ricerca, ne tramite la ricerca per azione correlata (solo se profilo e' asincrono asimmetrico)");
@@ -2002,6 +2003,7 @@ public class RicezioneContenutiApplicativi {
 			}
 			return;
 		}
+		msgDiag.highDebug("Ricerca servizio terminata");
 		infoServizio.setCorrelato(isServizioCorrelato);
 		this.msgContext.getProtocol().setProfiloCollaborazione(infoServizio.getProfiloDiCollaborazione(),null); // il valore verra' serializzato solo successivamente nella busta
 		msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, traduttore.toString(infoServizio.getProfiloDiCollaborazione()));
@@ -2012,7 +2014,9 @@ public class RicezioneContenutiApplicativi {
 				idServizio.setUriAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(infoServizio.getIdAccordo()));
 			}catch(Exception e){}
 		}
+		msgDiag.highDebug("Convert infoServizio to Busta ...");
 		Busta bustaRichiesta = infoServizio.convertToBusta(protocol, soggettoFruitore);
+		msgDiag.highDebug("Convert infoServizio to Busta terminata");
 		inRequestPDMessage.setBustaRichiesta(bustaRichiesta);
 		
 	
@@ -3522,12 +3526,15 @@ public class RicezioneContenutiApplicativi {
 		
 		else{ 
 			/*------------------------------- IMBUSTAMENTO -------------------------------------------*/
+			msgDiag.highDebug("Imbustamento stateless ...");
 			org.openspcoop2.pdd.mdb.Imbustamento imbustamentoLib = null;
 			openspcoopstate.setMessageLib(imbustamentoMSG);
 			openspcoopstate.setIDMessaggioSessione(idMessageRequest);
 			try {
 				imbustamentoLib = new org.openspcoop2.pdd.mdb.Imbustamento(logCore);
+				msgDiag.highDebug("Imbustamento stateless (invoco) ...");
 				esito = imbustamentoLib.onMessage(openspcoopstate);
+				msgDiag.highDebug("Imbustamento stateless (analizzo esito) ...");
 				if(esito.getStatoInvocazione()==EsitoLib.ERRORE_NON_GESTITO){
 					if(esito.getErroreNonGestito()!=null)
 						throw esito.getErroreNonGestito();
@@ -3553,18 +3560,22 @@ public class RicezioneContenutiApplicativi {
 				// ripristino utilizzo connessione al database
 				openspcoopstate.setUseConnection(true);
 				gestioneRisposta(parametriGestioneRisposta);
+				msgDiag.highDebug("Imbustamento stateless (terminato:false)");
 				return false;
 			}
 	
 			// Gestione oneway versione 11
 			if (openspcoopstate.getDestinatarioResponseMsgLib() != null
 					&& openspcoopstate.getDestinatarioResponseMsgLib().startsWith(RicezioneContenutiApplicativi.ID_MODULO)
-					&& propertiesReader.isGestioneOnewayStateful_1_1())
+					&& propertiesReader.isGestioneOnewayStateful_1_1()){
+				msgDiag.highDebug("Imbustamento stateless (terminato:true)");
 				return true;
+			}
 	
 			/* ------------ Rilascio risorsa se e' presente rinegoziamento delle risorse ------------------ */
 			// Rinegozio la connessione SOLO se siamo in oneway o sincrono stateless puro (non oneway11)
 			if( rinegoziamentoConnessione ){
+				msgDiag.highDebug("Imbustamento stateless (commit) ...");
 				openspcoopstate.setUseConnection(true);
 				try{
 					openspcoopstate.commit();
@@ -3573,6 +3584,7 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.setUseConnection(false);
 			}
 			
+			msgDiag.highDebug("Imbustamento stateless terminato");
 			
 			
 			
@@ -3581,10 +3593,13 @@ public class RicezioneContenutiApplicativi {
 			 * ---------------------- INOLTRO BUSTE ------------------
 			 */
 	
+			msgDiag.highDebug("InoltroBuste stateless ...");
 			InoltroBuste inoltroBusteLib = null;
 			try {
 				inoltroBusteLib = new InoltroBuste(logCore);
+				msgDiag.highDebug("InoltroBuste stateless (invoco) ...");
 				esito = inoltroBusteLib.onMessage(openspcoopstate);
+				msgDiag.highDebug("InoltroBuste stateless (analizzo esito) ...");
 				if(esito.getStatoInvocazione()==EsitoLib.ERRORE_NON_GESTITO){
 					if(esito.getErroreNonGestito()!=null)
 						throw esito.getErroreNonGestito();
@@ -3608,15 +3623,19 @@ public class RicezioneContenutiApplicativi {
 				// ripristino utilizzo connessione al database
 				openspcoopstate.setUseConnection(true);
 				gestioneRisposta(parametriGestioneRisposta);
+				msgDiag.highDebug("InoltroBuste stateless (terminato:false)");
 				return false;
 			}
 	
 			// Gestione oneway versione 11
 			if (openspcoopstate.getDestinatarioResponseMsgLib()!=null &&
 					openspcoopstate.getDestinatarioResponseMsgLib().startsWith(
-					RicezioneContenutiApplicativi.ID_MODULO))
+					RicezioneContenutiApplicativi.ID_MODULO)){
+				msgDiag.highDebug("InoltroBuste stateless (terminato:true)");
 				return true;
+			}
 			
+			msgDiag.highDebug("InoltroBuste stateless terminato");
 			
 			
 			
@@ -3624,12 +3643,14 @@ public class RicezioneContenutiApplicativi {
 	
 			/*--------------- SBUSTAMENTO RISPOSTE ---------------- */
 	
+			msgDiag.highDebug("SbustamentoRisposte stateless ...");
 			SbustamentoRisposte sbustamentoRisposteLib = null;
 			boolean erroreSbustamentoRisposta = false;
 			try {
 				sbustamentoRisposteLib = new SbustamentoRisposte(logCore);
 				/* Verifico che non abbia rilasciato la connessione, se si la riprendo */
 				if( rinegoziamentoConnessione && openspcoopstate.resourceReleased()){
+					msgDiag.highDebug("SbustamentoRisposte stateless (initResourceDB) ...");
 					openspcoopstate.setUseConnection(true);
 					openspcoopstate.initResource(parametriGestioneRisposta.getIdentitaPdD(), SbustamentoRisposte.ID_MODULO, idTransazione);
 					openspcoopstate.setUseConnection(false);
@@ -3638,7 +3659,9 @@ public class RicezioneContenutiApplicativi {
 					configurazionePdDReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 					msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 				}
+				msgDiag.highDebug("SbustamentoRisposte stateless (invoco) ...");
 				esito = sbustamentoRisposteLib.onMessage(openspcoopstate);
+				msgDiag.highDebug("SbustamentoRisposte stateless (analizzo esito) ...");
 				if(esito.getStatoInvocazione()==EsitoLib.ERRORE_NON_GESTITO){
 					if(esito.getErroreNonGestito()!=null)
 						throw esito.getErroreNonGestito();
@@ -3660,6 +3683,7 @@ public class RicezioneContenutiApplicativi {
 			}finally{
 				/* Se devo rinegoziare la connessione, la rilascio */
 				if( (rinegoziamentoConnessione) && (erroreSbustamentoRisposta==false) ){
+					msgDiag.highDebug("SbustamentoRisposte stateless (commit) ...");
 					openspcoopstate.setUseConnection(true);
 					try{
 						openspcoopstate.commit();
@@ -3673,8 +3697,11 @@ public class RicezioneContenutiApplicativi {
 				// ripristino utilizzo connessione al database
 				openspcoopstate.setUseConnection(true);
 				gestioneRisposta(parametriGestioneRisposta);
+				msgDiag.highDebug("SbustamentoRisposte stateless (terminato:false)");
 				return false;
 			}
+
+			msgDiag.highDebug("SbustamentoRisposte stateless terminato");
 			
 		}
 		

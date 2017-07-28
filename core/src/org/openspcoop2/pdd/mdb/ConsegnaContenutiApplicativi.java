@@ -175,7 +175,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 	 * 
 	 * @throws Exception
 	 */
-	private synchronized static void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
+	public synchronized static void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
 
 		if(ConsegnaContenutiApplicativi.initializeService)
 			return;

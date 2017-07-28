@@ -45,6 +45,13 @@ import org.openspcoop2.protocol.manifest.utils.XMLUtils;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
+import org.openspcoop2.protocol.sdk.constants.Inoltro;
+import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.MapReader;
@@ -85,6 +92,64 @@ public class ProtocolFactoryManager {
 	public static void updateLogger(Logger log){
 		if(ProtocolFactoryManager.protocolFactoryManager!=null){
 			ProtocolFactoryManager.protocolFactoryManager.log = log;
+		}
+	}
+	
+	public void initializeAllProtocols() throws ProtocolException{
+		//System.out.println("Init All Factories ["+this.factories.size()+"] ...");
+		if(this.factories!=null){
+			Enumeration<IProtocolFactory> factories = this.factories.elements();
+			while (factories.hasMoreElements()) {
+				IProtocolFactory iProtocolFactory = (IProtocolFactory) factories.nextElement();
+				//System.out.println("Init ["+iProtocolFactory.getProtocol()+"] ...");
+				
+				// base
+				iProtocolFactory.getLogger();
+				iProtocolFactory.getManifest();
+				iProtocolFactory.getConfigurazionePdD();
+				
+				// PROTOCOL BUILDER
+				iProtocolFactory.createBustaBuilder();
+				iProtocolFactory.createErroreApplicativoBuilder();
+				iProtocolFactory.createEsitoBuilder();
+				
+				// PROTOCOL VALIDATOR
+				iProtocolFactory.createValidatoreErrori();
+				iProtocolFactory.createValidazioneSintattica();
+				iProtocolFactory.createValidazioneSemantica();
+				iProtocolFactory.createValidazioneConSchema();
+				iProtocolFactory.createValidazioneDocumenti();
+				iProtocolFactory.createValidazioneAccordi();
+				
+				// DIAGNOSTICI 
+				iProtocolFactory.createDriverMSGDiagnostici();
+				iProtocolFactory.createMsgDiagnosticoOpenSPCoopAppender();
+				iProtocolFactory.createXMLDiagnosticoBuilder();
+				
+				// TRACCE
+				iProtocolFactory.createDriverTracciamento();
+				iProtocolFactory.createTracciamentoOpenSPCoopAppender();
+				iProtocolFactory.createXMLTracciaBuilder();
+				
+				// ARCHIVE
+				iProtocolFactory.createArchive();
+				
+				// CONFIG 
+				List<String> versioni = iProtocolFactory.createProtocolConfiguration().getVersioni();
+				for (String version : versioni) {
+					iProtocolFactory.createProtocolVersionManager(version);	
+				}
+				iProtocolFactory.createProtocolManager();
+				ITraduttore traduttore = iProtocolFactory.createTraduttore();
+				traduttore.toString(CodiceErroreCooperazione.AZIONE);
+				traduttore.toString(ContestoCodificaEccezione.INTESTAZIONE);
+				traduttore.toString(Inoltro.CON_DUPLICATI);
+				traduttore.toString(LivelloRilevanza.INFO);
+				traduttore.toString(ProfiloDiCollaborazione.SINCRONO);
+				traduttore.toString(TipoOraRegistrazione.LOCALE);
+				
+				//System.out.println("Init ["+iProtocolFactory.getProtocol()+"] ok");
+			}
 		}
 	}
 	

@@ -197,7 +197,7 @@ public class InoltroBuste extends GenericLib{
 	 * 
 	 * @throws Exception
 	 */
-	private synchronized static void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
+	public synchronized static void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader) {
 
 		if(InoltroBuste.initializeService)
 			return;
@@ -1215,7 +1215,9 @@ public class InoltroBuste extends GenericLib{
 			}
 			BustaRawContent<?> headerBustaRichiesta = null;
 			try{
+				msgDiag.highDebug("Imbustamento (creoImbustamentoUtils) ...");
 				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore =  new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log, protocolFactory);
+				msgDiag.highDebug("Imbustamento (invokeSdk) ...");
 				if(functionAsRouter){
 					if(this.propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDDestinatario)){
 						msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
@@ -1236,6 +1238,7 @@ public class InoltroBuste extends GenericLib{
 					requestMessage = protocolMessage.getMessage(); // updated
 					msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
 				}
+				msgDiag.highDebug("Imbustamento (invokeSdk) terminato");
 			}catch(Exception e){
 				String msgErroreImbusta = null;
 				if(functionAsRouter)

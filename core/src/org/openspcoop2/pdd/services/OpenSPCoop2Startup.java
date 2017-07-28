@@ -31,6 +31,10 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
 
 import org.slf4j.Logger;
 import org.jminix.console.tool.StandaloneMiniConsole;
@@ -43,6 +47,9 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
@@ -79,6 +86,8 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
@@ -567,6 +576,25 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
 					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
 				}
+				
+				// Inizializzo Operazioni "Costose"
+				// Serve per abbassare la latenza del primo messaggio, altrimenti queste operazioni all'interno del metodo di costruzione dell'header costano sui 50ms
+				OpenSPCoop2Message msgTest = factory.createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST);
+				SOAPHeader hdr = msgTest.castAsSoap().getSOAPHeader();
+				if(hdr==null){
+					hdr = msgTest.castAsSoap().getSOAPPart().getEnvelope().addHeader();
+				}
+				String namespaceTest = "http://initialize.openspcoop.org/test";
+				String prefixTest = "op2";
+				QName nameTest = new QName(namespaceTest, "Prova", prefixTest);
+				SOAPHeaderElement testHeader = msgTest.castAsSoap().newSOAPHeaderElement(hdr, nameTest);
+				testHeader.setActor("http://initialize.openspcoop.org/test");
+				testHeader.setMustUnderstand(true);
+				SOAPElement eGovIntestazioneMsg = testHeader.addChildElement("Test",prefixTest,namespaceTest);
+				if(eGovIntestazioneMsg!=null){
+					eGovIntestazioneMsg.toString();
+				}
+				
 			} catch(Exception e) {
 				this.logError("Inizializzazione Message/DOM/SOAP: "+e.getMessage(), e);
 				return;
@@ -946,6 +974,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// forzo update logger. (viene caricato dopo il log della console)
 				ProtocolFactoryManager.updateLogger(logCore);
 				protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				protocolFactoryManager.initializeAllProtocols();
 				OpenSPCoop2Startup.log.info("ProtocolFactory default: "+protocolFactoryManager.getDefaultProtocolFactory().getProtocol());
 			} catch(Exception e) {
 				this.logError("Initialize ProtocolFactoryManager failed: "+e.getMessage());
@@ -1230,6 +1259,25 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				RicezioneBuste.initializeService(configurazionePdDReader,classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneBuste");
+				return;
+			}
+			try{
+				InoltroBuste.initializeService(classNameReader, propertiesReader);
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione servizio InoltroBuste");
+				return;
+			}
+			try{
+				ConsegnaContenutiApplicativi.initializeService(classNameReader, propertiesReader);
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione servizio ConsegnaContenutiApplicativi");
+				return;
+			}
+			try{
+				IDAccordoFactory.getInstance();
+				IDAccordoCooperazioneFactory.getInstance();
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione factory ID");
 				return;
 			}
 			
