@@ -149,6 +149,7 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBean implements 
   	connettoreConfig.setId(this.id);
   	connettoreConfig.setNome(this.nome);
   	connettoreConfig.setTipo(this.tipo);
+  	connettoreConfig.setCustom(this.custom);
   	return connettoreConfig;
   }
 
