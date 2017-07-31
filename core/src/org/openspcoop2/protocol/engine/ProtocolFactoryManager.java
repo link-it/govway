@@ -98,9 +98,9 @@ public class ProtocolFactoryManager {
 	public void initializeAllProtocols() throws ProtocolException{
 		//System.out.println("Init All Factories ["+this.factories.size()+"] ...");
 		if(this.factories!=null){
-			Enumeration<IProtocolFactory> factories = this.factories.elements();
+			Enumeration<IProtocolFactory<?>> factories = this.factories.elements();
 			while (factories.hasMoreElements()) {
-				IProtocolFactory iProtocolFactory = (IProtocolFactory) factories.nextElement();
+				IProtocolFactory<?> iProtocolFactory = (IProtocolFactory<?>) factories.nextElement();
 				//System.out.println("Init ["+iProtocolFactory.getProtocol()+"] ...");
 				
 				// base
@@ -122,14 +122,14 @@ public class ProtocolFactoryManager {
 				iProtocolFactory.createValidazioneAccordi();
 				
 				// DIAGNOSTICI 
-				iProtocolFactory.createDriverMSGDiagnostici();
-				iProtocolFactory.createMsgDiagnosticoOpenSPCoopAppender();
-				iProtocolFactory.createXMLDiagnosticoBuilder();
+				iProtocolFactory.createDiagnosticDriver();
+				iProtocolFactory.createDiagnosticProducer();
+				iProtocolFactory.createDiagnosticSerializer();
 				
 				// TRACCE
-				iProtocolFactory.createDriverTracciamento();
-				iProtocolFactory.createTracciamentoOpenSPCoopAppender();
-				iProtocolFactory.createXMLTracciaBuilder();
+				iProtocolFactory.createTracciaDriver();
+				iProtocolFactory.createTracciaProducer();
+				iProtocolFactory.createTracciaSerializer();
 				
 				// ARCHIVE
 				iProtocolFactory.createArchive();
