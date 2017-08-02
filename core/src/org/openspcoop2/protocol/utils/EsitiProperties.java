@@ -819,7 +819,7 @@ public class EsitiProperties {
 				while (enKeys.hasMoreElements()) {
 					String key = (String) enKeys.nextElement();
 					if(key.endsWith(".headerName")){
-						keys.add(key.substring(0, ".headerName".length()));
+						keys.add(key.substring(0, (key.length()-".headerName".length())));
 					}
 				}
 				for (String key : keys) {

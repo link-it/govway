@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/config" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/config">
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/config" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/config">
 
 	
 
@@ -887,9 +887,9 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="off"/>
 			<xsd:enumeration value="fatal"/>
-			<xsd:enumeration value="errorProtocoll"/>
+			<xsd:enumeration value="errorProtocol"/>
 			<xsd:enumeration value="errorIntegration"/>
-			<xsd:enumeration value="infoProtocoll"/>
+			<xsd:enumeration value="infoProtocol"/>
 			<xsd:enumeration value="infoIntegration"/>
 			<xsd:enumeration value="debugLow"/>
 			<xsd:enumeration value="debugMedium"/>

@@ -538,14 +538,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(pd_url_prefix_rewriter!=null && !"".equals(pd_url_prefix_rewriter)){
 				if(RegularExpressionEngine.isMatch(pd_url_prefix_rewriter, "[A-Za-z]+:\\/\\/(.*)")==false){
 					this.pd.setMessage("Il campo UrlPrefix rewriter del profilo client contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
-							StringEscapeUtils.escapeHtml("protocoll://hostname[:port][/*]"));
+							StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
 					return false;
 				}
 			}
 			if(pa_url_prefix_rewriter!=null && !"".equals(pa_url_prefix_rewriter)){
 				if(RegularExpressionEngine.isMatch(pa_url_prefix_rewriter, "[A-Za-z]+:\\/\\/(.*)")==false){
 					this.pd.setMessage("Il campo UrlPrefix rewriter del profilo server contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
-							StringEscapeUtils.escapeHtml("protocoll://hostname[:port][/*]"));
+							StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
 					return false;
 				}
 			}

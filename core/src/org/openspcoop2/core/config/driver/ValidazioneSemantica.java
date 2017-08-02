@@ -2435,23 +2435,23 @@ public class ValidazioneSemantica {
 				
 			}
 
-			// XSD:: off, fatal, errorProtocoll, errorIntegration, infoProtocoll, infoIntegration, debugLow, debugMedium, debugHigh, all
+			// XSD:: off, fatal, errorProtocol, errorIntegration, infoProtocol, infoIntegration, debugLow, debugMedium, debugHigh, all
 			Severita severita = md.getSeverita();
 			if ((severita != null) && !severita.equals(Severita.OFF) && !severita.equals(Severita.FATAL) && 
-					!severita.equals(Severita.ERROR_PROTOCOLL) && !severita.equals(Severita.ERROR_INTEGRATION) && 
-					!severita.equals(Severita.INFO_PROTOCOLL) && !severita.equals(Severita.INFO_INTEGRATION) && 
+					!severita.equals(Severita.ERROR_PROTOCOL) && !severita.equals(Severita.ERROR_INTEGRATION) && 
+					!severita.equals(Severita.INFO_PROTOCOL) && !severita.equals(Severita.INFO_INTEGRATION) && 
 					!severita.equals(Severita.DEBUG_LOW) && !severita.equals(Severita.DEBUG_MEDIUM) && !severita.equals(Severita.DEBUG_HIGH) &&
 					!severita.equals(Severita.ALL))
-				this.errori.add("L'opzione 'severita' della configurazione dei messaggi diagnostici nella configurazione generale della PdD deve assumere uno dei seguenti valori: off, fatal, errorProtocoll, errorIntegration, infoProtocoll, infoIntegration, debugLow, debugMedium, debugHigh, all");
+				this.errori.add("L'opzione 'severita' della configurazione dei messaggi diagnostici nella configurazione generale della PdD deve assumere uno dei seguenti valori: off, fatal, errorProtocol, errorIntegration, infoProtocol, infoIntegration, debugLow, debugMedium, debugHigh, all");
 
-			// XSD: openspcoop: off, fatal, errorProtocoll, errorIntegration, infoProtocoll, infoIntegration, debugLow, debugMedium, debugHigh, all
+			// XSD: openspcoop: off, fatal, errorProtocol, errorIntegration, infoProtocol, infoIntegration, debugLow, debugMedium, debugHigh, all
 			Severita severitaLog4j = md.getSeveritaLog4j();
 			if ((severitaLog4j != null) && !severitaLog4j.equals(Severita.OFF) && !severitaLog4j.equals(Severita.FATAL) && 
-					!severitaLog4j.equals(Severita.ERROR_PROTOCOLL) && !severitaLog4j.equals(Severita.ERROR_INTEGRATION) && 
-					!severitaLog4j.equals(Severita.INFO_PROTOCOLL) && !severitaLog4j.equals(Severita.INFO_INTEGRATION) && 
+					!severitaLog4j.equals(Severita.ERROR_PROTOCOL) && !severitaLog4j.equals(Severita.ERROR_INTEGRATION) && 
+					!severitaLog4j.equals(Severita.INFO_PROTOCOL) && !severitaLog4j.equals(Severita.INFO_INTEGRATION) && 
 					!severitaLog4j.equals(Severita.DEBUG_LOW) && !severitaLog4j.equals(Severita.DEBUG_MEDIUM) && !severitaLog4j.equals(Severita.DEBUG_HIGH) &&
 					!severitaLog4j.equals(Severita.ALL))
-			this.errori.add("L'opzione 'severita-log4j' della configurazione dei messaggi diagnostici nella configurazione generale della PdD deve assumere uno dei seguenti valori: off, fatal, errorProtocoll, errorIntegration, infoProtocoll, infoIntegration, debugLow, debugMedium, debugHigh, all");
+			this.errori.add("L'opzione 'severita-log4j' della configurazione dei messaggi diagnostici nella configurazione generale della PdD deve assumere uno dei seguenti valori: off, fatal, errorProtocol, errorIntegration, infoProtocol, infoIntegration, debugLow, debugMedium, debugHigh, all");
 		}
 		else{
 			this.errori.add("Non e' stata definita la configurazione dei messaggi diagnostici nella configurazione generale della PdD");

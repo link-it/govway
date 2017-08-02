@@ -2562,11 +2562,11 @@ public class UrlPrefixRewriter {
 	
 	
 	
-	/* ************************ TEST 10   otherProtocoll://hostnamePD e  otherProtocoll://hostnamePA**************************
+	/* ************************ TEST 10   otherProtocol://hostnamePD e  otherProtocol://hostnamePA**************************
 
 
 	/***
-	 * Test per pd-url-prefix-rewriter="otherProtocoll://hostnamePD"
+	 * Test per pd-url-prefix-rewriter="otherProtocol://hostnamePD"
 	 */
 	Date testPD10StartTime = null;
 	Repository repository_testPD10=new Repository();
@@ -2626,7 +2626,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocoll");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocol");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPD10Provider")
@@ -2644,8 +2644,8 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD10StartTime,"(location: otherProtocoll://hostnamePD/openspcoop2/spcoop/PA)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD10StartTime,"Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocoll"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD10StartTime,"(location: otherProtocol://hostnamePD/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD10StartTime,"Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocol"));
 			
 		}catch(Exception e){
 			throw e;
@@ -2667,7 +2667,7 @@ public class UrlPrefixRewriter {
 	
 	
 	/***
-	 * Test per pa-url-prefix-rewriter="otherProtocoll://hostnamePA"
+	 * Test per pa-url-prefix-rewriter="otherProtocol://hostnamePA"
 	 */
 	Date testPA10StartTime = null;
 	Repository repository_testPA10=new Repository();
@@ -2740,7 +2740,7 @@ public class UrlPrefixRewriter {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocoll");
+		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocol");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPA10Provider")
@@ -2827,8 +2827,8 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: otherProtocoll://hostnamePA/OpenSPCoop2TestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocoll"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: otherProtocol://hostnamePA/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocol"));
 			
 		}catch(Exception e){
 			throw e;

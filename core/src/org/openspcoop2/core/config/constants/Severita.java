@@ -40,12 +40,12 @@ public enum Severita implements IEnumeration , Serializable , Cloneable {
 	OFF ("off"),
 	@javax.xml.bind.annotation.XmlEnumValue("fatal")
 	FATAL ("fatal"),
-	@javax.xml.bind.annotation.XmlEnumValue("errorProtocoll")
-	ERROR_PROTOCOLL ("errorProtocoll"),
+	@javax.xml.bind.annotation.XmlEnumValue("errorProtocol")
+	ERROR_PROTOCOL ("errorProtocol"),
 	@javax.xml.bind.annotation.XmlEnumValue("errorIntegration")
 	ERROR_INTEGRATION ("errorIntegration"),
-	@javax.xml.bind.annotation.XmlEnumValue("infoProtocoll")
-	INFO_PROTOCOLL ("infoProtocoll"),
+	@javax.xml.bind.annotation.XmlEnumValue("infoProtocol")
+	INFO_PROTOCOL ("infoProtocol"),
 	@javax.xml.bind.annotation.XmlEnumValue("infoIntegration")
 	INFO_INTEGRATION ("infoIntegration"),
 	@javax.xml.bind.annotation.XmlEnumValue("debugLow")

@@ -1667,6 +1667,14 @@ public class RegistroServiziReader {
 				throw new DriverRegistroServiziServizioNotFound("isFruitoreServizioAutorizzato, servizio ["+servizio.toString()+"] non trovato nel registro dei servizi");
 			}
 
+			if(soggetto==null){
+				String error = "identita del chiamante non fornita (autenticazione non attiva?)";
+				this.log.error("Identita del chiamante non fornita");
+				esitoAutorizzazione.setServizioAutorizzato(false);
+				esitoAutorizzazione.setDetails(error);
+				return esitoAutorizzazione;
+			}
+			
 			// check fruizione
 			for(int i=0; i<servizioRicercato.sizeFruitoreList(); i++){
 				Fruitore fruitore = servizioRicercato.getFruitore(i);

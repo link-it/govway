@@ -10776,8 +10776,8 @@
         </servizio-applicativo>
     </soggetto>
     <soggetto tipo="SPC" nome="TestUrlPrefixRewriter10" 
-        pd-url-prefix-rewriter="otherProtocoll://hostnamePD" 
-        pa-url-prefix-rewriter="otherProtocoll://hostnamePA" >
+        pd-url-prefix-rewriter="otherProtocol://hostnamePD" 
+        pa-url-prefix-rewriter="otherProtocol://hostnamePA" >
         <porta-delegata gestione-manifest="abilitato" nome="TestUrlPrefixRewriter10" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />

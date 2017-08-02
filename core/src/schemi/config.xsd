@@ -707,9 +707,9 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="off"/>
 			<xsd:enumeration value="fatal"/>
-			<xsd:enumeration value="errorProtocoll"/>
+			<xsd:enumeration value="errorProtocol"/>
 			<xsd:enumeration value="errorIntegration"/>
-			<xsd:enumeration value="infoProtocoll"/>
+			<xsd:enumeration value="infoProtocol"/>
 			<xsd:enumeration value="infoIntegration"/>
 			<xsd:enumeration value="debugLow"/>
 			<xsd:enumeration value="debugMedium"/>
