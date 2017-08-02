@@ -1,3 +1,12 @@
+2017-08-01  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-644
+	Migliorato il riconoscimento dell'esito di una transazione.
+	La tipologia di transazione è adesso identificabile tramite nuove modalità di riconoscimento
+	basate sull'analisi degli header di integrazione e dei parametri della url
+	attraverso la comparazione con valori di riferimento o attraverso l'utilizzo di espressioni regolari.
+
 2017-07-26  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
