@@ -19,6 +19,13 @@
  */
 package org.openspcoop2.web.lib.mvc;
 
+/**
+ * DataElementParameter
+ * 
+ * @author Giuliano Pintori (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class DataElementParameter {
 
 	private Integer size= null; 
