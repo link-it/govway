@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.utils;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
@@ -790,6 +791,68 @@ public class EsitiProperties {
 			EsitiProperties.esitoTransactionContextFormBasedPropertyName = getProperty("esiti.transactionContext.urlFormBased.propertyName");	   
 		}
 		return EsitiProperties.esitoTransactionContextFormBasedPropertyName;
+	}
+	
+	private static List<EsitoTransportContextIdentification> esitoTransactionContextHeaderTrasportoDynamicIdentification = null;
+	public  List<EsitoTransportContextIdentification> getEsitoTransactionContextHeaderTrasportoDynamicIdentification() throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification == null){
+			EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification = this.readEsitoTransportContextIdentification("esiti.transactionContext.trasporto.dynamic.");			
+		}
+		return EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification;
+	}
+	
+	private static List<EsitoTransportContextIdentification> esitoTransactionContextHeaderFormBasedDynamicIdentification = null;
+	public  List<EsitoTransportContextIdentification> getEsitoTransactionContextHeaderFormBasedDynamicIdentification() throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification == null){
+			EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification = this.readEsitoTransportContextIdentification("esiti.transactionContext.urlFormBased.dynamic.");			
+		}
+		return EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification;
+	}
+	
+	private List<EsitoTransportContextIdentification> readEsitoTransportContextIdentification(String pName) throws ProtocolException{
+		try{
+			List<EsitoTransportContextIdentification> l = new ArrayList<EsitoTransportContextIdentification>();
+			Properties p = this.reader.readProperties_convertEnvProperties(pName);
+			if(p.size()>0){
+				List<String> keys = new ArrayList<>();
+				Enumeration<?> enKeys = p.keys();
+				while (enKeys.hasMoreElements()) {
+					String key = (String) enKeys.nextElement();
+					if(key.endsWith(".headerName")){
+						keys.add(key.substring(0, ".headerName".length()));
+					}
+				}
+				for (String key : keys) {
+					EsitoTransportContextIdentification etci = new EsitoTransportContextIdentification();
+					etci.setName(p.getProperty(key+".headerName"));
+					etci.setValue(p.getProperty(key+".value"));
+					String mode = p.getProperty(key+".mode");
+					etci.setMode(EsitoTransportContextIdentificationMode.toEnumConstant(mode));
+					if(etci.getMode()==null){
+						throw new ProtocolException("Modalità indicata ["+mode+"] per chiave ["+key+"] sconosciuta");
+					}
+					etci.setRegularExpr(p.getProperty(key+".regularExpr"));
+					if(EsitoTransportContextIdentificationMode.MATCH.equals(etci.getMode())){
+						if(etci.getRegularExpr()==null){
+							throw new ProtocolException("Modalità indicata ["+mode+"] per la chiave ["+key+"] richiede obbligatoriamente la definizione di una espressione regolare");
+						}
+					}
+					else if(EsitoTransportContextIdentificationMode.EQUALS.equals(etci.getMode()) || EsitoTransportContextIdentificationMode.CONTAINS.equals(etci.getMode())){
+						if(etci.getValue()==null){
+							throw new ProtocolException("Modalità indicata ["+mode+"] per la chiave ["+key+"] richiede obbligatoriamente la definizione di un valore su cui basare il confronto");
+						}
+					}
+					etci.setType(p.getProperty(key+".type"));
+					if(getEsitiTransactionContextCode().contains(etci.getType())==false){
+						throw new ProtocolException("Tipo di contesto indicato ["+etci.getType()+"] per la chiave ["+key+"] non risulta tra le tipologie di contesto supportate: "+getEsitiTransactionContextCode());
+					}
+					l.add(etci);
+				}
+			}
+			return l;
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
 	}
 
 	

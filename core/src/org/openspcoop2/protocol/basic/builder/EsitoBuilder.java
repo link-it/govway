@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
+import org.openspcoop2.protocol.utils.EsitoTransportContextIdentification;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.w3c.dom.Node;
 
@@ -71,6 +72,32 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		
 		if(transportRequestContext!=null){
 		
+			if(transportRequestContext.getParametersTrasporto()!=null && transportRequestContext.getParametersTrasporto().size()>0){
+				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoDynamicIdentification();
+				if(list!=null && list.size()>0){
+					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
+						if(esitoTransportContextIdentification.match(transportRequestContext.getParametersTrasporto())){
+							tipoContext = esitoTransportContextIdentification.getType();
+							break;
+						}
+					}
+				}
+			}
+			
+			// urlBased eventualmente sovrascrive l'header
+			if(transportRequestContext.getParametersFormBased()!=null && transportRequestContext.getParametersFormBased().size()>0){
+				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderFormBasedDynamicIdentification();
+				if(list!=null && list.size()>0){
+					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
+						if(esitoTransportContextIdentification.match(transportRequestContext.getParametersFormBased())){
+							tipoContext = esitoTransportContextIdentification.getType();
+							break;
+						}
+					}
+				}
+			}
+			
+			// trasporto con header openspcoop sovrascrive un valore trovato in precedenza
 			if(transportRequestContext.getParametersTrasporto()!=null && transportRequestContext.getParametersTrasporto().size()>0){
 				String headerName = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoName();
 				String value = transportRequestContext.getParameterTrasporto(headerName);
