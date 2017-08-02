@@ -52,8 +52,8 @@ import org.openspcoop2.web.lib.users.dao.User;
  * PorteDelegateCorrelazioneApplicativa
  * 
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100(mer, 11 gen 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class PorteDelegateCorrelazioneApplicativa extends Action {
