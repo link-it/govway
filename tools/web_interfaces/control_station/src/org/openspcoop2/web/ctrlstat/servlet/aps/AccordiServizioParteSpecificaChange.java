@@ -196,8 +196,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// http
 			String url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
-				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// jms
@@ -236,8 +236,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			String httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
-				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -685,8 +685,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 					if (nome == null) {
 						nome = props.get(CostantiDB.CONNETTORE_JMS_NOME);
-						user = props.get(CostantiDB.CONNETTORE_USER);
-						password = props.get(CostantiDB.CONNETTORE_PWD);
+						String userTmp = props.get(CostantiDB.CONNETTORE_USER);
+						if(userTmp!=null && !"".equals(userTmp)){
+							user = userTmp;
+						}
+						String passwordTmp = props.get(CostantiDB.CONNETTORE_PWD);
+						if(passwordTmp!=null && !"".equals(passwordTmp)){
+							password = passwordTmp;
+						}
 						tipo = props.get(CostantiDB.CONNETTORE_JMS_TIPO);
 						initcont = props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL);
 						urlpgk = props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG);

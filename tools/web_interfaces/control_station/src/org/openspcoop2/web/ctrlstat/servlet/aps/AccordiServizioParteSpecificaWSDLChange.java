@@ -425,8 +425,14 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 						endpointtype = connettore.getTipo();
 				}
 				autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-				user = props.get(CostantiDB.CONNETTORE_USER);
-				password = props.get(CostantiDB.CONNETTORE_PWD);
+				String userTmp = props.get(CostantiDB.CONNETTORE_USER);
+				if(userTmp!=null && !"".equals(userTmp)){
+					user = userTmp;
+				}
+				String passwordTmp = props.get(CostantiDB.CONNETTORE_PWD);
+				if(passwordTmp!=null && !"".equals(passwordTmp)){
+					password = passwordTmp;
+				}
 				autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				if(connettoreDebug==null && props!=null){

@@ -978,9 +978,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if(!TipiConnettore.HTTP.toString().equals(endpointtype) &&
 					!TipiConnettore.HTTPS.toString().equals(endpointtype) &&
 					!TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
-				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
+				de.setLabel(null);
+				de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 				de.setType(DataElementType.TEXT);
-				de.setValue(" ");
 				
 				this.pd.disableEditMode();
 				this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
@@ -1752,8 +1752,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsalgoritmokey = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 
 			if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
-				user = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				user = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file

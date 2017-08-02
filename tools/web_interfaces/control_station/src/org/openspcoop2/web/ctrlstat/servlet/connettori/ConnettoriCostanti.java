@@ -75,9 +75,6 @@ public class ConnettoriCostanti {
 
 	/* PARAMETRI */
 
-	public final static String PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME = "utente";
-	public final static String PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD = "password";
-	
 	public final static String PARAMETRO_CONNETTORE_ID = "id";	
 	public final static String PARAMETRO_CONNETTORE_ENDPOINT_TYPE = "endpointtype";
 	public final static String PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP = "endpointtype_http";
@@ -113,8 +110,8 @@ public class ConnettoriCostanti {
 	
 	public final static String PARAMETRO_CONNETTORE_JMS_NOME_CODA = "nome";
 	public final static String PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "tipo";
-	public final static String PARAMETRO_CONNETTORE_JMS_USERNAME = "user";
-	public final static String PARAMETRO_CONNETTORE_JMS_PASSWORD = "password";
+	public final static String PARAMETRO_CONNETTORE_JMS_USERNAME = "userJms";
+	public final static String PARAMETRO_CONNETTORE_JMS_PASSWORD = "passwordJms";
 	public final static String PARAMETRO_CONNETTORE_JMS_INIT_CTX = "initcont";
 	public final static String PARAMETRO_CONNETTORE_JMS_URL_PKG = "urlpgk";
 	public final static String PARAMETRO_CONNETTORE_JMS_PROVIDER_URL = "provurl";

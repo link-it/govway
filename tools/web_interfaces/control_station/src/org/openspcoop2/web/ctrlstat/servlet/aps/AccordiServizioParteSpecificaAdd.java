@@ -254,8 +254,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// http
 			this.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
 			if(TipiConnettore.HTTP.toString().equals(this.endpointtype)){
-				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 
 			// jms
@@ -288,8 +288,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
 			this.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			if(TipiConnettore.HTTPS.toString().equals(this.endpointtype)){
-				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
 			
 			// file
@@ -1535,12 +1535,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					if(this.password==null)
 						this.password = dis.readLine();
 				}
-				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME+"\"") != -1) {
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME+"\"") != -1) {
 					line = dis.readLine();
 					if(this.user==null)
 						this.user = dis.readLine();
 				}
-				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD+"\"") != -1) {
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD+"\"") != -1) {
 					line = dis.readLine();
 					if(this.password==null)
 						this.password = dis.readLine();

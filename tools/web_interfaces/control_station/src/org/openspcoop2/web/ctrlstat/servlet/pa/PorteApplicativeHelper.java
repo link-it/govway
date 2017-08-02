@@ -1004,9 +1004,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					
 				}
 				else{
-					de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
+					de.setLabel(null);
+					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 					de.setType(DataElementType.TEXT);
-					de.setValue("");
 					configurazioneStandardNonApplicabile = true;
 				}
 				dati.addElement(de);

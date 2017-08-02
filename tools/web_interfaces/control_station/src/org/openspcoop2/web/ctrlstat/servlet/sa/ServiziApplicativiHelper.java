@@ -274,9 +274,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.SELECT);
 			de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO);
 			if(!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
-				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
+				de.setLabel(null);
+				de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 				de.setType(DataElementType.TEXT);
-				de.setValue(" ");
 				de.setPostBack(false);
 				
 				configurazioneStandardNonApplicabile = true;
