@@ -67,12 +67,14 @@ public interface ConnectorInMessage {
 	public URLProtocolContext getURLProtocolContext() throws ConnectorException;
 	
 	public Credential getCredential() throws ConnectorException;
-	
+		
 	public String getSource() throws ConnectorException;
 	
 	public String getProtocol() throws ConnectorException;
 	
 	public int getContentLength() throws ConnectorException;
+	
+	public String getRemoteAddress() throws ConnectorException;
 	
 	public void close() throws ConnectorException;
 	

@@ -268,6 +268,11 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}	
 	}
 	
+	@Override
+	public String getRemoteAddress() throws ConnectorException{
+		return this.req.getRemoteAddr();
+	}
+	
 	public HttpServletRequest getHttpServletRequest(){
 		return this.req;
 	}

@@ -294,6 +294,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
+	public String getRemoteAddress() throws ConnectorException{
+		return "DirectVM";
+	}
+	
+	@Override
 	public void close() throws ConnectorException{
 		// nop
 	}

@@ -302,6 +302,13 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		return this.connectorInMessage.getProtocol();
 	}
 
+	
+	@Override
+	public String getRemoteAddress() throws ConnectorException{
+		// wrapped method
+		return this.connectorInMessage.getRemoteAddress();
+	}
+	
 	@Override
 	public void close() throws ConnectorException {
 		// wrapped method
