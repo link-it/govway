@@ -444,7 +444,7 @@ public class PddCore extends ControlStationCore {
 	
 	public boolean isPddEsterna(String nomePdD) throws DriverControlStationException, DriverControlStationNotFound{
 		PdDControlStation pdd = null;
-		if (nomePdD!=null && (!nomePdD.equals("-")) )
+		if (nomePdD!=null && (!nomePdD.equals("")) && (!nomePdD.equals("-")) )
 			pdd = this.getPdDControlStation(nomePdD);
 		boolean pddEsterna = false;
 		if( (pdd==null) || PddTipologia.ESTERNO.toString().equals(pdd.getTipo())){

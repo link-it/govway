@@ -93,7 +93,6 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -104,7 +103,6 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -1015,11 +1013,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			 * creata.
 			 */
 			try{
-				PdDControlStation pddFruitore = pddCore.getPdDControlStation(pdd);
-				String tipoPddFruitore = pddFruitore != null ? pddFruitore.getTipo() : "";
-				String pddOp = PddCostanti.LABEL_TIPI_SOLO_OPERATIVI[0];
-				String pddNonOp = PddCostanti.LABEL_TIPI_SOLO_OPERATIVI[1];
-				generazionePortaDelegata = (pddOp.equals(tipoPddFruitore) || pddNonOp.equals(tipoPddFruitore));
+				if(pddCore.isPddEsterna(pdd)){
+					generazionePortaDelegata = false;
+				}
 			}catch(DriverControlStationNotFound dNT){
 				// In singlePdD la porta di dominio e' opzionale.
 				if(apsCore.isSinglePdD()==false){
