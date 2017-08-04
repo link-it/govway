@@ -2043,7 +2043,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			// Controllo campi obbligatori per il tipo di connettore custom
 			if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn == null || "".equals(tipoconn))) {
-				this.pd.setMessage("Tipo connettore personalizzato obbligatorio per il tipo di connettore custom");
+				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" obbligatorio per il tipo di connettore custom");
 				return false;
 			}
 
@@ -2055,7 +2055,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			// Se il tipo di connettore è custom, tipoconn non può essere
 			if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn.equals(TipiConnettore.HTTP.toString()) || tipoconn.equals(TipiConnettore.HTTPS.toString()) || tipoconn.equals(TipiConnettore.JMS.toString()) || tipoconn.equals(TipiConnettore.NULL.toString()) || tipoconn.equals(TipiConnettore.NULLECHO.toString()) || tipoconn.equals(TipiConnettore.DISABILITATO.toString()) )) {
-				this.pd.setMessage("Tipo connettore personalizzato non può assumere i valori: disabilitato,http,https,jms,null,nullEcho");
+				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" non può assumere i valori: disabilitato,http,https,jms,null,nullEcho");
 				return false;
 			}
 

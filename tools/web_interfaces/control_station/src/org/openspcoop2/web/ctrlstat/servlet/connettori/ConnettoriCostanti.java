@@ -167,7 +167,7 @@ public class ConnettoriCostanti {
 	/* LABEL PARAMETRI */
 
 	public final static String LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE = "Tipo";
-	public final static String LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "Tipo connettore personalizzato";
+	public final static String LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_CONNETTORE_DEBUG = "Debug";
 	public final static String LABEL_PARAMETRO_CONNETTORE_URL = "Endpoint";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROFILO =  "Versione Protocollo";
