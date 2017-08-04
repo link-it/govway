@@ -397,14 +397,18 @@ public class UtentiHelper extends ConsoleHelper {
 
 			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
 			
-			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-			de.setType(DataElementType.CRYPT);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-			de.setValue("");
-			de.setSize(this.getSize());
-			de.setRequired(true);
-			dati.addElement(de);
+			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
+			
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+				de.setType(DataElementType.CRYPT);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+				de.setValue("");
+				de.setSize(this.getSize());
+				de.setRequired(true);
+				dati.addElement(de);
+				
+			}
 
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
@@ -622,10 +626,18 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// String cpwd = this.procToCall.cryptPw(oldpw);
 			User user = ServletUtils.getUserFromSession(this.session);
-			// if(!cpwd.equals(user.getPassword())){
-			if (!this.passwordManager.checkPw(oldpw, user.getPassword())) {
-				this.pd.setMessage("La vecchia password indicata non e' corretta");
-				return false;
+
+			if(user.getPermessi().isUtenti()==false){
+				if (!this.passwordManager.checkPw(oldpw, user.getPassword())) {
+					this.pd.setMessage("La vecchia password indicata non e' corretta");
+					return false;
+				}
+				
+				// Controllo che non ci siano spazi nei campi di testo
+				if ((oldpw.indexOf(" ") != -1)) {
+					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					return false;
+				}
 			}
 
 			// Campi obbligatori
@@ -641,9 +653,11 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// Controllo che la vecchia password e la nuova corrispondano
-			if (oldpw.equals(newpw)) {
-				this.pd.setMessage("Le nuova password deve essere differente dalla vecchia");
-				return false;
+			if(user.getPermessi().isUtenti()==false){
+				if (oldpw.equals(newpw)) {
+					this.pd.setMessage("Le nuova password deve essere differente dalla vecchia");
+					return false;
+				}
 			}
 			
 			// Controllo che le password corrispondano
