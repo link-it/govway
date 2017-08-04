@@ -1,3 +1,10 @@
+2017-08-04  Andrea Poli <apoli@link.it>
+
+	* [Utils, PddConsole]
+	Aggiunta funzionalità OP-646
+	Realizzata utility in org.openspcoop2.utils.crypt.PasswordVerifier che permette di definire i criteri che una password deve soddisfare. 
+	L'utility è stata utilizzata per aggiungere vincoli di sicurezza sulle password associate alle utenze della pddConsole.
+
 2017-08-01  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
