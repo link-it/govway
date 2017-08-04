@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
@@ -100,6 +101,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if( (TipoOperazione.ADD.equals(tipoOperazione)) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
 
+			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+			
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
 			de.setValue(pwsu);
@@ -116,7 +119,11 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			de.setSize(this.getSize());
 			de.setRequired(true);
+			if(passwordVerifier!=null){
+				de.setNote(passwordVerifier.help("<BR/>"));
+			}
 			dati.addElement(de);
+			
 		}
 
 		de = new DataElement();
@@ -388,6 +395,8 @@ public class UtentiHelper extends ConsoleHelper {
 		//se e' stato selezionato il link per il cambio password allora mostro i dati
 		if(ServletUtils.isCheckBoxEnabled(changepw)){
 
+			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+			
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
 			de.setType(DataElementType.CRYPT);
@@ -413,6 +422,9 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setSize(this.getSize());
 			de.setValue("");
 			de.setRequired(true);
+			if(passwordVerifier!=null){
+				de.setNote(passwordVerifier.help("<BR/>"));
+			}
 			dati.addElement(de);
 		}
 
@@ -530,6 +542,15 @@ public class UtentiHelper extends ConsoleHelper {
 				this.pd.setMessage("Le password non corrispondono");
 				return false;
 			}
+			
+			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+			if(passwordVerifier!=null){
+				StringBuffer motivazioneErrore = new StringBuffer();
+				if(passwordVerifier.validate(nomesu, pwsu, motivazioneErrore)==false){
+					this.pd.setMessage(motivazioneErrore.toString());
+					return false;
+				}
+			}
 
 			// Almeno un permesso dev'essere selezionato
 			if (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
@@ -619,18 +640,27 @@ public class UtentiHelper extends ConsoleHelper {
 				return false;
 			}
 
+			// Controllo che la vecchia password e la nuova corrispondano
+			if (oldpw.equals(newpw)) {
+				this.pd.setMessage("Le nuova password deve essere differente dalla vecchia");
+				return false;
+			}
+			
 			// Controllo che le password corrispondano
 			if (!newpw.equals(confpw)) {
 				this.pd.setMessage("Le due password non corrispondono!");
 				return false;
 			}
 
-			// La password dev'essere lunga almeno 5 caratteri
-			if (newpw.length() < 5) {
-				this.pd.setMessage("Inserire una password di almeno 5 caratteri");
-				return false;
+			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+			if(passwordVerifier!=null){
+				StringBuffer motivazioneErrore = new StringBuffer();
+				if(passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)==false){
+					this.pd.setMessage(motivazioneErrore.toString());
+					return false;
+				}
 			}
-
+			
 			return true;
 
 		} catch (Exception e) {

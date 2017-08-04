@@ -87,6 +87,8 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
@@ -374,6 +376,33 @@ public class ControlStationCore {
 		return this.showJ2eeOptions;
 	}
 
+	/** Password Verifier */
+	private String passwordVerifierConfiguration = null;
+	public String getPasswordVerifierConfiguration() {
+		return this.passwordVerifierConfiguration;
+	}
+	private PasswordVerifier passwordVerifierEngine = null;
+	private synchronized void initPasswordVerifier() throws UtilsException {
+		if(this.passwordVerifierEngine==null){
+			this.passwordVerifierEngine = new PasswordVerifier(this.passwordVerifierConfiguration); 
+		}
+	}
+	public PasswordVerifier getPasswordVerifier() {
+		if(this.passwordVerifierConfiguration!=null){
+			if(this.passwordVerifierEngine==null){
+				try{
+					this.initPasswordVerifier();
+				}catch(Exception e){
+					log.error(e.getMessage(),e);
+				}
+			}
+			if(this.passwordVerifierEngine!=null && this.passwordVerifierEngine.existsRestriction()){
+				return this.passwordVerifierEngine;
+			}
+		}
+		return null;
+	}
+	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -391,7 +420,7 @@ public class ControlStationCore {
 	public String getIndirizzoGestione() {
 		return this.indirizzoGestione;
 	}
-
+	
 	/** Opzioni di visualizzazione */
 	private boolean showSelectList_PA_ProtocolProperties = true;
 	private boolean showCorrelazioneAsincronaInAccordi = false;
@@ -1226,12 +1255,15 @@ public class ControlStationCore {
 		/** J2EE Ambiente */
 		this.showJ2eeOptions = core.showJ2eeOptions;
 
+		/** Password Verifier */
+		this.passwordVerifierConfiguration = core.passwordVerifierConfiguration;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
 		this.indirizzoPubblico = core.indirizzoPubblico;
 		this.indirizzoGestione = core.indirizzoGestione;
-
+		
 		/** Opzioni di visualizzazione */
 		this.showSelectList_PA_ProtocolProperties = core.showSelectList_PA_ProtocolProperties;
 		this.showCorrelazioneAsincronaInAccordi = core.showCorrelazioneAsincronaInAccordi;
@@ -1476,6 +1508,7 @@ public class ControlStationCore {
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();
+			this.passwordVerifierConfiguration = consoleProperties.getConsolePasswordVerifier();
 			this.showConfigurazioniPersonalizzate = consoleProperties.isConsoleConfigurazioniPersonalizzate();
 			this.showGestioneSoggettiVirtuali = consoleProperties.isConsoleGestioneSoggettiVirtuali();
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
@@ -1501,6 +1534,7 @@ public class ControlStationCore {
 			this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = consoleProperties.isElenchiMenuVisualizzazioneCampiInserimentoStrutturaMessaggiWsdl();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
+			
 			
 			// Gestione pddConsole centralizzata
 			if(this.singlePdD == false){

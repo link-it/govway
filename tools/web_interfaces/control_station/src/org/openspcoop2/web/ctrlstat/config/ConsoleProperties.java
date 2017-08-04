@@ -255,6 +255,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "gestoreConsistenzaDati.forceCheckMapping");
 	}
 	
+	public String getConsolePasswordVerifier() throws UtilsException{
+		return this.readProperty(false, "console.passwordVerifier");
+	}
+	
 	
 	/* ----- Impostazioni grafiche ------- */
 	
