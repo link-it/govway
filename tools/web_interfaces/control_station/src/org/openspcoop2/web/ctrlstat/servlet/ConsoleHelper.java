@@ -1161,7 +1161,7 @@ public class ConsoleHelper {
 						}
 					}
 					if (!pu.isUtenti()){
-						dimensioneEntries++; // change password
+						//dimensioneEntries++; // change password
 					}else {
 						entriesUtenti = getVoceMenuUtenti();
 						dimensioneEntries += entriesUtenti.length;
@@ -1222,9 +1222,9 @@ public class ConsoleHelper {
 
 					//link cambio password
 					if (!pu.isUtenti()) {
-						entries[index][0] = UtentiCostanti.LABEL_UTENTE;
-						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
-						index++;
+//						entries[index][0] = UtentiCostanti.LABEL_UTENTE;
+//						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
+//						index++;
 					}
 
 					// Extended Menu
@@ -1261,7 +1261,7 @@ public class ConsoleHelper {
 						}
 					}
 					if(!pu.isUtenti()){
-						dimensioneEntries++;  // change password
+						//dimensioneEntries++;  // change password
 					}else {
 						entriesUtenti = getVoceMenuUtenti();
 						dimensioneEntries += entriesUtenti.length;
@@ -1312,9 +1312,9 @@ public class ConsoleHelper {
 							}
 						}
 						if (!pu.isUtenti()) {
-							entries[index][0] = UtentiCostanti.LABEL_UTENTE;
-							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
-							index++;
+//							entries[index][0] = UtentiCostanti.LABEL_UTENTE;
+//							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
+//							index++;
 						}
 
 						// Extended Menu
