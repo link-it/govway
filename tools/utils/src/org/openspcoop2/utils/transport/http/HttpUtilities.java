@@ -28,10 +28,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.soap.encoding.soapenc.Base64;
@@ -63,7 +66,80 @@ public class HttpUtilities {
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
-
+	
+	public static List<String> getClientAddressHeaders() throws UtilsException{
+		// X-Forwarded-For: A de facto standard for identifying the originating IP address of a client connecting to a web server through an HTTP proxy or load balancer
+		// Forwarded: Disclose original information of a client connecting to a web server through an HTTP proxy.'
+		List<String> possibiliHeaders = new ArrayList<String>();
+		possibiliHeaders.add("X-Forwarded-For");
+		possibiliHeaders.add("Forwarded-For"); // senza la 'X-' nel caso l'header venga fatto rendere uno standard
+		possibiliHeaders.add("X-Forwarded");
+		possibiliHeaders.add("Forwarded");
+		possibiliHeaders.add("X-Client-IP");
+		possibiliHeaders.add("Client-IP");
+		possibiliHeaders.add("X-Cluster-Client-IP");
+		possibiliHeaders.add("Cluster-Client-IP");
+		return possibiliHeaders;
+	}
+	public static String getClientAddress(HttpServletRequest request) throws UtilsException{
+		try{
+			return getClientAddress(getClientAddressHeaders(), request);
+		}catch(Throwable e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private static String getClientAddress(List<String> headers, HttpServletRequest request) throws UtilsException{
+		if(headers.size()>0){
+			for (String header : headers) {
+				String transportAddr = request.getHeader(header);
+				if(transportAddr!=null){
+					return transportAddr;
+				}
+				transportAddr = request.getHeader(header.toLowerCase());
+				if(transportAddr!=null){
+					return transportAddr;
+				}
+				transportAddr = request.getHeader(header.toUpperCase());
+				if(transportAddr!=null){
+					return transportAddr;
+				}
+			}
+		}
+		return null;
+	}
+	public static String getClientAddress(Properties transportProperties) throws UtilsException{
+		try{
+			return getClientAddress(getClientAddressHeaders(), transportProperties);
+		}catch(Throwable e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private static String getClientAddress(List<String> headers, Properties transportProperties) throws UtilsException{
+		if(headers.size()>0){
+			for (String header : headers) {
+				String transportAddr = transportProperties.getProperty(header);
+				if(transportAddr!=null){
+					return transportAddr;
+				}
+				transportAddr = transportProperties.getProperty(header.toLowerCase());
+				if(transportAddr!=null){
+					return transportAddr;
+				}
+				transportAddr = transportProperties.getProperty(header.toUpperCase());
+				if(transportAddr!=null){
+					return transportAddr;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	public final static String HEADER_X_DOWNLOAD = "application/x-download";
+	public final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
+	public final static String HEADER_ATTACH_FILE = "attachment; filename=";
+	
 	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName) throws UtilsException{
 		
 		// setto content-type e header per gestire il download lato client
