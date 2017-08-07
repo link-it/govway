@@ -1,3 +1,9 @@
+2017-08-07  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-509
+	Aggiunta alle informazioni di integrazione l'informazione sull'identificativo di transazione.
+
 2017-08-04  Andrea Poli <apoli@link.it>
 
 	* [Utils, PddConsole]
