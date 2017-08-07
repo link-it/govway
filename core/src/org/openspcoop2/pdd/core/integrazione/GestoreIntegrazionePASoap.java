@@ -114,6 +114,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 					inRequestPAMessage.getServizio(), 
 					idMessaggio, 
 					servizioApplicativo, correlazioneApplicativa, null,
+					UtilitiesIntegrazione.getIdTransazione(this.getPddContext()),
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione(),  // actor
 					this.openspcoopProperties.getHeaderSoapNameIntegrazione(),  // header name 
 					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(),  // prefix

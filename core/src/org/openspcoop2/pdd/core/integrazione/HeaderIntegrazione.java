@@ -47,10 +47,14 @@ public class HeaderIntegrazione implements java.io.Serializable{
 		
 	/** Identita del servizio applicativo */
 	private String servizioApplicativo;
+
+	/** ID Transazione */
+	private String idTransazione;
 		
 	/** costruttore */
-	public HeaderIntegrazione(){
+	public HeaderIntegrazione(String idTransazione){
 		this.busta = new HeaderIntegrazioneBusta();
+		this.idTransazione = idTransazione;
 	}
 	
 	
@@ -109,4 +113,13 @@ public class HeaderIntegrazione implements java.io.Serializable{
 		this.riferimentoIdApplicativoRichiesta = riferimentoIdApplicativoRichiesta;
 	}
 
+
+	public String getIdTransazione() {
+		return this.idTransazione;
+	}
+
+
+	public void setIdTransazione(String idTransazione) {
+		this.idTransazione = idTransazione;
+	}
 }

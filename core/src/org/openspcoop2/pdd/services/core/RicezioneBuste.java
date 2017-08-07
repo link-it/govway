@@ -1199,7 +1199,7 @@ public class RicezioneBuste {
 				}
 			}
 		}
-		HeaderIntegrazione headerIntegrazioneRichiesta = new HeaderIntegrazione();
+		HeaderIntegrazione headerIntegrazioneRichiesta = new HeaderIntegrazione(idTransazione);
 		InRequestPAMessage inRequestPAMessage = null;
 		if(tipiIntegrazionePA!=null){
 			msgDiag.highDebug("Header integrazione (Impostazione ...)");
@@ -5701,7 +5701,7 @@ public class RicezioneBuste {
 			/* ----- Header Integrazione ------ */
 			if(pa!=null){
 				msgDiag.mediumDebug("Gestione header di integrazione messaggio di risposta...");
-				HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione();
+				HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione(idTransazione);
 				headerIntegrazioneRisposta.setBusta(new HeaderIntegrazioneBusta());
 				headerIntegrazioneRisposta.getBusta().setTipoMittente(bustaRichiesta.getTipoMittente());
 				headerIntegrazioneRisposta.getBusta().setMittente(bustaRichiesta.getMittente());

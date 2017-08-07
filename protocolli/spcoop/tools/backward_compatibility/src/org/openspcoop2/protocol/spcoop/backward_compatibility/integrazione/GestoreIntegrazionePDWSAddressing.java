@@ -157,7 +157,9 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 			){
 				this.utilities.updateHeader(inRequestPDMessage.getMessage().castAsSoap(), 
 					inRequestPDMessage.getSoggettoPropeprietarioPortaDelegata(), idServizio, idMessaggio, 
-					servizioApplicativo, correlazioneApplicativa, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());  // namespace
+					servizioApplicativo, correlazioneApplicativa, 
+					org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione.getIdTransazione(this.getPddContext()),
+					this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());  // namespace
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.updateInRequestHeader(inRequestPDMessage, idServizio, idMessaggio, servizioApplicativo, correlazioneApplicativa);

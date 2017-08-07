@@ -155,6 +155,8 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_COLLABORAZIONE = "idCollaborazione";
     /** Costante che indica il valore dell'header di integrazione: servizioApplicativo*/
     public final static String HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO = "servizioApplicativo";
+    /** Costante che indica il valore dell'header di integrazione: identificativo di transazione*/
+    public final static String HEADER_INTEGRAZIONE_ID_TRANSAZIONE = "idTransazione";
     
     /** Costante che indica il valore dell'header User-Agent*/
     public final static String HEADER_HTTP_USER_AGENT = "User-Agent";

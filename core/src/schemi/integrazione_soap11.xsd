@@ -31,6 +31,8 @@
                         <xsd:attribute name="IdApplicativo" type="xsd:string" use="optional"/>
                         <xsd:attribute name="RiferimentoIDApplicativoRichiesta" type="xsd:string" use="optional"/>
                         <xsd:attribute name="ServizioApplicativo" type="xsd:string" use="optional"/>
+                        <!-- Id Transazione -->
+                        <xsd:attribute name="IdTransazione" type="xsd:string" use="optional"/>
                         <!--Informazioni sulla versione -->
                         <xsd:attribute name="OpenSPCoop2Pdd" type="xsd:string"/>
                         <xsd:attribute name="OpenSPCoop2PddDetails" type="xsd:string"/>

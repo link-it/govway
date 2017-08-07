@@ -1140,7 +1140,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				bustaRichiesta.setID(idMessaggioPreBehaviour);
 			}
 			msgDiag.mediumDebug("Gestione header di integrazione per la richiesta...");
-			HeaderIntegrazione headerIntegrazione = new HeaderIntegrazione();
+			HeaderIntegrazione headerIntegrazione = new HeaderIntegrazione(idTransazione);
 			if(soggettoFruitoreHeaderIntegrazione!=null){
 				headerIntegrazione.getBusta().setTipoMittente(soggettoFruitoreHeaderIntegrazione.getTipo());
 				headerIntegrazione.getBusta().setMittente(soggettoFruitoreHeaderIntegrazione.getNome());
@@ -2540,7 +2540,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						
 						/* ------------  Header integrazione Risposta ------------- */
 						
-						HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione();		
+						HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione(idTransazione);		
 						InResponsePAMessage inResponsePAMessage = new InResponsePAMessage();
 						inResponsePAMessage.setBustaRichiesta(bustaRichiesta);
 						inResponsePAMessage.setMessage(responseMessage);

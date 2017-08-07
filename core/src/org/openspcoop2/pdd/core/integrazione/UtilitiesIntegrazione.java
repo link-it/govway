@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 
@@ -43,6 +44,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.slf4j.Logger;
@@ -157,6 +159,8 @@ public class UtilitiesIntegrazione {
 							integrazione.setRiferimentoIdApplicativoRichiesta(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)))
 							integrazione.setServizioApplicativo(prop.getProperty(key));
+						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE)))
+							integrazione.setIdTransazione(prop.getProperty(key));
 					}
 				}
 			}
@@ -212,6 +216,8 @@ public class UtilitiesIntegrazione {
 							integrazione.setRiferimentoIdApplicativoRichiesta(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)))
 							integrazione.setServizioApplicativo(prop.getProperty(key));
+						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE)))
+							integrazione.setIdTransazione(prop.getProperty(key));
 					}
 				}
 			}
@@ -268,6 +274,8 @@ public class UtilitiesIntegrazione {
 					properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
 				if(integrazione.getServizioApplicativo()!=null)
 					properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
+				if(integrazione.getIdTransazione()!=null)
+					properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE), integrazione.getIdTransazione());
 			}
 			if(properties!=null){
 //				properties.put(CostantiPdD.URL_BASED_PDD,URLEncoder.encode(this.openspcoopProperties.getHttpServer(),"UTF-8"));
@@ -341,6 +349,8 @@ public class UtilitiesIntegrazione {
 					properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
 				if(integrazione.getServizioApplicativo()!=null)
 					properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
+				if(integrazione.getIdTransazione()!=null)
+					properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE), integrazione.getIdTransazione());
 			}
 			if(properties!=null){
 				if(request)
@@ -516,6 +526,13 @@ public class UtilitiesIntegrazione {
 			if(sa!=null && sa.compareTo("")!=0)
 				integrazione.setServizioApplicativo(sa);
 			
+			String idTransazione = null;
+			try{
+				idTransazione = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE));
+			}catch(Exception e){}
+			if(idTransazione!=null && idTransazione.compareTo("")!=0)
+				integrazione.setIdTransazione(idTransazione);
+			
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("UtilitiesIntegrazione, lettura dell'header soap non riuscita: "+e.getMessage(),e);
 		}
@@ -523,24 +540,24 @@ public class UtilitiesIntegrazione {
 
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String servizioApplicativo,
-			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta,
+			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta, String idTransazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
 			Map<String, String> protocolInfos) throws Exception{
 		updateHeader(message, soggettoFruitore, idServizio, idBusta, null, 
-				servizioApplicativo, correlazioneApplicativa, riferimentoCorrelazioneApplicativaRichiesta, 
+				servizioApplicativo, correlazioneApplicativa, riferimentoCorrelazioneApplicativaRichiesta, idTransazione,
 				actorIntegrazione, nomeElemento, prefix, namespace, 
 				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos);
 	}
 	
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String idBustaRisposta,String servizioApplicativo,
-			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta,
+			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta, String idTransazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
 			Map<String, String> protocolInfos) throws Exception{
 		
-		HeaderIntegrazione integrazione = new HeaderIntegrazione();
+		HeaderIntegrazione integrazione = new HeaderIntegrazione(idTransazione);
 		integrazione.setIdApplicativo(correlazioneApplicativa);
 		integrazione.setRiferimentoIdApplicativoRichiesta(riferimentoCorrelazioneApplicativaRichiesta);
 		integrazione.setServizioApplicativo(servizioApplicativo);
@@ -728,6 +745,10 @@ public class UtilitiesIntegrazione {
 			header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
 		}
 		
+		if(integrazione.getIdTransazione()!=null){
+			header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE), integrazione.getIdTransazione());
+		}
+		
 		header.setAttribute(CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_VERSION, this.openspcoopProperties.getHeaderIntegrazioneSOAPPdDVersione());
 		if(this.openspcoopProperties.getHeaderIntegrazioneSOAPPdDDetails()!=null && !"".equals(this.openspcoopProperties.getHeaderIntegrazioneSOAPPdDDetails())){
 			header.setAttribute(CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS, this.openspcoopProperties.getHeaderIntegrazioneSOAPPdDDetails());
@@ -769,6 +790,15 @@ public class UtilitiesIntegrazione {
 			
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("UtilitiesIntegrazione, eliminazione dell'header soap non riuscita: "+e.getMessage(),e);
+		}
+	}
+	
+	public static String getIdTransazione(PdDContext context){
+		if(context!=null){
+			return (String) context.getObject(Costanti.CLUSTER_ID);
+		}
+		else{
+			return null;
 		}
 	}
 }

@@ -113,7 +113,9 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 			
 			this.utilities.updateHeader(soapMsg, 
 					inRequestPDMessage.getSoggettoPropeprietarioPortaDelegata(), idServizio, idMessaggio, 
-					servizioApplicativo, correlazioneApplicativa, this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");  // namespace
+					servizioApplicativo, correlazioneApplicativa, 
+					UtilitiesIntegrazione.getIdTransazione(this.getPddContext()), 
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");  // namespace
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDWSAddressing, "+e.getMessage(),e);
 		}

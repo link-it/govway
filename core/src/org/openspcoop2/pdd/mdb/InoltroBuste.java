@@ -1045,7 +1045,7 @@ public class InoltroBuste extends GenericLib{
 			
 			/* -----  Header Integrazione ------ */
 			msgDiag.mediumDebug("Gestione header di integrazione per la richiesta...");
-			HeaderIntegrazione headerIntegrazione = new HeaderIntegrazione();
+			HeaderIntegrazione headerIntegrazione = new HeaderIntegrazione(idTransazione);
 			headerIntegrazione.getBusta().setTipoMittente(soggettoFruitore.getTipo());
 			headerIntegrazione.getBusta().setMittente(soggettoFruitore.getNome());
 			headerIntegrazione.getBusta().setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
@@ -3038,7 +3038,7 @@ public class InoltroBuste extends GenericLib{
 			
 			/* ------------------------- Gestione Header Integrazione / Correlazione Applicativa  ---------------------------- */
 			
-			HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione();
+			HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione(idTransazione);
 			
 			Utilities.printFreeMemory("InoltroBuste - Gestione Header Integrazione / Correlazione Applicativa... ");
 			

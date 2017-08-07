@@ -159,6 +159,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 				this.utilities.updateHeader(inRequestPDMessage.getMessage().castAsSoap(), 
 						inRequestPDMessage.getSoggettoPropeprietarioPortaDelegata(), idServizio, idMessaggio, 
 						servizioApplicativo, correlazioneApplicativa, null,
+						org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione.getIdTransazione(this.getPddContext()),
 						this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),  // actor
 						this.backwardCompatibilityProperties.getHeaderSoapNameIntegrazione(),  // header name 
 						this.backwardCompatibilityProperties.getHeaderSoapPrefixIntegrazione(),  // prefix

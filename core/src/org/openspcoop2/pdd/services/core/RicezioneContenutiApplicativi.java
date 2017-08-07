@@ -912,7 +912,7 @@ public class RicezioneContenutiApplicativi {
 		if (this.msgContext.getHeaderIntegrazioneRichiesta() != null)
 			headerIntegrazioneRichiesta = this.msgContext.getHeaderIntegrazioneRichiesta(); // prendo quello dell'IntegrationManager
 		else
-			headerIntegrazioneRichiesta = new HeaderIntegrazione();
+			headerIntegrazioneRichiesta = new HeaderIntegrazione(idTransazione);
 		HeaderIntegrazione headerIntegrazioneRisposta = null;
 		String[] tipiIntegrazionePD = null;
 		try {
@@ -1301,7 +1301,7 @@ public class RicezioneContenutiApplicativi {
 			}
 		
 			// aggiorno informazioni dell'header di integrazione della risposta
-			headerIntegrazioneRisposta = new HeaderIntegrazione();
+			headerIntegrazioneRisposta = new HeaderIntegrazione(idTransazione);
 			headerIntegrazioneRisposta.getBusta().setTipoMittente(soggettoFruitore.getTipo());
 			headerIntegrazioneRisposta.getBusta().setMittente(soggettoFruitore.getNome());
 			headerIntegrazioneRisposta.getBusta().setTipoDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo());

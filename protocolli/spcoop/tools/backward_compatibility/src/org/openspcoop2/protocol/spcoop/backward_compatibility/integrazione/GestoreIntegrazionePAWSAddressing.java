@@ -157,7 +157,9 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 				this.utilities.updateHeader(inRequestPAMessage.getMessage().castAsSoap(), 
 						inRequestPAMessage.getSoggettoMittente(),
 						inRequestPAMessage.getServizio(),
-						idMessaggio, servizioApplicativo, correlazioneApplicativa, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+						idMessaggio, servizioApplicativo, correlazioneApplicativa, 
+						org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione.getIdTransazione(this.getPddContext()),
+						this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.updateInRequestHeader(inRequestPAMessage, idMessaggio, servizioApplicativo, correlazioneApplicativa);

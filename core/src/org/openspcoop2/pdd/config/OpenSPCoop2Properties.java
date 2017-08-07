@@ -1710,6 +1710,10 @@ public class OpenSPCoop2Properties {
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO+"'.");
 					return false;
 				}
+				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE) == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE+"'.");
+					return false;
+				}
 				break;
 			}
 			

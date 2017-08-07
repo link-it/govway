@@ -488,18 +488,19 @@ public class UtilitiesIntegrazione {
 
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String servizioApplicativo,
-			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta,
+			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta, String idTransazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace) throws Exception{
 		updateHeader(message, soggettoFruitore, idServizio, idBusta, null, 
-				servizioApplicativo, correlazioneApplicativa, riferimentoCorrelazioneApplicativaRichiesta, actorIntegrazione, nomeElemento, prefix, namespace);
+				servizioApplicativo, correlazioneApplicativa, riferimentoCorrelazioneApplicativaRichiesta, idTransazione,
+				actorIntegrazione, nomeElemento, prefix, namespace);
 	}
 	
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String idBustaRisposta,String servizioApplicativo,
-			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta,
+			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta, String idTransazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace) throws Exception{
 		
-		HeaderIntegrazione integrazione = new HeaderIntegrazione();
+		HeaderIntegrazione integrazione = new HeaderIntegrazione(idTransazione);
 		integrazione.setIdApplicativo(correlazioneApplicativa);
 		integrazione.setRiferimentoIdApplicativoRichiesta(riferimentoCorrelazioneApplicativaRichiesta);
 		integrazione.setServizioApplicativo(servizioApplicativo);

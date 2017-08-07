@@ -438,15 +438,15 @@ public class UtilitiesIntegrazioneWSAddressing {
 	
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String servizioApplicativo,
-			String correlazioneApplicativa,String actorIntegrazione) throws Exception{
+			String correlazioneApplicativa,String idTransazione, String actorIntegrazione) throws Exception{
 		updateHeader(message, soggettoFruitore, idServizio, idBusta, null, 
-				servizioApplicativo, correlazioneApplicativa, actorIntegrazione);
+				servizioApplicativo, correlazioneApplicativa, idTransazione, actorIntegrazione);
 	}
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String idBustaRisposta,String servizioApplicativo,
-			String correlazioneApplicativa,String actorIntegrazione) throws Exception{
+			String correlazioneApplicativa,String idTransazione, String actorIntegrazione) throws Exception{
 		
-		HeaderIntegrazione integrazione = new HeaderIntegrazione();
+		HeaderIntegrazione integrazione = new HeaderIntegrazione(idTransazione);
 		integrazione.setIdApplicativo(correlazioneApplicativa);
 		integrazione.setServizioApplicativo(servizioApplicativo);
 		HeaderIntegrazioneBusta busta = new HeaderIntegrazioneBusta();

@@ -528,7 +528,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 
 
 			//	Costruisco HeaderIntegrazione IntegrationManager
-			HeaderIntegrazione headerIntegrazioneRichiesta = new HeaderIntegrazione();
+			HeaderIntegrazione headerIntegrazioneRichiesta = new HeaderIntegrazione(idTransazione);
 
 
 			// Identificazione Porta Delegata INPUT-BASED

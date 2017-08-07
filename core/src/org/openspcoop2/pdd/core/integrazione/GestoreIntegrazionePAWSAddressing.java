@@ -112,7 +112,9 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 			this.utilities.updateHeader(soapMsg, 
 					inRequestPAMessage.getSoggettoMittente(),
 					inRequestPAMessage.getServizio(),
-					idMessaggio, servizioApplicativo, correlazioneApplicativa, this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
+					idMessaggio, servizioApplicativo, correlazioneApplicativa, 
+					UtilitiesIntegrazione.getIdTransazione(this.getPddContext()),
+					this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
