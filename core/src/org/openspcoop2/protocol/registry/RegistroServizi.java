@@ -1520,7 +1520,8 @@ public class RegistroServizi  {
 		// Raccolta dati
 		if(nomeRuolo == null)
 			throw new DriverRegistroServiziException("[getRuolo]: Parametro non definito");	
-
+		IDRuolo idRuolo = new IDRuolo(nomeRuolo);
+		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
@@ -1543,9 +1544,9 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		Ruolo ruolo = null;
 		if(this.cache!=null){
-			ruolo = (Ruolo) this.getObjectCache(key,"getRuolo",nomeRegistro,null,connectionPdD,nomeRuolo);
+			ruolo = (Ruolo) this.getObjectCache(key,"getRuolo",nomeRegistro,null,connectionPdD,idRuolo);
 		}else{
-			ruolo = (Ruolo) this.getObject("getRuolo",nomeRegistro,null,connectionPdD,nomeRuolo);
+			ruolo = (Ruolo) this.getObject("getRuolo",nomeRegistro,null,connectionPdD,idRuolo);
 		}
 
 		if(ruolo!=null)
