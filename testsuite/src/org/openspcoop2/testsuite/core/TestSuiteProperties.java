@@ -383,6 +383,20 @@ public class TestSuiteProperties {
 		}
 	}
 	
+	/**
+	 * Ritorna il nome della proprieta' nel trasporto contenente l'id di transazione
+	 *
+	 */
+	public String getIDTransazioneTrasporto(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_TRASPORTO).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_TRASPORTO+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	
 	
 	/* ************* URL BASED ************ */
@@ -569,6 +583,20 @@ public class TestSuiteProperties {
 		}
 	}
 	
+	/**
+	 * Ritorna il nome della proprieta' nella url contenente l'id di transazione
+	 *
+	 */
+	public String getIDTransazioneUrlBased(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_URL_BASED).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_URL_BASED+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	
 	
 	/* ************* SOAP ************ */
@@ -750,6 +778,20 @@ public class TestSuiteProperties {
 			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP).trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_APPLICATIVO_SOAP+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	/**
+	 * Ritorna il nome della proprieta' nell'header soap contenente l'id transazione
+	 *
+	 */
+	public String getIDTransazioneSoap(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_SOAP).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ID_TRANSAZIONE_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
 			return null;
 		}

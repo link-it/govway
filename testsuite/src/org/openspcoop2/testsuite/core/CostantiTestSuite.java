@@ -96,6 +96,8 @@ public class CostantiTestSuite {
 	public static final String PROPERTY_SERVIZIO_APPLICATIVO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.integrazione.servizioApplicativo";
 	/** Servizio applicativo */
 	public static final String PROPERTY_ID_APPLICATIVO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.integrazione.idApplicativo";
+	/** Id Transazione */
+	public static final String PROPERTY_ID_TRANSAZIONE_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.integrazione.idTransazione";
 	
 	
 	/** Nome della Proprieta' che contiene l'id della richiesta in corso */
@@ -117,6 +119,8 @@ public class CostantiTestSuite {
 	public static final String PROPERTY_SERVIZIO_APPLICATIVO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.integrazione.servizioApplicativo";
 	/** Servizio applicativo */
 	public static final String PROPERTY_ID_APPLICATIVO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.integrazione.idApplicativo";
+	/** Id Transazione */
+	public static final String PROPERTY_ID_TRANSAZIONE_URL_BASED="org.openspcoop2.testsuite.server.urlBased.integrazione.idTransazione";
 	
 	
 	/** Nome della Proprieta' che contiene l'id della richiesta in corso */
@@ -138,6 +142,8 @@ public class CostantiTestSuite {
 	public static final String PROPERTY_SERVIZIO_APPLICATIVO_SOAP="org.openspcoop2.testsuite.server.soap.integrazione.servizioApplicativo";
 	/** Servizio applicativo */
 	public static final String PROPERTY_ID_APPLICATIVO_SOAP="org.openspcoop2.testsuite.server.soap.integrazione.idApplicativo";
+	/** Id Transazione */
+	public static final String PROPERTY_ID_TRANSAZIONE_SOAP="org.openspcoop2.testsuite.server.soap.integrazione.idTransazione";
 	
 	
 	

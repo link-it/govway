@@ -141,6 +141,7 @@ public class Integrazione {
 		boolean findVersioneServizio = false;
 		boolean findAzione = (azione==null);
 		boolean findID = false;
+		boolean findIDTransazione = false;
 		TestSuiteProperties testsuiteProperties = TestSuiteProperties.getInstance();
 		while(keys.hasMoreElements()){
 			String key = (String) keys.nextElement();
@@ -227,6 +228,12 @@ public class Integrazione {
 				}
 				findID = true;
 			}
+			else if(testsuiteProperties.getIDTransazioneTrasporto().equalsIgnoreCase(key)){
+				if(value==null){
+					throw new Exception("Attributo ["+key+"] con valore null");
+				}
+				findIDTransazione = true;
+			}
 		}
 		if(findTipoMittente==false){
 			throw new Exception("HTTP Header "+testsuiteProperties.getTipoMittenteTrasporto()+" non trovato");
@@ -254,6 +261,9 @@ public class Integrazione {
 		}
 		if(findID==false){
 			throw new Exception("HTTP Header "+testsuiteProperties.getIdMessaggioTrasporto()+" non trovato");
+		}
+		if(findIDTransazione==false){
+			throw new Exception("HTTP Header "+testsuiteProperties.getIDTransazioneTrasporto()+" non trovato");
 		}
 
 		checkHttpRispostaPddVersioneDetails(risposta);
@@ -321,6 +331,7 @@ public class Integrazione {
 		boolean findVersioneServizio = false;
 		boolean findAzione = (azione==null);
 		boolean findID = false;
+		boolean findIDTransazione = false;
 		boolean findProductVersion = false;
 		boolean findProductDetails = false;
 		TestSuiteProperties testsuiteProperties = TestSuiteProperties.getInstance();
@@ -418,6 +429,13 @@ public class Integrazione {
 						}
 						findID = true;
 					}
+					else if(testsuiteProperties.getIDTransazioneSoap().equals(attr.getLocalName())){
+						String v = elem.getAttributeValue(attr.getLocalName());
+						if(v==null){
+							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
+						}
+						findIDTransazione = true;
+					}
 					else if(CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_VERSION.equals(attr.getLocalName())){
 						String v = elem.getAttributeValue(attr.getLocalName());
 						if(v==null){
@@ -471,6 +489,9 @@ public class Integrazione {
 		}
 		if(findID==false){
 			throw new Exception("Integrazione.id non trovata");
+		}
+		if(findIDTransazione==false){
+			throw new Exception("Integrazione.idTransazione non trovata");
 		}
 		if(findProductVersion==false){
 			throw new Exception("Integrazione."+CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_VERSION+" non trovata");

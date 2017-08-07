@@ -183,6 +183,14 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				} 
 			}
 			
+			String idTransazione=request.getHeader(this.testsuiteProperties.getIDTransazioneTrasporto());
+			this.log.debug("trovato nel trasporto: "+idTransazione);
+			if(idTransazione==null){
+				this.log.error("IdTransazione della richiesta non presente nell'header di trasporto");
+				returnSOAPFault(response.getOutputStream(),"Trasporto, IdTransazione non presente");
+				return;
+			} 
+			
 			String xPdD=request.getHeader(CostantiPdD.HEADER_HTTP_X_PDD);
 			this.log.debug("trovato nel trasporto: "+xPdD);
 			if(xPdD==null){
@@ -320,6 +328,19 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				return;
 			}
 			
+			param = request.getParameter(this.testsuiteProperties.getIDTransazioneUrlBased());
+			this.log.debug("trovato nella url: "+param);
+			if(param==null){
+				this.log.error("IdTransazione della richiesta non presente nell'url invocata");
+				returnSOAPFault(response.getOutputStream(),"Url, IdTransazione non presente");
+				return;
+			} 
+			if(param.equals(idTransazione)==false){
+				this.log.error("IdTransazione trovato nel trasporto["+idTransazione+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response.getOutputStream(),"IdTransazione trovato nel trasporto["+idTransazione+"] diverso da quello trovato nella url["+param+"]");
+				return;
+			}
+			
 			String urlPdD=request.getParameter(CostantiPdD.URL_BASED_PDD);
 			this.log.debug("trovato nella url: "+urlPdD);
 			if(urlPdD==null){
@@ -372,6 +393,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			boolean findVersioneServizio = false;
 			boolean findAzione = (idAzione==null);
 			boolean findID = false;
+			boolean findIDTransazione = false;
 			boolean findProductVersion = false;
 			boolean findProductDetails = false;
 			
@@ -487,6 +509,16 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+idTrasporto+"]");
 								}
 								findID = true;
+							}else if(this.testsuiteProperties.getIDTransazioneSoap().equals(attr.getLocalName())){
+								String v = elem.getAttributeValue(attr.getLocalName());
+								this.log.debug("trovato nell'header soap: "+v);
+								if(v==null){
+									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
+								}
+								if(v.equals(idTransazione)==false){
+									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+idTransazione+"]");
+								}
+								findIDTransazione = true;
 							}else if(CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_VERSION.equals(attr.getLocalName())){
 								String v = elem.getAttributeValue(attr.getLocalName());
 								if(v==null){
@@ -617,6 +649,9 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				}
 				if(findID==false){
 					throw new Exception("Integrazione.id non trovata");
+				}
+				if(findIDTransazione==false){
+					throw new Exception("Integrazione.idTransazione non trovata");
 				}
 				if(findProductVersion==false){
 					throw new Exception("Integrazione."+CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_VERSION+" non trovata");
