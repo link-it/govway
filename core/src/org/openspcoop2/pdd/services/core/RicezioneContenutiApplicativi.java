@@ -2915,6 +2915,10 @@ public class RicezioneContenutiApplicativi {
 					}
 					return;
 				}
+				if(localForwardEngine.getRequestMessageAfterProcess()!=null){
+					// Messaggio aggiornato
+					requestMessage = localForwardEngine.getRequestMessageAfterProcess();
+				}
 			} catch (Exception e) {
 				msgDiag.logErroreGenerico(e,"GestioneLocalForward.processRequest");
 				openspcoopstate.releaseResource();

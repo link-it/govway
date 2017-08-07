@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.RequestInfo;
@@ -235,6 +236,11 @@ public class LocalForwardEngine {
 	public OpenSPCoop2Message getResponseMessageError() {
 		return this.responseMessageError;
 	}
+	private OpenSPCoop2Message requestMessageAfterProcess = null;
+	public OpenSPCoop2Message getRequestMessageAfterProcess() {
+		return this.requestMessageAfterProcess;
+	}
+
 	public boolean processRequest(OpenSPCoop2Message requestMessage) throws LocalForwardException{
 		
 		try{
@@ -300,10 +306,11 @@ public class LocalForwardEngine {
 			
 			/* *** MessageSecurity *** */
 			MessageSecurityContext messageSecurityContext = null;
-			if(erroreIntegrazione==null && securityConfig!=null && securityConfig.getFlowParameters()!=null){
-				if(securityConfig.getFlowParameters().size() > 0){
+			if(erroreIntegrazione==null){
+				if(securityConfig!=null && securityConfig.getFlowParameters()!=null &&
+						securityConfig.getFlowParameters().size() > 0){
 					try{
-						this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity (PD) ...");
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PD) della richiesta ...");
 						messageSecurityApply = true;
 						MessageSecurityContextParameters contextParameters = new MessageSecurityContextParameters();
 						contextParameters.setUseActorDefaultIfNotDefined(this.propertiesReader.isGenerazioneActorDefault(this.localForwardParameter.getImplementazionePdDDestinatario()));
@@ -318,16 +325,43 @@ public class LocalForwardEngine {
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setOutgoingProperties(securityConfig.getFlowParameters());
+						
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PD) della richiesta completata con successo");
+						
+						if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+							this.localForwardParameter.getMsgDiag().mediumDebug("Normalize to saajImpl");
+							//System.out.println("InoltroBusteEgov.request.normalize");
+							requestMessage = requestMessage.normalizeToSaajImpl();
+							this.requestMessageAfterProcess = requestMessage; // per aggiornare il messaggio fuori dall'engine
+						}
+						
+						String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
 						if(messageSecurityContext.processOutgoing(requestMessage) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
+							
+							this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "["+codiceErroreCooperazione+"] "+msgErrore );
+							this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInErrore");
+						}
+						else{
+							this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaEffettuato");
 						}
 					}catch(Exception e){
+						
+						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInErrore");
+						this.localForwardParameter.getLog().error("[MessageSecurityRequest]" + e.getMessage(),e);
+						
 						posizione = "MessageSecurityPortaDelegataRequestFlow";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
+				}
+				else{
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaDisabilitato");
 				}
 			}
 			
@@ -450,7 +484,7 @@ public class LocalForwardEngine {
 			if(erroreIntegrazione==null && securityConfig!=null && securityConfig.getFlowParameters()!=null){
 				if(securityConfig.getFlowParameters().size() > 0){
 					try{
-						this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity init context (PA) ...");
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PA) della richiesta ...");
 						
 						if(messageSecurityApply){
 							
@@ -481,6 +515,9 @@ public class LocalForwardEngine {
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setIncomingProperties(securityConfig.getFlowParameters());
+						
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PA) della richiesta completata con successo");
+						
 					}catch(Exception e){
 						posizione = "MessageSecurityPortaApplicativaRequestFlowInitContext";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -508,7 +545,16 @@ public class LocalForwardEngine {
 			List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
 			if(erroreIntegrazione==null && messageSecurityContext!=null){
 				try{
-					this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity (PA) ...");
+					if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+						this.localForwardParameter.getMsgDiag().mediumDebug("Normalize to saajImpl");
+						//System.out.println("RicezioneBuste.request.normalize");
+						requestMessage = requestMessage.normalizeToSaajImpl();
+						this.requestMessageAfterProcess = requestMessage; // per aggiornare il messaggio fuori dall'engine
+					}
+					
+					String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
 					if(messageSecurityContext.processIncoming(requestMessage,this.busta) == false){  
 						if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 							List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
@@ -524,12 +570,27 @@ public class LocalForwardEngine {
 									this.localForwardParameter.getProtocolFactory());
 							eccezioniSicurezza.add(ecc);
 						}
+						Eccezione ecc = eccezioniSicurezza.get(0); // prendo la prima disponibile.
+						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "["+ecc.getCodiceEccezione()+"] "+ecc.getDescrizione(this.localForwardParameter.getProtocolFactory() ));
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInErrore");
+					}
+					else{
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaEffettuato");
 					}										
 				}catch(Exception e){
+					
+					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInErrore");
+					
 					posizione = "MessageSecurityPortaApplicativaRequestFlow";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+				}
+			}
+			else{
+				if(erroreIntegrazione==null){
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaDisabilitato");
 				}
 			}
 			
@@ -656,6 +717,10 @@ public class LocalForwardEngine {
 	public SecurityInfo getSecurityInfoResponse() {
 		return this.securityInfoResponse;
 	}
+	private OpenSPCoop2Message responseMessageAfterProcess = null;
+	public OpenSPCoop2Message getResponseMessageAfterProcess() {
+		return this.responseMessageAfterProcess;
+	}
 	public boolean processResponse(OpenSPCoop2Message responseMessage) throws LocalForwardException{
 		
 		try{
@@ -725,7 +790,7 @@ public class LocalForwardEngine {
 			if(erroreIntegrazione==null && securityConfig!=null && securityConfig.getFlowParameters()!=null){
 				if(securityConfig.getFlowParameters().size() > 0){
 					try{
-						this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity init context (PA-Response) ...");
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PA) della risposta ...");
 						MessageSecurityContextParameters contextParameters = new MessageSecurityContextParameters();
 						contextParameters.setUseActorDefaultIfNotDefined(this.propertiesReader.isGenerazioneActorDefault(this.localForwardParameter.getImplementazionePdDMittente()));
 						contextParameters.setActorDefault(this.propertiesReader.getActorDefault(this.localForwardParameter.getImplementazionePdDMittente()));
@@ -738,6 +803,8 @@ public class LocalForwardEngine {
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setOutgoingProperties(securityConfig.getFlowParameters());
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PA) della risposta completata con successo");
+						
 					}catch(Exception e){
 						posizione = "MessageSecurityPortaApplicativaResponseFlowInitContext";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -764,17 +831,37 @@ public class LocalForwardEngine {
 			/* *** MessageSecurity *** */
 			if(erroreIntegrazione==null && messageSecurityContext!=null){
 				try{
-					this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity (PA-Response) ...");
+					if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+						this.localForwardParameter.getMsgDiag().mediumDebug("Normalize to saajImpl");
+						//System.out.println("InoltroBusteEgov.request.normalize");
+						responseMessage = responseMessage.normalizeToSaajImpl();
+						this.responseMessageAfterProcess = responseMessage; // per aggiornare il messaggio fuori dall'engine
+					}
+					String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
 					messageSecurityApply = true;
 					if(messageSecurityContext.processOutgoing(responseMessage) == false){
 						msgErrore = messageSecurityContext.getMsgErrore();
 						codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
+						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "["+codiceErroreCooperazione+"] "+msgErrore );
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInErrore");
+					}
+					else{
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaEffettuato");
 					}
 				}catch(Exception e){
+					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInErrore");
 					posizione = "MessageSecurityPortaApplicativaResponseFlow";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
+				}
+			}
+			else{
+				if(erroreIntegrazione==null){
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaDisabilitato");
 				}
 			}
 			
@@ -876,10 +963,11 @@ public class LocalForwardEngine {
 			}
 			
 			/* *** MessageSecurity *** */
-			if(erroreIntegrazione==null && securityConfig!=null && securityConfig.getFlowParameters()!=null){
-				if(securityConfig.getFlowParameters().size() > 0){
+			if(erroreIntegrazione==null){
+				if(securityConfig!=null && securityConfig.getFlowParameters()!=null &&
+						securityConfig.getFlowParameters().size() > 0){
 					try{
-						this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity (PD-Response) ...");
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PD) della risposta ...");
 						
 						if(messageSecurityApply){
 							
@@ -909,16 +997,37 @@ public class LocalForwardEngine {
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setIncomingProperties(securityConfig.getFlowParameters());
+						this.localForwardParameter.getMsgDiag().mediumDebug("Inizializzazione contesto di Message Security (PD) della risposta completata con successo");
+						
+						if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+							this.localForwardParameter.getMsgDiag().mediumDebug("Normalize to saajImpl");
+							//System.out.println("InoltroBusteEgov.request.normalize");
+							responseMessage = responseMessage.normalizeToSaajImpl();
+							this.responseMessageAfterProcess = responseMessage; // per aggiornare il messaggio fuori dall'engine
+						}
+						String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
 						if(messageSecurityContext.processIncoming(responseMessage,this.busta) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
+							this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "["+codiceErroreCooperazione+"] "+msgErrore );
+							this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInErrore");
+						}
+						else{
+							this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaEffettuato");
 						}
 					}catch(Exception e){
+						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInErrore");
 						posizione = "MessageSecurityPortaDelegataResponseFlow";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
+				}
+				else{
+					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaDisabilitato");					
 				}
 			}
 			

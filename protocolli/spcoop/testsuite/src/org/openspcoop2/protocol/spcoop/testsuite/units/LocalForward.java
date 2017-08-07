@@ -931,7 +931,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id,"003039", "003040", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1005,7 +1005,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1141,7 +1141,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062","001034","007011","007012","004065","004066","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1214,7 +1214,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_ENCRYPT_DECRYPT_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012", "004065", "004066", "003043", "003044", "001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1305,7 +1305,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1390,7 +1390,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_REQUEST, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_REQUEST, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1536,7 +1536,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012","004065","004066","001005"));
 
 		}catch(Exception e){
 			throw e;
@@ -1620,7 +1620,7 @@ public class LocalForward {
 			Reporter.log("Controllo msg diag local forward solo codici attesi: " +id);
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_RESPONSE, "001039"));
 			Assert.assertTrue(msgDiag.isTracedCodice(this.testWSS_SIGNATURE_VERIFY_RESPONSE, "001057"));
-			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "003039", "003040", "004061", "004062", "001034","007011","007012", "004065", "004066", "003043", "003044", "001005"));
 
 		}catch(Exception e){
 			throw e;

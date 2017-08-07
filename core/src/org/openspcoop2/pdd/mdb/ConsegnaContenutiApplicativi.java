@@ -2750,6 +2750,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"localForwardEngine.processResponse==false");
 								return esito;
 							}
+							if(localForwardEngine.getResponseMessageAfterProcess()!=null){
+								// Messaggio aggiornato
+								responseMessage = localForwardEngine.getResponseMessageAfterProcess();
+							}
 						}catch(Exception e){
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 							msgDiag.logPersonalizzato("localForwardProcessResponse");
