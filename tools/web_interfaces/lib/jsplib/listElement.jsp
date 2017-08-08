@@ -93,7 +93,7 @@ var pageSize = <%= pd.getPageSize() %>;
 var nr = 0;
 
 function checkAll(){
-	if(n > 1){
+	if(n > 0){
 		var chkAll = $("#chkAll:checked").length;
 		
 		if(chkAll > 0) {

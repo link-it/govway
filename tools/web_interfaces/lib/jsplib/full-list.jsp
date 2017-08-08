@@ -229,7 +229,7 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 					
 						<tr class="tableHeader">
 							<%
-							if (pd.getSelect()) {
+							if (v.size()> 0 && pd.getSelect()) {
 							  %>
 							  <td style="width:30px;">
 							  	<div align="center">
@@ -561,7 +561,7 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 									}
 					
 									//Bottone di Remove
-									if (pd.getRemoveButton()) {
+									if (v.size() > 0 && pd.getRemoveButton()) {
 									  %><input id='rem_btn' type="button" value='Rimuovi Selezionati' class="negative" /><%
 									}
 									
