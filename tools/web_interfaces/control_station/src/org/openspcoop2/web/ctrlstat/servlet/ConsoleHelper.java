@@ -2678,12 +2678,15 @@ public class ConsoleHelper {
 
 	
 	public Vector<DataElement> addRuoliToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
-			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili) throws DriverRegistroServiziException {
+			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, 
+			boolean addTitoloSezione) throws DriverRegistroServiziException {
 		return this.addRuoliToDati(tipoOp, dati, enableUpdate, filtroRuoli, nome, ruoliGiaConfigurati, 
-				addSelezioneVuota, addMsgServiziApplicativoNonDisponibili, CostantiControlStation.LABEL_PARAMETRO_RUOLO);
+				addSelezioneVuota, addMsgServiziApplicativoNonDisponibili, CostantiControlStation.LABEL_PARAMETRO_RUOLO, 
+				addTitoloSezione);
 	}
 	public Vector<DataElement> addRuoliToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
-			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, String labelParametro) throws DriverRegistroServiziException {
+			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, String labelParametro,
+			boolean addTitoloSezione) throws DriverRegistroServiziException {
 
 		List<String> allRuoli = this.confCore.getAllRuoli(filtroRuoli);
 		List<String> ruoliDaFarScegliere = new ArrayList<>();
@@ -2701,10 +2704,12 @@ public class ConsoleHelper {
 		// Nome
 		if(ruoliDaFarScegliere.size()>0){
 			
-			DataElement de = new DataElement();
-			de.setLabel(RuoliCostanti.LABEL_RUOLO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			if(addTitoloSezione){
+				DataElement de = new DataElement();
+				de.setLabel(RuoliCostanti.LABEL_RUOLO);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
 			
 			List<String> ruoli = new ArrayList<>();
 			if(addSelezioneVuota){
@@ -2712,7 +2717,7 @@ public class ConsoleHelper {
 			}
 			ruoli.addAll(ruoliDaFarScegliere);
 			
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setLabel(labelParametro);
 			de.setValue(nome);
 			if (tipoOp.equals(TipoOperazione.ADD) || enableUpdate) {
@@ -2835,7 +2840,8 @@ public class ConsoleHelper {
 			String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
-			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata) throws Exception{
+			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata,
+			boolean addTitoloSezione) throws Exception{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SUBTITLE);
@@ -3026,7 +3032,7 @@ public class ConsoleHelper {
 						filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
 					}
 					this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
-							AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO);
+							AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO, addTitoloSezione);
 				}
 			}
 			

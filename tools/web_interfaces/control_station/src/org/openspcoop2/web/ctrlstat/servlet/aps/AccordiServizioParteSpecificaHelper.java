@@ -2713,7 +2713,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					erogazioneAutorizzazioneAutenticati, null, 0, null, null,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
-					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false);
+					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
 			
 		}
 
@@ -3650,7 +3650,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 						fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
 						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
-						false, true, contaListe, true);
+						false, true, contaListe, true, false);
 	
 			}
 

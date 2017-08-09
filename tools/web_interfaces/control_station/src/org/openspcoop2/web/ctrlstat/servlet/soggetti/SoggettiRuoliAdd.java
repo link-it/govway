@@ -123,7 +123,7 @@ public final class SoggettiRuoliAdd extends Action {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
-				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true);
+				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true);
 				
 				pd.setDati(dati);
 
@@ -151,7 +151,7 @@ public final class SoggettiRuoliAdd extends Action {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
-				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true);
+				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true);
 
 				pd.setDati(dati);
 

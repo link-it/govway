@@ -1077,7 +1077,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 				autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 				autorizzazioneRuoliTipologia, ruoloMatch,
-				confPers, isSupportatoAutenticazioneSoggetti, contaListe, false);
+				confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false);
 		
 		this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		

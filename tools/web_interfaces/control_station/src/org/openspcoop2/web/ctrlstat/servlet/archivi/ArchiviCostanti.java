@@ -346,7 +346,7 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT = "AccordoServizioParteComune/ServizioComposto";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT = "AccordoCooperazione";
 	
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE = "Includi tutti gli elementi riferiti";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE = "Includi gli elementi riferiti";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SEZIONE = "Configurazione 'Cascade'";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "Tipologia di salvataggio";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "Porte di Dominio";

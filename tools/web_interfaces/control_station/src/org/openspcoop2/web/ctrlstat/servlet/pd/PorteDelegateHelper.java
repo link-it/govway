@@ -747,7 +747,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
 				autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
 				autorizzazioneRuoliTipologia, ruoloMatch,
-				confPers, isSupportatoAutenticazioneSoggetti, contaListe, true);
+				confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false);
 		
 		this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		
