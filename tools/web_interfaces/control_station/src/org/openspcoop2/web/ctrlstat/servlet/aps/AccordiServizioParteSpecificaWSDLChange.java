@@ -654,7 +654,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
-			dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString, soggettiList,
+			dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, null, null, 
+					provider, provString, soggettiList,
 					soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru,
 					TipoOperazione.CHANGE, this.id, tipiServizi, profilo, portType, ptList,
 					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),

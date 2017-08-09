@@ -539,6 +539,18 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			}
 
+			// Fix per bug che accadeva in modalita' standard quando si seleziona un servizio di un accordo operativo, poi si cambia idea e si seleziona un accordo bozza.
+			// lo stato del package rimaneva operativo.
+			if(this.statoPackage!=null && InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())){
+				if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
+					if(StatiAccordo.operativo.toString().equals(this.statoPackage) || StatiAccordo.finale.toString().equals(this.statoPackage)){
+						if(as!=null && as.getStatoPackage().equals(StatiAccordo.bozza.toString()) ){
+							this.statoPackage = StatiAccordo.bozza.toString(); 
+						}
+					}					
+				}
+			}
+			
 
 			//String profiloValue = profiloSoggettoErogatore;
 			//if(this.profilo!=null && !"".equals(this.profilo) && !"-".equals(this.profilo)){
@@ -880,7 +892,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAps);
 
-				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, this.provider, "", 
+				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio,  null, null, 
+						this.provider, "", 
 						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
 						this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
@@ -1015,7 +1028,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, this.provider, "", 
+				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
+						this.provider, "", 
 						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel,
 						this.servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
@@ -1161,7 +1175,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, this.provider, "", 
+					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
+							this.provider, "", 
 							soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
 							this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,

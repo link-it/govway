@@ -2126,7 +2126,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	
 
-	public Vector<DataElement> addServiziToDati(Vector<DataElement> dati, String nomeservizio, String tiposervizio,
+	public Vector<DataElement> addServiziToDati(Vector<DataElement> dati, String nomeServizio, String tipoServizio, String oldNomeServizio, String oldTipoServizio,
 			String provider, String provString, String[] soggettiList, String[] soggettiListLabel,
 			String accordo, String[] accordiList, String[] accordiListLabel, String servcorr, BinaryParameter wsdlimpler,
 			BinaryParameter wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
@@ -2138,6 +2138,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale,String erogazioneAutorizzazione, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch) throws Exception{
 
+		String tipoServizioEffettivo = oldTipoServizio!=null ? oldTipoServizio : tipoServizio; 
+		String nomeServizioEffettivo = oldTipoServizio!=null ? oldNomeServizio : nomeServizio; 
+		
 		String[] tipiLabel = new String[tipi.size()];
 		for (int i = 0; i < tipi.size(); i++) {
 			String nomeTipo = tipi.get(i);
@@ -2380,14 +2383,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO  );
 			de.setValues(tipiLabel);
-			de.setSelected(tiposervizio);
+			de.setSelected(tipoServizio);
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
 			de.setSize(this.getSize());
 			dati.addElement(de);
 		}else{
 			de = new DataElement();
-			de.setValue(tiposervizio);
+			de.setValue(tipoServizio);
 			de.setType(DataElementType.TEXT);
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
@@ -2398,10 +2401,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		if (!isModalitaAvanzata) {
 			de = new DataElement();
-			if (nomeservizio == null) {
+			if (nomeServizio == null) {
 				de.setValue("");
 			} else {
-				de.setValue(nomeservizio);
+				de.setValue(nomeServizio);
 			}
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO  );
@@ -2409,10 +2412,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		} else {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
-			if (nomeservizio == null) {
+			if (nomeServizio == null) {
 				de.setValue("");
 			} else {
-				de.setValue(nomeservizio);
+				de.setValue(nomeServizio);
 			}
 			if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
 				de.setType(DataElementType.TEXT_EDIT);
@@ -2597,8 +2600,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setType(DataElementType.LINK);
 
 						Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatore + "");
-						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio);
-						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio);
+						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo);
+						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo);
 
 						de.setUrl(
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
@@ -2643,8 +2646,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setType(DataElementType.LINK);
 
 						Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatore + "");
-						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio);
-						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio);
+						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo);
+						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo);
 
 						de.setUrl(
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
@@ -2853,7 +2856,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			IDPortaApplicativa idPA = null;
 			String [] tmp = provString.split("/");
 			Integer versioneInt = Integer.parseInt(versione);
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, 
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizioEffettivo, nomeServizioEffettivo, 
 					tmp[0], tmp[1], versioneInt); 
 			if(isModalitaAvanzata==false){
 				idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociata(idServizio);
@@ -2878,11 +2881,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio),
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio));
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo),
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo));
 				if(contaListe){
 					try{
-						int num = this.apsCore.serviziPorteAppList(tiposervizio,nomeservizio,versioneInt,Long.parseLong(id),idSoggettoErogatore, new Search(true)).size();
+						int num = this.apsCore.serviziPorteAppList(tipoServizioEffettivo,nomeServizioEffettivo,versioneInt,Long.parseLong(id),idSoggettoErogatore, new Search(true)).size();
 						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, (long) num);
 					}catch(Exception e){
 						this.log.error("Calcolo numero pa non riuscito",e);
@@ -2919,8 +2922,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio)
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo),
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo)
 					);
 			if(contaListe){
 				try{

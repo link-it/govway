@@ -813,7 +813,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
-					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString,
+					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio,
+							provider, provString,
 							soggettiList, soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
@@ -928,7 +929,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
-				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString, soggettiList, 
+				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
+						provider, provString, soggettiList, 
 						soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
@@ -1162,7 +1164,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
-					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString, soggettiList,
+					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
+							provider, provString, soggettiList,
 							soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,

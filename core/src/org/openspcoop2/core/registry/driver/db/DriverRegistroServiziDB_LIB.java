@@ -47,6 +47,7 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -1944,9 +1945,10 @@ public class DriverRegistroServiziDB_LIB {
 				List<Long> idFruitoriEsistenti = new ArrayList<>();
 				for (int i = 0; i < sizeFruitori; i++) {
 					fruitore = asps.getFruitore(i);
-					
-					long idFruizione = DBUtils.getIdFruizioneServizio(IDServizioFactory.getInstance().getIDServizioFromValues(oldTipoServizio, oldNomeServizio, 
-							new IDSoggetto(oldTipoSoggetto, oldNomeSoggetto), oldVersioneServizio), 
+					// i dati del servizio sono gia' stati modificati, devo usare i dati nuovi
+					IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, 
+											new IDSoggetto(tipoProprietario, nomeProprietario), versioneServizio);
+					long idFruizione = DBUtils.getIdFruizioneServizio(idS, 
 							new IDSoggetto(fruitore.getTipo(), fruitore.getNome()), con, tipoDatabase);
 					int typeFruitore = 1; // create
 					if(idFruizione>0){

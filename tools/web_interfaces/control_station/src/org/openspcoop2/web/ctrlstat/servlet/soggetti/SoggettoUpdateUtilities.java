@@ -609,15 +609,13 @@ public class SoggettoUpdateUtilities {
 						}
 						// new locationSuffix
 						String newLocationSuffix = "/" + this.tipoprov + this.nomeprov + "/" + asps.getTipo() + asps.getNome() + "/" + asps.getVersione().intValue();
-						String newLocationPrefix = "";
-						if(fruitore.getTipo().equals(this.oldtipoprov))
-							newLocationPrefix = newLocationPrefix + this.tipoprov;
-						else
-							newLocationPrefix = newLocationPrefix + fruitore.getTipo();
-						if(fruitore.getNome().equals(this.oldnomeprov))
-							newLocationPrefix = newLocationPrefix + this.nomeprov;
-						else
-							newLocationPrefix = newLocationPrefix + fruitore.getNome();
+						String newLocationPrefix = null;
+						if(fruitore.getTipo().equals(this.oldtipoprov) && fruitore.getNome().equals(this.oldnomeprov)){
+							newLocationPrefix = this.tipoprov + this.nomeprov;
+						}
+						else{
+							newLocationPrefix = fruitore.getTipo() + fruitore.getNome();
+						}
 						String newLocation = newLocationPrefix + newLocationSuffix;
 
 						if(portaDelegata.getOldIDPortaDelegataForUpdate()==null){
