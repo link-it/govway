@@ -547,12 +547,14 @@ public class UtentiHelper extends ConsoleHelper {
 				return false;
 			}
 			
-			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
-			if(passwordVerifier!=null){
-				StringBuffer motivazioneErrore = new StringBuffer();
-				if(passwordVerifier.validate(nomesu, pwsu, motivazioneErrore)==false){
-					this.pd.setMessage(motivazioneErrore.toString());
-					return false;
+			if (checkPassword){
+				PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
+				if(passwordVerifier!=null){
+					StringBuffer motivazioneErrore = new StringBuffer();
+					if(passwordVerifier.validate(nomesu, pwsu, motivazioneErrore)==false){
+						this.pd.setMessage(motivazioneErrore.toString());
+						return false;
+					}
 				}
 			}
 
