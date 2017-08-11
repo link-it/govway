@@ -1476,6 +1476,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		if(showName){
+			
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			de.setValue(nomeservizioApplicativo);
