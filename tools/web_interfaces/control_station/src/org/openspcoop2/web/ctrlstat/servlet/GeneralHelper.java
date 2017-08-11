@@ -164,7 +164,7 @@ public class GeneralHelper {
 				InterfaceType tipoInterfaccia = u.getInterfaceType();
 				if(tipoInterfaccia.equals(InterfaceType.STANDARD)){
 					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
-					glUtente.setIcon("");
+					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_MODALITA_STANDARD);
 					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
 							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),

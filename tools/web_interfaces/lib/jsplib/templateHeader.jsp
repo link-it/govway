@@ -103,6 +103,10 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 																itemClass ="menu-item-with-icon";
 															}
 															
+															if(l.getUrl().equals("")){
+																itemClass += " menu-no-pointer";
+															}
+															
 															if (!l.getLabel().equals("")) {							
 												  				%>
 												    			<div class="<%=itemClass %>">

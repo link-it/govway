@@ -76,7 +76,9 @@ public class LoginCostanti {
 	/* LABEL MENU' AZIONI UTENTE */
 	
 	public final static String LABEL_MENU_UTENTE_MODALITA_AVANZATA = "Modalit&agrave; avanzata";
-	public final static String ICONA_MENU_UTENTE_MODALITA_AVANZATA = "check-white";
+	public final static String LABEL_MENU_UTENTE_MODALITA_STANDARD = "Modalit&agrave; standard";
+	public final static String ICONA_MENU_UTENTE_MODALITA_AVANZATA = "checkbox-checked-white";
+	public final static String ICONA_MENU_UTENTE_MODALITA_STANDARD = "checkbox-unchecked-white";
 	public final static String LABEL_MENU_UTENTE_INFORMAZIONI = "Informazioni";
 	public final static String LABEL_MENU_UTENTE_PROFILO_UTENTE = "Profilo Utente";
 	public final static String LABEL_MENU_UTENTE_LOGOUT = "Logout";

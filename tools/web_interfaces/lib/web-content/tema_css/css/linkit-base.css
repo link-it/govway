@@ -639,21 +639,30 @@ span.nomeUtenteImg {
 #menuUtente_menu {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
-	min-width: 140px;
+	min-width: 154px;
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
 	top: 20px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
 } 
 
+.menu-separator {
+	border-bottom: 1px solid ${page.header.border.bottom.color};
+}
+
+.menu-no-pointer {
+	cursor: default;
+}
+
 .menu-item {
-	color: ${page.header.text.color};
-	padding: 5px 0px 5px 12px; 
+	color: #ffffff;
+	padding: 6px 0px 6px 22px; 
 }
 
 .menu-item-with-icon {
 	color: ${page.header.text.color};
-	padding: 5px 0px 5px 4px; 
+	padding: 6px 0px 6px 6px; 
 }
 
 span.item-label {
@@ -672,9 +681,10 @@ span.item-label a:hover{
 
 span.item-label-with-icon {
 	padding: 12px 12px 12px 4px;
+	font-size: 13px;
 }
 
-span.item-label-with-icon a{
+span.item-label-with-icon a, span.item-label-with-icon span{
 	font-size: 13px;
 }
 
@@ -688,13 +698,31 @@ span.item-icon {
 	margin: 0px;
 }
 
+.icon-checkbox-checked-white{
+	background-image: url(../images/tema_link/checkbox_checked_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+    height: 16px;
+    padding: 0px 12px;
+}
+
+.icon-checkbox-unchecked-white{
+	background-image: url(../images/tema_link/checkbox_unchecked_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+    height: 16px;
+    padding: 0px 12px;
+}
+
 .icon-check-white{
 	background-image: url(../images/tema_link/check_white.png) ! important;
 	background-repeat: no-repeat;
 	background-position: center center;
 	width: 16px;
     height: 16px;
-    padding: 0px 8px;
+    padding: 0px 12px;
 }
 
 .icon-up-white{
@@ -703,7 +731,7 @@ span.item-icon {
 	background-position: center center;
 	width: 16px;
     height: 16px;
-    padding: 0px 8px;
+    padding: 0px 12px;
 }
 
 .icon-down-white{
@@ -712,7 +740,7 @@ span.item-icon {
 	background-position: center center;
 	width: 16px;
     height: 16px;
-    padding: 0px 8px;
+    padding: 0px 12px;
 }
 
 /* form */
