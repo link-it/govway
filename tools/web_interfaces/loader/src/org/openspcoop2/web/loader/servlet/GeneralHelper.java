@@ -26,6 +26,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -113,7 +114,7 @@ public class GeneralHelper {
 		GeneralData gd = new GeneralData(Costanti.LABEL_LINKIT_WEB);
 		gd.setProduct(this.loaderCore.getLoaderNomeSintesi());
 		gd.setLanguage(this.loaderCore.getLoaderLanguage());
-		gd.setTitle(this.loaderCore.getLoaderNomeEsteso(false));
+		gd.setTitle(StringEscapeUtils.escapeHtml(this.loaderCore.getLoaderNomeEsteso(false)));
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		gd.setLogoHeaderImage(this.loaderCore.getLogoHeaderImage());
