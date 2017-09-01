@@ -51,6 +51,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
+import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -79,6 +80,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -499,6 +501,19 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 						getErrore432_MessaggioRichiestaMalformato(tParsing),tParsing,null);
 			}
+			else if (e instanceof HandlerException) {
+				logCore.error("ErroreGenerale (HandlerException)",e);
+				HandlerException he = (HandlerException) e;
+				if(he.isEmettiDiagnostico()) {
+					msgDiag.logErroreGenerico(e, "Generale(richiesta-handler)");
+				}
+				ErroreIntegrazione errore = he.convertToErroreIntegrazione();
+				if(errore==null) {
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Generale(richiesta)");
+				}
+				responseMessage = this.generatoreErrore.build(IntegrationError.BAD_REQUEST,errore,e,null);
+				he.customized(responseMessage);
+			}
 			else{
 				logCore.error("ErroreGenerale",e);
 				msgDiag.logErroreGenerico(e, "Generale(richiesta)");
@@ -601,7 +616,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 	    			value = context.getHeaderIntegrazioneRisposta().getProperty(key);
 	    			res.setHeader(key,value);
 	    		}catch(Exception e){
-	    			logCore.error("Request.setHeader("+key+","+value+") error: "+e.getMessage(),e);
+	    			logCore.error("Response.setHeader("+key+","+value+") error: "+e.getMessage(),e);
 	    		}
 	    	}	
 		}
@@ -670,8 +685,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		long lengthOutResponse = -1;
 		boolean erroreConnessioneClient = false;
 		try{
-			if(responseMessage!=null){
-				
+			if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && (responseMessage.getForcedResponse()==null)){
+					
 				// force response code
 				boolean forced = false;
 				if(responseMessage.getForcedResponseCode()!=null){
@@ -740,9 +755,67 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					res.sendResponse(risposta);
 				}
 
-			}else{
+			}
+			else if(responseMessage!=null && responseMessage.getForcedResponse()!=null) {
+				byte[]response = responseMessage.getForcedResponse().getContent();
+				if(response==null) {
+					throw new Exception("Trovata configurazione 'forcedResponse' senza una vera risposta");
+				}
+				lengthOutResponse = response.length;
+			
+				if(response.length<1024) {
+					// Se il messaggio non è troppo grande lo aggiungo al diagnostico
+					try {
+						descrizioneSoapFault = "("+new String(response)+")";
+					}catch(Throwable t) {
+						descrizioneSoapFault = "";
+					}
+				}
+				
+				if(responseMessage.getForcedResponse().getHeaders()!=null &&
+						responseMessage.getForcedResponse().getHeaders().size()>0) {
+					java.util.Enumeration<?> en = responseMessage.getForcedResponse().getHeaders().keys();
+			    	while(en.hasMoreElements()){
+			    		String key = (String) en.nextElement();
+			    		String value = null;
+			    		try{
+			    			value = responseMessage.getForcedResponse().getHeaders().getProperty(key);
+			    			res.setHeader(key,value);
+			    		}catch(Exception e){
+			    			logCore.error("Response(Forced).setHeader("+key+","+value+") error: "+e.getMessage(),e);
+			    		}
+			    	}	
+				}
+				
+				res.setContentType(responseMessage.getForcedResponse().getContentType());
+				
+				if(responseMessage.getForcedResponse().getResponseCode()!=null) {
+					try{
+						statoServletResponse = Integer.parseInt(responseMessage.getForcedResponse().getResponseCode());
+					}catch(Exception e){}
+				}
+				else if(responseMessage!=null && responseMessage.getForcedResponseCode()!=null) {
+					try{
+						statoServletResponse = Integer.parseInt(responseMessage.getForcedResponseCode());
+					}catch(Exception e){}
+				}
+				res.setStatus(statoServletResponse);
+				
+				res.sendResponse(response);
+				
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
+			}			
+			else{
 				// httpstatus
-				statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
+				if(responseMessage!=null && responseMessage.getForcedResponseCode()!=null) {
+					try{
+						statoServletResponse = Integer.parseInt(responseMessage.getForcedResponseCode());
+					}catch(Exception e){}
+				}
+				else {
+					statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
+				}
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
@@ -991,10 +1064,15 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					postOutResponseContext.setInputRequestMessageSize(req.getContentLength()+0l);
 				}
 				
-				if(erroreConsegnaRisposta==null && responseMessage!=null){
+				if(erroreConsegnaRisposta==null && responseMessage!=null  && !responseMessage.isForcedEmptyResponse() && responseMessage.getForcedResponse()==null){
 					postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
 					postOutResponseContext.setOutputResponseMessageSize(lengthOutResponse); // sbustata!
 					postOutResponseContext.setMessaggio(responseMessage);
+				}
+				else if(responseMessage!=null && responseMessage.getForcedResponse()!=null &&
+						responseMessage.getForcedResponse().getContent()!=null) {
+					postOutResponseContext.setInputResponseMessageSize(responseMessage.getIncomingMessageContentLength());
+					postOutResponseContext.setOutputResponseMessageSize((long) responseMessage.getForcedResponse().getContent().length);
 				}
 								
 			}catch(Exception e){

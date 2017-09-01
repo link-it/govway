@@ -71,10 +71,18 @@ public interface OpenSPCoop2Message {
 	public TransportRequestContext getTransportRequestContext();
 	public void setTransportResponseContext(TransportResponseContext transportResponseContext);
 	public TransportResponseContext getTransportResponseContext();
-	public void setForcedResponseCode(String code);
-	public String getForcedResponseCode();
 	public OpenSPCoop2MessageProperties getForwardTransportHeader(List<String> whiteListHeader) throws MessageException;
 	public OpenSPCoop2MessageProperties getForwardUrlProperties() throws MessageException;
+	
+		
+	/* Forced Response */
+	
+	public void setForcedResponseCode(String code);
+	public String getForcedResponseCode();
+	public void forceEmptyResponse();
+	public boolean isForcedEmptyResponse();
+	public void forceResponse(ForcedResponseMessage msg);
+	public ForcedResponseMessage getForcedResponse();
 	
 	
 	/* Context */

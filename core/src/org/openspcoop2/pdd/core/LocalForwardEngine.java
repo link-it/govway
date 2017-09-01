@@ -48,6 +48,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.mdb.Imbustamento;
@@ -1116,6 +1117,10 @@ public class LocalForwardEngine {
 		
 			OpenSPCoop2Message responseMessageError = 
 					this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,errore,eErrore,parseException);
+			if(eErrore instanceof HandlerException){
+				HandlerException he = (HandlerException) eErrore;
+				he.customized(responseMessageError);
+			}
 			this.sendErrore(responseMessageError);
 			
 		}catch(Exception e){

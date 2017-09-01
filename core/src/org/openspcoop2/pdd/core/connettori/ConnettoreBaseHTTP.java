@@ -30,6 +30,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * ConnettoreBaseHTTP
@@ -100,7 +101,12 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		 * Se il messaggio e' un html di errore me ne esco 
 		 */			
 		if(this.codice>=400 && this.tipoRisposta!=null && this.tipoRisposta.contains(HttpConstants.CONTENT_TYPE_HTML)){
-			String tipoLetturaRisposta = "("+this.codice+") " + this.resultHTTPMessage ;
+			String tmpResultHTTPMessage=this.resultHTTPMessage;
+			if(tmpResultHTTPMessage==null) {
+				// provo a tradurlo
+				tmpResultHTTPMessage = HttpUtilities.getHttpReason(this.codice);
+			}
+			String tipoLetturaRisposta = "("+this.codice+") " +  tmpResultHTTPMessage;
 			
 			// Registro HTML ricevuto.
 			String htmlRicevuto = null;

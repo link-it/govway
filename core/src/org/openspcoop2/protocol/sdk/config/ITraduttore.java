@@ -120,6 +120,15 @@ public interface ITraduttore extends IComponentFactory {
 	public String toString(CodiceErroreIntegrazione cod,String prefix, boolean isGenericCodeFor5XX);
 	
 	/**
+	 * Traduce l'errore in un formato conforme alle specifiche del protocollo
+	 * @param errore l'errore di integrazione
+	 * @param prefix Il prefisso richiesto dal servizio applicativo
+	 * @param isGenericCodeFor5XX indicazione se l'errore 5XX debba essere mascherato con un 500
+	 * @return Stringa che rappresenta l'errore nel protocollo in uso
+	 */
+	public String toCodiceErroreIntegrazioneAsString(ErroreIntegrazione errore,String prefix, boolean isGenericCodeFor5XX);
+	
+	/**
 	 * Fornisce la stringa di descrizione errore prevista in caso di errore di integrazione per il protocollo in uso
 	 * @param errore Errore integrazione
 	 * @return Messaggio della descrizione di errore previsto dalla specifica in uso

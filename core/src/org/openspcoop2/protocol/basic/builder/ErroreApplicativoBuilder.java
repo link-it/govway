@@ -429,7 +429,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				fruitore = eccezioneIntegrazione.getMittente();
 				servizio = eccezioneIntegrazione.getServizio();
 				servizioApplicativo = eccezioneIntegrazione.getServizioApplicativo();
-				codiceEccezione = this.traduttore.toString(eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore(),
+				codiceEccezione = this.traduttore.toCodiceErroreIntegrazioneAsString(eccezioneIntegrazione.getErroreIntegrazione(),
 						eccezioneIntegrazione.getProprieta().getFaultPrefixCode(),eccezioneIntegrazione.getProprieta().isFaultAsGenericCode());
 				codiceEccezioneOpenSPCoop = eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore().getCodice();
 				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);
@@ -605,7 +605,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					}
 					else{
 					
-						codiceEccezione = this.traduttore.toString(eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore(),
+						codiceEccezione = this.traduttore.toCodiceErroreIntegrazioneAsString(eccezioneIntegrazione.getErroreIntegrazione(),
 								proprieta.getFaultPrefixCode(),proprieta.isFaultAsGenericCode());
 						posizioneEccezione = proprieta.transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);
 					

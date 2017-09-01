@@ -38,7 +38,6 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
-import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
@@ -83,21 +82,39 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 
 
 
-	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreIntegrazione codErrore,String msgErrore){
+//	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione codErrore,String msgErrore){
+//		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
+//				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
+//				false,msgErrore, null, false, false);
+//	}
+//	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione codErrore,String msgErrore,
+//			Exception eProcessamento){
+//		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
+//				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
+//				false,msgErrore, eProcessamento, false, false);
+//	}
+//	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione codErrore,String msgErrore,
+//			Exception eProcessamento,boolean generaInformazioniGeneriche){
+//		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
+//				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
+//				false,msgErrore, eProcessamento, true, generaInformazioniGeneriche);
+//	}
+	
+	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore,String msgErrore){
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
-				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
+				this.traduttore.toCodiceErroreIntegrazioneAsString(errore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
 				false,msgErrore, null, false, false);
 	}
-	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreIntegrazione codErrore,String msgErrore,
+	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore,String msgErrore,
 			Exception eProcessamento){
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
-				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
+				this.traduttore.toCodiceErroreIntegrazioneAsString(errore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
 				false,msgErrore, eProcessamento, false, false);
 	}
-	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreIntegrazione codErrore,String msgErrore,
+	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,ErroreIntegrazione errore,String msgErrore,
 			Exception eProcessamento,boolean generaInformazioniGeneriche){
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
-				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
+				this.traduttore.toCodiceErroreIntegrazioneAsString(errore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
 				false,msgErrore, eProcessamento, true, generaInformazioniGeneriche);
 	}
 

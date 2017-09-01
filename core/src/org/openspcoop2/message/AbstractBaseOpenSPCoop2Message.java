@@ -49,10 +49,14 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	/* Trasporto */	
 	public TransportRequestContext transportRequestContext;
 	public TransportResponseContext transportResponseContext;	
-	public String forcedResponseCode;
 	public OpenSPCoop2MessageProperties forwardTransportHeader = new OpenSPCoop2MessageProperties();
 	public OpenSPCoop2MessageProperties forwardUrlProperties = new OpenSPCoop2MessageProperties();
 		
+	/* Forced Response */
+	public String forcedResponseCode;
+	public boolean forcedEmptyResponse;
+	public ForcedResponseMessage forcedResponse;
+	
 	/* Context */	
 	public Map<String, Object> context = new Hashtable<String, Object>();
 	
@@ -109,6 +113,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			base.transportRequestContext = this.transportRequestContext;
 			base.transportResponseContext = this.transportResponseContext;
 			base.forcedResponseCode = this.forcedResponseCode;
+			base.forcedEmptyResponse = this.forcedEmptyResponse;
+			base.forcedResponse = this.forcedResponse;
 			base.forwardTransportHeader = this.forwardTransportHeader;
 			base.forwardUrlProperties = this.forwardUrlProperties;
 			base.context = this.context;
@@ -121,6 +127,13 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			// Viene riversato solo quello che è possibile riversare
 			newInstance.setTransportRequestContext(this.transportRequestContext);
 			newInstance.setTransportResponseContext(this.transportResponseContext);
+			newInstance.setForcedResponseCode(this.forcedResponseCode);
+			if(this.forcedEmptyResponse) {
+				newInstance.forceEmptyResponse();
+			}
+			if(this.forcedResponse!=null) {
+				newInstance.forceResponse(this.forcedResponse);
+			}
 			newInstance.setForcedResponseCode(this.forcedResponseCode);
 			if(this.context.size()>0){
 				Iterator<String> it = this.context.keySet().iterator();
@@ -220,6 +233,18 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		return this.transportResponseContext;
 	}
 	@Override
+	public OpenSPCoop2MessageProperties getForwardTransportHeader(List<String> whiteListHeader) throws MessageException{
+		return this.forwardTransportHeader;
+	}
+	@Override
+	public OpenSPCoop2MessageProperties getForwardUrlProperties() throws MessageException{
+		return this.forwardUrlProperties;
+	}
+	
+	
+	/* Forced Response */
+	
+	@Override
 	public void setForcedResponseCode(String code){
 		this.forcedResponseCode = code;
 	}
@@ -228,12 +253,20 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		return this.forcedResponseCode;
 	}
 	@Override
-	public OpenSPCoop2MessageProperties getForwardTransportHeader(List<String> whiteListHeader) throws MessageException{
-		return this.forwardTransportHeader;
+	public boolean isForcedEmptyResponse() {
+		return this.forcedEmptyResponse;
 	}
 	@Override
-	public OpenSPCoop2MessageProperties getForwardUrlProperties() throws MessageException{
-		return this.forwardUrlProperties;
+	public void forceEmptyResponse() {
+		this.forcedEmptyResponse = true;
+	}
+	@Override
+	public void forceResponse(ForcedResponseMessage msg) {
+		this.forcedResponse = msg;
+	}
+	@Override
+	public ForcedResponseMessage getForcedResponse() {
+		return this.forcedResponse;
 	}
 	
 

@@ -172,7 +172,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			}else{
 				idPorta = eccezioneIntegrazione.getDominioPorta().getCodicePorta();
 				idFunzione = eccezioneIntegrazione.getIdFunzione();
-				codiceEccezione = this.traduttore.toString(eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore(),
+				codiceEccezione = this.traduttore.toCodiceErroreIntegrazioneAsString(eccezioneIntegrazione.getErroreIntegrazione(),
 						eccezioneIntegrazione.getProprieta().getFaultPrefixCode(),
 						eccezioneIntegrazione.getProprieta().isFaultAsGenericCode());
 				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);

@@ -485,10 +485,10 @@ public class OpenSPCoop2DBConfigurationUtility {
 						log.debug("\t\t. porta delegata ("+pd.getNome()+") ...");
 						for (int i = 0; i < pd.sizeServizioApplicativoList(); i++) {
 							String sa = pd.getServizioApplicativo(i).getNome();
-							if(!nomiServiziApplicativi.contains(sa)){
-								IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-								idServizioApplicativo.setNome(sa);
-								idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+							IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+							idServizioApplicativo.setNome(sa);
+							idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+							if(!nomiServiziApplicativi.contains(idServizioApplicativo)){
 								nomiServiziApplicativi.add(idServizioApplicativo);
 							}
 						}
@@ -511,10 +511,10 @@ public class OpenSPCoop2DBConfigurationUtility {
 						log.debug("\t\t. porta applicativa ("+pa.getNome()+") ...");
 						for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
 							String sa = pa.getServizioApplicativo(i).getNome();
-							if(!nomiServiziApplicativi.contains(sa)){
-								IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-								idServizioApplicativo.setNome(sa);
-								idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+							IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+							idServizioApplicativo.setNome(sa);
+							idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+							if(!nomiServiziApplicativi.contains(idServizioApplicativo)){
 								nomiServiziApplicativi.add(idServizioApplicativo);
 							}
 						}

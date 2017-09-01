@@ -35,7 +35,12 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
    
 
     /* ********  F I E L D S    S T A T I C    P U B L I C  ******** */
+	
 	UNKNOWN(0),
+	
+	
+	 /* ******** MESSAGGI E CODICI 5XX  ******** */
+	
     /** String che contiene un codice di errore OpenSPCoop: Errore di Processamento Generale, 500*/
     CODICE_500_ERRORE_INTERNO(500),
     /** String che contiene un codice di errore OpenSPCoop: OpenSPCoop non inizializzato, 501*/
@@ -157,6 +162,10 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento situazione anomala di messaggio senza fault ricevuto insieme ad un errore di trasporto, 559*/
     CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO(559),
     
+    /** Codice di Errore Custom, 5XX*/
+    CODICE_5XX_CUSTOM(5),
+    
+    
 
     /* ******** MESSAGGI E CODICI 4XX  ******** */
 
@@ -241,8 +250,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     /** String che contiene un codice di errore OpenSPCoop: Errore avvenuto durante il parsing della risposta, 432*/
     CODICE_440_PARSING_EXCEPTION_RISPOSTA(440),
     
-    
-    /* ---- errori spediti in buste errore ---- */
+    // errori spediti in buste errore
     
     /** String che contiene un codice di errore OpenSPCoop: PortaApplicativaInesistente,450 */
     CODICE_450_PA_INESISTENTE(450),
@@ -255,14 +263,20 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 	/** String che contiene un codice di errore OpenSPCoop: Messaggio di risposta con busta nell'header,454 */
 	CODICE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA(454),
 	/** String che contiene un codice di errore OpenSPCoop: Messaggio di risposta con busta nell'header,455 */
-	CODICE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA(455);
+	CODICE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA(455),
+
+    /** Codice di Errore Custom, 4XX*/
+    CODICE_4XX_CUSTOM(4);
+	
+	
     
     private final int codice;
     
-    private CodiceErroreIntegrazione(int codice) {
+	private CodiceErroreIntegrazione(int codice) {
 		this.codice = codice;
 	}
    
+	
     @Override
 	public int getCodice() {
 		return this.codice;
@@ -333,6 +347,9 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 452: return CodiceErroreIntegrazione.CODICE_452_BUSTA_GIA_RICEVUTA;
 				case 453: return CodiceErroreIntegrazione.CODICE_453_SA_INESISTENTE;
 				case 454: return CodiceErroreIntegrazione.CODICE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA;
+				
+				case 4: return CodiceErroreIntegrazione.CODICE_4XX_CUSTOM;
+				
 				case 500: return CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO;
 				case 501: return CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA;
 				case 502: return CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD;
@@ -393,6 +410,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 557: return CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR;
 				case 558: return CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST;
 				case 559: return CodiceErroreIntegrazione.CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO;
+				
+				case 5: return CodiceErroreIntegrazione.CODICE_5XX_CUSTOM;
 			default:
 				return CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO;
 			}

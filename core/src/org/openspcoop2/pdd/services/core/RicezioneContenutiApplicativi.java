@@ -2144,9 +2144,8 @@ public class RicezioneContenutiApplicativi {
 					msgDiag.logErroreGenerico(e,he.getIdentitaHandler());
 				}
 				logCore.error("Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
-				if(this.msgContext.isGestioneRisposta() && he.isSetErrorMessageInFault()){
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
+				if(this.msgContext.isGestioneRisposta()){
+					erroreIntegrazione = he.convertToErroreIntegrazione();
 				}
 			}else{
 				msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
@@ -2158,7 +2157,12 @@ public class RicezioneContenutiApplicativi {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
 				}
-				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,erroreIntegrazione,e,null)));
+				OpenSPCoop2Message responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,erroreIntegrazione,e,null);
+				if(e instanceof HandlerException){
+					HandlerException he = (HandlerException) e;
+					he.customized(responseMessageError);
+				}
+				this.msgContext.setMessageResponse(responseMessageError);
 			}
 			return;
 		}

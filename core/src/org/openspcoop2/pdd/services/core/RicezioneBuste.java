@@ -618,13 +618,17 @@ public class RicezioneBuste {
 				}
 				else if(e!=null){
 					ErroreIntegrazione erroreIntegrazioneGenerato = null;
-					if(he!=null && he.isSetErrorMessageInFault()){
-						erroreIntegrazioneGenerato = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(he.getMessage());
-					}else{
+					if(he!=null){
+						erroreIntegrazioneGenerato = he.convertToErroreIntegrazione();
+					}
+					if(erroreIntegrazioneGenerato==null) {
 						erroreIntegrazioneGenerato = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore);
 					}
 					messageFault = this.generatoreErrore.buildErroreProcessamento(integrationError, 
 							erroreIntegrazioneGenerato,e);
+					if(he!=null){
+						he.customized(messageFault);
+					}
 				}else{
 					messageFault = this.generatoreErrore.buildErroreProcessamento(integrationError, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore));
@@ -2854,9 +2858,8 @@ public class RicezioneBuste {
 					msgDiag.logErroreGenerico(e,he.getIdentitaHandler());
 				}
 				logCore.error("Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
-				if(this.msgContext.isGestioneRisposta() && he.isSetErrorMessageInFault()){
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
+				if(this.msgContext.isGestioneRisposta()){
+					erroreIntegrazione = he.convertToErroreIntegrazione();
 				}
 			}else{
 				msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
@@ -2872,6 +2875,10 @@ public class RicezioneBuste {
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
 				OpenSPCoop2Message errorMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				if(e instanceof HandlerException){
+					HandlerException he = (HandlerException) e;
+					he.customized(errorMsg);
+				}
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 				parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);

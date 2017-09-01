@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Element;
@@ -243,7 +244,8 @@ public class ErroreApplicativoBuilder  {
 		try{
 			
 			boolean produciDettaglioEccezione = false;
-			if(errore.getCodiceErrore().getCodice() < 500){
+			if(errore.getCodiceErrore().getCodice() < 500 && 
+					CodiceErroreIntegrazione.CODICE_5XX_CUSTOM.getCodice()!=errore.getCodiceErrore().getCodice()){ // CODICE_5XX_CUSTOM = 5
 				produciDettaglioEccezione = this.protocolManager.isGenerazioneDetailsFaultIntegratione_erroreClient();
 			}else{
 				produciDettaglioEccezione = this.protocolManager.isGenerazioneDetailsFaultIntegratione_erroreServer();
@@ -252,7 +254,7 @@ public class ErroreApplicativoBuilder  {
 			// uso byte per avere eraser type...
 			String msgErroreTrasformato = this.proprietaErroreApplicato.transformFaultMsg(errore,this.protocolFactory);
 			String codErroreTrasformato = this.protocolFactory.createTraduttore().
-					toString(errore.getCodiceErrore(), this.proprietaErroreApplicato.getFaultPrefixCode(), 
+					toCodiceErroreIntegrazioneAsString(errore, this.proprietaErroreApplicato.getFaultPrefixCode(), 
 													   this.proprietaErroreApplicato.isFaultAsGenericCode());
 				
 			// Creo Dettaglio Eccezione

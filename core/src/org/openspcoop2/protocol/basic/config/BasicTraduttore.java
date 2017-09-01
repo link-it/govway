@@ -123,6 +123,22 @@ public class BasicTraduttore extends BasicComponentFactory implements org.opensp
     		}
     	}
     	
+    	return this._toStringCodiceErroreIntegrazione(codiceMappato, prefix, isGenericCodeFor5XX);
+		
+	}
+	
+	@Override
+	public String toCodiceErroreIntegrazioneAsString(ErroreIntegrazione errore,String prefix, boolean isGenericCodeFor5XX) {
+		if(errore.getCodiceCustom()!=null) {
+			return this._toStringCodiceErroreIntegrazione(errore.getCodiceCustom(), prefix, isGenericCodeFor5XX);
+		}
+		else {
+			return this.toString(errore.getCodiceErrore(), prefix, isGenericCodeFor5XX);
+		}
+	}
+	
+	private String _toStringCodiceErroreIntegrazione(String codiceMappato,String prefix, boolean isGenericCodeFor5XX) {
+    	
     	codiceMappato = (prefix == null ? Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE : prefix) + codiceMappato;
     	
     	return codiceMappato;

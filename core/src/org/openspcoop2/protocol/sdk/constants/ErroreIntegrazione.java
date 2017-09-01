@@ -45,6 +45,14 @@ public class ErroreIntegrazione implements Serializable  {
 	private List<KeyValueObject> keyValueObjects = new ArrayList<KeyValueObject>();
 	private final SOAPFaultCode soapFaultCode;
 	
+    private String codiceCustom;
+    public String getCodiceCustom() {
+		return this.codiceCustom;
+	}
+	public void setCodiceCustom(String codiceCustom) {
+		this.codiceCustom = codiceCustom;
+	}
+	
 	public ErroreIntegrazione(String descrizione, CodiceErroreIntegrazione codiceErrore, KeyValueObject ... keyValueObjects){
 		this.descrizione = descrizione;
 		this.codiceErrore = codiceErrore;

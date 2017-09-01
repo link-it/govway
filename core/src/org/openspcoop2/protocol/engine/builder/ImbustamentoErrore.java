@@ -368,7 +368,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 		try{
 			DettaglioEccezione dettaglioEccezione = null;
 			if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento()){
-				dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, errore.getCodiceErrore(), 
+				dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, 
+						errore, // errore.getCodiceErrore(), 
 						this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 				if(eProcessamento!=null){
 					this.dettaglioEccezioneOpenSPCoop2Builder.gestioneDettaglioEccezioneProcessamento(eProcessamento, dettaglioEccezione);
@@ -415,7 +416,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = null;
 		if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione()){
-			dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, errore.getCodiceErrore(), 
+			dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, 
+					errore, // errore.getCodiceErrore(), 
 					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 		}
 		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
@@ -662,7 +664,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento()){
 				if(erroreIntegrazione!=null){
 					dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezioneProcessamentoBusta(identitaPdD, tipoPdD, modulo, 
-							erroreIntegrazione.getCodiceErrore(), erroreIntegrazione.getDescrizione(this.protocolFactory), eProcessamento);
+							erroreIntegrazione, //erroreIntegrazione.getCodiceErrore(), 
+							erroreIntegrazione.getDescrizione(this.protocolFactory), eProcessamento);
 				}else{
 					dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezioneFromBusta(identitaPdD, tipoPdD, modulo, null, busta, eProcessamento);
 				}

@@ -1497,9 +1497,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 					}
 					msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
-					if(existsModuloInAttesaRispostaApplicativa && he.isSetErrorMessageInFault()) {
-						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(he.getMessage(),CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
+					if(existsModuloInAttesaRispostaApplicativa) {
+						erroreIntegrazione = he.convertToErroreIntegrazione();
 					}
 				}else{
 					msgDiag.logErroreGenerico(e, "OutRequestHandler");
@@ -1678,6 +1677,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						riconsegna = gestoreErrore.isRiconsegna();
 						dataRiconsegna = gestoreErrore.getDataRispedizione();
 					}
+					// dopo aver verificato se siamo in un caso di errore, vediamo se l'errore è dovuto al codice di trasporto
+					// in tal caso rientriamo in un utilizzo del connettore con errore.
+					if(errorConsegna) {
+						if(connectorSender.getResponse()==null) {
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE, errorConsegna);
+						}
+					}
 					// raccolta risultati del connettore
 					fault = gestoreErrore.getFault();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
@@ -1839,9 +1845,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 						}
 						msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
-						if(existsModuloInAttesaRispostaApplicativa && he.isSetErrorMessageInFault()) {
-							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(he.getMessage(),CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
+						if(existsModuloInAttesaRispostaApplicativa) {
+							erroreIntegrazione = he.convertToErroreIntegrazione();
 						}
 					}else{
 						msgDiag.logErroreGenerico(e, "InResponseHandler");

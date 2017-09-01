@@ -120,5 +120,7 @@ public class CostantiProtocollo {
     public final static String KEY_ERRORE_INTEGRAZIONE_OGGETTO_DIVERSO_TRA_BUSTA_E_PA = "@ERRORE_INTEGRAZIONE_OGGETTO_DIVERSO_TRA_BUSTA_E_PA@";
     public final static String KEY_ERRORE_INTEGRAZIONE_DATO_BUSTA = "@ERRORE_INTEGRAZIONE_DATO_BUSTA@";
     public final static String KEY_ERRORE_INTEGRAZIONE_DATO_PA = "@ERRORE_INTEGRAZIONE_DATO_PA@";
+    
+    public final static String KEY_ERRORE_CUSTOM = "@ERRORE_CUSTOM@";
 	
 }

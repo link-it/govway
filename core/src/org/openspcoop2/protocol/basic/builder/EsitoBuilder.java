@@ -186,7 +186,8 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			
 					
 			SOAPBody body = null;
-			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())){
+			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())
+					&& !message.isForcedEmptyResponse() && message.getForcedResponse()==null){
 				body = message.castAsSoap().getSOAPBody();
 			}
 			

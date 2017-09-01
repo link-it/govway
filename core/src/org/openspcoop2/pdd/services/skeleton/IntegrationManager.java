@@ -534,7 +534,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		
 		
 		
-		/* ------------  IntegrationManagerRequesCHandler ------------- */
+		/* ------------  IntegrationManagerRequestHandler ------------- */
 		IntegrationManagerRequestContext imRequestContext = null;
 		try {
 			imRequestContext = buildIMRequestContext(dataRichiestaOperazione, tipoOperazione, pddContext,logCore,protocolFactory);
@@ -546,9 +546,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
-				if(he.isSetErrorMessageInFault()){
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
-				}
+				erroreIntegrazione = he.convertToErroreIntegrazione();
 			} else {
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			} 
@@ -834,9 +832,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
-				if(he.isSetErrorMessageInFault()){
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
-				}
+				erroreIntegrazione = he.convertToErroreIntegrazione();
 			}else{
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			}
@@ -1195,9 +1191,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
-				if(he.isSetErrorMessageInFault()){
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
-				}
+				erroreIntegrazione = he.convertToErroreIntegrazione();
 			}else{
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			}
@@ -1433,9 +1427,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				if(he.isEmettiDiagnostico()){
 					msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 				}
-				if(he.isSetErrorMessageInFault()){
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(e.getMessage());
-				}
+				erroreIntegrazione = he.convertToErroreIntegrazione();
 			}else{
 				msgDiag.logErroreGenerico(e, "IntegrationManagerRequestHandler");
 			}

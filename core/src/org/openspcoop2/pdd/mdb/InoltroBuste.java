@@ -1791,9 +1791,8 @@ public class InoltroBuste extends GenericLib{
 						msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 					}
 					msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
-					if((functionAsRouter || sendRispostaApplicativa) && he.isSetErrorMessageInFault()) {
-						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(he.getMessage(),CodiceErroreIntegrazione.CODICE_543_HANDLER_OUT_REQUEST);
+					if((functionAsRouter || sendRispostaApplicativa)) {
+						erroreIntegrazione = he.convertToErroreIntegrazione();
 					}
 				}else{
 					msgDiag.logErroreGenerico(e, "OutRequestHandler");
@@ -1819,6 +1818,10 @@ public class InoltroBuste extends GenericLib{
 						OpenSPCoop2Message responseMessageError = 
 								this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,erroreIntegrazione,e,
 									(responseMessage!=null ? responseMessage.getParseException() : null));
+						if(e instanceof HandlerException){
+							HandlerException he = (HandlerException) e;
+							he.customized(responseMessageError);
+						}
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
 						esito.setEsitoInvocazione(true);
@@ -1984,6 +1987,13 @@ public class InoltroBuste extends GenericLib{
 						motivoErroreConsegna = gestoreErrore.getErrore();
 						riconsegna = gestoreErrore.isRiconsegna();
 						dataRiconsegna = gestoreErrore.getDataRispedizione();
+					}
+					// dopo aver verificato se siamo in un caso di errore, vediamo se l'errore è dovuto al codice di trasporto
+					// in tal caso rientriamo in un utilizzo del connettore con errore.
+					if(errorConsegna) {
+						if(connectorSender.getResponse()==null) {
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE, errorConsegna);
+						}
 					}
 					// raccolta risultati del connettore
 					fault = gestoreErrore.getFault();
@@ -2205,9 +2215,8 @@ public class InoltroBuste extends GenericLib{
 							msgDiag.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 						}
 						msgErrore = ((HandlerException)e).getIdentitaHandler()+" error: "+msgErrore;
-						if((functionAsRouter || sendRispostaApplicativa) && he.isSetErrorMessageInFault()) {
-							erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_544_HANDLER_IN_RESPONSE);
+						if((functionAsRouter || sendRispostaApplicativa)) {
+							erroreIntegrazione = he.convertToErroreIntegrazione();
 						}
 					}else{
 						msgDiag.logErroreGenerico(e, "InResponseHandler");
@@ -2234,6 +2243,10 @@ public class InoltroBuste extends GenericLib{
 									this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
 											erroreIntegrazione,e,
 												(responseMessage!=null ? responseMessage.getParseException() : null));
+							if(e instanceof HandlerException){
+								HandlerException he = (HandlerException) e;
+								he.customized(responseMessageError);
+							}
 							ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
 							esito.setEsitoInvocazione(true);

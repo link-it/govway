@@ -135,6 +135,220 @@ public class HttpUtilities {
 	}
 	
 	
+	public static String getHttpReason(int status) {
+	
+		if(status==100) {
+			return "Continue"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.2.1]
+		}
+		else if(status==101) {
+			return "Switching Protocols"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.2.2]
+		}
+		else if(status==102) {
+			return "Processing"; // WebDAV - RFC 2518  [RFC2518]
+		}
+		// 103-199 	Unassigned 	
+		
+				
+		
+		else if(status==200) {
+			return "OK"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.3.1]
+		}
+		else if(status==201) {
+			return "Created"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.3.2]
+		}
+		else if(status==202) {
+			return "Accepted"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.3.3]
+		}
+		else if(status==203) {
+			return "Non-Authoritative Information"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.3.4]
+		}
+		else if(status==204) {
+			return "No Content"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.3.5]
+		}
+		else if(status==205) {
+			return "Reset Content"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.3.6]
+		}
+		else if(status==206) {
+			return "Partial Content"; // HTTP/1.1 - RFC 2616  [RFC7233, Section 4.1]
+		}
+		else if(status==207) {
+			return "Multi-Status"; // (WebDAV - RFC 2518)  [RFC4918] or 207 Partial Update OK (HTTP/1.1 - draft-ietf-http-v11-spec-rev-01?)
+		}
+		else if(status==208) {
+			return "Already Reported"; // WebDAV - RFC 2518  [RFC5842]
+		}
+		// 209-225 	Unassigned 	
+		else if(status==226) {
+			return "IM Used"; // [RFC3229]
+		}
+		// 227-299 	Unassigned 	
+		
+		
+		else if(status==300) {
+			return "Multiple Choices"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.4.1]
+		}
+		else if(status==301) {
+			return "Moved Permanently"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.4.2]
+		}
+		else if(status==302) {
+			return "Found"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.4.3]
+		}
+		else if(status==303) {
+			return "See Other"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.4.4]
+		}		
+		else if(status==304) {
+			return "Not Modified"; // HTTP/1.0 - RFC 1945  [RFC7232, Section 4.1]
+		}
+		else if(status==305) {
+			return "Use Proxy"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.4.5]
+		}
+		else if(status==306) {
+			return "Switch Proxy"; // (Unused)  [RFC7231, Section 6.4.6]
+		}
+		else if(status==307) {
+			return "Temporary Redirect"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.4.7]
+		}
+		else if(status==308) {
+			return "Permanent Redirect"; // [RFC7538]
+		}
+		// 309-399 	Unassigned 	
+		
+
+		else if(status==400) {
+			return "Bad Request"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.1]
+		}
+		else if(status==401) {
+			return "Unauthorized"; // HTTP/1.0 - RFC 1945  [RFC7235, Section 3.1]
+		}
+		else if(status==402) {
+			return "Payment Required"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.2]
+		}
+		else if(status==403) {
+			return "Forbidden"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.5.3]
+		}
+		else if(status==404) {
+			return "Not Found"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.5.4]
+		}
+		else if(status==405) {
+			return "Method Not Allowed"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.5]
+		}
+		else if(status==406) {
+			return "Not Acceptable"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.6]
+		}
+		else if(status==407) {
+			return "Proxy Authentication Required"; // HTTP/1.1 - RFC 2616  [RFC7235, Section 3.2]
+		}
+		else if(status==408) {
+			return "Request Timeout"; // [RFC7231, Section 6.5.7]
+		}
+		else if(status==409) {
+			return "Conflict"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.8]
+		}
+		else if(status==410) {
+			return "Gone"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.9]
+		}
+		else if(status==411) {
+			return "Length Required"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.10]
+		}
+		else if(status==412) {
+			return "Precondition Failed"; // HTTP/1.1 - RFC 2616  [RFC7232, Section 4.2][RFC8144, Section 3.2]
+		}
+		else if(status==413) {
+			return "Payload Too Large"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.11]
+		}
+		else if(status==414) {
+			return "URI Too Long"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.12]
+		}
+		else if(status==415) {
+			return "Unsupported Media Type"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.13][RFC7694, Section 3]
+		}
+		else if(status==416) {
+			return "Range Not Satisfiable"; // HTTP/1.1 - RFC 2616  [RFC7233, Section 4.4]
+		}
+		else if(status==417) {
+			return "Expectation Failed"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.5.14]
+		}
+		// 418 Unassigned
+		else if(status==419) {
+			return "Authentication Timeout"; // HTTP/1.1 - RFC 2616
+		}
+		// 420 Unassigned
+		else if(status==421) {
+			return "Misdirected Request"; // [RFC7540, Section 9.1.2]
+		}
+		else if(status==422) {
+			return "Unprocessable Entity"; // WebDAV - RFC 2518  [RFC4918]
+		}
+		else if(status==423) {
+			return "Locked"; //	(WebDAV - RFC 2518) [RFC4918]
+		}
+		else if(status==424) {
+			return "Failed Dependency"; // WebDAV - RFC 2518 [RFC4918]
+		}
+		// 425 Unassigned
+		else if(status==426) {
+			return "Upgrade Required"; // [RFC7231, Section 6.5.15]
+		}
+		// 427 Unassigned
+		else if(status==428) {
+			return "Precondition Required"; // [RFC6585]
+		}
+		else if(status==429) {
+			return "Too Many Requests"; // [RFC6585]
+		}
+		// 430 Unassigned
+		else if(status==431) {
+			return "Request Header Fields Too Large"; // [RFC6585]
+		}
+		// 432-450 	Unassigned
+		else if(status==451) {
+			return "Unavailable For Legal Reasons"; // [RFC7725]
+		}
+		// 452-499 	Unassigned 	
+		
+
+		else if(status==500) {
+			return "Internal Server Error"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.6.1]
+		}
+		else if(status==501) {
+			return "Not Implemented"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.6.2]
+		}
+		else if(status==502) {
+			return "Bad Gateway"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.6.3]
+		}
+		else if(status==503) {
+			return "Service Unavailable"; // HTTP/1.0 - RFC 1945  [RFC7231, Section 6.6.4]
+		}
+		else if(status==504) {
+			return "Gateway Timeout"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.6.5]
+		}
+		else if(status==505) {
+			return "HTTP Version Not Supported"; // HTTP/1.1 - RFC 2616  [RFC7231, Section 6.6.6]
+		}
+		else if(status==506) {
+			return "Variant Also Negotiates"; // [RFC2295]
+		}
+		else if(status==507) {
+			return "Insufficient Storage"; // WebDAV - RFC 2518  [RFC4918]
+		}
+		else if(status==508) {
+			return "Loop Detected"; // [RFC5842]
+		}
+		else if(status==509) {
+			return "Bandwidth Limit Exceeded"; // [Apache]
+		}
+		else if(status==510) {
+			return "Not Extended"; // [RFC2774]
+		}
+		else if(status==511) {
+			return "Network Authentication Required"; // [RFC6585]
+		}
+		// 512-599 	Unassigned 	
+
+		return null;
+	}
+	
+	
 	
 	public final static String HEADER_X_DOWNLOAD = "application/x-download";
 	public final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";

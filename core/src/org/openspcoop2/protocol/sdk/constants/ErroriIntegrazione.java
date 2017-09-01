@@ -66,6 +66,9 @@ public enum ErroriIntegrazione {
 	ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO),
 	
+	ERRORE_5XX_CUSTOM(CostantiProtocollo.KEY_ERRORE_CUSTOM,CodiceErroreIntegrazione.CODICE_5XX_CUSTOM),
+	
+	
 	/* 4XX */
 	
 	ERRORE_401_PORTA_INESISTENTE("La porta invocata non esiste"+
@@ -211,7 +214,7 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA),
 
-	 /* ---- errori spediti in buste errore ---- */
+	// errori spediti in buste errore
 	
 	ERRORE_450_PA_INESISTENTE("La porta applicativa richiesta dalla busta non esiste",
 			CodiceErroreIntegrazione.CODICE_450_PA_INESISTENTE),
@@ -232,7 +235,10 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_DATO_BUSTA+") presente nel messaggio di protocollo ricevuto differente da quello definito ("+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_DATO_PA+") nella porta applicativa invocata ("+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION+")"),
-			CodiceErroreIntegrazione.CODICE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA);
+			CodiceErroreIntegrazione.CODICE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA),
+
+	ERRORE_4XX_CUSTOM(CostantiProtocollo.KEY_ERRORE_CUSTOM,CodiceErroreIntegrazione.CODICE_4XX_CUSTOM);
+
 	
 	
 	private final String descrizione;
@@ -302,10 +308,12 @@ public enum ErroriIntegrazione {
 			this.equals(ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL) ||
 			this.equals(ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL) ||
 			this.equals(ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA) ||
+			this.equals(ERRORE_4XX_CUSTOM) ||
 			this.equals(ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE) ||
 			this.equals(ERRORE_517_RISPOSTA_RICHIESTA_NON_RITORNATA) ||
 			this.equals(ERRORE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT) ||
-			this.equals(ERRORE_537_BUSTA_GIA_RICEVUTA)
+			this.equals(ERRORE_537_BUSTA_GIA_RICEVUTA) ||
+			this.equals(ERRORE_5XX_CUSTOM)
 			){
 			throw new RuntimeException("Il metodo non può essere utilizzato con il messaggio "+this.name());
 		}
@@ -402,6 +410,19 @@ public enum ErroriIntegrazione {
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,msgErrore));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
+	}
+	
+	public ErroreIntegrazione get5XX_Custom(String descrizione,String codiceErroreIntegrazione) {
+		if(this.equals(ERRORE_5XX_CUSTOM)){
+			if(codiceErroreIntegrazione==null){
+				throw new RuntimeException("Il metodo può essere utilizzato senza fornire un codice errore di integrazione personalizzato");	
+			}
+			ErroreIntegrazione e = newErroreIntegrazione(descrizione, CodiceErroreIntegrazione.CODICE_5XX_CUSTOM);
+			e.setCodiceCustom(codiceErroreIntegrazione);
+			return e;
+		}else{
+			throw new RuntimeException("Il metodo può essere utilizzato solo con il messaggio "+ERRORE_5XX_CUSTOM.name());
+		}
 	}
 	
 	
@@ -801,7 +822,7 @@ public enum ErroriIntegrazione {
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,e.toString()));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
-
+	
 	public ErroreIntegrazione getErrore455DatiBustaDifferentiDatiPAInvocata(String oggetto,String datoBusta, String datoPA, String locationPA) {
 		if(!this.equals(ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA.name());
@@ -814,4 +835,17 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 
+	public ErroreIntegrazione get4XX_Custom(String descrizione,String codiceErroreIntegrazione) {
+		if(this.equals(ERRORE_4XX_CUSTOM)){
+			if(codiceErroreIntegrazione==null){
+				throw new RuntimeException("Il metodo può essere utilizzato senza fornire un codice errore di integrazione personalizzato");	
+			}
+			ErroreIntegrazione e = newErroreIntegrazione(descrizione, CodiceErroreIntegrazione.CODICE_4XX_CUSTOM);
+			e.setCodiceCustom(codiceErroreIntegrazione);
+			return e;
+		}else{
+			throw new RuntimeException("Il metodo può essere utilizzato solo con il messaggio "+ERRORE_4XX_CUSTOM.name());
+		}
+	}
+	
 }

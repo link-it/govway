@@ -63,6 +63,7 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
+import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
@@ -2183,6 +2184,10 @@ public class EJBUtils {
 				this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, dettaglioEccezione);
 		if(errorMsg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
+		}
+		if(eProcessamento instanceof HandlerException){
+			HandlerException he = (HandlerException) eProcessamento;
+			he.customized(errorMsg);
 		}
 		if(parseException!=null){
 			errorMsg.setParseException(parseException);
