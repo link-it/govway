@@ -406,15 +406,19 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 							Fruitore fr = asps.getFruitore(i);
 							IDSoggetto idSoggetto = new IDSoggetto(fr.getTipo(), fr.getNome());
 							Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(idSoggetto);
-							if(soggetto.getCredenziali()==null || soggetto.getCredenziali().getTipo()==null ||
-									!soggetto.getCredenziali().getTipo().equals(autenticazione)){
-								fruitoriCompatibili = false;
-								break;
+							if(this.pddCore.isPddEsterna(soggetto.getPortaDominio())) {
+								// Devo controllare solo i soggetti delle pddEsterne, altrimeni se registro un soggeto operativo come fruitore per fruire del servizio,
+								// poi il controllo non permette la modifica
+								if(soggetto.getCredenziali()==null || soggetto.getCredenziali().getTipo()==null ||
+										!soggetto.getCredenziali().getTipo().equals(autenticazione)){
+									fruitoriCompatibili = false;
+									break;
+								}
 							}
 						}
 						if(fruitoriCompatibili == false){
 							this.pd.setMessage("Non è possibile modificare il tipo di autenticazione da ["+pa.getAutenticazione()+"] a ["+autenticazione+
-									"], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalita' di accesso, con il nuovo tipo di autenticazione");
+									"], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalità di accesso, con il nuovo tipo di autenticazione");
 							return false;
 						}
 					}	

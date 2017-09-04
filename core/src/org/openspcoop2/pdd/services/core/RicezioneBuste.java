@@ -1969,7 +1969,7 @@ public class RicezioneBuste {
 					msgDiag.logPersonalizzato("autenticazioneDisabilitata");
 				}	
 				else{
-					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, credenziali.toString(true)); // Aggiungo la password se presente
+					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, credenziali.toString());
 					msgDiag.logPersonalizzato("autenticazioneInCorso");
 					
 					ErroreCooperazione erroreCooperazione = null;
