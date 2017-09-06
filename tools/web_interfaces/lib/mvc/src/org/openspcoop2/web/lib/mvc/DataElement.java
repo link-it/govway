@@ -252,11 +252,27 @@ public class DataElement {
 	public void setSelected(String s) {
 		this.selected = s;
 	}
+	public void setSelectedAsNull() {
+		this.selected = null;
+	}
 	public void setSelected(boolean isFlag) {
 		if(isFlag)
 			this.selected = Costanti.CHECK_BOX_ENABLED;
 		else
 			this.selected = Costanti.CHECK_BOX_DISABLED;
+	}
+	public void setSelected(CheckboxStatusType status) {
+		switch (status) {
+		case ABILITATO:
+			this.selected = Costanti.CHECK_BOX_ENABLED;
+			break;
+		case DISABILITATO:
+			this.selected = Costanti.CHECK_BOX_DISABLED;
+			break;
+		case WARNING_ONLY:
+			this.selected = Costanti.CHECK_BOX_WARN;
+			break;
+		}
 	}
 	public String getSelected() {
 		return checkNull(this.selected);

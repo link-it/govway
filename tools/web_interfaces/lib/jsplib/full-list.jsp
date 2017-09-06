@@ -398,7 +398,13 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 										    	}
 									  		} else { 
 									  			 if (de.getType().equals("checkbox")) {
-									  				 String image = de.getSelected().equals("yes") ? "check_green.png" : "check_red.png";
+												 	String image = "check_red.png";
+												 	if("yes".equals(de.getSelected())){
+														image = "check_green.png";
+													}
+													else if("warn".equals(de.getSelected())){
+														image = "check_yellow.png";
+													}
 									  				 String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
 									  				 
 									  				%><div style="text-align: center;"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%

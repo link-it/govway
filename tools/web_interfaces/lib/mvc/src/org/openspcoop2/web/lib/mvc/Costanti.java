@@ -80,6 +80,7 @@ public class Costanti {
 	public final static String CHECK_BOX_ENABLED_TRUE = "true";
 	public final static String CHECK_BOX_ENABLED_ABILITATO = "abilitato";
 	public final static String CHECK_BOX_DISABLED = "no";
+	public final static String CHECK_BOX_WARN = "warn";
 	
 	
 	/** PAGE DATA TITLE */
