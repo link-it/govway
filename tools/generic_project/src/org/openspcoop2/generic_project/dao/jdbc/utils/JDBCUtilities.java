@@ -1469,4 +1469,25 @@ public class JDBCUtilities {
 		return jdbcUtilities.executeQuery(sql, jdbcProperties.isShowSql(), returnClassTypes ,paramArray);
 	}
 	
+	public static int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+			String sql,Object ... param) throws SQLQueryObjectException, JDBCAdapterException, ServiceException{
+		
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
+				
+		java.util.List<org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject> listParams = 
+			new java.util.ArrayList<org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject>();
+		for (Object jdbcObject : param) {
+			org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject jdbc =
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(jdbcObject,jdbcObject.getClass());
+			listParams.add(jdbc);
+		}
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] paramArray = null;
+		if(listParams.size()>0){
+			paramArray = listParams.toArray(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [1]);
+		}
+		
+		return jdbcUtilities.executeUpdate(sql, jdbcProperties.isShowSql(), paramArray);
+	}
+	
 }
