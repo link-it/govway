@@ -376,23 +376,40 @@ public class EsitiProperties {
 	private static List<Integer> esitiCode = null;
 	public List<Integer> getEsitiCode() throws ProtocolException {
 		if(EsitiProperties.esitiCode == null){
-			EsitiProperties.esitiCode = getListaInteger("esiti.codes"); 	   
+			this.initEsitiCode();
 		}
 
 		return EsitiProperties.esitiCode;
+	}
+	private synchronized void initEsitiCode() throws ProtocolException {
+		if(EsitiProperties.esitiCode == null){
+			EsitiProperties.esitiCode = getListaInteger("esiti.codes");
+		}
 	}
 	
 	private static List<Integer> esitiCodeOk = null;
 	public List<Integer> getEsitiCodeOk() throws ProtocolException {
 		if(EsitiProperties.esitiCodeOk == null){
-			EsitiProperties.esitiCodeOk = getListaInteger("esiti.codes.ok"); 	   
+			this.initEsitiCodeOk();
 		}
 
 		return EsitiProperties.esitiCodeOk;
 	}
+	private synchronized void initEsitiCodeOk() throws ProtocolException {
+		if(EsitiProperties.esitiCodeOk == null){
+			EsitiProperties.esitiCodeOk = getListaInteger("esiti.codes.ok"); 	   
+		}
+	}
 	
 	private static List<Integer> esitiCodeOk_senzaFaultApplicativo = null;
 	public List<Integer> getEsitiCodeOk_senzaFaultApplicativo() throws ProtocolException {
+		if(EsitiProperties.esitiCodeOk_senzaFaultApplicativo == null){
+				this.initEsitiCodeOk_senzaFaultApplicativo();   
+		}
+
+		return EsitiProperties.esitiCodeOk_senzaFaultApplicativo;
+	}
+	private synchronized void initEsitiCodeOk_senzaFaultApplicativo() throws ProtocolException {
 		if(EsitiProperties.esitiCodeOk_senzaFaultApplicativo == null){
 			List<Integer> tmp = this.getEsitiCodeOk();
 			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
@@ -404,12 +421,17 @@ public class EsitiProperties {
 			}
 			EsitiProperties.esitiCodeOk_senzaFaultApplicativo = esitiOk; 	   
 		}
-
-		return EsitiProperties.esitiCodeOk_senzaFaultApplicativo;
 	}
 	
 	private static List<Integer> esitiCodeKo = null;
 	public List<Integer> getEsitiCodeKo() throws ProtocolException {
+		if(EsitiProperties.esitiCodeKo == null){
+			this.initEsitiCodeKo();
+		}
+
+		return EsitiProperties.esitiCodeKo;
+	}
+	private synchronized void initEsitiCodeKo() throws ProtocolException {
 		if(EsitiProperties.esitiCodeKo == null){
 			EsitiProperties.esitiCodeKo = new ArrayList<Integer>();
 			List<Integer> esiti = this.getEsitiCode();
@@ -427,12 +449,17 @@ public class EsitiProperties {
 				}
 			}
 		}
-
-		return EsitiProperties.esitiCodeKo;
 	}
 	
 	private static List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 	public List<Integer> getEsitiCodeKo_senzaFaultApplicativo() throws ProtocolException { // serve ad essere sicuri che anche se si è registrato un faultApplicativo tra gli errori, cmq non viene ritornato
+		if(EsitiProperties.esitiCodeKo_senzaFaultApplicativo == null){
+			this.initEsitiCodeKo_senzaFaultApplicativo();   
+		}
+
+		return EsitiProperties.esitiCodeKo_senzaFaultApplicativo;
+	}
+	private synchronized void initEsitiCodeKo_senzaFaultApplicativo() throws ProtocolException {
 		if(EsitiProperties.esitiCodeKo_senzaFaultApplicativo == null){
 			List<Integer> tmp = this.getEsitiCodeKo();
 			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
@@ -444,23 +471,33 @@ public class EsitiProperties {
 			}
 			EsitiProperties.esitiCodeKo_senzaFaultApplicativo = esitiKo; 	   
 		}
-
-		return EsitiProperties.esitiCodeKo_senzaFaultApplicativo;
 	}
 	
 	private static List<Integer> esitiCodeFaultApplicativo = null;
 	public List<Integer> getEsitiCodeFaultApplicativo() throws ProtocolException {
 		if(EsitiProperties.esitiCodeFaultApplicativo == null){
-			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
-			EsitiProperties.esitiCodeFaultApplicativo = new ArrayList<Integer>();
-			EsitiProperties.esitiCodeFaultApplicativo.add(codeFaultApplicativo);
+			this.initEsitiCodeFaultApplicativo();
 		}
 
 		return EsitiProperties.esitiCodeFaultApplicativo;
 	}
+	private synchronized void initEsitiCodeFaultApplicativo() throws ProtocolException {
+		if(EsitiProperties.esitiCodeFaultApplicativo == null){
+			int codeFaultApplicativo = this.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
+			EsitiProperties.esitiCodeFaultApplicativo = new ArrayList<Integer>();
+			EsitiProperties.esitiCodeFaultApplicativo.add(codeFaultApplicativo);
+		}
+	}
 	
 	private static List<Integer> esitiCodeForSoapFaultIdentificationMode = null;
 	public List<Integer> getEsitiCodeForSoapFaultIdentificationMode() throws ProtocolException {
+		if(EsitiProperties.esitiCodeForSoapFaultIdentificationMode == null){
+			this.initEsitiCodeForSoapFaultIdentificationMode();
+		}
+
+		return EsitiProperties.esitiCodeForSoapFaultIdentificationMode;
+	}
+	private synchronized void initEsitiCodeForSoapFaultIdentificationMode() throws ProtocolException {
 		if(EsitiProperties.esitiCodeForSoapFaultIdentificationMode == null){
 			EsitiProperties.esitiCodeForSoapFaultIdentificationMode = new ArrayList<Integer>();
 			List<Integer> codes = getEsitiCode();  
@@ -470,12 +507,17 @@ public class EsitiProperties {
 				}
 			}
 		}
-
-		return EsitiProperties.esitiCodeForSoapFaultIdentificationMode;
 	}
 	
 	private static List<Integer> esitiCodeForContextPropertyIdentificationMode = null;
 	public List<Integer> getEsitiCodeForContextPropertyIdentificationMode() throws ProtocolException {
+		if(EsitiProperties.esitiCodeForContextPropertyIdentificationMode == null){
+			this.initEsitiCodeForContextPropertyIdentificationMode();
+		}
+
+		return EsitiProperties.esitiCodeForContextPropertyIdentificationMode;
+	}
+	private synchronized void initEsitiCodeForContextPropertyIdentificationMode() throws ProtocolException {
 		if(EsitiProperties.esitiCodeForContextPropertyIdentificationMode == null){
 			EsitiProperties.esitiCodeForContextPropertyIdentificationMode = new ArrayList<Integer>();
 			List<Integer> codes = getEsitiCode();  
@@ -485,21 +527,31 @@ public class EsitiProperties {
 				}
 			}
 		}
-
-		return EsitiProperties.esitiCodeForContextPropertyIdentificationMode;
 	}
 
 	private static List<Integer> esitiCodeOrderLabel = null;
 	public List<Integer> getEsitiCodeOrderLabel() throws ProtocolException {
 		if(EsitiProperties.esitiCodeOrderLabel == null){
-			EsitiProperties.esitiCodeOrderLabel = getListaInteger("esiti.codes.labelOrder"); 	   
+			this.initEsitiCodeOrderLabel();
 		}
 
 		return EsitiProperties.esitiCodeOrderLabel;
 	}
+	private synchronized void initEsitiCodeOrderLabel() throws ProtocolException {
+		if(EsitiProperties.esitiCodeOrderLabel == null){
+			EsitiProperties.esitiCodeOrderLabel = getListaInteger("esiti.codes.labelOrder"); 	   
+		}
+	}
 	
 	private static List<String> esitiOrderLabel = null;
 	public List<String> getEsitiOrderLabel() throws ProtocolException {
+		if(EsitiProperties.esitiOrderLabel == null){
+			this.initEsitiOrderLabel();
+		}
+
+		return EsitiProperties.esitiOrderLabel;
+	}
+	private synchronized void initEsitiOrderLabel() throws ProtocolException {
 		if(EsitiProperties.esitiOrderLabel == null){
 			List<Integer> codes = getEsitiCode();
 			EsitiProperties.esitiOrderLabel = new ArrayList<String>();
@@ -507,12 +559,19 @@ public class EsitiProperties {
 				EsitiProperties.esitiOrderLabel.add(this.getEsitoLabel(codeEsito));
 			}
 		}
-
-		return EsitiProperties.esitiOrderLabel;
 	}
 	
 	private static Hashtable<String,String> esitoName= null;
 	public String getEsitoName(Integer codeEsito) throws ProtocolException {
+		if(EsitiProperties.esitoName == null){
+			this.initEsitoName();
+		}
+		if(EsitiProperties.esitoName.containsKey(codeEsito+"")==false){
+			throw new ProtocolException("EsitoName for code ["+codeEsito+"] not found");
+		}
+		return EsitiProperties.esitoName.get(codeEsito+"");
+	}
+	private synchronized void initEsitoName() throws ProtocolException {
 		if(EsitiProperties.esitoName == null){
 			esitoName = new Hashtable<String, String>();
 			List<Integer> codes = getEsitiCode();
@@ -520,14 +579,19 @@ public class EsitiProperties {
 				esitoName.put(code+"", getProperty("esito."+code+".name"));
 			}
 		}
-		if(EsitiProperties.esitoName.containsKey(codeEsito+"")==false){
-			throw new ProtocolException("EsitoName for code ["+codeEsito+"] not found");
-		}
-		return EsitiProperties.esitoName.get(codeEsito+"");
 	}
 	
 	private static Hashtable<String,String> esitoDescription= null;
 	public String getEsitoDescription(Integer codeEsito) throws ProtocolException {
+		if(EsitiProperties.esitoDescription == null){
+			this.initEsitoDescription();
+		}
+		if(EsitiProperties.esitoDescription.containsKey(codeEsito+"")==false){
+			throw new ProtocolException("EsitoDescription for code ["+codeEsito+"] not found");
+		}
+		return EsitiProperties.esitoDescription.get(codeEsito+"");
+	}
+	private synchronized void initEsitoDescription() throws ProtocolException {
 		if(EsitiProperties.esitoDescription == null){
 			esitoDescription = new Hashtable<String, String>();
 			List<Integer> codes = getEsitiCode();
@@ -535,14 +599,19 @@ public class EsitiProperties {
 				esitoDescription.put(code+"", getProperty("esito."+code+".description"));
 			} 
 		}
-		if(EsitiProperties.esitoDescription.containsKey(codeEsito+"")==false){
-			throw new ProtocolException("EsitoDescription for code ["+codeEsito+"] not found");
-		}
-		return EsitiProperties.esitoDescription.get(codeEsito+"");
 	}
 	
 	private static Hashtable<String,String> esitoLabel= null;
 	public String getEsitoLabel(Integer codeEsito) throws ProtocolException {
+		if(EsitiProperties.esitoLabel == null){
+			this.initEsitoLabel(); 
+		}
+		if(EsitiProperties.esitoLabel.containsKey(codeEsito+"")==false){
+			throw new ProtocolException("EsitoLabel for code ["+codeEsito+"] not found");
+		}
+		return EsitiProperties.esitoLabel.get(codeEsito+"");
+	}
+	private synchronized void initEsitoLabel() throws ProtocolException {
 		if(EsitiProperties.esitoLabel == null){
 			esitoLabel = new Hashtable<String, String>();
 			List<Integer> codes = getEsitiCode();
@@ -550,14 +619,19 @@ public class EsitiProperties {
 				esitoLabel.put(code+"", getProperty("esito."+code+".label"));
 			}    
 		}
-		if(EsitiProperties.esitoLabel.containsKey(codeEsito+"")==false){
-			throw new ProtocolException("EsitoLabel for code ["+codeEsito+"] not found");
-		}
-		return EsitiProperties.esitoLabel.get(codeEsito+"");
 	}
 	
 	private static Hashtable<String,EsitoIdentificationMode> esitoIdentificationMode= null;
 	public EsitoIdentificationMode getEsitoIdentificationMode(Integer codeEsito) throws ProtocolException {
+		if(EsitiProperties.esitoIdentificationMode == null){
+			this.initEsitoIdentificationMode();  
+		}
+		if(EsitiProperties.esitoIdentificationMode.containsKey(codeEsito+"")==false){
+			throw new ProtocolException("EsitoIdentificationMode for code ["+codeEsito+"] not found");
+		}
+		return EsitiProperties.esitoIdentificationMode.get(codeEsito+"");
+	}
+	private synchronized void initEsitoIdentificationMode() throws ProtocolException {
 		if(EsitiProperties.esitoIdentificationMode == null){
 			esitoIdentificationMode = new Hashtable<String, EsitoIdentificationMode>();
 			List<Integer> codes = getEsitiCode();
@@ -577,14 +651,16 @@ public class EsitiProperties {
 				} 	 
 			}    
 		}
-		if(EsitiProperties.esitoIdentificationMode.containsKey(codeEsito+"")==false){
-			throw new ProtocolException("EsitoIdentificationMode for code ["+codeEsito+"] not found");
-		}
-		return EsitiProperties.esitoIdentificationMode.get(codeEsito+"");
 	}
 	
 	private static Hashtable<String,List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList= null;
 	public List<EsitoIdentificationModeSoapFault> getEsitoIdentificationModeSoapFaultList(Integer codeEsito) throws ProtocolException {
+		if(esitoIdentificationModeSoapFaultList==null){
+			this.initEsitoIdentificationModeSoapFaultList();
+		}
+		return EsitiProperties.esitoIdentificationModeSoapFaultList.get(codeEsito+"");
+	}
+	private synchronized void initEsitoIdentificationModeSoapFaultList() throws ProtocolException {
 		if(esitoIdentificationModeSoapFaultList==null){
 			esitoIdentificationModeSoapFaultList = new Hashtable<String, List<EsitoIdentificationModeSoapFault>>();
 			List<Integer> codes = getEsitiCode();
@@ -599,7 +675,6 @@ public class EsitiProperties {
 				}
 			}
 		}
-		return EsitiProperties.esitoIdentificationModeSoapFaultList.get(codeEsito+"");
 	}
 	private List<EsitoIdentificationModeSoapFault> _getEsitoIdentificationModeSoapFaultList(Integer codeEsito) throws ProtocolException {
 			
@@ -656,6 +731,12 @@ public class EsitiProperties {
 	private static Hashtable<String,List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList= null;
 	public List<EsitoIdentificationModeContextProperty> getEsitoIdentificationModeContextPropertyList(Integer codeEsito) throws ProtocolException {
 		if(esitoIdentificationModeContextPropertyList==null){
+			this.initEsitoIdentificationModeContextPropertyList();
+		}
+		return EsitiProperties.esitoIdentificationModeContextPropertyList.get(codeEsito+"");
+	}
+	private synchronized void initEsitoIdentificationModeContextPropertyList() throws ProtocolException {
+		if(esitoIdentificationModeContextPropertyList==null){
 			esitoIdentificationModeContextPropertyList = new Hashtable<String, List<EsitoIdentificationModeContextProperty>>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
@@ -669,7 +750,6 @@ public class EsitiProperties {
 				}
 			}
 		}
-		return EsitiProperties.esitoIdentificationModeContextPropertyList.get(codeEsito+"");
 	}
 	private List<EsitoIdentificationModeContextProperty> _getEsitoIdentificationModeContextPropertyList(Integer codeEsito) throws ProtocolException {
 			
@@ -714,6 +794,13 @@ public class EsitiProperties {
 	private static List<String> esitiTransactionContextCode = null;
 	public List<String> getEsitiTransactionContextCode() throws ProtocolException {
 		if(EsitiProperties.esitiTransactionContextCode == null){
+			this.initEsitiTransactionContextCode();
+		}
+
+		return EsitiProperties.esitiTransactionContextCode;
+	}
+	private synchronized void initEsitiTransactionContextCode() throws ProtocolException {
+		if(EsitiProperties.esitiTransactionContextCode == null){
 			EsitiProperties.esitiTransactionContextCode = getLista("esiti.transactionContext");
 			for (String context : EsitiProperties.esitiTransactionContextCode) {
 				if(context.length()>255){
@@ -721,21 +808,31 @@ public class EsitiProperties {
 				}
 			}
 		}
-
-		return EsitiProperties.esitiTransactionContextCode;
 	}
 	
 	private static List<String> esitiTransactionContextCodeOrderLabel = null;
 	public List<String> getEsitiTransactionContextCodeOrderLabel() throws ProtocolException {
 		if(EsitiProperties.esitiTransactionContextCodeOrderLabel == null){
-			EsitiProperties.esitiTransactionContextCodeOrderLabel = getLista("esiti.transactionContext.labelOrder"); 	   
+			this.initEsitiTransactionContextCodeOrderLabel();
 		}
 
 		return EsitiProperties.esitiTransactionContextCode;
 	}
+	private synchronized void initEsitiTransactionContextCodeOrderLabel() throws ProtocolException {
+		if(EsitiProperties.esitiTransactionContextCodeOrderLabel == null){
+			EsitiProperties.esitiTransactionContextCodeOrderLabel = getLista("esiti.transactionContext.labelOrder"); 	   
+		}
+	}
 	
 	private static List<String> esitiTransactionContextOrderLabel = null;
 	public List<String> getEsitiTransactionContextOrderLabel() throws ProtocolException {
+		if(EsitiProperties.esitiTransactionContextOrderLabel == null){
+			this.initEsitiTransactionContextOrderLabel();
+		}
+
+		return EsitiProperties.esitiTransactionContextOrderLabel;
+	}
+	private synchronized void initEsitiTransactionContextOrderLabel() throws ProtocolException {
 		if(EsitiProperties.esitiTransactionContextOrderLabel == null){
 			List<String> codes = getEsitiTransactionContextCode();
 			EsitiProperties.esitiTransactionContextOrderLabel = new ArrayList<String>();
@@ -743,12 +840,19 @@ public class EsitiProperties {
 				EsitiProperties.esitiTransactionContextOrderLabel.add(this.getEsitoTransactionContextLabel(codeTransactionContext));
 			}
 		}
-
-		return EsitiProperties.esitiTransactionContextOrderLabel;
 	}
 
 	private static Hashtable<String,String> esitoTransactionContextLabel= null;
 	public String getEsitoTransactionContextLabel(String tipo) throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextLabel == null){
+			this.initEsitoTransactionContextLabel();
+		}
+		if(EsitiProperties.esitoTransactionContextLabel.containsKey(tipo)==false){
+			throw new ProtocolException("EsitoTransactionContextLabel for code ["+tipo+"] not found");
+		}
+		return EsitiProperties.esitoTransactionContextLabel.get(tipo);
+	}
+	private synchronized void initEsitoTransactionContextLabel() throws ProtocolException {
 		if(EsitiProperties.esitoTransactionContextLabel == null){
 			esitoTransactionContextLabel = new Hashtable<String, String>();
 			List<String> codes = getEsitiTransactionContextCode();
@@ -756,15 +860,17 @@ public class EsitiProperties {
 				esitoTransactionContextLabel.put(code, getProperty("esiti.transactionContext."+code+".label"));
 			}   
 		}
-		if(EsitiProperties.esitoTransactionContextLabel.containsKey(tipo)==false){
-			throw new ProtocolException("EsitoTransactionContextLabel for code ["+tipo+"] not found");
-		}
-		return EsitiProperties.esitoTransactionContextLabel.get(tipo);
 	}
 	
 	private static String esitoTransactionContextDefault= null;
 	private static Boolean esitoTransactionContextDefault_read= null;
 	public String getEsitoTransactionContextDefault() throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextDefault_read == null){
+			this.initEsitoTransactionContextDefault();
+		}
+		return EsitiProperties.esitoTransactionContextDefault;
+	}
+	private synchronized void initEsitoTransactionContextDefault() throws ProtocolException {
 		if(EsitiProperties.esitoTransactionContextDefault_read == null){
 			EsitiProperties.esitoTransactionContextDefault = getOptionalProperty("esiti.transactionContext.default");
 			EsitiProperties.esitoTransactionContextDefault_read = true;
@@ -774,39 +880,58 @@ public class EsitiProperties {
 				}
 			}
 		}
-		return EsitiProperties.esitoTransactionContextDefault;
 	}
 	
 	private static String esitoTransactionContextHeaderTrasportoName= null;
 	public String getEsitoTransactionContextHeaderTrasportoName() throws ProtocolException {
 		if(EsitiProperties.esitoTransactionContextHeaderTrasportoName == null){
-			EsitiProperties.esitoTransactionContextHeaderTrasportoName = getProperty("esiti.transactionContext.trasporto.headerName");	   
+			this.initEsitoTransactionContextHeaderTrasportoName();
 		}
 		return EsitiProperties.esitoTransactionContextHeaderTrasportoName;
+	}
+	private synchronized void initEsitoTransactionContextHeaderTrasportoName() throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextHeaderTrasportoName == null){
+			EsitiProperties.esitoTransactionContextHeaderTrasportoName = getProperty("esiti.transactionContext.trasporto.headerName");	   
+		}
 	}
 	
 	private static String esitoTransactionContextFormBasedPropertyName= null;
 	public String getEsitoTransactionContextFormBasedPropertyName() throws ProtocolException {
 		if(EsitiProperties.esitoTransactionContextFormBasedPropertyName == null){
-			EsitiProperties.esitoTransactionContextFormBasedPropertyName = getProperty("esiti.transactionContext.urlFormBased.propertyName");	   
+			this.initEsitoTransactionContextFormBasedPropertyName();
 		}
 		return EsitiProperties.esitoTransactionContextFormBasedPropertyName;
+	}
+	private synchronized void initEsitoTransactionContextFormBasedPropertyName() throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextFormBasedPropertyName == null){
+			EsitiProperties.esitoTransactionContextFormBasedPropertyName = getProperty("esiti.transactionContext.urlFormBased.propertyName");	   
+		}
 	}
 	
 	private static List<EsitoTransportContextIdentification> esitoTransactionContextHeaderTrasportoDynamicIdentification = null;
 	public  List<EsitoTransportContextIdentification> getEsitoTransactionContextHeaderTrasportoDynamicIdentification() throws ProtocolException {
 		if(EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification == null){
-			EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification = this.readEsitoTransportContextIdentification("esiti.transactionContext.trasporto.dynamic.");			
+			this.initEsitoTransactionContextHeaderTrasportoDynamicIdentification();
 		}
 		return EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification;
+	}
+	private synchronized void initEsitoTransactionContextHeaderTrasportoDynamicIdentification() throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification == null){
+			EsitiProperties.esitoTransactionContextHeaderTrasportoDynamicIdentification = this.readEsitoTransportContextIdentification("esiti.transactionContext.trasporto.dynamic.");			
+		}
 	}
 	
 	private static List<EsitoTransportContextIdentification> esitoTransactionContextHeaderFormBasedDynamicIdentification = null;
 	public  List<EsitoTransportContextIdentification> getEsitoTransactionContextHeaderFormBasedDynamicIdentification() throws ProtocolException {
 		if(EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification == null){
-			EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification = this.readEsitoTransportContextIdentification("esiti.transactionContext.urlFormBased.dynamic.");			
+			this.initEsitoTransactionContextHeaderFormBasedDynamicIdentification();
 		}
 		return EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification;
+	}
+	private synchronized void initEsitoTransactionContextHeaderFormBasedDynamicIdentification() throws ProtocolException {
+		if(EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification == null){
+			EsitiProperties.esitoTransactionContextHeaderFormBasedDynamicIdentification = this.readEsitoTransportContextIdentification("esiti.transactionContext.urlFormBased.dynamic.");			
+		}
 	}
 	
 	private List<EsitoTransportContextIdentification> readEsitoTransportContextIdentification(String pName) throws ProtocolException{

@@ -242,7 +242,7 @@ public class ArchiviCore extends ControlStationCore {
 	
 	public void validateArchive(Archive archive, String protocolloEffettivo, 
 			boolean validazioneDocumenti, ImportInformationMissingCollection importInformationMissingCollection, 
-			String userLogin) throws Exception,ImportInformationMissingException{
+			String userLogin, boolean delete) throws Exception,ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -257,7 +257,7 @@ public class ArchiviCore extends ControlStationCore {
 			
 			ArchiveValidator validator = new ArchiveValidator(reader);
 			validator.validateArchive(archive, protocolloEffettivo, validazioneDocumenti, importInformationMissingCollection, userLogin, 
-					this.isShowCorrelazioneAsincronaInAccordi());
+					this.isShowCorrelazioneAsincronaInAccordi(),delete);
 			
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);

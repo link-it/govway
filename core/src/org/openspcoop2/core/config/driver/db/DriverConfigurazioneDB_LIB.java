@@ -129,6 +129,7 @@ import org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -1726,7 +1727,7 @@ public class DriverConfigurazioneDB_LIB {
 				if(aPD.sizeExtendedInfoList()>0){
 					if(extInfoConfigurazioneDriver!=null){
 						for (i = 0; i < aPD.sizeExtendedInfoList(); i++) {
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, aPD.getExtendedInfo(i));
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, aPD.getExtendedInfo(i), CRUDType.CREATE);
 						}
 					}
 				}
@@ -2260,14 +2261,14 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD);
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, CRUDType.UPDATE);
 				}
 				
 				i=0;
 				if(aPD.sizeExtendedInfoList()>0){
 					if(extInfoConfigurazioneDriver!=null){
 						for (i = 0; i < aPD.sizeExtendedInfoList(); i++) {
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, aPD.getExtendedInfo(i));
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, aPD.getExtendedInfo(i), CRUDType.UPDATE);
 						}
 					}
 				}
@@ -2399,7 +2400,7 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD);
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, CRUDType.DELETE);
 				}
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -3647,7 +3648,7 @@ public class DriverConfigurazioneDB_LIB {
 				if(aPA.sizeExtendedInfoList()>0){
 					if(extInfoConfigurazioneDriver!=null){
 						for (i = 0; i < aPA.sizeExtendedInfoList(); i++) {
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPA, aPA.getExtendedInfo(i));
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPA, aPA.getExtendedInfo(i), CRUDType.CREATE);
 						}
 					}
 				}
@@ -4193,14 +4194,14 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA);
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, CRUDType.UPDATE);
 				}
 				
 				i=0;
 				if(aPA.sizeExtendedInfoList()>0){
 					if(extInfoConfigurazioneDriver!=null){
 						for (i = 0; i < aPA.sizeExtendedInfoList(); i++) {
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, aPA.getExtendedInfo(i));
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, aPA.getExtendedInfo(i), CRUDType.UPDATE);
 						}
 					}
 				}
@@ -4349,7 +4350,7 @@ public class DriverConfigurazioneDB_LIB {
 
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA);
+					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, CRUDType.DELETE);
 				}
 				
 				// porta applicativa
@@ -5570,20 +5571,37 @@ public class DriverConfigurazioneDB_LIB {
 			if(extInfoConfigurazioneDriver!=null){
 			
 				try{
+					CRUDType crudType = null;
+					switch (type) {
+					case CREATE:
+						crudType = CRUDType.CREATE;
+						break;
+					case UPDATE:
+						crudType = CRUDType.UPDATE;
+						break;
+					case DELETE:
+						crudType = CRUDType.DELETE;
+						break;
+					}
+					
 					switch (type) {
 					case CREATE:
 					case UPDATE:
-						extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
-						
-						
+						//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, crudType);												
 						if(config.sizeExtendedInfoList()>0){
 							for(int l=0; l<config.sizeExtendedInfoList();l++){
-								extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l));
+								extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), crudType);
+								extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), crudType);
 							}
 						}
 						break;
 					case DELETE:
-						extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
+						//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, crudType);
+						if(config.sizeExtendedInfoList()>0){
+							for(int l=0; l<config.sizeExtendedInfoList();l++){
+								extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), crudType);
+							}
+						}
 						break;
 					}
 				}catch (Exception se) {
@@ -6090,12 +6108,12 @@ public class DriverConfigurazioneDB_LIB {
 				// ExtendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
-					
-					
+					//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, CRUDType.CREATE);
+										
 					if(config.sizeExtendedInfoList()>0){
 						for(int l=0; l<config.sizeExtendedInfoList();l++){
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l));
+							extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.CREATE);
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.CREATE);
 						}
 					}
 				}
@@ -6427,12 +6445,12 @@ public class DriverConfigurazioneDB_LIB {
 				// ExtendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					
-					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
-					
-					
+					//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, CRUDType.UPDATE);
+										
 					if(config.sizeExtendedInfoList()>0){
 						for(int l=0; l<config.sizeExtendedInfoList();l++){
-							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l));
+							extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
+							extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
 						}
 					}
 				}
@@ -6442,7 +6460,13 @@ public class DriverConfigurazioneDB_LIB {
 
 			case DELETE:
 				
-				extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config);
+				//extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, CRUDType.DELETE);
+				if(config.sizeExtendedInfoList()>0){
+					for(int l=0; l<config.sizeExtendedInfoList();l++){
+						extInfoConfigurazioneDriver.deleteExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
+						extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
+					}
+				}
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE);

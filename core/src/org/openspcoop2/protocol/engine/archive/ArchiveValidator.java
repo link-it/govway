@@ -51,12 +51,14 @@ public class ArchiveValidator {
 	
 	public void validateArchive(Archive archive, String protocolloEffettivo, 
 			boolean validazioneDocumenti, ImportInformationMissingCollection importInformationMissingCollection, 
-			String userLogin, boolean checkCorrelazioneAsincrona) throws Exception,ImportInformationMissingException{
+			String userLogin, boolean checkCorrelazioneAsincrona, boolean delete) throws Exception,ImportInformationMissingException{
 		try{
 			
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloEffettivo);
 			
-			validateAndFillImportInformationMissing(archive, protocolFactory, importInformationMissingCollection, validazioneDocumenti, userLogin, checkCorrelazioneAsincrona);
+			validateAndFillImportInformationMissing(archive, protocolFactory, 
+					importInformationMissingCollection, validazioneDocumenti, userLogin, 
+					checkCorrelazioneAsincrona, delete);
 							
 		}catch(ImportInformationMissingException e){
 			throw e;
@@ -66,14 +68,15 @@ public class ArchiveValidator {
 	}
 	
 	private void validateAndFillImportInformationMissing(Archive archive,IProtocolFactory<?> protocolFactory, 
-			ImportInformationMissingCollection importInformationMissingCollection, boolean validazioneDocumenti, String userLogin, boolean checkCorrelazioneAsincrona) throws Exception,ImportInformationMissingException{
+			ImportInformationMissingCollection importInformationMissingCollection, boolean validazioneDocumenti, String userLogin, 
+			boolean checkCorrelazioneAsincrona, boolean delete) throws Exception,ImportInformationMissingException{
 		
 		ImporterInformationMissingUtils importerInformationMissingUtils = 
 				new ImporterInformationMissingUtils(importInformationMissingCollection, this.registryReader, validazioneDocumenti, protocolFactory, userLogin, archive);
 		
 		// ArchiveInformationMissing
 		if(archive.getInformationMissing()!=null){
-			importerInformationMissingUtils.validateAndFillInformationMissing(archive.getInformationMissing());
+			importerInformationMissingUtils.validateAndFillInformationMissing(archive.getInformationMissing(),delete);
 		}
 			
 		// ServiziApplicativi

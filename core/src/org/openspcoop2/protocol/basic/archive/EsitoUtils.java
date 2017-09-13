@@ -483,7 +483,8 @@ public class EsitoUtils {
 			// Stato mai usato per questo oggetto
 			break;
 		case DELETED:
-			// Stato mai usato per questo oggetto
+			// Stato utilizzato solamente per le extended info
+			bfEsito.append("eliminazione effettuata correttamente").append(stateDetail);
 			break;
 		}
 	}

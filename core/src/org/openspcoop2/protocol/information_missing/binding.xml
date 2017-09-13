@@ -112,12 +112,14 @@
     <value name="placeholder" field="placeholder" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="default" field="_default" usage="optional" style="attribute"/>
+    <value name="use-in-delete" field="useInDelete" default="true" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="wizard" class="org.openspcoop2.protocol.information_missing.Wizard">
     <namespace uri="http://www.openspcoop2.org/protocol/information_missing" default="elements"/>
     <structure field="requisiti" usage="optional" map-as="org.openspcoop2.protocol.information_missing.Requisiti"/>
     <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
     <value name="step" field="step" usage="optional" style="attribute"/>
+    <value name="step-in-delete" field="stepInDelete" usage="optional" style="attribute"/>
     <value name="intestazione-originale" field="intestazioneOriginale" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="requisiti" class="org.openspcoop2.protocol.information_missing.Requisiti">

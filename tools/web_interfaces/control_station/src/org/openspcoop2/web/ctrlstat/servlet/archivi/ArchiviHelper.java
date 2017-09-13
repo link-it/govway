@@ -893,24 +893,21 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}else
 				cis.setTipo(CredenzialeTipo.toEnumConstant(tipoauth));
 			
+			cis.setUser("");
+			cis.setPassword("");
+			cis.setSubject("");
+			
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 				cis.setUser(utente);
 				cis.setPassword(password);
-			} else {
-				cis.setUser("");
-				cis.setPassword("");
 			}
 			
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 				cis.setSubject(subject);
-			} else {
-				cis.setSubject("");
 			}
 			
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
 				cis.setUser(principal);
-			} else {
-				cis.setUser("");
 			}
 		}
 		
@@ -1206,7 +1203,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String modalitaAcquisizioneInformazioniProtocollo,List<PortType> portTypesOpenSPCoop,
 			List<String> protocolliForModes,
 			boolean readedDatiConnettori,
-			Wizard wizard, int step) throws Exception{
+			Wizard wizard, int step,
+			boolean delete) throws Exception{
 		
 		String oldMessage = this.pd.getMessage();
 		if(oldMessage!=null && !"".equals(oldMessage)){
@@ -1218,8 +1216,17 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		boolean showSection = true;
 		if(wizard!=null){
 			String stepDescription = " (Fase "+step;
+			int stepConfigurated = -1;
 			if(wizard.getStep()>0){
-				stepDescription+="/"+wizard.getStep();
+				stepConfigurated = wizard.getStep();
+			}
+			if(delete) {
+				if(wizard.getStepInDelete()>0){
+					stepConfigurated = wizard.getStepInDelete();
+				}
+			}
+			if(stepConfigurated>0){
+				stepDescription+="/"+stepConfigurated;
 			}
 			stepDescription+=")";
 			this.pd.setMessage(wizard.getDescrizione()+stepDescription+oldMessage,Costanti.MESSAGE_TYPE_INFO);
@@ -1486,6 +1493,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			for (int i = 0; i < input.sizeProprietaList(); i++) {
 				
 				Proprieta p = input.getProprieta(i);
+				
+				if(delete && !p.isUseInDelete()) {
+					continue;
+				}
 				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_HIDDEN+i);

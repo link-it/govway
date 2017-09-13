@@ -106,7 +106,7 @@ public class ImporterInformationMissingUtils {
 	
 	
 	
-	public void validateAndFillInformationMissing(Openspcoop2 archiveInformationMissing) throws Exception{
+	public void validateAndFillInformationMissing(Openspcoop2 archiveInformationMissing, boolean delete) throws Exception{
 		
 		ImportInformationMissingException infoException = null;	
 		String objectId = null;
@@ -163,16 +163,18 @@ public class ImporterInformationMissingUtils {
 						}	
 						break;
 					case CONNETTORE:
-						if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
-							updateInfo = true;
-						}
-						else{
-							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoInvocazioneServizio(true);
-							infoException.setMissingInfoSoggetto_protocollo(soggettoMissingInfo.getProtocollo());
-							if(soggettoMissingInfo.getTipoPdd()!=null)
-								infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());	
-							throwException = true;
+						if(delete==false) {
+							if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
+								updateInfo = true;
+							}
+							else{
+								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+								infoException.setMissingInfoInvocazioneServizio(true);
+								infoException.setMissingInfoSoggetto_protocollo(soggettoMissingInfo.getProtocollo());
+								if(soggettoMissingInfo.getTipoPdd()!=null)
+									infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());	
+								throwException = true;
+							}
 						}
 						break;
 					}
@@ -203,6 +205,18 @@ public class ImporterInformationMissingUtils {
 				for (int i = 0; i < archiveInformationMissing.sizeInputList(); i++) {
 					org.openspcoop2.protocol.information_missing.Input inputMissingInfo = 
 							archiveInformationMissing.getInput(i);
+					if(delete) {
+						boolean foundPropertyUseInDelete = false;
+						for (int j = 0; j < inputMissingInfo.sizeProprietaList(); j++) {
+							if(inputMissingInfo.getProprieta(j).isUseInDelete()) {
+								foundPropertyUseInDelete = true;
+								break;
+							}
+						}
+						if(!foundPropertyUseInDelete) {
+							continue;
+						}
+					}
 			
 					// *** object id ***
 					
@@ -251,27 +265,33 @@ public class ImporterInformationMissingUtils {
 						// nop; non gestito (Da realizzare per assegnare lo stesso servizio applicativo a piu' porte)
 						break;
 					case CONNETTORE:
-						if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
-							updateInfo = true;
-						}
-						else{
-							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoInvocazioneServizio(true);
-							throwException = true;
+						if(delete==false) {
+							if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
+								updateInfo = true;
+							}
+							else{
+								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+								infoException.setMissingInfoInvocazioneServizio(true);
+								throwException = true;
+							}
 						}
 						break;
 					case CREDENZIALI_ACCESSO_PDD:
-						if(importInformationMissing!=null && importInformationMissing.getCredenziali()!=null){
-							updateInfo = true;
-						}
-						else{
-							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoCredenziali(true);
-							throwException = true;
+						if(delete==false) {
+							if(importInformationMissing!=null && importInformationMissing.getCredenziali()!=null){
+								updateInfo = true;
+							}
+							else{
+								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+								infoException.setMissingInfoCredenziali(true);
+								throwException = true;
+							}
 						}
 						break;
 					case ALLINEA_CREDENZIALI_PD:
-						updateInfo = true;
+						if(delete==false) {
+							updateInfo = true;
+						}
 						break;
 					}
 					
@@ -324,7 +344,9 @@ public class ImporterInformationMissingUtils {
 						}
 						break;
 					case STATO_ARCHIVIO:
-						updateInfo = true;
+						if(delete==false) {
+							updateInfo = true;
+						}
 						break;
 					}
 					
@@ -376,7 +398,9 @@ public class ImporterInformationMissingUtils {
 						}
 						break;
 					case STATO_ARCHIVIO:
-						updateInfo = true;
+						if(delete==false) {
+							updateInfo = true;
+						}
 						break;
 					}
 					
@@ -418,17 +442,21 @@ public class ImporterInformationMissingUtils {
 					boolean updateInfo = false;
 					switch (aspsMissingInfo.getTipo()) {
 					case CONNETTORE:
-						if(importInformationMissing!=null && importInformationMissing.getConnettore()!=null){
-							updateInfo = true;
-						}
-						else{
-							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoConnettore(true);
-							throwException = true;
+						if(delete==false) {
+							if(importInformationMissing!=null && importInformationMissing.getConnettore()!=null){
+								updateInfo = true;
+							}
+							else{
+								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+								infoException.setMissingInfoConnettore(true);
+								throwException = true;
+							}
 						}
 						break;
 					case STATO_ARCHIVIO:
-						updateInfo = true;
+						if(delete==false) {
+							updateInfo = true;
+						}
 						break;
 					}					
 					
@@ -479,7 +507,9 @@ public class ImporterInformationMissingUtils {
 						}
 						break;
 					case STATO_ARCHIVIO:
-						updateInfo = true;
+						if(delete==false) {
+							updateInfo = true;
+						}
 						break;
 					}
 					
@@ -520,7 +550,9 @@ public class ImporterInformationMissingUtils {
 					boolean updateInfo = false;
 					switch (fruitoreMissingInfo.getTipo()) {
 					case STATO_ARCHIVIO:
-						updateInfo = true;
+						if(delete==false) {
+							updateInfo = true;
+						}
 						break;
 					}
 					

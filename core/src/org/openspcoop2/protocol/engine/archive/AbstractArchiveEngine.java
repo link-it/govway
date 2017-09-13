@@ -769,6 +769,9 @@ public abstract class AbstractArchiveEngine {
 		}
 		this.driverConfigurazione.updateConfigurazione(configurazione);
 	}
+	public void deleteConfigurazione(Configurazione configurazione) throws DriverConfigurazioneException{
+		this.driverConfigurazione.deleteConfigurazione(configurazione);
+	}
 
 	public Configurazione getConfigurazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		Configurazione configurazione = this.driverConfigurazione.getConfigurazioneGenerale();

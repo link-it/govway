@@ -39,6 +39,7 @@ import java.io.Serializable;
  * 		&lt;/sequence>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="step" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/>
+ * 		&lt;attribute name="step-in-delete" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/>
  * 		&lt;attribute name="intestazione-originale" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -86,6 +87,14 @@ public class Wizard extends org.openspcoop2.utils.beans.BaseBean implements Seri
     this.step = step;
   }
 
+  public int getStepInDelete() {
+    return this.stepInDelete;
+  }
+
+  public void setStepInDelete(int stepInDelete) {
+    this.stepInDelete = stepInDelete;
+  }
+
   public boolean isIntestazioneOriginale() {
     return this.intestazioneOriginale;
   }
@@ -112,6 +121,10 @@ public class Wizard extends org.openspcoop2.utils.beans.BaseBean implements Seri
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlAttribute(name="step",required=false)
   protected int step;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlAttribute(name="step-in-delete",required=false)
+  protected int stepInDelete;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="intestazione-originale",required=false)

@@ -36,6 +36,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="placeholder" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="use-in-delete" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -78,6 +79,18 @@ public class Proprieta extends org.openspcoop2.utils.beans.BaseBean implements S
     this._default = _default;
   }
 
+  public boolean isUseInDelete() {
+    return this.useInDelete;
+  }
+
+  public boolean getUseInDelete() {
+    return this.useInDelete;
+  }
+
+  public void setUseInDelete(boolean useInDelete) {
+    this.useInDelete = useInDelete;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -93,5 +106,9 @@ public class Proprieta extends org.openspcoop2.utils.beans.BaseBean implements S
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="default",required=false)
   protected java.lang.String _default;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="use-in-delete",required=false)
+  protected boolean useInDelete = true;
 
 }

@@ -504,7 +504,7 @@ public final class Importer extends Action {
 			if(isOk || convertForGetException){
 				try{
 					archiviCore.validateArchive(archive, protocolloEffettivo, 
-							this.validazioneDocumenti, importInformationMissingCollection, userLogin);
+							this.validazioneDocumenti, importInformationMissingCollection, userLogin, deleter);
 				}catch(ImportInformationMissingException e){
 					//ControlStationCore.logError(importInformationMissingException.getMessage(), importInformationMissingException);
 					importInformationMissingException = e;
@@ -547,7 +547,8 @@ public final class Importer extends Action {
 							importInformationMissingCollection, importInformationMissingException, 
 							this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo,this.importInformationMissing_portTypes,
 							protocolliForModes,readedDatiConnettori,
-							wizard,this.step);
+							wizard,this.step,
+							deleter);
 				}
 				else{
 					archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,

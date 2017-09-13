@@ -55,31 +55,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AccordoServizioParteComune }
+     * Create an instance of {@link Proprieta }
      */
-    public AccordoServizioParteComune createAccordoServizioParteComune() {
-        return new AccordoServizioParteComune();
-    }
-
-    /**
-     * Create an instance of {@link Wizard }
-     */
-    public Wizard createWizard() {
-        return new Wizard();
-    }
-
-    /**
-     * Create an instance of {@link Requisiti }
-     */
-    public Requisiti createRequisiti() {
-        return new Requisiti();
-    }
-
-    /**
-     * Create an instance of {@link ReplaceMatchType }
-     */
-    public ReplaceMatchType createReplaceMatchType() {
-        return new ReplaceMatchType();
+    public Proprieta createProprieta() {
+        return new Proprieta();
     }
 
     /**
@@ -90,10 +69,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Soggetto }
+     * Create an instance of {@link RequisitoProtocollo }
      */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
+    public RequisitoProtocollo createRequisitoProtocollo() {
+        return new RequisitoProtocollo();
+    }
+
+    /**
+     * Create an instance of {@link Wizard }
+     */
+    public Wizard createWizard() {
+        return new Wizard();
     }
 
     /**
@@ -104,17 +90,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Openspcoop2 }
+     * Create an instance of {@link ServizioApplicativo }
      */
-    public Openspcoop2 createOpenspcoop2() {
-        return new Openspcoop2();
-    }
-
-    /**
-     * Create an instance of {@link Proprieta }
-     */
-    public Proprieta createProprieta() {
-        return new Proprieta();
+    public ServizioApplicativo createServizioApplicativo() {
+        return new ServizioApplicativo();
     }
 
     /**
@@ -125,17 +104,31 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ServizioApplicativo }
+     * Create an instance of {@link AccordoServizioParteComune }
      */
-    public ServizioApplicativo createServizioApplicativo() {
-        return new ServizioApplicativo();
+    public AccordoServizioParteComune createAccordoServizioParteComune() {
+        return new AccordoServizioParteComune();
     }
 
     /**
-     * Create an instance of {@link RequisitoProtocollo }
+     * Create an instance of {@link Requisiti }
      */
-    public RequisitoProtocollo createRequisitoProtocollo() {
-        return new RequisitoProtocollo();
+    public Requisiti createRequisiti() {
+        return new Requisiti();
+    }
+
+    /**
+     * Create an instance of {@link Soggetto }
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link Input }
+     */
+    public Input createInput() {
+        return new Input();
     }
 
     /**
@@ -146,10 +139,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Input }
+     * Create an instance of {@link ReplaceMatchType }
      */
-    public Input createInput() {
-        return new Input();
+    public ReplaceMatchType createReplaceMatchType() {
+        return new ReplaceMatchType();
+    }
+
+    /**
+     * Create an instance of {@link Openspcoop2 }
+     */
+    public Openspcoop2 createOpenspcoop2() {
+        return new Openspcoop2();
     }
 
     private final static QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");

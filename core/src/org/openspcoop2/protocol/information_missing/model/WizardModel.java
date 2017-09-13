@@ -43,6 +43,7 @@ public class WizardModel extends AbstractModel<Wizard> {
 		this.REQUISITI = new org.openspcoop2.protocol.information_missing.model.RequisitiModel(new Field("requisiti",org.openspcoop2.protocol.information_missing.Requisiti.class,"Wizard",Wizard.class));
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"Wizard",Wizard.class);
 		this.STEP = new Field("step",int.class,"Wizard",Wizard.class);
+		this.STEP_IN_DELETE = new Field("step-in-delete",int.class,"Wizard",Wizard.class);
 		this.INTESTAZIONE_ORIGINALE = new Field("intestazione-originale",boolean.class,"Wizard",Wizard.class);
 	
 	}
@@ -54,6 +55,7 @@ public class WizardModel extends AbstractModel<Wizard> {
 		this.REQUISITI = new org.openspcoop2.protocol.information_missing.model.RequisitiModel(new ComplexField(father,"requisiti",org.openspcoop2.protocol.information_missing.Requisiti.class,"Wizard",Wizard.class));
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"Wizard",Wizard.class);
 		this.STEP = new ComplexField(father,"step",int.class,"Wizard",Wizard.class);
+		this.STEP_IN_DELETE = new ComplexField(father,"step-in-delete",int.class,"Wizard",Wizard.class);
 		this.INTESTAZIONE_ORIGINALE = new ComplexField(father,"intestazione-originale",boolean.class,"Wizard",Wizard.class);
 	
 	}
@@ -65,6 +67,8 @@ public class WizardModel extends AbstractModel<Wizard> {
 	public IField DESCRIZIONE = null;
 	 
 	public IField STEP = null;
+	 
+	public IField STEP_IN_DELETE = null;
 	 
 	public IField INTESTAZIONE_ORIGINALE = null;
 	 

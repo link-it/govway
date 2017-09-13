@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -41,9 +42,9 @@ public interface IExtendedInfo {
 	public List<Object> getAllExtendedInfo(Connection connection,  Logger log, Object originalObject) throws UtilsException;
 	
 	// store
-	public void createExtendedInfo(Connection connection,  Logger log, Object originalObject, Object object) throws UtilsException;
-	public void deleteExtendedInfo(Connection connection,  Logger log, Object originalObject, Object object) throws UtilsException;
-	public void deleteAllExtendedInfo(Connection connection,  Logger log, Object originalObject) throws UtilsException;
+	public void createExtendedInfo(Connection connection,  Logger log, Object originalObject, Object object, CRUDType tipoOperazioneOrigine) throws UtilsException;
+	public void deleteExtendedInfo(Connection connection,  Logger log, Object originalObject, Object object, CRUDType tipoOperazioneOrigine) throws UtilsException;
+	public void deleteAllExtendedInfo(Connection connection,  Logger log, Object originalObject, CRUDType tipoOperazioneOrigine) throws UtilsException;
 	
 	// serialize
 	public byte[] serialize( Logger log, Object originalObject, Object object) throws UtilsException;

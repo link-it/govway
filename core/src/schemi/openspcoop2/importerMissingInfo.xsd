@@ -240,6 +240,7 @@
 		<xsd:attribute name="placeholder" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="default" type="xsd:string" use="optional"/>
+		<xsd:attribute name="use-in-delete" type="xsd:boolean" use="optional" default="true"/>
 	</xsd:complexType>
 	
 	<!-- Wizard -->	
@@ -252,6 +253,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
 		<xsd:attribute name="step" type="xsd:int" use="optional"/>
+		<xsd:attribute name="step-in-delete" type="xsd:int" use="optional"/>
 		<xsd:attribute name="intestazione-originale" type="xsd:boolean" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="Requisiti">

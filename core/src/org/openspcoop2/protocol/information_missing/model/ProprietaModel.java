@@ -43,6 +43,7 @@ public class ProprietaModel extends AbstractModel<Proprieta> {
 		this.PLACEHOLDER = new Field("placeholder",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.NOME = new Field("nome",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.DEFAULT = new Field("default",java.lang.String.class,"Proprieta",Proprieta.class);
+		this.USE_IN_DELETE = new Field("use-in-delete",boolean.class,"Proprieta",Proprieta.class);
 	
 	}
 	
@@ -53,6 +54,7 @@ public class ProprietaModel extends AbstractModel<Proprieta> {
 		this.PLACEHOLDER = new ComplexField(father,"placeholder",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.DEFAULT = new ComplexField(father,"default",java.lang.String.class,"Proprieta",Proprieta.class);
+		this.USE_IN_DELETE = new ComplexField(father,"use-in-delete",boolean.class,"Proprieta",Proprieta.class);
 	
 	}
 	
@@ -63,6 +65,8 @@ public class ProprietaModel extends AbstractModel<Proprieta> {
 	public IField NOME = null;
 	 
 	public IField DEFAULT = null;
+	 
+	public IField USE_IN_DELETE = null;
 	 
 
 	@Override

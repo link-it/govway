@@ -112,7 +112,7 @@ public class Importer {
 		ArchiveValidator validator = new ArchiveValidator(archiveRegistryReader);
 		ImportInformationMissingCollection importInformationMissingCollection = new ImportInformationMissingCollection();
 		validator.validateArchive(archive, protocollo, validateDocuments, importInformationMissingCollection, userLogin, 
-				isShowCorrelazioneAsincronaInAccordi);
+				isShowCorrelazioneAsincronaInAccordi, false);
 		// TODO: Gestore correttamente le eccezioni
 		
 		

@@ -414,6 +414,21 @@ public class DeleterArchiveUtils {
 			
 			
 			
+			// Configurazione (Gestisco solamente informazioni extended, in modo da chiamare il driver con la DELETE)
+			if(archive.getConfigurazionePdD()!=null && archive.getConfigurazionePdD().sizeExtendedInfoList()>0) {
+				Configurazione newConfig = new Configurazione();
+				newConfig.getExtendedInfoList().addAll(archive.getConfigurazionePdD().getExtendedInfoList());
+				ArchiveEsitoImportDetailConfigurazione detail = new ArchiveEsitoImportDetailConfigurazione(newConfig);
+				try{
+					this.deleteConfigurazione(newConfig, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.setConfigurazionePdD(detail);
+			}
+			
+			
 			return esito;
 			
 		}catch(Exception e){
@@ -422,6 +437,22 @@ public class DeleterArchiveUtils {
 	}
 	
 	
+	public void deleteConfigurazione(Configurazione config, ArchiveEsitoImportDetailConfigurazione detail){
+		
+		try{
+						
+			// --- delete ---
+			this.importerEngine.deleteConfigurazione(config);
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione della configurazione: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
 	
 	
 	public void deletePdd(ArchivePdd archivePdd,ArchiveEsitoImportDetail detail){
