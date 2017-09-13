@@ -180,7 +180,7 @@ public class EsitoUtils {
 		
 		// Ruoli
 		if(archive.getRuoli().size()>0){
-			bfEsito.append("Ruoli (").append(archive.getPdd().size()).append(")\n");
+			bfEsito.append("Ruoli (").append(archive.getRuoli().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getRuoli().size(); i++) {
 			try{
