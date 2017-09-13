@@ -34,19 +34,26 @@ legend {
 	font-size: 13px;
 	font-weight: bold;
 	padding-left: 10px;
-    padding-right: 10px;
-    color: ${legend.color};
+    	padding-right: 10px;
+    	color: ${legend.color};
 }
 
 a {
-	text-decoration: none;
+	text-decoration: underline;
 	font-family: 'Roboto';
 	font-size: 12px;
 	cursor: pointer;
+	color: ${a.color};
+}
+
+a:hover {
+	color: ${a.hover.color};
+	text-decoration: none;
 }
 
 a:visited {
-	color:${a.visited.color};
+	color: ${a.visited.color};
+	text-decoration: none;
 }
 
 body {
@@ -268,16 +275,18 @@ div.voceMenu:hover {
 	color: ${menu.element.hover.color};
 	border-left: 4px solid ${menu.element.hover.border.color};
 	padding-left: 4px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    	padding-top: 6px;
+   	padding-bottom: 6px;
 }
 
 .voceMenu a{
-	color: #ffffff;
+	color: ${menu.header.hover.color};
+	text-decoration: none;
 }
 
 .voceMenu a:hover{
-	color: #f0641e;
+	color: ${menu.element.hover.color};
+	text-decoration: none
 }
 
 .spazioSottoTitolo {
@@ -357,8 +366,16 @@ p.legend em {
 	color: ${a.color};
 }
 
+.even a:hover{
+	color: ${a.hover.color};
+}
+
 .odd a{
 	color: ${a.color};
+}
+
+.odd a:hover{
+	color: ${a.hover.color};
 }
 
 .tdText {
@@ -656,13 +673,21 @@ span.nomeUtenteImg {
 }
 
 .menu-item {
-	color: #ffffff;
+	color: ${page.header.text.color};
 	padding: 6px 0px 6px 22px; 
 }
 
 .menu-item-with-icon {
 	color: ${page.header.text.color};
 	padding: 6px 0px 6px 6px; 
+}
+
+.menu-item a{
+	text-decoration: none;
+}
+
+.menu-item-with-icon a{
+	text-decoration: none;
 }
 
 span.item-label {
