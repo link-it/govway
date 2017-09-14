@@ -282,17 +282,22 @@ public abstract class BaseBean {
 								}
 							}else{
 								if("java.util.Date".equals(fields[i].getType().getName())){
-									java.util.Calendar calendarThis = new java.util.GregorianCalendar();
-									calendarThis.setTime((java.util.Date)fieldValue_this);
-									java.util.Calendar calendarObject = new java.util.GregorianCalendar();
-									calendarObject.setTime((java.util.Date)fieldValue_object);
-									checkUguaglianza = (  calendarThis.get(java.util.Calendar.YEAR) == calendarObject.get(java.util.Calendar.YEAR) ) && 
-											( calendarThis.get(java.util.Calendar.MONTH) == calendarObject.get(java.util.Calendar.MONTH) ) && 
-											( calendarThis.get(java.util.Calendar.DAY_OF_MONTH) == calendarObject.get(java.util.Calendar.DAY_OF_MONTH) ) && 
-											( calendarThis.get(java.util.Calendar.HOUR_OF_DAY) == calendarObject.get(java.util.Calendar.HOUR_OF_DAY) ) && 
-											( calendarThis.get(java.util.Calendar.MINUTE) == calendarObject.get(java.util.Calendar.MINUTE) ) && 
-											( calendarThis.get(java.util.Calendar.SECOND) == calendarObject.get(java.util.Calendar.SECOND) ) && 
-											( calendarThis.get(java.util.Calendar.MILLISECOND) == calendarObject.get(java.util.Calendar.MILLISECOND) ) ;
+									if(fieldValue_object==null) {
+										checkUguaglianza=false; // che fieldValue_this non sia null e' gia' stato controllato sopra
+									}
+									else {
+										java.util.Calendar calendarThis = new java.util.GregorianCalendar();
+										calendarThis.setTime((java.util.Date)fieldValue_this);
+										java.util.Calendar calendarObject = new java.util.GregorianCalendar();
+										calendarObject.setTime((java.util.Date)fieldValue_object);
+										checkUguaglianza = (  calendarThis.get(java.util.Calendar.YEAR) == calendarObject.get(java.util.Calendar.YEAR) ) && 
+												( calendarThis.get(java.util.Calendar.MONTH) == calendarObject.get(java.util.Calendar.MONTH) ) && 
+												( calendarThis.get(java.util.Calendar.DAY_OF_MONTH) == calendarObject.get(java.util.Calendar.DAY_OF_MONTH) ) && 
+												( calendarThis.get(java.util.Calendar.HOUR_OF_DAY) == calendarObject.get(java.util.Calendar.HOUR_OF_DAY) ) && 
+												( calendarThis.get(java.util.Calendar.MINUTE) == calendarObject.get(java.util.Calendar.MINUTE) ) && 
+												( calendarThis.get(java.util.Calendar.SECOND) == calendarObject.get(java.util.Calendar.SECOND) ) && 
+												( calendarThis.get(java.util.Calendar.MILLISECOND) == calendarObject.get(java.util.Calendar.MILLISECOND) ) ;
+									}
 								}else{
 									checkUguaglianza = fieldValue_this.equals(fieldValue_object);
 								}
