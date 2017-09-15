@@ -103,10 +103,6 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			
 			op2Properties = OpenSPCoop2Properties.getInstance();
 			
-			if(FormUrlEncodedHttpServletRequest.isFormUrlEncodedRequest(req)) {
-				req = FormUrlEncodedHttpServletRequest.convert(req);
-			}
-			
 			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, op2Properties.isPrintInfoCertificate());
 			String function = protocolContext.getFunction();
 			

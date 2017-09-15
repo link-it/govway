@@ -46,7 +46,7 @@ import org.openspcoop2.utils.UtilsException;
 
 
 /**
- * WrapperHttpServletRequest
+ * FormUrlEncodedHttpServletRequest
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author $Author: mergefairy $
