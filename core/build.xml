@@ -58,7 +58,6 @@
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/cxf/geronimo-servlet_3.0_spec-1.0.jar"/>
-			<exclude name="**/faces2/javax.servlet-api-3.0.1.jar"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
 			<include name="commons/*"/>
