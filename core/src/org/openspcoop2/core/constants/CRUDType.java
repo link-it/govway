@@ -25,8 +25,8 @@ package org.openspcoop2.core.constants;
  * CRUDType
  *
  * @author apoli@link.it
- * @author $Author: apoli $
- * @version $Rev: 12621 $, $Date: 2017-01-26 11:45:17 +0100 (Thu, 26 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public enum CRUDType {

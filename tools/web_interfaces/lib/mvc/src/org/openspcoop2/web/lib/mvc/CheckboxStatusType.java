@@ -24,8 +24,8 @@ package org.openspcoop2.web.lib.mvc;
  * DataElementType
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: pintori $
- * @version $Rev: 12946 $, $Date: 2017-05-03 12:40:45 +0200 (Wed, 03 May 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public enum CheckboxStatusType {
 

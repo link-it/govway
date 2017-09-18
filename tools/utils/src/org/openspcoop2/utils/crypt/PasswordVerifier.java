@@ -38,7 +38,7 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
  * PasswordVerifier
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
+ * @author $Author$
  * @version $Rev$, $Date$
  */
 

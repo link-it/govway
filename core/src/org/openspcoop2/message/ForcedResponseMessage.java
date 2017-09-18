@@ -29,8 +29,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * ForcedResponseMessage
  *
  * @author Lorenzo Nardi <nardi@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13039 $, $Date: 2017-05-31 09:53:22 +0200 (Wed, 31 May 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class ForcedResponseMessage {
