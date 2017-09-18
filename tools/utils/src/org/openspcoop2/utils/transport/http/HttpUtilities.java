@@ -712,10 +712,10 @@ public class HttpUtilities {
 					is.close();
 					outResponse.flush();
 					outResponse.close();
-					throw new Exception("Response Code ("+resultHTTPOperation+"): "+outResponse.toString());
+					throw new HttpUtilsException(resultHTTPOperation, "Response Code ("+resultHTTPOperation+"): "+outResponse.toString());
 				}
 				else{
-					throw new Exception("Response Code ("+resultHTTPOperation+")");
+					throw new HttpUtilsException(resultHTTPOperation, "Response Code ("+resultHTTPOperation+")");
 				}
 			}
 		}finally{
