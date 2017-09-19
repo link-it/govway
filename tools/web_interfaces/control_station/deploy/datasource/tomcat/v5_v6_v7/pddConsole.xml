@@ -1,5 +1,18 @@
 <Context>
 
+
+
+	<!-- Turn off session serialization -->
+
+	<Manager className="org.apache.catalina.session.PersistentManager"
+
+	      debug="0" distributable="false" saveOnRestart="false">
+
+	     <Store className="org.apache.catalina.session.FileStore"/>
+
+	</Manager>
+
+
 	<!-- Datasouce utilizzato dall'applicazione grafica pddConsole della PdD OpenSPCoop2 -->
 
 	<Resource name="org.openspcoop2.dataSource.pddConsole" auth="Container"
@@ -7,9 +20,9 @@
 	          driverClassName="DriverJDBC"
 	          url="ConnectionURL"
 	          username="pddConsole" password="pddConsole"
-	          initialSize="10"
-	          maxActive="50"
-	          minIdle="10" maxIdle="50"
+	          initialSize="2"
+	          maxActive="20"
+	          minIdle="2" maxIdle="20"
 	          maxWait="30000" defaultTransactionIsolation="READ_COMMITTED"
 	          validationQuery="SELECT VALIDAZIONE DELLA CONNESSIONE"
 	          validationQueryTimeout="10"
@@ -70,9 +83,9 @@
 	          driverClassName="DriverJDBC"
 	          url="ConnectionURL"
 	          username="openspcoop2" password="openspcoop2"
-	          initialSize="10"
-	          maxActive="50"
-	          minIdle="10" maxIdle="50"
+	          initialSize="2"
+	          maxActive="20"
+	          minIdle="2" maxIdle="20"
 	          maxWait="30000" defaultTransactionIsolation="READ_COMMITTED"
 	          validationQuery="SELECT VALIDAZIONE DELLA CONNESSIONE"
 	          validationQueryTimeout="10"
