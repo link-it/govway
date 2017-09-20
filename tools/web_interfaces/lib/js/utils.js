@@ -46,7 +46,8 @@
 	if($("[name=selectcheckbox]").length>0){
 		if($("#rem_btn").length==1){
 		    $("#rem_btn").click(function(){
-		    	 $( "#confermaModal" ).dialog( "open" );
+		    	if($("input[name=selectcheckbox]:checked").length > 0)
+		    		$( "#confermaModal" ).dialog( "open" );
 			    //RemoveEntries();
 			});
 		
