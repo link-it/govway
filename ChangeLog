@@ -1,3 +1,12 @@
+2017-09-26  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-651
+	Risolte piccole problematiche su pddConsole:
+	1) Alla add del fruitore, non si vedevano i suoi servizi applicativi perchè il soggetto era stato creato con una utenza pddConsole differente dal servizio.
+	2) Migliorate 'label' quando si elimina un'utenza pddConsole e si assegna i suoi oggetti ad un'altra utenza
+	3) Migliorata sezione Connettore, quando la configurazione non è visualizzabile in modalità standard: veniva erroneamente riportata la sezione extended
+
 2017-08-07  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
