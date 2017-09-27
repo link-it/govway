@@ -96,6 +96,7 @@ img.datepicker_trigger {
 .datepicker a {
 	display: block;
 	width: 100%;
+	text-decoration: none;
 }
 .datepicker_titleRow {
 	background: ${input.calendar.widget.footer.background.color};
@@ -151,6 +152,7 @@ img.datepicker_trigger {
 	padding: 0;
 	background: none;
 	color: ${input.calendar.widget.color};
+	text-decoration: none;
 }
 .datepicker_inline .datepicker_links a {
 	padding: 0 5px !important;
