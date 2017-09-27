@@ -304,7 +304,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuServizi){
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI);
+			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE);
+			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI);
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			de.setValues(uws);
@@ -313,7 +314,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuAccordi){
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE);
+			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE);
+			de.setLabel(UtentiCostanti.LABEL_UTENTE);
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			de.setValues(uwp);
@@ -334,7 +336,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuServizi){
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI);
+			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE);
+			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI);
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			de.setValues(uws);
@@ -343,7 +346,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuAccordi){
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE);
+			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE);
+			de.setLabel(UtentiCostanti.LABEL_UTENTE);
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			de.setValues(uwp);

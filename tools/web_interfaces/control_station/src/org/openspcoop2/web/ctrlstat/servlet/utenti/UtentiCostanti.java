@@ -123,8 +123,10 @@ public class UtentiCostanti {
 	public final static String LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD = "Conferma Nuova";
 	public final static String LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD = "Nuova";
 	
-	public final static String LABEL_UTENTE_PERMESSI_SERVIZI = "Utente con permessi " + LABEL_PARAMETRO_UTENTI_IS_SERVIZI;
-	public final static String LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE = "Utente con permessi " + LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE;
+	public final static String LABEL_UTENTE_PERMESSI = "Utente";
+	private final static String LABEL_UTENTE_PERMESSI_PREFIX_NOTE = "Utente a cui verranno assegnati gli oggetti creati con il permesso '";
+	public final static String LABEL_UTENTE_PERMESSI_SERVIZI_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_SERVIZI+"'";
+	public final static String LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE+"'";
 	
 	
 }

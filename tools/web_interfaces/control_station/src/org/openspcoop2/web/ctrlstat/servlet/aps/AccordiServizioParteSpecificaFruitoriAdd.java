@@ -531,8 +531,15 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					if(auth==null || "".equals(auth)){
 						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					}
-					List<ServizioApplicativo> oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,superUser,
-							CredenzialeTipo.toEnumConstant(auth));
+					List<ServizioApplicativo> oldSilList = null;
+					if(apsCore.isVisioneOggettiGlobale(superUser)){
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,null,
+								CredenzialeTipo.toEnumConstant(auth));
+					}
+					else {
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,superUser,
+								CredenzialeTipo.toEnumConstant(auth));
+					}
 					if(oldSilList!=null && oldSilList.size()>0){
 						for (int i = 0; i < oldSilList.size(); i++) {
 							saList.add(oldSilList.get(i).getNome());		

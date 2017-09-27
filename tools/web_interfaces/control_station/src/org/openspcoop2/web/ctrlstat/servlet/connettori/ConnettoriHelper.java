@@ -971,6 +971,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 		if (TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP.equals(tipologiaConnettori)) {
 			
+			boolean configurazioneNonVisualizzabile = false;
+			
 			DataElement de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_ABILITATO);
 
@@ -981,7 +983,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setLabel(null);
 				de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 				de.setType(DataElementType.TEXT);
-				
+				configurazioneNonVisualizzabile = true;
 				this.pd.disableEditMode();
 				this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
 			}
@@ -1117,8 +1119,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}	
 			
 			// Extended
-			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
-				ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
+			if(configurazioneNonVisualizzabile==false) {
+				if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+					ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
+				}
 			}
 			
 			// opzioni avanzate
