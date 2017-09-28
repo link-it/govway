@@ -44,7 +44,8 @@
 			     versione="1"
 			     profilo-collaborazione="sincrono"
 			     wsdl-concettuale="/etc/openspcoop2/mtom/concettuale.wsdl"
-			     wsdl-logico-erogatore="/etc/openspcoop2/mtom/logicoErogatore.wsdl">
+			     wsdl-logico-erogatore="/etc/openspcoop2/mtom/logicoErogatore.wsdl"
+			     service-binding="soap">
 		<soggetto-referente tipo="API" nome="MinisteroErogatore" />
 		<port-type nome="MTOMServiceExample" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
 		   <azione nome="echo" />
@@ -172,19 +173,19 @@
 		<!-- **** Configurazione REST **** -->
 
                 <accordo-servizio-parte-specifica tipo="REST" nome="API" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioREST:1" port-type="API">
-                        <configurazione-servizio>
-                                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_REST/API">
-                                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>
-                                </connettore>
-                        </configurazione-servizio>
-                        <fruitore tipo="API" nome="Anonimo" />
-                        <fruitore tipo="API" nome="applicativoComunePisa"/>
+		        <configurazione-servizio>
+		                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_REST/API">
+		                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>
+		                </connettore>
+		        </configurazione-servizio>
+		        <fruitore tipo="API" nome="applicativoComunePisa"/>
                 </accordo-servizio-parte-specifica>
 
 
 		<!-- **** Configurazione SOAP **** -->
 
-		<accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+		<accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" 
+			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
 			<configurazione-servizio>
 			        <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Oneway">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
@@ -193,7 +194,8 @@
 			<fruitore tipo="API" nome="applicativoComunePisa"/>
 		</accordo-servizio-parte-specifica>
 
-                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" 
+			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Sincrono">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
@@ -204,48 +206,44 @@
 			<specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/xacmlPolicy/OpenSPCoop2TestSuitePolicy.xml"/>
 		</accordo-servizio-parte-specifica>
 
-		<accordo-servizio-parte-specifica
-			 nome="MTOMServiceExampleSOAP11"
-			 accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1"
-			 port-type="MTOMServiceExample"
+		<accordo-servizio-parte-specifica tipo="SOAP" nome="MTOMServiceExampleSOAP11" versione="1" 
+			 accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
 			 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11"
 			 wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap11.wsdl">
-		    <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11">
+			<configurazione-servizio>
 		             <connettore tipo="http" nome="Connettore">
 		                 <property nome="location" valore="http://localhost:65000/MTOMExample/soap11" />
 		             </connettore>
 
-			     <parametri-azione nome="unpackagePackage">
+			     <configurazione-azione nome="unpackagePackage">
 				    <connettore tipo="http" nome="unpackagePackage">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
 				        />
 				    </connettore>
-			     </parametri-azione>
-		    </servizio> 
-		    <fruitore tipo="API" nome="MinisteroFruitore" />
+			     </configurazione-azione>
+			</configurazione-servizio> 
+			<fruitore tipo="API" nome="MinisteroFruitore" />
 		</accordo-servizio-parte-specifica>
 
-		<accordo-servizio-parte-specifica
-		         nome="MTOMServiceExampleSOAP12"
-		         accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1"
-		         port-type="MTOMServiceExample"
+		<accordo-servizio-parte-specifica tipo="SOAP" nome="MTOMServiceExampleSOAP12" versione="1" 
+		         accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
 		         descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12"
 		         wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap12.wsdl">
-		    <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12">
+			<configurazione-servizio>
 		             <connettore tipo="http" nome="Connettore">
 		                 <property nome="location" valore="http://localhost:65001/MTOMExample/soap12" />
 		             </connettore>
 
-			     <parametri-azione nome="unpackagePackage">
+			     <configurazione-azione nome="unpackagePackage">
 				    <connettore tipo="http" nome="unpackagePackage">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
 				        />
 				    </connettore>
-			     </parametri-azione>
-		    </servizio>
-		    <fruitore tipo="API" nome="MinisteroFruitore" />
+			     </configurazione-azione>
+			</configurazione-servizio>
+			<fruitore tipo="API" nome="MinisteroFruitore" />
 		</accordo-servizio-parte-specifica>
 
 	</soggetto>
@@ -257,7 +255,8 @@
 
 		<!-- **** Configurazione SOAP **** -->
 
-                <accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+                <accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" 
+			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
                         <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Oneway">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
@@ -286,7 +285,8 @@
 			</fruitore>
                 </accordo-servizio-parte-specifica>
 
-                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" 
+			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Sincrono">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>

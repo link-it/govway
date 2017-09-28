@@ -976,7 +976,7 @@
 
 		<!-- **** Configurazione REST **** -->
 
-                <porta-applicativa nome="APIMinisteroErogatore/RESTAPI" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                <porta-applicativa nome="APIMinisteroErogatore/RESTAPI" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
                     <servizio tipo="REST" nome="API"/>
                     <azione nome="invoke"/>
                     <servizio-applicativo nome="api"/>
