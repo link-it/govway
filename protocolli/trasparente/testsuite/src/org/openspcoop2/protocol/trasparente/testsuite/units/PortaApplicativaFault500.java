@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 /**
  * PortaApplicativaFault500
  * 
- * @author Andreea Poli (apoli@link.it)
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
