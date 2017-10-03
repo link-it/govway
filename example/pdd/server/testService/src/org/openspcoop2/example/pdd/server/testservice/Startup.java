@@ -19,6 +19,9 @@
  */
 package org.openspcoop2.example.pdd.server.testservice;
 
+import java.io.File;
+import java.util.Properties;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -37,6 +40,7 @@ public class Startup implements ServletContextListener {
 	public static Logger logPing;
 	public static Logger logEcho;
 	public static Logger logStressTest;
+	public static File repositoryResponseFiles;
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
@@ -54,6 +58,25 @@ public class Startup implements ServletContextListener {
 			logEcho.info("avviato con successo");
 			logStressTest = LoggerWrapperFactory.getLogger("openspcoop2.stress");
 			logStressTest.info("avviato con successo");
+			
+			Properties p = new Properties();
+			p.load(Startup.class.getResourceAsStream("/testService.properties"));
+			String repo = p.getProperty("responseFiles.repository");
+			if(repo!=null) {
+				repo = repo.trim();
+				File f = new File(repo);
+				if(f.exists()==false) {
+					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' not exists");
+				}
+				if(f.isDirectory()==false) {
+					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' is not directory");
+				}
+				if(f.canRead()==false) {
+					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' cannot read");
+				}
+				repositoryResponseFiles = f;
+			}
+			
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}

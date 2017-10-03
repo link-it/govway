@@ -48,7 +48,7 @@ public class PingService extends ServletTestService {
 	private static final long serialVersionUID = 1L;
 	
 	public PingService(){
-		super(Startup.logPing);
+		super(Startup.logPing,Startup.repositoryResponseFiles);
 	}
 
 	@Override

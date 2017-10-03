@@ -48,7 +48,7 @@ public class EchoService extends ServletTestService {
 	private static final long serialVersionUID = 1L;
 	
 	public EchoService(){
-		super(Startup.logEcho);
+		super(Startup.logEcho,Startup.repositoryResponseFiles);
 	}
 
 	@Override

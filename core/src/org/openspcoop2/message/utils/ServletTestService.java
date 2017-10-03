@@ -70,7 +70,12 @@ public class ServletTestService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private Logger log = null;
+	private File repositoryResponseFiles = null;
 	
+	public ServletTestService(Logger log, File repositoryResponseFiles){
+		this.log = log;
+		this.repositoryResponseFiles = repositoryResponseFiles;
+	}
 	public ServletTestService(Logger log){
 		this.log = log;
 	}
@@ -470,12 +475,30 @@ public class ServletTestService extends HttpServlet {
 				String contentTypeRisposta = contentTypeRichiesta;
 				
 				String fileDestinazione = req.getParameter("destFile");
+				String fileResponse = req.getParameter("response");
+				if(fileResponse==null) {
+					fileResponse = req.getParameter("op"); // alias per response, in modo da rendere meno evidente l'operazione
+				}
 				ByteArrayOutputStream boutStaticFile = null;
-				if(fileDestinazione!=null){
+				if(fileDestinazione!=null || fileResponse!=null){
 					
-					fileDestinazione = fileDestinazione.trim();
+					String path = null;
 					
-					FileInputStream fin = new FileInputStream(fileDestinazione);
+					if(fileDestinazione!=null) {
+						fileDestinazione = fileDestinazione.trim();
+						path = fileDestinazione;
+					}
+					else {
+						fileResponse = fileResponse.trim();
+						path = fileResponse;
+						if(this.repositoryResponseFiles==null) {
+							throw new Exception("Property 'response' non utilizzabile se non viene definito un repository dei files");
+						}
+						File f = new File(this.repositoryResponseFiles,fileResponse);
+						path = f.getAbsolutePath();
+					}
+					
+					FileInputStream fin = new FileInputStream(path);
 					boutStaticFile = new ByteArrayOutputStream();
 					FileSystemUtilities.copy(fin, boutStaticFile);
 					boutStaticFile.flush();
@@ -489,7 +512,7 @@ public class ServletTestService extends HttpServlet {
 					}
 					else{
 						
-						if(contentTypeRichiesta.contains("multipart/related")==false)
+						if(contentTypeRichiesta!=null && contentTypeRichiesta.contains("multipart/related")==false)
 							contentTypeRisposta = contentTypeRichiesta; // uso lo stesso contentType della richiesta.
 						else
 							contentTypeRisposta = "text/xml"; // default soap 1.1
