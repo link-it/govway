@@ -1,3 +1,58 @@
+2017-10-03  Andrea Poli <apoli@link.it>
+
+	* [Pdd, ProtocolloTrasparente]
+	Aggiunta funzionalità  OP-655
+	Migliorato il protocollo trasparente per gestire le informazioni di integrazione
+	che vengono generate dalla PdD e che si classificano in tre "classi":
+	- elementi del soap fault (codice, actor e fault-string). Questi elementi possono contenenere informazioni generiche
+	  o specifiche riguardante l'errore avvenuto.
+	- elemento aggiunto nel details 'errore-applicativo' appartenente al namespace 'http://www.openspcoop2.org/core/eccezione/errore_applicativo' 
+	  che contiene le informazioni principali sull'errore ritornato.
+	- elemento aggiunto nel details 'dettaglio-eccezione' appartenente al namespace 'http://www.openspcoop2.org/core/eccezione/details' 
+	  che contiene eventuali dettagli su di un errore (es. stack trace o dettaglio di un errore, come connection refused etc...)
+	Le informazioni ritornate verso gli applicativi interni (Porta Delegata) sono configurabili rispetto alle seguenti proprietà 
+	del protocollo che iniziano tutte con il prefisso 'org.openspcoop2.protocol.trasparente.':
+	- 'generazioneDetailsSoapFault.integration.serverError' (default:true): indicazione se deve essere aggiunto al soap fault prodotto dalla PdD, 
+	  in caso di un errore 5xx, un elemento 'dettaglio-eccezione' contenente i dettagli dell'errore.
+	- 'generazioneDetailsSoapFault.integration.clientError' (default:false): indicazione se deve essere aggiunto al soap fault prodotto dalla PdD, 
+	  in caso di un errore 4xx, un elemento 'dettaglio-eccezione' contenente i dettagli dell'errore.
+	- 'generazioneDetailsSoapFault.integration.stackTrace' (default:false): indicazione se deve essere aggiunto,
+	  all'interno di un elemento 'dettaglio-eccezione', anche lo stack trace dell'errore avvenuto.
+	- 'generazioneDetailsSoapFault.integration.informazioniGeneriche' (default:true): indicazione se le informazioni che viaggiano nei details 
+	  debbano contenere qualsiasi dettaglio o solamente quelle classificate come 'esportabili' e tutte le altre vengono generalizzate.
+	Le informazioni ritornate verso i soggetti esterni (Porta Applicativa) sono configurabili rispetto alle seguenti proprietà 
+	del protocollo che iniziano tutte con il prefisso 'org.openspcoop2.protocol.trasparente.':
+	- 'pa.bustaErrore.personalizzaElementiFault' (default:false): indicazione se deve essere ritornato un soap fault 
+	   personalizzato nel codice/actor/faultString per i messaggi di errore o un fault di protocollo generico
+	- 'pa.bustaErrore.aggiungiErroreApplicativo' (default:true): indicazione se deve essere aggiunto un elemento 'errore-applicativo' nel soap fault ritornato.
+	- 'generazioneDetailsSoapFault.protocol.eccezioneProcessamento' (default:true): indicazione se deve essere aggiunto al soap fault prodotto dalla PdD, 
+	  in caso di un errore di 'Processamento del Protocollo', un elemento 'dettaglio-eccezione' contenente i dettagli dell'errore.
+	- 'generazioneDetailsSoapFault.protocol.eccezioneIntestazione' (default:false): indicazione se deve essere aggiunto al soap fault prodotto dalla PdD, 
+	  in caso di un errore di 'Validazione del Protocollo', un elemento 'dettaglio-eccezione' contenente i dettagli dell'errore.
+	- 'generazioneDetailsSoapFault.protocol.stackTrace' (default:false): indicazione se deve essere aggiunto, 
+	  all'interno di un elemento 'dettaglio-eccezione', anche lo stack trace dell'errore avvenuto.
+	- 'generazioneDetailsSoapFault.protocol.informazioniGeneriche' (default:true): indicazione se le informazioni che viaggiano nei details 
+	  debbano contenere qualsiasi dettaglio o solamente quelle 'esportabili' e tutte le altre vengono generalizzate.
+	Infine il protocollo è configurabile anche negli aspetti riguardanti "l'arricchimento" dei soap fault generati dagli applicativi           
+	  o dai soggetti esterni. 
+	- 'erroreApplicativo.faultApplicativo.enrichDetails' (default: configurazione della PdD): indicazione se deve essere aggiunto 
+	  un elemento 'errore-applicativo' nel soap fault ritornato dall'applicativo invocato tramite la porta applicativa.
+	- 'erroreApplicativo.faultPdD.enrichDetails' (default: configurazione della PdD): indicazione se deve essere aggiunto 
+	  un elemento 'errore-applicativo' nel soap fault ritornato dal soggetto esterno invocato tramite la porta delegata.
+
+2017-10-03  Andrea Poli <apoli@link.it>
+
+	* [TestsuiteProtocolloTrasparente]
+	Aggiunta funzionalità  OP-653
+	Create nuove unità di test, all'interno della testsuite del prodotto, in modo da verificare le seguenti funzionalità:
+	- autenticazione PD/PA
+	- autenticazione opzionale PD/PA
+	- autenticazione tramite principal e openspcoop2sec
+	- autorizzazione dei client autenticati PD/PA
+	- autorizzazione basata sui ruoli PD/PA
+	- autorizzazione tramite roles via openspcoop2sec
+	- autorizzazione basata su XACMLPolicy
+
 2017-09-26  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
