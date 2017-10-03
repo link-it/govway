@@ -650,11 +650,12 @@ public class OpenSPCoop2Logger {
 			showMsg.append(" IDApplicativoRisposta:");
 			showMsg.append(idCorrelazioneApplicativaRisposta);
 		}
-		if(delegata){
-			if(porta!=null)
+		if(porta!=null && !"".equals(porta)) {
+			if(delegata) {
 				showMsg.append(" PD:"+porta);
-			else
+			}else {
 				showMsg.append(" PA:"+porta);
+			}
 		}
 		if(servizioApplicativo!=null){
 			showMsg.append(" SA:"+servizioApplicativo);

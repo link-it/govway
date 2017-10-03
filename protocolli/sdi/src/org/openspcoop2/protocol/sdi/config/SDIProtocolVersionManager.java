@@ -22,8 +22,12 @@
 package org.openspcoop2.protocol.sdi.config;
 
 import org.openspcoop2.protocol.basic.config.BasicVersionManager;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 
 /**
  * Classe che implementa, in base al protocollo SdI, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolVersionManager} 
@@ -32,34 +36,131 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SDIProtocolVersionManager extends BasicVersionManager {
+public class SDIProtocolVersionManager extends SDIProtocolManager implements IProtocolVersionManager {
 	
 	protected String versione;
+	private InstanceVersioneManager basicVersionManager;
 	public SDIProtocolVersionManager(IProtocolFactory<?> protocolFactory,String versione) throws ProtocolException{
 		super(protocolFactory);
 		this.versione = versione;
+		this.basicVersionManager = new InstanceVersioneManager(protocolFactory);
 	}
+	
+	
+	
+	/* *********** FUNZIONALITA' OFFERTE DALLA Porta di Dominio ******************* */
+	
+	@Override
+	public StatoFunzionalitaProtocollo getFiltroDuplicati(ProfiloDiCollaborazione profiloCollaborazione) {
+		return this.basicVersionManager.getFiltroDuplicati(profiloCollaborazione);
+	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaAffidabile(ProfiloDiCollaborazione profiloCollaborazione){
+		return this.basicVersionManager.getConsegnaAffidabile(profiloCollaborazione);
+	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getConsegnaInOrdine(ProfiloDiCollaborazione profiloCollaborazione){
+		return this.basicVersionManager.getConsegnaInOrdine(profiloCollaborazione);
+	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione){
+		return this.basicVersionManager.getCollaborazione(profiloCollaborazione);
+	}
+	
+	
+	
+	
+	/* *********** PROFILI ASINCRONI ******************* */
+	
+	@Override
+	public boolean isCorrelazioneRichiestaPresenteRispostaAsincronaSimmetrica(){
+		return this.basicVersionManager.isCorrelazioneRichiestaPresenteRispostaAsincronaSimmetrica();
+	}
+	
+	@Override
+	public boolean isCorrelazioneRichiestaPresenteRichiestaStatoAsincronaAsimmetrica(){
+		return this.basicVersionManager.isCorrelazioneRichiestaPresenteRichiestaStatoAsincronaAsimmetrica();
+	}
+	
+	@Override
+	public boolean isGenerazioneInformazioniServizioCorrelatoAsincronoSimmetrico(){
+		return this.basicVersionManager.isGenerazioneInformazioniServizioCorrelatoAsincronoSimmetrico();
+	}
+	
+	@Override
+	public boolean isGenerazioneInformazioniServizioCorrelatoAsincronoAsimmetrico(){
+		return this.basicVersionManager.isGenerazioneInformazioniServizioCorrelatoAsincronoAsimmetrico();
+	}
+	
+	@Override
+	public String getIdCorrelazioneAsincrona(Busta richiesta){
+		return this.basicVersionManager.getIdCorrelazioneAsincrona(richiesta);
+	}
+	
+	@Override
+	public String getIdCorrelazioneAsincrona(String rifMsg,String collaborazione){
+		return this.basicVersionManager.getIdCorrelazioneAsincrona(rifMsg,collaborazione);
+	}
+	
+	
+	
+
+	
 	
 	/* *********** ECCEZIONI ******************* */
 
-	/**
-	 * Indicazione se devono essere gestite eccezioni di livello INFO
-	 * 
-	 * @return Indicazione se devono essere gestite eccezioni di livello INFO
-	 */
 	@Override
 	public boolean isEccezioniLivelloInfoAbilitato(){
-		return true;
+		return true; // true per il protocollo SDI
 	}
 
 	
-	/**
-	 * Indicazione se devono essere ignorate eventuali eccezioni di livello diverso da GRAVE
-	 * 
-	 * @return Indicazione se devono essere ignorate eventuali eccezioni di livello diverso da GRAVE
-	 */
 	@Override
 	public boolean isIgnoraEccezioniLivelloNonGrave(){
-		return true;
+		return true; // true per il protocollo SDI
 	}
+	
+	
+	
+	
+	
+	
+	/* *********** VALIDAZIONE/GENERAZIONE BUSTE ******************* */
+	
+	@Override
+	public boolean isGenerazioneBusteErrore_strutturaMalformataHeaderProtocollo(){
+		return this.basicVersionManager.isGenerazioneBusteErrore_strutturaMalformataHeaderProtocollo();
+	}
+		
+	@Override
+	public boolean isGenerazioneErroreMessaggioOnewayDuplicato(){
+		return this.basicVersionManager.isGenerazioneErroreMessaggioOnewayDuplicato();
+	}
+	
+	
+	
+	
+	
+	
+	/* *********** ALTRO ******************* */
+    
+	@Override
+	public boolean isUtilizzoIndirizzoSoggettoPresenteBusta(){
+		return this.basicVersionManager.isUtilizzoIndirizzoSoggettoPresenteBusta();
+	}
+	
+
+	
+}
+
+
+class InstanceVersioneManager extends BasicVersionManager{
+
+	public InstanceVersioneManager(IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		super(protocolFactory);
+	}
+	
 }

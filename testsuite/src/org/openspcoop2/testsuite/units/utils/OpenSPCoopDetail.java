@@ -18,14 +18,14 @@
  *
  */
 
-package org.openspcoop2.protocol.spcoop.testsuite.core;
+package org.openspcoop2.testsuite.units.utils;
 
 /**
  * OpenSPCoopDetail
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
 public class OpenSPCoopDetail {
 	private String codice;

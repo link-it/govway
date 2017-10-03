@@ -124,14 +124,27 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 		}
 		else{
 			if(busta.sizeListaEccezioni()>0){
+				
+				// le eccezioni vengono tornate anche per gli errori di processamento poiche' in TrasparenteProtocolVersionManager
+				// e' stato cablato il metodo isGenerazioneListaEccezioniErroreProcessamento al valore 'true'
+				
+				// Per quanto riguarda la generazione dei codici SOAPFault personalizzati e/o la generazione dell'elemento errore-applicativo
+				// la scelta e' delegata a due proprieta' nel file di proprieta'.
+				//
+				// Infine la scelta della presenza o meno dell'elemento OpenSPCoop2Details lo stesso viene pilotata dalle proprieta' presenti nel file di proprieta'
+				
 				boolean ignoraEccezioniNonGravi = this.protocolFactory.createProtocolManager().isIgnoraEccezioniNonGravi();
 				if(ignoraEccezioniNonGravi){
 					if(busta.containsEccezioniGravi() ){
-						this.addEccezioniInFault(msg, busta, ignoraEccezioniNonGravi);
+						this.enrichFault(msg, busta, ignoraEccezioniNonGravi,
+								this.sdiProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault(),
+								this.sdiProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo());
 					}	
 				}
 				else{
-					this.addEccezioniInFault(msg, busta, ignoraEccezioniNonGravi);
+					this.enrichFault(msg, busta, ignoraEccezioniNonGravi,
+							this.sdiProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault(),
+							this.sdiProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo());
 				}
 			}
 			

@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.protocol.basic.config.BasicManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 
 /**
  * Classe che implementa, in base al protocollo Trasparente, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolManager} 
@@ -44,6 +45,74 @@ public class TrasparenteProtocolManager extends BasicManager {
 		this.trasparenteProperties = TrasparenteProperties.getInstance(this.logger);
 	}
 	
+	
+	
+	/* *********** VALIDAZIONE/GENERAZIONE BUSTE ******************* */
+	
+	@Override
+	public boolean isGenerazioneListaEccezioniErroreProcessamento(){
+		return true; // l'eccezione viene utilizzata per produrre un errore applicativo e/o per impostare un codice nel soap fault
+	}
+	
+	
+	
+	/* *********** Fault della Porta (Protocollo, Porta Applicativa) ******************* */
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(){
+		return this.trasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(){
+		return this.trasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento();
+	}
+		
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocolloConStackTrace(){
+		return this.trasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche(){
+		return this.trasparenteProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche();
+	}
+	
+	
+	
+	/* *********** Fault della Porta (Integrazione, Porta Delegata) ******************* */
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreServer(){
+		return this.trasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreClient(){
+		return this.trasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultIntegrationeConStackTrace(){
+		return this.trasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace();
+	}
+	
+	@Override
+	public FaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione(){
+		Boolean value = this.trasparenteProperties.isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche();
+		if(value==null){
+			return FaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
+		}
+		else if(value){
+			return FaultIntegrationGenericInfoMode.ABILITATO;
+		}else{
+			return FaultIntegrationGenericInfoMode.DISABILITATO;
+		}
+	}
+	
+	
+	
+	/* *********** SOAP Fault della Porta (Generati dagli attori esterni) ******************* */
 	
 	@Override
 	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {

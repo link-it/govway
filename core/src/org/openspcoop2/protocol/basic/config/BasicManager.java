@@ -90,8 +90,8 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 	
 	
 	
-	/* *********** SOAP Fault della Porta ******************* */
-	
+	/* *********** SOAP Fault della Porta (Protocollo, Porta Applicativa) ******************* */
+
 	@Override
 	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(){
 		return false;
@@ -112,6 +112,9 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 		return true;
 	}
 	
+	
+	/* *********** SOAP Fault della Porta (Integrazione, Porta Delegata) ******************* */
+	
 	@Override
 	public boolean isGenerazioneDetailsFaultIntegratione_erroreServer(){
 		return true;
@@ -131,6 +134,9 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 	public FaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione(){
 		return FaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
 	}
+	
+	
+	/* *********** SOAP Fault della Porta (Generati dagli attori esterni) ******************* */
 	
 	@Override
 	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo(){

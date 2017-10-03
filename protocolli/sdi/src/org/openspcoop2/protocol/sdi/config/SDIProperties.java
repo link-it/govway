@@ -154,6 +154,21 @@ public class SDIProperties {
 			this.getAzioniWhiteList();
 			this.getNamespaceWhiteList();
 			
+			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+			this.isGenerazioneDetailsSOAPFaultProtocolValidazione();
+			this.isGenerazioneDetailsSOAPFaultProtocolProcessamento();
+			this.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace();
+			this.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche();
+			
+			this.isGenerazioneDetailsSOAPFaultIntegrationServerError();
+			this.isGenerazioneDetailsSOAPFaultIntegrationClientError();
+			this.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace();
+			this.isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche();
+			
+			this.isPortaApplicativaBustaErrore_personalizzaElementiFault();
+			this.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo();
+			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo sdi, "+e.getMessage();
 			this.log.error(msg,e);
@@ -766,5 +781,393 @@ public class SDIProperties {
 		}
 
 		return SDIProperties.namespaceWhiteList;
+	}
+	
+	
+	
+	/* **** SOAP FAULT (Protocollo, Porta Applicativa) **** */
+	
+    /**
+     * Indicazione se ritornare un soap fault personalizzato nel codice/actor/faultString per i messaggi di errore di protocollo (Porta Applicativa)
+     *   
+     * @return Indicazione se ritornare un soap fault personalizzato nel codice/actor/faultString per i messaggi di errore di protocollo (Porta Applicativa)
+     * 
+     */
+	private static Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault= null;
+	private static Boolean isPortaApplicativaBustaErrore_personalizzaElementiFaultRead= null;
+    public Boolean isPortaApplicativaBustaErrore_personalizzaElementiFault(){
+    	if(SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
+					SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+				}
+				
+				SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.personalizzaElementiFault' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
+				SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault = null;
+				
+				SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFaultRead = true;
+			}
+    	}
+    	
+    	return SDIProperties.isPortaApplicativaBustaErrore_personalizzaElementiFault;
+	}
+    
+    
+    /**
+     * Indicazione se deve essere aggiunto un errore-applicativo nei details di un messaggio di errore di protocollo (Porta Applicativa)
+     *   
+     * @return Indicazione se deve essere aggiunto un errore-applicativo nei details di un messaggio di errore di protocollo (Porta Applicativa)
+     * 
+     */
+	private static Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo= null;
+	private static Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead= null;
+    public Boolean isPortaApplicativaBustaErrore_aggiungiErroreApplicativo(){
+    	if(SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
+					SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+				}
+				
+				SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.pa.bustaErrore.aggiungiErroreApplicativo' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
+				SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo = null;
+				
+				SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativoRead = true;
+			}
+    	}
+    	
+    	return SDIProperties.isPortaApplicativaBustaErrore_aggiungiErroreApplicativo;
+	}
+	
+    /**
+     * Indicazione se generare i details in caso di SOAPFault *_001 (senza buste Errore)
+     *   
+     * @return Indicazione se generare i details in caso di SOAPFault *_001 (senza buste Errore)
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultProtocolValidazione = null;
+    public boolean isGenerazioneDetailsSOAPFaultProtocolValidazione(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione' non impostata, viene utilizzato il default=false");
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneIntestazione' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione = false;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione;
+	}
+    
+    /**
+     * Indicazione se generare i details in caso di SOAPFault *_300
+     *   
+     * @return Indicazione se generare i details in caso di SOAPFault *_300
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento = null;
+    public boolean isGenerazioneDetailsSOAPFaultProtocolProcessamento(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento' non impostata, viene utilizzato il default=true");
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.eccezioneProcessamento' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento = true;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento;
+	}
+    
+    
+    /**
+     * Indicazione se generare nei details in caso di SOAPFault *_300 lo stack trace
+     *   
+     * @return Indicazione se generare nei details in caso di SOAPFault *_300 lo stack trace
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = null;
+    public boolean isGenerazioneDetailsSOAPFaultProtocolWithStackTrace(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace' non impostata, viene utilizzato il default=false");
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.stackTrace' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace = false;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace;
+	}
+    
+    /**
+     * Indicazione se generare nei details in caso di SOAPFault informazioni generiche
+     *   
+     * @return Indicazione se generare nei details in caso di SOAPFault informazioni generiche
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = null;
+    public boolean isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche' non impostata, viene utilizzato il default=true");
+					SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.protocol.informazioniGeneriche' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche = true;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche;
+	}
+    
+    
+    
+    /* **** SOAP FAULT (Integrazione, Porta Delegata) **** */
+    
+    /**
+     * Indicazione se generare i details in Casi di errore 5XX
+     *   
+     * @return Indicazione se generare i details in Casi di errore 5XX
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationServerError = null;
+    public boolean isGenerazioneDetailsSOAPFaultIntegrationServerError(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError' non impostata, viene utilizzato il default=true");
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.serverError' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError = true;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError;
+	}
+    
+    /**
+     * Indicazione se generare i details in Casi di errore 4XX
+     *   
+     * @return Indicazione se generare i details in Casi di errore 4XX
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationClientError = null;
+    public boolean isGenerazioneDetailsSOAPFaultIntegrationClientError(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError' non impostata, viene utilizzato il default=false");
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.clientError' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError = false;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError;
+	}
+    
+    /**
+     * Indicazione se generare nei details lo stack trace all'interno
+     *   
+     * @return Indicazione se generare nei details lo stack trace all'interno
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = null;
+    public boolean isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace' non impostata, viene utilizzato il default=false");
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.stackTrace' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace = false;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace;
+	}
+    
+    /**
+     * Indicazione se generare nei details informazioni dettagliate o solo di carattere generale
+     *   
+     * @return Indicazione se generare nei details informazioni dettagliate o solo di carattere generale
+     * 
+     */
+	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche= null;
+	private static Boolean isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead= null;
+    public Boolean isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche(){
+    	if(SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultAsGenericCode)");
+					SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
+				}
+				
+				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.generazioneDetailsSoapFault.integration.informazioniGeneriche' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultAsGenericCode), errore:"+e.getMessage());
+				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche = null;
+				
+				SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGenericheRead = true;
+			}
+    	}
+    	
+    	return SDIProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche;
+	}
+    
+    
+    
+    
+    /* **** SOAP FAULT (Generati dagli attori esterni) **** */
+    
+    /**
+     * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+     *   
+     * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+     * 
+     */
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
+    public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
+    	if(SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
+					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = null;
+				}
+				
+				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
+				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = null;
+				
+				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
+			}
+    	}
+    	
+    	return SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo;
+	}
+    
+    /**
+     * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+     *   
+     * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+     * 
+     */
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
+	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
+    public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
+    	if(SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails"); 
+				
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails)");
+					SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = null;
+				}
+				
+				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails), errore:"+e.getMessage());
+				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = null;
+				
+				SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
+			}
+    	}
+    	
+    	return SDIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
 }

@@ -826,7 +826,7 @@ public class SPCoopProperties {
 	
 	
 	
-	/* **** SOAP FAULT **** */
+	/* **** SOAP FAULT (Protocollo, Porta Applicativa) **** */
 	
     /**
      * Indicazione se generare i details in caso di SOAPFault *_001 (senza buste Errore)
@@ -944,6 +944,10 @@ public class SPCoopProperties {
     	
     	return SPCoopProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche;
 	}
+    
+    
+    
+    /* **** SOAP FAULT (Integrazione, Porta Delegata) **** */
     
     /**
      * Indicazione se generare i details in Casi di errore 5XX
@@ -1065,6 +1069,9 @@ public class SPCoopProperties {
     	
     	return SPCoopProperties.isGenerazioneDetailsSOAPFaultIntegrationConInformazioniGeneriche;
 	}
+    
+    
+    /* **** SOAP FAULT (Generati dagli attori esterni) **** */
     
     /**
      * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale

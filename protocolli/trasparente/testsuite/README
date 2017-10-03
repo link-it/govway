@@ -173,6 +173,33 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 - 'REST.[PD/PA].OPTIONS': test che riguardano l'http method 'OPTIONS'
 - 'REST.[PD/PA].METHOD_OVERRIDE': test che riguardano la verifica dell'inoltro dell'header http 'X-HTTP-Method-Override' durante una POST
 
+
+** Autenticazione e Autorizzazione **
+
+!! Pre-requisiti!!
+a. Aggiunta di connettori https specifici per i test nella configurazione web (in jboss in server.xml del tomcat integrato)
+- Un connettore HTTPS che non esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8443)
+  Esempio in ./protocolli/trasparente/testsuite/deploy/https_examples/ConnettoreHTTPS_noClientAuth.xml
+  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/openspcoop2/keys
+- un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
+  Esempio in ./protocolli/trasparente/testsuite/deploy/https_examples/ConnettoreHTTPS_withClientAuth.xml
+  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/openspcoop2/keys
+b. Installazione dei keystore in /etc/openspcoop2/keys
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client1.jks
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client2.jks
+- ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client3.jks
+c. Configurazione della JVM dell'A.S. in modo che utilizzi il keystore ./protocolli/trasparente/testsuite/deploy/https_examples/jks/erogatore.jks
+  Indicazioni descritte per JBoss in ./protocolli/trasparente/testsuite/deploy/https_examples/configurazioneTrustStoreJBOSS.txt
+d. Configurare nuove utenze nel container per poter gestire l'autenticazione tramite principal.
+   Seguire le indicazioni presenti in Esempio in ./protocolli/trasparente/testsuite/deploy/principal/README.txt
+
+Batterie di test:
+- 'AutenticazionePortaDelegata': verifica le funzionalità di autenticazione sulla PortaDelegata
+- 'AutenticazionePortaApplicativa': verifica le funzionalità di autenticazione sulla PortaApplicativa
+- 'AutorizzazionePortaDelegata': verifica le funzionalità di autorizzazione sulla PortaDelegata
+- 'AutorizzazionePortaApplicativa': verifica le funzionalità di autorizzazione sulla PortaApplicativa
+
+
 ** MTOM **
 
 Prerequisito: 

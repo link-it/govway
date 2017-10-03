@@ -1,4 +1,4 @@
-Esempio di connettore da impostare in apache tomcat:
+Esempio di connettore da impostare in apache tomcat 5.x, 6.x, 7.x e 8.x (per tomcat8 solamente versioni inferiori a 8.5.x):
 
 <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
@@ -8,7 +8,7 @@ Esempio di connettore da impostare in apache tomcat:
            keystorePass="openspcoop"/>
 
 
-Esempio di connettore da impostare in apache tomcat 9.x (viene aggiunto l'attributo keyAlias):
+Esempio di connettore da impostare in apache tomcat 8.5.x e 9.x (viene aggiunto l'attributo keyAlias):
 
 <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"

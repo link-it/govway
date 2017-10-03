@@ -44,6 +44,7 @@ import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.testng.Assert;
@@ -222,19 +223,19 @@ public class SOAPAction {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-					new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
 				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' non presente");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -386,9 +387,9 @@ public class SOAPAction {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-					new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
 				if(version_jbossas!=null && version_jbossas.startsWith("wildfly")){
 					// una soap action non presente viene tradotta nel nuovo web container in una stringa vuota
@@ -399,11 +400,11 @@ public class SOAPAction {
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -554,19 +555,19 @@ public class SOAPAction {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-					new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
 				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -716,19 +717,19 @@ public class SOAPAction {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-					new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+					new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR));
 				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR+"ErroreProcessamento: Header http 'SOAPAction' valorizzato tramite una stringa non quotata (WSI-BP-1.1 R1109)");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 				
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
 			}

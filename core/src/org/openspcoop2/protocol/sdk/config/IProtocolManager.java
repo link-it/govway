@@ -106,7 +106,7 @@ public interface IProtocolManager extends IComponentFactory {
 	
 	
 	
-	/* *********** Fault della Porta ******************* */
+    /* *********** Fault della Porta (Protocollo, Porta Applicativa) ******************* */
 	
 	/**
      * Indicazione se generare i details in caso di Fault *_001 (senza buste Errore) di protocollo
@@ -139,6 +139,11 @@ public interface IProtocolManager extends IComponentFactory {
      * 
      */
 	public boolean isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche();
+	
+	
+	
+	
+	/* *********** Fault della Porta (Integrazione, Porta Delegata) ******************* */
 	
 	 /**
      * Indicazione se generare i details in Casi di errore 5XX in fase di integrazione
@@ -173,6 +178,11 @@ public interface IProtocolManager extends IComponentFactory {
      * 
      */
 	public FaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione();
+	
+	
+	
+	
+	/* *********** Fault della Porta (Generati dagli attori esterni) ******************* */
 	
 	/**
 	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel FaultApplicativo originale

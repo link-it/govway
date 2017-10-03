@@ -113,7 +113,7 @@ public class SPCoopProtocolManager extends BasicComponentFactory implements IPro
 	
 	
 	
-	/* *********** SOAP Fault della Porta ******************* */
+	/* *********** SOAP Fault della Porta (Protocollo, Porta Applicativa) ******************* */
 	
 	@Override
 	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(){
@@ -134,6 +134,10 @@ public class SPCoopProtocolManager extends BasicComponentFactory implements IPro
 	public boolean isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche();
 	}
+	
+	
+	
+	/* *********** SOAP Fault della Porta (Integrazione, Porta Delegata) ******************* */
 	
 	@Override
 	public boolean isGenerazioneDetailsFaultIntegratione_erroreServer(){
@@ -162,6 +166,10 @@ public class SPCoopProtocolManager extends BasicComponentFactory implements IPro
 			return FaultIntegrationGenericInfoMode.DISABILITATO;
 		}
 	}
+	
+	
+	
+	/* *********** SOAP Fault della Porta (Generati dagli attori esterni) ******************* */
 	
 	@Override
 	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {

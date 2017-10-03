@@ -745,15 +745,15 @@
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
-		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
 		-->
-		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
-		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
@@ -765,28 +765,29 @@
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
-		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
 		-->
-		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
-		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
 			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
 			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+			<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/>   
 		    </ruoli>
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
-		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
-		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     Invocazione da effettuare su openspcoop2
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic2 ha esito ko (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic3 ha esito ko (non è nella lista ne ha i ruoli)
 		-->
 		<porta-delegata nome="AuthorizationAuthenticatedOrInternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
@@ -794,7 +795,7 @@
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
-		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic2" />
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
@@ -803,10 +804,10 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
-		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
-		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     Invocazione da effettuare su openspcoop2
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
 		-->
 		<porta-delegata nome="AuthorizationAuthenticatedOrInternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
@@ -814,27 +815,28 @@
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
-		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic2" />
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
-			<ruolo nome="role5IntAllOpenSPCoopTest"/>    
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>  
+			<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/>     
 		    </ruoli>
 		</porta-delegata>
 
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
-		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
 		-->
-		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
+		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
-		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
@@ -845,20 +847,21 @@
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
-		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
 		-->
-		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
+		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
-		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
 			<ruolo nome="role3AllPD_OpenSPCoopTest"/> 
+			<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/>     
 		    </ruoli>
 		</porta-delegata>
 
@@ -929,6 +932,11 @@
 		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" >
 		      <invocazione-porta>
 		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic" password="123456" />
+			<ruoli>
+				<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+				<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+				<ruolo nome="role5IntAllOpenSPCoopTest"/>
+			</ruoli>
 		      </invocazione-porta>
 		</servizio-applicativo>
 
@@ -938,13 +946,28 @@
 		      </invocazione-porta>
 		</servizio-applicativo>
 
-		<servizio-applicativo nome="EsempioFruitoreTrasparenteSsl" >
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic3" >
 		      <invocazione-porta>
-		         <credenziali tipo="ssl" subject="CN=client,o=trasparente" />
+		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic3" password="123456" />
+			<ruoli>
+				<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/> 
+		    	  </ruoli>
 		      </invocazione-porta>
 		</servizio-applicativo>
 
-		<!-- Utente configurato sul container con password 'Op3nSPC00p2' e ruoli: 
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteSsl" >
+		      <invocazione-porta>
+		         <credenziali tipo="ssl" subject="CN=client,OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it" />
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteSsl2" >
+		      <invocazione-porta>
+		         <credenziali tipo="ssl" subject="CN=client2,OU=trasparente, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it" />
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<!-- Utente configurato sul container con password 'Op3nSPC@@p2' e ruoli: 
 			'role1AllAllOpenSPCoopTest', 'role2ExtAllOpenSPCoopTest' e 'role3AllPD_OpenSPCoopTest' -->
 		<servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal" >
 		      <invocazione-porta>
@@ -957,7 +980,7 @@
 		      </invocazione-porta>
 		</servizio-applicativo>
 
-		<!-- Utente configurato sul container con password 'Op3nSPC00p2' e ruoli: 
+		<!-- Utente configurato sul container con password 'Op3nSPC@@p2' e ruoli: 
 			'role1AllAllOpenSPCoopTest' e 'role8ExtPD_OpenSPCoopTest' -->
 		<servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" >
 		      <invocazione-porta>
@@ -1692,7 +1715,7 @@
 
 		<!-- 
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok
-		     2. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic2 ha esito ko
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic3 ha esito ko
 		-->
 		<porta-applicativa nome="AuthorizationAuthenticated" autenticazione="basic" autorizzazione="authenticated" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
@@ -1842,10 +1865,10 @@
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
-		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
 		-->
-		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
@@ -1861,10 +1884,10 @@
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
-		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
 		-->
-		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
@@ -1873,15 +1896,16 @@
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
 			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
-			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+			<ruolo nome="role5IntAllOpenSPCoopTest"/> 
+			<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/>     
 		    </ruoli>
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
-		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
-		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     Invocazione da effettuare su openspcoop2
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic3 ha esito ko (non è nella lista ne ha i ruoli)
 		-->
 		<porta-applicativa nome="AuthorizationAuthenticatedOrInternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
@@ -1897,10 +1921,10 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
-		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
-		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     Invocazione da effettuare su openspcoop2
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
 		-->
 		<porta-applicativa nome="AuthorizationAuthenticatedOrInternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
@@ -1912,16 +1936,17 @@
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
 			<ruolo nome="role5IntAllOpenSPCoopTest"/>    
+			<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/>    
 		    </ruoli>
 		</porta-applicativa>
 
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
-		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
 		-->
-		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
+		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
@@ -1937,10 +1962,10 @@
 		<!-- 
 		     Invocazione da effettuare su openspcoop2sec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
-		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
-		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
 		-->
-		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
+		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
@@ -1949,7 +1974,8 @@
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
-			<ruolo nome="role4AllPA_OpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>
+			<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest"/>     
 		    </ruoli>
 		</porta-applicativa>
 

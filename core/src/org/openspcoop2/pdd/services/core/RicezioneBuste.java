@@ -2069,7 +2069,22 @@ public class RicezioneBuste {
 									parametriGenerazioneBustaErrore.setErroreCooperazione(erroreCooperazione);
 								}
 	
-								OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
+								OpenSPCoop2Message errorOpenSPCoopMsg = null;
+								if(erroreCooperazione!=null){
+									if(CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO.equals(erroreCooperazione.getCodiceErrore()) ||
+											CodiceErroreCooperazione.MITTENTE_NON_VALIDO.equals(erroreCooperazione.getCodiceErrore()) ||
+											CodiceErroreCooperazione.MITTENTE_NON_PRESENTE.equals(erroreCooperazione.getCodiceErrore()) ||
+											CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO.equals(erroreCooperazione.getCodiceErrore()) ||
+											CodiceErroreCooperazione.MITTENTE.equals(erroreCooperazione.getCodiceErrore())) {
+										errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+									}
+									else {
+										errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
+									}
+								}
+								else {
+									errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
+								}								
 								
 								// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 								parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);

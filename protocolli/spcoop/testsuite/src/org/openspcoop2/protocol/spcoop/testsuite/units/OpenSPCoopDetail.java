@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -119,16 +120,16 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
 		eccezioni.add(ecc);
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> dettagli = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 		
 		if(username==null){
 			codice = "OPENSPCOOP_ORG_401";
@@ -137,10 +138,10 @@ public class OpenSPCoopDetail {
 		}
 		else if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
 			codice = "PREFIX_PERSONALIZZATO_405";
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
 		}
 	
 		
@@ -151,7 +152,7 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(o instanceof AxisFault);
 			AxisFault error = (AxisFault)o;
 			
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)==false); // non vengono generati in caso di 4XX
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)==false); // non vengono generati in caso di 4XX
 			
 		}
 		else{
@@ -159,7 +160,7 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(o instanceof Element);
 			Element element = (Element) o;
 			
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(element)==false); // non vengono generati in caso di 4XX
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false); // non vengono generati in caso di 4XX
 			
 		}
 		
@@ -222,22 +223,22 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
 		eccezioni.add(ecc);
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> dettagli = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();	
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 1", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 2", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causato da", "Eccezione processamento Test Livello 3", true));
 		}
 		
 		if("erroreApplicativoAsSoapFaultDefault".equals(username) ||
@@ -246,9 +247,9 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(o instanceof AxisFault);
 			AxisFault error = (AxisFault)o;
 			
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 			
-			Utilities.verificaFaultOpenSPCoopDetail(error, 
+			OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 					dominio,TipoPdD.DELEGATA,"RicezioneContenutiApplicativiSOAP", 
 					eccezioni, dettagli);
 		}
@@ -258,7 +259,7 @@ public class OpenSPCoopDetail {
 			Element element = (Element) o;
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(element)==false);
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
 			
 		}
 		
@@ -309,9 +310,9 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
@@ -323,13 +324,13 @@ public class OpenSPCoopDetail {
 		if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
 				"erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 		
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)==false); // non vengono aggiunti dettagli, se il SOAP Fault e' generato dal servizio applicativo
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)==false); // non vengono aggiunti dettagli, se il SOAP Fault e' generato dal servizio applicativo
 			
 		}
 		else{
 			
 			// vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)==false);
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)==false);
 			
 		}
 	}
@@ -373,9 +374,9 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
@@ -387,13 +388,13 @@ public class OpenSPCoopDetail {
 		if("erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
 				"erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
 		
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)==false); // non vengono aggiunti dettagli, se il SOAP Fault e' generato dal servizio applicativo
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)==false); // non vengono aggiunti dettagli, se il SOAP Fault e' generato dal servizio applicativo
 			
 		}
 		else{
 			
 			// vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)==false);
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)==false);
 			
 		}
 		
@@ -443,17 +444,17 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
 		eccezioni.add(ecc);
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> dettagli = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();	
-		dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causa", "Connection refused", true));
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
+		dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connection refused", true));
 			
 		if(servizioApplicativoFruitore==null ||
 				"erroreApplicativoAsSoapFaultDefault".equals(servizioApplicativoFruitore) ||
@@ -462,9 +463,9 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(o instanceof AxisFault);
 			AxisFault error = (AxisFault)o;
 			
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 			
-			Utilities.verificaFaultOpenSPCoopDetail(error, 
+			OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 					dominio,TipoPdD.DELEGATA,"InoltroBuste", 
 					eccezioni, dettagli);
 		}
@@ -474,7 +475,7 @@ public class OpenSPCoopDetail {
 			Element element = (Element) o;
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(element)==false);
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
 			
 		}
 		
@@ -531,17 +532,17 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
 		eccezioni.add(ecc);
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> dettagli = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();	
-		dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causa", "Connection refused", true));
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
+		dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connection refused", true));
 		
 		
 		if(servizioApplicativoFruitore==null ||
@@ -551,9 +552,9 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(o instanceof AxisFault);
 			AxisFault error = (AxisFault)o;
 			
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 			
-			Utilities.verificaFaultOpenSPCoopDetail(error, 
+			OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 					dominio,TipoPdD.APPLICATIVA,"ConsegnaContenutiApplicativi", 
 					eccezioni, dettagli);
 		}
@@ -563,7 +564,7 @@ public class OpenSPCoopDetail {
 			Element element = (Element) o;
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(element)==false);
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
 			
 		}
 		
@@ -627,20 +628,20 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
 		eccezioni.add(ecc);
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> dettagli = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();	
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causa", "connect timed out", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "connect timed out", true));
 		}else{
-			dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causa", "Connect timed out", true));
+			dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connect timed out", true));
 		}
 		
 		if(servizioApplicativoFruitore==null ||
@@ -650,9 +651,9 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(o instanceof AxisFault);
 			AxisFault error = (AxisFault)o;
 			
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 			
-			Utilities.verificaFaultOpenSPCoopDetail(error, 
+			OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 					dominio,TipoPdD.DELEGATA,"InoltroBuste", 
 					eccezioni, dettagli);
 		}
@@ -662,7 +663,7 @@ public class OpenSPCoopDetail {
 			Element element = (Element) o;
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(element)==false);
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
 			
 		}
 		
@@ -719,17 +720,17 @@ public class OpenSPCoopDetail {
 		
 		// detail OpenSPCoop
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-		org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+		org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 		ecc.setCodice(codice);
 		ecc.setDescrizione(msg);
 		ecc.setCheckDescrizioneTramiteMatchEsatto(equalsMatch);
 		eccezioni.add(ecc);
 		
-		List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> dettagli = 
-			new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();	
-		dettagli.add(new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail("causa", "Connect timed out", true));
+		List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> dettagli = 
+			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();	
+		dettagli.add(new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail("causa", "Connect timed out", true));
 		
 		
 		if(servizioApplicativoFruitore==null ||
@@ -739,9 +740,9 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(o instanceof AxisFault);
 			AxisFault error = (AxisFault)o;
 			
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 			
-			Utilities.verificaFaultOpenSPCoopDetail(error, 
+			OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 					dominio,TipoPdD.APPLICATIVA,"ConsegnaContenutiApplicativi", 
 					eccezioni, dettagli);
 		}
@@ -751,7 +752,7 @@ public class OpenSPCoopDetail {
 			Element element = (Element) o;
 			
 			 // vengono generati in caso di 5XX ma non vengono generati in caso il servizio applicativo voglia un errore compatibile in formato CNIPA (XML di ritorno standard)
-			Assert.assertTrue(Utilities.existsOpenSPCoopDetails(element)==false);
+			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(element)==false);
 			
 		}
 		

@@ -261,11 +261,15 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 	}
 	
 	
-	
-	protected void addEccezioniInFault(OpenSPCoop2Message msg, Busta busta, boolean ignoraEccezioniNonGravi) throws ProtocolException{
+	protected void enrichFault(OpenSPCoop2Message msg, Busta busta, boolean ignoraEccezioniNonGravi,
+			boolean modifyFault, boolean generateErroreApplicativoIntoDetail) throws ProtocolException{
 		SOAPFault f = null;
 		OpenSPCoop2SoapMessage soapMessage = null;
 		try{
+			if(!modifyFault && !generateErroreApplicativoIntoDetail) {
+				return;
+			}
+			
 			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				soapMessage = msg.castAsSoap();
 				if(soapMessage.getSOAPBody()!=null){
@@ -275,48 +279,11 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 					f = soapMessage.getSOAPBody().getFault();
 				}
 			}
-			
+					
 			if(soapMessage==null || f==null){
 				return;
 			}
-		
-		
-			EccezioneProtocolloBuilderParameters params = new EccezioneProtocolloBuilderParameters();
 			
-			// Soggetto Produce Eccezione == Dominio
-			IDSoggetto soggettoProduceEccezione = new IDSoggetto(busta.getTipoMittente(),busta.getMittente(),busta.getIdentificativoPortaMittente());
-			params.setSoggettoProduceEccezione(soggettoProduceEccezione);
-			params.setDominioPorta(soggettoProduceEccezione);
-			
-			// Mittente (può essere non definito in protocollo che supportano l'invocazione anonima)
-			if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null){
-				IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
-				String idPortaMittente = busta.getIdentificativoPortaDestinatario();
-				if(idPortaMittente==null){
-					idPortaMittente = this.traduttore.getIdentificativoPortaDefault(idSoggettoMittente);
-				}
-				idSoggettoMittente.setCodicePorta(idPortaMittente);
-				params.setMittente(idSoggettoMittente);
-			}
-						
-			// Servizio
-			IDServizio idServizio = 
-					IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
-							soggettoProduceEccezione, busta.getVersioneServizio());
-			idServizio.setAzione(busta.getAzione());
-			params.setServizio(idServizio);
-			
-			// MessageType
-			params.setMessageType(msg.getMessageType());
-			
-			// IDFunzione
-			params.setIdFunzione("PortaApplicativa");
-			
-			// ServizioApplicativo
-			params.setServizioApplicativo(busta.getServizioApplicativoErogatore());
-			
-			// TipoPdD
-			params.setTipoPorta(TipoPdD.APPLICATIVA);
 			
 			// Eccezione
 			// NOTA: il parametro 'ignoraEccezioniNonGravi' serve solo a filtrare.
@@ -338,31 +305,74 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 				if(bfDescrizione.length()>0)
 					ecc.setDescrizione(bfDescrizione.toString());
 			}
+			if(ecc==null) {
+				// non ci sono segnalazioni di errore
+				return ;
+			}
+			
+			EccezioneProtocolloBuilderParameters params = new EccezioneProtocolloBuilderParameters();			
 			params.setEccezioneProtocollo(ecc);
-							
-			// Set Fault Code
-			if(soapMessage!=null){
+						
+			if(modifyFault) {
+				// Set Fault Code
 				String codiceEccezione = 
 						this.traduttore.toString(ecc.getCodiceEccezione(),
 								ecc.getSubCodiceEccezione());
 				QName eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(codiceEccezione);
 				SOAPFaultCode code = params.getSoapFaultCode();
 				soapMessage.setFaultCode(f, code, eccezioneName);
+				
+				// Set fault String
+				f.setFaultString(ecc.getDescrizione(this.protocolFactory));
+				
+				// Set fault Actor
+				f.setFaultActor(org.openspcoop2.utils.Costanti.OPENSPCOOP2);
 			}
 			
-			// Set fault String
-			f.setFaultString(ecc.getDescrizione(this.protocolFactory));
-			
-			// Set fault Actor
-			f.setFaultActor(org.openspcoop2.utils.Costanti.OPENSPCOOP2);
-			
-			
-			// genero errore applicativo
-			this.erroreApplicativoBuilder.insertInSOAPFault(params, msg);
+			if(generateErroreApplicativoIntoDetail) {
+				
+				// Soggetto Produce Eccezione == Dominio
+				IDSoggetto soggettoProduceEccezione = new IDSoggetto(busta.getTipoMittente(),busta.getMittente(),busta.getIdentificativoPortaMittente());
+				params.setSoggettoProduceEccezione(soggettoProduceEccezione);
+				params.setDominioPorta(soggettoProduceEccezione);
+				
+				// Mittente (può essere non definito in protocollo che supportano l'invocazione anonima)
+				if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null){
+					IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
+					String idPortaMittente = busta.getIdentificativoPortaDestinatario();
+					if(idPortaMittente==null){
+						idPortaMittente = this.traduttore.getIdentificativoPortaDefault(idSoggettoMittente);
+					}
+					idSoggettoMittente.setCodicePorta(idPortaMittente);
+					params.setMittente(idSoggettoMittente);
+				}
+							
+				// Servizio
+				IDServizio idServizio = 
+				IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+						soggettoProduceEccezione, busta.getVersioneServizio());
+				idServizio.setAzione(busta.getAzione());
+				params.setServizio(idServizio);
+				
+				// MessageType
+				params.setMessageType(msg.getMessageType());
+				
+				// IDFunzione
+				params.setIdFunzione("PortaApplicativa");
+				
+				// ServizioApplicativo
+				params.setServizioApplicativo(busta.getServizioApplicativoErogatore());
+				
+				// TipoPdD
+				params.setTipoPorta(TipoPdD.APPLICATIVA);
+				
+				// genero errore applicativo
+				this.erroreApplicativoBuilder.insertInSOAPFault(params, msg);
+			}
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-
+	
 }

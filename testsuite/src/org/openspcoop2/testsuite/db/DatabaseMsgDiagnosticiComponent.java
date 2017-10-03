@@ -733,6 +733,14 @@ public class DatabaseMsgDiagnosticiComponent {
 					}
 				}
 				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("Op3nSPC@@p2")){
+						String tmp = new String(messaggio);
+						tmp = tmp.replace("Op3nSPC@@p2", "");
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
+				
 				if(casoSpecialeEmail==false){
 					resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 							": "+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));

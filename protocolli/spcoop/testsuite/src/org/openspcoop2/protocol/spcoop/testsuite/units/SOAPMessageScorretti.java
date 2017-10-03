@@ -54,6 +54,7 @@ import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.testng.Assert;
@@ -254,19 +255,19 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO));
 				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_NON_SUPPORTATO.replace(CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_KEY,"application/soap+xml"));
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -422,19 +423,19 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR));
 				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR +"{http://openspcoop.exampleMustUnderstand.unknown/1}headerUnknownA, {http://openspcoop.exampleMustUnderstand.unknown/2}headerUnknownB");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>());
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -570,25 +571,25 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+error.getFaultString()+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()) || msgErrore2.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR));
 				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "http://www.w3.org/2003/05/soap-envelope"));
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc2 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc2.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR));
 				ecc2.setDescrizione(CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "Impossibile recuperare il valore del namespace"));
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc2);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 
 			}finally{
 				dbComponentErogatore.close();
@@ -1911,28 +1912,28 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
 				ecc.setDescrizione("Unexpected close tag");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc);
 				
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc2 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc2.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
 				ecc2.setDescrizione("The element type \"soapenv:Body\" must be terminated by the matching end-tag \"</soapenv:Body>\"");
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); 
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); 
 				String[] identificativiFunzione = new String[2];
 				identificativiFunzione[0] = "MinisteroErogatoreSPCoopIT";
 				identificativiFunzione[1] = "RicezioneBusteSOAP";
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2016,28 +2017,28 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
 				ecc.setDescrizione("Unexpected close tag");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc);
 				
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc2 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc2.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
 				ecc2.setDescrizione("The end-tag for element type \"helloworld\" must end with a '>' delimiter");
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error));
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error));
 				String[] identificativiFunzione = new String[2];
 				identificativiFunzione[0] = "MinisteroErogatoreSPCoopIT";
 				identificativiFunzione[1] = "RicezioneBusteSOAP";
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2120,28 +2121,28 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
 				ecc.setDescrizione("Unexpected close tag");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc);
 				
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc2 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc2.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
 				ecc2.setDescrizione("The end-tag for element type \"b\" must end with a '>' delimiter");
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); 
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); 
 				String[] identificativiFunzione = new String[2];
 				identificativiFunzione[0] = "MinisteroErogatoreSPCoopIT";
 				identificativiFunzione[1] = "RicezioneBusteSOAP";
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2246,33 +2247,33 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice("EGOV_IT_300");
 				ecc.setDescrizione(SPCoopCostanti.FAULT_STRING_PROCESSAMENTO_SPCOOP_SENZA_CODICE);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc);
 
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc2 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc2.setCodice("EGOV_IT_300");
 				ecc2.setDescrizione(CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE);
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc3 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
                 ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
                 ecc3.setDescrizione("The element type \"soapenv:Body\" must be terminated by the matching end-tag");
                 ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
                 eccezioni.add(ecc3);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); 
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); 
                                 String[] identificativiFunzione = new String[2];
                                 identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
                                 identificativiFunzione[1] = "RicezioneBusteSOAP";
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+                                OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2369,33 +2370,33 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice("EGOV_IT_300");
 				ecc.setDescrizione(SPCoopCostanti.FAULT_STRING_PROCESSAMENTO_SPCOOP_SENZA_CODICE);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc);
 
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc2 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc2.setCodice("EGOV_IT_300");
 				ecc2.setDescrizione(CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE);
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc3 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
                 ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
                 ecc3.setDescrizione("The end-tag for element type \"helloworld\" must end with a '>' delimiter");
                 ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
                 eccezioni.add(ecc3);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error));
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error));
                                 String[] identificativiFunzione = new String[2];
                                 identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
                                 identificativiFunzione[1] = "RicezioneBusteSOAP";
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+                                OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2486,33 +2487,33 @@ public class SOAPMessageScorretti {
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 
-				List<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail> eccezioni = 
-						new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>();
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
+						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice("EGOV_IT_300");
 				ecc.setDescrizione(SPCoopCostanti.FAULT_STRING_PROCESSAMENTO_SPCOOP_SENZA_CODICE);
 				ecc.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc);
 
-				org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc2 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc2 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc2.setCodice("EGOV_IT_300");
 				ecc2.setDescrizione(CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE);
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc3 = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
                 ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
                 ecc3.setDescrizione("The end-tag for element type \"b\" must end with a '>' delimiter");
                 ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
                 eccezioni.add(ecc3);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error));
+				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error));
                                 String[] identificativiFunzione = new String[2];
                                 identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
                                 identificativiFunzione[1] = "RicezioneBusteSOAP";
-				Utilities.verificaFaultOpenSPCoopDetail(error, 
+                                OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
-						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
+						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 			}finally{
 				dbComponentErogatore.close();
 			}

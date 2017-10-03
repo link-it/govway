@@ -127,15 +127,45 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_KO_RESPONSE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyKoResponse";
 	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_KO_RESPONSE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyKoResponse";
 	
+	/** Porte Delegate per autenticazione */
+	public static final String PORTA_DELEGATA_AUTH_BASIC = "AuthenticationBasic";
+	public static final String PORTA_DELEGATA_AUTH_SSL = "AuthenticationSsl";
+	public static final String PORTA_DELEGATA_AUTH_PRINCIPAL = "AuthenticationPrincipal";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_BASIC = "AuthenticationOptionalBasic";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_SSL = "AuthenticationOptionalSsl";
+	public static final String PORTA_DELEGATA_AUTH_OPTIONAL_PRINCIPAL = "AuthenticationOptionalPrincipal";
+	
+	/** Porte Delegate per autorizzazione */
+	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED = "AuthorizationAuthenticated";
+	public static final String PORTA_DELEGATA_AUTHZ_ROLES_ALL = "AuthorizationRolesAll";
+	public static final String PORTA_DELEGATA_AUTHZ_ROLES_ANY = "AuthorizationRolesAny";
+	public static final String PORTA_DELEGATA_AUTHZ_INTERNAL_ROLES_ALL = "AuthorizationInternalRolesAll";
+	public static final String PORTA_DELEGATA_AUTHZ_INTERNAL_ROLES_ANY = "AuthorizationInternalRolesAny";
+	public static final String PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ALL = "AuthorizationExternalRolesAll";
+	public static final String PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ANY = "AuthorizationExternalRolesAny";
+	public static final String PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ALL_NO_AUTHENTICATION = "AuthorizationExternalRolesAll_noAuthentication";
+	public static final String PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ANY_NO_AUTHENTICATION = "AuthorizationExternalRolesAny_noAuthentication";
+	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_ROLES_ALL = "AuthorizationAuthenticatedOrRolesAll";
+	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_ROLES_ANY = "AuthorizationAuthenticatedOrRolesAny";
+	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_INTERNAL_ROLES_ALL = "AuthorizationAuthenticatedOrInternalRolesAll";
+	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_INTERNAL_ROLES_ANY = "AuthorizationAuthenticatedOrInternalRolesAny";
+	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_EXTERNAL_ROLES_ALL = "AuthorizationAuthenticatedOrExternalRolesAll";
+	public static final String PORTA_DELEGATA_AUTHZ_AUTHENTICATED_OR_EXTERNAL_ROLES_ANY = "AuthorizationAuthenticatedOrExternalRolesAny";
+	public static final String PORTA_DELEGATA_AUTHZ_XACML_POLICY = "AuthorizationXacmlPolicy";
+	public static final String PORTA_DELEGATA_AUTHZ_INTERNAL_XACML_POLICY = "AuthorizationInternalXacmlPolicy";
+	public static final String PORTA_DELEGATA_AUTHZ_EXTERNAL_XACML_POLICY = "AuthorizationExternalXacmlPolicy";
+	public static final String PORTA_DELEGATA_AUTHZ_EXTERNAL_XACML_POLICY_NO_AUTHENTICATION = "AuthorizationExternalXacmlPolicy_noAuthentication";
+	
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI";
-	
+
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward";
 	
 
 	
 	
+
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */
 	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateful";
 	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateless";
@@ -197,14 +227,45 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_VERIFY_KO_REQUEST="MTOMServiceExampleSOAP12/verifyKoRequest";
 	public static final String PORTA_APPLICATIVA_MTOM_SOAP11_VERIFY_KO_RESPONSE="MTOMServiceExampleSOAP11/verifyKoResponse";
 	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_VERIFY_KO_RESPONSE="MTOMServiceExampleSOAP12/verifyKoResponse";
-		
+
+	public static final String USERNAME_PORTA_APPLICATIVA_MTOM="MinisteroFruitore";
+	public static final String PASSWORD_PORTA_APPLICATIVA_MTOM="123456";
+	
+	/** Porte Applicative per autenticazione */
+	public static final String PORTA_APPLICATIVA_AUTH_NONE = "AuthenticationNone";
+	public static final String PORTA_APPLICATIVA_AUTH_BASIC = "AuthenticationBasic";
+	public static final String PORTA_APPLICATIVA_AUTH_SSL = "AuthenticationSsl";
+	public static final String PORTA_APPLICATIVA_AUTH_PRINCIPAL = "AuthenticationPrincipal";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_BASIC = "AuthenticationOptionalBasic";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_SSL = "AuthenticationOptionalSsl";
+	public static final String PORTA_APPLICATIVA_AUTH_OPTIONAL_PRINCIPAL = "AuthenticationOptionalPrincipal";
+	
+	/** Porte Applicative per autorizzazione */
+	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED = "AuthorizationAuthenticated";
+	public static final String PORTA_APPLICATIVA_AUTHZ_ROLES_ALL = "AuthorizationRolesAll";
+	public static final String PORTA_APPLICATIVA_AUTHZ_ROLES_ANY = "AuthorizationRolesAny";
+	public static final String PORTA_APPLICATIVA_AUTHZ_INTERNAL_ROLES_ALL = "AuthorizationInternalRolesAll";
+	public static final String PORTA_APPLICATIVA_AUTHZ_INTERNAL_ROLES_ANY = "AuthorizationInternalRolesAny";
+	public static final String PORTA_APPLICATIVA_AUTHZ_EXTERNAL_ROLES_ALL = "AuthorizationExternalRolesAll";
+	public static final String PORTA_APPLICATIVA_AUTHZ_EXTERNAL_ROLES_ANY = "AuthorizationExternalRolesAny";
+	public static final String PORTA_APPLICATIVA_AUTHZ_EXTERNAL_ROLES_ALL_NO_AUTHENTICATION = "AuthorizationExternalRolesAll_noAuthentication";
+	public static final String PORTA_APPLICATIVA_AUTHZ_EXTERNAL_ROLES_ANY_NO_AUTHENTICATION = "AuthorizationExternalRolesAny_noAuthentication";
+	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED_OR_ROLES_ALL = "AuthorizationAuthenticatedOrRolesAll";
+	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED_OR_ROLES_ANY = "AuthorizationAuthenticatedOrRolesAny";
+	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED_OR_INTERNAL_ROLES_ALL = "AuthorizationAuthenticatedOrInternalRolesAll";
+	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED_OR_INTERNAL_ROLES_ANY = "AuthorizationAuthenticatedOrInternalRolesAny";
+	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED_OR_EXTERNAL_ROLES_ALL = "AuthorizationAuthenticatedOrExternalRolesAll";
+	public static final String PORTA_APPLICATIVA_AUTHZ_AUTHENTICATED_OR_EXTERNAL_ROLES_ANY = "AuthorizationAuthenticatedOrExternalRolesAny";
+	public static final String PORTA_APPLICATIVA_AUTHZ_XACML_POLICY = "AuthorizationXacmlPolicy";
+	public static final String PORTA_APPLICATIVA_AUTHZ_INTERNAL_XACML_POLICY = "AuthorizationInternalXacmlPolicy";
+	public static final String PORTA_APPLICATIVA_AUTHZ_EXTERNAL_XACML_POLICY = "AuthorizationExternalXacmlPolicy";
+	public static final String PORTA_APPLICATIVA_AUTHZ_EXTERNAL_XACML_POLICY_NO_AUTHENTICATION = "AuthorizationExternalXacmlPolicy_noAuthentication";
+	
 
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_APPLICATIVA_REST_API="APIMinisteroErogatore/RESTAPI";
-		
 	
-	public static final String USERNAME_PORTA_APPLICATIVA_MTOM="MinisteroFruitore";
-	public static final String PASSWORD_PORTA_APPLICATIVA_MTOM="123456";
+
 	
 		
 	/** Tipo Soggetto */
@@ -281,6 +342,66 @@ public class CostantiTestSuite {
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_EROGATORE_ESTERNO = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO);
+	
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteBasic  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC="EsempioSoggettoTrasparenteBasic";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteBasic */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC="EsempioSoggettoTrasparenteBasicPdD";
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteBasic */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_BASIC = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteBasic2  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_2="EsempioSoggettoTrasparenteBasic2";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteBasic2 */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_2="EsempioSoggettoTrasparenteBasic2PdD";
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteBasic */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_BASIC_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_2);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteBasic3  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_3="EsempioSoggettoTrasparenteBasic3";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteBasic3 */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_3="EsempioSoggettoTrasparenteBasic3PdD";
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteBasic */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_BASIC_3 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_3, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_3);
+	
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteSsl  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_SSL="EsempioSoggettoTrasparenteSsl";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL="EsempioSoggettoTrasparenteSslPdD";
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_SSL = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_SSL, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteSsl2  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_SSL_2="EsempioSoggettoTrasparenteSsl2";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl2 */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL_2="EsempioSoggettoTrasparenteSsl2PdD";
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_SSL_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_SSL_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL_2);
+	
+	
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparentePrincipal  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL="EsempioSoggettoTrasparentePrincipal";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparentePrincipal */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL="EsempioSoggettoTrasparentePrincipalPdD";
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparentePrincipal */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_PRINCIPAL = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL);
+	
+	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparentePrincipal2  */
+	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL_2="EsempioSoggettoTrasparentePrincipal2";
+	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparentePrincipal2 */
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL_2="EsempioSoggettoTrasparentePrincipal2PdD";
+	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparentePrincipal */
+	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_PRINCIPAL_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL_2);
 		
 	
 	
@@ -303,6 +424,8 @@ public class CostantiTestSuite {
     public static final String SOAP_SERVIZIO_SINCRONO_AZIONE_COLLABORAZIONE="Collaborazione";
     /** Nome Azione WSSTimestamp del Servizio RichiestaStatoAvanzamento */
     public static final String SOAP_SERVIZIO_SINCRONO_AZIONE_WSS_TIMESTAMP="WSSTimestamp";
+    /** ENTITA SPCOOP: Nome Azione Aggiornamento del Servizio RichiestaStatoAvanzamento */
+    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO="aggiornamento";
     
     
     
@@ -322,7 +445,37 @@ public class CostantiTestSuite {
     public static final String PROXY_SERVIZIO_MTOM_AZIONE_UNPACKAGE_PACKAGE="unpackagePackage";
    
 	
+
 	/** Nome Servizio API */
 	public static final String SOAP_NOME_SERVIZIO_API="API";
 	
+
+    
+    
+    
+    
+    
+    public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = "Identificazione fallita, credenziali non fornite";
+    public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE = "Identificazione fallita, credenziali fornite non corrette";
+    
+    private static final String SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO = " non risulta autorizzato a fruire del servizio richiesto";
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE = "NOMESERVIZIOAPPLICATIVO";
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_XACML_POLICY = ": result-1 DENY code:urn:oasis:names:tc:xacml:1.0:status:ok";
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO = "Il servizio applicativo "+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE+SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO;
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO_XACML_POLICY = 
+    		"Il servizio applicativo "+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE+SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_XACML_POLICY;
+    
+    private static final String SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO = " non è autorizzato ad invocare il servizio "+
+    		SOAP_TIPO_SERVIZIO+"/"+SOAP_NOME_SERVIZIO_SINCRONO+" erogato da "+PROXY_TIPO_SOGGETTO+"/"+PROXY_NOME_SOGGETTO_EROGATORE;
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_TEMPLATE = "NOMESOGGETTO";
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_XACML_POLICY = " (result-1 DENY code:urn:oasis:names:tc:xacml:1.0:status:ok)";
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO = "Il soggetto "+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_TEMPLATE+
+    		SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO;
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO_XACML_POLICY = "Il soggetto "+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_TEMPLATE+
+    		SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_XACML_POLICY;
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_ANONIMO_NON_AUTORIZZATO = "Il mittente"+
+    		SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO;
+    public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_ANONIMO_NON_AUTORIZZATO_XACML_POLICY = "Il mittente"+
+    		SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_NON_AUTORIZZATO+MESSAGGIO_AUTORIZZAZIONE_FALLITA_SOGGETTO_XACML_POLICY;
+    
 }

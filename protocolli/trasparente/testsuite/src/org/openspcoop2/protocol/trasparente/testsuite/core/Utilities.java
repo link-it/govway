@@ -27,6 +27,9 @@ import java.io.File;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Document;
 
@@ -60,7 +63,12 @@ public class Utilities {
 		return version_jbossas;
 	}
 	
-	
+	public static String toString(CodiceErroreIntegrazione codiceErrore) throws ProtocolException{
+		return "OPENSPCOOP2_ORG_"+codiceErrore.getCodice();
+	}
+	public static String toString(CodiceErroreCooperazione codiceErrore) throws ProtocolException{
+		return "ECCEZIONE_PROTOCOLLO_"+codiceErrore.getCodice();
+	}
 }
 
 

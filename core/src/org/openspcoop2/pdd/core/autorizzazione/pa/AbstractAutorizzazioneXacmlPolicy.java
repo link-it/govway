@@ -90,13 +90,11 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 	
 	@Override
 	public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione) {
-		if(this.xacmlRequestAsString==null){
-			try{
-				this.getXacmlRequest(datiInvocazione, this.log);
-			}catch(Exception e){
-				this.log.error("Autorizzazione "+this.nomeAutorizzazione+" non riuscita (create XACML-Request)",e);
-				// Comunque l'errore verrà rilanciato anche durante l'utilizzo della classe vera e propria
-			}
+		try{
+			initDatiPolicy(datiInvocazione, false);
+		}catch(Exception e){
+			// Comunque l'errore verrà rilanciato anche durante l'utilizzo della classe vera e propria nel metodo 'process'
+			// quando viene effettuata la 'XACMLPolicyUtilities.loadPolicy'. 
 		}
 		return this.xacmlRequestAsString;
 	}
@@ -106,7 +104,18 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 		return true;
 	}
 	
-	
+	private void initDatiPolicy(DatiInvocazionePortaApplicativa datiInvocazione, boolean throwError) throws Exception {
+		if(this.xacmlRequestAsString==null){
+			try{
+				this.getXacmlRequest(datiInvocazione, this.log);
+			}catch(Exception e){
+				this.log.error("Autorizzazione "+this.nomeAutorizzazione+" non riuscita (create XACML-Request)",e);
+				if(throwError) {
+					throw e;
+				}
+			}
+		}
+	}
 	
     @Override
 	public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione) throws AutorizzazioneException{
@@ -116,6 +125,25 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     	IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
 		IDServizio idServizio = datiInvocazione.getIdServizio();
 		String errore = this.getErrorString(idSoggetto, idServizio);
+		
+		
+		
+    	// ****** Inizializzazione Policy Key (Serve per la chiave identificativa della policy e anche per la cache) ********
+    	// Inizializzazione 'policyKey'
+    	// Questo codice serve per creare la chiave della policy che poi viene utilizzata dal PdD
+    	// Il codice viene anche usato nel metodo 'getSuffixKeyAuthorizationResultInCache', 
+    	// e quindi in presenza di cache attiva, in questo metodo l'invocazione non effettua nessuna operazione.
+    	// Se invece la cache non e' attiva, l'invocazione inizializza i dati della policy tra cui la 'policyKey'
+    	try{
+    		initDatiPolicy(datiInvocazione,true);
+    	}catch(Exception e){
+    		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (init XACML-Policy)",e);
+    		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));
+    		esito.setAutorizzato(false);
+    		esito.setEccezioneProcessamento(e);
+			return esito;
+    	}
+		
 		
     	
     	

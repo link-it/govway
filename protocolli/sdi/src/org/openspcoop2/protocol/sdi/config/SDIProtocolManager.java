@@ -37,6 +37,7 @@ import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioTrasmissioneFat
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -61,10 +62,97 @@ public class SDIProtocolManager extends BasicManager {
 		this.sdiProperties = SDIProperties.getInstance(this.logger);
 	}
 	
+	
+	/* *********** VALIDAZIONE/GENERAZIONE BUSTE ******************* */
+	
 	@Override
 	public boolean isIgnoraEccezioniNonGravi(){
 		return true;
 	}
+	
+	@Override
+	public boolean isGenerazioneListaEccezioniErroreProcessamento(){
+		return true; // l'eccezione viene utilizzata per produrre un errore applicativo e/o per impostare un codice nel soap fault
+	}
+	
+	
+	
+	
+	
+	/* *********** Fault della Porta (Protocollo, Porta Applicativa) ******************* */
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(){
+		return this.sdiProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(){
+		return this.sdiProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento();
+	}
+		
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocolloConStackTrace(){
+		return this.sdiProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche(){
+		return this.sdiProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche();
+	}
+	
+	
+	
+	/* *********** Fault della Porta (Integrazione, Porta Delegata) ******************* */
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreServer(){
+		return this.sdiProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreClient(){
+		return this.sdiProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError();
+	}
+	
+	@Override
+	public boolean isGenerazioneDetailsFaultIntegrationeConStackTrace(){
+		return this.sdiProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace();
+	}
+	
+	@Override
+	public FaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione(){
+		Boolean value = this.sdiProperties.isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche();
+		if(value==null){
+			return FaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
+		}
+		else if(value){
+			return FaultIntegrationGenericInfoMode.ABILITATO;
+		}else{
+			return FaultIntegrationGenericInfoMode.DISABILITATO;
+		}
+	}
+	
+	
+	
+	/* *********** Fault della Porta (Generati dagli attori esterni) ******************* */
+	
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {
+		return this.sdiProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+	}
+
+	@Override
+	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
+		return this.sdiProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+	}
+	
+	
+	
+	
+	
+	
+	/* *********** INTEGRAZIONE ******************* */
 	
 	@Override
 	public Map<String, String> buildIntegrationProperties(Busta busta,
@@ -167,9 +255,6 @@ public class SDIProtocolManager extends BasicManager {
 		}
 	}
 	
-	
-	
-	
 	@Override
 	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
@@ -194,6 +279,8 @@ public class SDIProtocolManager extends BasicManager {
 	
 	
 	
+	
+	/* *********** ALTRO ******************* */
 	
     @Override
 	public Integer getHttpReturnCodeEmptyResponseOneWay(){
