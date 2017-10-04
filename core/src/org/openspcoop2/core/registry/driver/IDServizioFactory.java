@@ -231,7 +231,9 @@ public class IDServizioFactory {
 		if(soggettoErogatore==null){
 			throw new DriverRegistroServiziException("Soggetto erogatore non fornito");
 		}
-		return this.getIDServizioFromValues(tipo, nome, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), ver);
+		IDServizio idServ = this.getIDServizioFromValues(tipo, nome, soggettoErogatore.getTipo(), soggettoErogatore.getNome(), ver);
+		idServ.getSoggettoErogatore().setCodicePorta(soggettoErogatore.getCodicePorta());
+		return idServ;
 	}
 	
 	

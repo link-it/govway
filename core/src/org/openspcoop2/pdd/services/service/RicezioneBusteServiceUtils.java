@@ -63,6 +63,7 @@ public class RicezioneBusteServiceUtils {
 		IProtocolFactory<?> pf = requestInfo.getProtocolFactory();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 		ServiceBinding integrationServiceBinding = requestInfo.getIntegrationServiceBinding();
+		ServiceBinding protocolServiceBinding = requestInfo.getProtocolServiceBinding();
 						
 		IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
 		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
@@ -120,7 +121,11 @@ public class RicezioneBusteServiceUtils {
 				try{
 					integrationServiceBinding = pf.createProtocolConfiguration().getIntegrationServiceBinding(idServizio, registryReader);
 					requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
-					//generatoreErrore.updateServiceBinding(integrationServiceBinding); NO L'errore ritornato deve riguardare il protocolServiceBinding
+					
+					protocolServiceBinding = pf.createProtocolConfiguration().getProtocolServiceBinding(integrationServiceBinding, protocolContext);
+					requestInfo.setProtocolServiceBinding(protocolServiceBinding);
+					
+					generatoreErrore.updateServiceBinding(protocolServiceBinding);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
@@ -163,10 +168,15 @@ public class RicezioneBusteServiceUtils {
 				
 				// Aggiorno message type
 				try{
-					MessageType requestMessageType = bindingConfig.getMessageType(integrationServiceBinding, MessageRole.REQUEST, 
+					MessageType requestMessageTypeIntegration = bindingConfig.getMessageType(integrationServiceBinding, MessageRole.REQUEST, 
 							protocolContext, protocolContext.getContentType());
-					requestInfo.setIntegrationRequestMessageType(requestMessageType);
-					//generatoreErrore.updateRequestMessageType(requestMessageType);  NO L'errore ritornato deve riguardare il protocolServiceBinding
+					requestInfo.setIntegrationRequestMessageType(requestMessageTypeIntegration);
+					
+					MessageType requestMessageTypeProtocol = bindingConfig.getMessageType(protocolServiceBinding, MessageRole.REQUEST, 
+							protocolContext, protocolContext.getContentType());
+					requestInfo.setProtocolRequestMessageType(requestMessageTypeProtocol);
+					
+					generatoreErrore.updateRequestMessageType(requestMessageTypeProtocol);
 				}catch(Exception error){
 					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error.getMessage());

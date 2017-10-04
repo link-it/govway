@@ -221,13 +221,13 @@ public class AuthUtilities {
 					modulo = RicezioneContenutiApplicativiConnector.ID_MODULO;
 					Reporter.log("Modulo ["+modulo+"]");
 					
-					Reporter.log("Controllo actor code ["+CostantiPdD.OPENSPCOOP2+"]");
+					Reporter.log("Controllo actor code ["+CostantiPdD.OPENSPCOOP2+"],  found["+error.getFaultActor()+"]");
 					Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
 					
-					Reporter.log("Controllo fault code ["+Utilities.toString(codiceErroreIntegrazione)+"]");
+					Reporter.log("Controllo fault code ["+Utilities.toString(codiceErroreIntegrazione)+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
 					Assert.assertTrue(Utilities.toString(codiceErroreIntegrazione).equals(error.getFaultCode().getLocalPart()));
 					
-					Reporter.log("Controllo fault string ["+erroreAtteso+"]");
+					Reporter.log("Controllo fault string ["+erroreAtteso+"], found["+error.getFaultString()+"]");
 					if(ricercaEsatta) {
 						Assert.assertTrue(erroreAtteso.equals(error.getFaultString()));
 					}
@@ -259,13 +259,13 @@ public class AuthUtilities {
 					modulo = RicezioneBusteConnector.ID_MODULO;
 					Reporter.log("Modulo ["+modulo+"]");
 					
-					Reporter.log("Controllo actor code is null");
+					Reporter.log("Controllo actor code is null,  found["+error.getFaultActor()+"]");
 					Assert.assertTrue(error.getFaultActor()==null);
 					
-					Reporter.log("Controllo fault code [Client]");
+					Reporter.log("Controllo fault code [Client], found["+error.getFaultCode().getLocalPart().trim()+"]");
 					Assert.assertTrue("Client".equals(error.getFaultCode().getLocalPart().trim()));
 					
-					Reporter.log("Controllo fault string ["+MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString()+"]");
+					Reporter.log("Controllo fault string ["+MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString()+"], found["+error.getFaultString()+"]");
 					Assert.assertTrue(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString().equals(error.getFaultString()));
 					
 					
