@@ -20,6 +20,8 @@
 package org.openspcoop2.example.pdd.server.testservice;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
@@ -41,6 +43,8 @@ public class Startup implements ServletContextListener {
 	public static Logger logEcho;
 	public static Logger logStressTest;
 	public static File repositoryResponseFiles;
+	public static List<String> whitePropertiesList;
+	public static boolean genericError = false;
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
@@ -75,6 +79,34 @@ public class Startup implements ServletContextListener {
 					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' cannot read");
 				}
 				repositoryResponseFiles = f;
+			}
+			
+			String wList = p.getProperty("parameters.whiteList");
+			if(wList!=null) {
+				wList = wList.trim();
+				
+				String [] tmp = wList.split(",");
+				if(tmp!=null && tmp.length>0) {
+					List<String> tmpL = new ArrayList<>();
+					for (int i = 0; i < tmp.length; i++) {
+						String pr = tmp[i];
+						if(pr!=null) {
+							pr = pr.trim();
+							if(!"".equals(pr)) {
+								tmpL.add(pr);
+							}
+						}
+					}
+					if(tmpL.size()>0) {
+						whitePropertiesList = tmpL;
+					}
+				}
+			}
+			
+			String genErr = p.getProperty("genericError");
+			if(genErr!=null) {
+				genErr = genErr.trim();
+				Startup.genericError = "true".equalsIgnoreCase(genErr);
 			}
 			
 		}catch(Exception e){

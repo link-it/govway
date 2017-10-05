@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -69,20 +70,46 @@ public class ServletTestService extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Logger log = null;
-	private File repositoryResponseFiles = null;
+	protected Logger log = null;
+	protected File repositoryResponseFiles = null;
+	protected List<String> whitePropertiesList = null;
+	protected boolean genericError = false;
 	
-	public ServletTestService(Logger log, File repositoryResponseFiles){
+	public ServletTestService(Logger log, File repositoryResponseFiles,List<String> whitePropertiesList,boolean genericError){
 		this.log = log;
 		this.repositoryResponseFiles = repositoryResponseFiles;
+		this.whitePropertiesList = whitePropertiesList;
+		this.genericError = genericError;
+	}
+	public ServletTestService(Logger log, File repositoryResponseFiles,boolean genericError){
+		this(log, repositoryResponseFiles, null,genericError);
+	}
+	public ServletTestService(Logger log, File repositoryResponseFiles){
+		this(log, repositoryResponseFiles, null, false);
 	}
 	public ServletTestService(Logger log){
-		this.log = log;
+		this(log, null, null, false);
+	}
+	
+	private static String getParameter_checkWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
+		String value = request.getParameter(parameter);
+		if(value!=null) {
+			value = value.trim();
+		}
+		if(whitePropertiesList!=null) {
+			if(whitePropertiesList.contains(parameter)==false) {
+				return null;
+			}
+		}
+		return value;
 	}
 	
 	public static void checkHttpServletRequestParameter(HttpServletRequest request) throws ServletException{
+		checkHttpServletRequestParameter(request, null);
+	}
+	private static void checkHttpServletRequestParameter(HttpServletRequest request, List<String> whitePropertiesList) throws ServletException{
 		
-		String checkEqualsHttpMethod = request.getParameter("checkEqualsHttpMethod");
+		String checkEqualsHttpMethod = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsHttpMethod");
 		if(checkEqualsHttpMethod!=null){
 			checkEqualsHttpMethod = checkEqualsHttpMethod.trim();
 			if(checkEqualsHttpMethod.equals(request.getMethod())==false){
@@ -90,7 +117,7 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
-		String checkEqualsHttpHeader = request.getParameter("checkEqualsHttpHeader");
+		String checkEqualsHttpHeader = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsHttpHeader");
 		if(checkEqualsHttpHeader!=null){
 			checkEqualsHttpHeader = checkEqualsHttpHeader.trim();
 			if(checkEqualsHttpHeader.contains(":")==false){
@@ -130,7 +157,7 @@ public class ServletTestService extends HttpServlet {
 		
 		try{
 			
-			checkHttpServletRequestParameter(req);
+			checkHttpServletRequestParameter(req, this.whitePropertiesList);
 			
 			
 			
@@ -155,7 +182,7 @@ public class ServletTestService extends HttpServlet {
 					
 
 			// opzioni connettore
-			String fault = req.getParameter("fault");
+			String fault = getParameter_checkWhiteList(req, this.whitePropertiesList, "fault");
 			String faultActor = "OpenSPCoopTrace";
 			String faultSoapVersion = null;
 			String faultNamespaceCode = "http://www.openspcoop2.org/example";
@@ -163,20 +190,20 @@ public class ServletTestService extends HttpServlet {
 			String faultMessage = "Fault ritornato dalla servlet di trace, esempio di OpenSPCoop";
 			if(fault!=null && fault.equalsIgnoreCase("true")){
 				
-				if(req.getParameter("faultActor")!=null)
-					faultActor = req.getParameter("faultActor");
+				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultActor")!=null)
+					faultActor = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultActor");
 				
-				if(req.getParameter("faultSoapVersion")!=null)
-					faultSoapVersion = req.getParameter("faultSoapVersion");
+				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultSoapVersion")!=null)
+					faultSoapVersion = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultSoapVersion");
 				
-				if(req.getParameter("faultCode")!=null)
-					faultCode = req.getParameter("faultCode");
+				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultCode")!=null)
+					faultCode = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultCode");
 				
-				if(req.getParameter("faultNamespaceCode")!=null)
-					faultNamespaceCode = req.getParameter("faultNamespaceCode");
+				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultNamespaceCode")!=null)
+					faultNamespaceCode = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultNamespaceCode");
 				
-				if(req.getParameter("faultMessage")!=null)
-					faultMessage = req.getParameter("faultMessage");
+				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultMessage")!=null)
+					faultMessage = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultMessage");
 			}
 			
 			
@@ -184,14 +211,14 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzioni tunnel SOAP
-			String tunnelSoap = req.getParameter("OpenSPCoop2TunnelSOAP");
+			String tunnelSoap = getParameter_checkWhiteList(req, this.whitePropertiesList, "OpenSPCoop2TunnelSOAP");
 			boolean tunnel = false;
 			if(tunnelSoap!=null){
 				tunnelSoap = tunnelSoap.trim();
 				if("true".equals(tunnelSoap))
 					tunnel = true;
 			}
-			String tunnelSoapMimeType = req.getParameter("OpenSPCoop2TunnelSOAPMimeType");
+			String tunnelSoapMimeType = getParameter_checkWhiteList(req, this.whitePropertiesList, "OpenSPCoop2TunnelSOAPMimeType");
 			if(tunnelSoapMimeType!=null){
 				tunnelSoapMimeType = tunnelSoapMimeType.trim();
 			}
@@ -201,7 +228,7 @@ public class ServletTestService extends HttpServlet {
 
 			// opzione returnCode
 			int returnCode = 200;
-			String returnCodeString = req.getParameter("returnCode");
+			String returnCodeString = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnCode");
 			if(returnCodeString!=null){
 				try{
 					returnCode = Integer.parseInt(returnCodeString.trim());
@@ -218,7 +245,7 @@ public class ServletTestService extends HttpServlet {
 			
 			// opzione replace
 			// formato: old:new[,old:new,....,old:new]
-			String replace = req.getParameter("replace");
+			String replace = getParameter_checkWhiteList(req, this.whitePropertiesList, "replace");
 			Map<String, String> replaceMap = new Hashtable<String, String>();
 			if(replace!=null){
 				// volutamente non faccio il trim
@@ -260,7 +287,7 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzione returnHttpHeader
-			String returnHeaderString = req.getParameter("returnHttpHeader");
+			String returnHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeader");
 			String returnHeaderKey = null; 
 			String returnHeaderValue = null;
 			if(returnHeaderString!=null){
@@ -283,14 +310,14 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzioni save msg
-			String logMessageTmp = req.getParameter("logMessage");
+			String logMessageTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "logMessage");
 			boolean logMessage = false;
 			if(logMessageTmp!=null){
 				logMessageTmp = logMessageTmp.trim();
 				if("true".equals(logMessage))
 					logMessage = true;
 			}
-			String saveMessageDir = req.getParameter("saveMessageDir");
+			String saveMessageDir = getParameter_checkWhiteList(req, this.whitePropertiesList, "saveMessageDir");
 			if(saveMessageDir!=null){
 				saveMessageDir = saveMessageDir.trim();
 			}
@@ -351,7 +378,7 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// sleep
-			String sleep = req.getParameter("sleep");
+			String sleep = getParameter_checkWhiteList(req, this.whitePropertiesList, "sleep");
 			if(sleep!=null){
 				int millisecond = Integer.parseInt(sleep);
 				if(millisecond>1000){
@@ -382,8 +409,8 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// sleep in intervallo
-			String min = req.getParameter("sleepMin");
-			String max = req.getParameter("sleepMax");
+			String min = getParameter_checkWhiteList(req, this.whitePropertiesList, "sleepMin");
+			String max = getParameter_checkWhiteList(req, this.whitePropertiesList, "sleepMax");
 			if(max!=null){
 				int maxSleep = Integer.parseInt((String)max);
 				int minSleep = 0;
@@ -474,10 +501,10 @@ public class ServletTestService extends HttpServlet {
 				
 				String contentTypeRisposta = contentTypeRichiesta;
 				
-				String fileDestinazione = req.getParameter("destFile");
-				String fileResponse = req.getParameter("response");
+				String fileDestinazione = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFile");
+				String fileResponse = getParameter_checkWhiteList(req, this.whitePropertiesList, "response");
 				if(fileResponse==null) {
-					fileResponse = req.getParameter("op"); // alias per response, in modo da rendere meno evidente l'operazione
+					fileResponse = getParameter_checkWhiteList(req, this.whitePropertiesList, "op"); // alias per response, in modo da rendere meno evidente l'operazione
 				}
 				ByteArrayOutputStream boutStaticFile = null;
 				if(fileDestinazione!=null || fileResponse!=null){
@@ -505,7 +532,7 @@ public class ServletTestService extends HttpServlet {
 					boutStaticFile.close();
 					fin.close();
 					
-					String fileDestinazioneContentType = req.getParameter("destFileContentType");
+					String fileDestinazioneContentType = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFileContentType");
 					if(fileDestinazioneContentType!=null){
 						fileDestinazioneContentType = fileDestinazioneContentType.trim();
 						contentTypeRisposta = fileDestinazioneContentType;
@@ -600,13 +627,21 @@ public class ServletTestService extends HttpServlet {
 				
 			}
 			
-		}catch(Exception e){
-			e.printStackTrace(System.out);
-			if(this.log!=null)
-				this.log.error("ERRORE TestService: "+e.toString());
-			else
+		}catch(Throwable e){
+			if(this.log!=null) {
+				this.log.error("TestService: "+e.getMessage(),e);
+			}else {
 				System.out.println("ERRORE TestService: "+e.toString());
-			throw new ServletException(e.getMessage(),e);
+				e.printStackTrace(System.out);
+			}
+			if(this.genericError) {
+				res.setStatus(500);
+				res.getOutputStream().flush();
+				res.getOutputStream().close();
+			}
+			else {
+				throw new ServletException(e.getMessage(),e);
+			}
 		}
 	}
 
