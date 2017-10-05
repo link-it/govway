@@ -350,6 +350,25 @@ public class DBMappingUtils {
 	
 	
 	
+
+	
+	public static boolean existsMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
+			Connection con, String tipoDB) throws CoreException {
+		return existsMappingErogazione(idServizio, idPortaApplicativa, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static boolean existsMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		try {
+			long id = getTableIdMappingErogazione(idServizio, idPortaApplicativa, con, tipoDB);
+			return id>0;
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	
+	
+	
+	
 	public static long getTableIdMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
 			Connection con, String tipoDB) throws CoreException {
 		return getTableIdMappingErogazione(idServizio, idPortaApplicativa, con, tipoDB, CostantiDB.SOGGETTI);
@@ -382,6 +401,7 @@ public class DBMappingUtils {
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
 			sqlQueryObject.addWhereCondition("id_erogazione=?");
 			sqlQueryObject.addWhereCondition("id_porta=?");
+			sqlQueryObject.setANDLogicOperator(true);
 			String queryString = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(queryString);
 			stm.setLong(1, idServizioLong);
@@ -733,6 +753,29 @@ public class DBMappingUtils {
 	
 	
 
+
+	
+	
+	public static boolean existsMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
+			Connection con, String tipoDB) throws CoreException {
+		return existsMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static boolean existsMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		try {
+			long id = getTableIdMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, tipoDB);
+			return id>0;
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	
+	
+	
+	
+	
+	
+
 	public static long getTableIdMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
 			Connection con, String tipoDB) throws CoreException {
 		return getTableIdMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, tipoDB, CostantiDB.SOGGETTI);
@@ -765,6 +808,7 @@ public class DBMappingUtils {
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 			sqlQueryObject.addWhereCondition("id_fruizione=?");
 			sqlQueryObject.addWhereCondition("id_porta=?");
+			sqlQueryObject.setANDLogicOperator(true);
 			String queryString = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(queryString);
 			stm.setLong(1, idFruizione);

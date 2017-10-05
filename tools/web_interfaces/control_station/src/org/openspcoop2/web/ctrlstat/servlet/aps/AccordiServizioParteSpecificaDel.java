@@ -213,8 +213,9 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(paGenerataAutomcaticamente.getServizio().getTipo(),
 								paGenerataAutomcaticamente.getServizio().getNome(), soggettoErogatore, paGenerataAutomcaticamente.getServizio().getVersione());
 						mappingErogazione.setIdServizio(idServizioPA);
-						
-						listaOggettiDaEliminare.add(mappingErogazione);
+						if(porteApplicativeCore.existsMappingErogazionePortaApplicativa(mappingErogazione)) {
+							listaOggettiDaEliminare.add(mappingErogazione);
+						}
 						
 						listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 					}

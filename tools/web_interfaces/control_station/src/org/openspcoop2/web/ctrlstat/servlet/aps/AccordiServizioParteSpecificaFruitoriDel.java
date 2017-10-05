@@ -187,7 +187,9 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 					mappingFruizione.setIdFruitore(idSoggettoFruitore);
 					mappingFruizione.setIdServizio(idServizioObject);
 					mappingFruizione.setIdPortaDelegata(myidpd);
-					listPerformOperations.add(mappingFruizione);
+					if(porteDelegateCore.existsMappingFruizionePortaDelegata(mappingFruizione)) {
+						listPerformOperations.add(mappingFruizione);
+					}
 					
 					listPerformOperations.add(mypd);
 					

@@ -33,7 +33,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -131,6 +135,17 @@ public final class PorteApplicativeDel extends Action {
 							listPerformOperations.add(wrapper);
 						}
 					}
+				}
+				
+				MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
+				IDSoggetto soggettoErogatore = new IDSoggetto(pa.getTipoSoggettoProprietario(),pa.getNomeSoggettoProprietario());
+				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+				idPortaApplicativa.setNome(pa.getNome());
+				mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
+				mappingErogazione.setIdServizio(IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+						soggettoErogatore, pa.getServizio().getVersione()));
+				if(porteApplicativeCore.existsMappingErogazionePortaApplicativa(mappingErogazione)) {
+					listPerformOperations.add(mappingErogazione);
 				}
 				
 				listPerformOperations.add(pa);

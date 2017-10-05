@@ -33,7 +33,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -131,6 +135,22 @@ public final class PorteDelegateDel extends Action {
 							listPerformOperations.add(wrapper);
 						}
 					}
+				}
+				
+				if(pde.getSoggettoErogatore()!=null && pde.getSoggettoErogatore().getNome()!=null && !"".equals(pde.getSoggettoErogatore().getNome()) &&
+						pde.getServizio()!=null && pde.getServizio().getNome()!=null && !"".equals(pde.getServizio().getNome())) {
+					MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+					mappingFruizione.setIdFruitore(new IDSoggetto(pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario()));
+					mappingFruizione.setIdServizio(IDServizioFactory.getInstance().getIDServizioFromValues(pde.getServizio().getTipo(), pde.getServizio().getNome(), 
+							new IDSoggetto(pde.getSoggettoErogatore().getTipo(), pde.getSoggettoErogatore().getNome()), 
+							pde.getServizio().getVersione()));
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(pde.getNome());
+					mappingFruizione.setIdPortaDelegata(idPD);
+					if(porteDelegateCore.existsMappingFruizionePortaDelegata(mappingFruizione)) {
+						listPerformOperations.add(mappingFruizione);	
+					}					
+					
 				}
 				
 				listPerformOperations.add(pde);
