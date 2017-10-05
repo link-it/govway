@@ -1,3 +1,10 @@
+2017-10-05  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole, PddLoader, Utils]
+	OP-659
+	Aggiunta la possibilità di creare un BuildVersion consultabile tramite console.
+	La build version deve essere registrata all'interno di un file di proprietà dedicato 'op2Version.properties'
+
 2017-10-04  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
