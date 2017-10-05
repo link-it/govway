@@ -1,3 +1,15 @@
+2017-10-04  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	OP-657
+	Dopo aver creato una fruizione per un soggetto, se si selezionava la porta delegata creata e si provava ad eliminarla si otteneva un errore.
+	Lo stesso accadeva per l'eliminazione delle porta applicativa creata automaticamente dopo aver registrato un nuovo accordo di servizio parte specifica.
+	L'errore che si otteneva era il seguente:
+	...is still referenced from table "mapping_fruizione_pd"....
+	o
+	...is still referenced from table "mapping_erogazione_pa"....
+	Il problema è stato risolto.
+
 2017-10-03  Andrea Poli <apoli@link.it>
 
 	* [Pdd, ProtocolloTrasparente]
