@@ -88,6 +88,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.MapReader;
@@ -226,15 +227,26 @@ public class ControlStationCore {
 		}
 	}
 	public String getProductVersion(){
+		String pVersion = null;
 		if(this.consoleNomeEstesoSuffix!=null){
 			if(this.consoleNomeEstesoSuffix.trim().startsWith("-")){
-				return "PdDOpenSPCoopEnterprise "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
+				pVersion = "PdDOpenSPCoopEnterprise "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
 			}
 			else{
-				return this.consoleNomeEstesoSuffix;
+				pVersion = this.consoleNomeEstesoSuffix;
 			}
 		}
-		return "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+		else {
+			pVersion = "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+		}
+		String buildVersion = null;
+		try {
+			buildVersion = VersionUtilities.readBuildVersion();
+		}catch(Exception e) {}
+		if(buildVersion!=null) {
+			pVersion = pVersion + " (build "+buildVersion+")";
+		}
+		return pVersion;
 	}
 	public String getConsoleCSS() {
 		return this.consoleCSS;

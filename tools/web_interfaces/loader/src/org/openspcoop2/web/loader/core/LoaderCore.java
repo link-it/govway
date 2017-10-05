@@ -34,6 +34,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -82,15 +83,26 @@ public class LoaderCore{
 		}
 	}
 	public String getProductVersion(){
+		String pVersion = null;
 		if(this.loaderNomeEstesoSuffix!=null){
 			if(this.loaderNomeEstesoSuffix.trim().startsWith("-")){
-				return "PdDOpenSPCoopEnterprise "+ this.loaderNomeEstesoSuffix.trim().substring(1).trim();
+				pVersion = "PdDOpenSPCoopEnterprise "+ this.loaderNomeEstesoSuffix.trim().substring(1).trim();
 			}
 			else{
-				return this.loaderNomeEstesoSuffix;
+				pVersion = this.loaderNomeEstesoSuffix;
 			}
 		}
-		return "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+		else {
+			pVersion = "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+		}
+		String buildVersion = null;
+		try {
+			buildVersion = VersionUtilities.readBuildVersion();
+		}catch(Exception e) {}
+		if(buildVersion!=null) {
+			pVersion = pVersion + " (build "+buildVersion+")";
+		}
+		return pVersion;
 	}
 	public String getLoaderCSS() {
 		return this.loaderCSS;

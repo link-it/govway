@@ -65,6 +65,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -399,6 +400,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			String versione = "Porta di Dominio "+CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
 			if(this.openspcoopProperties!=null){
 				versione = "Porta di Dominio "+this.openspcoopProperties.getPddDetailsForServices();
+			}
+			String buildVersion = null;
+			try {
+				buildVersion = VersionUtilities.readBuildVersion();
+			}catch(Exception e) {}
+			if(buildVersion!=null) {
+				versione = versione + " (build "+buildVersion+")";
 			}
 			return versione;
 		}catch(Throwable e){
