@@ -635,24 +635,24 @@ public class MTOMUtilities {
 			if(isRequest){
 				if(datiServizioAzione!=null){
 					long count = data.getVerificatoreTracciaRichiesta().countTracedAllegati(id, datiServizioAzione);
-					Reporter.log("Controllo numero allegati attesi("+countAttachments+") trovati ("+count+")");
+					Reporter.log("Controllo numero allegati id("+id+") attesi("+countAttachments+") trovati ("+count+")");
 					Assert.assertTrue(count==countAttachments);
 				}
 				else{
 					long count = data.getVerificatoreTracciaRichiesta().countTracedAllegati(id);
-					Reporter.log("Controllo numero allegati attesi("+countAttachments+") trovati ("+count+")");
+					Reporter.log("Controllo numero allegati id("+id+") attesi("+countAttachments+") trovati ("+count+")");
 					Assert.assertTrue(count==countAttachments);
 				}
 			}
 			else{
 				if(datiServizioAzione!=null){
 					long count = data.getVerificatoreTracciaRisposta().countTracedAllegati(id, datiServizioAzione);
-					Reporter.log("Controllo numero allegati attesi("+countAttachments+") trovati ("+count+")");
+					Reporter.log("Controllo numero allegati id("+id+") attesi("+countAttachments+") trovati ("+count+")");
 					Assert.assertTrue(count==countAttachments);
 				}
 				else{
 					long count = data.getVerificatoreTracciaRisposta().countTracedAllegati(id);
-					Reporter.log("Controllo numero allegati attesi("+countAttachments+") trovati ("+count+")");
+					Reporter.log("Controllo numero allegati id("+id+") attesi("+countAttachments+") trovati ("+count+")");
 					Assert.assertTrue(count==countAttachments);
 				}
 			}

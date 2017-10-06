@@ -796,7 +796,7 @@ public class Tracciamento {
 		
 		if(msg!=null){
 			try{
-				if(ServiceBinding.SOAP.equals(msg)){
+				if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 					java.util.Iterator<?> it = msg.castAsSoap().getAttachments();
 				    while(it.hasNext()){
 				    	AttachmentPart ap = 

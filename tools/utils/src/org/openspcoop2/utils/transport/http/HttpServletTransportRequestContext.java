@@ -37,7 +37,8 @@ import org.slf4j.Logger;
 
 public class HttpServletTransportRequestContext extends org.openspcoop2.utils.transport.TransportRequestContext implements java.io.Serializable {
 
-	private HttpServletRequest httpServletRequest;
+	// Senno se l'oggetto non e' serializzabile
+	private transient HttpServletRequest httpServletRequest;
 	
 	public HttpServletRequest getHttpServletRequest() {
 		return this.httpServletRequest;

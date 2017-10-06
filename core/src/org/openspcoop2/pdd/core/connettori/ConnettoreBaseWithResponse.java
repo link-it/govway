@@ -289,7 +289,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					else{
 						if(this.requestMsg.getMessageType().equals(messageTypeResponse)==false){
 							msgErrore = "Header Content-Type definito nell'http reply associato ad un tipo ("+messageTypeResponse.name()
-										+") differente da quello associato al messaggio di richiesta ("+this.requestMsg.getMessageType().name();
+										+") differente da quello associato al messaggio di richiesta ("+this.requestMsg.getMessageType().name()+")";
 						}
 					}
 				}catch(Exception e){

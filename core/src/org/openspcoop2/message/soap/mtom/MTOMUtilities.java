@@ -212,6 +212,23 @@ public class MTOMUtilities {
 						message.addContentTypeParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE, HttpConstants.CONTENT_TYPE_SOAP_1_2);
 					}
 				}
+				else {
+					
+					ContentType cType = null;
+					if(MessageType.SOAP_11.equals(message.getMessageType())){
+						cType = new ContentType(HttpConstants.CONTENT_TYPE_SOAP_1_1);
+					}
+					else if(MessageType.SOAP_12.equals(message.getMessageType())){
+						cType = new ContentType(HttpConstants.CONTENT_TYPE_SOAP_1_2);
+					}
+					
+					String charsetParam =  ContentTypeUtilities.readCharsetFromContentType(message.getContentType());
+					if(charsetParam!=null && !"".equals(charsetParam)) {
+						cType.setParameter(HttpConstants.CONTENT_TYPE_PARAMETER_CHARSET, charsetParam);
+					}
+					
+					message.setContentType(cType.toString());
+				}
 			}
 			
 			//message.saveChanges();
