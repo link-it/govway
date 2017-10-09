@@ -26,8 +26,8 @@ package org.openspcoop2.utils.transport.http;
  * CHttpUtilsException
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13288 $, $Date: 2017-09-18 11:57:27 +0200 (Mon, 18 Sep 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 

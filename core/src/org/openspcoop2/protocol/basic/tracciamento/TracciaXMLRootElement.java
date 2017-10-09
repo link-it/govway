@@ -26,8 +26,8 @@ package org.openspcoop2.protocol.basic.tracciamento;
  * Bean Contenente le informazioni per il root element dei messaggi diagnostici
  * 
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13064 $, $Date: 2017-06-12 13:16:47 +0200 (Mon, 12 Jun 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public class TracciaXMLRootElement extends org.openspcoop2.protocol.sdk.XMLRootElement{

@@ -27,8 +27,8 @@ import java.io.Serializable;
  * ApiFormats
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 13002 $, $Date: 2017-05-19 18:37:46 +0200 (Fri, 19 May 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 

@@ -30,8 +30,8 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class HttpBaseEntity<T> {
 

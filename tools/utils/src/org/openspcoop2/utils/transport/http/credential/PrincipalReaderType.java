@@ -25,8 +25,8 @@ import java.io.Serializable;
  * Enum dei tipi di reader disponibili
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 12774 $, $Date: 2017-03-10 10:44:01 +0100 (Fri, 10 Mar 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public enum PrincipalReaderType implements  Serializable , Cloneable {
 	
