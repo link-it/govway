@@ -407,7 +407,7 @@ public class Imbustamento extends GenericLib{
 					}
 				}			
 			}catch(Exception e){	
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("protocolli.funzionalita.unsupported");
 				OpenSPCoop2Message responseMessageError = 
 						generatoreErrore.build(IntegrationError.BAD_REQUEST, 

@@ -539,7 +539,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			this.resultHTTPMessage = httpResponse.getStatusLine().getReasonPhrase();
 			
 			if(this.codice<300)
-				if(this.acceptOnlyReturnCode_202_200){
+				if(this.isSoap && this.acceptOnlyReturnCode_202_200){
 					if(this.codice!=200 && this.codice!=202){
 						throw new Exception("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
 					}

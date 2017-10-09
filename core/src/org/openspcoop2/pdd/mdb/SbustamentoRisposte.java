@@ -418,7 +418,7 @@ public class SbustamentoRisposte extends GenericLib {
 					}
 				}				
 			}catch(Exception e){	
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("protocolli.funzionalita.unsupported");
 				if(sendRispostaApplicativa){
 					OpenSPCoop2Message responseMessageError =

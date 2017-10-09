@@ -28,7 +28,6 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.RequestInfo;
@@ -74,7 +73,7 @@ public class RicezioneBusteServiceUtils {
 		}catch(RegistryNotFound notFound){
 			if(bindingConfig.existsContextUrlMapping()==false){
 				logCore.error("Porta Applicativa non trovata: "+notFound.getMessage(),notFound);
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
+				msgDiag.addKeywordErroreProcessamento(notFound);
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 				ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
 						IntegrationError.NOT_FOUND, notFound, null, res, logCore);
@@ -96,7 +95,7 @@ public class RicezioneBusteServiceUtils {
 					idServizio = serviceIdentificationReader.convertToIDServizio(idPA);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
+					msgDiag.addKeywordErroreProcessamento(notFound);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
 							IntegrationError.NOT_FOUND, notFound, null, res, logCore);
@@ -128,7 +127,7 @@ public class RicezioneBusteServiceUtils {
 					generatoreErrore.updateServiceBinding(protocolServiceBinding);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
+					msgDiag.addKeywordErroreProcessamento(notFound);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione(),
@@ -136,7 +135,7 @@ public class RicezioneBusteServiceUtils {
 					return false;
 				}catch(Exception error){
 					logCore.error("Lettura ServiceBinding fallita: "+error.getMessage(),error);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error.getMessage());
+					msgDiag.addKeywordErroreProcessamento(error);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Lettura ServiceBinding fallita"),
@@ -150,7 +149,7 @@ public class RicezioneBusteServiceUtils {
 					requestInfo.setBindingConfig(bindingConfig);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura Configurazione Servizio fallita (notFound): "+notFound.getMessage(),notFound);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
+					msgDiag.addKeywordErroreProcessamento(notFound);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione(),
@@ -158,7 +157,7 @@ public class RicezioneBusteServiceUtils {
 					return false;
 				}catch(Exception error){
 					logCore.error("Lettura Configurazione Servizio fallita: "+error.getMessage(),error);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error.getMessage());
+					msgDiag.addKeywordErroreProcessamento(error);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Lettura Configurazione Servizio fallita"),
@@ -179,7 +178,7 @@ public class RicezioneBusteServiceUtils {
 					generatoreErrore.updateRequestMessageType(requestMessageTypeProtocol);
 				}catch(Exception error){
 					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error.getMessage());
+					msgDiag.addKeywordErroreProcessamento(error);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Comprensione MessageType fallita"),

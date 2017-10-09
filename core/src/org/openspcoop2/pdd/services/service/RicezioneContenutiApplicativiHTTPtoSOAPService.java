@@ -131,7 +131,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, RicezioneContenutiApplicativiHTTPtoSOAPConnector.ID_MODULO, requestInfo);
 			}
 		}catch(Exception e){
-			String msg = "Inizializzazione Generatore Errore fallita: "+e.getMessage();
+			String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);
 			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -192,7 +192,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		try{
 			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo);
 		}catch(Exception e){
-			String msg = "Inizializzazione RegistryReader fallita: "+e.getMessage();
+			String msg = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);
 			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

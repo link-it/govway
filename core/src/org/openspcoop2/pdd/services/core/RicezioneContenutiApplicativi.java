@@ -971,7 +971,7 @@ public class RicezioneContenutiApplicativi {
 				logCore.debug("Errore durante la lettura dell'header di integrazione ["+ tipiIntegrazionePD[i]
 								+ "]: "+ e.getMessage(),e);
 				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePD[i]);
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.toString());
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 			}
 		}
@@ -1035,7 +1035,7 @@ public class RicezioneContenutiApplicativi {
 					logCore.error("Errore durante l'identificazione delle credenziali ["+ RicezioneContenutiApplicativi.tipiGestoriCredenziali[i]
 					         + "]: "+ e.getMessage(),e);
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_GESTORE_CREDENZIALI,RicezioneContenutiApplicativi.tipiGestoriCredenziali[i]);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					msgDiag.addKeywordErroreProcessamento(e);
 					msgDiag.logPersonalizzato("gestoreCredenziali.errore");
 					ErroreIntegrazione errore = null;
 					IntegrationError integrationError = null;
@@ -1288,16 +1288,28 @@ public class RicezioneContenutiApplicativi {
 				idPD, servizioApplicativo,
 				idModuloInAttesa, proprietaErroreAppl, identitaPdD);
 		try {
-			IDSoggetto soggettoErogatore = new IDSoggetto(pd.getTipoSoggettoProprietario(),pd.getNomeSoggettoProprietario());
+			IDSoggetto soggettoErogatore = new IDSoggetto(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome());
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(),pd.getServizio().getNome(), 
 					soggettoErogatore, pd.getServizio().getVersione());
 			if(requestInfo.getIdServizio()!=null && requestInfo.getIdServizio().getAzione()!=null){
 				// gia identificata
 				idServizio.setAzione(requestInfo.getIdServizio().getAzione());
+				// aggiorno anche codice porta erogatore gia' identificato
+				if(requestInfo.getIdServizio().getSoggettoErogatore()!=null) {
+					idServizio.getSoggettoErogatore().setCodicePorta(requestInfo.getIdServizio().getSoggettoErogatore().getCodicePorta());
+				}
 			}
 			else{
 				idServizio.setAzione(configurazionePdDReader.getAzione(pd, urlProtocolContext, requestMessage, 
 						headerIntegrazioneRichiesta, this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO), protocolFactory));
+			}
+			if(idServizio.getSoggettoErogatore().getCodicePorta()==null) {
+				idServizio.getSoggettoErogatore().setCodicePorta(registroServiziReader.getDominio(idServizio.getSoggettoErogatore(), null, protocolFactory));
+			}
+			// aggiorno idServizio
+			richiestaDelegata.setIdServizio(idServizio);
+			if(idPD.getIdentificativiFruizione()!=null) {
+				idPD.getIdentificativiFruizione().setIdServizio(idServizio);
 			}
 		
 			// aggiorno informazioni dell'header di integrazione della risposta
@@ -1317,7 +1329,7 @@ public class RicezioneContenutiApplicativi {
 			}
 
 		} catch (IdentificazioneDinamicaException e) {
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+			msgDiag.addKeywordErroreProcessamento(e);
 			msgDiag.logPersonalizzato("identificazioneDinamicaAzioneNonRiuscita");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
@@ -1326,7 +1338,7 @@ public class RicezioneContenutiApplicativi {
 			}
 			return;
 		} catch (Exception e) {
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+			msgDiag.addKeywordErroreProcessamento(e);
 			msgDiag.logPersonalizzato("identificazioneDinamicaServizioNonRiuscita");
 			logCore.error(msgDiag.getMessaggio_replaceKeywords("identificazioneDinamicaServizioNonRiuscita"),e);
 			openspcoopstate.releaseResource();
@@ -1794,7 +1806,7 @@ public class RicezioneContenutiApplicativi {
 		try {
 			nomeRegistroForSearch = configurazionePdDReader.getRegistroForImbustamento(soggettoFruitore, idServizio, false);
 		} catch (Exception e) {
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "connettore associato al servizio non trovato, "+e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e,"connettore associato al servizio non trovato");
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
@@ -1938,28 +1950,28 @@ public class RicezioneContenutiApplicativi {
 			}
 		} catch (DriverRegistroServiziNotFound e) {
 			eServiceNotFound = e;
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e);
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			servizioNonTrovato = true;
 		} catch (DriverRegistroServiziAzioneNotFound e) {
 			eServiceNotFound = e;
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e);
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			// viene impostata la variabile invocazioneAzioneErrata
 		} catch (DriverRegistroServiziPortTypeNotFound e) {
 			eServiceNotFound = e;
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "configurazione registro dei servizi errata, "+e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e,"configurazione registro dei servizi errata");
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			portTypeErrato = "Configurazione del registro dei Servizi errata: "+ e.getMessage();
 		} catch(DriverRegistroServiziCorrelatoNotFound e){
 			eServiceNotFound = e;
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "correlazione asincrona non rilevata, "+e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e,"correlazione asincrona non rilevata");
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			servizioCorrelatoNonTrovato = true;
 		} 
 		catch (Exception e) {
 			eServiceNotFound = e;
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "errore generale, "+e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e,"errore generale");
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			logCore.error("Ricerca servizio fallita",e);
 			ricercaConErrore = true;
@@ -2026,7 +2038,7 @@ public class RicezioneContenutiApplicativi {
 			richiestaDelegata.setProfiloGestione(profiloGestione);
 			msgDiag.mediumDebug("Profilo di gestione ["+ RicezioneContenutiApplicativi.ID_MODULO+ "] della busta: " + profiloGestione);
 		} catch (Exception e) {
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "analisi del profilo di gestione fallita, "+e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e,"analisi del profilo di gestione fallita");
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			logCore.error("Comprensione Profilo Gestione fallita",e);
 			openspcoopstate.releaseResource();
@@ -2046,7 +2058,7 @@ public class RicezioneContenutiApplicativi {
 			msgDiag.mediumDebug("Aggiornamento del messaggio");
 			requestMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(requestMessage, bustaRichiesta);
 		} catch (Exception e) {
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Aggiornamento messaggio fallito, "+e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento messaggio fallito");
 			msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
 			logCore.error("ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage(),e);
 			openspcoopstate.releaseResource();
@@ -2091,7 +2103,7 @@ public class RicezioneContenutiApplicativi {
 				msgDiag.mediumDebug("Indirizzo Risposta del soggetto erogatore ["+ idServizio.getSoggettoErogatore()+ "]: " + indirizzoErogatore);
 				
 			} catch (Exception e) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "recupero degli indirizzi di risposta per i soggetti fallita, "+e.getMessage() );
+				msgDiag.addKeywordErroreProcessamento(e,"recupero degli indirizzi di risposta per i soggetti fallita");
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 				logCore.error("Comprensione Indirizzo Risposta fallita",e);
 				openspcoopstate.releaseResource();
@@ -2288,7 +2300,7 @@ public class RicezioneContenutiApplicativi {
 				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaEffettuata");
 				
 			} catch (ValidatoreMessaggiApplicativiException ex) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+				msgDiag.addKeywordErroreProcessamento(ex);
 				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 				logCore.error("[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
 				if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false) {
@@ -2308,7 +2320,7 @@ public class RicezioneContenutiApplicativi {
 					return;
 				}
 			} catch (Exception ex) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+				msgDiag.addKeywordErroreProcessamento(ex);
 				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 				logCore.error("Riscontrato errore durante la validazione xsd della richiesta applicativa",ex);
 				if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false) {
@@ -2677,7 +2689,7 @@ public class RicezioneContenutiApplicativi {
 					throw new Exception("La funzionalita' e' permessa solo per messaggi SOAP With Attachments");
 				}
 			} catch (Exception e) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("funzionalitaScartaBodyNonEffettuabile");
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
@@ -2692,7 +2704,7 @@ public class RicezioneContenutiApplicativi {
 			try {
 				TunnelSoapUtils.allegaBody(requestMessage, propertiesReader.getHeaderSoapActorIntegrazione());
 			} catch (Exception e) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("funzionalitaAllegaBodyNonEffettuabile");
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
@@ -2829,8 +2841,15 @@ public class RicezioneContenutiApplicativi {
 								throw new DriverConfigurazioneNotFound("NotFound");
 							}
 							if(list.size()>1){
+								StringBuffer bf = new StringBuffer();
+								for (PortaApplicativa portaApplicativa : list) {
+									if(bf.length()>0) {
+										bf.append(",");
+									}
+									bf.append(portaApplicativa.getNome());
+								}
 								throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"] indicato nella porta delegata ["+
-										idPD.getNome()+"]");
+										idPD.getNome()+"]: "+bf.toString());
 							}
 							idPA = configurazionePdDReader.convertToIDPortaApplicativa(list.get(0));
 						}catch(DriverConfigurazioneNotFound n){
@@ -2847,10 +2866,10 @@ public class RicezioneContenutiApplicativi {
 							erroreConfigurazione = e.getMessage();
 						}
 					}
-					ra = new RichiestaApplicativa(soggettoFruitore,idServizio.getSoggettoErogatore(), idPA);
 				}
 				
 				if(erroreConfigurazione==null){
+					ra = new RichiestaApplicativa(soggettoFruitore,idServizio.getSoggettoErogatore(), idPA);
 					pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(ra.getIdPortaApplicativa());
 					if(pa.sizeServizioApplicativoList()<=0){
 						erroreConfigurazione = "non risultano registrati servizi applicativi erogatori associati alla porta applicativa ("+pa.getNome()

@@ -427,7 +427,7 @@ public class Sbustamento extends GenericLib{
 					}
 				}				
 			}catch(Exception e){	
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("protocolli.funzionalita.unsupported");
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.

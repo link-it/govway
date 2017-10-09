@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneServiz
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -361,6 +362,23 @@ public class MsgDiagnostico {
 			if(this.keywordLogPersonalizzati.containsKey(key))
 				this.keywordLogPersonalizzati.remove(key);
 			this.keywordLogPersonalizzati.put(key, tmpValue);
+		}
+	}
+	public void addKeywordErroreProcessamento(Throwable t) {
+		this.addKeywordErroreProcessamento(t, null);
+	}
+	public void addKeywordErroreProcessamento(Throwable t,String prefix) {
+		String eccezione = Utilities.readFirstErrorValidMessageFromException(t);
+		if(prefix!=null) {
+			prefix = prefix.trim();
+			if(prefix.endsWith(":")==false) {
+				prefix = prefix +":";
+			}
+			prefix = prefix +" ";
+			this.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO ,prefix +eccezione);
+		}
+		else {
+			this.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO ,eccezione);
 		}
 	}
 	public void addKeywords(IProtocolFactory<?> protocolFactory){
@@ -959,22 +977,14 @@ public class MsgDiagnostico {
 	
 	
 	public void logErroreGenerico(Throwable e, String posizioneErrore) {
-		String msg = null;
-		if(e instanceof NullPointerException)
-			 msg = "NullPointerException";
-		else
-			msg = e.getMessage();
+		String msg = Utilities.readFirstErrorValidMessageFromException(e);
 		this.logErroreGenerico(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
 		if(this.loggerOpenSPCoop2Core!=null)
 			this.loggerOpenSPCoop2Core.error(posizioneErrore+": "+msg,e);
 	}
 	public void logErroreGenerico(Exception e, String posizioneErrore) {
-		String msg = null;
-		if(e instanceof NullPointerException)
-			 msg = "NullPointerException";
-		else
-			msg = e.getMessage();
+		String msg = Utilities.readFirstErrorValidMessageFromException(e);
 		this.logErroreGenerico(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
 		if(this.loggerOpenSPCoop2Core!=null)
@@ -988,11 +998,7 @@ public class MsgDiagnostico {
 	
 	
 	public void logFatalError(Exception e, String posizioneErrore) {
-		String msg = null;
-		if(e instanceof NullPointerException)
-			 msg = "NullPointerException";
-		else
-			msg = e.getMessage();
+		String msg = Utilities.readFirstErrorValidMessageFromException(e);
 		this.logFatalError(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
 		if(this.loggerOpenSPCoop2Core!=null){

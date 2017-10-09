@@ -1719,7 +1719,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, location));
 					}
 				} catch (Exception e) {
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Analisi risposta fallita, "+e.getMessage() );
+					msgDiag.addKeywordErroreProcessamento(e, "Analisi risposta fallita");
 					msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");
 					String msgErrore = "Analisi risposta del connettore ha provocato un errore: "+e.getMessage();
 					this.log.error(msgErrore,e);
@@ -1764,7 +1764,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						bustaRichiesta, nParams,
 						consegnaMessage.getTransportRequestContext(),transportResponseContext);
 			} catch (Exception e) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Aggiornamento messaggio fallito, "+e.getMessage() );
+				msgDiag.addKeywordErroreProcessamento(e, "Aggiornamento messaggio fallito");
 				msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
 				String msgErrore = "ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage();
 				this.log.error(msgErrore,e);
@@ -2493,7 +2493,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								}
 
 							}catch(ValidatoreMessaggiApplicativiException ex){
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+								msgDiag.addKeywordErroreProcessamento(ex);
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("[ValidazioneContenutiApplicativi Risposta] "+ex.getMessage(),ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
@@ -2511,7 +2511,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									return esito;
 								}
 							}catch(Exception ex){
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+								msgDiag.addKeywordErroreProcessamento(ex);
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("Riscontrato errore durante la validazione xsd della risposta applicativa",ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
@@ -2583,8 +2583,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								this.log.debug("Errore durante la lettura dell'header di integrazione ["+ tipiIntegrazione[i]
 										+ "]: "+ e.getMessage(),e);
 								msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazione[i]);
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.toString());
-									msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
+								msgDiag.addKeywordErroreProcessamento(e);
+								msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 							}
 						}
 						
@@ -2666,8 +2666,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								this.log.debug("Errore durante la lettura dell'header di integrazione ["+ tipiIntegrazione[i]
 										+ "]: "+ e.getMessage(),e);
 								msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazione[i]);
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.toString());
-									msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
+								msgDiag.addKeywordErroreProcessamento(e);
+								msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 							}
 						}
 						
@@ -2688,7 +2688,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										}
 									}
 								}catch(Exception e){
-									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+									msgDiag.addKeywordErroreProcessamento(e);
 									msgDiag.logPersonalizzato("funzionalitaScartaBodyNonRiuscita");
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
@@ -2709,7 +2709,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										TunnelSoapUtils.allegaBody(responseMessage, this.propertiesReader.getHeaderSoapActorIntegrazione());
 									}
 								}catch(Exception e){
-									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+									msgDiag.addKeywordErroreProcessamento(e);
 									msgDiag.logPersonalizzato("funzionalitaAllegaBodyNonRiuscita");
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
@@ -2760,8 +2760,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								responseMessage = localForwardEngine.getResponseMessageAfterProcess();
 							}
 						}catch(Exception e){
-							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
-							msgDiag.logPersonalizzato("localForwardProcessResponse");
+							msgDiag.addKeywordErroreProcessamento(e);
+							msgDiag.logErroreGenerico(e, "localForwardProcessResponse");
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_556_LOCAL_FORWARD_PROCESS_RESPONSE_ERROR),
@@ -2771,7 +2771,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true); 
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
-									msgDiag.getMessaggio_replaceKeywords("localForwardProcessResponse"));
+									e.getMessage());
 							return esito;
 						}
 					}

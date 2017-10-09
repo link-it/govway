@@ -60,14 +60,14 @@
                     <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
                     <servizio tipo="SOAP" nome="Oneway"/>
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward/([^/|^?]*).*"/>
-		    <local-forward stato="abilitato"/>
+		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPOnewayLocalForwardStateful"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward/([^/|^?]*).*"/>
-		    <local-forward stato="abilitato"/>
+		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPOnewayLocalForwardStateless"/>
 		</porta-delegata>
 
 	
@@ -103,14 +103,14 @@
                     <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward/([^/|^?]*).*"/>
-		    <local-forward stato="abilitato"/>
+		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateful"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/([^/|^?]*).*"/>
-		    <local-forward stato="abilitato"/>
+		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateless"/>
 		</porta-delegata>
 
 

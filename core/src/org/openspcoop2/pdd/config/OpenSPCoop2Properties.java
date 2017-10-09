@@ -590,8 +590,10 @@ public class OpenSPCoop2Properties {
 			this.getTransferLengthModes_ricezioneBuste();
 			this.getTransferLengthModes_ricezioneContenutiApplicativi();
 			
-			this.isFollowRedirects_consegnaContenutiApplicativi();
-			this.isFollowRedirects_inoltroBuste();
+			this.isFollowRedirects_consegnaContenutiApplicativi_soap();
+			this.isFollowRedirects_consegnaContenutiApplicativi_rest();
+			this.isFollowRedirects_inoltroBuste_soap();
+			this.isFollowRedirects_inoltroBuste_rest();
 			this.getFollowRedirectsMaxHop_consegnaContenutiApplicativi();
 			this.getFollowRedirectsMaxHop_inoltroBuste();
 			this.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi();
@@ -7418,48 +7420,94 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi;
 	}
 	
-	private static Boolean isFollowRedirects_inoltroBuste = null;
-	public boolean isFollowRedirects_inoltroBuste() {	
-		if(OpenSPCoop2Properties.isFollowRedirects_inoltroBuste==null){
+	private static Boolean isFollowRedirects_inoltroBuste_soap = null;
+	public boolean isFollowRedirects_inoltroBuste_soap() {	
+		if(OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_soap==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap");
 				if(name!=null){
 					name = name.trim();
-					OpenSPCoop2Properties.isFollowRedirects_inoltroBuste = Boolean.parseBoolean(name);
+					OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_soap = Boolean.parseBoolean(name);
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isFollowRedirects_inoltroBuste = false;
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_soap = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				OpenSPCoop2Properties.isFollowRedirects_inoltroBuste = false;
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_soap = false;
 			}  
 		}
 
-		return OpenSPCoop2Properties.isFollowRedirects_inoltroBuste;
+		return OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_soap;
 	}
 	
-	private static Boolean isFollowRedirects_consegnaContenutiApplicativi = null;
-	public boolean isFollowRedirects_consegnaContenutiApplicativi() {	
-		if(OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi==null){
+	private static Boolean isFollowRedirects_inoltroBuste_rest = null;
+	public boolean isFollowRedirects_inoltroBuste_rest() {	
+		if(OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_rest==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest");
 				if(name!=null){
 					name = name.trim();
-					OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
+					OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_rest = Boolean.parseBoolean(name);
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi = false;
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_rest = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
-				OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi = false;
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_rest = false;
 			}  
 		}
 
-		return OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi;
+		return OpenSPCoop2Properties.isFollowRedirects_inoltroBuste_rest;
+	}
+	
+
+	
+	private static Boolean isFollowRedirects_consegnaContenutiApplicativi_soap = null;
+	public boolean isFollowRedirects_consegnaContenutiApplicativi_soap() {	
+		if(OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_soap==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_soap = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_soap = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_soap = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_soap;
+	}
+	
+	private static Boolean isFollowRedirects_consegnaContenutiApplicativi_rest = null;
+	public boolean isFollowRedirects_consegnaContenutiApplicativi_rest() {	
+		if(OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_rest==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_rest = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_rest = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_rest = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isFollowRedirects_consegnaContenutiApplicativi_rest;
 	}
 		
 	private static Integer getFollowRedirectsMaxHop_inoltroBuste = null;

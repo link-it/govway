@@ -25,8 +25,6 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 
-import com.sun.xml.internal.ws.api.SOAPVersion;
-
 /**
  * Test sui profili di collaborazione implementati nella Porta di Dominio
  * 
@@ -47,7 +45,7 @@ public class PortaApplicativa extends Porta {
 			this.setPortaDelegataOneWay(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO);
 			this.setPortaDelegataSincrono(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO);
 
-			if(SOAPVersion.SOAP_11.equals(messageType)) {
+			if(MessageType.SOAP_11.equals(messageType)) {
 				this.setPortaDelegataOneWayFault200(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT11_200);
 				this.setPortaDelegataSincronoFault200(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT11_200);
 				this.setPortaDelegataOneWayFault500(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT11_500);
@@ -72,7 +70,7 @@ public class PortaApplicativa extends Porta {
 			this.setPortaDelegataOneWay(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO);
 			this.setPortaDelegataSincrono(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO);
 
-			if(SOAPVersion.SOAP_11.equals(messageType)) {
+			if(MessageType.SOAP_11.equals(messageType)) {
 				this.setPortaDelegataOneWayFault200(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT11_200);
 				this.setPortaDelegataSincronoFault200(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT11_200);
 				this.setPortaDelegataOneWayFault500(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT11_500);

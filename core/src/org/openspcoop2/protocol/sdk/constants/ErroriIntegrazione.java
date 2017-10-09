@@ -29,6 +29,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.Utilities;
 
 
 
@@ -322,12 +323,18 @@ public enum ErroriIntegrazione {
 	
 	
 	/* 5XX */
-	
+		
+	public ErroreIntegrazione get5XX_ErroreProcessamento(Exception e) {
+		return get5XX_ErroreProcessamento(Utilities.readFirstErrorValidMessageFromException(e), ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.codiceErrore);
+	}
 	public ErroreIntegrazione get5XX_ErroreProcessamento(String descrizione) {
 		return get5XX_ErroreProcessamento(descrizione, ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.codiceErrore);
 	}
 	public ErroreIntegrazione get5XX_ErroreProcessamento(CodiceErroreIntegrazione codiceErroreIntegrazione) {
 		return get5XX_ErroreProcessamento(ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.descrizione, codiceErroreIntegrazione);
+	}
+	public ErroreIntegrazione get5XX_ErroreProcessamento(Exception e,CodiceErroreIntegrazione codiceErroreIntegrazione) {
+		return get5XX_ErroreProcessamento(Utilities.readFirstErrorValidMessageFromException(e), codiceErroreIntegrazione);
 	}
 	public ErroreIntegrazione get5XX_ErroreProcessamento(String descrizione,CodiceErroreIntegrazione codiceErroreIntegrazione) {
 		if(this.equals(ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO)){

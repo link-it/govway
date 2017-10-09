@@ -74,6 +74,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.w3c.dom.Node;
 
@@ -272,7 +273,7 @@ public class LocalForwardEngine {
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPDRequest";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
 			}
 			if(erroreIntegrazione==null){
@@ -281,7 +282,7 @@ public class LocalForwardEngine {
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPDRequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
 				}
 			}		
@@ -300,7 +301,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")PDRequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -351,13 +352,13 @@ public class LocalForwardEngine {
 						}
 					}catch(Exception e){
 						
-						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+						this.localForwardParameter.getMsgDiag().addKeywordErroreProcessamento(e);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInErrore");
 						this.localForwardParameter.getLog().error("[MessageSecurityRequest]" + e.getMessage(),e);
 						
 						posizione = "MessageSecurityPortaDelegataRequestFlow";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
 				}
@@ -391,7 +392,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")PDRequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -414,6 +415,10 @@ public class LocalForwardEngine {
 					}
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
+				}
+				if(logDiagnosticError==false){
+					// comunque effettuo log nel core. Puo' darsi in alcuni casi che non venga registrato (es. NullPointer)
+					this.localForwardParameter.getLog().error("("+posizione+") "+Utilities.readFirstErrorValidMessageFromException(configException),configException);
 				}
 
 			}
@@ -448,7 +453,7 @@ public class LocalForwardEngine {
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPARequest";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
 			}
 			if(erroreIntegrazione==null){
@@ -457,7 +462,7 @@ public class LocalForwardEngine {
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPARequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
 				}
 			}		
@@ -476,7 +481,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")PARequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -522,7 +527,7 @@ public class LocalForwardEngine {
 					}catch(Exception e){
 						posizione = "MessageSecurityPortaApplicativaRequestFlowInitContext";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
 				}
@@ -580,12 +585,13 @@ public class LocalForwardEngine {
 					}										
 				}catch(Exception e){
 					
-					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+					this.localForwardParameter.getMsgDiag().addKeywordErroreProcessamento(e);
+	
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInErrore");
 					
 					posizione = "MessageSecurityPortaApplicativaRequestFlow";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
 				}
 			}
@@ -604,7 +610,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")PARequest";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -627,7 +633,10 @@ public class LocalForwardEngine {
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
-
+				if(logDiagnosticError==false){
+					// comunque effettuo log nel core. Puo' darsi in alcuni casi che non venga registrato (es. NullPointer)
+					this.localForwardParameter.getLog().error("("+posizione+") "+Utilities.readFirstErrorValidMessageFromException(configException),configException);
+				}
 			}
 			if(this.responseMessageError!=null){
 				return false;
@@ -753,7 +762,7 @@ public class LocalForwardEngine {
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPAResponse";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
 			}
 			if(erroreIntegrazione==null){
@@ -762,7 +771,7 @@ public class LocalForwardEngine {
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPAResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
 				}
 			}		
@@ -781,7 +790,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")PAResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -809,7 +818,7 @@ public class LocalForwardEngine {
 					}catch(Exception e){
 						posizione = "MessageSecurityPortaApplicativaResponseFlowInitContext";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
 				}
@@ -852,11 +861,11 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaEffettuato");
 					}
 				}catch(Exception e){
-					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+					this.localForwardParameter.getMsgDiag().addKeywordErroreProcessamento(e);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInErrore");
 					posizione = "MessageSecurityPortaApplicativaResponseFlow";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
 				}
 			}
@@ -875,7 +884,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")PAResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -899,6 +908,10 @@ public class LocalForwardEngine {
 					}
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
+				}
+				if(logDiagnosticError==false){
+					// comunque effettuo log nel core. Puo' darsi in alcuni casi che non venga registrato (es. NullPointer)
+					this.localForwardParameter.getLog().error("("+posizione+") "+Utilities.readFirstErrorValidMessageFromException(configException),configException);
 				}
 			}
 			if(this.responseMessageError!=null){
@@ -930,7 +943,7 @@ public class LocalForwardEngine {
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPDResponse";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+						get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 				configException = e;
 			}
 			if(erroreIntegrazione==null){
@@ -939,7 +952,7 @@ public class LocalForwardEngine {
 				}catch(Exception e){
 					posizione = "LetturaParametriMTOMProcessorPDResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
 				}
 			}		
@@ -958,7 +971,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")PDResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -1019,11 +1032,11 @@ public class LocalForwardEngine {
 							this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaEffettuato");
 						}
 					}catch(Exception e){
-						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+						this.localForwardParameter.getMsgDiag().addKeywordErroreProcessamento(e);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInErrore");
 						posizione = "MessageSecurityPortaDelegataResponseFlow";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
 				}
@@ -1057,7 +1070,7 @@ public class LocalForwardEngine {
 					
 					posizione = "MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")PDResponse";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					configException = e;
 				}
 			}
@@ -1081,6 +1094,10 @@ public class LocalForwardEngine {
 					}
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
+				}
+				if(logDiagnosticError==false){
+					// comunque effettuo log nel core. Puo' darsi in alcuni casi che non venga registrato (es. NullPointer)
+					this.localForwardParameter.getLog().error("("+posizione+") "+Utilities.readFirstErrorValidMessageFromException(configException),configException);
 				}
 			}
 			if(this.responseMessageError!=null){

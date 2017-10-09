@@ -123,7 +123,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true);
 			requestInfo = ConnectorUtils.getRequestInfo(protocolFactory, urlProtocolContext);
 		}catch(Exception e){
-			String msgError = "Lettura RequestInfo non riuscita: "+e.getMessage();
+			String msgError = "Lettura RequestInfo non riuscita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msgError);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgError));
@@ -173,7 +173,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		try{
 			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo);
 		}catch(Exception e){
-			String msgError = "Inizializzazione RegistryReader fallita: "+e.getMessage();
+			String msgError = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -204,7 +204,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				}
 			}
 		}catch(Exception e){
-			String msgError = "Aggiornamento RequestInfo fallito: "+e.getMessage();
+			String msgError = "Aggiornamento RequestInfo fallito: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -590,7 +590,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				generatoreErrore = 
 							new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, idModulo, requestInfo);
 			}catch(Exception e){
-				String msgError = "Inizializzazione Generatore Errore fallita: "+e.getMessage();
+				String msgError = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 				msgDiag.logErroreGenerico(e,"Inizializzazione Generatore Errore");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msgError));

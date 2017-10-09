@@ -20,19 +20,41 @@
 
 package org.openspcoop2.message;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.context.ContentLength;
+import org.openspcoop2.message.context.ContentTypeParameters;
+import org.openspcoop2.message.context.Credentials;
+import org.openspcoop2.message.context.ForcedResponse;
+import org.openspcoop2.message.context.HeaderParameters;
+import org.openspcoop2.message.context.MessageContext;
+import org.openspcoop2.message.context.SerializedContext;
+import org.openspcoop2.message.context.SerializedParameter;
+import org.openspcoop2.message.context.StringParameter;
+import org.openspcoop2.message.context.UrlParameters;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
+import org.openspcoop2.utils.serialization.JavaDeserializer;
+import org.openspcoop2.utils.serialization.JavaSerializer;
+import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.w3c.dom.Node;
@@ -145,6 +167,379 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			newInstance.setMessageRole(this.messageRole);
 			newInstance.setProtocolName(this.protocolName);
 		}
+	}
+	
+	@Override
+	public MessageContext serializeResourcesTo() throws MessageException{
+		try {
+			MessageContext msgContext = new MessageContext();
+			
+			/* Trasporto */	
+			if(this.transportRequestContext!=null) {
+				org.openspcoop2.message.context.TransportRequestContext ctx = new org.openspcoop2.message.context.TransportRequestContext();
+				
+				if(this.transportRequestContext.getParametersFormBased()!=null && this.transportRequestContext.getParametersFormBased().size()>0) {
+					List<StringParameter> l = this._msgContext_convertTo(this.transportRequestContext.getParametersFormBased());
+					if(l!=null && l.size()>0) {
+						UrlParameters urlParameters = new UrlParameters();
+						urlParameters.getUrlParameterList().addAll(l);
+						ctx.setUrlParameters(urlParameters);
+					}
+				}			
+				if(this.transportRequestContext.getParametersTrasporto()!=null && this.transportRequestContext.getParametersTrasporto().size()>0) {
+					List<StringParameter> l = this._msgContext_convertTo(this.transportRequestContext.getParametersTrasporto());
+					if(l!=null && l.size()>0) {
+						HeaderParameters headerParameters = new HeaderParameters();
+						headerParameters.getHeaderParameterList().addAll(l);
+						ctx.setHeaderParameters(headerParameters);
+					}
+				}
+				if(this.transportRequestContext.getCredential()!=null) {
+					Credentials credentials = new Credentials();
+					credentials.setPrincipal(this.transportRequestContext.getCredential().getPrincipal());
+					credentials.setSubject(this.transportRequestContext.getCredential().getSubject());
+					credentials.setUsername(this.transportRequestContext.getCredential().getUsername());
+					credentials.setPassword(this.transportRequestContext.getCredential().getPassword());
+					ctx.setCredentials(credentials);
+				}
+				ctx.setWebContext(this.transportRequestContext.getWebContext());
+				ctx.setRequestUri(this.transportRequestContext.getRequestURI());
+				ctx.setRequestType(this.transportRequestContext.getRequestType());
+				ctx.setSource(this.transportRequestContext.getSource());
+				ctx.setProtocol(this.transportRequestContext.getProtocol());
+				ctx.setFunction(this.transportRequestContext.getFunction());
+				ctx.setFunctionParameters(this.transportRequestContext.getFunctionParameters());
+				ctx.setInterfaceName(this.transportRequestContext.getInterfaceName());
+
+				msgContext.setTransportRequestContext(ctx);
+			}
+			if(this.transportResponseContext!=null) {
+				org.openspcoop2.message.context.TransportResponseContext ctx = new org.openspcoop2.message.context.TransportResponseContext();
+				
+				if(this.transportResponseContext.getParametersTrasporto()!=null && this.transportResponseContext.getParametersTrasporto().size()>0) {
+					List<StringParameter> l = this._msgContext_convertTo(this.transportResponseContext.getParametersTrasporto());
+					if(l!=null && l.size()>0) {
+						HeaderParameters headerParameters = new HeaderParameters();
+						headerParameters.getHeaderParameterList().addAll(l);
+						ctx.setHeaderParameters(headerParameters);
+					}
+				}
+				ctx.setTransportCode(this.transportResponseContext.getCodiceTrasporto());
+				if(this.transportResponseContext.getContentLength()>=0) {
+					ctx.setContentLength(this.transportResponseContext.getContentLength());
+				}
+				ctx.setError(this.transportResponseContext.getErrore());
+				
+				msgContext.setTransportResponseContext(ctx);
+			}
+			
+			/* Forced Response */
+			if(this.forcedResponseCode!=null || this.forcedEmptyResponse || this.forcedResponse!=null) {
+				ForcedResponse forcedResponse = new ForcedResponse();
+				forcedResponse.setResponseCode(this.forcedResponseCode);
+				forcedResponse.setEmptyResponse(this.forcedEmptyResponse);
+				if(this.forcedResponse!=null) {
+					org.openspcoop2.message.context.ForcedResponseMessage forcedResponseMessage = new org.openspcoop2.message.context.ForcedResponseMessage();
+					forcedResponseMessage.setContent(this.forcedResponse.getContent());
+					forcedResponseMessage.setContentType(this.forcedResponse.getContentType());
+					forcedResponseMessage.setResponseCode(this.forcedResponse.getResponseCode());
+					if(this.forcedResponse.getHeaders()!=null && this.forcedResponse.getHeaders().size()>0) {
+						List<StringParameter> l = this._msgContext_convertTo(this.forcedResponse.getHeaders());
+						if(l!=null && l.size()>0) {
+							HeaderParameters headerParameters = new HeaderParameters();
+							headerParameters.getHeaderParameterList().addAll(l);
+							forcedResponseMessage.setHeaderParameters(headerParameters);
+						}
+					}
+					forcedResponse.setResponseMessage(forcedResponseMessage);
+				}
+				msgContext.setForcedResponse(forcedResponse);
+			}
+						
+			/* Context */	
+			if(this.context!=null && this.context.size()>0) {
+				SerializedContext serializedContext = null;
+				Iterator<String> it = this.context.keySet().iterator();
+				JavaSerializer jSerializer = new JavaSerializer();
+				while (it.hasNext()) {
+					String key = (String) it.next();
+					Object o = this.context.get(key);
+					if(o instanceof Serializable) {
+						if(serializedContext==null) {
+							serializedContext = new SerializedContext();
+						}
+						SerializedParameter p = new SerializedParameter();
+						p.setNome(key);
+						p.setClasse(o.getClass().getName());
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						jSerializer.writeObject(o, bout);
+						bout.flush();
+						bout.close();
+						p.setBase(bout.toByteArray());
+						serializedContext.addProperty(p);
+					}
+				}
+				msgContext.setSerializedContext(serializedContext);
+			}
+	
+			/* ContentType */
+			if(this.contentTypeParamaters!=null && this.contentTypeParamaters.size()>0) {
+				ContentTypeParameters contentTypeParameters = new ContentTypeParameters();
+				Iterator<String> it = this.contentTypeParamaters.keySet().iterator();
+				while (it.hasNext()) {
+					String key = (String) it.next();
+					String value = this.contentTypeParamaters.get(key);
+					StringParameter parameter = new StringParameter();
+					parameter.setNome(key);
+					parameter.setBase(value);
+					contentTypeParameters.addParameter(parameter);
+				}		
+				msgContext.setContentTypeParameters(contentTypeParameters);
+			}
+			
+			/* MessageType */
+			msgContext.setMessageType(this.messageType.name());
+			
+			/* MessageRole */
+			msgContext.setMessageRole(this.messageRole.name());
+						
+			/* Content Length */
+			if(this.outgoingsize >=0 || this.incomingsize >=0 || this.incomingSizeForced!=null) {
+				ContentLength contentLength = new ContentLength();
+				if(this.outgoingsize >=0) {
+					contentLength.setOutgoingSize(this.outgoingsize);
+				}
+				if(this.incomingsize >=0) {
+					contentLength.setIncomingSize(this.incomingsize);
+				}
+				if(this.incomingSizeForced!=null) {
+					contentLength.setIncomingSizeForced(this.incomingSizeForced);
+				}
+				msgContext.setContentLength(contentLength);
+			}
+			
+			/* Errors */
+			// non serializzabile
+			
+			/* Protocol Plugin */
+			msgContext.setProtocol(this.protocolName);
+			
+			/* Stream */
+			// non serializzabile
+				
+			return msgContext;
+			
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}		
+	}
+	protected List<StringParameter> _msgContext_convertTo(Properties p){
+		List<StringParameter> l = new ArrayList<>();
+		if(p.size()>0) {
+			Enumeration<?> en = p.keys();
+			while (en.hasMoreElements()) {
+				Object object = (Object) en.nextElement();
+				if(object instanceof String) {
+					String key = (String) object;
+					String value = p.getProperty(key);
+					StringParameter sp = new StringParameter();
+					sp.setBase(value);
+					sp.setNome(key);
+					l.add(sp);
+				}
+			}
+		}
+		return l;
+	}
+	
+	@Override
+	public void serializeResourcesTo(OutputStream os) throws MessageException{
+		try {
+			MessageContext messageContext = this.serializeResourcesTo();
+			messageContext.writeTo(os, WriteToSerializerType.JAXB);
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}	
+	}
+	
+	@Override
+	public void readResourcesFrom(MessageContext messageContext) throws MessageException{
+		
+		try {
+		
+			/* Trasporto */	
+			if(messageContext.getTransportRequestContext()!=null) {
+				this.transportRequestContext = new TransportRequestContext();
+				
+				if(messageContext.getTransportRequestContext().getUrlParameters()!=null &&
+						messageContext.getTransportRequestContext().getUrlParameters().sizeUrlParameterList()>0) {
+					Properties p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getUrlParameters().getUrlParameterList());
+					if(p!=null && p.size()>0) {
+						this.transportRequestContext.setParametersFormBased(p);
+					}	
+				}
+				if(messageContext.getTransportRequestContext().getHeaderParameters()!=null &&
+						messageContext.getTransportRequestContext().getHeaderParameters().sizeHeaderParameterList()>0) {
+					Properties p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getHeaderParameters().getHeaderParameterList());
+					if(p!=null && p.size()>0) {
+						this.transportRequestContext.setParametersTrasporto(p);
+					}	
+				}
+				if(messageContext.getTransportRequestContext().getCredentials()!=null) {
+					Credential credentials = new Credential();
+					credentials.setPrincipal(messageContext.getTransportRequestContext().getCredentials().getPrincipal());
+					credentials.setSubject(messageContext.getTransportRequestContext().getCredentials().getSubject());
+					credentials.setUsername(messageContext.getTransportRequestContext().getCredentials().getUsername());
+					credentials.setPassword(messageContext.getTransportRequestContext().getCredentials().getPassword());
+					this.transportRequestContext.setCredentials(credentials);
+				}
+				if(messageContext.getTransportRequestContext().getWebContext()!=null) {
+					this.transportRequestContext.setWebContext(messageContext.getTransportRequestContext().getWebContext());
+				}
+				if(messageContext.getTransportRequestContext().getRequestUri()!=null) {
+					this.transportRequestContext.setRequestURI(messageContext.getTransportRequestContext().getRequestUri());
+				}
+				if(messageContext.getTransportRequestContext().getRequestType()!=null) {
+					this.transportRequestContext.setRequestType(messageContext.getTransportRequestContext().getRequestType());
+				}
+				if(messageContext.getTransportRequestContext().getSource()!=null) {
+					this.transportRequestContext.setSource(messageContext.getTransportRequestContext().getSource());
+				}
+				if(messageContext.getTransportRequestContext().getProtocol()!=null) {
+					this.transportRequestContext.setProtocol(messageContext.getTransportRequestContext().getProtocol());
+				}
+				if(messageContext.getTransportRequestContext().getFunction()!=null) {
+					this.transportRequestContext.setFunction(messageContext.getTransportRequestContext().getFunction());
+				}
+				if(messageContext.getTransportRequestContext().getFunctionParameters()!=null) {
+					this.transportRequestContext.setFunctionParameters(messageContext.getTransportRequestContext().getFunctionParameters());
+				}
+				if(messageContext.getTransportRequestContext().getInterfaceName()!=null) {
+					this.transportRequestContext.setInterfaceName(messageContext.getTransportRequestContext().getInterfaceName());
+				}
+				
+			}
+			if(messageContext.getTransportResponseContext()!=null) {
+				this.transportResponseContext = new TransportResponseContext();
+				
+				if(messageContext.getTransportResponseContext().getHeaderParameters()!=null &&
+						messageContext.getTransportResponseContext().getHeaderParameters().sizeHeaderParameterList()>0) {
+					Properties p = this._msgContext_convertTo(messageContext.getTransportResponseContext().getHeaderParameters().getHeaderParameterList());
+					if(p!=null && p.size()>0) {
+						this.transportResponseContext.setParametersTrasporto(p);
+					}	
+				}
+				this.transportResponseContext.setCodiceTrasporto(messageContext.getTransportResponseContext().getTransportCode());
+				if(messageContext.getTransportResponseContext().getContentLength()!=null) {
+					this.transportResponseContext.setContentLength(messageContext.getTransportResponseContext().getContentLength());
+				}
+				this.transportResponseContext.setErrore(messageContext.getTransportResponseContext().getError());
+			}
+				
+			/* Forced Response */
+			if(messageContext.getForcedResponse()!=null) {
+				this.forcedResponseCode = messageContext.getForcedResponse().getResponseCode();
+				this.forcedEmptyResponse = messageContext.getForcedResponse().isEmptyResponse();
+				if(messageContext.getForcedResponse().getResponseMessage()!=null) {
+					ForcedResponseMessage f = new ForcedResponseMessage();
+					f.setContent(messageContext.getForcedResponse().getResponseMessage().getContent());
+					f.setContentType(messageContext.getForcedResponse().getResponseMessage().getContentType());
+					f.setResponseCode(messageContext.getForcedResponse().getResponseMessage().getResponseCode());
+					if(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters()!=null &&
+							messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().sizeHeaderParameterList()>0) {
+						Properties p = this._msgContext_convertTo(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().getHeaderParameterList());
+						if(p!=null && p.size()>0) {
+							f.setHeaders(p);
+						}	
+					}
+					this.forcedResponse = f;
+				}
+			}
+			
+			/* Context */	
+			if(messageContext.getSerializedContext()!=null) {
+				JavaDeserializer jDeserializer = new JavaDeserializer();
+				for (SerializedParameter p : messageContext.getSerializedContext().getPropertyList()) {
+					Object o = jDeserializer.readObject(new ByteArrayInputStream(p.getBase()), Class.forName(p.getClasse()));
+					this.context.put(p.getNome(), o);
+				}
+			}
+			
+			/* ContentType */
+			if(messageContext.getContentTypeParameters()!=null &&
+					messageContext.getContentTypeParameters().sizeParameterList()>0){
+				for (StringParameter par : messageContext.getContentTypeParameters().getParameterList()) {
+					this.contentTypeParamaters.put(par.getNome(), par.getBase());
+				}
+			}
+			
+			/* MessageType */
+			MessageType mt = MessageType.valueOf(messageContext.getMessageType());
+			if(mt==null) {
+				throw new Exception("MessageType ["+messageContext.getMessageType()+"] unknown");
+			}
+			if(mt.equals(this.messageType)==false) {
+				throw new Exception("MessageType ["+mt+"] different from instance value ["+this.messageType+"]");
+			}
+			
+			/* MessageRole */
+			MessageRole mr = MessageRole.valueOf(messageContext.getMessageRole());
+			if(mr==null) {
+				throw new Exception("MessageRole ["+messageContext.getMessageRole()+"] unknown");
+			}
+			if(mr.equals(this.messageRole)==false) {
+				throw new Exception("MessageRole ["+mr+"] different from instance value ["+this.messageRole+"]");
+			}
+			
+			/* Content Length */
+			if(messageContext.getContentLength()!=null) {
+				if(messageContext.getContentLength().getOutgoingSize()!=null) {
+					this.outgoingsize = messageContext.getContentLength().getOutgoingSize();
+				}
+				if(messageContext.getContentLength().getIncomingSize()!=null) {
+					this.incomingsize = messageContext.getContentLength().getIncomingSize();
+				}
+				if(messageContext.getContentLength().getIncomingSizeForced()!=null) {
+					this.incomingSizeForced = messageContext.getContentLength().getIncomingSizeForced();
+				}
+			}
+			
+			/* Errors */
+			// non serializzabile
+			
+			/* Protocol Plugin */
+			if(messageContext.getProtocol()!=null) {
+				this.protocolName = messageContext.getProtocol();
+			}
+			
+			/* Stream */
+			// non serializzabile
+			
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}	
+	}
+	protected Properties _msgContext_convertTo(List<StringParameter> list){
+		Properties p = new Properties();
+		if(list.size()>0) {
+			for (StringParameter stringParameter : list) {
+				p.put(stringParameter.getNome(), stringParameter.getBase());
+			}
+		}
+		return p;
+	}
+	
+	@Override
+	public void readResourcesFrom(InputStream is) throws MessageException{
+		MessageContext messageContext = null;
+		try {
+			org.openspcoop2.message.context.utils.serializer.JaxbDeserializer deserializer = 
+					new org.openspcoop2.message.context.utils.serializer.JaxbDeserializer();
+			messageContext = deserializer.readMessageContext(is);
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}	
+		this.readResourcesFrom(messageContext);
 	}
 	
 	

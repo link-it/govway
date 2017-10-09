@@ -21,6 +21,7 @@
 package org.openspcoop2.message;
 
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.context.MessageContext;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
@@ -53,6 +55,10 @@ public interface OpenSPCoop2Message {
 	/* Copy Resources to another instance */
 	
 	public void copyResourcesTo(OpenSPCoop2Message newInstance) throws MessageException;
+	public MessageContext serializeResourcesTo() throws MessageException;
+	public void serializeResourcesTo(OutputStream os) throws MessageException;
+	public void readResourcesFrom(MessageContext messageContext) throws MessageException;
+	public void readResourcesFrom(InputStream is) throws MessageException;
 	
 	
 	/* Cast */

@@ -894,7 +894,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				if(isRiferimentoMessaggio)
 					idMessaggioRichiesto = gestoreMessaggi.mapRiferimentoIntoIDBusta();
 			}catch(Exception e){
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
@@ -1253,7 +1253,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				if(isRiferimentoMessaggio)
 					idMessaggioRichiesto = gestoreMessaggi.mapRiferimentoIntoIDBusta();
 			}catch(Exception e){
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);

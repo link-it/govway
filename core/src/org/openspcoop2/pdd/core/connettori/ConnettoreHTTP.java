@@ -243,12 +243,21 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 		
 		// Redirect
 		if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-			this.followRedirects = this.openspcoopProperties.isFollowRedirects_consegnaContenutiApplicativi();
+			if(this.isSoap) {
+				this.followRedirects = this.openspcoopProperties.isFollowRedirects_consegnaContenutiApplicativi_soap();
+			}else {
+				this.followRedirects = this.openspcoopProperties.isFollowRedirects_consegnaContenutiApplicativi_rest();
+			}
 			this.maxNumberRedirects = this.openspcoopProperties.getFollowRedirectsMaxHop_consegnaContenutiApplicativi();
 		}
 		else{
 			// InoltroBuste e InoltroRisposte
-			this.followRedirects = this.openspcoopProperties.isFollowRedirects_inoltroBuste();
+			if(this.isSoap) {
+				this.followRedirects = this.openspcoopProperties.isFollowRedirects_inoltroBuste_soap();
+			}
+			else {
+				this.followRedirects = this.openspcoopProperties.isFollowRedirects_inoltroBuste_rest();
+			}
 			this.maxNumberRedirects = this.openspcoopProperties.getFollowRedirectsMaxHop_inoltroBuste();
 		}
 
@@ -723,12 +732,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 						}
 						
 						boolean acceptOnlyReturnCode_307 = false;
-						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-							acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi();
-						}
-						else{
-							// InoltroBuste e InoltroRisposte
-							acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_inoltroBuste();
+						if(this.isSoap) {
+							if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi();
+							}
+							else{
+								// InoltroBuste e InoltroRisposte
+								acceptOnlyReturnCode_307 = this.openspcoopProperties.isAcceptOnlyReturnCode_307_inoltroBuste();
+							}
 						}
 						if(acceptOnlyReturnCode_307){
 							if(this.codice!=307){
@@ -739,11 +750,22 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 						return this.send(request);
 						
 					}else{
-						throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+						if(this.isSoap) {
+							throw new Exception("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+						}
+						else {
+							this.logger.debug("Gestione redirect (code:"+this.codice+" "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non attiva");
+							if(httpBody.isDoInput()){
+								this.isResponse = this.httpConn.getInputStream();
+								if(this.isResponse==null) {
+									this.isResponse = this.httpConn.getErrorStream();
+								}
+							}
+						}
 					}
 				}
 				else{
-					if(this.acceptOnlyReturnCode_202_200){
+					if(this.isSoap && this.acceptOnlyReturnCode_202_200){
 						if(this.codice!=200 && this.codice!=202){
 							throw new Exception("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
 						}

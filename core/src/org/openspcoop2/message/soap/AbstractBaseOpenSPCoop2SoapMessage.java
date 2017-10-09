@@ -27,6 +27,8 @@ import javax.xml.soap.SOAPMessage;
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.context.MessageContext;
+import org.openspcoop2.message.context.Soap;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
@@ -44,6 +46,31 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 
 	/* SOAPAction */
 	public String soapAction;
+	
+	
+	/* Copy Resources to another instance */
+	
+	@Override
+	public MessageContext serializeResourcesTo() throws MessageException{
+		MessageContext messageContext = super.serializeResourcesTo();
+		Soap soap = new Soap();
+		soap.setSoapAction(this.soapAction);
+		messageContext.setSoap(soap);
+		return messageContext;
+	}
+	
+	@Override
+	public void readResourcesFrom(MessageContext messageContext) throws MessageException{
+		super.readResourcesFrom(messageContext);
+		
+		if(messageContext.getSoap()!=null) {
+			
+			/* SOAPAction */
+			if(messageContext.getSoap().getSoapAction()!=null) {
+				this.soapAction = messageContext.getSoap().getSoapAction();
+			}
+		}
+	}
 	
 	
 	/* Elementi SOAP */

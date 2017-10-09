@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/message/context"
+       targetNamespace="http://www.openspcoop2.org/message/context"
+       xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+       attributeFormDefault="unqualified">
+       
+       
+       
+       
+       <xsd:element name="message-context" type="message-context"/>
+       <xsd:complexType name="message-context">
+              <xsd:sequence>
+                     <xsd:element name="transport-request-context" type="transport-request-context" minOccurs="0"/>
+                     <xsd:element name="transport-response-context" type="transport-response-context" minOccurs="0"/>
+                     <xsd:element name="forced-response" type="forced-response" minOccurs="0"/>
+                     <xsd:element name="serialized-context" type="serialized-context" minOccurs="0"/>
+                     <xsd:element name="content-type-parameters" type="content-type-parameters" minOccurs="0"/>
+                     <xsd:element name="content-length" type="content-length" minOccurs="0"/>
+                     <!-- <xsd:element name="rest" type="rest" minOccurs="0"/> --> <!-- Allo stato attuale non ci sono informazioni aggiuntive sull'oggetto rest rispetto a quelle base -->
+                     <xsd:element name="soap" type="soap" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="message-type" type="xsd:string" use="required"/>
+              <xsd:attribute name="message-role" type="xsd:string" use="required"/>
+              <xsd:attribute name="protocol" type="xsd:string" use="required"/>
+       </xsd:complexType>
+       
+       
+       <xsd:complexType name="soap">
+              <xsd:sequence>
+                     <xsd:element name="soap-action" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <!-- Allo stato attuale non ci sono informazioni aggiuntive sull'oggetto rest rispetto a quelle base -->
+       <!--
+       <xsd:complexType name="rest">
+              <xsd:sequence>
+
+              </xsd:sequence>
+       </xsd:complexType>
+       -->
+       
+       <!-- Tipi Principali -->
+       
+       <xsd:complexType name="transport-request-context">
+              <xsd:sequence>
+                     <xsd:element name="url-parameters" type="url-parameters" minOccurs="0"/>
+                     <xsd:element name="header-parameters" type="header-parameters" minOccurs="0"/>
+                     <xsd:element name="credentials" type="credentials" minOccurs="0"/>
+                     <xsd:element name="web-context" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="request-uri" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="request-type" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="source" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="protocol" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="function" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="function-parameters" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="interface-name" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="transport-response-context">
+              <xsd:sequence>
+                     <xsd:element name="header-parameters" type="header-parameters" minOccurs="0"/>
+                     <xsd:element name="transport-code" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="content-length" type="xsd:unsignedLong" minOccurs="0"/>
+                     <xsd:element name="error" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="forced-response">
+              <xsd:sequence>
+                     <xsd:element name="response-code" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="empty-response" type="xsd:boolean" minOccurs="0"/>
+                     <xsd:element name="response-message" type="forced-response-message" minOccurs="0"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       <xsd:complexType name="forced-response-message">
+              <xsd:sequence>
+                     <xsd:element name="content" type="xsd:base64Binary" minOccurs="0"/>
+                     <xsd:element name="content-type" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="response-code" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="header-parameters" type="header-parameters" minOccurs="0"/>
+              </xsd:sequence>
+       </xsd:complexType>
+
+       <xsd:complexType name="serialized-context">
+              <xsd:sequence>
+                     <xsd:element name="property" type="serialized-parameter" minOccurs="1" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="content-type-parameters">
+              <xsd:sequence>
+                     <xsd:element name="parameter" type="string-parameter" minOccurs="1" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="content-length">
+              <xsd:sequence>
+                     <xsd:element name="outgoing-size" type="xsd:unsignedLong" minOccurs="0" />
+                     <xsd:element name="incoming-size" type="xsd:unsignedLong" minOccurs="0" />
+                     <xsd:element name="incoming-size-forced" type="xsd:unsignedLong" minOccurs="0" />
+              </xsd:sequence>
+       </xsd:complexType>
+               
+
+
+       
+       <!-- Tipi Interni -->
+       
+       <xsd:complexType name="url-parameters">
+              <xsd:sequence>
+                     <xsd:element name="url-parameter" type="string-parameter" minOccurs="1" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="header-parameters">
+              <xsd:sequence>
+                     <xsd:element name="header-parameter" type="string-parameter" minOccurs="1" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="string-parameter">
+              <xsd:simpleContent>
+                     <xsd:extension base="xsd:string">
+                            <xsd:attribute name="nome" type="xsd:string" use="required"/>
+                     </xsd:extension>
+              </xsd:simpleContent>
+       </xsd:complexType>
+       
+       <xsd:complexType name="serialized-parameter">
+              <xsd:simpleContent>
+                     <xsd:extension base="xsd:base64Binary">
+                            <xsd:attribute name="nome" type="xsd:string" use="required"/>
+                            <xsd:attribute name="classe" type="xsd:string" use="required"/>
+                     </xsd:extension>
+              </xsd:simpleContent>
+       </xsd:complexType>
+       
+       <xsd:complexType name="credentials">
+              <xsd:sequence>
+                     <xsd:element name="principal" type="xsd:string" minOccurs="0" />              
+                     <xsd:element name="subject" type="xsd:string" minOccurs="0" />
+                     <xsd:element name="username" type="xsd:string" minOccurs="0" />
+                     <xsd:element name="password" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       
+       
+       
+</xsd:schema>

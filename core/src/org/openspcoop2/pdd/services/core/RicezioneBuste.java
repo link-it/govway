@@ -853,7 +853,7 @@ public class RicezioneBuste {
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),e,
+					get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),e,
 					"InizializzazioneRisorseServizioRicezioneBuste");
 			return;
 		}
@@ -866,7 +866,7 @@ public class RicezioneBuste {
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(e.getMessage()),e,
+					get5XX_ErroreProcessamento(e),e,
 					"InizializzazioneHeaderRisposta");
 			return;
 		}
@@ -1041,7 +1041,7 @@ public class RicezioneBuste {
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente.identificazionePerServizio");
 				}
 				else{
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					msgDiag.addKeywordErroreProcessamento(e);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
 				}
 				
@@ -1237,7 +1237,7 @@ public class RicezioneBuste {
 					}		
 				} catch (Exception e) {
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA[i]);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.toString());
+					msgDiag.addKeywordErroreProcessamento(e);
 					msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 				}
 			}
@@ -1889,7 +1889,7 @@ public class RicezioneBuste {
 					logCore.error("Errore durante l'identificazione delle credenziali ["+ RicezioneBuste.tipiGestoriCredenziali[i]
 					         + "]: "+ e.getMessage(),e);
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_GESTORE_CREDENZIALI,RicezioneBuste.tipiGestoriCredenziali[i]);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					msgDiag.addKeywordErroreProcessamento(e);
 					msgDiag.logPersonalizzato("gestoreCredenziali.errore");
 					ErroreIntegrazione msgErroreIntegrazione = null;
 					if(e instanceof GestoreCredenzialiConfigurationException){
@@ -2292,7 +2292,7 @@ public class RicezioneBuste {
 				msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
 			}
 			
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Aggiornamento messaggio fallito, "+e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento messaggio fallito");
 			msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
 			logCore.error("ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage(),e);
 			
@@ -2694,7 +2694,7 @@ public class RicezioneBuste {
 				}
 			}			
 		}catch(Exception e){	
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+			msgDiag.addKeywordErroreProcessamento(e);
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"protocolli.funzionalita.unsupported");
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
@@ -4148,7 +4148,7 @@ public class RicezioneBuste {
 						msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaDisabilitata");
 					}
 				}catch(ValidatoreMessaggiApplicativiException ex){
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+					msgDiag.addKeywordErroreProcessamento(ex);
 					msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 					logCore.error("[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
 					if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
@@ -4168,7 +4168,7 @@ public class RicezioneBuste {
 						return;
 					}
 				}catch(Exception ex){
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+					msgDiag.addKeywordErroreProcessamento(ex);
 					msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 					logCore.error("Riscontrato errore durante la validazione dei contenuti applicativi (richiesta applicativa)",ex);
 					if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
@@ -5616,7 +5616,7 @@ public class RicezioneBuste {
 							}
 							
 						}catch(Exception e){
-							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+							msgDiag.addKeywordErroreProcessamento(e);
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
 							logCore.error("[MessageSecurityResponse]" + e.getMessage(),e);
 							
@@ -5832,7 +5832,7 @@ public class RicezioneBuste {
 							
 					} catch (Exception e) {
 						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA_response[i]);
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.toString());
+						msgDiag.addKeywordErroreProcessamento(e);
 						msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 					}
 				}

@@ -1051,6 +1051,25 @@ public class Utilities {
 
 	// Gestione eccezioni
 	
+	public static String readFirstErrorValidMessageFromException(Throwable e) {
+		if(e instanceof NullPointerException) {
+			 return "NullPointerException";
+		}else {
+			Throwable inner = Utilities.getInnerNotEmptyMessageException(e);
+			if(inner!=null) {
+				return inner.getMessage();
+			}
+			else {
+				if(Utilities.isEmpytMessageException(e)) {
+					return e.toString();
+				}
+				else {
+					return e.getMessage();
+				}
+			}
+		}
+	}
+	
 	public static boolean isEmpytMessageException(Throwable e){
 		if(e.getMessage()==null ||
 				"".equals(e.getMessage()) || 

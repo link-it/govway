@@ -31,12 +31,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.context.MessageContext;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
@@ -47,6 +47,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.slf4j.Logger;
 
 
 /**
@@ -71,6 +72,8 @@ public class SoapMessage implements java.io.Serializable {
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
 
+	private static final String MSG_BYTES = "_bytes.bin";
+	private static final String MSG_CONTEXT = "_context.bin";
 
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
@@ -82,7 +85,9 @@ public class SoapMessage implements java.io.Serializable {
 	/** Indicazione se il messaggio deve essere registrato su file System o su DB */
 	private boolean saveOnFS;
 	/** Identificativo del Messaggio passato sotto una funziona HASH */
-	private String keyMsg;
+	private String keyMsgBytes;
+	/** Identificativo del MessaggeContext passato sotto una funziona HASH */
+	private String keyMsgContext;
 	/** Indica la directory dove effettuare salvataggi */
 	private String workDir;
 	/** AdapterJDBC */
@@ -146,10 +151,19 @@ public class SoapMessage implements java.io.Serializable {
 			this.log = LoggerWrapperFactory.getLogger(SoapMessage.class);
 		}
 		try{
-			this.keyMsg = this.hash(idMsg);
-			if(this.keyMsg == null){
-				throw new Exception("Codifica hash non riuscita: keyMsg is null");
+
+			this.keyMsgBytes = this.hash(idMsg);
+			if(this.keyMsgBytes == null){
+				throw new Exception("Codifica hash non riuscita: keyMsgBytes is null");
 			}
+			this.keyMsgBytes = this.keyMsgBytes + MSG_BYTES;
+
+			this.keyMsgContext = this.hash(idMsg);
+			if(this.keyMsgContext == null){
+				throw new Exception("Codifica hash non riuscita: keyMsgContext is null");
+			}
+			this.keyMsgContext = this.keyMsgContext + MSG_CONTEXT;
+
 		}catch(Exception e){
 			String errorMsg = "SOAP_MESSAGE, costructor error (CodificaHash): "+box+"/"+idMsg+": "+e.getMessage();		
 			this.log.error(errorMsg);
@@ -262,7 +276,7 @@ public class SoapMessage implements java.io.Serializable {
 
 
 	/* ********  S A V E  ******** */
-	
+
 	/**
 	 * Dato un messaggio come parametro, si occupa di salvarlo nel filesystem/DB. 
 	 * Il SoapEnvelope viene salvato nel FileSystem associandoci l'informazione strutturale <var>idMessaggio</var>.
@@ -272,110 +286,98 @@ public class SoapMessage implements java.io.Serializable {
 	 * 
 	 */
 	public void save(OpenSPCoop2Message msg, boolean isRichiesta, boolean portaDiTipoStateless) throws UtilsException{
-		
-//		//NOTA: Faccio la save per refreshare il ContentType. Necessario nel caso di attachment
-//		try{
-//	        if( msg.saveRequired() ) {
-//	        	msg.saveChanges();
-//	        }
-//		}catch(Exception e){
-//			String errorMsg = "SOAP_MESSAGE, save: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-//			this.log.error(errorMsg);
-//			throw new UtilsException(errorMsg,e);
-//		}
-        
-		// Find SoapAction
-		String soapAction = null;
-		String location = null;
-		try{
-			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-				soapAction = msg.castAsSoap().getSoapAction();
-				location = msg.castAsSoap().getSOAPPart().getContentLocation();
-			}
-		}catch(Exception e){
-			String errorMsg = "SOAP_MESSAGE, save (soapAction): "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-			this.log.error(errorMsg);
-			throw new UtilsException(errorMsg,e);
-		}
-			
+
 		if( !portaDiTipoStateless ) {
 			StateMessage stateMsg = (isRichiesta) ?  
 					(StateMessage)this.openspcoopstate.getStatoRichiesta() :
 						(StateMessage)this.openspcoopstate.getStatoRisposta();
-					Connection connectionDB = stateMsg.getConnectionDB();
+			Connection connectionDB = stateMsg.getConnectionDB();
 
-					PreparedStatement pstmt = null;
-					try{
-						// Save proprieta' msg
-						StringBuffer query = new StringBuffer();
-						query.append("INSERT INTO  ");
-						query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-						if(this.saveOnFS)
-							query.append(" (ID_MESSAGGIO,TIPO,SOAP_ACTION,CONTENT_TYPE,CONTENT_LOCATION) VALUES ( ? , ? , ? , ? , ?)");
-						else
-							query.append(" (ID_MESSAGGIO,TIPO,SOAP_ACTION,CONTENT_TYPE,CONTENT_LOCATION,MSG_BYTES) VALUES ( ? , ? , ? , ? , ? , ?)");
-						
-						pstmt = connectionDB.prepareStatement(query.toString());
-						pstmt.setString(1,this.idMessaggio);
-						if(Costanti.INBOX.equals(this.box))
-							pstmt.setString(2,Costanti.INBOX);
-						else
-							pstmt.setString(2,Costanti.OUTBOX);		
-						pstmt.setString(3,soapAction);
-						
-						//Sposto il set del contentType dopo la writeTo del messaggio 
-						//cosi nel caso di attachment lo trovo corretto.
-						
-						
-						pstmt.setString(5,location);
+			PreparedStatement pstmt = null;
+			try{
+				// Save proprieta' msg
+				StringBuffer query = new StringBuffer();
+				query.append("INSERT INTO  ");
+				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
+				if(this.saveOnFS)
+					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE) VALUES ( ? , ? , ? )");
+				else
+					query.append(" (ID_MESSAGGIO,TIPO,CONTENT_TYPE,MSG_BYTES,MSG_CONTEXT) VALUES ( ? , ? , ? , ? , ?)");
 
-						// Save bytes
-						if(this.saveOnFS){
-							// READ FROM FILE SYSTEM
-							String saveDir = getBaseDir();
-							if(saveDir==null){
-								String errorMsg = "WorkDir non correttamente inizializzata";		
-								throw new UtilsException(errorMsg);
-							}
-							String path = saveDir + this.keyMsg;
-							this.saveMessage(path,msg);
-						}else{
-							// Scrittura su DB
-							java.io.ByteArrayOutputStream msgByte = new java.io.ByteArrayOutputStream();
-							msg.writeTo(msgByte,true);
-							msgByte.flush();
-							msgByte.close();
-							//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
-							this.adapter.setBinaryData(pstmt,6,msgByte.toByteArray());
-						}
-						
-						// Set del contentType nella query
-						pstmt.setString(4,msg.getContentType());
+				pstmt = connectionDB.prepareStatement(query.toString());
+				pstmt.setString(1,this.idMessaggio);
+				if(Costanti.INBOX.equals(this.box))
+					pstmt.setString(2,Costanti.INBOX);
+				else
+					pstmt.setString(2,Costanti.OUTBOX);		
 
-						// Add PreparedStatement
-						stateMsg.getPreparedStatement().put("INSERT (MSG_OP_STEP1a) saveMessage["+this.keyMsg+","+this.box+"]",pstmt);
+				//Sposto il set del contentType dopo la writeTo del messaggio 
+				//cosi nel caso di attachment lo trovo corretto.
+
+				if(this.saveOnFS){
+					// SAVE IN FILE SYSTEM
 					
-					}catch(Exception e){
-						try{
-							if( pstmt != null )
-								pstmt.close();
-						} catch(Exception err) {}
-						String errorMsg = "SOAP_MESSAGE, save : "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-						this.log.error(errorMsg,e);
-						throw new UtilsException(errorMsg,e);
+					String saveDir = getBaseDir();
+					if(saveDir==null){
+						String errorMsg = "WorkDir non correttamente inizializzata";		
+						throw new UtilsException(errorMsg);
 					}
+					
+					// Save bytes message
+					String pathBytes = saveDir + this.keyMsgBytes;
+					this.saveMessageBytes(pathBytes,msg);
+					
+					// Save message context
+					String pathContext = saveDir + this.keyMsgContext;
+					this.saveMessageContext(pathContext,msg);
+					
+				}else{
+					// SAVE IN DB
+					
+					// Save bytes message
+					java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+					msg.writeTo(bout,true);
+					bout.flush();
+					bout.close();
+					//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
+					this.adapter.setBinaryData(pstmt,4,bout.toByteArray());
+					
+					// Save message context
+					bout = new java.io.ByteArrayOutputStream();
+					msg.serializeResourcesTo(bout);
+					bout.flush();
+					bout.close();
+					//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
+					this.adapter.setBinaryData(pstmt,5,bout.toByteArray());
+				}
+
+				// Set del contentType nella query
+				pstmt.setString(3,msg.getContentType());
+
+				// Add PreparedStatement
+				stateMsg.getPreparedStatement().put("INSERT (MSG_OP_STEP1a) saveMessage["+this.idMessaggio+","+this.box+"]",pstmt);
+
+			}catch(Exception e){
+				try{
+					if( pstmt != null )
+						pstmt.close();
+				} catch(Exception err) {}
+				String errorMsg = "SOAP_MESSAGE, save : "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
+				this.log.error(errorMsg,e);
+				throw new UtilsException(errorMsg,e);
+			}
 		}else if (portaDiTipoStateless){
-						
+
 			if (isRichiesta) ((OpenSPCoopStateless)this.openspcoopstate).setRichiestaMsg(msg);
 			else ((OpenSPCoopStateless)this.openspcoopstate).setRispostaMsg(msg);
-			
-			
+
+
 		}else{
 			throw new UtilsException("Metodo invocato con OpenSPCoopState non valido");
 		}
 
 	}     
-	private void saveMessage(String path,OpenSPCoop2Message msg) throws UtilsException{
+	private void saveMessageBytes(String path,OpenSPCoop2Message msg) throws UtilsException{
 
 		FileOutputStream fos = null;
 		try{
@@ -388,6 +390,29 @@ public class SoapMessage implements java.io.Serializable {
 			fos = new FileOutputStream(path);
 			// Scrittura Messaggio su FileSystem
 			msg.writeTo(fos,true);
+			fos.close();
+
+		}catch(Exception e){
+			try{
+				if( fos != null )
+					fos.close();
+			} catch(Exception er) {}
+			throw new UtilsException("Utilities.saveMessage error "+e.getMessage(),e);
+		}
+	}
+	private void saveMessageContext(String path,OpenSPCoop2Message msg) throws UtilsException{
+
+		FileOutputStream fos = null;
+		try{
+
+			File fileMsg = new File(path);
+			if(fileMsg.exists() == true){
+				throw new UtilsException("L'identificativo del Messaggio risulta gia' registrato: "+path);
+			}	
+
+			fos = new FileOutputStream(path);
+			// Scrittura Messaggio su FileSystem
+			msg.serializeResourcesTo(fos);
 			fos.close();
 
 		}catch(Exception e){
@@ -419,106 +444,134 @@ public class SoapMessage implements java.io.Serializable {
 					((StateMessage)this.openspcoopstate.getStatoRichiesta()).getConnectionDB() :
 						((StateMessage)this.openspcoopstate.getStatoRisposta()).getConnectionDB();
 
-					OpenSPCoop2Message msg = null;
-					PreparedStatement pstmt = null;
-					InputStream is = null;
-					ResultSet rs = null;
-					try{
+			OpenSPCoop2Message msg = null;
+			PreparedStatement pstmt = null;
+			InputStream isBytes = null;
+			InputStream isContext = null;
+			ResultSet rs = null;
+			try{
 
-						// Leggo proprieta' messaggio
-						StringBuffer query = new StringBuffer();
-						if(this.saveOnFS)
-							query.append("select SOAP_ACTION,CONTENT_TYPE,CONTENT_LOCATION ");
-						else
-							query.append("select SOAP_ACTION,CONTENT_TYPE,CONTENT_LOCATION,MSG_BYTES ");
-						query.append("from ");
-						query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-						query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
-						pstmt =  connectionDB.prepareStatement(query.toString());
-						pstmt.setString(1,this.idMessaggio);
-						if(Costanti.INBOX.equals(this.box))
-							pstmt.setString(2,Costanti.INBOX);
-						else
-							pstmt.setString(2,Costanti.OUTBOX);
-						rs = pstmt.executeQuery();
-						if(rs==null){
-							String errorMsg = "ResultSet is null?";		
-							throw new UtilsException(errorMsg);
-						}
-						if(rs.next()==false){
-							String errorMsg = "Messaggio non esistente";		
-							throw new UtilsException(errorMsg);
-						}
+				// Leggo proprieta' messaggio
+				StringBuffer query = new StringBuffer();
+				if(this.saveOnFS)
+					query.append("select CONTENT_TYPE ");
+				else
+					query.append("select CONTENT_TYPE,MSG_BYTES,MSG_CONTEXT ");
+				query.append("from ");
+				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
+				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
+				pstmt =  connectionDB.prepareStatement(query.toString());
+				pstmt.setString(1,this.idMessaggio);
+				if(Costanti.INBOX.equals(this.box))
+					pstmt.setString(2,Costanti.INBOX);
+				else
+					pstmt.setString(2,Costanti.OUTBOX);
+				rs = pstmt.executeQuery();
+				if(rs==null){
+					String errorMsg = "ResultSet is null?";		
+					throw new UtilsException(errorMsg);
+				}
+				if(rs.next()==false){
+					String errorMsg = "Messaggio non esistente";		
+					throw new UtilsException(errorMsg);
+				}
 
-						// ContentType e ContentLocation
-						String contentType = rs.getString("CONTENT_TYPE");
-						String contentLocation = rs.getString("CONTENT_LOCATION");
+				// ContentType
+				String contentType = rs.getString("CONTENT_TYPE");
 
-						// InputStream
-						if(this.saveOnFS){
-							// READ FROM FILE SYSTEM
-							String saveDir = getBaseDir();
-							if(saveDir==null){
-								String errorMsg = "WorkDir non correttamente inizializzata";		
-								throw new UtilsException(errorMsg);
-							}
-							String path = saveDir + this.keyMsg;
-
-							File fileCheck = new File(path);
-							if(fileCheck.exists() == false){
-								String errorMsg = "Il messaggio non risulta gia' registrato ("+path+").";		
-								throw new UtilsException(errorMsg);
-							}	   
-							is = new FileInputStream(path);
-						}else{
-							// Lettura da DB]
-							is = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,4));
-						}
-
-						// CostruzioneMessaggio
-						/*
-						OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-						NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
-						OpenSPCoop2MessageParseResult pr = mf.createMessage(is,notifierInputStreamParams,false,contentType,contentLocation, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
-						msg = pr.getMessage_throwParseException();
-								
-						// SoapAction
-						try{
-							String soapAction = rs.getString("SOAP_ACTION");
-							if(soapAction!=null)
-								msg.setProperty(org.openspcoop2.message.constants.Costanti.SOAP_ACTION,soapAction);
-						}catch(Exception e){
-							throw new UtilsException(e.getMessage(),e);
-						}
-						 */
-						
-						boolean b = true;
-						if(b)
-							throw new Exception("TODO implementare a modo base dati dove si salva il message type e tutto quello che serve");
-
-						// chiusura risorse DB
-						rs.close();
-						pstmt.close();
-
-					}catch(Exception e){
-						try{
-							if( rs != null )
-								rs.close();
-						} catch(Exception er) {}
-						try{
-							if( pstmt != null )
-								pstmt.close();
-						} catch(Exception er) {}
-						try{
-							if( is != null )
-								is.close();
-						} catch(Exception er) {}
-						String errorMsg = "SOAP_MESSAGE, read: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-						this.log.error(errorMsg,e);
-						throw new UtilsException(errorMsg,e);
+				if(this.saveOnFS){
+					// READ FROM FILE SYSTEM
+					
+					String saveDir = getBaseDir();
+					if(saveDir==null){
+						String errorMsg = "WorkDir non correttamente inizializzata";		
+						throw new UtilsException(errorMsg);
 					}
+					
+					// read bytes
+					String pathBytes = saveDir + this.keyMsgBytes;
+					File fileCheckBytes = new File(pathBytes);
+					if(fileCheckBytes.exists() == false){
+						String errorMsg = "Il messaggio non risulta gia' registrato ("+pathBytes+").";		
+						throw new UtilsException(errorMsg);
+					}	   
+					isBytes = new FileInputStream(pathBytes);
+					
+					// read msgContext
+					String pathContext = saveDir + this.keyMsgContext;
+					File fileCheckContext = new File(pathContext);
+					if(fileCheckContext.exists() == false){
+						String errorMsg = "Il messaggio (contesto) non risulta gia' registrato ("+pathContext+").";		
+						throw new UtilsException(errorMsg);
+					}	   
+					isContext = new FileInputStream(pathContext);
+				}else{
+					// READ FROM DB
+					
+					// read bytes
+					isBytes = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,2));
+					
+					// read msgContext
+					isContext = new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,3));
+				}
+				
+				// Lettura Message Context
+				org.openspcoop2.message.context.utils.serializer.JaxbDeserializer jaxbDeserializer  = 
+						new org.openspcoop2.message.context.utils.serializer.JaxbDeserializer();
+				MessageContext msgContext = jaxbDeserializer.readMessageContext(isContext);
+				
+				if(msgContext.getMessageType()==null) {
+					throw new Exception("Message Type undefined in context serialized");
+				}
+				MessageType mt = MessageType.valueOf(msgContext.getMessageType());
+				if(mt==null) {
+					throw new Exception("MessageType ["+msgContext.getMessageType()+"] unknown");
+				}
+				
+				if(msgContext.getMessageRole()==null) {
+					throw new Exception("Message Role undefined in context serialized");
+				}
+				MessageRole mr = MessageRole.valueOf(msgContext.getMessageRole());
+				if(mr==null) {
+					throw new Exception("MessageRole ["+msgContext.getMessageRole()+"] unknown");
+				}
+				
+				// CostruzioneMessaggio
+				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
+				NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
+				OpenSPCoop2MessageParseResult pr = null;
+				pr = mf.createMessage(mt,mr,contentType,
+						isBytes,notifierInputStreamParams,
+						this.openspcoopProperties.getAttachmentsProcessingMode());
+				msg = pr.getMessage_throwParseException();
+				msg.readResourcesFrom(msgContext);
 
-					return msg;
+				rs.close();
+				pstmt.close();
+
+			}catch(Exception e){
+				try{
+					if( rs != null )
+						rs.close();
+				} catch(Exception er) {}
+				try{
+					if( pstmt != null )
+						pstmt.close();
+				} catch(Exception er) {}
+				try{
+					if( isBytes != null )
+						isBytes.close();
+				} catch(Exception er) {}
+				try{
+					if( isContext != null )
+						isContext.close();
+				} catch(Exception er) {}
+				String errorMsg = "SOAP_MESSAGE, read: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
+				this.log.error(errorMsg,e);
+				throw new UtilsException(errorMsg,e);
+			}
+
+			return msg;
 		}else if ( portaDiTipoStateless ){
 			if (isRichiesta) return	((OpenSPCoopStateless)this.openspcoopstate).getRichiestaMsg();
 			else return	((OpenSPCoopStateless)this.openspcoopstate).getRispostaMsg();
@@ -554,16 +607,24 @@ public class SoapMessage implements java.io.Serializable {
 			try{
 				// Eliminazione da FileSystem
 				if(this.saveOnFS){
+					
 					String saveDir = getBaseDir();
 					if(saveDir==null){
 						String errorMsg = "WorkDir non correttamente inizializzata";		
 						throw new UtilsException(errorMsg);
 					}
-					String path = saveDir + this.keyMsg;
-					File fileDelete = new File(path);
-					if(fileDelete.exists()){
-						fileDelete.delete();
+					
+					String pathBytes = saveDir + this.keyMsgBytes;
+					File fileDeleteBytes = new File(pathBytes);
+					if(fileDeleteBytes.exists()){
+						fileDeleteBytes.delete();
 					}	
+					
+					String pathContext = saveDir + this.keyMsgContext;
+					File fileDeleteContext = new File(pathContext);
+					if(fileDeleteContext.exists()){
+						fileDeleteContext.delete();
+					}
 				}
 
 				//	Eliminazione from DB.
@@ -607,16 +668,24 @@ public class SoapMessage implements java.io.Serializable {
 		try{
 			// Eliminazione da FileSystem
 			if(this.saveOnFS){
+				
 				String saveDir = getBaseDir();
 				if(saveDir==null){
 					String errorMsg = "WorkDir non correttamente inizializzata";		
 					throw new UtilsException(errorMsg);
 				}
-				String path = saveDir + this.keyMsg;
-				File fileDelete = new File(path);
-				if(fileDelete.exists()){
-					fileDelete.delete();
+				
+				String pathBytes = saveDir + this.keyMsgBytes;
+				File fileDeleteBytes = new File(pathBytes);
+				if(fileDeleteBytes.exists()){
+					fileDeleteBytes.delete();
 				}	
+				
+				String pathContext = saveDir + this.keyMsgContext;
+				File fileDeleteContext = new File(pathContext);
+				if(fileDeleteContext.exists()){
+					fileDeleteContext.delete();
+				}
 			}
 
 		}catch(Exception e){

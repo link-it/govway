@@ -67,6 +67,9 @@ public class MTOMProcessor {
 	
 	public void mtomBeforeSecurity(OpenSPCoop2Message msg,RuoloMessaggio tipo) throws Exception{
 		
+		if(msg==null) {
+			return;
+		}
 		if(!ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 			return;
 		}
@@ -93,7 +96,7 @@ public class MTOMProcessor {
 					
 				}catch(Exception e){
 					
-					this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					this.msgDiag.addKeywordErroreProcessamento(e);
 					this.log.error("[MTOM BeforeSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
 					
 					this.emitDiagnostic(tipo, 
@@ -123,6 +126,9 @@ public class MTOMProcessor {
 	
 	public void mtomAfterSecurity(OpenSPCoop2Message msg,RuoloMessaggio tipo) throws Exception{
 		
+		if(msg==null) {
+			return;
+		}
 		if(!ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 			return;
 		}
@@ -149,7 +155,7 @@ public class MTOMProcessor {
 					
 				}catch(Exception e){
 					
-					this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					this.msgDiag.addKeywordErroreProcessamento(e);
 					this.log.error("[MTOM AfterSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
 					
 					this.emitDiagnostic(tipo, 

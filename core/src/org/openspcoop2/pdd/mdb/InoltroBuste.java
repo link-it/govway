@@ -1161,7 +1161,7 @@ public class InoltroBuste extends GenericLib{
 					this.log.debug("Errore durante la lettura dell'header di integrazione ["+ tipiIntegrazionePD[i]
 									+ "]: "+ e.getMessage(),e);
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePD[i]);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.toString());
+					msgDiag.addKeywordErroreProcessamento(e);
 					msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 				}
 			}
@@ -1302,7 +1302,7 @@ public class InoltroBuste extends GenericLib{
 				}catch(Exception e){
 					oggetto = "LetturaConfigurazioneMTOMProcessorRoleSender";
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 					configException = e;
 				}
 				
@@ -1312,7 +1312,7 @@ public class InoltroBuste extends GenericLib{
 					}catch(Exception e){
 						oggetto = "LetturaConfigurazioneMessageSecurityRoleSender";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
 				}
@@ -1363,7 +1363,7 @@ public class InoltroBuste extends GenericLib{
 					// msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
 				
 					ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					if(sendRispostaApplicativa){
 						OpenSPCoop2Message responseMessageError = null;
 						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
@@ -1468,12 +1468,12 @@ public class InoltroBuste extends GenericLib{
 						
 					}catch(Exception e){
 						
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , e.getMessage() );
+						msgDiag.addKeywordErroreProcessamento(e);
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInErrore");
 						this.log.error("[MessageSecurityRequest]" + e.getMessage(),e);
 						
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						messageSecurityException = e;
 					}
 				}
@@ -1540,7 +1540,7 @@ public class InoltroBuste extends GenericLib{
 					//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
 				
 					ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+							get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 					if(sendRispostaApplicativa){
 						OpenSPCoop2Message responseMessageError = null;
 						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
@@ -2031,7 +2031,7 @@ public class InoltroBuste extends GenericLib{
 						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, location));
 					}
 				} catch (Exception e) {
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Analisi risposta fallita, "+e.getMessage() );
+					msgDiag.addKeywordErroreProcessamento(e, "Analisi risposta fallita");
 					msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");
 					String msgErrore = "Analisi risposta del connettore ha provocato un errore: "+e.getMessage();
 					this.log.error(msgErrore,e);
@@ -2111,7 +2111,7 @@ public class InoltroBuste extends GenericLib{
 						bustaRichiesta, nParams,
 						requestMessage.getTransportRequestContext(),transportResponseContext);
 			} catch (Exception e) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Aggiornamento messaggio fallito, "+e.getMessage() );
+				msgDiag.addKeywordErroreProcessamento(e, "Aggiornamento messaggio fallito");
 				msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
 				String msgErrore = "ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage();
 				this.log.error(msgErrore,e);
@@ -2502,7 +2502,7 @@ public class InoltroBuste extends GenericLib{
 					}catch(Exception e){
 						oggetto = "LetturaConfigurazioneMTOMProcessorRoleReceiver";
 						erroreIntegrazioneConfig = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}					
 					try{
@@ -2510,7 +2510,7 @@ public class InoltroBuste extends GenericLib{
 					}catch(Exception e){
 						oggetto = "LetturaConfigurazioneMessageSecurityRoleReceiver";
 						erroreIntegrazioneConfig = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE);
 						configException = e;
 					}
 						
@@ -2558,7 +2558,7 @@ public class InoltroBuste extends GenericLib{
 							// msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
 						
 							ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+									get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 							if(sendRispostaApplicativa){
 								OpenSPCoop2Message responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
 										erroreIntegrazione,e,
@@ -2748,7 +2748,7 @@ public class InoltroBuste extends GenericLib{
 							// msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
 						
 							ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
+									get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR);
 							if(sendRispostaApplicativa){
 								OpenSPCoop2Message responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
 										erroreIntegrazione,e,
@@ -2857,7 +2857,7 @@ public class InoltroBuste extends GenericLib{
 						}else{
 													
 							ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO);
+									get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO);
 							if(sendRispostaApplicativa){
 								OpenSPCoop2Message responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
 										erroreIntegrazione,e,
@@ -3141,7 +3141,7 @@ public class InoltroBuste extends GenericLib{
 						this.log.debug("Errore durante la lettura dell'header di integrazione ["+ tipiIntegrazionePD_risposta[i]
 										+ "]: "+ e.getMessage(),e);
 						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePD_risposta[i]);
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.toString());
+						msgDiag.addKeywordErroreProcessamento(e);
 						msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 					}
 				}
@@ -3962,7 +3962,7 @@ public class InoltroBuste extends GenericLib{
 								}
 
 							}catch(ValidatoreMessaggiApplicativiException ex){
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+								msgDiag.addKeywordErroreProcessamento(ex);
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("[ValidazioneContenutiApplicativi Risposta] "+ex.getMessage(),ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
@@ -3982,7 +3982,7 @@ public class InoltroBuste extends GenericLib{
 									return esito;
 								}
 							}catch(Exception ex){
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, ex.getMessage());
+								msgDiag.addKeywordErroreProcessamento(ex);
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("Riscontrato errore durante la validazione xsd della risposta applicativa",ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){

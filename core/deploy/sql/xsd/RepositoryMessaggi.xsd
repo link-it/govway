@@ -554,17 +554,6 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="soap_action" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="SOAP_ACTION"/>
-                                <linkit:sql-ddl-column-comment>SOAPAction associata al messaggio</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
                 <xsd:element name="content_type" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -572,17 +561,6 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="CONTENT_TYPE"/>
                                 <linkit:sql-ddl-column-comment>MimeType del messaggio</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="content_location" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="CONTENT_LOCATION"/>
-                                <linkit:sql-ddl-column-comment>Eventuale header 'Content-Location' presente in un messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -597,7 +575,18 @@
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
-                </xsd:element>      
+                </xsd:element>
+                <xsd:element name="msg_context" type="xsd:hexBinary" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="MSG_CONTEXT"/>
+                                <linkit:sql-ddl-column-comment>Bytes che definiscono il contesto del messaggio</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
