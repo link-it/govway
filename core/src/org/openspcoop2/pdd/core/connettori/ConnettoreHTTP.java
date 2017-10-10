@@ -381,6 +381,11 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				this.httpConn.setInstanceFollowRedirects(true);
 			}
 			*/
+			// Deve essere impostato a false, altrimenti nel caso si intenda leggere gli header o l'input stream di un 302
+			// si ottiene il seguente errore:
+			//    java.net.HttpRetryException: cannot retry due to redirection, in streaming mode
+			this.httpConn.setInstanceFollowRedirects(false);
+
 			
 			
 			// Tipologia di servizio
