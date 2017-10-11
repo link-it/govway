@@ -131,7 +131,7 @@ public class SbustamentoRisposte extends GenericLib {
 		IProtocolVersionManager protocolManager = null;
 		ITraduttore traduttore = null;
 		try{
-			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			protocolManager = protocolFactory.createProtocolVersionManager(sbustamentoRisposteMsg.getRichiestaDelegata().getProfiloGestione());
 			traduttore = protocolFactory.createTraduttore();
 		}catch(Exception e){

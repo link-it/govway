@@ -146,12 +146,6 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			return false;
 		}
 	
-		// analsi i parametri specifici per il connettore
-		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
-			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
-			return false;
-		}
-		
 		try{
 			
 			// Creazione URL

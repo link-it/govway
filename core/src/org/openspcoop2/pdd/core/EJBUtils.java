@@ -277,7 +277,7 @@ public class EJBUtils {
 		this.pddContext = pddContext;
 		
 		try{
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			this.protocolManager = this.protocolFactory.createProtocolVersionManager(profiloGestione);
 			this.dettaglioBuilder = new DettaglioEccezioneOpenSPCoop2Builder(this.log, this.protocolFactory);
 		}catch(Exception e){

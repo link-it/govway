@@ -41,7 +41,7 @@ public class IntegrationManagerUtility {
 	public static void readAndSetProtocol(javax.servlet.http.HttpServletRequest req,String pathinfo) throws IntegrationManagerException{
 		
 		//System.out.println("PATH INFO["+pathinfo+"]");
-		String protocol = (String) req.getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO);
+		String protocol = (String) req.getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
 		//System.out.println("PROTOCOLLO ["+protocol+"]");
 		if(protocol!=null){
 			
@@ -55,7 +55,7 @@ public class IntegrationManagerUtility {
 				boolean ok = false;
 				try{
 					Openspcoop2 manifest = ProtocolFactoryManager.getInstance().getProtocolManifest(protocol);
-					req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, manifest.getProtocol().getName());
+					req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, manifest.getProtocol().getName());
 					ok = true;
 				} catch(ProtocolException eInternal) {}
 				
@@ -85,7 +85,7 @@ public class IntegrationManagerUtility {
 				}
 			}
 			
-			req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolName);
+			req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolName);
 			
 		}
 		

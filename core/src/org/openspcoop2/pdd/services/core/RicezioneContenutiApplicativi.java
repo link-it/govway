@@ -333,7 +333,7 @@ public class RicezioneContenutiApplicativi {
 		// ------------- in-handler -----------------------------
 		IProtocolFactory<?> protocolFactory = null;
 		try{
-			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
 			setSOAPFault(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, e, "ProtocolFactoryInstance");
 			return;
@@ -591,9 +591,6 @@ public class RicezioneContenutiApplicativi {
 		// RegistroServizi Reader
 		RegistroServiziManager registroServiziReader = RegistroServiziManager.getInstance();
 
-		// Protocollo
-		String protocol = (String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO);
-		
 		// IdentificativoPdD
 		IDSoggetto identitaPdD = requestInfo.getIdentitaPdD();
 
@@ -2027,7 +2024,7 @@ public class RicezioneContenutiApplicativi {
 			}catch(Exception e){}
 		}
 		msgDiag.highDebug("Convert infoServizio to Busta ...");
-		Busta bustaRichiesta = infoServizio.convertToBusta(protocol, soggettoFruitore);
+		Busta bustaRichiesta = infoServizio.convertToBusta(protocolFactory.getProtocol(), soggettoFruitore);
 		msgDiag.highDebug("Convert infoServizio to Busta terminata");
 		inRequestPDMessage.setBustaRichiesta(bustaRichiesta);
 		

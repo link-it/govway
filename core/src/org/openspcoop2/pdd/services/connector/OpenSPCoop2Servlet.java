@@ -106,10 +106,10 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, op2Properties.isPrintInfoCertificate());
 			String function = protocolContext.getFunction();
 			
-			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocol());
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocolWebContext());
 			if(pf==null){
-				if(!Costanti.CONTEXT_EMPTY.equals(protocolContext.getProtocol()))
-					throw new Exception("Non risulta registrato un protocollo con contesto ["+protocolContext.getProtocol()+"]");
+				if(!Costanti.CONTEXT_EMPTY.equals(protocolContext.getProtocolWebContext()))
+					throw new Exception("Non risulta registrato un protocollo con contesto ["+protocolContext.getProtocolWebContext()+"]");
 				else
 					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
 			}
@@ -184,7 +184,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 								
 				// Dispatching al servizio di IntegrationManager implementato tramite CXF
 				String forwardUrl = "/"+URLProtocolContext.IntegrationManager_ENGINE+"/"+protocolContext.getFunctionParameters();
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolContext.getProtocol());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolContext.getProtocolName());
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED, true);
 				RequestDispatcher dispatcher = req.getRequestDispatcher(forwardUrl);
 				dispatcher.forward(req, res);
@@ -222,7 +222,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 				// Dispatching al servizio 
 				CheckStatoPdD checkStatoPdD = new CheckStatoPdD();
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolContext.getProtocol());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolContext.getProtocolName());
 				checkStatoPdD.doGet(req, res);
 				
 			}

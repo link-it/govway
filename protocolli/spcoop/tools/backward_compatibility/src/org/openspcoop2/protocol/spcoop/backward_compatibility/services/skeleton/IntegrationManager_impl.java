@@ -54,7 +54,7 @@ public class IntegrationManager_impl extends IntegrationManager{
 		req = 
 			(javax.servlet.http.HttpServletRequest) msgContext.get(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST);
 		
-		req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, "spcoop");
+		req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, "spcoop");
 		req.setAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED, true);
 		
 		return req;

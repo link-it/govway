@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -68,14 +69,26 @@ public class RestUtilities {
 				if(requestContext.getInterfaceName()!=null && resourcePath.startsWith(requestContext.getInterfaceName())){
 					resourcePath = resourcePath.substring(requestContext.getInterfaceName().length());
 				}
+				boolean extraPathApplicativoStartWithSlash = false;
 				if(resourcePath.startsWith("/")){
+					extraPathApplicativoStartWithSlash = true;
+					// Lo elimino in modo da evitare doppi '//' se anche il baseUrl finisce con '/'
 					resourcePath = resourcePath.substring(1);
 				}
 				if(resourcePath!=null && !"".equals(resourcePath)){
+					// // extra path contiene ulteriori dati da aggiungere alla url
 					if(baseUrl.endsWith("/")==false){
 						newUrl.append("/");
 					}
 					newUrl.append(resourcePath);
+				}
+				else {
+					if(extraPathApplicativoStartWithSlash) {
+						if(baseUrl.endsWith("/")==false){
+							// extra path terminava semplicemente con '/'. Questo slash va ripristinato poiche' e' importante per l'index
+							newUrl.append("/");
+						}
+					}
 				}
 			}
 		}
@@ -110,6 +123,53 @@ public class RestUtilities {
 		return TransportUtils.buildLocationWithURLBasedParameter(p, newUrl.toString());
 		
 	}
+	
+	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrl) {
+               
+		String r = baseUrl;
+		if(r.contains("?")) {
+			r = baseUrl.split("\\?")[0];
+		}
+               
+		if(redirectLocationUrl.startsWith(r)) {
+			
+			// Context path rappresenta il prefisso della richiesta contenente il contesto dell'applicazione (es. /openspcoop2),
+			// il protocollo e il servizio. Ad esempio /openspcoop2/spcoop/PD
+			String contextPath = transportRequestContext.getWebContext();
+			if(contextPath.endsWith("/")==false) {
+				contextPath = contextPath + "/";
+			}
+			String protocollo = transportRequestContext.getProtocolWebContext();
+			if(Costanti.CONTEXT_EMPTY.equals(protocollo)==false) {
+				contextPath = contextPath + protocollo + "/";
+			}
+			contextPath = contextPath + transportRequestContext.getFunction();
+
+			// Il suffisso contiene la parte della url ritornata dalla redirect senza la parte iniziale rappresentata dalla base url del servizio
+			String suffix = "";
+			if(redirectLocationUrl.equals(r)==false) {
+				suffix=redirectLocationUrl.substring(r.length());
+			}
+			
+			// Viene costruita una nuova url contenente la richiesta iniziale e il nuovo suffisso,
+			// in modo che la url ritornata tramite la redirect possa contenere una nuova url che viene veicolata nuovamente sulla PdD
+			StringBuffer bf = new StringBuffer();
+			bf.append(contextPath);
+			if(contextPath.endsWith("/")==false) {
+				bf.append("/");
+			}
+			bf.append(transportRequestContext.getInterfaceName());
+			if(suffix.startsWith("/")==false) {
+				bf.append("/");
+			}
+			bf.append(suffix);
+			return bf.toString();
+		}
+		else {
+			return redirectLocationUrl;
+		}
+	}
+
 	
 	public static void initializeTransportHeaders(OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
 			Properties transportHeaders, List<String> whiteListHeader) throws MessageException{

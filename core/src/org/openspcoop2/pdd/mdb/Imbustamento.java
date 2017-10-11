@@ -116,7 +116,7 @@ public class Imbustamento extends GenericLib{
 		IProtocolVersionManager protocolManager = null;
 		ITraduttore traduttore = null;
 		try{
-			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			protocolManager = protocolFactory.createProtocolVersionManager(imbustamentoMsg.getRichiestaDelegata().getProfiloGestione());
 			traduttore = protocolFactory.createTraduttore();
 		}catch(Exception e){

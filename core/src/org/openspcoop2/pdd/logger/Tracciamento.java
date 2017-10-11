@@ -153,7 +153,7 @@ public class Tracciamento {
 		this.msgDiagErroreTracciamento.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		try{
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
-			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		} catch(Throwable e){
 			throw new TracciamentoException(e.getMessage(),e);
 		}

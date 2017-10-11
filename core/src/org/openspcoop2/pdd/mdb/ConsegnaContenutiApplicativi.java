@@ -298,7 +298,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		/* Protocol Factory */
 		IProtocolFactory<?> protocolFactory = null;
 		try{
-			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione"); 
 			openspcoopstate.releaseResource();

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
@@ -135,7 +136,16 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 			if(logCore!=null)
 				logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
 			
-			this.protocol = protocollo;
+			this.protocolWebContext = protocollo;
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(this.protocolWebContext);
+			if(pf==null){
+				if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
+					throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
+				else
+					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+			}
+			this.protocolName = pf.getProtocol();
+			
 			this.function = function;
 			this.functionParameters = functionParameters;		
 			

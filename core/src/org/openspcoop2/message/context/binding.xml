@@ -26,7 +26,8 @@
     <value name="request-uri" field="requestUri" usage="optional"/>
     <value name="request-type" field="requestType" usage="optional"/>
     <value name="source" field="source" usage="optional"/>
-    <value name="protocol" field="protocol" usage="optional"/>
+    <value name="protocol-name" field="protocolName" usage="optional"/>
+    <value name="protocol-web-context" field="protocolWebContext" usage="optional"/>
     <value name="function" field="function" usage="optional"/>
     <value name="function-parameters" field="functionParameters" usage="optional"/>
     <value name="interface-name" field="interfaceName" usage="optional"/>

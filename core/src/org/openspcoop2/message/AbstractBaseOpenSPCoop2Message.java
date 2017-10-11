@@ -206,7 +206,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				ctx.setRequestUri(this.transportRequestContext.getRequestURI());
 				ctx.setRequestType(this.transportRequestContext.getRequestType());
 				ctx.setSource(this.transportRequestContext.getSource());
-				ctx.setProtocol(this.transportRequestContext.getProtocol());
+				ctx.setProtocolName(this.transportRequestContext.getProtocolName());
+				ctx.setProtocolWebContext(this.transportRequestContext.getProtocolWebContext());
 				ctx.setFunction(this.transportRequestContext.getFunction());
 				ctx.setFunctionParameters(this.transportRequestContext.getFunctionParameters());
 				ctx.setInterfaceName(this.transportRequestContext.getInterfaceName());
@@ -405,8 +406,9 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				if(messageContext.getTransportRequestContext().getSource()!=null) {
 					this.transportRequestContext.setSource(messageContext.getTransportRequestContext().getSource());
 				}
-				if(messageContext.getTransportRequestContext().getProtocol()!=null) {
-					this.transportRequestContext.setProtocol(messageContext.getTransportRequestContext().getProtocol());
+				if(messageContext.getTransportRequestContext().getProtocolName()!=null) {
+					this.transportRequestContext.setProtocol(messageContext.getTransportRequestContext().getProtocolName(),
+							messageContext.getTransportRequestContext().getProtocolWebContext());
 				}
 				if(messageContext.getTransportRequestContext().getFunction()!=null) {
 					this.transportRequestContext.setFunction(messageContext.getTransportRequestContext().getFunction());

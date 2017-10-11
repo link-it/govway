@@ -1531,6 +1531,8 @@ public class OpenSPCoop2Properties {
 			// API Services
 			this.getRESTServicesWhiteListRequestHeaderList();
 			this.getRESTServicesWhiteListResponseHeaderList();
+			this.isRESTServices_inoltroBuste_proxyPassReverse();
+			this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
 			
 			// Datasource Wrapped
 			this.isDSOp2UtilsEnabled();
@@ -10269,7 +10271,47 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeaderList;
 	}
 	
+	private static Boolean isRESTServices_inoltroBuste_proxyPassReverse = null;
+	public boolean isRESTServices_inoltroBuste_proxyPassReverse() {	
+		if(OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage());
+				OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse;
+	}
 	
+	private static Boolean isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = null;
+	public boolean isRESTServices_consegnaContenutiApplicativi_proxyPassReverse() {	
+		if(OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage());
+				OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse;
+	}
 	
 	/* -------------Datasource Wrapped  ---------------------*/
 	
@@ -10294,6 +10336,7 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isDSOp2UtilsEnabled;
 	}
 	
+
 	
 	
 	
@@ -10324,6 +10367,10 @@ public class OpenSPCoop2Properties {
 	
 	
 	
+
+	
+	
+
 	/* ------------- Notifier ---------------------*/
 	
 	private static String notifierInputStreamCallback = null;		

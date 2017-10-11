@@ -890,7 +890,7 @@ public class ProtocolFactoryManager {
 		} catch (Exception e) {
 			throw new ProtocolException("Impossibile recuperare il nome del contesto dalla request: ServletContext["+request.getContextPath()+"] RequestURI["+request.getRequestURI()+"]",e);
 		}
-		return getProtocolManifest(urlProtocolContext.getProtocol()); 
+		return getProtocolManifest(urlProtocolContext.getProtocolWebContext()); 
 	}
 	
 	

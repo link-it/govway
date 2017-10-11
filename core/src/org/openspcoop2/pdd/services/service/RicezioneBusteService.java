@@ -274,7 +274,7 @@ public class RicezioneBusteService  {
 			proprietaErroreAppl.setIdModulo(idModulo);
 			
 			context = new RicezioneBusteContext(idModuloAsService, dataAccettazioneRichiesta,requestInfo);
-			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, req.getRequestInfo());
 			context.setTipoPorta(TipoPdD.APPLICATIVA);
 			context.setIdModulo(idModulo);
@@ -515,7 +515,7 @@ public class RicezioneBusteService  {
 				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				context.setTipoPorta(TipoPdD.APPLICATIVA);
 				context.setIdModulo(idModulo);
-				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 				pddContext = context.getPddContext();
 				msgDiag.setPddContext(pddContext,protocolFactory);
 				if(postOutResponseContext!=null){

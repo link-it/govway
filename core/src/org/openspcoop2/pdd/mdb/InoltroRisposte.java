@@ -144,7 +144,7 @@ public class InoltroRisposte extends GenericLib{
 		IValidazioneSemantica validazioneSemantica = null;
 		org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = null;
 		try{
-			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			traduttore = protocolFactory.createTraduttore();
 			validazioneSemantica = protocolFactory.createValidazioneSemantica();
 		}catch(Exception e){

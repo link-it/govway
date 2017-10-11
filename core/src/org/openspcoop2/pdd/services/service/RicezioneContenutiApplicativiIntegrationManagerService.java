@@ -255,7 +255,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO, idInvocazionePerRiferimento);
 		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, portaDelegata);
-		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 		
 		EsitoTransazione esito = null;
 		String errore = null;
@@ -407,7 +407,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			urlProtocolContext.setFunctionParameters(portaDelegata);
 			urlProtocolContext.setRequestURI(portaDelegata);
 			urlProtocolContext.setFunction(URLProtocolContext.IntegrationManager_FUNCTION);
-			urlProtocolContext.setProtocol(protocolFactory.getProtocol());
+			urlProtocolContext.setProtocol(protocolFactory.getProtocol(),
+					requestInfo.getProtocolContext().getProtocolWebContext());
 			if(openSPCoopProperties.integrationManager_readInformazioniTrasporto()){
 				urlProtocolContext.setParametersTrasporto(headerTrasporto);
 			}
@@ -577,7 +578,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			context.setMessageRequest(msgRequest);
 			context.setUrlProtocolContext(urlProtocolContext);
 			context.setHeaderIntegrazioneRichiesta(headerIntegrazioneRichiesta);
-			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			// Location
 			context.setFromLocation(requestInfo.getProtocolContext().getSource());
 			

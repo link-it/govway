@@ -259,7 +259,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 			context.setIdModulo(idModulo);
-			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, req.getRequestInfo());
 			msgDiag.setPddContext(context.getPddContext(),protocolFactory);		
 			pddContext = context.getPddContext();
@@ -451,7 +451,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 				context.setIdModulo(idModulo);
-				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 				pddContext = context.getPddContext();
 				msgDiag.setPddContext(pddContext,protocolFactory);
 				if(postOutResponseContext!=null){

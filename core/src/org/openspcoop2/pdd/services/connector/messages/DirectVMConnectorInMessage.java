@@ -134,7 +134,8 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			
 			urlProtocolContext.setFunction(this.function);
 			
-			urlProtocolContext.setProtocol(this.protocolFactory.getManifest().getWeb().getContextList().get(0).getName());
+			urlProtocolContext.setProtocol(this.protocolFactory.getProtocol(),
+					this.protocolFactory.getManifest().getWeb().getContextList().get(0).getName());
 			
 			urlProtocolContext.setRequestURI(this.url);
 			

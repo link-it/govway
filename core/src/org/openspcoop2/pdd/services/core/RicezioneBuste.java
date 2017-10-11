@@ -367,7 +367,7 @@ public class RicezioneBuste {
 		
 		IProtocolFactory<?> protocolFactory = null;
 		try{
-			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, e, "ProtocolFactoryInstance");
 			return;
@@ -802,10 +802,6 @@ public class RicezioneBuste {
 		// Classi registrate
 		ClassNameProperties className = ClassNameProperties.getInstance();
 
-		// protocollo
-		@SuppressWarnings("unused")
-		String protocollo = (String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO);
-		
 		//	IdentificativoPdD
 		IDSoggetto identitaPdD = requestInfo.getIdentitaPdD();
 
@@ -6102,7 +6098,7 @@ public class RicezioneBuste {
 			}
 
 			// ProtocolFactory
-			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 						
 			//	Tracciamento Busta Ritornata: cambiata nel metodo msgErroreProcessamento
 			if(this.msgContext.isTracciamentoAbilitato()){
@@ -6178,7 +6174,7 @@ public class RicezioneBuste {
 		
 		try{
 			
-			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 						
 
 			/* ------- Gestione messaggi di richiesta per stateless --------*/
@@ -6314,7 +6310,7 @@ public class RicezioneBuste {
 		ProfiloDiCollaborazione profiloCollaborazione = null;
 		try{
 			
-			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 						
 			// Messaggi AD HOC senza profilo: RISCONTRO
 			if(bustaRichiesta.getProfiloDiCollaborazione()==null && bustaRichiesta.sizeListaRiscontri()>0 &&
@@ -6538,7 +6534,7 @@ public class RicezioneBuste {
 		ProfiloDiCollaborazione profiloCollaborazione = null;
 		try{
 
-			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 						
 			// Messaggi AD HOC senza profilo: RISCONTRO
 			if(bustaRichiesta.getProfiloDiCollaborazione()==null && bustaRichiesta.sizeListaRiscontri()>0 &&
@@ -6669,7 +6665,7 @@ public class RicezioneBuste {
 			PdDContext pddContext) throws Exception{
 		boolean attendiTerminazioneRichiesta = false;
 
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 				
 		// Puo' potenzialmente essere una ricevuta alla richiesta (new connection for response)
 		// o alla risposta (e cmq la risposta l'ho generata io e quindi e' chiaro che ho finito di gestire la richiesta)
@@ -6772,7 +6768,7 @@ public class RicezioneBuste {
 			PdDContext pddContext)throws Exception{
 		boolean attendiTerminazioneRicevutaRichiesta = false;
 
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		
 		// Puo' potenzialmente essere una ricevuta alla richiesta (new connection for response)
 		// o alla risposta (e cmq la risposta l'ho generata io e quindi e' chiaro che ho finito di gestire la richiesta)
@@ -6882,7 +6878,7 @@ public class RicezioneBuste {
 		Busta bustaHTTPReply = null;
 		
 		IProtocolVersionManager protocolManager = 
-				ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO)).createProtocolVersionManager(profiloGestione);
+				ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME)).createProtocolVersionManager(profiloGestione);
 		
 		RequestInfo requestInfo = (RequestInfo) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		

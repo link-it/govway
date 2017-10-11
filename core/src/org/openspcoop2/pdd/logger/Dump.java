@@ -146,7 +146,7 @@ public class Dump {
 		// Protocol Factory Manager
 		String protocol = null;
 		try{
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			protocol = this.protocolFactory.getProtocol();
 			this.msgDiagErroreDump.setPddContext(pddContext, this.protocolFactory);
 		}catch (Exception e) {

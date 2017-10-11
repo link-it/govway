@@ -179,7 +179,7 @@ public class ServiceBindingConfiguration implements Serializable {
 	public List<String> getContentTypesSupported(ServiceBinding serviceBinding, MessageRole messageType, 
 			TransportRequestContext transportContext) throws MessageException{
 		return getContentTypesSupported(serviceBinding, messageType, 
-				transportContext.getProtocol(), transportContext.getFunction(), transportContext.getFunctionParameters());
+				transportContext.getProtocolWebContext(), transportContext.getFunction(), transportContext.getFunctionParameters());
 	}
 	public List<String> getContentTypesSupported(ServiceBinding serviceBinding, MessageRole messageType, 
 			String protocol, String function, String functionParameters) throws MessageException{
@@ -234,7 +234,7 @@ public class ServiceBindingConfiguration implements Serializable {
 	public String getContentTypesSupportedAsString(ServiceBinding serviceBinding, MessageRole messageType, 
 			TransportRequestContext transportContext) throws MessageException{
 		return getContentTypesSupportedAsString(serviceBinding, messageType, 
-				transportContext.getProtocol(), transportContext.getFunction(), transportContext.getFunctionParameters());
+				transportContext.getProtocolWebContext(), transportContext.getFunction(), transportContext.getFunctionParameters());
 	}
 	public String getContentTypesSupportedAsString(ServiceBinding serviceBinding, MessageRole messageType, 
 			String protocol, String function, String functionParameters) throws MessageException{
@@ -253,7 +253,7 @@ public class ServiceBindingConfiguration implements Serializable {
 			TransportRequestContext transportContext, 
 			String contentType) throws MessageException{
 		return this.getMessageType(serviceBinding, messageRole, 
-				transportContext.getProtocol(), transportContext.getFunction(), transportContext.getFunctionParameters(), 
+				transportContext.getProtocolWebContext(), transportContext.getFunction(), transportContext.getFunctionParameters(), 
 				contentType);
 	}
 	public MessageType getMessageType(ServiceBinding serviceBinding, MessageRole messageRole, 

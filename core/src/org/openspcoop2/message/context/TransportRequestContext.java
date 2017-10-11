@@ -42,7 +42,8 @@ import java.io.Serializable;
  * 			&lt;element name="request-uri" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="request-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="source" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="protocol" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocol-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocol-web-context" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="function" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="function-parameters" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="interface-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -66,7 +67,8 @@ import java.io.Serializable;
   	"requestUri",
   	"requestType",
   	"source",
-  	"protocol",
+  	"protocolName",
+  	"protocolWebContext",
   	"function",
   	"functionParameters",
   	"interfaceName"
@@ -149,12 +151,20 @@ public class TransportRequestContext extends org.openspcoop2.utils.beans.BaseBea
     this.source = source;
   }
 
-  public java.lang.String getProtocol() {
-    return this.protocol;
+  public java.lang.String getProtocolName() {
+    return this.protocolName;
   }
 
-  public void setProtocol(java.lang.String protocol) {
-    this.protocol = protocol;
+  public void setProtocolName(java.lang.String protocolName) {
+    this.protocolName = protocolName;
+  }
+
+  public java.lang.String getProtocolWebContext() {
+    return this.protocolWebContext;
+  }
+
+  public void setProtocolWebContext(java.lang.String protocolWebContext) {
+    this.protocolWebContext = protocolWebContext;
   }
 
   public java.lang.String getFunction() {
@@ -214,8 +224,12 @@ public class TransportRequestContext extends org.openspcoop2.utils.beans.BaseBea
   protected java.lang.String source;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="protocol",required=false,nillable=false)
-  protected java.lang.String protocol;
+  @XmlElement(name="protocol-name",required=false,nillable=false)
+  protected java.lang.String protocolName;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="protocol-web-context",required=false,nillable=false)
+  protected java.lang.String protocolWebContext;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="function",required=false,nillable=false)

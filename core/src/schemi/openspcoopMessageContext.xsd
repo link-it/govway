@@ -51,7 +51,8 @@
                      <xsd:element name="request-uri" type="xsd:string" minOccurs="0"/>
                      <xsd:element name="request-type" type="xsd:string" minOccurs="0"/>
                      <xsd:element name="source" type="xsd:string" minOccurs="0"/>
-                     <xsd:element name="protocol" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="protocol-name" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="protocol-web-context" type="xsd:string" minOccurs="0"/>
                      <xsd:element name="function" type="xsd:string" minOccurs="0"/>
                      <xsd:element name="function-parameters" type="xsd:string" minOccurs="0"/>
                      <xsd:element name="interface-name" type="xsd:string" minOccurs="0"/>

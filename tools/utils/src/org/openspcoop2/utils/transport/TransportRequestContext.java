@@ -54,7 +54,9 @@ public class TransportRequestContext implements java.io.Serializable {
 	
 	protected String source = null; // location es. https://ip:socketPort
 	
-	protected String protocol = null;
+	protected String protocolName = null; // identificativo del protocollo
+	protected String protocolWebContext = null; // webcontext utilizzato per indirizzare il protocollo, ad esempio verra' assegnato api per trasparente.
+	
 	protected String function = null;
 	protected String functionParameters = null;
 	protected String interfaceName = null; // Nome PD o PA
@@ -76,8 +78,11 @@ public class TransportRequestContext implements java.io.Serializable {
 	public String getSource() {
 		return this.source;
 	}
-	public String getProtocol() {
-		return this.protocol;
+	public String getProtocolName() {
+		return this.protocolName;
+	}
+	public String getProtocolWebContext() {
+		return this.protocolWebContext;
 	}
 	public String getFunction() {
 		return this.function;
@@ -187,8 +192,9 @@ public class TransportRequestContext implements java.io.Serializable {
 		this.source = source;
 	}
 	
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
+	public void setProtocol(String protocolName,String protocolWebContext) {
+		this.protocolName = protocolName;
+		this.protocolWebContext = protocolWebContext;
 	}
 
 	public void setFunction(String function) {

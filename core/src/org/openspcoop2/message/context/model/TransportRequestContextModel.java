@@ -47,7 +47,8 @@ public class TransportRequestContextModel extends AbstractModel<TransportRequest
 		this.REQUEST_URI = new Field("request-uri",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.REQUEST_TYPE = new Field("request-type",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.SOURCE = new Field("source",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
-		this.PROTOCOL = new Field("protocol",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
+		this.PROTOCOL_NAME = new Field("protocol-name",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
+		this.PROTOCOL_WEB_CONTEXT = new Field("protocol-web-context",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.FUNCTION = new Field("function",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.FUNCTION_PARAMETERS = new Field("function-parameters",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.INTERFACE_NAME = new Field("interface-name",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
@@ -65,7 +66,8 @@ public class TransportRequestContextModel extends AbstractModel<TransportRequest
 		this.REQUEST_URI = new ComplexField(father,"request-uri",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.REQUEST_TYPE = new ComplexField(father,"request-type",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.SOURCE = new ComplexField(father,"source",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
-		this.PROTOCOL = new ComplexField(father,"protocol",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
+		this.PROTOCOL_NAME = new ComplexField(father,"protocol-name",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
+		this.PROTOCOL_WEB_CONTEXT = new ComplexField(father,"protocol-web-context",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.FUNCTION = new ComplexField(father,"function",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.FUNCTION_PARAMETERS = new ComplexField(father,"function-parameters",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
 		this.INTERFACE_NAME = new ComplexField(father,"interface-name",java.lang.String.class,"transport-request-context",TransportRequestContext.class);
@@ -88,7 +90,9 @@ public class TransportRequestContextModel extends AbstractModel<TransportRequest
 	 
 	public IField SOURCE = null;
 	 
-	public IField PROTOCOL = null;
+	public IField PROTOCOL_NAME = null;
+	 
+	public IField PROTOCOL_WEB_CONTEXT = null;
 	 
 	public IField FUNCTION = null;
 	 

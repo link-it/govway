@@ -100,8 +100,11 @@ public abstract class AbstractDatiInvocazione {
 						if(this.infoConnettoreIngresso.getUrlProtocolContext().getFunctionParameters()!=null){
 							bf.append(" UrlProtocolContext_FunctionParameters:").append(this.infoConnettoreIngresso.getUrlProtocolContext().getFunctionParameters());
 						}
-						if(this.infoConnettoreIngresso.getUrlProtocolContext().getProtocol()!=null){
-							bf.append(" UrlProtocolContext_Protocol:").append(this.infoConnettoreIngresso.getUrlProtocolContext().getProtocol());
+						if(this.infoConnettoreIngresso.getUrlProtocolContext().getProtocolName()!=null){
+							bf.append(" UrlProtocolContext_ProtocolName:").append(this.infoConnettoreIngresso.getUrlProtocolContext().getProtocolName());
+						}
+						if(this.infoConnettoreIngresso.getUrlProtocolContext().getProtocolWebContext()!=null){
+							bf.append(" UrlProtocolContext_ProtocolWebContext:").append(this.infoConnettoreIngresso.getUrlProtocolContext().getProtocolWebContext());
 						}
 						if(this.infoConnettoreIngresso.getUrlProtocolContext().getRequestURI()!=null){
 							bf.append(" UrlProtocolContext_RequestURI:").append(this.infoConnettoreIngresso.getUrlProtocolContext().getRequestURI());

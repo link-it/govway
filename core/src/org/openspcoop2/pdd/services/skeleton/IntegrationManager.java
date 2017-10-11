@@ -139,7 +139,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	
 	private IProtocolFactory<?> getProtocolFactory(Logger log) throws IntegrationManagerException{
 		try {
-			String protocolName = (String) getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO);
+			String protocolName = (String) getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
 			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
 		} catch (Exception e) {
 			log.error("Errore durante il recupero della ProtocolFactory: "+e.getMessage(),e);
@@ -516,7 +516,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		PdDContext pddContext = new PdDContext();
 		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 		
 		IDServizio idServizio = null;
 		try {
@@ -815,7 +815,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO,idMessaggio);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO,protocolFactory.getProtocol());
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME,protocolFactory.getProtocol());
 		msgDiag.setPddContext(pddContext, protocolFactory);
 		
 		
@@ -1173,7 +1173,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO,idMessaggio);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 		msgDiag.setPddContext(pddContext, protocolFactory);
 		
 		
@@ -1409,7 +1409,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		PdDContext pddContext = new PdDContext();
 		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 		msgDiag.setPddContext(pddContext, protocolFactory);
 		
 		

@@ -227,7 +227,7 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 			PdDContext pddContext = sbustamentoRisposteMsg.getPddContext();
 			try{
 				msgDiag.setPddContext(pddContext, 
-						ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO)));
+						ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME)));
 			}catch(ProtocolException e){
 				msgDiag.logErroreGenerico(e,"ProtocolFactory.instanziazione");
 				this.ctxMDB.setRollbackOnly();

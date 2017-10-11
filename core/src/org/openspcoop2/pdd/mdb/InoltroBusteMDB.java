@@ -246,7 +246,7 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 			/* PddContext */
 			PdDContext pddContext = inoltroBusteMsg.getPddContext();
 			try{
-				msgDiag.setPddContext(pddContext, ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO)));
+				msgDiag.setPddContext(pddContext, ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME)));
 			}catch(ProtocolException e){
 				msgDiag.logErroreGenerico(e,"ProtocolFactory.instanziazione");
 				this.ctxMDB.setRollbackOnly();

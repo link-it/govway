@@ -24,9 +24,12 @@ import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.rest.RestUtilities;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -67,6 +70,34 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;
 
+	
+	/** REST Proxy Pass Reverse */
+	protected boolean rest_proxyPassReverse = false;
+	
+	
+	@Override
+	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired){
+		boolean init = super.initialize(request, connectorPropertiesRequired);
+		
+		// Location
+		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
+			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+			return false;
+		}
+		
+		if(this.isRest) {
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+				this.rest_proxyPassReverse = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
+			}
+			else{
+				// InoltroBuste e InoltroRisposte
+				this.rest_proxyPassReverse = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse();
+			}
+		}
+		
+		return init;
+	}
+	
 	
 	protected void forwardHttpRequestHeader() throws Exception{
 		OpenSPCoop2MessageProperties forwardHeader = 
@@ -131,5 +162,51 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		}
 		
 		return super.doSoapResponse();
+	}
+	
+	@Override
+	protected boolean doRestResponse() throws Exception{
+		
+		 if(this.debug)
+			 this.logger.debug("gestione REST - proxyPassReverse:"+this.rest_proxyPassReverse+" ...");
+			                                 
+		 if(this.rest_proxyPassReverse) {
+			 String redirectLocation = this.propertiesTrasportoRisposta.getProperty(HttpConstants.REDIRECT_LOCATION);
+			 if(redirectLocation==null){
+				 redirectLocation = this.propertiesTrasportoRisposta.getProperty(HttpConstants.REDIRECT_LOCATION.toLowerCase());
+			 }
+			 if(redirectLocation==null){
+				 redirectLocation = this.propertiesTrasportoRisposta.getProperty(HttpConstants.REDIRECT_LOCATION.toUpperCase());
+			 }
+			 if(redirectLocation!=null) {
+				 if(this.debug)
+					 this.logger.debug("Trovato Header '"+HttpConstants.REDIRECT_LOCATION+"':["+redirectLocation+"] ...");
+                   
+				 // Aggiorno url
+				 try {
+					 String baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
+					 if(baseUrl==null) {
+						 throw new Exception("BaseURL undefined");
+					 }
+					 if(this.debug)
+						 this.logger.debug("Base URL: ["+baseUrl+"] ...");
+					 
+					 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation);
+					 if(this.debug)
+						 this.logger.debug("Nuovo Header '"+HttpConstants.REDIRECT_LOCATION+"':["+newRedirectLocation+"] ...");
+               
+					 this.propertiesTrasportoRisposta.remove(HttpConstants.REDIRECT_LOCATION);
+					 this.propertiesTrasportoRisposta.remove(HttpConstants.REDIRECT_LOCATION.toLowerCase());
+					 this.propertiesTrasportoRisposta.remove(HttpConstants.REDIRECT_LOCATION.toUpperCase());
+					 this.propertiesTrasportoRisposta.put(HttpConstants.REDIRECT_LOCATION, newRedirectLocation);
+				 }catch(Exception e) {
+					 throw new Exception("Errore durante l'aggiornamento della Redirect '"+HttpConstants.REDIRECT_LOCATION+
+							 "' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
+				 }
+			 }
+		 }
+
+		
+		return super.doRestResponse();
 	}
 }

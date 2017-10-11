@@ -862,7 +862,7 @@ public class GestoreMessaggi  {
 		this.pddContext = pddContext;
 		try{
 			if(this.pddContext!=null)
-				this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+				this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
 			this.log.error("Inizializzione GestoreMessaggi non riuscita [ProtocoFactoryManager.getInstance]:"+e.getMessage(),e);
 		}
@@ -2976,9 +2976,10 @@ public class GestoreMessaggi  {
 						}
 					}
 				}
-				if(fieldNamesPdDContext_db.length() != 0) fieldNamesPdDContext_db.append(" , ");
+				if(fieldNamesPdDContext_db.length() != 0) 
+					fieldNamesPdDContext_db.append(" , ");
 				fieldNamesPdDContext_db.append("PROTOCOLLO");
-				mapping.put("PROTOCOLLO", org.openspcoop2.core.constants.Costanti.PROTOCOLLO);
+				mapping.put("PROTOCOLLO", org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
 				PdDContext pddContext = new PdDContext();
 				if(mapping.size()<=0){
 					return pddContext;

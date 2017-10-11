@@ -314,7 +314,7 @@ public class InoltroBuste extends GenericLib{
 		IProtocolVersionManager protocolManager = null;
 		IValidazioneSemantica validazioneSemantica = null;
 		try{
-			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			traduttore = protocolFactory.createTraduttore();
 			protocolManager = protocolFactory.createProtocolVersionManager(inoltroBusteMsg.getRichiestaDelegata().getProfiloGestione());
 			validazioneSemantica = protocolFactory.createValidazioneSemantica();

@@ -172,7 +172,7 @@ public class MsgDiagnostico {
 		}
 		try{
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
-			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			this.traduttore = this.protocolFactory.createTraduttore();
 		} catch(Throwable e){
 			// Succede quando non appartiene a nessun protocollo, ad esempio i diagnostici di startup

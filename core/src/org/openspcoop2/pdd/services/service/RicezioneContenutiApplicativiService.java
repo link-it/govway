@@ -266,7 +266,7 @@ public class RicezioneContenutiApplicativiService {
 			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setIdModulo(idModulo);
-			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, req.getRequestInfo());
 			context.setProprietaErroreAppl(this.generatoreErrore.getProprietaErroreAppl());
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
@@ -507,7 +507,7 @@ public class RicezioneContenutiApplicativiService {
 				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setIdModulo(idModulo);
-				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
+				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 				pddContext = context.getPddContext();
 				if(postOutResponseContext!=null){
 					postOutResponseContext.setPddContext(pddContext);
