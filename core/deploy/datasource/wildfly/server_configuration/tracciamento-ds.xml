@@ -86,9 +86,9 @@
 
 			<!-- esempio hsql -->
 			<!--
-			<new-connection-sql>SELECT 1</new-connection-sql>
+			<new-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</new-connection-sql>
 			<validation>
-				<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+				<check-valid-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</check-valid-connection-sql>
 				<validate-on-match>true</validate-on-match>
 			</validation>
 			-->

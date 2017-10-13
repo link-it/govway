@@ -53,7 +53,7 @@
 		hsql:
 		driverClassName="org.hsqldb.jdbcDriver"
 		url="jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/openspcoop2]"
-		validationQuery="SELECT 1"
+		validationQuery="SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS"
 	-->
 
 	<!-- 
@@ -116,7 +116,7 @@
 		hsql:
 		driverClassName="org.hsqldb.jdbcDriver"
 		url="jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/tracciamento]"
-		validationQuery="SELECT 1"
+		validationQuery="SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS"
 	-->
 
 	<!-- 
@@ -179,7 +179,7 @@
 		hsql:
 		driverClassName="org.hsqldb.jdbcDriver"
 		url="jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/msgdiagnostici]"
-		validationQuery="SELECT 1"
+		validationQuery="SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS"
 	-->
 
 	<!-- 

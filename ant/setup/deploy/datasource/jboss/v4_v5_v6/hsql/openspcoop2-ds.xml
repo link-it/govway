@@ -39,8 +39,8 @@
 		Validazione della Connessione SQL.
 		Effettuata quando una connessione viene creata o su una esistente connessione quando questa viene ottenuta dal pool
 		-->
-		    <new-connection-sql>SELECT 1</new-connection-sql>
-		    <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+		    <new-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</new-connection-sql>
+		    <check-valid-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</check-valid-connection-sql>
 
 		<metadata>
 
