@@ -240,23 +240,41 @@ public class DataSourceFactory {
 		
 		boolean waitCloseConnection = true;
 		int maxWait = 60000;
+		int sleep = 1000;
 		int index = 0;
+		int count = 1;
+		int total = maxWait / sleep;
 		while(waitCloseConnection && index<maxWait){
 			list = mapUUIDtoDatasources.values();
 			it = list.iterator();
 			boolean closeAll = true;
+			StringBuffer bf = new StringBuffer();
+			boolean debugClose = true;
 			while (it.hasNext()) {
 				org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
 				if(datasource.size()>0){
 					closeAll = false;
+					bf.append("Find datasource (applicative-id:"+datasource.getApplicativeIdDatasource()+" jndi:"+datasource.getJndiName()+") with "+datasource.size()+" released connection:");
+					String[] status = datasource.getJmxStatus();
+					if(status!=null) {
+						for (int i = 0; i < status.length; i++) {
+							bf.append("\n");
+							bf.append("\t"+status[i]);
+						}
+					}
 					break;
 				}
 			}
 			if(closeAll==false){
-				System.out.println("Wait close connection ...");
+				if(debugClose && ((count%5)==0)) {
+					// stampo la situazione ogni 5 secondi
+					System.out.println(bf.toString());
+				}
+				System.out.println("Wait close connection ("+count+"/"+total+") ...");
 				try{
-					Thread.sleep(1000);
-					index = index + 1000;
+					Thread.sleep(sleep);
+					index = index + sleep;
+					count++;
 				}catch(Exception e){}
 			}
 			else{

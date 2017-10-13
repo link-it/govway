@@ -62,7 +62,7 @@ public class PipedUnblockedStream extends InputStream {
 	
 	private void readWaitBytes() throws IOException{
 		int i = 0;
-		while(this.stop==false && this.bout.size()==0 && i<ITERAZIONI_WAIT){
+		while(this.stop==false && this.bout!=null && this.bout.size()==0 && i<ITERAZIONI_WAIT){
 			try{
 				Thread.sleep((i+1));
 				i = i + i;
@@ -103,6 +103,11 @@ public class PipedUnblockedStream extends InputStream {
 				if(this.bout.size()==0){
 					//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] WAIT BYTES ...");
 					readWaitBytes();
+					if(this.bout==null) {
+						// Viene reso null dal metodo close() che puo' essere chiamato mentre la read e' in corso
+						//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] WAIT BYTES FOUND BOUT NULL ON EXIT");
+						return -1;
+					}
 				}
 			}
 		}
