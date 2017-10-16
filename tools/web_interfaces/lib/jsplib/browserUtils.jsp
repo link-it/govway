@@ -76,7 +76,9 @@ String browserversion = info[1];
 // Microsoft IE (Trident e' il browsername che viene impostato da IE11)
 // <meta http-equiv="X-UA-Compatible" content="IE=8">
 if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident")){
+	// fix ie10
 	%>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<script type="text/javascript">
 		window.location.hash="no-back-button";
 		window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history

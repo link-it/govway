@@ -768,6 +768,26 @@ span.item-icon {
     padding: 0px 12px;
 }
 
+/* IE10 fix icon utente */
+
+span[data-useragent*='MSIE 10.0'].icon-checkbox-checked-white{
+	background-image: url(../images/tema_link/checkbox_checked_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+    height: 16px;
+    padding: 0px 16px 0px 0px;
+}
+
+span[data-useragent*='MSIE 10.0'].icon-checkbox-unchecked-white{
+	background-image: url(../images/tema_link/checkbox_unchecked_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+    height: 16px;
+    padding: 0px 16px 0px 0px;
+}
+
 /* form */
 
 /* 	personalizzazioni */

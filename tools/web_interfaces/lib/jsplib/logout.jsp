@@ -49,6 +49,8 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 <html>
 <head>
 	<meta charset="UTF-8">
+	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+	<title><%= gd.getTitle() %></title>
 	<SCRIPT type="text/javascript">
 	
 	var ok = true;
@@ -72,8 +74,6 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 	};
 	
 	</SCRIPT>
-	<title><%= gd.getTitle() %></title>
-	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 	<script type="text/javascript" src="js/webapps.js"></script>
