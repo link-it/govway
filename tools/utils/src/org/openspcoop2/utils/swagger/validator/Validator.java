@@ -24,6 +24,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.json.JsonValidatorAPI;
+import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiValidator;
@@ -32,21 +34,8 @@ import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
-import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
-import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
 import org.openspcoop2.utils.swagger.SwaggerApi;
 import org.slf4j.Logger;
-
-import com.atlassian.oai.validator.interaction.ApiOperationResolver;
-import com.atlassian.oai.validator.interaction.RequestValidator;
-import com.atlassian.oai.validator.interaction.ResponseValidator;
-import com.atlassian.oai.validator.model.Request;
-import com.atlassian.oai.validator.model.SimpleRequest;
-import com.atlassian.oai.validator.model.SimpleResponse;
-import com.atlassian.oai.validator.report.MessageResolver;
-import com.atlassian.oai.validator.report.ValidationReport;
-import com.atlassian.oai.validator.report.ValidationReport.Message;
-import com.atlassian.oai.validator.schema.SchemaValidator;
 
 /**
  * Validator
@@ -59,7 +48,7 @@ import com.atlassian.oai.validator.schema.SchemaValidator;
 public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	private SwaggerApi api;
-	private SchemaValidator schemaValidator;
+	private JsonValidatorAPI jsonValidatorAPI;
 
 	@Override
 	public void init(Logger log, Api api, ApiValidatorConfig config)
@@ -72,7 +61,11 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			throw new ProcessingException("Api class invalid. Expected ["+SwaggerApi.class.getName()+"] found ["+api.getClass().getName()+"]");
 
 		this.api = (SwaggerApi) api;
-		this.schemaValidator = new SchemaValidator(this.api.getSwagger(), new MessageResolver());
+		if(config instanceof SwaggerApiValidatorConfig) {
+			this.jsonValidatorAPI = ((SwaggerApiValidatorConfig)config).getJsonValidatorAPI();
+		} else {
+			this.jsonValidatorAPI = JsonValidatorAPI.get(ApiName.FGE);
+		}
 	}
 
 	@Override
@@ -87,61 +80,61 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			ApiOperation operation, Object... args) throws ProcessingException,
 	ValidatorException {
 
-        ApiOperationResolver apiOperationResolver = new ApiOperationResolver(this.api.getSwagger(), this.api.getSwagger().getBasePath());
-        com.atlassian.oai.validator.model.ApiOperation apiOperation = apiOperationResolver.findApiOperation(operation.getPath(), Request.Method.valueOf(operation.getHttpMethod().toString())).getApiOperation();
-
-        
-		if(httpEntity instanceof HttpBaseRequestEntity<?>) {
-			SimpleRequest.Builder builder = new SimpleRequest.Builder(operation.getHttpMethod().toString(), operation.getPath());
-			if(httpEntity.getContent() != null) {
-				builder.withBody(httpEntity.getContent().toString()); //TODO vedere come recuperare la stringa
-			}
-			if(httpEntity.getParametersTrasporto() != null) {
-				for(Object key: httpEntity.getParametersTrasporto().keySet()) {
-					if(key instanceof String) {
-						String keyS = (String)key;
-						builder.withHeader(keyS, httpEntity.getParametersTrasporto().getProperty(keyS));
-					}
-				}
-			}
-			if(httpEntity.getParametersQuery() != null) {
-				for(Object key: httpEntity.getParametersQuery().keySet()) {
-					if(key instanceof String) {
-						String keyS = (String)key;
-						builder.withQueryParam(keyS, httpEntity.getParametersQuery().getProperty(keyS));
-					}
-				}
-			}
-			SimpleRequest request = builder.build();
-			RequestValidator validator = new RequestValidator(this.schemaValidator, new MessageResolver(), this.api.getSwagger());
-	        ValidationReport validateRequest = validator.validateRequest(request, apiOperation);
-	        if(validateRequest.hasErrors()) {
-	        	throw buildException(validateRequest.getMessages());
-	        }
-		} else if(httpEntity instanceof HttpBaseResponseEntity<?>) {
-			SimpleResponse.Builder builder = new SimpleResponse.Builder(((HttpBaseResponseEntity<?>)httpEntity).getStatus());
-			if(httpEntity.getContent() != null) {
-				builder.withBody(httpEntity.getContent().toString()); //TODO vedere come recuperare la stringa
-			}
-			SimpleResponse request = builder.build();
-			ResponseValidator validator = new ResponseValidator(this.schemaValidator, new MessageResolver(), this.api.getSwagger());
-	        ValidationReport validateResponse = validator.validateResponse(request, apiOperation);
-	        if(validateResponse.hasErrors()) {
-	        	throw buildException(validateResponse.getMessages());
-	        }
-		} 
+//        ApiOperationResolver apiOperationResolver = new ApiOperationResolver(this.api.getSwagger(), this.api.getSwagger().getBasePath());
+//        com.atlassian.oai.validator.model.ApiOperation apiOperation = apiOperationResolver.findApiOperation(operation.getPath(), Request.Method.valueOf(operation.getHttpMethod().toString())).getApiOperation();
+//
+//        
+//		if(httpEntity instanceof HttpBaseRequestEntity<?>) {
+//			SimpleRequest.Builder builder = new SimpleRequest.Builder(operation.getHttpMethod().toString(), operation.getPath());
+//			if(httpEntity.getContent() != null) {
+//				builder.withBody(httpEntity.getContent().toString()); //TODO vedere come recuperare la stringa
+//			}
+//			if(httpEntity.getParametersTrasporto() != null) {
+//				for(Object key: httpEntity.getParametersTrasporto().keySet()) {
+//					if(key instanceof String) {
+//						String keyS = (String)key;
+//						builder.withHeader(keyS, httpEntity.getParametersTrasporto().getProperty(keyS));
+//					}
+//				}
+//			}
+//			if(httpEntity.getParametersQuery() != null) {
+//				for(Object key: httpEntity.getParametersQuery().keySet()) {
+//					if(key instanceof String) {
+//						String keyS = (String)key;
+//						builder.withQueryParam(keyS, httpEntity.getParametersQuery().getProperty(keyS));
+//					}
+//				}
+//			}
+//			SimpleRequest request = builder.build();
+//			RequestValidator validator = new RequestValidator(this.schemaValidator, new MessageResolver(), this.api.getSwagger());
+//	        ValidationReport validateRequest = validator.validateRequest(request, apiOperation);
+//	        if(validateRequest.hasErrors()) {
+//	        	throw buildException(validateRequest.getMessages());
+//	        }
+//		} else if(httpEntity instanceof HttpBaseResponseEntity<?>) {
+//			SimpleResponse.Builder builder = new SimpleResponse.Builder(((HttpBaseResponseEntity<?>)httpEntity).getStatus());
+//			if(httpEntity.getContent() != null) {
+//				builder.withBody(httpEntity.getContent().toString()); //TODO vedere come recuperare la stringa
+//			}
+//			SimpleResponse request = builder.build();
+//			ResponseValidator validator = new ResponseValidator(this.schemaValidator, new MessageResolver(), this.api.getSwagger());
+//	        ValidationReport validateResponse = validator.validateResponse(request, apiOperation);
+//	        if(validateResponse.hasErrors()) {
+//	        	throw buildException(validateResponse.getMessages());
+//	        }
+//		} 
 
 	}
 
-	private ValidatorException buildException(List<Message> messages) {
-		StringBuilder msg = new StringBuilder();
-		if(messages!=null && !messages.isEmpty()) {
-			for(Message message: messages) {
-				msg.append(message.getKey()).append(": ").append(message.getMessage()).append("\n");
-			}
-		}
-		return new ValidatorException(msg.toString());
-	}
+//	private ValidatorException buildException(List<Message> messages) {
+//		StringBuilder msg = new StringBuilder();
+//		if(messages!=null && !messages.isEmpty()) {
+//			for(Message message: messages) {
+//				msg.append(message.getKey()).append(": ").append(message.getMessage()).append("\n");
+//			}
+//		}
+//		return new ValidatorException(msg.toString());
+//	}
 
 	@Override
 	public void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,
