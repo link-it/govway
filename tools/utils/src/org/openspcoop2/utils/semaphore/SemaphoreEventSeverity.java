@@ -2,7 +2,7 @@
  * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2017 Link.it srl (http://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -17,18 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.dao.jdbc.utils;
+
+package org.openspcoop2.utils.semaphore;
 
 /**
- * JDBCDefaultForXSDType
- * 
- * @author Poli Andrea (apoli@link.it)
+ * SemaphoreEventSeverity
+ *
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum JDBCDefaultForXSDType {
-
-	NONE,
-	FORCE_ZERO_AS_NULL; // un risultato 0 per una lettura da un tipo primitivo, deve essere convertito in null (utile per i tipi primitivi), inoltre nei tipi come positiveInteger o negativeInteger non e' previsto un valore uguale a 0
-	
+public enum SemaphoreEventSeverity {
+	DEBUG,INFO,WARN,ERROR;
 }

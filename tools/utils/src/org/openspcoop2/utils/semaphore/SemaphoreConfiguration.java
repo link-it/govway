@@ -18,24 +18,24 @@
  *
  */
 
-package org.openspcoop2.utils.id.serial;
+package org.openspcoop2.utils.semaphore;
 
 /**
- * IDSerialGenerator
+ * SemaphoreConfiguration
  *
- * @author Poli Andrea (apoli@link.it)
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class IDSerialGeneratorParameter {
+public class SemaphoreConfiguration {
 
-	private IDSerialGeneratorType tipo = IDSerialGeneratorType.DEFAULT;
-	private String protocollo = "@DEFAULT@"; // per usare la libreria al di fuori del contesto del protocol della PdD
-	private Long maxValue = Long.MAX_VALUE; // value o cifre
-	private String informazioneAssociataAlProgressivo= null;
-	private boolean wrap = true;
-	private Integer size = null;
-
+	private String idNode;
+	
+	private long maxIdleTime;
+	private long maxLife;
+	private boolean emitEvent; 
+	private ISemaphoreEventGenerator eventGenerator;
+	
 	private long serializableTimeWaitMs = 60000; // tempo massimo di attesa in millisecondi
 	private int serializableNextIntervalTimeMs = 100; // nuovo tentativo ogni 100 millisecondi (random 0-100)
 	
@@ -46,69 +46,39 @@ public class IDSerialGeneratorParameter {
 	private int serializableNextIntervalTimeMsIncrement = 200;
 	private int maxSerializableNextIntervalTimeMs = 2000;
 	
-	private String tableName;
-	private String columnPrg;
-	private String columnProtocol;
-	private String columnRelativeInfo;
-	
-	private int sizeBuffer = 1;
-	
 	// Non e' necessario se la riga utilizzata gia' esiste (richiede una init)
 	private boolean serializableLevel = true;
 	
-	public IDSerialGeneratorParameter(){
+	public String getIdNode() {
+		return this.idNode;
 	}
-	public IDSerialGeneratorParameter(String protocollo){
-		this.protocollo = protocollo;
-	}
-	public IDSerialGeneratorParameter(String protocollo,String informazioneAssociataAlProgressivo){
-		this.protocollo = protocollo;
-		this.informazioneAssociataAlProgressivo = informazioneAssociataAlProgressivo;
+	public void setIdNode(String idNode) {
+		this.idNode = idNode;
 	}
 	
-	public String getProtocollo() {
-		return this.protocollo;
+	public ISemaphoreEventGenerator getEventGenerator() {
+		return this.eventGenerator;
 	}
-	public void setProtocollo(String protocollo) {
-		this.protocollo = protocollo;
+	public void setEventGenerator(ISemaphoreEventGenerator eventGenerator) {
+		this.eventGenerator = eventGenerator;
 	}
-	
-	public Long getMaxValue() {
-		return this.maxValue;
+	public long getMaxIdleTime() {
+		return this.maxIdleTime;
 	}
-
-	public void setMaxValue(Long maxValue) {
-		this.maxValue = maxValue;
+	public void setMaxIdleTime(long maxIdleTime) {
+		this.maxIdleTime = maxIdleTime;
 	}
-	
-	public Integer getSize() {
-		return this.size;
+	public long getMaxLife() {
+		return this.maxLife;
 	}
-	public void setSize(Integer size) {
-		this.size = size;
+	public void setMaxLife(long maxLife) {
+		this.maxLife = maxLife;
 	}
-	
-	public IDSerialGeneratorType getTipo() {
-		return this.tipo;
+	public boolean isEmitEvent() {
+		return this.emitEvent;
 	}
-
-	public void setTipo(IDSerialGeneratorType tipo) {
-		this.tipo = tipo;
-	}
-	
-	public String getInformazioneAssociataAlProgressivo() {
-		return this.informazioneAssociataAlProgressivo;
-	}
-	public void setInformazioneAssociataAlProgressivo(
-			String informazioneAssociataAlProgressivo) {
-		this.informazioneAssociataAlProgressivo = informazioneAssociataAlProgressivo;
-	}
-	
-	public boolean isWrap() {
-		return this.wrap;
-	}
-	public void setWrap(boolean wrap) {
-		this.wrap = wrap;
+	public void setEmitEvent(boolean emitEvent) {
+		this.emitEvent = emitEvent;
 	}
 	
 	public long getSerializableTimeWaitMs() {
@@ -142,38 +112,6 @@ public class IDSerialGeneratorParameter {
 	}
 	public void setMaxSerializableNextIntervalTimeMs(int maxSerializableNextIntervalTimeMs) {
 		this.maxSerializableNextIntervalTimeMs = maxSerializableNextIntervalTimeMs;
-	}
-	
-	public String getTableName() {
-		return this.tableName;
-	}
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-	public String getColumnPrg() {
-		return this.columnPrg;
-	}
-	public void setColumnPrg(String columnPrg) {
-		this.columnPrg = columnPrg;
-	}
-	public String getColumnProtocol() {
-		return this.columnProtocol;
-	}
-	public void setColumnProtocol(String columnProtocol) {
-		this.columnProtocol = columnProtocol;
-	}
-	public String getColumnRelativeInfo() {
-		return this.columnRelativeInfo;
-	}
-	public void setColumnRelativeInfo(String columnRelativeInfo) {
-		this.columnRelativeInfo = columnRelativeInfo;
-	}
-	
-	public int getSizeBuffer() {
-		return this.sizeBuffer;
-	}
-	public void setSizeBuffer(int sizeBuffer) {
-		this.sizeBuffer = sizeBuffer;
 	}
 	
 	public boolean isSerializableLevel() {

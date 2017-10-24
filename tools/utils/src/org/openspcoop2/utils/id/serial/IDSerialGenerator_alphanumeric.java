@@ -36,6 +36,7 @@ import org.openspcoop2.utils.id.ApacheGeneratorConfiguration;
 import org.openspcoop2.utils.id.ApacheIdentifierGenerator;
 import org.openspcoop2.utils.id.apache.serial.EnumTypeGenerator;
 import org.openspcoop2.utils.id.apache.serial.MaxReachedException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -115,7 +116,10 @@ public class IDSerialGenerator_alphanumeric {
 		
 		List<String> valuesGenerated = new ArrayList<String>();
 		
-		while(maxValueAndWrapDisabled==false && idBuildOK==false && DateManager.getTimeMillis() < scadenzaWhile){
+		boolean rowNotExistsAndSerializableLevelNotFound = false;
+		
+		while(maxValueAndWrapDisabled==false && rowNotExistsAndSerializableLevelNotFound==false && idBuildOK==false && 
+				DateManager.getTimeMillis() < scadenzaWhile){
 
 			valuesGenerated = new ArrayList<String>();
 			
@@ -168,6 +172,12 @@ public class IDSerialGenerator_alphanumeric {
 					throw new UtilsException("Creazione serial non riuscita: ResultSet is null?");		
 				}
 				boolean exist = rs.next();
+				if(!exist) {
+					if(JDBCUtilities.isTransactionIsolationSerializable(conDB.getTransactionIsolation(), tipoDatabase)==false) {
+						rowNotExistsAndSerializableLevelNotFound = true;
+						continue;
+					}
+				}
 
 				// incremento se esiste
 				if(exist){
@@ -340,6 +350,12 @@ public class IDSerialGenerator_alphanumeric {
 		if(maxValueAndWrapDisabled){
 			String msgError = "Max Value of identifier has been reached";
 			log.error(msgError+": "+out.toString()); // in out è presente l'intero stackTrace
+			throw new UtilsException(msgError);	
+		}
+		
+		if(rowNotExistsAndSerializableLevelNotFound){
+			String msgError = "Raw not exists and serializable level is disabled";
+			log.error(msgError); // in out è presente l'intero stackTrace
 			throw new UtilsException(msgError);	
 		}
 		

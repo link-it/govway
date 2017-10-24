@@ -161,6 +161,14 @@ public class JDBCUtilities {
 	public static boolean isTransactionIsolationSqlServerSnapshot(int transactionIsolationLevel){
 		return transactionIsolationLevel == SQL_SERVER_TRANSACTION_SNAPSHOT;
 	}
+	public static boolean isTransactionIsolationSerializable(int transactionIsolationLevel,TipiDatabase tipoDatabase){
+		if(tipoDatabase!=null && TipiDatabase.SQLSERVER.equals(tipoDatabase)){ 
+			return isTransactionIsolationSqlServerSnapshot(transactionIsolationLevel);
+		}
+		else {
+			return isTransactionIsolationSerializable(transactionIsolationLevel);
+		}
+	}
 	
 	public static void setTransactionIsolationSerializable(String tipoDatabase,Connection connection) throws SQLException{
 		setTransactionIsolationSerializable(TipiDatabase.toEnumConstant(tipoDatabase), connection);

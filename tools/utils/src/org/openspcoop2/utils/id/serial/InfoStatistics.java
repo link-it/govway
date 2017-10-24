@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * InfoStatistics
  *
@@ -48,8 +50,18 @@ public class InfoStatistics {
 		return this._occurs.get(e.getMessage());
 	}
 	
-	protected synchronized void addErrorSerializableAccess(Throwable e){
-		String msg = e.getMessage();
+	public synchronized void addErrorSerializableAccess(Throwable e){
+		Throwable msgE = Utilities.getInnerNotEmptyMessageException(e);
+		String msg = null;
+		if(msgE!=null) {
+			msg = msgE.getMessage();
+		}
+		else {
+			msg = e.toString();
+		}
+		if(msg==null) {
+			msg = "NullException";
+		}
 		this.errorSerializableAccess++;
 		if(this._exceptionOccursDistincts.contains(msg)==false){
 			this._exceptionOccursDistincts.add(msg);

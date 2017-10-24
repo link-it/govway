@@ -1,3 +1,8 @@
+2017-10-20  Andrea Poli <apoli@link.it>
+
+	Aggiunta tabella 'OP2_SEMAPHORE' che permette di implementare
+	tramite database un meccanismo di sincronizzazione tramite threads.
+
 2017-06-13  Andrea Poli <apoli@link.it>
 
 	Aggiunto stato di utilizzo della porta delegata o applicativa:

@@ -221,5 +221,28 @@
                 </classpath>
         </java>
 	</target>
+
+	<target name="runSemaphoreTest">
+		<if>
+			<equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
+			<then>
+				<fail message="Parametro tipoDatabase non fornito"/>
+			</then>
+		</if>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.utils.semaphore.ClientTest" fork="true">
+		        <arg value="${tipoDatabase}" />
+				<arg value="${url}" /> <!-- opzionale -->
+				<arg value="${username}" /> <!-- opzionale -->
+				<arg value="${password}" /> <!-- opzionale -->
+				<arg value="${threads}" /> <!-- opzionale -->
+				<arg value="${lockForThread}" /> <!-- opzionale -->
+				<arg value="${printDebug}" /> <!-- opzionale -->
+				<arg value="${timeWaitMs}" /> <!-- opzionale -->
+		        <classpath>
+		        		<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
+	</target>
 	
 </project>

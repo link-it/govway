@@ -27,6 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -212,17 +214,34 @@ public class ClientTest {
 			serialGeneratorParameter.setSerializableTimeWaitMs(timeWaitMs);
 			//serialGeneratorParameter.setSerializableNextIntervalTimeMs(100);
 			serialGeneratorParameter.setSizeBuffer(sizeBuffer);
-				
+			
+			boolean SERIALIZABLE = true;
+			boolean READ_COMMITTED = false;
+			
+			
 			
 			/** TEST N.1 PROGRESSIVO */
 			
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
 			serialGenerator.clearBuffer(serialGeneratorParameter);
-			serialGeneratorParameter.setWrap(false);			
+			serialGeneratorParameter.setWrap(false);		
+			
 			log.info("\n\n==========================================");
-			log.info("Test 1. Progressivo numerico");
+			log.info("Test 1. Progressivo numerico (SERIALIZABLE)");
+			serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
 			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 1. Progressivo numerico (READ_COMMITTED)");
+			serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
+			
 			
 			
 			/** TEST N.2 PROGRESSIVO con MAX */
@@ -234,10 +253,32 @@ public class ClientTest {
 			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setMaxValue(10l);
+			
 			log.info("\n\n==========================================");
-			log.info("Test 2. Progressivo numerico con max 10");
+			log.info("Test 2. Progressivo numerico con max 10 (SERIALIZABLE)");
 			boolean foundError = false;
 			try{
+				serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			}catch(Exception e){
+				foundError = true;
+				log.info("Errore Atteso: "+e.getMessage());
+			}
+			if(foundError==false){
+				throw new Exception("Atteso errore di max value, errore non rilevato");
+			}
+			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 2. Progressivo numerico con max 20 (READ_COMMITTED)");
+			foundError = false;
+			try{
+				serialGeneratorParameter.setMaxValue(20l);
+				serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
 				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
@@ -249,6 +290,7 @@ public class ClientTest {
 			printInfos(infoStat);
 			
 			
+			
 			/** TEST N.3 PROGRESSIVO con MAX e Wrap */
 			
 			ClientTestThread.reset();
@@ -258,10 +300,24 @@ public class ClientTest {
 			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setMaxValue(10l);
+			
 			log.info("\n\n==========================================");
-			log.info("Test 3. Progressivo numerico con max 10 e wrap");
+			log.info("Test 3. Progressivo numerico con max 10 e wrap (SERIALIZABLE)");
+			serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
 			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 3. Progressivo numerico con max 10 e wrap (READ_COMMITTED)");
+			serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
+			
+			
 			
 			
 			
@@ -275,10 +331,24 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setMaxValue(Long.MAX_VALUE);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
+			
 			log.info("\n\n==========================================");
-			log.info("Test 4. Progressivo numerico (InfoAssociata)");
+			log.info("Test 4. Progressivo numerico (InfoAssociata) (SERIALIZABLE)");
+			serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
 			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 4. Progressivo numerico (InfoAssociata) (READ_COMMITTED)");
+			serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
+			
+			
 			
 			
 			/** TEST N.5 PROGRESSIVO con MAX (InfoAssociata) */
@@ -291,10 +361,12 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setMaxValue(10l);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
+			
 			log.info("\n\n==========================================");
-			log.info("Test 5. Progressivo numerico con max 10 (InfoAssociata)");
+			log.info("Test 5. Progressivo numerico con max 10 (InfoAssociata) (SERIALIZABLE)");
 			foundError = false;
 			try{
+				serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
 				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
@@ -304,6 +376,28 @@ public class ClientTest {
 				throw new Exception("Atteso errore di max value, errore non rilevato");
 			}
 			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 5. Progressivo numerico con max 20 (InfoAssociata) (READ_COMMITTED)");
+			foundError = false;
+			try{
+				serialGeneratorParameter.setMaxValue(20l);
+				serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			}catch(Exception e){
+				foundError = true;
+				log.info("Errore Atteso: "+e.getMessage());
+			}
+			if(foundError==false){
+				throw new Exception("Atteso errore di max value, errore non rilevato");
+			}
+			printInfos(infoStat);
+			
+			
 			
 			
 			/** TEST N.6 PROGRESSIVO con MAX e Wrap (InfoAssociata)  */
@@ -316,8 +410,20 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setMaxValue(10l);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("Associata");
+			
 			log.info("\n\n==========================================");
-			log.info("Test 6. Progressivo numerico con max 10 e wrap");
+			log.info("Test 6. Progressivo numerico con max 10 e wrap (SERIALIZABLE)");
+			serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
+			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 6. Progressivo numerico con max 10 e wrap (READ_COMMITTED)");
+			serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
 			test(serialGenerator, serialGeneratorParameter, conThreads, log, true, DEBUG, tipoDatabase);
 			printInfos(infoStat);
 			
@@ -334,10 +440,12 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setSize(1);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo(null); // annullo il precedente assegnamento
+			
 			log.info("\n\n==========================================");
-			log.info("Test 7. Progressivo alfanumerico con size 1");
+			log.info("Test 7. Progressivo alfanumerico con size 1 (SERIALIZABLE)");
 			foundError = false;
 			try{
+				serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
 				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
@@ -347,6 +455,27 @@ public class ClientTest {
 				throw new Exception("Atteso errore di max value, errore non rilevato");
 			}
 			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 7. Progressivo alfanumerico con size 1 (READ_COMMITTED)");
+			foundError = false;
+			try{
+				serialGeneratorParameter.setSize(1);
+				serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
+			}catch(Exception e){
+				foundError = true;
+				log.info("Errore Atteso: "+e.getMessage());
+			}
+			if(foundError==false){
+				throw new Exception("Atteso errore di max value, errore non rilevato");
+			}
+			printInfos(infoStat);
+			
 			
 			
 			
@@ -359,10 +488,24 @@ public class ClientTest {
 			serialGenerator.clearBuffer(serialGeneratorParameter);
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setSize(1);
+			
 			log.info("\n\n==========================================");
-			log.info("Test 8. Progressivo numerico con size 1 e wrap");
+			log.info("Test 8. Progressivo numerico con size 1 e wrap (SERIALIZABLE)");
+			serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
 			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
 			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 8. Progressivo numerico con size 1 e wrap (READ_COMMITTED)");
+			serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
+			printInfos(infoStat);
+			
+			
 			
 			
 			/** TEST N.9 PROGRESSIVO con MAX (InfoAssociata) */
@@ -375,10 +518,12 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(false);
 			serialGeneratorParameter.setSize(1);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("InfoAssociata");
+			
 			log.info("\n\n==========================================");
-			log.info("Test 9. Progressivo alfanumerico con size 1 (InfoAssociata)");
+			log.info("Test 9. Progressivo alfanumerico con size 1 (InfoAssociata) (SERIALIZABLE)");
 			foundError = false;
 			try{
+				serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
 				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
 			}catch(Exception e){
 				foundError = true;
@@ -388,6 +533,28 @@ public class ClientTest {
 				throw new Exception("Atteso errore di max value, errore non rilevato");
 			}
 			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 9. Progressivo alfanumerico con size 1 (InfoAssociata) (READ_COMMITTED)");
+			foundError = false;
+			try{
+				serialGeneratorParameter.setSize(1);
+				serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
+				test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
+			}catch(Exception e){
+				foundError = true;
+				log.info("Errore Atteso: "+e.getMessage());
+			}
+			if(foundError==false){
+				throw new Exception("Atteso errore di max value, errore non rilevato");
+			}
+			printInfos(infoStat);
+			
+			
 			
 			
 			
@@ -401,8 +568,20 @@ public class ClientTest {
 			serialGeneratorParameter.setWrap(true);
 			serialGeneratorParameter.setSize(1);
 			serialGeneratorParameter.setInformazioneAssociataAlProgressivo("InfoAssociata");
+			
 			log.info("\n\n==========================================");
-			log.info("Test 10. Progressivo numerico con size 1 e wrap (InfoAssociata)");
+			log.info("Test 10. Progressivo numerico con size 1 e wrap (InfoAssociata) (SERIALIZABLE)");
+			serialGeneratorParameter.setSerializableLevel(SERIALIZABLE);
+			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
+			printInfos(infoStat);
+			
+			ClientTestThread.reset();
+			//clear(infoStat, con, stmtDelete); Utilizzo la precedente esecuzione come inizializzazione della tabella
+			infoStat.clear();
+			
+			log.info("\n\n==========================================");
+			log.info("Test 10. Progressivo numerico con size 1 e wrap (InfoAssociata) (READ_COMMITTED)");
+			serialGeneratorParameter.setSerializableLevel(READ_COMMITTED);
 			test(serialGenerator, serialGeneratorParameter, conThreads, log, false, DEBUG, tipoDatabase);
 			printInfos(infoStat);
 			
@@ -463,6 +642,8 @@ public class ClientTest {
 	public static void test(IDSerialGenerator serialGenerator, IDSerialGeneratorParameter param,
 			List<Connection> conThreads, Logger log, boolean isNumber, boolean debug, TipiDatabase tipoDatabase) throws Exception{
 		
+		Date inizio = DateManager.getDate();
+		
 		ExecutorService threadsPool = Executors.newFixedThreadPool(conThreads.size());
 		Hashtable<String, ClientTestThread> threads = new Hashtable<String, ClientTestThread>();
 		
@@ -511,6 +692,10 @@ public class ClientTest {
 			log.info("Shutdown pool ok");
 		}
 		
+		
+		Date fine = DateManager.getDate();
+		long diff = fine.getTime() - inizio.getTime();
+		log.info("Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
 		
 		for (int i = 0; i < conThreads.size(); i++) {
 			ClientTestThread c = threads.get("Thread-"+i);

@@ -123,8 +123,10 @@ public class IDSerialGenerator {
 						//System.out.println("ROLLBACK ERROR: "+e.getMessage());
 					}
 					
-					JDBCUtilities.setTransactionIsolationSerializable(tipoDatabase, con);
-					transactionIsolationModificato = true;
+					if(param.isSerializableLevel()) {
+						JDBCUtilities.setTransactionIsolationSerializable(tipoDatabase, con);
+						transactionIsolationModificato = true;
+					}
 					
 					if(originalConnectionAutocommit){
 						con.setAutoCommit(false);
