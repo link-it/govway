@@ -42,8 +42,8 @@ import org.slf4j.Logger;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13134 $, $Date: 2017-07-13 12:32:49 +0200(gio, 13 lug 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class Validator extends AbstractApiValidator implements IApiValidator {
 

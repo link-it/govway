@@ -35,8 +35,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * TransportUtilities
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13353 $, $Date: 2017-10-11 14:15:51 +0200 (Wed, 11 Oct 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class TransportUtilities {
 	

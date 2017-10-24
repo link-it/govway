@@ -27,8 +27,8 @@ import java.util.List;
  * ForwardHeaderConfig
  *
  * @author Andrea Poli <poli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13292 $, $Date: 2017-09-18 12:30:40 +0200 (Mon, 18 Sep 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class ForwardConfig implements Serializable {
