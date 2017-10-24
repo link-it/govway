@@ -37,12 +37,12 @@
 			    <condition property="javadoc.doclint.none" value="-Xdoclint:none" else="">
 			    	<not>
 				      	<or>
-							<equals arg1="${ant.java.version}" arg2="1.3" />
-							<equals arg1="${ant.java.version}" arg2="1.4" />
-				     		<equals arg1="${ant.java.version}" arg2="1.5" />
-							<equals arg1="${ant.java.version}" arg2="1.6" />
-				      		<equals arg1="${ant.java.version}" arg2="1.7" />
-						</or>
+						<equals arg1="${ant.java.version}" arg2="1.3" />
+						<equals arg1="${ant.java.version}" arg2="1.4" />
+			     			<equals arg1="${ant.java.version}" arg2="1.5" />
+						<equals arg1="${ant.java.version}" arg2="1.6" />
+			      			<equals arg1="${ant.java.version}" arg2="1.7" />
+					</or>
 			     	</not>
 				</condition>
 				<if>

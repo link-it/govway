@@ -2,9 +2,8 @@ package org.openspcoop2.utils.json.validation;
 
 import java.util.Iterator;
 
-import javax.validation.ValidationException;
-
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
+import org.openspcoop2.utils.json.ValidationException;
 import org.openspcoop2.utils.json.ValidationResponse;
 import org.openspcoop2.utils.json.ValidationResponse.ESITO;
 

@@ -3,10 +3,6 @@ package org.openspcoop2.utils.json;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openspcoop2.utils.json.validation.EveritJsonschemaValidator;
-import org.openspcoop2.utils.json.validation.FGEJsonschemaValidator;
-import org.openspcoop2.utils.json.validation.NetworkNTJsonschemaValidator;
-
 public class JsonValidatorAPI {
 
 	private String validatorClass;
@@ -30,15 +26,15 @@ public class JsonValidatorAPI {
 	private static void initMapApi() {
 		JsonValidatorAPI.mapApi = new HashMap<ApiName, JsonValidatorAPI>();
 		JsonValidatorAPI networkNtApi = new JsonValidatorAPI();
-		networkNtApi.setValidatorClass(NetworkNTJsonschemaValidator.class.getName());
+		networkNtApi.setValidatorClass("org.openspcoop2.utils.json.validation.NetworkNTJsonschemaValidator");
 		JsonValidatorAPI.mapApi.put(ApiName.NETWORK_NT, networkNtApi);
 
 		JsonValidatorAPI everitApi = new JsonValidatorAPI();
-		everitApi.setValidatorClass(EveritJsonschemaValidator.class.getName());
+		everitApi.setValidatorClass("org.openspcoop2.utils.json.validation.EveritJsonschemaValidator");
 		JsonValidatorAPI.mapApi.put(ApiName.EVERIT, everitApi);
 
 		JsonValidatorAPI fgeApi = new JsonValidatorAPI();
-		fgeApi.setValidatorClass(FGEJsonschemaValidator.class.getName());
+		fgeApi.setValidatorClass("org.openspcoop2.utils.json.validation.FGEJsonschemaValidator");
 		JsonValidatorAPI.mapApi.put(ApiName.FGE, fgeApi);
 
 	}

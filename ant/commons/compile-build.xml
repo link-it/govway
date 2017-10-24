@@ -42,18 +42,19 @@
 		<or>
 			<equals arg1="${ant.java.version}" arg2="1.3" />
 			<equals arg1="${ant.java.version}" arg2="1.4" />
-	     	<equals arg1="${ant.java.version}" arg2="1.5" />
+	     		<equals arg1="${ant.java.version}" arg2="1.5" />
 			<equals arg1="${ant.java.version}" arg2="1.6" />
+			<equals arg1="${ant.java.version}" arg2="1.7" />
 		</or>
 		<then>
 			<echo message="Java home: ${java_home}"/>
 			<echo message="Java version: ${ant.java.version}"/>
-			<fail message="E' richiesta una versione di java 7 o superiore"/>
+			<fail message="E' richiesta una versione di java 8 o superiore"/>
 		</then>
 	</if>
 	
-	<var name="classSourceVersion" value="1.7"/>
-	<var name="classTargetVersion" value="1.7"/>
+	<var name="classSourceVersion" value="1.8"/>
+	<var name="classTargetVersion" value="1.8"/>
 	
 	<path id="classpath_jre" >
 		<fileset dir="${java_home}/jre/lib" >

@@ -1,6 +1,5 @@
 package org.openspcoop2.utils.json;
 
-import javax.validation.ValidationException;
 
 public interface IJsonSchemaValidator {
 
