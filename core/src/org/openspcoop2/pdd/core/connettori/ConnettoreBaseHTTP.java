@@ -100,8 +100,14 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	
 	protected void forwardHttpRequestHeader() throws Exception{
-		OpenSPCoop2MessageProperties forwardHeader = 
-				this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesWhiteListRequestHeaderList());
+		OpenSPCoop2MessageProperties forwardHeader = null;
+		if(ServiceBinding.REST.equals(this.requestMsg.getServiceBinding())) {
+			forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(true));
+		}
+		else {
+			forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(true));
+		}
+				
 		if(forwardHeader!=null && forwardHeader.size()>0){
 			if(this.debug)
 				this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");

@@ -27,8 +27,10 @@ import java.util.Properties;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -134,15 +136,23 @@ public class ConnettoreUtils {
 	
 			try{
 			
+				OpenSPCoop2MessageProperties forwardParameter = null;
+				if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
+					forwardParameter = msg.getForwardUrlProperties(OpenSPCoop2Properties.getInstance().getRESTServicesUrlParametersForwardConfig());
+				}
+				else {
+					forwardParameter = msg.getForwardUrlProperties(OpenSPCoop2Properties.getInstance().getSOAPServicesUrlParametersForwardConfig());
+				}
+				
 				Properties p = propertiesURLBased;
-				if(msg.getForwardUrlProperties()!=null && msg.getForwardUrlProperties().size()>0){
+				if(forwardParameter!=null && forwardParameter.size()>0){
 					if(p==null){
 						p = new Properties();
 					}
-					Enumeration<?> keys = msg.getForwardUrlProperties().getKeys();
+					Enumeration<?> keys = forwardParameter.getKeys();
 					while (keys.hasMoreElements()) {
 						String key = (String) keys.nextElement();
-						String value = msg.getForwardUrlProperties().getProperty(key);
+						String value = forwardParameter.getProperty(key);
 						if(value!=null){
 							if(p.containsKey(key)){
 								p.remove(key);

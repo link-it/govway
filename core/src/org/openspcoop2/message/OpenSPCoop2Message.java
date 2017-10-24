@@ -24,7 +24,6 @@ package org.openspcoop2.message;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.List;
 
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -77,8 +76,8 @@ public interface OpenSPCoop2Message {
 	public TransportRequestContext getTransportRequestContext();
 	public void setTransportResponseContext(TransportResponseContext transportResponseContext);
 	public TransportResponseContext getTransportResponseContext();
-	public OpenSPCoop2MessageProperties getForwardTransportHeader(List<String> whiteListHeader) throws MessageException;
-	public OpenSPCoop2MessageProperties getForwardUrlProperties() throws MessageException;
+	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException;
+	public OpenSPCoop2MessageProperties getForwardUrlProperties(ForwardConfig forwardConfig) throws MessageException;
 	
 		
 	/* Forced Response */

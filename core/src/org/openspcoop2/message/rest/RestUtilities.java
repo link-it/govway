@@ -20,18 +20,11 @@
 
 package org.openspcoop2.message.rest;
 
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
 
-import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.Costanti;
-import org.openspcoop2.message.constants.MessageRole;
-import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
-import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpHeaderTypes;
 
 /**
  * RestUtilities
@@ -170,47 +163,4 @@ public class RestUtilities {
 		}
 	}
 
-	
-	public static void initializeTransportHeaders(OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
-			Properties transportHeaders, List<String> whiteListHeader) throws MessageException{
-		
-		try{
-			HttpHeaderTypes httpHeader = HttpHeaderTypes.getInstance();
-			List<String> headers = httpHeader.getHeaders();
-			if(transportHeaders!=null && transportHeaders.size()>0){
-				Enumeration<?> enumHeader = transportHeaders.keys();
-				while (enumHeader.hasMoreElements()) {
-					String key = (String) enumHeader.nextElement();
-					if(MessageRole.REQUEST.equals(messageRole)==false){
-						if(HttpConstants.RETURN_CODE.equalsIgnoreCase(key)){
-							continue;
-						}
-					}
-					if( (headers.contains(key)==false) || (whiteListHeader.contains(key)) ){
-						op2MessageProperties.addProperty(key, transportHeaders.getProperty(key));
-					}
-				}
-			}
-		}catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
-		}
-		
-	}
-	
-	public static void initializeForwardUrlParameters(OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
-			Properties forwardUrlParameters) throws MessageException{
-		
-		try{
-			if(forwardUrlParameters!=null && forwardUrlParameters.size()>0){
-				Enumeration<?> enumHeader = forwardUrlParameters.keys();
-				while (enumHeader.hasMoreElements()) {
-					String key = (String) enumHeader.nextElement();
-					op2MessageProperties.addProperty(key, forwardUrlParameters.getProperty(key));
-				}
-			}
-		}catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
-		}
-		
-	}
 }

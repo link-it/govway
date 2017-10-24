@@ -25,7 +25,6 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -34,6 +33,7 @@ import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.slf4j.Logger;
 
 /**
  * DumpRawConnectorOutMessage
@@ -117,9 +117,14 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			throws ConnectorException {
 		
 		try{
-			// Eventuali header http propagati (REST-Mode)
-			OpenSPCoop2MessageProperties forwardHeader = 
-					message.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesWhiteListResponseHeaderList());
+			// Eventuali header http propagati
+			OpenSPCoop2MessageProperties forwardHeader = null;
+			if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+				forwardHeader = message.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(false));
+			}
+			else {
+				forwardHeader = message.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
+			}
 			if(forwardHeader!=null && forwardHeader.size()>0){
 				Enumeration<?> keys = forwardHeader.getKeys();
 				while (keys.hasMoreElements()) {

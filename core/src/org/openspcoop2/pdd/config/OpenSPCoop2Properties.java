@@ -45,6 +45,7 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.AttachmentsProcessingMode;
+import org.openspcoop2.message.ForwardConfig;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
@@ -1527,13 +1528,7 @@ public class OpenSPCoop2Properties {
 			this.isCheckPdDReadJMXResourcesEnabled();
 			this.getCheckPdDReadJMXResourcesUsername();
 			this.getCheckPdDReadJMXResourcesPassword();
-			
-			// API Services
-			this.getRESTServicesWhiteListRequestHeaderList();
-			this.getRESTServicesWhiteListResponseHeaderList();
-			this.isRESTServices_inoltroBuste_proxyPassReverse();
-			this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
-			
+						
 			// Datasource Wrapped
 			this.isDSOp2UtilsEnabled();
 			
@@ -1614,6 +1609,18 @@ public class OpenSPCoop2Properties {
 					return false;
 				} 
 			}
+			
+			// Trasporto REST / SOAP
+			
+			this.getSOAPServicesUrlParametersForwardConfig();
+			this.getSOAPServicesHeadersForwardConfig(true);
+			this.getSOAPServicesHeadersForwardConfig(false);
+			
+			this.getRESTServicesUrlParametersForwardConfig();
+			this.getRESTServicesHeadersForwardConfig(true);
+			this.getRESTServicesHeadersForwardConfig(false);
+			this.isRESTServices_inoltroBuste_proxyPassReverse();
+			this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
 			
 			return true;
 
@@ -10213,105 +10220,7 @@ public class OpenSPCoop2Properties {
 	
 	
 	
-	/* ------------- REST ---------------------*/
-	
-	private static Boolean getRESTServicesWhiteListRequestHeaderRead = null;
-	private static List<String> getRESTServicesWhiteListRequestHeaderList = null;
-	public List<String> getRESTServicesWhiteListRequestHeaderList() {	
-		if(OpenSPCoop2Properties.getRESTServicesWhiteListRequestHeaderRead==null){
-			try{ 
-				getRESTServicesWhiteListRequestHeaderList = new ArrayList<String>();
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.request.forward");
-				if(name!=null){
-					name = name.trim();
-					String [] split = name.split(",");
-					if(split!=null){
-						for (int i = 0; i < split.length; i++) {
-							getRESTServicesWhiteListRequestHeaderList.add(split[i].trim());
-						}
-					}
-				}
-				
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.request.forward': "+e.getMessage());
-			}    
-		}
 
-		OpenSPCoop2Properties.getRESTServicesWhiteListRequestHeaderRead = true;
-		
-		return OpenSPCoop2Properties.getRESTServicesWhiteListRequestHeaderList;
-	}
-	
-	private static Boolean getRESTServicesWhiteListResponseHeaderRead = null;
-	private static List<String> getRESTServicesWhiteListResponseHeaderList = null;
-	public List<String> getRESTServicesWhiteListResponseHeaderList() {	
-		if(OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeaderRead==null){
-			try{ 
-				getRESTServicesWhiteListResponseHeaderList = new ArrayList<String>();
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.response.forward");
-				if(name!=null){
-					name = name.trim();
-					String [] split = name.split(",");
-					if(split!=null){
-						for (int i = 0; i < split.length; i++) {
-							getRESTServicesWhiteListResponseHeaderList.add(split[i].trim());
-						}
-					}
-				}
-				
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.response.forward': "+e.getMessage());
-			}    
-		}
-
-		OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeaderRead = true;
-		
-		return OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeaderList;
-	}
-	
-	private static Boolean isRESTServices_inoltroBuste_proxyPassReverse = null;
-	public boolean isRESTServices_inoltroBuste_proxyPassReverse() {	
-		if(OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse");
-				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
-					name="false";
-				}
-				name = name.trim();
-				OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage());
-				OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse = false;
-			}    
-		}
-
-		return OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse;
-	}
-	
-	private static Boolean isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = null;
-	public boolean isRESTServices_consegnaContenutiApplicativi_proxyPassReverse() {	
-		if(OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse");
-				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
-					name="false";
-				}
-				name = name.trim();
-				OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage());
-				OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = false;
-			}    
-		}
-
-		return OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse;
-	}
 	
 	/* -------------Datasource Wrapped  ---------------------*/
 	
@@ -10509,6 +10418,948 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione;
+	}
+	
+	
+	
+	/* ------------- REST / SOAP Trasporto Utils ---------------------*/
+	
+	private void _list_add(List<String> tmp, List<String> addList) {
+		if(tmp!=null && tmp.size()>0) {
+			for (String hdr : tmp) {
+				if(addList.contains(hdr)==false) {
+					addList.add(hdr);
+				}
+			}
+		}
+	}
+	
+	/* ------------- SOAP (Trasporto - URLParameters) ---------------------*/
+	
+	private static Boolean isSOAPServicesUrlParametersForward = null;
+	private boolean isSOAPServicesUrlParametersForward(){
+
+		if(OpenSPCoop2Properties.isSOAPServicesUrlParametersForward==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.forward.enable"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isSOAPServicesUrlParametersForward = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.forward.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isSOAPServicesUrlParametersForward = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isSOAPServicesUrlParametersForward = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isSOAPServicesUrlParametersForward;
+	}
+	
+	private static Boolean getSOAPServicesBlackListInternalUrlParametersRead = null;
+	private static List<String> getSOAPServicesBlackListInternalUrlParametersList = null;
+	private List<String> getSOAPServicesBlackListInternalUrlParameters() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListInternalUrlParametersRead==null){
+			try{ 
+				getSOAPServicesBlackListInternalUrlParametersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList.internal");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListInternalUrlParametersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListInternalUrlParametersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList.internal': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListInternalUrlParametersList;
+	}
+	
+	private static Boolean getSOAPServicesBlackListUrlParametersRead = null;
+	private static List<String> getSOAPServicesBlackListUrlParametersList = null;
+	private List<String> getSOAPServicesBlackListUrlParameters() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListUrlParametersRead==null){
+			try{ 
+				getSOAPServicesBlackListUrlParametersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListUrlParametersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListUrlParametersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListUrlParametersList;
+	}
+	
+	private static Boolean getSOAPServicesWhiteListUrlParametersRead = null;
+	private static List<String> getSOAPServicesWhiteListUrlParametersList = null;
+	private List<String> getSOAPServicesWhiteListUrlParameters() {	
+		if(OpenSPCoop2Properties.getSOAPServicesWhiteListUrlParametersRead==null){
+			try{ 
+				getSOAPServicesWhiteListUrlParametersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.whiteList");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesWhiteListUrlParametersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesWhiteListUrlParametersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.whiteList': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesWhiteListUrlParametersList;
+	}
+	
+	private List<String> _getSOAPServicesBlackListUrlParameters() {	
+		
+		List<String> blackList = new ArrayList<>();
+		List<String> tmp = this.getSOAPServicesBlackListInternalUrlParameters();
+		this._list_add(tmp, blackList);
+		tmp = this.getSOAPServicesBlackListUrlParameters();
+		this._list_add(tmp, blackList);
+		
+		return blackList;
+	}
+	private List<String> _getSOAPServicesWhiteListUrlParameters() {	
+		
+		List<String> whiteList = new ArrayList<>();
+		List<String> tmp = this.getSOAPServicesWhiteListUrlParameters();
+		this._list_add(tmp, whiteList);
+		
+		return whiteList;
+	}
+	public ForwardConfig getSOAPServicesUrlParametersForwardConfig() {
+		ForwardConfig f = new ForwardConfig();
+		f.setForwardEnable(this.isSOAPServicesUrlParametersForward());
+		f.setBlackList(_getSOAPServicesBlackListUrlParameters());
+		f.setWhiteList(_getSOAPServicesWhiteListUrlParameters());
+		return f;
+	}
+	
+	
+	
+	
+	/* ------------- SOAP (Trasporto - Headers) ---------------------*/
+	
+	private static Boolean isSOAPServicesHeadersForward = null;
+	private boolean isSOAPServicesHeadersForward(){
+
+		if(OpenSPCoop2Properties.isSOAPServicesHeadersForward==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.forward.enable"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isSOAPServicesHeadersForward = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.forward.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isSOAPServicesHeadersForward = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isSOAPServicesHeadersForward = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isSOAPServicesHeadersForward;
+	}
+	
+	private static Boolean getSOAPServicesBlackListBothInternalHeadersRead = null;
+	private static List<String> getSOAPServicesBlackListBothInternalHeadersList = null;
+	private List<String> getSOAPServicesBlackListBothInternalHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListBothInternalHeadersRead==null){
+			try{ 
+				getSOAPServicesBlackListBothInternalHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.both");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListBothInternalHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListBothInternalHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.both': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListBothInternalHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesBlackListRequestInternalHeadersRead = null;
+	private static List<String> getSOAPServicesBlackListRequestInternalHeadersList = null;
+	private List<String> getSOAPServicesBlackListRequestInternalHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListRequestInternalHeadersRead==null){
+			try{ 
+				getSOAPServicesBlackListRequestInternalHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.request");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListRequestInternalHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListRequestInternalHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.request': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListRequestInternalHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesBlackListResponseInternalHeadersRead = null;
+	private static List<String> getSOAPServicesBlackListResponseInternalHeadersList = null;
+	private List<String> getSOAPServicesBlackListResponseInternalHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListResponseInternalHeadersRead==null){
+			try{ 
+				getSOAPServicesBlackListResponseInternalHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.response");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListResponseInternalHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListResponseInternalHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.response': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListResponseInternalHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesBlackListBothHeadersRead = null;
+	private static List<String> getSOAPServicesBlackListBothHeadersList = null;
+	private List<String> getSOAPServicesBlackListBothHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListBothHeadersRead==null){
+			try{ 
+				getSOAPServicesBlackListBothHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.both");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListBothHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListBothHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.both': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListBothHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesBlackListRequestHeadersRead = null;
+	private static List<String> getSOAPServicesBlackListRequestHeadersList = null;
+	private List<String> getSOAPServicesBlackListRequestHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListRequestHeadersRead==null){
+			try{ 
+				getSOAPServicesBlackListRequestHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.request");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListRequestHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListRequestHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.request': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListRequestHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesBlackListResponseHeadersRead = null;
+	private static List<String> getSOAPServicesBlackListResponseHeadersList = null;
+	private List<String> getSOAPServicesBlackListResponseHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesBlackListResponseHeadersRead==null){
+			try{ 
+				getSOAPServicesBlackListResponseHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.response");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesBlackListResponseHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesBlackListResponseHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.response': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesBlackListResponseHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesWhiteListBothHeadersRead = null;
+	private static List<String> getSOAPServicesWhiteListBothHeadersList = null;
+	private List<String> getSOAPServicesWhiteListBothHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesWhiteListBothHeadersRead==null){
+			try{ 
+				getSOAPServicesWhiteListBothHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.both");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesWhiteListBothHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesWhiteListBothHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.both': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesWhiteListBothHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesWhiteListRequestHeadersRead = null;
+	private static List<String> getSOAPServicesWhiteListRequestHeadersList = null;
+	private List<String> getSOAPServicesWhiteListRequestHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesWhiteListRequestHeadersRead==null){
+			try{ 
+				getSOAPServicesWhiteListRequestHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.request");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesWhiteListRequestHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesWhiteListRequestHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.request': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesWhiteListRequestHeadersList;
+	}
+	
+	private static Boolean getSOAPServicesWhiteListResponseHeadersRead = null;
+	private static List<String> getSOAPServicesWhiteListResponseHeadersList = null;
+	private List<String> getSOAPServicesWhiteListResponseHeaders() {	
+		if(OpenSPCoop2Properties.getSOAPServicesWhiteListResponseHeadersRead==null){
+			try{ 
+				getSOAPServicesWhiteListResponseHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.response");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getSOAPServicesWhiteListResponseHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getSOAPServicesWhiteListResponseHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.response': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getSOAPServicesWhiteListResponseHeadersList;
+	}
+	
+	private List<String> getSOAPServicesBlackListHeaders(boolean request) {	
+		
+		List<String> blackList = new ArrayList<>();
+		List<String> tmp = this.getSOAPServicesBlackListBothInternalHeaders();
+		this._list_add(tmp, blackList);
+		tmp = this.getSOAPServicesBlackListBothHeaders();
+		this._list_add(tmp, blackList);
+		
+		if(request) {
+			tmp = this.getSOAPServicesBlackListRequestInternalHeaders();
+			this._list_add(tmp, blackList);
+			tmp = this.getSOAPServicesBlackListRequestHeaders();
+			this._list_add(tmp, blackList);
+		}
+		else {
+			tmp = this.getSOAPServicesBlackListResponseInternalHeaders();
+			this._list_add(tmp, blackList);
+			tmp = this.getSOAPServicesBlackListResponseHeaders();
+			this._list_add(tmp, blackList);
+		}
+		
+		return blackList;
+	}
+	private List<String> getSOAPServicesWhiteListHeaders(boolean request) {	
+		
+		List<String> whiteList = new ArrayList<>();
+		List<String> tmp = this.getSOAPServicesWhiteListBothHeaders();
+		this._list_add(tmp, whiteList);
+		if(request) {
+			tmp = this.getSOAPServicesWhiteListRequestHeaders();
+			this._list_add(tmp, whiteList);
+		}
+		else {
+			tmp = this.getSOAPServicesWhiteListResponseHeaders();
+			this._list_add(tmp, whiteList);
+		}
+		
+		return whiteList;
+	}
+	public ForwardConfig getSOAPServicesHeadersForwardConfig(boolean request) {
+		ForwardConfig f = new ForwardConfig();
+		f.setForwardEnable(this.isSOAPServicesHeadersForward());
+		f.setBlackList(getSOAPServicesBlackListHeaders(request));
+		f.setWhiteList(getSOAPServicesWhiteListHeaders(request));
+		return f;
+	}
+
+	
+	
+	
+	/* ------------- REST (Trasporto - URLParameters) ---------------------*/
+	
+	private static Boolean isRESTServicesUrlParametersForward = null;
+	private boolean isRESTServicesUrlParametersForward(){
+
+		if(OpenSPCoop2Properties.isRESTServicesUrlParametersForward==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.forward.enable"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isRESTServicesUrlParametersForward = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.forward.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isRESTServicesUrlParametersForward = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isRESTServicesUrlParametersForward = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isRESTServicesUrlParametersForward;
+	}
+	
+	private static Boolean getRESTServicesBlackListInternalUrlParametersRead = null;
+	private static List<String> getRESTServicesBlackListInternalUrlParametersList = null;
+	private List<String> getRESTServicesBlackListInternalUrlParameters() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListInternalUrlParametersRead==null){
+			try{ 
+				getRESTServicesBlackListInternalUrlParametersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList.internal");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListInternalUrlParametersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListInternalUrlParametersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList.internal': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListInternalUrlParametersList;
+	}
+	
+	private static Boolean getRESTServicesBlackListUrlParametersRead = null;
+	private static List<String> getRESTServicesBlackListUrlParametersList = null;
+	private List<String> getRESTServicesBlackListUrlParameters() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListUrlParametersRead==null){
+			try{ 
+				getRESTServicesBlackListUrlParametersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListUrlParametersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListUrlParametersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListUrlParametersList;
+	}
+	
+	private static Boolean getRESTServicesWhiteListUrlParametersRead = null;
+	private static List<String> getRESTServicesWhiteListUrlParametersList = null;
+	private List<String> getRESTServicesWhiteListUrlParameters() {	
+		if(OpenSPCoop2Properties.getRESTServicesWhiteListUrlParametersRead==null){
+			try{ 
+				getRESTServicesWhiteListUrlParametersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.whiteList");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesWhiteListUrlParametersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesWhiteListUrlParametersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.whiteList': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesWhiteListUrlParametersList;
+	}
+		
+	private List<String> _getRESTServicesBlackListUrlParameters() {	
+		
+		List<String> blackList = new ArrayList<>();
+		List<String> tmp = this.getRESTServicesBlackListInternalUrlParameters();
+		this._list_add(tmp, blackList);
+		tmp = this.getRESTServicesBlackListUrlParameters();
+		this._list_add(tmp, blackList);
+		
+		return blackList;
+	}
+	private List<String> _getRESTServicesWhiteListUrlParameters() {	
+		
+		List<String> whiteList = new ArrayList<>();
+		List<String> tmp = this.getRESTServicesWhiteListUrlParameters();
+		this._list_add(tmp, whiteList);
+		
+		return whiteList;
+	}
+	public ForwardConfig getRESTServicesUrlParametersForwardConfig() {
+		ForwardConfig f = new ForwardConfig();
+		f.setForwardEnable(this.isRESTServicesUrlParametersForward());
+		f.setBlackList(_getRESTServicesBlackListUrlParameters());
+		f.setWhiteList(_getRESTServicesWhiteListUrlParameters());
+		return f;
+	}
+	
+	
+	
+	
+	/* ------------- REST (Trasporto - Headers) ---------------------*/
+	
+	private static Boolean isRESTServicesHeadersForward = null;
+	private boolean isRESTServicesHeadersForward(){
+
+		if(OpenSPCoop2Properties.isRESTServicesHeadersForward==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.forward.enable"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isRESTServicesHeadersForward = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.forward.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isRESTServicesHeadersForward = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isRESTServicesHeadersForward = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isRESTServicesHeadersForward;
+	}
+	
+	private static Boolean getRESTServicesBlackListBothInternalHeadersRead = null;
+	private static List<String> getRESTServicesBlackListBothInternalHeadersList = null;
+	private List<String> getRESTServicesBlackListBothInternalHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListBothInternalHeadersRead==null){
+			try{ 
+				getRESTServicesBlackListBothInternalHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.both");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListBothInternalHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListBothInternalHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.both': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListBothInternalHeadersList;
+	}
+	
+	private static Boolean getRESTServicesBlackListRequestInternalHeadersRead = null;
+	private static List<String> getRESTServicesBlackListRequestInternalHeadersList = null;
+	private List<String> getRESTServicesBlackListRequestInternalHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListRequestInternalHeadersRead==null){
+			try{ 
+				getRESTServicesBlackListRequestInternalHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.request");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListRequestInternalHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListRequestInternalHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.request': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListRequestInternalHeadersList;
+	}
+	
+	private static Boolean getRESTServicesBlackListResponseInternalHeadersRead = null;
+	private static List<String> getRESTServicesBlackListResponseInternalHeadersList = null;
+	private List<String> getRESTServicesBlackListResponseInternalHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListResponseInternalHeadersRead==null){
+			try{ 
+				getRESTServicesBlackListResponseInternalHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.response");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListResponseInternalHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListResponseInternalHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.response': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListResponseInternalHeadersList;
+	}
+	
+	private static Boolean getRESTServicesBlackListBothHeadersRead = null;
+	private static List<String> getRESTServicesBlackListBothHeadersList = null;
+	private List<String> getRESTServicesBlackListBothHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListBothHeadersRead==null){
+			try{ 
+				getRESTServicesBlackListBothHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.both");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListBothHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListBothHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.both': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListBothHeadersList;
+	}
+	
+	private static Boolean getRESTServicesBlackListRequestHeadersRead = null;
+	private static List<String> getRESTServicesBlackListRequestHeadersList = null;
+	private List<String> getRESTServicesBlackListRequestHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListRequestHeadersRead==null){
+			try{ 
+				getRESTServicesBlackListRequestHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.request");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListRequestHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListRequestHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.request': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListRequestHeadersList;
+	}
+	
+	private static Boolean getRESTServicesBlackListResponseHeadersRead = null;
+	private static List<String> getRESTServicesBlackListResponseHeadersList = null;
+	private List<String> getRESTServicesBlackListResponseHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesBlackListResponseHeadersRead==null){
+			try{ 
+				getRESTServicesBlackListResponseHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.response");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesBlackListResponseHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesBlackListResponseHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.response': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesBlackListResponseHeadersList;
+	}
+	
+	private static Boolean getRESTServicesWhiteListBothHeadersRead = null;
+	private static List<String> getRESTServicesWhiteListBothHeadersList = null;
+	private List<String> getRESTServicesWhiteListBothHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesWhiteListBothHeadersRead==null){
+			try{ 
+				getRESTServicesWhiteListBothHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.both");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesWhiteListBothHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesWhiteListBothHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.both': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesWhiteListBothHeadersList;
+	}
+	
+	private static Boolean getRESTServicesWhiteListRequestHeadersRead = null;
+	private static List<String> getRESTServicesWhiteListRequestHeadersList = null;
+	private List<String> getRESTServicesWhiteListRequestHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesWhiteListRequestHeadersRead==null){
+			try{ 
+				getRESTServicesWhiteListRequestHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.request");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesWhiteListRequestHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesWhiteListRequestHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.request': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesWhiteListRequestHeadersList;
+	}
+	
+	private static Boolean getRESTServicesWhiteListResponseHeadersRead = null;
+	private static List<String> getRESTServicesWhiteListResponseHeadersList = null;
+	private List<String> getRESTServicesWhiteListResponseHeaders() {	
+		if(OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeadersRead==null){
+			try{ 
+				getRESTServicesWhiteListResponseHeadersList = new ArrayList<String>();
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.response");
+				if(name!=null){
+					name = name.trim();
+					String [] split = name.split(",");
+					if(split!=null){
+						for (int i = 0; i < split.length; i++) {
+							getRESTServicesWhiteListResponseHeadersList.add(split[i].trim());
+						}
+					}
+				}
+				OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeadersRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.response': "+e.getMessage(),e);
+			}    
+		}
+		
+		return OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeadersList;
+	}
+	
+	private List<String> getRESTServicesBlackListHeaders(boolean request) {	
+		
+		List<String> blackList = new ArrayList<>();
+		List<String> tmp = this.getRESTServicesBlackListBothInternalHeaders();
+		this._list_add(tmp, blackList);
+		tmp = this.getRESTServicesBlackListBothHeaders();
+		this._list_add(tmp, blackList);
+		
+		if(request) {
+			tmp = this.getRESTServicesBlackListRequestInternalHeaders();
+			this._list_add(tmp, blackList);
+			tmp = this.getRESTServicesBlackListRequestHeaders();
+			this._list_add(tmp, blackList);
+		}
+		else {
+			tmp = this.getRESTServicesBlackListResponseInternalHeaders();
+			this._list_add(tmp, blackList);
+			tmp = this.getRESTServicesBlackListResponseHeaders();
+			this._list_add(tmp, blackList);
+		}
+		
+		return blackList;
+	}
+	private List<String> getRESTServicesWhiteListHeaders(boolean request) {	
+		
+		List<String> whiteList = new ArrayList<>();
+		List<String> tmp = this.getRESTServicesWhiteListBothHeaders();
+		this._list_add(tmp, whiteList);
+		if(request) {
+			tmp = this.getRESTServicesWhiteListRequestHeaders();
+			this._list_add(tmp, whiteList);
+		}
+		else {
+			tmp = this.getRESTServicesWhiteListResponseHeaders();
+			this._list_add(tmp, whiteList);
+		}
+		
+		return whiteList;
+	}
+	public ForwardConfig getRESTServicesHeadersForwardConfig(boolean request) {
+		ForwardConfig f = new ForwardConfig();
+		f.setForwardEnable(this.isRESTServicesHeadersForward());
+		f.setBlackList(getRESTServicesBlackListHeaders(request));
+		f.setWhiteList(getRESTServicesWhiteListHeaders(request));
+		return f;
+	}
+
+	
+	/* ------------- REST (Trasporto - Headers - Proxy Pass Reverse) ---------------------*/
+	
+	private static Boolean isRESTServices_inoltroBuste_proxyPassReverse = null;
+	public boolean isRESTServices_inoltroBuste_proxyPassReverse() {	
+		if(OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage());
+				OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isRESTServices_inoltroBuste_proxyPassReverse;
+	}
+	
+	private static Boolean isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = null;
+	public boolean isRESTServices_consegnaContenutiApplicativi_proxyPassReverse() {	
+		if(OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage());
+				OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse;
 	}
 }
 

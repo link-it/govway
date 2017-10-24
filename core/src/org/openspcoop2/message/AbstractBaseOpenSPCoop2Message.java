@@ -49,6 +49,7 @@ import org.openspcoop2.message.context.UrlParameters;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.utils.TransportUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
@@ -630,12 +631,61 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		return this.transportResponseContext;
 	}
 	@Override
-	public OpenSPCoop2MessageProperties getForwardTransportHeader(List<String> whiteListHeader) throws MessageException{
-		return this.forwardTransportHeader;
+	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException{
+		try{
+			if(forwardConfig==null || forwardConfig.isForwardEnable()==false) {
+				return this.forwardTransportHeader;
+			}
+			if(this.forwardTransportHeader.isInitialize()==false){
+				
+				Properties transportHeaders = null;
+				if(MessageRole.REQUEST.equals(this.messageRole)){
+					if(this.transportRequestContext!=null){
+						transportHeaders = this.transportRequestContext.getParametersTrasporto();
+					}
+				}
+				else{
+					// vale sia per la risposta normale che fault
+					if(this.transportResponseContext!=null){ 
+						transportHeaders = this.transportResponseContext.getParametersTrasporto();
+					}
+				}
+				
+				if(transportHeaders!=null && transportHeaders.size()>0){
+					TransportUtilities.initializeTransportHeaders(this.forwardTransportHeader, this.messageRole, transportHeaders, forwardConfig);
+					this.forwardTransportHeader.setInitialize(true);
+				}
+			
+			}
+			return this.forwardTransportHeader;
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
 	}
+	
 	@Override
-	public OpenSPCoop2MessageProperties getForwardUrlProperties() throws MessageException{
-		return this.forwardUrlProperties;
+	public OpenSPCoop2MessageProperties getForwardUrlProperties(ForwardConfig forwardConfig) throws MessageException{
+		try{
+			if(forwardConfig==null || forwardConfig.isForwardEnable()==false) {
+				return this.forwardUrlProperties;
+			}
+			if(this.forwardUrlProperties.isInitialize()==false){
+				
+				Properties forwardUrlParamters = null;
+				if(this.transportRequestContext!=null){
+					forwardUrlParamters = this.transportRequestContext.getParametersFormBased();
+				}
+				
+				if(forwardUrlParamters!=null && forwardUrlParamters.size()>0){
+					TransportUtilities.initializeForwardUrlParameters(this.forwardUrlProperties, this.messageRole, forwardUrlParamters, forwardConfig);
+					this.forwardUrlProperties.setInitialize(true);
+				}
+			
+			}
+			return this.forwardUrlProperties;
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
 	}
 	
 	

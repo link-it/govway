@@ -353,10 +353,13 @@ public class RESTCore {
 					if(!isRichiesta && rispostaOk) {
 						MimeMultipart mm = new MimeMultipart(new ByteArrayInputStream(contentRisposta), contentTypeRisposta);
 						MimeMultipart mmAtteso = new MimeMultipart(new ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getMultipartFileName())), contentTypeAttesoRisposta);
+						Reporter.log("BodyParts ["+mm.countBodyParts()+"] == ["+mmAtteso.countBodyParts()+"]");
 						Assert.assertEquals(mm.countBodyParts(),mmAtteso.countBodyParts());
 
 						for(int i = 0; i < mm.countBodyParts(); i++) {
+							Reporter.log("BodyParts["+i+"] ContentType ["+mm.getBodyPart(i).getContentType()+"] == ["+mmAtteso.getBodyPart(i).getContentType()+"]");
 							Assert.assertEquals(mm.getBodyPart(i).getContentType(),mmAtteso.getBodyPart(i).getContentType());
+							Reporter.log("BodyParts["+i+"] Size ["+mm.getBodyPart(i).getSize()+"] == ["+mmAtteso.getBodyPart(i).getSize()+"]");
 							Assert.assertEquals(mm.getBodyPart(i).getSize(),mmAtteso.getBodyPart(i).getSize());
 //							Assert.assertEquals(mm.getBodyPart(i).getContent(),mmAtteso.getBodyPart(i).getContent());
 						}

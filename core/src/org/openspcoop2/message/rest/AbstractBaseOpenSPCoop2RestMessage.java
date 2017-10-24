@@ -24,13 +24,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
-import java.util.List;
-import java.util.Properties;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
-import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.utils.Utilities;
@@ -136,63 +132,6 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 			throw e;
 		}
 		catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
-		}
-	}
-	
-	
-	/* Trasporto */
-
-	
-	@Override
-	public OpenSPCoop2MessageProperties getForwardTransportHeader(List<String> whiteListHeader) throws MessageException{
-		try{
-			if(this.forwardTransportHeader.isInitialize()==false){
-				
-				Properties transportHeaders = null;
-				if(MessageRole.REQUEST.equals(this.messageRole)){
-					if(this.transportRequestContext!=null){
-						transportHeaders = this.transportRequestContext.getParametersTrasporto();
-					}
-				}
-				else{
-					// vale sia per la risposta normale che fault
-					if(this.transportResponseContext!=null){ 
-						transportHeaders = this.transportResponseContext.getParametersTrasporto();
-					}
-				}
-				
-				if(transportHeaders!=null && transportHeaders.size()>0){
-					RestUtilities.initializeTransportHeaders(this.forwardTransportHeader, this.messageRole, transportHeaders, 
-							whiteListHeader);
-					this.forwardTransportHeader.setInitialize(true);
-				}
-			
-			}
-			return this.forwardTransportHeader;
-		}catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
-		}
-	}
-	
-	@Override
-	public OpenSPCoop2MessageProperties getForwardUrlProperties() throws MessageException{
-		try{
-			if(this.forwardUrlProperties.isInitialize()==false){
-				
-				Properties forwardUrlParamters = null;
-				if(this.transportRequestContext!=null){
-					forwardUrlParamters = this.transportRequestContext.getParametersFormBased();
-				}
-				
-				if(forwardUrlParamters!=null && forwardUrlParamters.size()>0){
-					RestUtilities.initializeForwardUrlParameters(this.forwardUrlProperties, this.messageRole, forwardUrlParamters);
-					this.forwardUrlProperties.setInitialize(true);
-				}
-			
-			}
-			return this.forwardUrlProperties;
-		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
 	}

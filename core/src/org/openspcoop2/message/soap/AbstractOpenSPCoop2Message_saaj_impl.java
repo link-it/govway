@@ -42,6 +42,7 @@ import javax.xml.soap.SOAPPart;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.util.WSSecurityUtil;
+import org.openspcoop2.message.ForwardConfig;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.Costanti;
@@ -205,8 +206,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	/* Trasporto */
 	
 	@Override
-	public OpenSPCoop2MessageProperties getForwardTransportHeader(List<String> whiteListHeader) throws MessageException{
-		return new OpenSPCoop2MessageMimeHeaderProperties(this.soapMessage);
+	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException{
+		OpenSPCoop2MessageProperties msg = super.getForwardTransportHeader(forwardConfig);
+		return new OpenSPCoop2MessageMimeHeaderProperties(this.soapMessage,msg);
 	}
 	
 

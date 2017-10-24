@@ -361,10 +361,20 @@ public class Dump {
 				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
 					OpenSPCoop2MessageProperties forwardHeader = null;
 					if(TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio)){
-						forwardHeader = msg.getForwardTransportHeader(this.properties.getRESTServicesWhiteListRequestHeaderList());
+						if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
+							forwardHeader = msg.getForwardTransportHeader(this.properties.getRESTServicesHeadersForwardConfig(true));
+						}
+						else {
+							forwardHeader = msg.getForwardTransportHeader(this.properties.getSOAPServicesHeadersForwardConfig(true));
+						}
 					}
 					else if(TipoMessaggio.RISPOSTA_USCITA.equals(tipoMessaggio)){
-						forwardHeader = msg.getForwardTransportHeader(this.properties.getRESTServicesWhiteListResponseHeaderList());
+						if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
+							forwardHeader = msg.getForwardTransportHeader(this.properties.getRESTServicesHeadersForwardConfig(false));
+						}
+						else {
+							forwardHeader = msg.getForwardTransportHeader(this.properties.getSOAPServicesHeadersForwardConfig(false));
+						}
 					}
 					if(forwardHeader!=null && forwardHeader.size()>0){
 						Enumeration<?> enHdr = forwardHeader.getKeys();

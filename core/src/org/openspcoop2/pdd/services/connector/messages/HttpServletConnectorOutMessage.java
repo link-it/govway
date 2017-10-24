@@ -72,9 +72,14 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void sendResponse(OpenSPCoop2Message msg, boolean consume) throws ConnectorException {
 		try{
-			// Propago eventuali header http (REST-Mode)
-			OpenSPCoop2MessageProperties forwardHeader = 
-					msg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesWhiteListResponseHeaderList());
+			// Propago eventuali header http
+			OpenSPCoop2MessageProperties forwardHeader = null;
+			if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
+				forwardHeader = msg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(false));
+			}
+			else {
+				forwardHeader = msg.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
+			}
 			if(forwardHeader!=null && forwardHeader.size()>0){
 				Enumeration<?> keys = forwardHeader.getKeys();
 				while (keys.hasMoreElements()) {
