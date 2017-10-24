@@ -1,0 +1,117 @@
+package org.openspcoop2.utils.json.validation.test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import org.openspcoop2.utils.json.IJsonSchemaValidator;
+import org.openspcoop2.utils.json.ValidationResponse;
+import org.openspcoop2.utils.json.ValidatorFactory;
+
+import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
+import org.openspcoop2.utils.json.ValidationResponse.ESITO;
+
+public class ValidatorTest {
+
+	private static byte[] schema;
+	private static ExecutorService executor;
+
+	public static void main(String[] args) throws Exception {
+		ValidatorTest.executor = Executors.newFixedThreadPool(100);
+		ValidatorTest.schema = ValidatorTest.loadResource("schema.json");
+		byte[] json2M = ValidatorTest.loadResource("file2M.json");
+		byte[] jsonInvalid = ValidatorTest.loadResource("file1K_invalid.json");
+		byte[] json1K = ValidatorTest.loadResource("file1K.json");
+		byte[] json50K = ValidatorTest.loadResource("file50K.json");
+		byte[] json500K = ValidatorTest.loadResource("file500K.json");
+		
+		List<byte[]> file1K = new ArrayList<byte[]>();
+		file1K.add(json1K);
+
+		List<byte[]> file50K = new ArrayList<byte[]>();
+		file50K.add(json50K);
+
+		List<byte[]> file500K = new ArrayList<byte[]>();
+		file500K.add(json500K);
+
+		List<byte[]> fileNonValidi = new ArrayList<byte[]>();
+		fileNonValidi.add(jsonInvalid);
+
+		List<byte[]> file2M = new ArrayList<byte[]>();
+		file2M.add(json2M);
+
+		for(ApiName name : ApiName.values()) {
+			ValidatorTest.validazioneListaFile("fileNonValidi", name, fileNonValidi, 10000, false);
+			ValidatorTest.validazioneListaFile("file1K", name, file1K, 10000, true);
+			ValidatorTest.validazioneListaFile("file50K", name, file50K, 1000, true);
+			ValidatorTest.validazioneListaFile("file500K", name, file500K, 100, true);
+			ValidatorTest.validazioneListaFile("file2M", name, file2M, 10, true);
+		}
+
+		ValidatorTest.executor.shutdown();
+	}
+
+	private static byte[] loadResource(String resourceName) throws Exception {
+		InputStream is = ValidatorTest.class.getResourceAsStream(resourceName);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		int c = is.read(buf);
+		while(c >=0 ) {
+			baos.write(buf, 0, c);
+			c = is.read(buf);
+		}
+		baos.flush();
+		baos.close();
+		return baos.toByteArray();
+	}
+
+	private static void validazioneListaFile(String testName, ApiName name, List<byte[]> files, int nTimes, boolean expectedSuccess) throws Exception {
+
+		IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(name);
+		validator.setSchema(ValidatorTest.schema);
+
+		List<TestRunner> lst = new ArrayList<TestRunner>();
+		for(byte[] file: files) {
+			for(int i =0; i < nTimes; i++) {
+				lst.add(new TestRunner(validator, file, expectedSuccess));
+			}
+		}
+		long before = System.currentTimeMillis();
+		List<Future<Boolean>> futures = ValidatorTest.executor.invokeAll(lst);
+		for(Future<Boolean> result: futures) {
+			if(!result.get())
+				throw new Exception("Errore validazione con validatore ["+validator.getClass().getName()+"]");
+		}
+		long after = System.currentTimeMillis();
+		System.out.println("test ["+testName+"] validatore["+name+"] Tempo ["+((after-before)/1000.0)+"]");
+	}
+
+	static class TestRunner implements Callable<Boolean> {
+
+		private IJsonSchemaValidator validator;
+		private byte[] instance;
+		private boolean expectedSuccess;
+
+		public TestRunner(IJsonSchemaValidator validator, byte[] instance, boolean expectedSuccess){
+			this.validator = validator;
+			this.instance = instance;
+			this.expectedSuccess = expectedSuccess;
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+			ValidationResponse response = this.validator.validate(this.instance);
+
+			boolean valid = response.getEsito().equals(ESITO.OK);
+			return valid == this.expectedSuccess;
+		}
+
+	}
+
+}
