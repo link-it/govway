@@ -63,10 +63,12 @@
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
+			<include name="jackson/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
 			<include name="jibx/*"/>
 			<include name="jminix/*"/>
+			<include name="json/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="opensaml/*"/>
@@ -76,6 +78,7 @@
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
+			<include name="swagger/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>
 			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>

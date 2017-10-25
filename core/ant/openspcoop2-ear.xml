@@ -761,6 +761,7 @@
 				<include name="commons-io-2.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.5.jar"/>
+				<include name="commons-validator-1.6.jar"/>
 				<include name="commons-beanutils-1.9.2.jar"/> <!--jmx mini console -->
 				<include name="${commons_logging_jar}"/>
 			</zipfileset>
@@ -836,6 +837,18 @@
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/httpcore">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/json">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/jackson">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/wadl">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/swagger">
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/stub/cxf">

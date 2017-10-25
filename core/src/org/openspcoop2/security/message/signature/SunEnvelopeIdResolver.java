@@ -34,6 +34,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.sun.org.apache.xml.internal.security.signature.XMLSignatureInput;
+import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverContext;
 import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverException;
 import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverSpi;
 
@@ -67,6 +68,14 @@ public class SunEnvelopeIdResolver extends ResourceResolverSpi {
     }
 
     @Override
+	public XMLSignatureInput engineResolveURI(ResourceResolverContext context) throws ResourceResolverException {
+    	// The default implementation, to preserve backwards compatibility in the
+        // test cases, calls the old resolver API.
+    	return this.engineResolve(context.attr, context.baseUri);
+    }
+    
+    @SuppressWarnings("deprecation")
+	@Override
 	public XMLSignatureInput engineResolve(Attr uri, String BaseURI) throws ResourceResolverException {
 
         String wsuId = null;
@@ -166,6 +175,13 @@ public class SunEnvelopeIdResolver extends ResourceResolverSpi {
         
     }
 
+    @Override
+	public boolean engineCanResolveURI(ResourceResolverContext context) {
+        // To preserve backward compatibility with existing resolvers that might override the old method,
+        // call the old deprecated API.
+        return this.engineCanResolve( context.attr, context.baseUri );
+    }
+    
     /**
      * This method helps the ResourceResolver to decide whether a
      * ResourceResolverSpi is able to perform the requested action.
@@ -174,7 +190,8 @@ public class SunEnvelopeIdResolver extends ResourceResolverSpi {
      * @param BaseURI
      * @return true if this attribute can be resolved
      */
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
 	public boolean engineCanResolve(Attr uri, String BaseURI) {
         if (uri == null) {
             return false;

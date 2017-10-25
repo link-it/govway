@@ -378,6 +378,18 @@
 			<lib dir="${required_lib}/httpcore">
 				<include name="${pddConsoleRemota_httpcore}"/>
 			</lib>
+			<lib dir="${required_lib}/json">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/jackson">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/wadl">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/swagger">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${dist_pddConsole}">
 				<include name="openspcoop2*.jar" />
 			</lib>
