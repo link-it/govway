@@ -405,7 +405,8 @@
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2.sql"/>
-			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste.sql runtimePdD/RepositoryIdSerial.sql runtimePdD/RepositoryMessaggi.sql DBInfo.sql"/>
+			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste.sql runtimePdD/RepositoryIdSerial.sql runtimePdD/RepositoryMessaggi.sql runtimePdD/Semaphore.sql DBInfo.sql"/>
+			<param name="SQLDataFiles" value="init/runtimePdD/Semaphore_data.sql"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database della Porta di Dominio OpenSPCoop2');"/>
 		</antcall>
 		<antcall target="build_sql_utility">
@@ -416,7 +417,7 @@
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2_drop.sql"/>
-			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste_drop.sql runtimePdD/RepositoryIdSerial_drop.sql runtimePdD/RepositoryMessaggi_drop.sql DBInfo_drop.sql"/>
+			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste_drop.sql runtimePdD/RepositoryIdSerial_drop.sql runtimePdD/RepositoryMessaggi_drop.sql runtimePdD/Semaphore_drop.sql DBInfo_drop.sql"/>
 		</antcall>
 		
 		<!-- Tracce e Diagnostici -->

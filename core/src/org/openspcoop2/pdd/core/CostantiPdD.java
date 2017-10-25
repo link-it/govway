@@ -198,6 +198,10 @@ public class CostantiPdD {
     /** Intervallo per riconsegna messaggi verso ConsegnaContenutiApplicativi */
     public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL = 60; 
     
+    /** Tempi di gestione dei lock da parte del Timer */
+    public final static int TIMER_LOCK_MAX_LIFE = -1; 
+    public final static int TIMER_LOCK_IDLE_TIME = -1; 
+    
 
     /** Identifica il timeout di ricezione sulla connesione jms (5 minuti) */
 	public final static long NODE_RECEIVER_ATTESA_ATTIVA = 5 * 60 * 1000;

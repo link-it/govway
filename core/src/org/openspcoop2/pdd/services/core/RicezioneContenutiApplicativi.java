@@ -121,8 +121,10 @@ import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.pdd.timers.TimerLock;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
@@ -3119,7 +3121,7 @@ public class RicezioneContenutiApplicativi {
 						}
 						String causa = "Aggiornamento dati busta con id ["+idMessageRequest+"] tipo["+tipo+"] non riuscito: "+e.getMessage();
 						try{
-							GestoreMessaggi.acquireLock(msgDiag, causa, propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), propertiesReader.getMsgGiaInProcessamento_CheckInterval());
+							GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock.GESTIONE_REPOSITORY_MESSAGGI),msgDiag, causa, propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), propertiesReader.getMsgGiaInProcessamento_CheckInterval());
 							// errore che puo' avvenire a causa del Timer delle Buste (vedi spiegazione in classe GestoreMessaggi.deleteMessageWithLock)
 							// Si riesegue tutto il codice isRegistrata e update o create con il lock. Stavolta se avviene un errore non e' dovuto al timer.
 							if (repositoryBuste.isRegistrata(idMessageRequest,tipoMessaggio)) {
@@ -3148,7 +3150,7 @@ public class RicezioneContenutiApplicativi {
 							}
 						}finally{
 							try{
-								GestoreMessaggi.releaseLock(msgDiag, causa);
+								GestoreMessaggi.releaseLock(msgRequest,TimerLock.newInstance(TipoLock.GESTIONE_REPOSITORY_MESSAGGI),msgDiag, causa);
 							}catch(Exception eUnlock){}
 						}
 					}

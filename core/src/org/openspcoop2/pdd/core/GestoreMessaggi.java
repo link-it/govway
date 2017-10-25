@@ -64,6 +64,9 @@ import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.pdd.timers.TimerLock;
+import org.openspcoop2.pdd.timers.TimerLockNotAvailableException;
+import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -83,10 +86,15 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.semaphore.Semaphore;
+import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
+import org.openspcoop2.utils.semaphore.SemaphoreLogEventGenerator;
+import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
@@ -5472,9 +5480,31 @@ public class GestoreMessaggi  {
 	 * 
 	 */
 	public void deleteMessageWithLock(String causa, long attesaAttivaLock, int checkIntervalLock) throws GestoreMessaggiException{
+		Connection connectionDB = null;
+		if( (this.openspcoopstate instanceof OpenSPCoopStateful) || (this.oneWayVersione11)) {
+			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
+					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+			connectionDB = stateMSG.getConnectionDB();
+		}
+		
+		Semaphore semaphoreDB = null;
+		TimerLock timerLock = null;
+		try {
+			timerLock = new TimerLock(TipoLock.GESTIONE_REPOSITORY_MESSAGGI);
+		}catch(Exception e){
+			throw new GestoreMessaggiException(e.getMessage(),e);
+		}
 		try{
+			
 			try{
-				GestoreMessaggi.acquireLock(this.msgDiag, causa, attesaAttivaLock, checkIntervalLock);
+				semaphoreDB = this.getSemaphoreByInstance(timerLock.getIdLock());
+			}catch(Exception e){
+				throw new GestoreMessaggiException(e.getMessage(),e);
+			}
+			
+			try{
+				GestoreMessaggi.acquireLock(semaphoreDB, connectionDB, timerLock, 
+						this.msgDiag, causa, attesaAttivaLock, checkIntervalLock);
 			}catch(Exception e){
 				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
@@ -5483,7 +5513,8 @@ public class GestoreMessaggi  {
 
 		}finally{
 			try{
-				GestoreMessaggi.releaseLock(this.msgDiag, causa);
+				GestoreMessaggi.releaseLock(semaphoreDB, connectionDB, timerLock,
+						this.msgDiag, causa);
 			}catch(Exception e){}
 		}
 	}
@@ -5864,6 +5895,56 @@ public class GestoreMessaggi  {
 
 
 	/* ------------- LOCK PER GESTIONE DELETE DI MESSAGGI DUPLICATI IN CONCORRENZA CON L'ELIMINAZIONE DEL TIMER -------------- */
+	
+	private Semaphore getSemaphoreByInstance(String idLock) throws UtilsException {
+		if(this.propertiesReader.isTimerLockByDatabase()) {
+			try{
+				InfoStatistics semaphore_statistics = new InfoStatistics();
+						
+				SemaphoreConfiguration config = newSemaphoreConfiguration(this.propertiesReader.getTimerGestoreMessaggi_lockMaxLife(), 
+						this.propertiesReader.getTimerGestoreMessaggi_lockIdleTime());
+				
+				TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.propertiesReader.getDatabaseType());
+				Semaphore semaphoreDB = new Semaphore(semaphore_statistics, SemaphoreMapping.newInstance(idLock), 
+						config, databaseType, this.log);
+				return semaphoreDB;
+			}catch(Exception e){
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		return null;
+	}
+	private Connection getConnectionByInstance() {
+		Connection connectionDB = null;
+		if( (this.openspcoopstate instanceof OpenSPCoopStateful) || (this.oneWayVersione11)) {
+			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
+					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+			connectionDB = stateMSG.getConnectionDB();
+		}
+		return connectionDB;
+	}
+	
+	public static SemaphoreConfiguration newSemaphoreConfiguration(long maxLife,long idleTime) {
+		
+		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+		Logger logTimers = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
+		
+		SemaphoreConfiguration config = new SemaphoreConfiguration();
+		config.setSerializableTimeWaitMs(propertiesReader.getGestioneSerializableDB_AttesaAttiva());
+		config.setSerializableNextIntervalTimeMs(propertiesReader.getGestioneSerializableDB_CheckInterval());
+		config.setMaxLife(maxLife);
+		config.setMaxIdleTime(idleTime);
+		boolean logEvent = propertiesReader.isTimerLockByDatabaseNotifyLogEnabled();
+		config.setEmitEvent(logEvent);
+		if(logEvent) {
+			config.setEventGenerator(new SemaphoreLogEventGenerator(logTimers));
+		}
+		config.setIdNode(propertiesReader.getClusterId(true));
+		config.setSerializableLevel(false); // in modo da non avere il lock esclusivo sulla tabella, cmq le entries sono inizializzate
+		
+		return config;
+	}
+	
 	private static StringBuffer LOCK = new StringBuffer();
 	private static String LOCK_MODULO = null;
 
@@ -5871,132 +5952,200 @@ public class GestoreMessaggi  {
 	// Inoltre alla scadenza del while non veniva lanciata una eccezione che indicava il timeout per l'acquisizione del lock
 	// When fairness is set true, the semaphore guarantees that threads invoking any of the acquire methods are selected to obtain permits in the order in which their invocation of those methods was processed (first-in-first-out; FIFO)
 	// NOTA: La sincronizzazione non servirebbe. Serve solo per avere maggiori informazioni diagnostiche
+	
+	// Con l'introduzione di più nodi il problema descritto più sopra nella sezione 'ELIMINAZIONE MESSAGGI'
+	// si poteva ripresentare distribuito su più nodi. Per questo motivo l'implementazione del lock è stata distribuita grazie al semaforo implementato su database.
+	// Tale semaforo e' stato poi implementato anche per gli altri timer che pero' non necessitano di una semaforizzazione nel caso non esistano piu' di una istanza di PdD
+	// Questo comporta che la gestione tramite synchronized con lock viene attuata solamente per il timer di eliminazione messaggi che presentava tale problematica.
+	
 	private static final int LOCK_NUMBER_OF_PERMITS = 1;
 	private static final boolean LOCK_FAIR_FIFO = true;
 	private static java.util.concurrent.Semaphore LOCK_SEMAPHORE = new java.util.concurrent.Semaphore(LOCK_NUMBER_OF_PERMITS, LOCK_FAIR_FIFO);
-	public static void acquireLock(MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock) throws InterruptedException{
+	public static void acquireLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock) throws InterruptedException, UtilsException, TimerLockNotAvailableException{
+		acquireLock(gestoreMessaggi.getSemaphoreByInstance(timerLock.getIdLock()), gestoreMessaggi.getConnectionByInstance(), timerLock, 
+				msgDiag, causa, attesaAttivaLock, checkIntervalLock);
+	}
+	public static void acquireLock(Semaphore semaphoreDB, Connection connectionDB, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock) throws InterruptedException, UtilsException, TimerLockNotAvailableException{
 
 		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
-		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneLock.inCorso");
+		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneLock.inCorso");
 
-		synchronized (GestoreMessaggi.LOCK) {
-
-			// NOTA: puo' comunque succedere che un proprietario non esista, quindi non viene stampato il log con proprietario, pero' due thread in parallelo poi
-			//		 chiamano il tryAcquire e quindi solo uno dei due lo prende. L'altro rimane bloccato senza aver emesso il log con precedente proprietario.			
-			if(GestoreMessaggi.LOCK.length()>0){
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, GestoreMessaggi.LOCK.toString());
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCK_ID_MODULO, GestoreMessaggi.LOCK_MODULO);
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneLock.wait.existsOldOwner");
+		if(semaphoreDB!=null) {
+			
+			if(connectionDB==null) {
+				throw new UtilsException("Gestione Lock su db richiede una connessione");
 			}
-			else{
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneLock.wait.withoutOwner");
+			try {
+				if(connectionDB.isClosed()) {
+					throw new UtilsException("Gestione Lock su db richiede una connessione attiva");
+				}
+			}catch(Exception e) {
+				throw new UtilsException("Gestione Lock su db richiede una connessione attiva: "+e.getMessage(),e);
+			}
+			
+			boolean lock = semaphoreDB.newLock(connectionDB, causa);
+			int i=0;
+			while(i<attesaAttivaLock && !lock){
+				try{
+					Thread.sleep(checkIntervalLock);		
+				}catch(Exception e){}
+				i=i+checkIntervalLock;
+				lock = semaphoreDB.newLock(connectionDB, causa);
+			}
+			if(!lock) {
+				String error = "Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms";
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error);
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneLock.nonDisponibile");
+				throw new TimerLockNotAvailableException(error);
 			}
 
 		}
-
-		/*
-		 *  Acquires a permit from this semaphore, if one becomes available within the given waiting time and the current thread has not been interrupted.
-			Acquires a permit, if one is available and returns immediately/
-
-			If no permit is available then the current thread becomes disabled for thread scheduling purposes and lies dormant until one of three things happens:
-			- Some other thread invokes the release() method for this semaphore and the current thread is next to be assigned a permit; or
-			- Some other thread interrupts the current thread; or
-			- The specified waiting time elapses. 
-
-			If a permit is acquired then the value true is returned.
-
-			If the current thread:
-			- has its interrupted status set on entry to this method; or
-			- is interrupted while waiting to acquire a permit, 
-			then InterruptedException is thrown and the current thread's interrupted status is cleared.
-
-			If the specified waiting time elapses then the value false is returned. If the time is less than or equal to zero, the method will not wait at all. 
-		 */
-		boolean lockAcquired = LOCK_SEMAPHORE.tryAcquire(attesaAttivaLock, TimeUnit.MILLISECONDS);
-		if(lockAcquired==false){
-			throw new InterruptedException("Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+")");
+		else {
+		
+			if(TipoLock.GESTIONE_REPOSITORY_MESSAGGI.equals(timerLock.getTipoLock())) {
+			
+				synchronized (GestoreMessaggi.LOCK) {
+		
+					// NOTA: puo' comunque succedere che un proprietario non esista, quindi non viene stampato il log con proprietario, pero' due thread in parallelo poi
+					//		 chiamano il tryAcquire e quindi solo uno dei due lo prende. L'altro rimane bloccato senza aver emesso il log con precedente proprietario.			
+					if(GestoreMessaggi.LOCK.length()>0){
+						msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, GestoreMessaggi.LOCK.toString());
+						msgDiag.addKeyword(CostantiPdD.KEY_LOCK_ID_MODULO, GestoreMessaggi.LOCK_MODULO);
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneLock.wait.existsOldOwner");
+					}
+					else{
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneLock.wait.withoutOwner");
+					}
+		
+				}
+		
+				/*
+				 *  Acquires a permit from this semaphore, if one becomes available within the given waiting time and the current thread has not been interrupted.
+					Acquires a permit, if one is available and returns immediately/
+		
+					If no permit is available then the current thread becomes disabled for thread scheduling purposes and lies dormant until one of three things happens:
+					- Some other thread invokes the release() method for this semaphore and the current thread is next to be assigned a permit; or
+					- Some other thread interrupts the current thread; or
+					- The specified waiting time elapses. 
+		
+					If a permit is acquired then the value true is returned.
+		
+					If the current thread:
+					- has its interrupted status set on entry to this method; or
+					- is interrupted while waiting to acquire a permit, 
+					then InterruptedException is thrown and the current thread's interrupted status is cleared.
+		
+					If the specified waiting time elapses then the value false is returned. If the time is less than or equal to zero, the method will not wait at all. 
+				 */
+				boolean lockAcquired = LOCK_SEMAPHORE.tryAcquire(attesaAttivaLock, TimeUnit.MILLISECONDS);
+				if(lockAcquired==false){
+					throw new InterruptedException("Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+")");
+				}
+		
+				GestoreMessaggi.LOCK.append(causa);
+				GestoreMessaggi.LOCK_MODULO = msgDiag.getFunzione();
+				
+			}
+			
 		}
 
-		GestoreMessaggi.LOCK.append(causa);
-		GestoreMessaggi.LOCK_MODULO = msgDiag.getFunzione();
-
-		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneLock.ok");
+		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneLock.ok");
 
 	}
 
-	public static void releaseLock(MsgDiagnostico msgDiag,String causa) throws InterruptedException{
+	public static void updateLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
+		updateLock(gestoreMessaggi.getSemaphoreByInstance(timerLock.getIdLock()), gestoreMessaggi.getConnectionByInstance(), timerLock, msgDiag, causa);
+	}
+	public static void updateLock(Semaphore semaphoreDB,  Connection connectionDB, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
+		
+		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
+		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "updateLock.inCorso");
 
-		// Esiste solo un thread attivo, grazie al semaforo
-		// metto il synchronized per garantire il log consistente sopra
+		if(semaphoreDB!=null) {
+			
+			if(connectionDB==null) {
+				throw new UtilsException("Gestione Lock su db richiede una connessione");
+			}
+			try {
+				if(connectionDB.isClosed()) {
+					throw new UtilsException("Gestione Lock su db richiede una connessione attiva");
+				}
+			}catch(Exception e) {
+				throw new UtilsException("Gestione Lock su db richiede una connessione attiva: "+e.getMessage(),e);
+			}
+			
+			boolean unlock = semaphoreDB.updateLock(connectionDB, causa);
+			if(!unlock) {
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "updateLock.ko");
+				throw new InterruptedException(msgDiag.getMessaggio_replaceKeywords("all", "updateLock.ko"));
+			}
+		}
+		else {
+		
+			// nop
+			//aggiornamento non previsto con implementazione singleton
+			
+		}
+		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "updateLock.ok");
+		
+	}
+	
+	public static void releaseLock(GestoreMessaggi gestoreMessaggi, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
+		releaseLock(gestoreMessaggi.getSemaphoreByInstance(timerLock.getIdLock()), gestoreMessaggi.getConnectionByInstance(), timerLock, msgDiag, causa);
+	}
+	public static void releaseLock(Semaphore semaphoreDB,  Connection connectionDB, TimerLock timerLock,
+			MsgDiagnostico msgDiag,String causa) throws InterruptedException, UtilsException{
 
 		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
-		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneUnlock.inCorso");
+		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneUnlock.inCorso");
 
-		if( ! (GestoreMessaggi.LOCK.length()>0) ){
-			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneUnlock.ko");
-			throw new InterruptedException(msgDiag.getMessaggio_replaceKeywords("all", "deleteMessage.acquisizioneUnlock.ko"));
+		if(semaphoreDB!=null) {
+			
+			if(connectionDB==null) {
+				throw new UtilsException("Gestione Lock su db richiede una connessione");
+			}
+			try {
+				if(connectionDB.isClosed()) {
+					throw new UtilsException("Gestione Lock su db richiede una connessione attiva");
+				}
+			}catch(Exception e) {
+				throw new UtilsException("Gestione Lock su db richiede una connessione attiva: "+e.getMessage(),e);
+			}
+			
+			boolean unlock = semaphoreDB.releaseLock(connectionDB, causa);
+			if(!unlock) {
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneUnlock.ko");
+				throw new InterruptedException(msgDiag.getMessaggio_replaceKeywords("all", "acquisizioneUnlock.ko"));
+			}
 		}
-
-		synchronized (GestoreMessaggi.LOCK) {	
-			GestoreMessaggi.LOCK.delete(0, GestoreMessaggi.LOCK.length());
-			GestoreMessaggi.LOCK_MODULO = null;
+		else {
+		
+			if(TipoLock.GESTIONE_REPOSITORY_MESSAGGI.equals(timerLock.getTipoLock())) {
+			
+				// Esiste solo un thread attivo, grazie al semaforo
+				// metto il synchronized per garantire il log consistente sopra
+				
+				if( ! (GestoreMessaggi.LOCK.length()>0) ){
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneUnlock.ko");
+					throw new InterruptedException(msgDiag.getMessaggio_replaceKeywords("all", "acquisizioneUnlock.ko"));
+				}
+		
+				synchronized (GestoreMessaggi.LOCK) {	
+					GestoreMessaggi.LOCK.delete(0, GestoreMessaggi.LOCK.length());
+					GestoreMessaggi.LOCK_MODULO = null;
+				}
+				LOCK_SEMAPHORE.release();
+				
+			}
+			
 		}
-		LOCK_SEMAPHORE.release();
-		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneUnlock.ok");
+		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "acquisizioneUnlock.ok");
 
 	}
 
-
-
-	//	public static void lock(MsgDiagnostico msgDiag,String causa,long attesaAttivaLock,int checkIntervalLock){
-	//		
-	//		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
-	//		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneLock.inCorso");
-	//			
-	//		long scadenzaWhile = DateManager.getTimeMillis() + attesaAttivaLock;
-	//		while( DateManager.getTimeMillis() < scadenzaWhile  ){
-	//		
-	//			synchronized (GestoreMessaggi.LOCK) {
-	//			
-	//				if(GestoreMessaggi.LOCK.length()>0){
-	//					// attesa attiva
-	//					msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, GestoreMessaggi.LOCK.toString());
-	//					msgDiag.addKeyword(CostantiPdD.KEY_LOCK_ID_MODULO, GestoreMessaggi.LOCK_MODULO);
-	//					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneLock.ko");
-	//				}
-	//				else{
-	//					GestoreMessaggi.LOCK.append(causa);
-	//					GestoreMessaggi.LOCK_MODULO = msgDiag.getFunzione();
-	//					break;
-	//				}
-	//				
-	//			}
-	//				
-	//			try{
-	//				Thread.sleep(checkIntervalLock);
-	//			}catch(Exception eRandom){}
-	//				
-	//		}
-	//			
-	//		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneLock.ok");
-	//	}
-	//	
-	//	public static void unlock(MsgDiagnostico msgDiag,String causa) throws Exception{
-	//		
-	//		msgDiag.addKeyword(CostantiPdD.KEY_LOCK_CAUSALE, causa);
-	//		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneUnlock.inCorso");
-	//		
-	//		synchronized (GestoreMessaggi.LOCK) {
-	//				
-	//			if( ! (GestoreMessaggi.LOCK.length()>0) ){
-	//				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneUnlock.ko");
-	//				throw new Exception(msgDiag.getMessaggio_replaceKeywords("all", "deleteMessage.acquisizioneUnlock.ko"));
-	//			}
-	//			
-	//			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_ALL, "deleteMessage.acquisizioneUnlock.ok");
-	//			GestoreMessaggi.LOCK.delete(0, GestoreMessaggi.LOCK.length());
-	//			GestoreMessaggi.LOCK_MODULO = null;
-	//			
-	//		}
-	//	}
 }

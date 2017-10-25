@@ -209,6 +209,9 @@ public class ClientTest {
 			log.info("\n\n==========================================");
 			log.info("Test 1. Idle:Infinito MaxLife:Infinito");
 			String applicativeId = null;
+			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
+				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
+			}
 			test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, -1, SERIALIZABLE);
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
@@ -221,16 +224,19 @@ public class ClientTest {
 			infoStat.clear();
 						
 			log.info("\n\n==========================================");
-			log.info("Test 2. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero2-NOSerializable");
-			
+			log.info("Test 2a. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero2-NOSerializable");
 			applicativeId = "TestNumero2-NOSerializable";
 			init(con, tipoDatabase, applicativeId);
 			test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, -1, READ_COMMITTED);
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
+			log.info("\n\n==========================================");
+			log.info("Test 2b. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero2-Serializable");
 			applicativeId = "TestNumero2-Serializable";
-			// init(con, tipoDatabase, applicativeId); La init non serve con serializable
+			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
+				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
+			}
 			test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, -1, SERIALIZABLE);
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
@@ -242,16 +248,19 @@ public class ClientTest {
 			infoStat.clear();
 						
 			log.info("\n\n==========================================");
-			log.info("Test 3. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero3");
-			
+			log.info("Test 3a. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero3-NOSerializable");		
 			applicativeId = "TestNumero3-NOSerializable";
 			init(con, tipoDatabase, applicativeId);
 			test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, -1, READ_COMMITTED);
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
+			log.info("\n\n==========================================");
+			log.info("Test 3b. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero3-Serializable");
 			applicativeId = "TestNumero3-Serializable";
-			// init(con, tipoDatabase, applicativeId); La init non serve con serializable
+			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
+				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
+			}
 			test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, -1, SERIALIZABLE);
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
@@ -262,8 +271,7 @@ public class ClientTest {
 			infoStat.clear();
 						
 			log.info("\n\n==========================================");
-			log.info("Test 4. Idle:Infinito MaxLife:100ms ApplicativeId:TestNumero4");
-			
+			log.info("Test 4a. Idle:Infinito MaxLife:100ms ApplicativeId:TestNumero4-NoSerializable");
 			applicativeId = "TestNumero4-NoSerializable";
 			init(con, tipoDatabase, applicativeId);
 			boolean foundError = false;
@@ -283,8 +291,12 @@ public class ClientTest {
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
+			log.info("\n\n==========================================");
+			log.info("Test 4b. Idle:Infinito MaxLife:100ms ApplicativeId:TestNumero4-Serializable");
 			applicativeId = "TestNumero4-Serializable";
-			//init(con, tipoDatabase, applicativeId);  La init non serve con serializable
+			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
+				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
+			}
 			foundError = false;
 			try {
 				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, 105, -1, SERIALIZABLE);
@@ -308,13 +320,12 @@ public class ClientTest {
 			infoStat.clear();
 						
 			log.info("\n\n==========================================");
-			log.info("Test 5. Idle:133ms MaxLife:Infinito ApplicativeId:TestNumero5");
-			
+			log.info("Test 5a. Idle:38ms MaxLife:Infinito ApplicativeId:TestNumero5-NOSerializable");			
 			applicativeId = "TestNumero5-NOSerializable";
 			init(con, tipoDatabase, applicativeId);
 			foundError = false;
 			try {
-				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 133, READ_COMMITTED);
+				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 38, READ_COMMITTED);
 			}catch(Throwable e) {
 				foundError = true;
 				log.info("Errore Atteso: "+e.getMessage());
@@ -323,17 +334,21 @@ public class ClientTest {
 				throw new Exception("Atteso errore di idle time, errore non rilevato");
 			}
 			logContent = FileSystemUtilities.readFile(logFile);
-			if(logContent.contains("Idle Time (133ms) exceeded")==false) {
+			if(logContent.contains("Idle Time (38ms) exceeded")==false) {
 				throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
 			}
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
+			log.info("\n\n==========================================");
+			log.info("Test 5b. Idle:42s MaxLife:Infinito ApplicativeId:TestNumero5-Serializable");			
 			applicativeId = "TestNumero5-Serializable";
-			//init(con, tipoDatabase, applicativeId); La init non serve con serializable
+			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
+				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
+			}
 			foundError = false;
 			try {
-				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 132, SERIALIZABLE);
+				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 42, SERIALIZABLE);
 			}catch(Throwable e) {
 				foundError = true;
 				log.info("Errore Atteso: "+e.getMessage());
@@ -342,7 +357,7 @@ public class ClientTest {
 				throw new Exception("Atteso errore di idle time, errore non rilevato");
 			}
 			logContent = FileSystemUtilities.readFile(logFile);
-			if(logContent.contains("Idle Time (132ms) exceeded")==false) {
+			if(logContent.contains("Idle Time (42ms) exceeded")==false) {
 				throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
 			}
 			printInfos(infoStat);

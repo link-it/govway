@@ -1025,13 +1025,17 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"erroreGenericoMalfunzionamentoPdD",
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"transactionManager.validityCheckError",
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"connessioneUscita.disconnectError",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"deleteMessage.acquisizioneLock.inCorso",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"deleteMessage.acquisizioneLock.wait.withoutOwner",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"deleteMessage.acquisizioneLock.wait.existsOldOwner",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"deleteMessage.acquisizioneLock.ok",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"deleteMessage.acquisizioneUnlock.inCorso",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"deleteMessage.acquisizioneUnlock.ok",
-		MsgDiagnosticiProperties.MSG_DIAG_ALL+"deleteMessage.acquisizioneUnlock.ko"
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneLock.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneLock.wait.withoutOwner",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneLock.wait.existsOldOwner",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneLock.ok",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneLock.nonDisponibile",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneUnlock.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneUnlock.ok",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"acquisizioneUnlock.ko",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"updateLock.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"updateLock.ok",
+		MsgDiagnosticiProperties.MSG_DIAG_ALL+"updateLock.ko"
 	};
 	
 	private final static String PREFIX_MSG_DIAGNOSTICO = "org.openspcoop2.pdd.msgdiagnostico.";
