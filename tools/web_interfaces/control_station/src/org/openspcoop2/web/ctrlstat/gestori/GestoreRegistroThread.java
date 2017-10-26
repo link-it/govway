@@ -35,7 +35,6 @@ import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 import javax.xml.ws.BindingProvider;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -57,6 +56,7 @@ import org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.all
 import org.openspcoop2.core.registry.ws.client.portadominio.all.PortaDominioSoap11Service;
 import org.openspcoop2.core.registry.ws.client.soggetto.all.SoggettoSoap11Service;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
@@ -80,6 +80,7 @@ import org.openspcoop2.web.lib.queue.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.queue.dao.FilterParameter;
 import org.openspcoop2.web.lib.queue.dao.Operation;
 import org.openspcoop2.web.lib.queue.dao.Parameter;
+import org.slf4j.Logger;
 
 /**
  * GestoreRegistroThread
@@ -215,10 +216,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 				}
 
 				// Attendo tempi di delay (TransazioneSimilXA)
-				try {
-					Thread.sleep(CostantiControlStation.INTERVALLO_TRANSAZIONE_XA);
-				} catch (InterruptedException e) {
-				}
+				Utilities.sleep(CostantiControlStation.INTERVALLO_TRANSAZIONE_XA);
 
 				// Ricezione Operazione
 				Object objOp;
@@ -1002,7 +1000,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 				}
 				this.log.error("GestoreRegistro: Riscontrato errore durante la gestione di una richiesta: " + e.toString(), e);
 				try {
-					Thread.sleep(5000);
+					Utilities.sleep(5000);
 					this.log.debug("GestoreRegistro: Re-Inizializzazione Receiver ...");
 					try {
 						this.receiver.close();
@@ -1135,11 +1133,8 @@ public class GestoreRegistroThread extends GestoreGeneral {
 				trovato = true;
 			} catch (Exception e) {
 				i = i + 10000;
-				try {
-					Thread.sleep(10000);
-					this.log.debug("Ritento Inizializzazione Receiver ... causa: " + e.getMessage());
-				} catch (Exception et) {
-				}
+				Utilities.sleep(10000);
+				this.log.debug("Ritento Inizializzazione Receiver ... causa: " + e.getMessage());
 			}
 		}
 
@@ -1239,9 +1234,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 		int timeout = 60;
 		for (int i = 0; i < timeout; i++) {
 			if(this.isRunning()){
-				try{
-					Thread.sleep(1000);
-				}catch(Exception e){}
+				Utilities.sleep(1000);
 			}
 			else{
 				break;

@@ -29,6 +29,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
@@ -204,9 +205,7 @@ public class GestorePdDInitThread extends Thread {
 			int timeout = 60;
 			for (int i = 0; i < timeout; i++) {
 				if(gestore.isRunning()){
-					try{
-						Thread.sleep(1000);
-					}catch(Exception e){}
+					Utilities.sleep(1000);
 				}
 				else{
 					break;

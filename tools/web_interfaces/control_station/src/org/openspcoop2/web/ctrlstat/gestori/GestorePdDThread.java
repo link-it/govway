@@ -53,6 +53,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
@@ -218,10 +219,7 @@ public class GestorePdDThread extends GestoreGeneral {
 				}
 
 				// Attendo tempi di delay (TransazioneSimilXA)
-				try {
-					Thread.sleep(CostantiControlStation.INTERVALLO_TRANSAZIONE_XA);
-				} catch (InterruptedException e) {
-				}
+				Utilities.sleep(CostantiControlStation.INTERVALLO_TRANSAZIONE_XA);
 
 				// Ricezione Operazione
 				Object objOp;
@@ -915,7 +913,7 @@ public class GestorePdDThread extends GestoreGeneral {
 				this.log.error(this.nomeThread + ": Riscontrato errore durante la gestione di una richiesta: " + e.toString());
 				this.log.debug(this.nomeThread + " : Eccezione :", e);
 				try {
-					Thread.sleep(5000);
+					Utilities.sleep(5000);
 					this.log.debug(this.nomeThread + ": Re-Inizializzazione Receiver ...");
 					try {
 						this.receiver.close();
@@ -1044,11 +1042,8 @@ public class GestorePdDThread extends GestoreGeneral {
 				trovato = true;
 			} catch (Exception e) {
 				i = i + 10000;
-				try {
-					Thread.sleep(10000);
-					this.log.debug("Ritento Inizializzazione Receiver [" + this.nomeThread + "] ... causa: " + e.getMessage());
-				} catch (Exception et) {
-				}
+				Utilities.sleep(10000);
+				this.log.debug("Ritento Inizializzazione Receiver [" + this.nomeThread + "] ... causa: " + e.getMessage());
 			}
 		}
 

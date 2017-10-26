@@ -182,6 +182,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.Credential;
@@ -4562,9 +4563,7 @@ public class RicezioneBuste {
 
 								}
 
-								try{
-									Thread.sleep(propertiesReader.getMsgGiaInProcessamento_CheckInterval());
-								}catch(Exception eRandom){}
+								Utilities.sleep(propertiesReader.getMsgGiaInProcessamento_CheckInterval());
 								millisecondiTrascorsi = millisecondiTrascorsi + propertiesReader.getMsgGiaInProcessamento_CheckInterval();
 
 							}
@@ -6758,9 +6757,7 @@ public class RicezioneBuste {
 						" della gestione della richiesta");
 			}
 
-			try{
-				Thread.sleep(checkInterval);
-			}catch(Exception eRandom){}
+			Utilities.sleep(checkInterval);
 		}
 		return attendiTerminazioneRichiesta;
 	}
@@ -6858,9 +6855,7 @@ public class RicezioneBuste {
 						" della gestione della ricevuta alla richiesta");
 			}
 
-			try{
-				Thread.sleep(checkInterval);
-			}catch(Exception eRandom){}
+			Utilities.sleep(checkInterval);
 		}
 
 		return attendiTerminazioneRicevutaRichiesta;

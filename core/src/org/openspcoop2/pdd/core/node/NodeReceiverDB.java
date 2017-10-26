@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Classe utilizzata per la ricezione di messaggi contenuti nell'architettura di OpenSPCoop (versione DB).
@@ -223,9 +224,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 					}
 					
 					msgDiag.highDebug("Sleep...");
-					try{
-						Thread.sleep(checkInterval);
-					}catch(Exception e){}
+					Utilities.sleep(checkInterval);
 					attesa = attesa + checkInterval;
 
 				}else{

@@ -651,10 +651,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					trovato = true;
 				} else {
 					count += 10000;
-					try{
-						Thread.sleep(10000);
-					}catch(InterruptedException ie)
-					{}
+					Utilities.sleep(10000);
 				}
 			}
 
@@ -1514,9 +1511,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			// Inizializzazione delle risorse esterne terminata
 			OpenSPCoop2Startup.initialize = true;
-			try{
-				Thread.sleep(1000);
-			}catch(Exception e){}
+			Utilities.sleep(1000);
 
 
 
@@ -1559,8 +1554,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							gestoreBusteNonRiscontrate = true;
 						}catch(Exception e){
 							this.logError("Search EJB gestore riscontri non trovato: "+e.getMessage(),e);
-							try{
-								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+							try {
+								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}
 							continue;
 						}
@@ -1578,7 +1573,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}catch(Exception e){
 							this.logError("Search EJB gestore messaggi non trovato: "+e.getMessage(),e);
 							try{
-								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}
 							continue;
 						}
@@ -1596,7 +1591,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}catch(Exception e){
 							this.logError("Search EJB pulizia messaggi anomali non trovato: "+e.getMessage(),e);
 							try{
-								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}
 							continue;
 						}
@@ -1615,7 +1610,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}catch(Exception e){
 							this.logError("Search EJB gestore repository non trovato: "+e.getMessage(),e);
 							try{
-								Thread.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 							}catch(Exception eRandom){}
 							continue;
 						}
@@ -1940,9 +1935,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}catch (Throwable e) {}
 		
 		// Attendo qualche secondo
-		try{
-			Thread.sleep(2000);
-		}catch(Exception e){}
+		Utilities.sleep(2000);
 	}
 
 

@@ -21,6 +21,8 @@
 
 package org.openspcoop2.pdd.core.threshold;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * @author Fabio Tronci (tronci@link.it)
  * @author $Author$
@@ -30,11 +32,7 @@ public class ThreadsUtils {
 
 	/** attesa */
 	public static void attesa(long millis){
-		try {
-			Thread.sleep(millis);
-		}catch (Exception e) {
-			System.out.println(e);
-		}
+		Utilities.sleep(millis);
 	}
 
 }

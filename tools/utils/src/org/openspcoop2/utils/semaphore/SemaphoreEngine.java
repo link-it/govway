@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
@@ -507,7 +508,7 @@ public class SemaphoreEngine {
 					
 					int sleep = (new java.util.Random()).nextInt(intervalloDestro);
 					//System.out.println("Sleep: "+sleep);
-					Thread.sleep(sleep); // random
+					Utilities.sleep(sleep); // random
 				}catch(Exception eRandom){}
 			}
 		}

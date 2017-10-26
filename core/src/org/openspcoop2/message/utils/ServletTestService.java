@@ -386,19 +386,13 @@ public class ServletTestService extends HttpServlet {
 					int resto = millisecond%1000;
 					this.log.info("sleep "+millisecond+"ms ...");
 					for (int i = 0; i < count; i++) {
-						try{
-							Thread.sleep(1000);
-						}catch(Exception e){}
+						Utilities.sleep(1000);
 					}
-					try{
-						Thread.sleep(resto);
-					}catch(Exception e){}
+					Utilities.sleep(resto);
 					this.log.info("sleep "+millisecond+"ms terminated");
 				}else{
 					this.log.info("sleep "+millisecond+"ms ...");
-					try{
-						Thread.sleep(millisecond);
-					}catch(Exception e){}
+					Utilities.sleep(millisecond);
 					this.log.info("sleep "+millisecond+"ms terminated");
 				}
 			}
@@ -424,19 +418,13 @@ public class ServletTestService extends HttpServlet {
 					int resto = sleepInteger%1000;
 					this.log.info("sleep "+sleepInteger+"ms ...");
 					for (int i = 0; i < count; i++) {
-						try{
-							Thread.sleep(1000);
-						}catch(Exception e){}
+						Utilities.sleep(1000);
 					}
-					try{
-						Thread.sleep(resto);
-					}catch(Exception e){}
+					Utilities.sleep(resto);
 					this.log.info("sleep "+sleepInteger+"ms terminated");
 				}else{
 					this.log.info("sleep "+sleepInteger+"ms ...");
-					try{
-						Thread.sleep(sleepInteger);
-					}catch(Exception e){}
+					Utilities.sleep(sleepInteger);
 					this.log.info("sleep "+sleepInteger+"ms terminated");
 				}
 			}	

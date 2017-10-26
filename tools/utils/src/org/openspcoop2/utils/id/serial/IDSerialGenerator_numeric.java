@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -301,7 +302,7 @@ public class IDSerialGenerator_numeric {
 					
 					int sleep = (new java.util.Random()).nextInt(intervalloDestro);
 					//System.out.println("Sleep: "+sleep);
-					Thread.sleep(sleep); // random
+					Utilities.sleep(sleep); // random
 				}catch(Exception eRandom){}
 			}
 		}

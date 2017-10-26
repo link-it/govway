@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -106,9 +107,7 @@ public class TimerGestorePuliziaMessaggiAnomaliImpl implements SessionBean, Time
 		int attesa = 90;
 		int secondi = 0;
 		while( (OpenSPCoop2Startup.initialize==false) && (secondi<attesa) ){
-			try{
-				Thread.sleep(1000);
-			}catch(Exception e){}
+			Utilities.sleep(1000);
 			secondi++;
 		}
 		if(secondi>= 90){
@@ -225,11 +224,9 @@ public class TimerGestorePuliziaMessaggiAnomaliImpl implements SessionBean, Time
 						 * Aggiungo una sleep di 5 secondi per far provocare il LOCK sopra presente, per le altre istanze di timer
 						 * in modo da avere solamente una istanza in esecuzione
 						 */
-						try{
-							for (int i = 0; i < 10; i++) {
-								Thread.sleep(500);
-							}
-						}catch(Exception eSleep){}
+						for (int i = 0; i < 10; i++) {
+							Utilities.sleep(500);
+						}
 					}
 				}
 			}
@@ -323,9 +320,7 @@ public class TimerGestorePuliziaMessaggiAnomaliImpl implements SessionBean, Time
 				this.deployFromOpenSPCoop = true;	    
 				this.msgDiag.logPersonalizzato("avvioInCorso");
 				this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
-				try{
-					Thread.sleep(1000); // tempo necessario per un corretto avvio in JBoss 4.0.3...
-				}catch(Exception e){}
+				Utilities.sleep(1000); // tempo necessario per un corretto avvio in JBoss 4.0.3...
 				Date now = DateManager.getDate();
 				long timeout = 1000 * this.timeout;
 				try {

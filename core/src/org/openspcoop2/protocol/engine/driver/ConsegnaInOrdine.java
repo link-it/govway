@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -518,7 +519,7 @@ public class ConsegnaInOrdine  {
 				if(nextSequenceOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Thread.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
+						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
 					}catch(Exception eRandom){}
 				}
 			}

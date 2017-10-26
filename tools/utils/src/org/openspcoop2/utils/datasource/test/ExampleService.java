@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 
@@ -132,11 +133,7 @@ public class ExampleService extends HttpServlet {
 				
 				// simulo attivita con sleep
 				System.out.println(prefix+"Recuperate connessioni dalla configurazione, sleep 10s ...");
-				try{
-					Thread.sleep(10000);
-				}catch(Exception e){
-					
-				}
+				Utilities.sleep(10000);
 				
 				// metodo equivalente a getWrappedConnection(), 
 				// NOTA: utilizzabile solo se il ds è stato creato con setWrapOriginalMethods(true)
@@ -148,11 +145,7 @@ public class ExampleService extends HttpServlet {
 				
 				// simulo altra attivita con sleep
 				System.out.println(prefix+"Recuperate connessioni dalla runtime, sleep 20s ...");
-				try{
-					Thread.sleep(20000);
-				}catch(Exception e){
-					
-				}
+				Utilities.sleep(20000);
 				
 			}
 			finally{

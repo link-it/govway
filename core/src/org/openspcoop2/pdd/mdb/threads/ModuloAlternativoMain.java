@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.threshold.ThreadsUtils;
 import org.openspcoop2.pdd.mdb.GenericLibException;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * @author Fabio Tronci (tronci@link.it)
@@ -67,12 +68,7 @@ public class ModuloAlternativoMain extends Thread {
 	private boolean inizializza(){
 		/* ------------ Controllo inizializzazione OpenSPCoop -------------------- */
 		while( OpenSPCoop2Startup.initialize == false ){
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return false;
-			}
+			Utilities.sleep(250);
 		}
 		
 		try {	

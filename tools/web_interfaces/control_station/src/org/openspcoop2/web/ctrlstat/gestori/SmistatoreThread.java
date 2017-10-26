@@ -36,9 +36,9 @@ import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 import javax.naming.InitialContext;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
@@ -56,6 +56,7 @@ import org.openspcoop2.web.lib.queue.QueueParameter;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
 import org.openspcoop2.web.lib.queue.costanti.TipoOperazione;
+import org.slf4j.Logger;
 
 /**
  * SmistatoreThread
@@ -197,10 +198,7 @@ public class SmistatoreThread extends Thread {
 				trovato = true;
 			} catch (Exception e) {
 				i = i + 10000;
-				try {
-					Thread.sleep(10000);
-				} catch (Exception et) {
-				}
+				Utilities.sleep(10000);
 			}
 		}
 
@@ -430,7 +428,7 @@ public class SmistatoreThread extends Thread {
 				}
 				SmistatoreThread.log.error("Smistatore: Riscontrato erroreJMS durante la gestione di una richiesta: " + e.toString());
 				try {
-					Thread.sleep(5000);
+					Utilities.sleep(5000);
 					SmistatoreThread.log.debug("Smistatore: Re-Inizializzazione Receiver ...");
 					try {
 						receiver.close();
@@ -510,9 +508,7 @@ public class SmistatoreThread extends Thread {
 		int timeout = 60;
 		for (int i = 0; i < timeout; i++) {
 			if(this.isRunning()){
-				try{
-					Thread.sleep(1000);
-				}catch(Exception e){}
+				Utilities.sleep(1000);
 			}
 			else{
 				break;

@@ -129,7 +129,7 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 				while(initialize==false && i<limit){
 					try{
 						Thread.sleep(1000);
-					}catch(Exception e){}
+					}catch(Throwable e){}
 					
 					o = openspcoop2Startup.getField("initializeLog").get(null);
 					if(o!=null){
@@ -262,7 +262,7 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 				int secondiRimasti = ((30000-i)/1000);
 				if(secondiRimasti>0)
 					System.out.println("Attendo undeploy della Porta di Dominio (ancora "+secondiRimasti+" secondi)...");
-			}catch(Exception e){}
+			}catch(Throwable e){}
 		}
 		System.out.println("Undeploy OpenSPCoop2 Pools ...");
 				

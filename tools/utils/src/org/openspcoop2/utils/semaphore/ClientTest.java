@@ -571,9 +571,7 @@ public class ClientTest {
 					}
 				}
 				if(tmpTerminated==false){
-					try{
-						Thread.sleep(250);
-					}catch(Exception e){}
+					Utilities.sleep(250);
 				}
 				else{
 					terminated = true;
@@ -724,9 +722,7 @@ class ClientTestThread implements Runnable{
 						
 			boolean lock = false;
 			for (int i=0; i < ClientTest.CICLI_LOCK_PER_THREAD; i++) {
-				try {
-					Thread.sleep(50);
-				}catch(Exception e) {}
+				Utilities.sleep(50);
 				lock = this.semaphore.newLock(this.con, "[Thread-"+this.index+"] new lock (tentativo:"+i+")..."); 
 				if(lock) {
 					break;
@@ -739,9 +735,7 @@ class ClientTestThread implements Runnable{
 			this.lockAcquisito = true;
 			
 			for (int j = 0; j < 5; j++) {
-				try {
-					Thread.sleep(50);
-				}catch(Exception e) {}
+				Utilities.sleep(50);
 				lock = this.semaphore.updateLock(this.con, "[Thread-"+this.index+"] update lock iterazione-"+j+" ..."); 
 				if(lock==false) {
 					//throw new UtilsException("Lock non aggiornato (iterazione-"+j+")");
@@ -750,9 +744,7 @@ class ClientTestThread implements Runnable{
 				this.lockAggiornamenti++;
 			}
 			
-			try {
-				Thread.sleep(50);
-			}catch(Exception e) {}
+			Utilities.sleep(50);
 			
 			lock = this.semaphore.releaseLock(this.con, "[Thread-"+this.index+"] new lock..."); 
 			if(lock==false) {

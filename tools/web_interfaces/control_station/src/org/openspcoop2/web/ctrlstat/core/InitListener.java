@@ -30,6 +30,7 @@ import javax.servlet.ServletContextListener;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.message.xml.XMLDiff;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
@@ -88,9 +89,7 @@ public class InitListener implements ServletContextListener {
 			int limite = 60;
 			int index = 0;
 			while(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione && index<limite){
-				try{
-					Thread.sleep(1000);
-				}catch(Exception e){}
+				Utilities.sleep(1000);
 				index++;
 			}
 		}

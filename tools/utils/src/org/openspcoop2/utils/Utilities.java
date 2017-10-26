@@ -54,7 +54,20 @@ import org.apache.xml.security.utils.RFC2253Parser;
 
 public class Utilities {
 
+
 	
+	// ** Thread Sleep **
+	public static void sleep(long ms) {
+		try {
+			Thread.sleep(ms);
+		}catch(Throwable t) {
+			// ignore
+		}
+	}
+	
+	
+
+
 	/** ArrayBuffer utilizzato per la lettura */
 	public static final int DIMENSIONE_BUFFER = 65536;
 	

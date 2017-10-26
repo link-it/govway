@@ -321,7 +321,7 @@ public class IDSerialGenerator_alphanumeric {
 					
 					int sleep = (new java.util.Random()).nextInt(intervalloDestro);
 					//System.out.println("Sleep: "+sleep);
-					Thread.sleep(sleep); // random
+					Utilities.sleep(sleep); // random
 				}catch(Exception eRandom){}
 			}
 		}

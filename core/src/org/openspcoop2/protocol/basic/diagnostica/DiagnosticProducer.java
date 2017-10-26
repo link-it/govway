@@ -913,9 +913,7 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 						break;
 					}
 					
-					try{
-						Thread.sleep(50);
-					}catch(Exception e){}
+					Utilities.sleep(50);
 					
 					tentativi++;
 					

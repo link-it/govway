@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
 
@@ -170,19 +171,13 @@ public class ConnettoreStresstest extends ConnettoreBase {
 						int resto = sleep%1000;
 						this.logger.info("sleep "+sleep+"ms ...",false);
 						for (int i = 0; i < count; i++) {
-							try{
-								Thread.sleep(1000);
-							}catch(Exception e){}
+							Utilities.sleep(1000);
 						}
-						try{
-							Thread.sleep(resto);
-						}catch(Exception e){}
+						Utilities.sleep(resto);
 						this.logger.info("sleep "+sleep+"ms terminated", false);
 					}else{
 						this.logger.info("sleep "+sleep+"ms ...", false);
-						try{
-							Thread.sleep(sleep);
-						}catch(Exception e){}
+						Utilities.sleep(sleep);
 						this.logger.info("sleep "+sleep+"ms terminated", false);
 					}
 				}
@@ -195,19 +190,13 @@ public class ConnettoreStresstest extends ConnettoreBase {
 							int resto = millisecond%1000;
 							this.logger.info("sleep "+millisecond+"ms ...", false);
 							for (int i = 0; i < count; i++) {
-								try{
-									Thread.sleep(1000);
-								}catch(Exception e){}
+								Utilities.sleep(1000);
 							}
-							try{
-								Thread.sleep(resto);
-							}catch(Exception e){}
+							Utilities.sleep(resto);
 							this.logger.info("sleep "+millisecond+"ms terminated", false);
 						}else{
 							this.logger.info("sleep "+millisecond+"ms ...", false);
-							try{
-								Thread.sleep(millisecond);
-							}catch(Exception e){}
+							Utilities.sleep(millisecond);
 							this.logger.info("sleep "+millisecond+"ms terminated", false);
 						}
 					}

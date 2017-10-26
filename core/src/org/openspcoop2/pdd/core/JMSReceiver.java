@@ -34,6 +34,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.JMSObject;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Classe utilizzata per ricevere messaggi JMS dai componenti dell'architettura di OpenSPCoop.
@@ -200,9 +201,7 @@ public class JMSReceiver {
 						this.qmanager.releaseResource(this.codicePorta,this.idModulo,resource);
 					}
 					
-					try{
-						Thread.sleep(checkInterval);
-					}catch(Exception e){}
+					Utilities.sleep(checkInterval);
 					attesa = attesa + checkInterval;
 					
 					if(this.singleConnection==false){

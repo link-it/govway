@@ -25,6 +25,7 @@ import java.sql.DriverManager;
 import java.util.Date;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sonde.Sonda.StatoSonda;
 import org.openspcoop2.utils.sonde.impl.SondaBatch;
 import org.openspcoop2.utils.sonde.impl.SondaCoda;
@@ -182,14 +183,14 @@ public class ClientTest {
 			System.out.println("Test 1 batch ok. Descrizione: " + stato.getDescrizione());
 		}
 
-		Thread.sleep(1200);
+		Utilities.sleep(1200);
 
 		{
 			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di warn
 			checkStato(sondaName, 1, stato);
 			System.out.println("Test 2 batch ok. Descrizione: " + stato.getDescrizione());
 		}
-		Thread.sleep(1200);
+		Utilities.sleep(1200);
 
 		{
 			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di error

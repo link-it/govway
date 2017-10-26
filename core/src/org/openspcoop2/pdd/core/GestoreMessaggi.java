@@ -82,6 +82,7 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -2040,7 +2041,7 @@ public class GestoreMessaggi  {
 					if(getProprietarioOK == false){
 						// Per aiutare ad evitare conflitti
 						try{
-							Thread.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
+							Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
 						}catch(Exception eRandom){}
 					}
 				}
@@ -3959,7 +3960,7 @@ public class GestoreMessaggi  {
 				if(deleteDestinatarioOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Thread.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
+						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
 					}catch(Exception eRandom){}
 				}
 			}
@@ -4067,7 +4068,7 @@ public class GestoreMessaggi  {
 				if(deleteRiferimentoMsgOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Thread.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
+						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
 					}catch(Exception eRandom){}
 				}
 
@@ -5988,9 +5989,7 @@ public class GestoreMessaggi  {
 			boolean lock = semaphoreDB.newLock(connectionDB, causa);
 			int i=0;
 			while(i<attesaAttivaLock && !lock){
-				try{
-					Thread.sleep(checkIntervalLock);		
-				}catch(Exception e){}
+				Utilities.sleep(checkIntervalLock);
 				i=i+checkIntervalLock;
 				lock = semaphoreDB.newLock(connectionDB, causa);
 			}

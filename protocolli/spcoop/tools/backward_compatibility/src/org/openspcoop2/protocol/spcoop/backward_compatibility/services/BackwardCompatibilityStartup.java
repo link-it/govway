@@ -26,6 +26,7 @@ import javax.servlet.ServletContextListener;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.CodeMapping;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * BackwardCompatibilityStartup
@@ -49,9 +50,7 @@ public class BackwardCompatibilityStartup implements ServletContextListener {
 		int maxWait = 500;
 		int i = 0;
 		while(OpenSPCoop2Properties.getInstance()==null && i<maxWait ){
-			try{
-				Thread.sleep(200);
-			}catch(Exception e){}
+			Utilities.sleep(200);
 			i++;
 		}
 		try{

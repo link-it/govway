@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
@@ -110,9 +111,7 @@ public class ControlStationLogger {
 			int i=0;
 			int limit = 60;
 			while(OpenSPCoop2Startup.initialize==false && i<limit){
-				try{
-					Thread.sleep(1000);
-				}catch(Exception e){}
+				Utilities.sleep(1000);
 				i++;
 				if(i%10==0){
 					System.out.println("[PddConsole] Attendo inizializzazione PdDOpenSPCoop ...");

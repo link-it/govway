@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
 
@@ -180,10 +181,10 @@ public class TransactionManager {
 						msgDiag.highDebug("Rilascio connessione per TransactionManager");
 						dbManager.releaseResource(dominio,idModuloTransaction,resource);
 					}
-					try{
-						//Thread.sleep((new java.util.Random()).nextInt(properties.getTransactionManager_CheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
-						Thread.sleep(properties.getTransactionManager_CheckInterval());
-					}catch(Exception eRandom){}
+					//try {
+						//Utilities.sleep((new java.util.Random()).nextInt(properties.getTransactionManager_CheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+					//}catch(Exception eRandom){}
+					Utilities.sleep(properties.getTransactionManager_CheckInterval());
 				}
 				else if(proprietarioMessaggio.equals(idModulo)){
 					msgDiag.highDebug("Messaggio per il modulo ["+idModulo+"]: proprietario["+proprietarioMessaggio+"] OK");
@@ -250,9 +251,7 @@ public class TransactionManager {
 						msgDiag.highDebug("Rilascio connessione per TransactionManager");
 						dbManager.releaseResource(dominio,idModuloTransaction,resource);
 					}
-					try{
-						Thread.sleep(properties.getTransactionManager_CheckInterval());
-					}catch(Exception eRandom){}
+					Utilities.sleep(properties.getTransactionManager_CheckInterval());
 				}
 
 			}

@@ -363,7 +363,7 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 						}
 						try{
 							Thread.sleep(this.checkIntervalSessioniAllocate);
-						}catch(Exception eSleep){}
+						}catch(Throwable eSleep){}
 					}	*/				
 					
 					// Rilascio risorse

@@ -677,9 +677,7 @@ public class ClientTest {
 					}
 				}
 				if(tmpTerminated==false){
-					try{
-						Thread.sleep(250);
-					}catch(Exception e){}
+					Utilities.sleep(250);
 				}
 				else{
 					terminated = true;

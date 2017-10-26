@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import javax.naming.RefAddr;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jmx.RisorseJMXException;
@@ -271,11 +272,9 @@ public class DataSourceFactory {
 					System.out.println(bf.toString());
 				}
 				System.out.println("Wait close connection ("+count+"/"+total+") ...");
-				try{
-					Thread.sleep(sleep);
-					index = index + sleep;
-					count++;
-				}catch(Exception e){}
+				Utilities.sleep(sleep);
+				index = index + sleep;
+				count++;
 			}
 			else{
 				waitCloseConnection = false;

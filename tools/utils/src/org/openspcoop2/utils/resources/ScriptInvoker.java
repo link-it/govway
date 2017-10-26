@@ -23,6 +23,7 @@ package org.openspcoop2.utils.resources;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -74,9 +75,7 @@ public class ScriptInvoker {
 			boolean terminated = false;
 			while(terminated == false){
 				try{
-					try{
-						Thread.sleep(500);
-					}catch(Exception e){}
+					Utilities.sleep(500);
 					this.exitValue = processStatus.exitValue();
 					terminated = true;
 				}catch(java.lang.IllegalThreadStateException exit){}

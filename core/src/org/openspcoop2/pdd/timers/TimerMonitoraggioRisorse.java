@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.slf4j.Logger;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Thread per la gestione del monitoraggio delle risorse
@@ -307,9 +308,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 			if(this.stop==false){
 				int i=0;
 				while(i<this.propertiesReader.getControlloRisorseCheckInterval()){
-					try{
-						Thread.sleep(1000);		
-					}catch(Exception e){}
+					Utilities.sleep(1000);		
 					if(this.stop){
 						break; // thread terminato, non lo devo far piu' dormire
 					}

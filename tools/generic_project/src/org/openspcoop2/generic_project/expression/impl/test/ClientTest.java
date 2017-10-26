@@ -66,6 +66,7 @@ import org.openspcoop2.generic_project.expression.impl.test.beans.Version;
 import org.openspcoop2.generic_project.expression.impl.test.constants.EnumerationDouble;
 import org.openspcoop2.generic_project.expression.impl.test.constants.EnumerationString;
 import org.openspcoop2.generic_project.expression.impl.test.constants.EnumerationWrapperPrimitiveInt;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -861,9 +862,7 @@ public class ClientTest {
 		expr.equals(Book.model().VERSION.NUMBER, "3.0");
 		System.out.println("- test 2: "+ClientTest.toString(expr));
 		
-		try{
-			Thread.sleep(100);
-		}catch(Exception e){}
+		Utilities.sleep(100);
 		expr.equals(Book.model().REISSUE.DATE, new Date());
 		expr.equals(Book.model().REISSUE.NUMBER, "3.0");
 		System.out.println("- test 3: "+ClientTest.toString(expr));

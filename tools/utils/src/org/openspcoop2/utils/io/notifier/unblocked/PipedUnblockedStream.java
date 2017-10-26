@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
 /**
@@ -63,10 +64,8 @@ public class PipedUnblockedStream extends InputStream {
 	private void readWaitBytes() throws IOException{
 		int i = 0;
 		while(this.stop==false && this.bout!=null && this.bout.size()==0 && i<ITERAZIONI_WAIT){
-			try{
-				Thread.sleep((i+1));
-				i = i + i;
-			}catch(Exception e){}
+			Utilities.sleep((i+1));
+			i = i + i;
 		}
 		if(i>=ITERAZIONI_WAIT){
 			throw new IOException("Timeout, no bytes available for read");
@@ -262,10 +261,8 @@ public class PipedUnblockedStream extends InputStream {
 	private void writeWaitEmptyBuffer() throws IOException{
 		int i = 0;
 		while(this.stop==false && this.bout.size()>0 && i<ITERAZIONI_WAIT){
-			try{
-				Thread.sleep((i+1));
-				i = i + i;
-			}catch(Exception e){}
+			Utilities.sleep((i+1));
+			i = i + i;
 		}
 		if(i>=ITERAZIONI_WAIT){
 			throw new IOException("Timeout, no buffer available for write");

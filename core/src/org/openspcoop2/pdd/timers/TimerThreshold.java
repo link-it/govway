@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -165,9 +166,7 @@ public class TimerThreshold extends Thread{
 		if(this.stop==false){
 			int i=0;
 			while(i<this.propertiesReader.getRepositoryThresholdCheckInterval()){
-				try{
-					Thread.sleep(1000);		
-				}catch(Exception e){}
+				Utilities.sleep(1000);
 				if(this.stop){
 					break; // thread terminato, non lo devo far piu' dormire
 				}

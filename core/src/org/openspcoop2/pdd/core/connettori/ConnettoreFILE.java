@@ -43,6 +43,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.DynamicStringReplace;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -651,24 +652,18 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 					int resto = millisecond%tempoSingoloSleepMs;
 					this.logger.info("Wait "+millisecond+"ms ...", false);
 					for (int i = 0; i < count; i++) {
-						try{
-							Thread.sleep(tempoSingoloSleepMs);
-						}catch(Exception e){}
+						Utilities.sleep(tempoSingoloSleepMs);
 						if(file.exists()){
 							break;
 						}
 					}
 					if(!file.exists()){
-						try{
-							Thread.sleep(resto);
-						}catch(Exception e){}
+						Utilities.sleep(resto);
 					}
 					this.logger.info("Wait "+millisecond+"ms terminated", false);
 				}else{
 					this.logger.info("Wait "+millisecond+"ms ...", false);
-					try{
-						Thread.sleep(tempoSingoloSleepMs);
-					}catch(Exception e){}
+					Utilities.sleep(tempoSingoloSleepMs);
 					this.logger.info("Wait "+millisecond+"ms terminated", false);
 				}
 				
