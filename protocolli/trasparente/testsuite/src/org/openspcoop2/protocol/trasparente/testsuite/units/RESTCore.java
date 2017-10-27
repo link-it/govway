@@ -46,6 +46,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -144,7 +145,9 @@ public class RESTCore {
 		
 		if(!isDelegata) {
 			try {
-				Thread.sleep(2000); // in modo da dare il tempo al servizio di Testsuite di fare l'update delle tracce
+				//Thread.sleep(2000); // in modo da dare il tempo al servizio di Testsuite di fare l'update delle tracce
+				// provo a ridurre il tempo di sleep, per far terminare prima la testsuite
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -283,13 +286,32 @@ public class RESTCore {
 			Properties propertiesURLBased = new Properties();
 			propertiesURLBased.put("checkEqualsHttpMethod", this.method.name());
 			propertiesURLBased.put("checkEqualsHttpHeader", nomeHeaderHttpInviato + ":" + valoreHeaderRichiesto);
-			propertiesURLBased.put("returnHttpHeader", nomeHeaderHttpDaRicevere +":" + valoreHeaderHttpDaRicevere);
+			
+			boolean redirect = false;
 			
 			if(returnCodeAtteso != 200) {
-				propertiesURLBased.put("returnCode", returnCodeAtteso + "");
+				if(returnCodeAtteso==301 || returnCodeAtteso==303  || returnCodeAtteso==304|| returnCodeAtteso==307) {
+					// gli altri return code (302) li gestisco normali per vedere cmq di essere trasparente
+					redirect = true;
+					propertiesURLBased.put("redirect", "true");
+					propertiesURLBased.put("redirectReturnCode", returnCodeAtteso+"");
+					if(returnCodeAtteso==303) {
+						propertiesURLBased.put("redirectContext", "altroContestoApplicativo/test");
+					}
+					else if(returnCodeAtteso==304) {
+						propertiesURLBased.put("redirectContext", "/");
+					}
+				}
+				else {
+					propertiesURLBased.put("returnCode", returnCodeAtteso + "");
+				}
 			}
 
-			if(contenutoRisposta) {
+			if(!redirect) {
+				propertiesURLBased.put("returnHttpHeader", nomeHeaderHttpDaRicevere +":" + valoreHeaderHttpDaRicevere);
+			}
+			
+			if(!redirect && contenutoRisposta) {
 				if(rispostaOk) {
 					if(!tipoTest.equals("multi") || !isRichiesta) {
 						propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRisposta());
@@ -301,7 +323,14 @@ public class RESTCore {
 				}
 			}
 			
-			String urlDaUtilizzare = TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, bf.toString());
+			String urlBase = bf.toString();
+			if(returnCodeAtteso==307) {
+				// Aggiungo ulteriori path per verificare proxyPass
+				if(urlBase.endsWith("/")==false) {
+					urlBase = urlBase + "/ALTRO/PARAMETRO";
+				}
+			}
+			String urlDaUtilizzare = TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
 
 			request.setUrl(urlDaUtilizzare);
 			
@@ -317,14 +346,45 @@ public class RESTCore {
 			Reporter.log("["+idMessaggio+"] Atteso ["+returnCodeAtteso+"] ritornato ["+httpResponse.getResultHTTPOperation()+"]");
 			Assert.assertTrue(returnCodeAtteso == httpResponse.getResultHTTPOperation());
 			
+			// Controllo risposta redirect
+			if(redirect) {
+				String location = httpResponse.getHeader(HttpConstants.REDIRECT_LOCATION);
+				Assert.assertTrue(location!=null);
+				String urlBaseSenzaHostPort = urlBase.substring(urlBase.indexOf("/openspcoop2/"), urlBase.length());
+				String urlAttesa = null;
+				
+				if(returnCodeAtteso==303) {
+					urlAttesa = "/altroContestoApplicativo/test";
+				}
+				else if(returnCodeAtteso==304) {
+					urlAttesa = "/";
+				}
+				else {
+					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new Properties(), urlBaseSenzaHostPort);
+				}
+				
+				if(returnCodeAtteso!=303 && returnCodeAtteso!=304) {
+					Reporter.log("Location ["+location+"] atteso ["+urlAttesa+"] verifico uguaglianza");
+					Assert.assertTrue(location.equals(urlAttesa)); // verifico proxyPassReverse
+				}
+				else {
+					// verifico proxyPassReverse non abbia fatto modifiche essendo un contesto diverso
+					Reporter.log("Location ["+location+"] atteso ["+urlAttesa+"] verifico termina come atteso");
+					Assert.assertTrue(!location.equals(urlAttesa)); 
+					Assert.assertTrue(location.endsWith(urlAttesa)); 
+				}
+			}
+			
 			// Controllo header di risposta atteso
-			String headerRispostaRitornatoValore = httpResponse.getHeader(nomeHeaderHttpDaRicevere);
-			Reporter.log("["+idMessaggio+"] Atteso Header ["+nomeHeaderHttpDaRicevere+"] con valore atteso ["+valoreHeaderHttpDaRicevere+"] e valore ritornato ["+headerRispostaRitornatoValore+"]");
-			Assert.assertTrue(headerRispostaRitornatoValore!=null);
-			Assert.assertTrue(headerRispostaRitornatoValore.equals(valoreHeaderHttpDaRicevere));
+			if(!redirect) {
+				String headerRispostaRitornatoValore = httpResponse.getHeader(nomeHeaderHttpDaRicevere);
+				Reporter.log("["+idMessaggio+"] Atteso Header ["+nomeHeaderHttpDaRicevere+"] con valore atteso ["+valoreHeaderHttpDaRicevere+"] e valore ritornato ["+headerRispostaRitornatoValore+"]");
+				Assert.assertTrue(headerRispostaRitornatoValore!=null);
+				Assert.assertTrue(headerRispostaRitornatoValore.equals(valoreHeaderHttpDaRicevere));
+			}
 			
 			// Controllo risposta
-			if(contenutoRisposta){
+			if(!redirect && contenutoRisposta){
 				
 				byte[] contentAttesoRisposta = rispostaOk ? fileEntry.getBytesRichiesta(): fileEntry.getBytesRispostaKo();
 				String contentTypeAttesoRisposta = contentType != null ? contentType : (rispostaOk) ? fileEntry.getExtRisposta(): fileEntry.getExtRispostaKo();

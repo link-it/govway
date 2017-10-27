@@ -546,6 +546,13 @@ public class HttpUtilities {
 			httpConn.setConnectTimeout(request.getConnectTimeout());
 			httpConn.setReadTimeout(request.getReadTimeout());
 			
+			if(request.getFollowRedirects()!=null) {
+				httpConn.setInstanceFollowRedirects(request.getFollowRedirects());
+			}
+			else {
+				httpConn.setInstanceFollowRedirects(false);
+			}
+			
 			if(request.getUsername()!=null && request.getPassword()!=null){
 				String authentication = request.getUsername() + ":" + request.getPassword();
 				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + 

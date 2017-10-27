@@ -84,22 +84,38 @@ public class DataProviderUtils {
 	 * contentTypeXML Con Con
 	 */
 	public static Object[][] contentTypeXMLConCon(){
-		Object[] jsonLst = contentTypeXMLLst();
-		Object[] returnCodeLst = returnCodeConCon();
+		return contentTypeXMLConCon(false);
+	}
+	public static Object[][] contentTypeXMLConCon(boolean redirect){
+		Object[] xmlLst = contentTypeXMLLst();
+		Object[] returnCodeLst = null;
+		if(redirect) {
+			returnCodeLst = returnCodeRedirect();
+		}
+		else {
+			returnCodeLst = returnCodeConCon();
+		}
 		
-		
-		return getDataProvider(jsonLst, returnCodeLst);
+		return getDataProvider(xmlLst, returnCodeLst);
 	}
 
 	/**
 	 * contentTypeXML Con Senza
 	 */
 	public static Object[][] contentTypeXMLConSenza(){
-		Object[] jsonLst = contentTypeXMLLst();
-		Object[] returnCodeLst = returnCodeConSenza();
-		
-		
-		return getDataProvider(jsonLst, returnCodeLst);
+		return contentTypeXMLConSenza(false);
+	}
+	public static Object[][] contentTypeXMLConSenza(boolean redirect){
+		Object[] xmlLst = contentTypeXMLLst();
+		Object[] returnCodeLst = null;
+		if(redirect) {
+			returnCodeLst = returnCodeRedirect();
+		}
+		else {
+			returnCodeLst = returnCodeConSenza();
+		}
+				
+		return getDataProvider(xmlLst, returnCodeLst);
 	}
 
 	private static Object[][] getDataProvider(Object[] jsonLst, Object[] returnCodeLst) {
@@ -148,12 +164,28 @@ public class DataProviderUtils {
 
 	}
 	
+	public static Object[][] responseCodeRedirect() {
+		Object[] returnCodeLst = returnCodeRedirect();
+		Object[][] returned = new Object[returnCodeLst.length][1];
+		
+		int i = 0;
+		for(Object rc: returnCodeLst) {
+			returned[i++][0] = rc;
+		}
+		return returned;
+
+	}
+	
 	private static Object[] returnCodeConCon() {
 		return new Object[] {200, 400, 403, 500, 501};
 	}
-	
+		
 	private static Object[] returnCodeConSenza() {
 		return new Object[] {202, 400, 403, 500, 501};
+	}
+	
+	private static Object[] returnCodeRedirect() {
+		return new Object[] {301, 302, 303, 304, 307};
 	}
 	
 	private static Object[] contentTypeJSONLst(){

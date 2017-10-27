@@ -39,7 +39,17 @@ public class HttpRequest extends AbstractHttp {
 	
 	private HttpRequestMethod method;
 	
+	private Boolean followRedirects;
 	
+	
+	public Boolean getFollowRedirects() {
+		return this.followRedirects;
+	}
+
+	public void setFollowRedirects(Boolean followRedirects) {
+		this.followRedirects = followRedirects;
+	}
+
 	public String getUrl() {
 		return this.url;
 	}

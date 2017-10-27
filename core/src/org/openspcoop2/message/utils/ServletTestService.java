@@ -54,6 +54,8 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
 /**
@@ -176,6 +178,92 @@ public class ServletTestService extends HttpServlet {
 				if("chunked".equals(chunkedValue)){
 					chunked = true;
 				}
+			}
+			
+			
+			
+			
+			// opzioni redirect
+			String redirectOptions = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirect");
+			boolean redirect = false;
+			if(redirectOptions!=null){
+				redirectOptions = redirectOptions.trim();
+				if("true".equals(redirectOptions))
+					redirect = true;
+			}
+			if(redirect) {
+				Properties p = new Properties();
+				
+				Integer returnCode = 307;
+				String returnCodeOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectReturnCode");
+				if(returnCodeOpt!=null) {
+					returnCode = Integer.parseInt(returnCodeOpt.trim());
+					p.put("redirectReturnCode", returnCode+"");
+				}
+				
+				String protocol = "http";
+				String protocolOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectProtocol");
+				if(protocolOpt!=null) {
+					protocol = protocolOpt.trim();
+					p.put("redirectProtocol", protocol);
+				}
+				
+				String host = "localhost";
+				String hostOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHost");
+				if(hostOpt!=null) {
+					host = hostOpt.trim();
+					p.put("redirectHost", host);
+				}
+				
+				String port = "8080";
+				String portOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectPort");
+				if(portOpt!=null) {
+					port = portOpt.trim();
+					p.put("redirectPort", port);
+				}
+				
+				String contesto = req.getRequestURI();
+				String contestoOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectContext");
+				if(contestoOpt!=null) {
+					contesto = contestoOpt.trim();
+					if(contesto.startsWith("/")==false) {
+						contesto = "/" + contesto;
+					}
+					p.put("redirectContext", contesto);
+				}
+				
+				Integer maxHop = 1;
+				String maxOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectMaxHop");
+				if(maxOpt!=null) {
+					maxHop = Integer.parseInt(maxOpt.trim());
+					p.put("redirectMaxHop", maxHop+"");
+				}
+				
+				Integer hop = 1;
+				String hopOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHop");
+				if(hopOpt!=null) {
+					hop = Integer.parseInt(hopOpt.trim());
+					p.put("redirectHop", hop+"");
+				}
+				
+				if(hop<maxHop) {
+					p.remove("redirectHop");
+					p.put("redirectHop", (hop+1)+"");
+					p.put("redirect", "true");
+				}
+				else {
+					// terminato redirect hop
+					p.clear();
+				}
+				
+				String redirectUrl = protocol+"://"+host+":"+port+contesto;
+				redirectUrl = TransportUtils.buildLocationWithURLBasedParameter(p, redirectUrl, this.log);
+				
+				res.setHeader(HttpConstants.REDIRECT_LOCATION,redirectUrl);
+			
+				res.setStatus(returnCode);
+				
+				return;
 			}
 			
 			

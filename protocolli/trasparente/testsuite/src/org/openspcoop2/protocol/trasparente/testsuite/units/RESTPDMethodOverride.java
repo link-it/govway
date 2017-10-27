@@ -135,6 +135,14 @@ public class RESTPDMethodOverride {
 		return DataProviderUtils.contentTypeXMLConSenza();
 	}
 
+	/**
+	 * Redirect
+	 */
+	@DataProvider (name="redirect")
+	public Object[][] redirect(){
+		return DataProviderUtils.contentTypeXMLConCon(true);
+	}
+	
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDMethodOverride.ID_GRUPPO,RESTPDMethodOverride.ID_GRUPPO+".ConContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
 	public void test_ConContenutoRichiesta_ConContenutoRispostaJSON(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
@@ -166,28 +174,28 @@ public class RESTPDMethodOverride {
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDMethodOverride.ID_GRUPPO,RESTPDMethodOverride.ID_GRUPPO+".ConContenutoRichiesta_ConContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
 	public void test_ConContenutoRichiesta_ConContenutoBinary(String tipoTest, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
-		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, true, true, null);
+		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, true, true, true, null);
 		this.restCore.postInvoke(repository);
 	}
 
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDMethodOverride.ID_GRUPPO,RESTPDMethodOverride.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaBinary"},dataProvider="contentTypeBinaryConSenza")
 	public void test_SenzaContenutoRichiesta_SenzaContenutoBinary(String tipoTest, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
-		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, false, false, null);
+		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, false, false, true, null);
 		this.restCore.postInvoke(repository);
 	}
 	
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDMethodOverride.ID_GRUPPO,RESTPDMethodOverride.ID_GRUPPO+".ConContenutoRichiesta_SenzaContenutoRispostaBinary"},dataProvider="contentTypeBinaryConSenza")
 	public void test_ConContenutoRichiesta_SenzaContenutoRispostaBinary(String tipoTest, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
-		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, true, false, null);
+		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, true, false, true, null);
 		this.restCore.postInvoke(repository);
 	}
 	
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDMethodOverride.ID_GRUPPO,RESTPDMethodOverride.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaBinary(String tipoTest, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
-		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, false, true, null);
+		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, false, true, true, null);
 		this.restCore.postInvoke(repository);
 	}
 
@@ -243,7 +251,14 @@ public class RESTPDMethodOverride {
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDMethodOverride.ID_GRUPPO,RESTPDMethodOverride.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaMulti"},dataProvider="responseCodeConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaMulti(int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
-		this.restCore.invoke("multi", responseCodeAtteso, repository, false, true, null);
+		this.restCore.invoke("multi", responseCodeAtteso, repository, false, true, true, null);
+		this.restCore.postInvoke(repository);
+	}
+	
+	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDMethodOverride.ID_GRUPPO,RESTPDMethodOverride.ID_GRUPPO+".REDIRECT"},dataProvider="redirect")
+	public void test_Redirect(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		this.restCore.invoke("xml", responseCodeAtteso, repository, false, true, true, contentType);
 		this.restCore.postInvoke(repository);
 	}
 

@@ -101,6 +101,14 @@ public class RESTPDLocalForwardHead {
 	public Object[][] contentTypeXMLConCon(){
 		return DataProviderUtils.contentTypeXMLConCon();
 	}
+	
+	/**
+	 * Redirect
+	 */
+	@DataProvider (name="redirect")
+	public Object[][] redirect(){
+		return DataProviderUtils.contentTypeXMLConCon(true);
+	}
 
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD_LOCAL_FORWARD,RESTPDLocalForwardHead.ID_GRUPPO,RESTPDLocalForwardHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaJSON(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
@@ -127,6 +135,13 @@ public class RESTPDLocalForwardHead {
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaMulti(int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("multi", responseCodeAtteso, repository, false, true, null);
+		this.restCore.postInvokeLocalForward(repository, responseCodeAtteso > 299);
+	}
+	
+	@Test(groups={RESTCore.REST,RESTCore.REST_PD_LOCAL_FORWARD,RESTPDLocalForwardHead.ID_GRUPPO,RESTPDLocalForwardHead.ID_GRUPPO+".REDIRECT"},dataProvider="redirect")
+	public void test_Redirect(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		this.restCore.invoke("xml", responseCodeAtteso, repository, false, true, contentType);
 		this.restCore.postInvokeLocalForward(repository, responseCodeAtteso > 299);
 	}
 

@@ -134,6 +134,14 @@ public class RESTPAPost {
 	public Object[][] contentTypeXMLConSenza(){
 		return DataProviderUtils.contentTypeXMLConSenza();
 	}
+	
+	/**
+	 * Redirect
+	 */
+	@DataProvider (name="redirect")
+	public Object[][] redirect(){
+		return DataProviderUtils.contentTypeXMLConCon(true);
+	}
 
 	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAPost.ID_GRUPPO,RESTPAPost.ID_GRUPPO+".ConContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
 	public void test_ConContenutoRichiesta_ConContenutoRispostaJSON(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
@@ -247,5 +255,10 @@ public class RESTPAPost {
 		this.restCore.postInvoke(repository);
 	}
 
-
+	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAPost.ID_GRUPPO,RESTPAPost.ID_GRUPPO+".REDIRECT"},dataProvider="redirect")
+	public void test_Redirect(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		this.restCore.invoke("xml", responseCodeAtteso, repository, false, true, contentType);
+		this.restCore.postInvoke(repository);
+	}
 }

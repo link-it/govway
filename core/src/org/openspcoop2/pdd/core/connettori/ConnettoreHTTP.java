@@ -706,13 +706,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					if(redirectLocation==null){
 						redirectLocation = this.httpConn.getHeaderField(HttpConstants.REDIRECT_LOCATION.toUpperCase());
 					}
-					if(redirectLocation==null){
-						throw new Exception("Non è stato rilevato l'header HTTP ["+HttpConstants.REDIRECT_LOCATION+"] necessario alla gestione del Redirect (code:"+this.codice+")"); 
-					}
 					
 					// 3XX
 					if(this.followRedirects){
-												
+								
+						if(redirectLocation==null){
+							throw new Exception("Non è stato rilevato l'header HTTP ["+HttpConstants.REDIRECT_LOCATION+"] necessario alla gestione del Redirect (code:"+this.codice+")"); 
+						}
+						
 						request.getConnectorProperties().remove(CostantiConnettori.CONNETTORE_LOCATION);
 						request.getConnectorProperties().remove(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
 						request.getConnectorProperties().remove(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_ROUTE);

@@ -102,6 +102,14 @@ public class RESTPDDelete {
 		return DataProviderUtils.contentTypeXMLConCon();
 	}
 	
+	/**
+	 * Redirect
+	 */
+	@DataProvider (name="redirect")
+	public Object[][] redirect(){
+		return DataProviderUtils.contentTypeXMLConCon(true);
+	}
+	
 	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDDelete.ID_GRUPPO,RESTPDDelete.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaJSON(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
@@ -155,6 +163,13 @@ public class RESTPDDelete {
 	public void test_SenzaContenutoRichiesta_SenzaContenutoRispostaMulti(int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("multi", responseCodeAtteso, repository, false, false, null);
+		this.restCore.postInvoke(repository);
+	}
+	
+	@Test(groups={RESTCore.REST,RESTCore.REST_PD,RESTPDDelete.ID_GRUPPO,RESTPDDelete.ID_GRUPPO+".REDIRECT"},dataProvider="redirect")
+	public void test_Redirect(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		this.restCore.invoke("xml", responseCodeAtteso, repository, false, true, contentType);
 		this.restCore.postInvoke(repository);
 	}
 
