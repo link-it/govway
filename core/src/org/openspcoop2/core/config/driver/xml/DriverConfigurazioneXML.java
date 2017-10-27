@@ -1023,7 +1023,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						paSenzaAzione.setNomeSoggettoProprietario(soggetto.getNome());
 						paSenzaAzioneList.add(paSenzaAzione);
 					}
-					if(azione.equals(pa.getAzione().getNome())){
+					else if(azione.equals(pa.getAzione().getNome())){
 						pa.setTipoSoggettoProprietario(soggetto.getTipo());
 						pa.setNomeSoggettoProprietario(soggetto.getNome());
 						paList.add(pa);

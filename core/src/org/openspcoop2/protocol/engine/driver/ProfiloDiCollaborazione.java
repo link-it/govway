@@ -1705,6 +1705,7 @@ public class ProfiloDiCollaborazione {
 			// Prendo i dati di integrazione
 			RepositoryBuste repositoryBuste = new RepositoryBuste(state,  this.log, this.protocolFactory);
 			LetturaParametriBusta parametri = new LetturaParametriBusta();
+			parametri.setDestinatario(true);
 			parametri.setServizio(true);
 			parametri.setAzione(true);
 			Busta busta = repositoryBuste.getSomeValuesFromInBox(riferimentoMessaggio, parametri, true); // leggo dati da database
@@ -3424,10 +3425,10 @@ public class ProfiloDiCollaborazione {
 					pstmtValidazione.setString(1,tipoServizioCorrelato);
 					pstmtValidazione.setString(2,servizioCorrelato);
 					if(versioneServizioCorrelato!=null){
-						pstmt.setInt(3,versioneServizioCorrelato);
+						pstmtValidazione.setInt(3,versioneServizioCorrelato);
 					}
 					else{
-						pstmt.setNull(3, java.sql.Types.INTEGER);
+						pstmtValidazione.setNull(3, java.sql.Types.INTEGER);
 					}
 					pstmtValidazione.setString(4,idRicevuta);
 					pstmtValidazione.setString(5,Costanti.OUTBOX);

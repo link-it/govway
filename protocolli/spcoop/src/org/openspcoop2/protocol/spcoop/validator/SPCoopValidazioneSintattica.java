@@ -414,24 +414,24 @@ public class SPCoopValidazioneSintattica extends BasicComponentFactory implement
 				}
 				//else if((child.getNodeName().equals(xmlns+"ProfiloCollaborazione"))){
 				else if(SoapUtils.matchLocalName(child, "ProfiloCollaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
-					if(localizzaSolamenteDatiIdentificativiMinimi==false){
-						if(profiloCollaborazioneGiaTrovato==false){
-							validazioneProfiloCollaborazione(child,xmlns);
-							profiloCollaborazioneGiaTrovato = true;
+					// Serve per poter riconoscere il caso del profilo asincrono in modo da non localizzare una porta applicativa
+					//if(localizzaSolamenteDatiIdentificativiMinimi==false){
+					if(profiloCollaborazioneGiaTrovato==false){
+						validazioneProfiloCollaborazione(child,xmlns);
+						profiloCollaborazioneGiaTrovato = true;
+					}else{
+						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
+							throw new StrutturaBustaException("Header egov con più di un elemento ProfiloCollaborazione","ProfiloCollaborazione");
 						}else{
-							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
-								throw new StrutturaBustaException("Header egov con più di un elemento ProfiloCollaborazione","ProfiloCollaborazione");
-							}else{
-								Eccezione ecc = new Eccezione();
-								ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
-								ecc.setCodiceEccezione(CodiceErroreCooperazione.PROFILO_COLLABORAZIONE_PRESENTE_PIU_VOLTE);
-								ecc.setRilevanza(LivelloRilevanza.ERROR);
-								if(this.segnalazioneElementoPresentePiuVolte)
-									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
-								else
-									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE.toString());
-								this.erroriValidazione.add(ecc);
-							}
+							Eccezione ecc = new Eccezione();
+							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+							ecc.setCodiceEccezione(CodiceErroreCooperazione.PROFILO_COLLABORAZIONE_PRESENTE_PIU_VOLTE);
+							ecc.setRilevanza(LivelloRilevanza.ERROR);
+							if(this.segnalazioneElementoPresentePiuVolte)
+								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
+							else
+								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE.toString());
+							this.erroriValidazione.add(ecc);
 						}
 					}
 				}
@@ -502,26 +502,27 @@ public class SPCoopValidazioneSintattica extends BasicComponentFactory implement
 				}
 				//else if((child.getNodeName().equals(xmlns+"Messaggio"))){
 				else if(SoapUtils.matchLocalName(child, "Messaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
-					if(localizzaSolamenteDatiIdentificativiMinimi==false){
-						if(messaggioGiaTrovato==false){
-							validazioneMessaggio(child,xmlns);
-							messaggioGiaTrovato = true;
+					// Serve per poter riconoscere il caso del profilo asincrono in modo da non localizzare una porta applicativa
+					//if(localizzaSolamenteDatiIdentificativiMinimi==false){
+					if(messaggioGiaTrovato==false){
+						validazioneMessaggio(child,xmlns);
+						messaggioGiaTrovato = true;
+					}else{
+						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
+							throw new StrutturaBustaException("Header egov con più di un elemento Messaggio","Messaggio");
 						}else{
-							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
-								throw new StrutturaBustaException("Header egov con più di un elemento Messaggio","Messaggio");
-							}else{
-								Eccezione ecc = new Eccezione();
-								ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
-								ecc.setCodiceEccezione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO);
-								ecc.setRilevanza(LivelloRilevanza.ERROR);
-								if(this.segnalazioneElementoPresentePiuVolte)
-									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
-								else
-									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO.toString());
-								this.erroriValidazione.add(ecc);
-							}
+							Eccezione ecc = new Eccezione();
+							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+							ecc.setCodiceEccezione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO);
+							ecc.setRilevanza(LivelloRilevanza.ERROR);
+							if(this.segnalazioneElementoPresentePiuVolte)
+								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
+							else
+								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO.toString());
+							this.erroriValidazione.add(ecc);
 						}
 					}
+					//}
 				}
 				//else if((child.getNodeName().equals(xmlns+"ProfiloTrasmissione"))){
 				else if(SoapUtils.matchLocalName(child, "ProfiloTrasmissione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){

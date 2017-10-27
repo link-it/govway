@@ -1030,26 +1030,50 @@ public class RicezioneBuste {
 				
 			}catch(Exception e){
 				
-				if(idServizio!=null){
-					msgDiag.addKeywords(idServizio);
-					if(idServizio.getAzione()==null){
-						msgDiag.addKeyword(CostantiPdD.KEY_AZIONE_BUSTA_RICHIESTA, "-");
+				boolean checkAsSecondaFaseAsincrono = false;
+				try{
+					if(idServizio!=null){
+						IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
+						if(config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO) || 
+								config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)	) {
+							Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
+							if(busta!=null && busta.getProfiloDiCollaborazione()!=null) {
+								if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(busta.getProfiloDiCollaborazione()) ||
+										org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(busta.getProfiloDiCollaborazione())
+									) {
+									if(busta.getRiferimentoMessaggio()!=null) {
+										checkAsSecondaFaseAsincrono = true;
+									}
+								}
+							}
+						}
 					}
-					msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBusta!=null ? idBusta : "-");
-					msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, profiloBusta!=null ? profiloBusta : "-");
-					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente.identificazionePerServizio");
-				}
-				else{
-					msgDiag.addKeywordErroreProcessamento(e);
-					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
+				}catch(Exception eAsincronoCheck){
+					logCore.error("Errore durante il controllo della presenza di un profilo asincrono: "+eAsincronoCheck.getMessage(),eAsincronoCheck);
 				}
 				
-				// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
-				setSOAPFault_processamento(IntegrationError.NOT_FOUND,logCore,null,
-						ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),e,
-						"comprensioneIDServizio");
-				openspcoopstate.releaseResource();
-				return;
+				if(checkAsSecondaFaseAsincrono==false) {
+					if(idServizio!=null){
+						msgDiag.addKeywords(idServizio);
+						if(idServizio.getAzione()==null){
+							msgDiag.addKeyword(CostantiPdD.KEY_AZIONE_BUSTA_RICHIESTA, "-");
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBusta!=null ? idBusta : "-");
+						msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, profiloBusta!=null ? profiloBusta : "-");
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente.identificazionePerServizio");
+					}
+					else{
+						msgDiag.addKeywordErroreProcessamento(e);
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
+					}
+					
+					// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
+					setSOAPFault_processamento(IntegrationError.NOT_FOUND,logCore,null,
+							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),e,
+							"comprensioneIDServizio");
+					openspcoopstate.releaseResource();
+					return;
+				}
 			}
 		}
 		else{
@@ -2658,8 +2682,16 @@ public class RicezioneBuste {
 		String idModuloInAttesa = null;
 		if(this.msgContext.isGestioneRisposta())
 			idModuloInAttesa = this.msgContext.getIdModulo();
-		RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,
-				idModuloInAttesa,identitaPdD,idPA); 
+		RichiestaApplicativa richiestaApplicativa = null;
+		if(idPA!=null) {
+			richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,
+					idModuloInAttesa,identitaPdD,idPA); 
+		}
+		else {
+			// Scenario Asincrono Simmetrico - Risposta
+			richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,
+					idModuloInAttesa,identitaPdD,idServizio); 
+		}
 		richiestaApplicativa.setFiltroProprietaPorteApplicative(this.msgContext.getProprietaFiltroPortaApplicativa());
 		
 		

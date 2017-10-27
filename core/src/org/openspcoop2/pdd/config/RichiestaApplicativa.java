@@ -83,17 +83,18 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	/* ********  C O S T R U T T O R E  ******** */
 
 	public RichiestaApplicativa(IDSoggetto sog,String idModulo, IDSoggetto dominio, IDPortaApplicativa idPA){
-		this.soggettoFruitore = sog;
-		this.idServizio = idPA.getIdentificativiErogazione().getIdServizio();
-		this.idModuloInAttesa = idModulo;
-		this.dominio = dominio;
+		this(sog, idModulo, dominio, idPA.getIdentificativiErogazione().getIdServizio());
 		this.idPortaApplicativa = idPA;
 	}
 	public RichiestaApplicativa(IDSoggetto sog,IDSoggetto dominio, IDPortaApplicativa idPA){
-		this.soggettoFruitore = sog;
-		this.idServizio = idPA.getIdentificativiErogazione().getIdServizio();
-		this.dominio = dominio;
+		this(sog, null, dominio, idPA.getIdentificativiErogazione().getIdServizio());
 		this.idPortaApplicativa = idPA;
+	}
+	public RichiestaApplicativa(IDSoggetto sog,String idModulo,IDSoggetto dominio, IDServizio idServizio){
+		this.soggettoFruitore = sog;
+		this.idServizio = idServizio;
+		this.idModuloInAttesa = idModulo;
+		this.dominio = dominio;
 	}
 
 
