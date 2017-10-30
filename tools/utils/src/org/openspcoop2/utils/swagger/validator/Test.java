@@ -26,10 +26,10 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
-import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ValidatorException;
@@ -57,23 +57,25 @@ public class Test {
 			apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
 			Api api = apiReader.read();
 			IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.SWAGGER);
-			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, new ApiValidatorConfig());
+			SwaggerApiValidatorConfig config = new SwaggerApiValidatorConfig();
+			config.setJsonValidatorAPI(ApiName.FGE);
+			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
 	
 			String baseUrl = "http://petstore.swagger.io/v2";
-//	
-//			System.out.println("Test #1 (Richiesta GET con parametro path)");
-//			String testUrl1 = baseUrl + "/pet/2";
-//			HttpBaseEntity<?> httpEntity = new TextHttpRequestEntity();
-//			httpEntity.setMethod(HttpRequestMethod.GET);
-//			httpEntity.setUrl(testUrl1);
-//	
-//			Properties parametersTrasporto = new Properties();
-//			parametersTrasporto.put("api_key", "aaa");
-//			httpEntity.setParametersTrasporto(parametersTrasporto);
-//			apiValidator.validate(httpEntity);
-//	
-//			System.out.println("Test #1 completato");
-//	
+	
+			System.out.println("Test #1 (Richiesta GET con parametro path)");
+			String testUrl1 = baseUrl + "/pet/2";
+			HttpBaseEntity<?> httpEntity = new TextHttpRequestEntity();
+			httpEntity.setMethod(HttpRequestMethod.GET);
+			httpEntity.setUrl(testUrl1);
+	
+			Properties parametersTrasporto = new Properties();
+			parametersTrasporto.put("api_key", "aaa");
+			httpEntity.setParametersTrasporto(parametersTrasporto);
+			apiValidator.validate(httpEntity);
+	
+			System.out.println("Test #1 completato");
+	
 			System.out.println("Test #2 (Richiesta GET senza parametri query ove richiesti)");
 			String testUrl2 = baseUrl + "/pet/findByStatus";
 			HttpBaseEntity<?> httpEntity2 = new TextHttpRequestEntity();
@@ -102,17 +104,17 @@ public class Test {
 			TextHttpRequestEntity httpEntity4 = new TextHttpRequestEntity();
 			httpEntity4.setMethod(HttpRequestMethod.POST);
 			httpEntity4.setUrl("/pet");
-			httpEntity4.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
+			httpEntity4.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"tags\" : [{\"name\" : \"a\"},{\"name\" : \"b\"}]}");
 			httpEntity4.setContentType("application/json");
 			apiValidator.validate(httpEntity4);
-	
+
 			System.out.println("Test #4 completato");
 
 			System.out.println("Test #5 (Richiesta POST con body json errato)");
 			TextHttpRequestEntity httpEntity5 = new TextHttpRequestEntity();
 			httpEntity5.setMethod(HttpRequestMethod.POST);
 			httpEntity5.setUrl("/pet");
-			httpEntity5.setContent("{\"name\" : \"aaa\"}");
+			httpEntity5.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"a\":\"b\"}");
 			httpEntity5.setContentType("application/json");
 			try {
 				apiValidator.validate(httpEntity5);
@@ -133,7 +135,6 @@ public class Test {
 //			apiValidator.validate(httpEntity6);
 //	
 //			System.out.println("Test #6 completato");
-
 
 		} catch(Exception e) {
 			System.err.println("Errore durante l'esecuzione dei test: " + e.getMessage());

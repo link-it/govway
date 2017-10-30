@@ -22,6 +22,7 @@ package org.openspcoop2.utils.rest.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -39,11 +40,11 @@ public abstract class HttpBaseEntity<T> {
 	private HttpRequestMethod method;
 	private String contentType;
 	/* ---- Coppie nome/valori di invocazione della query --- */
-	private java.util.Properties parametersQuery;
+	private java.util.Properties parametersQuery = new Properties();
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
-	private java.util.Properties parametersTrasporto;
+	private java.util.Properties parametersTrasporto = new Properties();
 	/* ---- Coppie nome/valori di invocazione form ----- */
-	private java.util.Properties parametersForm;
+	private java.util.Properties parametersForm = new Properties();
 	/* ---- Cookies ----- */
 	private List<Cookie> cookies = new ArrayList<>();
 	

@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.utils.swagger.validator;
 
-import org.openspcoop2.utils.json.JsonValidatorAPI;
+import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 
 /**
@@ -32,13 +32,13 @@ import org.openspcoop2.utils.rest.ApiValidatorConfig;
  */
 public class SwaggerApiValidatorConfig extends ApiValidatorConfig {
 
-	private JsonValidatorAPI jsonValidatorAPI;
+	private ApiName jsonValidatorAPI;
 
-	public JsonValidatorAPI getJsonValidatorAPI() {
+	public ApiName getJsonValidatorAPI() {
 		return this.jsonValidatorAPI;
 	}
 
-	public void setJsonValidatorAPI(JsonValidatorAPI jsonValidatorAPI) {
+	public void setJsonValidatorAPI(ApiName jsonValidatorAPI) {
 		this.jsonValidatorAPI = jsonValidatorAPI;
 	}
 }

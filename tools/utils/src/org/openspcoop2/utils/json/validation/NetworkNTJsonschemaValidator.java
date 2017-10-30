@@ -20,14 +20,22 @@
 
 package org.openspcoop2.utils.json.validation;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
 import org.openspcoop2.utils.json.ValidationException;
 import org.openspcoop2.utils.json.ValidationResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.ValidationMessage;
@@ -45,24 +53,92 @@ public class NetworkNTJsonschemaValidator implements IJsonSchemaValidator {
 
 	
 	private JsonSchema schema;
+	private ObjectMapper mapper;
 
+	/**
+	 * 
+	 */
+	public NetworkNTJsonschemaValidator() {
+		this.mapper = new ObjectMapper();
+	}
 	@Override
-	public void setSchema(byte[] schema) throws ValidationException {
+	public void setSchema(byte[] schema, JsonSchemaValidatorConfig config) throws ValidationException {
 		try {
 	        JsonSchemaFactory factory = new JsonSchemaFactory();
-	        this.schema = factory.getSchema(new String(schema));
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        JsonNode jsonSchema =  mapper.readTree(schema);
+	        
+	        Map<String, String> map = new HashMap<>();
+			map.put("type", "string");
+			ObjectNode jsonStringTypeNode = this.mapper.getNodeFactory().objectNode();
+			jsonStringTypeNode.set("type", this.mapper.getNodeFactory().textNode("string"));
+			
+			BooleanNode booleanNode = this.mapper.getNodeFactory().booleanNode(false);
+			switch(config.getAdditionalProperties()) {
+			case DEFAULT:
+				break;
+			case FORCE_DISABLE: addAdditionalProperties(jsonSchema, booleanNode, true);
+				break;
+			case FORCE_STRING: addAdditionalProperties(jsonSchema, jsonStringTypeNode, true);
+				break;
+			case IF_NULL_DISABLE: addAdditionalProperties(jsonSchema, booleanNode, false);
+				break;
+			case IF_NULL_STRING: addAdditionalProperties(jsonSchema, jsonStringTypeNode, false);
+				break;
+			default:
+				break;
+			}
+	        
+			switch(config.getPoliticaInclusioneTipi()) {
+			case DEFAULT:
+				break;
+			case ALL: addTypes(jsonSchema, config.getTipi(), true);
+				break;
+			case ANY: addTypes(jsonSchema, config.getTipi(), false);
+				break;
+			default:
+				break;
+			}
+
+	        this.schema = factory.getSchema(jsonSchema);
+	        
 		} catch(Exception e) {
 			throw new ValidationException(e);
 		}
 	}
+	
+	private void addTypes(JsonNode jsonSchemaObject, List<String> nomi, boolean all) {
+		
+		String allAny = all ? "allOf" : "anyOf";
+		ArrayNode array = this.mapper.getNodeFactory().arrayNode();
+		for(String nome: nomi) {
+			array.add(this.mapper.getNodeFactory().objectNode().put("$ref", nome));
+		}
+		((ObjectNode)jsonSchemaObject).remove("allOf");
+		((ObjectNode)jsonSchemaObject).remove("anyOf");
+		((ObjectNode)jsonSchemaObject).set(allAny, array);
+	}
+
+	private void addAdditionalProperties(JsonNode jsonSchemaObject, JsonNode additionalPropertiesObject, boolean force) {
+		JsonNode definitions = jsonSchemaObject.get("definitions");
+		
+		Iterator<JsonNode> iterator = definitions.iterator();
+		while(iterator.hasNext()) {
+			ObjectNode definition = (ObjectNode) iterator.next();
+			if(force || !definition.has("additionalProperties")) {
+				definition.set("additionalProperties", additionalPropertiesObject);
+			}
+		}
+	}
+
 
 	@Override
 	public ValidationResponse validate(byte[] rawObject) throws ValidationException {
 		
 		ValidationResponse response = new ValidationResponse();
 		try {
-	        ObjectMapper mapper = new ObjectMapper();
-	        JsonNode node = mapper.readTree(rawObject);
+	        JsonNode node = this.mapper.readTree(rawObject);
 
 			Set<ValidationMessage> validate = this.schema.validate(node);
 			if(validate.isEmpty()) {

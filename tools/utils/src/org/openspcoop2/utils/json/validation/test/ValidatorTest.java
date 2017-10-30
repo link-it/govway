@@ -23,6 +23,7 @@ package org.openspcoop2.utils.json.validation.test;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -30,11 +31,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
-import org.openspcoop2.utils.json.ValidationResponse;
-import org.openspcoop2.utils.json.ValidatorFactory;
-
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.POLITICA_INCLUSIONE_TIPI;
 import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
+import org.openspcoop2.utils.json.ValidationResponse;
 import org.openspcoop2.utils.json.ValidationResponse.ESITO;
+import org.openspcoop2.utils.json.ValidatorFactory;
 
 /**
  * ValidatorTest
@@ -72,14 +74,14 @@ public class ValidatorTest {
 		List<byte[]> file2M = new ArrayList<byte[]>();
 		file2M.add(json2M);
 
-		for(ApiName name : ApiName.values()) {
+//		for(ApiName name : ApiName.values()) {
+		ApiName name = ApiName.NETWORK_NT;
 			ValidatorTest.validazioneListaFile("fileNonValidi", name, fileNonValidi, 10000, false);
-			ValidatorTest.validazioneListaFile("file1K", name, file1K, 10000, true);
-			ValidatorTest.validazioneListaFile("file50K", name, file50K, 1000, true);
-			ValidatorTest.validazioneListaFile("file500K", name, file500K, 100, true);
-			ValidatorTest.validazioneListaFile("file2M", name, file2M, 10, true);
-		}
-
+//			ValidatorTest.validazioneListaFile("file1K", name, file1K, 10000, true);
+//			ValidatorTest.validazioneListaFile("file50K", name, file50K, 1000, true);
+//			ValidatorTest.validazioneListaFile("file500K", name, file500K, 100, true);
+//			ValidatorTest.validazioneListaFile("file2M", name, file2M, 10, true);
+//		}
 		ValidatorTest.executor.shutdown();
 	}
 
@@ -101,7 +103,11 @@ public class ValidatorTest {
 	private static void validazioneListaFile(String testName, ApiName name, List<byte[]> files, int nTimes, boolean expectedSuccess) throws Exception {
 
 		IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(name);
-		validator.setSchema(ValidatorTest.schema);
+
+		JsonSchemaValidatorConfig config = new JsonSchemaValidatorConfig();
+		config.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.ANY);
+		config.setTipi(Arrays.asList("#/definitions/Pet"));
+		validator.setSchema(ValidatorTest.schema, config);
 
 		List<TestRunner> lst = new ArrayList<TestRunner>();
 		for(byte[] file: files) {

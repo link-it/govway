@@ -20,15 +20,22 @@
 
 package org.openspcoop2.utils.json.validation;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
 import org.openspcoop2.utils.json.ValidationException;
 import org.openspcoop2.utils.json.ValidationResponse;
 import org.openspcoop2.utils.json.ValidationResponse.ESITO;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -86,12 +93,71 @@ public class FGEJsonschemaValidator implements IJsonSchemaValidator {
 	}
 
 	@Override
-	public void setSchema(byte[] schema) throws ValidationException {
+	public void setSchema(byte[] schema, JsonSchemaValidatorConfig config) throws ValidationException {
 		try {
 			this.schema = this.jsonMapper.readTree(schema);
+
+			Map<String, String> map = new HashMap<>();
+			map.put("type", "string");
+			ObjectNode jsonStringTypeNode = this.jsonMapper.getNodeFactory().objectNode();
+			jsonStringTypeNode.set("type", this.jsonMapper.getNodeFactory().textNode("string"));
+			
+			BooleanNode booleanNode = this.jsonMapper.getNodeFactory().booleanNode(false);
+			switch(config.getAdditionalProperties()) {
+			case DEFAULT:
+				break;
+			case FORCE_DISABLE: addAdditionalProperties(this.schema, booleanNode, true);
+				break;
+			case FORCE_STRING: addAdditionalProperties(this.schema, jsonStringTypeNode, true);
+				break;
+			case IF_NULL_DISABLE: addAdditionalProperties(this.schema, booleanNode, false);
+				break;
+			case IF_NULL_STRING: addAdditionalProperties(this.schema, jsonStringTypeNode, false);
+				break;
+			default:
+				break;
+			}
+			
+			switch(config.getPoliticaInclusioneTipi()) {
+			case DEFAULT:
+				break;
+			case ALL: addTypes(this.schema, config.getTipi(), true);
+				break;
+			case ANY: addTypes(this.schema, config.getTipi(), false);
+				break;
+			default:
+				break;
+			}
+
 		} catch(Exception e) {
 			throw new ValidationException(e);
 		}
 	}
 	
+	private void addTypes(JsonNode jsonSchemaObject, List<String> nomi, boolean all) {
+		
+		String allAny = all ? "allOf" : "anyOf";
+		ArrayNode array = this.jsonMapper.getNodeFactory().arrayNode();
+		for(String nome: nomi) {
+			array.add(this.jsonMapper.getNodeFactory().objectNode().put("$ref", nome));
+		}
+		((ObjectNode)jsonSchemaObject).remove("allOf");
+		((ObjectNode)jsonSchemaObject).remove("anyOf");
+		((ObjectNode)jsonSchemaObject).set(allAny, array);
+	}
+
+
+	
+	private void addAdditionalProperties(JsonNode jsonSchemaObject, JsonNode additionalPropertiesObject, boolean force) {
+		JsonNode definitions = jsonSchemaObject.get("definitions");
+		
+		Iterator<JsonNode> iterator = definitions.iterator();
+		while(iterator.hasNext()) {
+			ObjectNode definition = (ObjectNode) iterator.next();
+			if(force || !definition.has("additionalProperties")) {
+				definition.set("additionalProperties", additionalPropertiesObject);
+			}
+		}
+	}
+
 }

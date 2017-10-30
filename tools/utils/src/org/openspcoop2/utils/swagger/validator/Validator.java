@@ -22,10 +22,20 @@ package org.openspcoop2.utils.swagger.validator;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.openspcoop2.utils.json.JsonValidatorAPI;
+import org.openspcoop2.utils.json.IJsonSchemaValidator;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
+import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.POLITICA_INCLUSIONE_TIPI;
 import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
+import org.openspcoop2.utils.json.ValidationException;
+import org.openspcoop2.utils.json.ValidationResponse;
+import org.openspcoop2.utils.json.ValidationResponse.ESITO;
+import org.openspcoop2.utils.json.ValidatorFactory;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiValidator;
@@ -33,9 +43,14 @@ import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
+import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.swagger.SwaggerApi;
 import org.slf4j.Logger;
+
+import io.swagger.models.Model;
+import io.swagger.util.Json;
 
 /**
  * Validator
@@ -48,8 +63,8 @@ import org.slf4j.Logger;
 public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	private SwaggerApi api;
-	private JsonValidatorAPI jsonValidatorAPI;
-
+	private Map<String, IJsonSchemaValidator> validatorMap;
+	
 	@Override
 	public void init(Logger log, Api api, ApiValidatorConfig config)
 			throws ProcessingException {
@@ -61,10 +76,35 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			throw new ProcessingException("Api class invalid. Expected ["+SwaggerApi.class.getName()+"] found ["+api.getClass().getName()+"]");
 
 		this.api = (SwaggerApi) api;
+		ApiName jsonValidatorAPI;
 		if(config instanceof SwaggerApiValidatorConfig) {
-			this.jsonValidatorAPI = ((SwaggerApiValidatorConfig)config).getJsonValidatorAPI();
+			jsonValidatorAPI = ((SwaggerApiValidatorConfig)config).getJsonValidatorAPI();
 		} else {
-			this.jsonValidatorAPI = JsonValidatorAPI.get(ApiName.FGE);
+			jsonValidatorAPI = ApiName.FGE;
+		}
+		
+		try {
+			
+			Map<String, Model> definitions = this.api.getSwagger().getDefinitions();
+			this.validatorMap = new HashMap<>();
+			String definitionString = Json.mapper().writeValueAsString(definitions);
+			for(String modelName: definitions.keySet()) {
+				byte[] schema = ("{\"definitions\" : "+definitionString+"}").getBytes();
+				
+				IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
+				
+				JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
+				schemaValidationConfig.setAdditionalProperties(ADDITIONAL.FORCE_DISABLE);
+				schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.ANY);
+				schemaValidationConfig.setTipi(Arrays.asList("#/definitions/"+modelName));
+				validator.setSchema(schema, schemaValidationConfig);
+				
+				this.validatorMap.put(modelName, validator);
+
+			}
+					
+		} catch(Exception e) {
+			throw new ProcessingException(e);
 		}
 	}
 
@@ -77,70 +117,72 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	@Override
 	public void validatePreConformanceCheck(HttpBaseEntity<?> httpEntity,
-			ApiOperation operation, Object... args) throws ProcessingException,
-	ValidatorException {
+			ApiOperation operation, Object... args) throws ProcessingException, ValidatorException {
 
-//        ApiOperationResolver apiOperationResolver = new ApiOperationResolver(this.api.getSwagger(), this.api.getSwagger().getBasePath());
-//        com.atlassian.oai.validator.model.ApiOperation apiOperation = apiOperationResolver.findApiOperation(operation.getPath(), Request.Method.valueOf(operation.getHttpMethod().toString())).getApiOperation();
-//
-//        
-//		if(httpEntity instanceof HttpBaseRequestEntity<?>) {
-//			SimpleRequest.Builder builder = new SimpleRequest.Builder(operation.getHttpMethod().toString(), operation.getPath());
-//			if(httpEntity.getContent() != null) {
-//				builder.withBody(httpEntity.getContent().toString()); //TODO vedere come recuperare la stringa
-//			}
-//			if(httpEntity.getParametersTrasporto() != null) {
-//				for(Object key: httpEntity.getParametersTrasporto().keySet()) {
-//					if(key instanceof String) {
-//						String keyS = (String)key;
-//						builder.withHeader(keyS, httpEntity.getParametersTrasporto().getProperty(keyS));
-//					}
-//				}
-//			}
-//			if(httpEntity.getParametersQuery() != null) {
-//				for(Object key: httpEntity.getParametersQuery().keySet()) {
-//					if(key instanceof String) {
-//						String keyS = (String)key;
-//						builder.withQueryParam(keyS, httpEntity.getParametersQuery().getProperty(keyS));
-//					}
-//				}
-//			}
-//			SimpleRequest request = builder.build();
-//			RequestValidator validator = new RequestValidator(this.schemaValidator, new MessageResolver(), this.api.getSwagger());
-//	        ValidationReport validateRequest = validator.validateRequest(request, apiOperation);
-//	        if(validateRequest.hasErrors()) {
-//	        	throw buildException(validateRequest.getMessages());
-//	        }
-//		} else if(httpEntity instanceof HttpBaseResponseEntity<?>) {
-//			SimpleResponse.Builder builder = new SimpleResponse.Builder(((HttpBaseResponseEntity<?>)httpEntity).getStatus());
-//			if(httpEntity.getContent() != null) {
-//				builder.withBody(httpEntity.getContent().toString()); //TODO vedere come recuperare la stringa
-//			}
-//			SimpleResponse request = builder.build();
-//			ResponseValidator validator = new ResponseValidator(this.schemaValidator, new MessageResolver(), this.api.getSwagger());
-//	        ValidationReport validateResponse = validator.validateResponse(request, apiOperation);
-//	        if(validateResponse.hasErrors()) {
-//	        	throw buildException(validateResponse.getMessages());
-//	        }
-//		} 
+		boolean required = false;
+		if(httpEntity instanceof HttpBaseRequestEntity) {
+			List<ApiRequestBodyParameter> bodyParameters = operation.getRequest().getBodyParameters();
 
+			for(ApiRequestBodyParameter body: bodyParameters) {
+				if(body.isRequired())
+					required = true;
+			}
+			
+			if(required) {
+				
+				if(httpEntity.getContent() == null) {
+					throw new ValidatorException("Body required ma non trovato");
+				}
+				
+				try {
+					List<IJsonSchemaValidator> validatorLst = getValidatorList(operation, httpEntity);
+					boolean valid = false;
+					Exception exc = null;
+					for(IJsonSchemaValidator validator: validatorLst) {
+						ValidationResponse response = validator.validate(httpEntity.getContent().toString().getBytes());
+						if(!ESITO.OK.equals(response.getEsito())) {
+							exc = response.getException();
+						} else {
+							valid = true;
+						}
+					}
+					
+					if(!valid) {
+						throw new ValidatorException(exc);
+					}
+				} catch (ValidationException e) {
+					throw new ValidatorException(e);
+				}
+			}
+
+		}
+		
 	}
 
-//	private ValidatorException buildException(List<Message> messages) {
-//		StringBuilder msg = new StringBuilder();
-//		if(messages!=null && !messages.isEmpty()) {
-//			for(Message message: messages) {
-//				msg.append(message.getKey()).append(": ").append(message.getMessage()).append("\n");
-//			}
-//		}
-//		return new ValidatorException(msg.toString());
-//	}
+	/**
+	 * @param operation
+	 * @return
+	 */
+	private List<IJsonSchemaValidator> getValidatorList(ApiOperation operation, HttpBaseEntity<?> httpEntity) throws ValidatorException {
+		List<IJsonSchemaValidator> lst = new ArrayList<>();
+		
+		if(httpEntity instanceof HttpBaseRequestEntity) {
+			for(ApiRequestBodyParameter body: operation.getRequest().getBodyParameters()) {
+				lst.add(this.validatorMap.get(body.getName()));
+			}
+		}
+		
+		if(lst.isEmpty())
+			throw new ValidatorException("Nessun validatore trovato");
+		
+		return lst;
+	}
 
 	@Override
 	public void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,
 			ApiOperation operation, Object... args) throws ProcessingException,
 	ValidatorException {
-		//NOP
+		
 	}
 
 	@Override

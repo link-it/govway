@@ -26,6 +26,9 @@ import java.net.URI;
 import java.util.Map;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.json.IJsonSchemaValidator;
+import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
+import org.openspcoop2.utils.json.ValidatorFactory;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
@@ -70,14 +73,5 @@ public class Test {
         System.out.println("API-Op ["+testPathInesistente+"]: "+api.findOperation(HttpRequestMethod.GET, testPathInesistente));
         
         
-        String model = "Pet";
-        Map<String, Model> definitions = ((SwaggerApi)api).getSwagger().getDefinitions();
-        
-		byte[] writeValueAsBytes = Json.pretty().writeValueAsBytes(definitions);
-        String anyOf ="\"anyOf\": [{\"$ref\": \"#/definitions/"+model+"\"}]";
-        	          
-		System.out.println("{\"definitions\" : " + new String(writeValueAsBytes) + ", "+anyOf+"}");
-		
-
 	}
 }
