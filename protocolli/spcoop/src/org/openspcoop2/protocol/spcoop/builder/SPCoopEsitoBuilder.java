@@ -48,7 +48,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 	}
 	
 	@Override
-	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, EsitoTransazioneName esitoOK) throws ProtocolException{
+	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, EsitoTransazione returnEsitoOk) throws ProtocolException{
 		Node childNode = body.getFirstChild();
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){
@@ -103,7 +103,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 				}
 			}
 		}
-		return this.esitiProperties.convertToEsitoTransazione(esitoOK, tipoContext);
+		return returnEsitoOk;
 	}
 
 }

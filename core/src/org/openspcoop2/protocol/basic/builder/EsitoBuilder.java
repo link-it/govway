@@ -204,9 +204,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			boolean emissioneDiagnosticiError = (context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.EMESSI_DIAGNOSTICI_ERRORE));
 			
 			// Tipo di esito OK
-			EsitoTransazioneName esitoOK = EsitoTransazioneName.OK;
+			EsitoTransazione returnEsitoOk = null;
 			if(emissioneDiagnosticiError){
-				esitoOK = EsitoTransazioneName.OK_PRESENZA_ANOMALIE;
+				returnEsitoOk = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK_PRESENZA_ANOMALIE, tipoContext); 
+			}
+			else {
+				returnEsitoOk = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK, tipoContext);
 			}
 			
 			// Devo riconoscere eventuali codifiche custom inserite nel contesto
@@ -224,7 +227,24 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 										if(esitoIdentificationModeContextProperty.getValue()==null ||
 												esitoIdentificationModeContextProperty.getValue().equals(pS)){
 											// match
-											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CUSTOM, customCode, tipoContext);
+											
+											EsitoTransazione esito = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CUSTOM, customCode, tipoContext);
+											
+											// ritorno immediatamente se l'esito e' un esito non 'ok'
+											// altrimenti verifico se primo ho avuto un errore che altrimenti ha priorita' rispetto al marcare la transazione con questo esito
+											List<Integer> esitiOk = this.esitiProperties.getEsitiCodeOk();
+											boolean found = false;
+											for (Integer intValue : esitiOk) {
+												if(intValue.intValue() == customCode.intValue()) {
+													found = true;
+												}
+											}
+											if(!found) {
+												return esito;
+											}
+											else {
+												returnEsitoOk = esito;
+											}
 										}
 									}
 								}catch(Throwable t){
@@ -253,7 +273,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE, tipoContext);
 			}
 			else if(body==null){
-				return this.esitiProperties.convertToEsitoTransazione(esitoOK, tipoContext); // oneway
+				return returnEsitoOk; // oneway
 			}
 			else{
 				if(body.hasFault()){
@@ -413,7 +433,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 				}
 				else{
-					return getEsitoMessaggioApplicativo(erroreApplicativo, body, tipoContext, esitoOK);
+					return getEsitoMessaggioApplicativo(erroreApplicativo, body, tipoContext, returnEsitoOk);
 				}
 			}
 		}catch(Exception e){
@@ -422,7 +442,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	}
 
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, EsitoTransazioneName esitoOK) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, EsitoTransazione returnEsitoOk) throws ProtocolException{
 		if(erroreApplicativo!=null){
 			Node childNode = body.getFirstChild();
 			if(childNode!=null){
@@ -468,7 +488,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			}
 		}
 
-		return this.esitiProperties.convertToEsitoTransazione(esitoOK, tipoContext);
+		return returnEsitoOk;
 
 	}
 	
