@@ -259,11 +259,13 @@ public class Validatore  {
 				this.mittente = new IDSoggetto(this.busta.getTipoMittente(),this.busta.getMittente());
 				this.mittente.setCodicePorta(this.busta.getIdentificativoPortaMittente());
 			}
-			this.servizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
-					this.busta.getTipoDestinatario(),this.busta.getDestinatario(),
-					this.busta.getVersioneServizio());
-			this.servizio.setAzione(this.busta.getAzione());
-			this.servizio.getSoggettoErogatore().setCodicePorta(this.busta.getIdentificativoPortaDestinatario());
+			if(this.isBustaDiServizio==false) {
+				this.servizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
+						this.busta.getTipoDestinatario(),this.busta.getDestinatario(),
+						this.busta.getVersioneServizio());
+				this.servizio.setAzione(this.busta.getAzione());
+				this.servizio.getSoggettoErogatore().setCodicePorta(this.busta.getIdentificativoPortaDestinatario());
+			}
 			
 			//	Se la lettura precedente ha riscontrato anomalie, ho gia' finito
 			if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 

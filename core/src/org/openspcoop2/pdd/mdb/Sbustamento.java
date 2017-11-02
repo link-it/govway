@@ -1400,6 +1400,12 @@ public class Sbustamento extends GenericLib{
 								bustaRichiesta.getServizioCorrelato() != null){
 							tipoServizioCorrelato = bustaRichiesta.getTipoServizioCorrelato();
 							servizioCorrelato = bustaRichiesta.getServizioCorrelato();
+							if(bustaRichiesta.getVersioneServizioCorrelato()!=null && bustaRichiesta.getVersioneServizioCorrelato().intValue()>0) {
+								versioneServizioCorrelato = bustaRichiesta.getVersioneServizioCorrelato();
+							}
+							else {
+								versioneServizioCorrelato = 1;
+							}
 						}else{
 							RisultatoValidazione validazione = registroServiziManager.validaServizio(idSoggettoFruitore,idServizio,null);
 							if( (validazione==null) || (validazione.getServizioRegistrato()==false))
