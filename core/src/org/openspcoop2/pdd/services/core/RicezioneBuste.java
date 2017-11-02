@@ -50,6 +50,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -1030,29 +1031,32 @@ public class RicezioneBuste {
 				
 			}catch(Exception e){
 				
-				boolean checkAsSecondaFaseAsincrono = false;
-				try{
-					if(idServizio!=null){
-						IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
-						if(config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO) || 
-								config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)	) {
-							Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
-							if(busta!=null && busta.getProfiloDiCollaborazione()!=null) {
-								if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(busta.getProfiloDiCollaborazione()) ||
-										org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(busta.getProfiloDiCollaborazione())
-									) {
-									if(busta.getRiferimentoMessaggio()!=null) {
-										checkAsSecondaFaseAsincrono = true;
-									}
-								}
-							}
-						}
-					}
-				}catch(Exception eAsincronoCheck){
-					logCore.error("Errore durante il controllo della presenza di un profilo asincrono: "+eAsincronoCheck.getMessage(),eAsincronoCheck);
-				}
+//				boolean checkAsSecondaFaseAsincrono = false;
+//				try{
+//					if(idServizio!=null){
+//						IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
+//						if(config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO) || 
+//								config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)	) {
+//							Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
+//							if(busta!=null && busta.getProfiloDiCollaborazione()!=null) {
+//								if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(busta.getProfiloDiCollaborazione()) ||
+//										org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(busta.getProfiloDiCollaborazione())
+//									) {
+//									if(busta.getRiferimentoMessaggio()!=null) {
+//										checkAsSecondaFaseAsincrono = true;
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}catch(Exception eAsincronoCheck){
+//					logCore.error("Errore durante il controllo della presenza di un profilo asincrono: "+eAsincronoCheck.getMessage(),eAsincronoCheck);
+//				}
+//				
+//				if(checkAsSecondaFaseAsincrono==false) {
 				
-				if(checkAsSecondaFaseAsincrono==false) {
+				ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
+				if(bindingConfig.existsContextUrlMapping()==false){
 					if(idServizio!=null){
 						msgDiag.addKeywords(idServizio);
 						if(idServizio.getAzione()==null){
@@ -1110,7 +1114,9 @@ public class RicezioneBuste {
 		msgDiag.mediumDebug("Esamina modalita' di ricezione (PdD/Router)...");
 		boolean existsSoggetto = false;
 		try{
-			existsSoggetto = configurazionePdDReader.existsSoggetto(idServizio.getSoggettoErogatore());
+			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null) {
+				existsSoggetto = configurazionePdDReader.existsSoggetto(idServizio.getSoggettoErogatore());
+			}
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1424,7 +1430,9 @@ public class RicezioneBuste {
 		Busta bustaURLMapping = null;
 		try{
 			// Build Busta
-			bustaURLMapping = new Busta(protocolFactory,infoServizio, soggettoFruitore, idServizio.getSoggettoErogatore(), id, generazioneListaTrasmissioni);
+			bustaURLMapping = new Busta(protocolFactory,infoServizio, soggettoFruitore, 
+					idServizio!=null ? idServizio.getSoggettoErogatore() : null, 
+					id, generazioneListaTrasmissioni);
 			TipoOraRegistrazione tipoOraRegistrazione = propertiesReader.getTipoTempoBusta(null);
 			bustaURLMapping.setTipoOraRegistrazione(tipoOraRegistrazione, traduttore.toString(tipoOraRegistrazione));
 			if(bustaURLMapping.sizeListaTrasmissioni()>0){
