@@ -23,21 +23,14 @@ package org.openspcoop2.utils.swagger;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Map;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.json.IJsonSchemaValidator;
-import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
-import org.openspcoop2.utils.json.ValidatorFactory;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
-
-import io.swagger.models.Model;
-import io.swagger.util.Json;
 
 
 /**
