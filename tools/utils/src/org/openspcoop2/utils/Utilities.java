@@ -716,6 +716,9 @@ public class Utilities {
 
 
 	/* UTILITY SSL */
+	
+	private static final boolean _trimValue_beforeSaveDB = true;
+	
 	public static boolean sslVerify(String subjectPresenteNellaConfigurazione, String subjectArrivatoConnessioneSSL) throws UtilsException{
 
 		//System.out.println("SSL VERIFY CONF["+subjectPresenteNellaConfigurazione+"] SSL["+subjectArrivatoConnessioneSSL+"]");
@@ -825,19 +828,13 @@ public class Utilities {
 		boolean campoObbligatorioC = false;
 		boolean campoObbligatorioE = false;
 		for(int i=0; i<valoriSubject.length; i++){
-			if(valoriSubject[i].contains("=")==false){
-				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valoriSubject[i]+"] non separata dal carattere \"=\". Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
-			}
-			String [] keyValue = valoriSubject[i].trim().split("=");
-			if(keyValue.length<2){
-				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valoriSubject[i]+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
-			}
-//			if(keyValue.length!=2){
-//				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valoriSubject[i]+"] contiene piu' di un carattere \"=\"");
-//			}
+			
+			String [] keyValue = _getKeyValuePair(valoriSubject[i], subject);
+
 			if(keyValue[0].trim().contains(" ")){
 				throw new UtilsException("("+subject+") Comprensione subject non riuscita: il campo ["+valoriSubject[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
 			}
+			
 			if(Utilities.formatKeySubject(keyValue[0]).equalsIgnoreCase("CN")){
 				campoObbligatorioCN = true;
 			}
@@ -982,13 +979,7 @@ public class Utilities {
 		
 		// validazione
 		for(int i=0; i<valori.length; i++){
-			if(valori[i].contains("=")==false){
-				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valori[i]+"] non separata dal carattere \"=\". Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
-			}
-			String [] keyValue = valori[i].trim().split("=");
-			if(keyValue.length<2){
-				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valori[i]+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
-			}
+			_getKeyValuePair(valori[i], subject);
 		}
 				
 		return valori;
@@ -998,19 +989,15 @@ public class Utilities {
 		Hashtable<String, String> hashSubject = new Hashtable<String, String>();
 		String [] valoriSubject = Utilities.getValoriSubject(subject);
 		for(int i=0; i<valoriSubject.length; i++){
+			
+			// override eccezione in caso '=' non rpesente
 			if(valoriSubject[i].contains("=")==false){
 				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valoriSubject[i]+"] non separata dal carattere \"=\"");
 			}
-			String [] keyValue = valoriSubject[i].trim().split("=");
-			if(keyValue.length<2){
-				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valoriSubject[i]+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
-			}
-//			if(keyValue.length!=2){
-//				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+valoriSubject[i]+"] contiene piu' di un carattere \"=\"");
-//			}
+			String [] keyValue = _getKeyValuePair(valoriSubject[i], subject);
+			
 			//System.out.println("CONF INTERNA ["+Utilities.formatKeySubject(keyValue[0])+"] ["+Utilities.formatValueSubject(keyValue[1])+"]");
-			String valore = Utilities.formatValueSubject(valoriSubject[i].trim().substring(keyValue[0].length()+"=".length()));
-			hashSubject.put(Utilities.formatKeySubject(keyValue[0]), valore);
+			hashSubject.put(Utilities.formatKeySubject(keyValue[0]), Utilities.formatValueSubject(keyValue[1]));
 		}
 		return hashSubject;
 	}
@@ -1036,10 +1023,69 @@ public class Utilities {
 			}
 			bf.append(valueSubject.charAt(i));
 		}
-		return bf.toString().trim();
+		String value = bf.toString();
+		if(_trimValue_beforeSaveDB) {
+			value = value.trim();
+		}
+		return value;
 	}
 
-
+	private static String[] _getKeyValuePair(String keyValue, String subject) throws UtilsException {
+		
+		if(keyValue.contains("=")==false){
+			throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+keyValue+"] non separata dal carattere \"=\". Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
+		}
+		
+		// Bug Fix OP-664
+		// Per non bruciare gli spazi presenti nei valori della chiave che sono ammessi. Ad esempio e' capitato un "C=IT,ST= ,CN=XXESEMPIOXX"
+		//String [] keyValue = keyValue.trim().split("=");
+		String [] keyValueReturn = keyValue.split("="); // lo spazio è ammesso nel valore.		
+		if(keyValueReturn.length<2){
+			if(_trimValue_beforeSaveDB && keyValueReturn.length==1) {
+				// Serve per i valori inseriti che poi vengono comunque normalizzati con il trim. Se il valore era ' ' viene normalizzato a ''
+				// una volta riletto poi si ottiene l'errore.
+				// Che ci sia l'uguale e' garantito dai controlli sopra. In pratica keyValue.endsWith("=")
+				String key = keyValueReturn[0];
+				keyValueReturn = new String[2];
+				keyValueReturn[0] = key;
+				keyValueReturn[1] = "";
+			}
+			else {
+				throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+keyValue+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
+			}
+		}
+		
+		// Lo spazio e' ammesso nel valore, ma non nella chiave
+		keyValueReturn[0] = keyValueReturn[0].trim();
+		//System.out.println("KEY["+keyValueReturn[0]+"]=VALUE["+keyValueReturn[1]+"]");
+		
+		// Questo controllo non deve essere fatto poiche' il valore puo' contenere il '='.
+//		if(keyValue.length!=2){
+//			throw new UtilsException("("+subject+") Comprensione subject non riuscita: ["+keyValue+"] contiene piu' di un carattere \"=\"");
+//		}
+		if(keyValueReturn.length==2) {
+			return keyValueReturn;
+		}
+		else {
+			String[] keyValueReturnNormalized = new String[2];
+			keyValueReturnNormalized[0] = keyValueReturn[0];
+			keyValueReturnNormalized[1] = _extractValueFromKeyPair(keyValue);
+			return keyValueReturnNormalized;
+		}
+		
+	}
+	private static String _extractValueFromKeyPair(String keyValue) throws UtilsException {
+		// Questo metodo server poiche' il valore puo' contenere il '=' ed il carattere ' ' anche all'inizio o alla fine.
+		// Quindi uno split con il carattere '=' non puo' essere usato.
+		// Deve quindi essere estratto dopo il primo uguale
+		int indexOf = keyValue.indexOf("=");
+		if(indexOf<=0) {
+			throw new UtilsException("Carattere '=' non presente in ["+keyValue+"]");
+		}
+		String valoreEstratto = keyValue.substring(indexOf+1);
+		//System.out.println("VALORE ESTRATTO ["+valoreEstratto+"]");
+		return valoreEstratto;
+	}
 
 
 
