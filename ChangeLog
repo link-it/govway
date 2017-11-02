@@ -1,3 +1,12 @@
+2017-11-02  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-666
+	La comprensione degli esiti, nel caso venivano registrati degli esiti personalizzati, 
+	non funzionava correttamente in presenza di esiti personalizzati che rientravano tra gli esiti 'ok' della PdD.
+	Se la pdd rilevava un esito personalizzato 'ok', tale esito viene utilizzato sempre e comunque 
+	non tenendo conto di un eventuale esito build-in appartenente agli esiti 'ko' e quindi di priorità maggiore.
+
 2017-10-31  Andrea Poli <apoli@link.it>
 
 	* [Utils]
