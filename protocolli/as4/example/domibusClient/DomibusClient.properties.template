@@ -5,13 +5,20 @@ urlServizio=http://localhost:8080/domibus/services/backend
 
 #  ------ Tipo di Operazione ------
 
-operazione=listPendingMessages
-#operazione=downloadMessage
+
+#  ------ Tipo di Operazione  ------
+
+# Comuni
+#operazione=listPendingMessages
 #operazione=getMessageStatus
 #operazione=getMessageErrors
+
+# Receiver
+#operazione=downloadMessage
+#operazione=retrieveMessage
 
 
 # ------ ID Messaggio ----
 
-#msgID=af593640-8c28-4e3f-a5a3-304be9579c2b@domibus.eu
+#msgID=6bbb68d2-7e3d-4dbd-ba63-186d8f34dc9e@domibus.eu
 

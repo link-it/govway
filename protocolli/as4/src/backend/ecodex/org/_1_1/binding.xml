@@ -5,10 +5,14 @@
     <structure field="faultDetail" usage="required" map-as="backend.ecodex.org._1_1.FaultDetail"/>
     <structure field="downloadMessageRequest" usage="required" map-as="backend.ecodex.org._1_1.DownloadMessageRequest"/>
     <structure field="downloadMessageResponse" usage="required" map-as="backend.ecodex.org._1_1.DownloadMessageResponse"/>
+    <structure field="retrieveMessageRequest" usage="required" map-as="backend.ecodex.org._1_1.RetrieveMessageRequest"/>
+    <structure field="retrieveMessageResponse" usage="required" map-as="backend.ecodex.org._1_1.RetrieveMessageResponse"/>
     <structure field="listPendingMessagesResponse" usage="required" map-as="backend.ecodex.org._1_1.ListPendingMessagesResponse"/>
     <structure field="messageErrorsRequest" usage="required" map-as="backend.ecodex.org._1_1.MessageErrorsRequest"/>
     <structure field="messageStatusRequest" usage="required" map-as="backend.ecodex.org._1_1.MessageStatusRequest"/>
     <structure field="sendRequest" usage="required" map-as="backend.ecodex.org._1_1.SendRequest"/>
+    <structure field="submitRequest" usage="required" map-as="backend.ecodex.org._1_1.SubmitRequest"/>
+    <structure field="submitResponse" usage="required" map-as="backend.ecodex.org._1_1.SubmitResponse"/>
     <structure field="sendRequestURL" usage="required" map-as="backend.ecodex.org._1_1.SendRequestURL"/>
     <structure field="sendResponse" usage="required" map-as="backend.ecodex.org._1_1.SendResponse"/>
     <structure field="getStatusRequest" usage="required" map-as="backend.ecodex.org._1_1.GetStatusRequest"/>
@@ -31,6 +35,17 @@
       <structure name="payload" map-as="_PayloadType_Type"/>
     </collection>
   </mapping>
+  <mapping name="retrieveMessageRequest" class="backend.ecodex.org._1_1.RetrieveMessageRequest">
+    <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
+    <value name="messageID" field="messageID" usage="required"/>
+  </mapping>
+  <mapping name="retrieveMessageResponse" class="backend.ecodex.org._1_1.RetrieveMessageResponse">
+    <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
+    <structure name="bodyload" field="bodyload" usage="optional" map-as="_LargePayloadType_Type"/>
+    <collection field="payload" create-type="java.util.ArrayList">
+      <structure name="payload" map-as="_LargePayloadType_Type"/>
+    </collection>
+  </mapping>
   <mapping name="listPendingMessagesResponse" class="backend.ecodex.org._1_1.ListPendingMessagesResponse">
     <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
     <collection field="messageID" create-type="java.util.ArrayList">
@@ -50,6 +65,19 @@
     <structure name="bodyload" field="bodyload" usage="optional" map-as="_PayloadType_Type"/>
     <collection field="payload" create-type="java.util.ArrayList">
       <structure name="payload" map-as="_PayloadType_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="submitRequest" class="backend.ecodex.org._1_1.SubmitRequest">
+    <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
+    <structure name="bodyload" field="bodyload" usage="optional" map-as="_LargePayloadType_Type"/>
+    <collection field="payload" create-type="java.util.ArrayList">
+      <structure name="payload" map-as="_LargePayloadType_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="submitResponse" class="backend.ecodex.org._1_1.SubmitResponse">
+    <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
+    <collection field="messageID" create-type="java.util.ArrayList">
+      <value name="messageID" type="java.lang.String"/>
     </collection>
   </mapping>
   <mapping name="sendRequestURL" class="backend.ecodex.org._1_1.SendRequestURL">
@@ -75,6 +103,19 @@
   <mapping type-name="_PayloadType_Type" class="backend.ecodex.org._1_1.PayloadType" abstract="true">
     <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
     <value field="base" usage="required" style="text"/>
+    <value name="payloadId" field="payloadId" usage="required" style="attribute"/>
+    <value name="contentType" field="contentType" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="bodyload" class="backend.ecodex.org._1_1.LargePayloadType" abstract="false">
+    <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
+    <value name="value" field="value" usage="required"/>
+    <value name="payloadId" field="payloadId" usage="required" style="attribute"/>
+    <value name="contentType" field="contentType" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_LargePayloadType_Type" class="backend.ecodex.org._1_1.LargePayloadType" abstract="true">
+    <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
+    <value name="value" field="value" usage="required"/>
     <value name="payloadId" field="payloadId" usage="required" style="attribute"/>
     <value name="contentType" field="contentType" usage="optional" style="attribute"/>
   </mapping>
@@ -105,6 +146,10 @@
     </collection>
   </mapping>
   <mapping name="getStatusRequest" class="backend.ecodex.org._1_1.GetStatusRequest">
+    <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
+    <value name="messageID" field="messageID" usage="required"/>
+  </mapping>
+  <mapping name="statusRequest" class="backend.ecodex.org._1_1.StatusRequest">
     <namespace uri="http://org.ecodex.backend/1_1/" default="elements"/>
     <value name="messageID" field="messageID" usage="required"/>
   </mapping>

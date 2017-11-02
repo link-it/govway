@@ -37,10 +37,14 @@ import java.io.Serializable;
  * 			&lt;element name="FaultDetail" type="{http://org.ecodex.backend/1_1/}FaultDetail" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="downloadMessageRequest" type="{http://org.ecodex.backend/1_1/}downloadMessageRequest" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="downloadMessageResponse" type="{http://org.ecodex.backend/1_1/}downloadMessageResponse" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="retrieveMessageRequest" type="{http://org.ecodex.backend/1_1/}retrieveMessageRequest" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="retrieveMessageResponse" type="{http://org.ecodex.backend/1_1/}retrieveMessageResponse" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="listPendingMessagesResponse" type="{http://org.ecodex.backend/1_1/}listPendingMessagesResponse" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="messageErrorsRequest" type="{http://org.ecodex.backend/1_1/}messageErrorsRequest" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="messageStatusRequest" type="{http://org.ecodex.backend/1_1/}messageStatusRequest" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="sendRequest" type="{http://org.ecodex.backend/1_1/}sendRequest" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="submitRequest" type="{http://org.ecodex.backend/1_1/}submitRequest" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="submitResponse" type="{http://org.ecodex.backend/1_1/}submitResponse" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="sendRequestURL" type="{http://org.ecodex.backend/1_1/}sendRequestURL" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="sendResponse" type="{http://org.ecodex.backend/1_1/}sendResponse" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="getStatusRequest" type="{http://org.ecodex.backend/1_1/}getStatusRequest" minOccurs="1" maxOccurs="1"/>
@@ -62,10 +66,14 @@ import java.io.Serializable;
   	"faultDetail",
   	"downloadMessageRequest",
   	"downloadMessageResponse",
+  	"retrieveMessageRequest",
+  	"retrieveMessageResponse",
   	"listPendingMessagesResponse",
   	"messageErrorsRequest",
   	"messageStatusRequest",
   	"sendRequest",
+  	"submitRequest",
+  	"submitResponse",
   	"sendRequestURL",
   	"sendResponse",
   	"getStatusRequest",
@@ -104,6 +112,22 @@ public class Collection extends org.openspcoop2.utils.beans.BaseBean implements 
     this.downloadMessageResponse = downloadMessageResponse;
   }
 
+  public RetrieveMessageRequest getRetrieveMessageRequest() {
+    return this.retrieveMessageRequest;
+  }
+
+  public void setRetrieveMessageRequest(RetrieveMessageRequest retrieveMessageRequest) {
+    this.retrieveMessageRequest = retrieveMessageRequest;
+  }
+
+  public RetrieveMessageResponse getRetrieveMessageResponse() {
+    return this.retrieveMessageResponse;
+  }
+
+  public void setRetrieveMessageResponse(RetrieveMessageResponse retrieveMessageResponse) {
+    this.retrieveMessageResponse = retrieveMessageResponse;
+  }
+
   public ListPendingMessagesResponse getListPendingMessagesResponse() {
     return this.listPendingMessagesResponse;
   }
@@ -134,6 +158,22 @@ public class Collection extends org.openspcoop2.utils.beans.BaseBean implements 
 
   public void setSendRequest(SendRequest sendRequest) {
     this.sendRequest = sendRequest;
+  }
+
+  public SubmitRequest getSubmitRequest() {
+    return this.submitRequest;
+  }
+
+  public void setSubmitRequest(SubmitRequest submitRequest) {
+    this.submitRequest = submitRequest;
+  }
+
+  public SubmitResponse getSubmitResponse() {
+    return this.submitResponse;
+  }
+
+  public void setSubmitResponse(SubmitResponse submitResponse) {
+    this.submitResponse = submitResponse;
   }
 
   public SendRequestURL getSendRequestURL() {
@@ -201,6 +241,12 @@ public class Collection extends org.openspcoop2.utils.beans.BaseBean implements 
   @XmlElement(name="downloadMessageResponse",required=true,nillable=false)
   protected DownloadMessageResponse downloadMessageResponse;
 
+  @XmlElement(name="retrieveMessageRequest",required=true,nillable=false)
+  protected RetrieveMessageRequest retrieveMessageRequest;
+
+  @XmlElement(name="retrieveMessageResponse",required=true,nillable=false)
+  protected RetrieveMessageResponse retrieveMessageResponse;
+
   @XmlElement(name="listPendingMessagesResponse",required=true,nillable=false)
   protected ListPendingMessagesResponse listPendingMessagesResponse;
 
@@ -212,6 +258,12 @@ public class Collection extends org.openspcoop2.utils.beans.BaseBean implements 
 
   @XmlElement(name="sendRequest",required=true,nillable=false)
   protected SendRequest sendRequest;
+
+  @XmlElement(name="submitRequest",required=true,nillable=false)
+  protected SubmitRequest submitRequest;
+
+  @XmlElement(name="submitResponse",required=true,nillable=false)
+  protected SubmitResponse submitResponse;
 
   @XmlElement(name="sendRequestURL",required=true,nillable=false)
   protected SendRequestURL sendRequestURL;

@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -34,14 +35,22 @@ import javax.xml.ws.Holder;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.DownloadMessageRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.DownloadMessageResponse;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ErrorResultImpl;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ErrorResultImplArray;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.GetStatusRequest;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.GetErrorsRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ListPendingMessagesResponse;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.MessageStatus;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.Messaging;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.RetrieveMessageRequest;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.RetrieveMessageResponse;
 import org.openspcoop2.protocol.as4.utils.AS4StubUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+
+
 
 /**
  * Client per il servizio Domibus	
@@ -109,7 +118,7 @@ public class DomibusClient {
 			
 			
 			// Parametri invocazione
-			if(("downloadMessage".equals(comando) || "getMessageStatus".equals(comando)) && (msgID==null)){
+			if(("downloadMessage".equals(comando) || "getMessageStatus".equals(comando) || "getMessageErrors".equals(comando)) && (msgID==null)){
 				System.err.println("ERROR : Identificativo del messaggio non definito all'interno del file 'DomibusClient.properties'");
 				return;
 			}
@@ -156,6 +165,8 @@ public class DomibusClient {
 			
 			else if(comando.equals("downloadMessage")){
 				
+				// DEPRECATO
+				
 				DownloadMessageRequest msgRequest = new DownloadMessageRequest();
 				msgRequest.setMessageID(msgID);
 				
@@ -196,6 +207,51 @@ public class DomibusClient {
 
 			}
 			
+			else if(comando.equals("retrieveMessage")){
+				
+				// DEPRECATO
+				
+				RetrieveMessageRequest msgRequest = new RetrieveMessageRequest();
+				msgRequest.setMessageID(msgID);
+				
+				// DownloadMessageResponse msgRespone = new
+				Holder<RetrieveMessageResponse> msgRespone = new Holder<RetrieveMessageResponse>();
+				Holder<Messaging> headerResponse = new Holder<Messaging>();
+				
+				domibusPort.retrieveMessage(msgRequest, msgRespone, headerResponse);
+				
+				if(msgRespone.value==null){
+					System.out.println("Invocazione fallita: nessuna oggetto ritornato");
+				}
+				if(headerResponse.value==null){
+					System.out.println("Invocazione fallita: nessuna informazione as4 sull'oggetto ritornata");
+				}
+				
+				UserMessage msg = AS4StubUtils.convertTo(headerResponse.value);
+				System.out.println("Header: \n"+msg.toXml_Jaxb());
+				System.out.println("\n\n");
+				if(msgRespone.value.getPayload()==null || msgRespone.value.getPayload().size()<=0){
+					System.out.println("Nessun payload associato al messaggio");
+				}
+				else{
+					System.out.println("Invocazione effettuata: trovati "+msgRespone.value.getPayload().size()+" payload");
+					String payloadName = "payload";
+					for (int i = 0; i < msgRespone.value.getPayload().size(); i++) {
+						String ext = "bin";
+						if(msgRespone.value.getPayload().get(i).getContentType()!=null){
+							String baseType = ContentTypeUtilities.readBaseTypeFromContentType(msgRespone.value.getPayload().get(i).getContentType());
+							ext = MimeTypes.getInstance().getExtension(baseType);
+						}
+						File f = new File(payloadName+(i+1)+"."+ext);
+						byte [] content = Utilities.getAsByteArray(msgRespone.value.getPayload().get(i).getValue().getInputStream());
+						FileSystemUtilities.writeFile(f, content);
+						System.out.println("Payload["+i+"] contentType["+msgRespone.value.getPayload().get(i).getContentType()+"] id["
+								+msgRespone.value.getPayload().get(i).getPayloadId()+"] savedTo["+f.getName()+"]");
+					}
+				}
+
+			}
+			
 			else if(comando.equals("getMessageStatus")){
 				
 				GetStatusRequest getStatusRequest = new GetStatusRequest();
@@ -206,7 +262,37 @@ public class DomibusClient {
 					System.out.println("Nessun stato trovato per il messaggio");
 				}
 				else{
-					// TODO
+					System.out.println("Stato: "+status);
+				}
+				
+			}
+			
+			else if(comando.equals("getMessageErrors")){
+				
+				GetErrorsRequest getErrorsRequest = new GetErrorsRequest();
+				getErrorsRequest.setMessageID(msgID);
+				
+				ErrorResultImplArray errors = domibusPort.getMessageErrors(getErrorsRequest);
+				if(errors==null || errors.getItem()==null || errors.getItem().size()<=0){
+					System.out.println("Nessun errore rilevato per il messaggio");
+				}
+				else{
+					String format = "yyyy-MM-dd_HH:mm:ss.SSS";
+					SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+					int index = 1;
+					for (ErrorResultImpl error : errors.getItem()) {
+						String data = null;
+						if(error.getTimestamp()!=null) {
+							data = " (timestamp:"+dateformat.format(error.getTimestamp().toGregorianCalendar().getTime())+")";
+						}
+						String notified = null;
+						if(error.getNotified()!=null) {
+							notified = " (notified:"+dateformat.format(error.getNotified().toGregorianCalendar().getTime())+")";
+						}
+						System.out.println("Errore["+index+"]"+data+notified+" id:"+error.getMessageInErrorId()+ " msh-role:"+error.getMshRole()
+							+ " code:"+error.getErrorCode()+" details: "+error.getErrorDetail());
+						index++;
+					}
 				}
 				
 			}

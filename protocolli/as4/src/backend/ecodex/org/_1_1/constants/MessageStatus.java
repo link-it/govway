@@ -38,6 +38,10 @@ public enum MessageStatus implements IEnumeration , Serializable , Cloneable {
 
 	@javax.xml.bind.annotation.XmlEnumValue("READY_TO_SEND")
 	READY_TO_SEND ("READY_TO_SEND"),
+	@javax.xml.bind.annotation.XmlEnumValue("READY_TO_PULL")
+	READY_TO_PULL ("READY_TO_PULL"),
+	@javax.xml.bind.annotation.XmlEnumValue("BEING_PULLED")
+	BEING_PULLED ("BEING_PULLED"),
 	@javax.xml.bind.annotation.XmlEnumValue("SEND_ENQUEUED")
 	SEND_ENQUEUED ("SEND_ENQUEUED"),
 	@javax.xml.bind.annotation.XmlEnumValue("SEND_IN_PROGRESS")
@@ -61,7 +65,9 @@ public enum MessageStatus implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("RECEIVED_WITH_WARNINGS")
 	RECEIVED_WITH_WARNINGS ("RECEIVED_WITH_WARNINGS"),
 	@javax.xml.bind.annotation.XmlEnumValue("DELETED")
-	DELETED ("DELETED");
+	DELETED ("DELETED"),
+	@javax.xml.bind.annotation.XmlEnumValue("DOWNLOADED")
+	DOWNLOADED ("DOWNLOADED");
 	
 	
 	/** Value */

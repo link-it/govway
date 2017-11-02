@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"  xmlns:tns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
 
-
-  <!--    
-  	<xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    
+  <!-- 
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
   -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
 
@@ -11,7 +11,7 @@
         
     <xsd:appinfo>Schema for Domibus messages' headers submission</xsd:appinfo>
         
-    <xsd:documentation xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <xsd:documentation xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">
             This schema defines an XML subset of ebMS-3 headers which is used to validate messages submitted to Domibus
             through WS plugin.
         </xsd:documentation>
@@ -75,9 +75,9 @@
         
     <xsd:all>
             
-      <xsd:element name="From" type="tns:From"/>
+      <xsd:element maxOccurs="1" minOccurs="1" name="From" type="tns:From"/>
             
-      <xsd:element name="To" type="tns:To"/>
+      <xsd:element maxOccurs="1" minOccurs="0" name="To" type="tns:To"/>
         
     </xsd:all>
     

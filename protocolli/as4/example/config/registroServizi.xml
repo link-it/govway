@@ -35,7 +35,8 @@
             <property nome="location" valore="http://localhost:8080/domibus/services/backend"/>
         </connettore>
 
-	<protocol-property name="ebmsUserMessagePartyId" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered:domibus-red" />
+	<protocol-property name="ebmsUserMessagePartyId" value="domibus-red" />
+	<protocol-property name="ebmsUserMessagePartyIdType" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered" />
 
     </soggetto>
 
@@ -47,7 +48,8 @@
             <property nome="location" valore="http://localhost:8080/domibus/services/backend"/>
         </connettore>
 
-	<protocol-property name="ebmsUserMessagePartyId" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered:domibus-blue" />
+	<protocol-property name="ebmsUserMessagePartyId" value="domibus-blue" />
+	<protocol-property name="ebmsUserMessagePartyIdType" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered" />
 
         <accordo-servizio-parte-specifica tipo="AS4" nome="GestioneFileSOAP"
             accordo-servizio-parte-comune="AS4/MinisteroErogatore:SoapExample:1"

@@ -23,22 +23,28 @@ import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.xml.JaxbUtils;
 
-import backend.ecodex.org._1_1.MessageErrorsRequest;
-import backend.ecodex.org._1_1.GetStatusRequest;
-import backend.ecodex.org._1_1.PayloadType;
-import backend.ecodex.org._1_1.ErrorResultImpl;
-import backend.ecodex.org._1_1.ErrorResultImplArray;
+import backend.ecodex.org._1_1.SubmitResponse;
 import backend.ecodex.org._1_1.FaultDetail;
-import backend.ecodex.org._1_1.DownloadMessageResponse;
-import backend.ecodex.org._1_1.Collection;
-import backend.ecodex.org._1_1.DownloadMessageRequest;
-import backend.ecodex.org._1_1.ListPendingMessagesResponse;
+import backend.ecodex.org._1_1.PayloadURLType;
 import backend.ecodex.org._1_1.MessageStatusRequest;
+import backend.ecodex.org._1_1.ErrorResultImpl;
+import backend.ecodex.org._1_1.ListPendingMessagesResponse;
+import backend.ecodex.org._1_1.StatusRequest;
+import backend.ecodex.org._1_1.LargePayloadType;
+import backend.ecodex.org._1_1.RetrieveMessageResponse;
+import backend.ecodex.org._1_1.RetrieveMessageRequest;
+import backend.ecodex.org._1_1.GetStatusRequest;
+import backend.ecodex.org._1_1.SendResponse;
+import backend.ecodex.org._1_1.PayloadType;
 import backend.ecodex.org._1_1.SendRequest;
 import backend.ecodex.org._1_1.SendRequestURL;
-import backend.ecodex.org._1_1.SendResponse;
 import backend.ecodex.org._1_1.GetErrorsRequest;
-import backend.ecodex.org._1_1.PayloadURLType;
+import backend.ecodex.org._1_1.DownloadMessageRequest;
+import backend.ecodex.org._1_1.DownloadMessageResponse;
+import backend.ecodex.org._1_1.ErrorResultImplArray;
+import backend.ecodex.org._1_1.MessageErrorsRequest;
+import backend.ecodex.org._1_1.SubmitRequest;
+import backend.ecodex.org._1_1.Collection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -131,590 +137,118 @@ public abstract class AbstractSerializer {
 
 	/*
 	 =================================================================================
-	 Object: messageErrorsRequest
+	 Object: submitResponse
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to file system in <var>fileName</var> the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>messageErrorsRequest</var>
-	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>submitResponse</var>
+	 * @param submitResponse Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,MessageErrorsRequest messageErrorsRequest) throws SerializerException {
-		this.objToXml(fileName, MessageErrorsRequest.class, messageErrorsRequest, false);
+	public void write(String fileName,SubmitResponse submitResponse) throws SerializerException {
+		this.objToXml(fileName, SubmitResponse.class, submitResponse, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to file system in <var>fileName</var> the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>messageErrorsRequest</var>
-	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>submitResponse</var>
+	 * @param submitResponse Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, MessageErrorsRequest.class, messageErrorsRequest, prettyPrint);
+	public void write(String fileName,SubmitResponse submitResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, SubmitResponse.class, submitResponse, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to file system in <var>file</var> the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param file Xml file to serialize the object <var>messageErrorsRequest</var>
-	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>submitResponse</var>
+	 * @param submitResponse Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,MessageErrorsRequest messageErrorsRequest) throws SerializerException {
-		this.objToXml(file, MessageErrorsRequest.class, messageErrorsRequest, false);
+	public void write(File file,SubmitResponse submitResponse) throws SerializerException {
+		this.objToXml(file, SubmitResponse.class, submitResponse, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to file system in <var>file</var> the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param file Xml file to serialize the object <var>messageErrorsRequest</var>
-	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>submitResponse</var>
+	 * @param submitResponse Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, MessageErrorsRequest.class, messageErrorsRequest, prettyPrint);
+	public void write(File file,SubmitResponse submitResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, SubmitResponse.class, submitResponse, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to output stream <var>out</var> the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param out OutputStream to serialize the object <var>messageErrorsRequest</var>
-	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>submitResponse</var>
+	 * @param submitResponse Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,MessageErrorsRequest messageErrorsRequest) throws SerializerException {
-		this.objToXml(out, MessageErrorsRequest.class, messageErrorsRequest, false);
+	public void write(OutputStream out,SubmitResponse submitResponse) throws SerializerException {
+		this.objToXml(out, SubmitResponse.class, submitResponse, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to output stream <var>out</var> the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param out OutputStream to serialize the object <var>messageErrorsRequest</var>
-	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>submitResponse</var>
+	 * @param submitResponse Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, MessageErrorsRequest.class, messageErrorsRequest, prettyPrint);
+	public void write(OutputStream out,SubmitResponse submitResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, SubmitResponse.class, submitResponse, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to byte array the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param messageErrorsRequest Object to be serialized
+	 * @param submitResponse Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(MessageErrorsRequest messageErrorsRequest) throws SerializerException {
-		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, false).toByteArray();
+	public byte[] toByteArray(SubmitResponse submitResponse) throws SerializerException {
+		return this.objToXml(SubmitResponse.class, submitResponse, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * Serialize to byte array the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param messageErrorsRequest Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
-	 * 
-	 * @param messageErrorsRequest Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(MessageErrorsRequest messageErrorsRequest) throws SerializerException {
-		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
-	 * 
-	 * @param messageErrorsRequest Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: getStatusRequest
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>getStatusRequest</var>
-	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,GetStatusRequest getStatusRequest) throws SerializerException {
-		this.objToXml(fileName, GetStatusRequest.class, getStatusRequest, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>getStatusRequest</var>
-	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, GetStatusRequest.class, getStatusRequest, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param file Xml file to serialize the object <var>getStatusRequest</var>
-	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,GetStatusRequest getStatusRequest) throws SerializerException {
-		this.objToXml(file, GetStatusRequest.class, getStatusRequest, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param file Xml file to serialize the object <var>getStatusRequest</var>
-	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, GetStatusRequest.class, getStatusRequest, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param out OutputStream to serialize the object <var>getStatusRequest</var>
-	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,GetStatusRequest getStatusRequest) throws SerializerException {
-		this.objToXml(out, GetStatusRequest.class, getStatusRequest, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param out OutputStream to serialize the object <var>getStatusRequest</var>
-	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, GetStatusRequest.class, getStatusRequest, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param getStatusRequest Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(GetStatusRequest getStatusRequest) throws SerializerException {
-		return this.objToXml(GetStatusRequest.class, getStatusRequest, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
-	 * 
-	 * @param getStatusRequest Object to be serialized
+	 * @param submitResponse Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(GetStatusRequest.class, getStatusRequest, prettyPrint).toByteArray();
+	public byte[] toByteArray(SubmitResponse submitResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(SubmitResponse.class, submitResponse, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * Serialize to String the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param getStatusRequest Object to be serialized
+	 * @param submitResponse Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(GetStatusRequest getStatusRequest) throws SerializerException {
-		return this.objToXml(GetStatusRequest.class, getStatusRequest, false).toString();
+	public String toString(SubmitResponse submitResponse) throws SerializerException {
+		return this.objToXml(SubmitResponse.class, submitResponse, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * Serialize to String the object <var>submitResponse</var> of type {@link backend.ecodex.org._1_1.SubmitResponse}
 	 * 
-	 * @param getStatusRequest Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(GetStatusRequest.class, getStatusRequest, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: PayloadType
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>payloadType</var>
-	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,PayloadType payloadType) throws SerializerException {
-		this.objToXml(fileName, PayloadType.class, payloadType, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>payloadType</var>
-	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,PayloadType payloadType,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, PayloadType.class, payloadType, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param file Xml file to serialize the object <var>payloadType</var>
-	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,PayloadType payloadType) throws SerializerException {
-		this.objToXml(file, PayloadType.class, payloadType, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param file Xml file to serialize the object <var>payloadType</var>
-	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,PayloadType payloadType,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, PayloadType.class, payloadType, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param out OutputStream to serialize the object <var>payloadType</var>
-	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,PayloadType payloadType) throws SerializerException {
-		this.objToXml(out, PayloadType.class, payloadType, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param out OutputStream to serialize the object <var>payloadType</var>
-	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,PayloadType payloadType,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, PayloadType.class, payloadType, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param payloadType Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(PayloadType payloadType) throws SerializerException {
-		return this.objToXml(PayloadType.class, payloadType, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param payloadType Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(PayloadType payloadType,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(PayloadType.class, payloadType, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param payloadType Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(PayloadType payloadType) throws SerializerException {
-		return this.objToXml(PayloadType.class, payloadType, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
-	 * 
-	 * @param payloadType Object to be serialized
+	 * @param submitResponse Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(PayloadType payloadType,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(PayloadType.class, payloadType, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: errorResultImpl
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>errorResultImpl</var>
-	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,ErrorResultImpl errorResultImpl) throws SerializerException {
-		this.objToXml(fileName, ErrorResultImpl.class, errorResultImpl, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>errorResultImpl</var>
-	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, ErrorResultImpl.class, errorResultImpl, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param file Xml file to serialize the object <var>errorResultImpl</var>
-	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,ErrorResultImpl errorResultImpl) throws SerializerException {
-		this.objToXml(file, ErrorResultImpl.class, errorResultImpl, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param file Xml file to serialize the object <var>errorResultImpl</var>
-	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, ErrorResultImpl.class, errorResultImpl, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param out OutputStream to serialize the object <var>errorResultImpl</var>
-	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,ErrorResultImpl errorResultImpl) throws SerializerException {
-		this.objToXml(out, ErrorResultImpl.class, errorResultImpl, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param out OutputStream to serialize the object <var>errorResultImpl</var>
-	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, ErrorResultImpl.class, errorResultImpl, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param errorResultImpl Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(ErrorResultImpl errorResultImpl) throws SerializerException {
-		return this.objToXml(ErrorResultImpl.class, errorResultImpl, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param errorResultImpl Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ErrorResultImpl.class, errorResultImpl, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param errorResultImpl Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(ErrorResultImpl errorResultImpl) throws SerializerException {
-		return this.objToXml(ErrorResultImpl.class, errorResultImpl, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
-	 * 
-	 * @param errorResultImpl Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ErrorResultImpl.class, errorResultImpl, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: errorResultImplArray
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>errorResultImplArray</var>
-	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,ErrorResultImplArray errorResultImplArray) throws SerializerException {
-		this.objToXml(fileName, ErrorResultImplArray.class, errorResultImplArray, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>errorResultImplArray</var>
-	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, ErrorResultImplArray.class, errorResultImplArray, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param file Xml file to serialize the object <var>errorResultImplArray</var>
-	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,ErrorResultImplArray errorResultImplArray) throws SerializerException {
-		this.objToXml(file, ErrorResultImplArray.class, errorResultImplArray, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param file Xml file to serialize the object <var>errorResultImplArray</var>
-	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, ErrorResultImplArray.class, errorResultImplArray, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param out OutputStream to serialize the object <var>errorResultImplArray</var>
-	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,ErrorResultImplArray errorResultImplArray) throws SerializerException {
-		this.objToXml(out, ErrorResultImplArray.class, errorResultImplArray, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param out OutputStream to serialize the object <var>errorResultImplArray</var>
-	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, ErrorResultImplArray.class, errorResultImplArray, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param errorResultImplArray Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(ErrorResultImplArray errorResultImplArray) throws SerializerException {
-		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param errorResultImplArray Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param errorResultImplArray Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(ErrorResultImplArray errorResultImplArray) throws SerializerException {
-		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
-	 * 
-	 * @param errorResultImplArray Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, prettyPrint).toString();
+	public String toString(SubmitResponse submitResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(SubmitResponse.class, submitResponse, prettyPrint).toString();
 	}
 	
 	
@@ -839,354 +373,354 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: downloadMessageResponse
+	 Object: PayloadURLType
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to file system in <var>fileName</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>downloadMessageResponse</var>
-	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>payloadURLType</var>
+	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,DownloadMessageResponse downloadMessageResponse) throws SerializerException {
-		this.objToXml(fileName, DownloadMessageResponse.class, downloadMessageResponse, false);
+	public void write(String fileName,PayloadURLType payloadURLType) throws SerializerException {
+		this.objToXml(fileName, PayloadURLType.class, payloadURLType, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to file system in <var>fileName</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>downloadMessageResponse</var>
-	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>payloadURLType</var>
+	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, DownloadMessageResponse.class, downloadMessageResponse, prettyPrint);
+	public void write(String fileName,PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, PayloadURLType.class, payloadURLType, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to file system in <var>file</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param file Xml file to serialize the object <var>downloadMessageResponse</var>
-	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>payloadURLType</var>
+	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,DownloadMessageResponse downloadMessageResponse) throws SerializerException {
-		this.objToXml(file, DownloadMessageResponse.class, downloadMessageResponse, false);
+	public void write(File file,PayloadURLType payloadURLType) throws SerializerException {
+		this.objToXml(file, PayloadURLType.class, payloadURLType, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to file system in <var>file</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param file Xml file to serialize the object <var>downloadMessageResponse</var>
-	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>payloadURLType</var>
+	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, DownloadMessageResponse.class, downloadMessageResponse, prettyPrint);
+	public void write(File file,PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, PayloadURLType.class, payloadURLType, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to output stream <var>out</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param out OutputStream to serialize the object <var>downloadMessageResponse</var>
-	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>payloadURLType</var>
+	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,DownloadMessageResponse downloadMessageResponse) throws SerializerException {
-		this.objToXml(out, DownloadMessageResponse.class, downloadMessageResponse, false);
+	public void write(OutputStream out,PayloadURLType payloadURLType) throws SerializerException {
+		this.objToXml(out, PayloadURLType.class, payloadURLType, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to output stream <var>out</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param out OutputStream to serialize the object <var>downloadMessageResponse</var>
-	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>payloadURLType</var>
+	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, DownloadMessageResponse.class, downloadMessageResponse, prettyPrint);
+	public void write(OutputStream out,PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, PayloadURLType.class, payloadURLType, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to byte array the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param downloadMessageResponse Object to be serialized
+	 * @param payloadURLType Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(DownloadMessageResponse downloadMessageResponse) throws SerializerException {
-		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, false).toByteArray();
+	public byte[] toByteArray(PayloadURLType payloadURLType) throws SerializerException {
+		return this.objToXml(PayloadURLType.class, payloadURLType, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to byte array the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param downloadMessageResponse Object to be serialized
+	 * @param payloadURLType Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, prettyPrint).toByteArray();
+	public byte[] toByteArray(PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PayloadURLType.class, payloadURLType, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to String the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param downloadMessageResponse Object to be serialized
+	 * @param payloadURLType Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(DownloadMessageResponse downloadMessageResponse) throws SerializerException {
-		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, false).toString();
+	public String toString(PayloadURLType payloadURLType) throws SerializerException {
+		return this.objToXml(PayloadURLType.class, payloadURLType, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * Serialize to String the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
 	 * 
-	 * @param downloadMessageResponse Object to be serialized
+	 * @param payloadURLType Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, prettyPrint).toString();
+	public String toString(PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PayloadURLType.class, payloadURLType, prettyPrint).toString();
 	}
 	
 	
 	
 	/*
 	 =================================================================================
-	 Object: collection
+	 Object: messageStatusRequest
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to file system in <var>fileName</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>collection</var>
-	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>messageStatusRequest</var>
+	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,Collection collection) throws SerializerException {
-		this.objToXml(fileName, Collection.class, collection, false);
+	public void write(String fileName,MessageStatusRequest messageStatusRequest) throws SerializerException {
+		this.objToXml(fileName, MessageStatusRequest.class, messageStatusRequest, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to file system in <var>fileName</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>collection</var>
-	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>messageStatusRequest</var>
+	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,Collection collection,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, Collection.class, collection, prettyPrint);
+	public void write(String fileName,MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, MessageStatusRequest.class, messageStatusRequest, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to file system in <var>file</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param file Xml file to serialize the object <var>collection</var>
-	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>messageStatusRequest</var>
+	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,Collection collection) throws SerializerException {
-		this.objToXml(file, Collection.class, collection, false);
+	public void write(File file,MessageStatusRequest messageStatusRequest) throws SerializerException {
+		this.objToXml(file, MessageStatusRequest.class, messageStatusRequest, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to file system in <var>file</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param file Xml file to serialize the object <var>collection</var>
-	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>messageStatusRequest</var>
+	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,Collection collection,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, Collection.class, collection, prettyPrint);
+	public void write(File file,MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, MessageStatusRequest.class, messageStatusRequest, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to output stream <var>out</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param out OutputStream to serialize the object <var>collection</var>
-	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>messageStatusRequest</var>
+	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,Collection collection) throws SerializerException {
-		this.objToXml(out, Collection.class, collection, false);
+	public void write(OutputStream out,MessageStatusRequest messageStatusRequest) throws SerializerException {
+		this.objToXml(out, MessageStatusRequest.class, messageStatusRequest, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to output stream <var>out</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param out OutputStream to serialize the object <var>collection</var>
-	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>messageStatusRequest</var>
+	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,Collection collection,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, Collection.class, collection, prettyPrint);
+	public void write(OutputStream out,MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, MessageStatusRequest.class, messageStatusRequest, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to byte array the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param collection Object to be serialized
+	 * @param messageStatusRequest Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(Collection collection) throws SerializerException {
-		return this.objToXml(Collection.class, collection, false).toByteArray();
+	public byte[] toByteArray(MessageStatusRequest messageStatusRequest) throws SerializerException {
+		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to byte array the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param collection Object to be serialized
+	 * @param messageStatusRequest Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(Collection collection,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Collection.class, collection, prettyPrint).toByteArray();
+	public byte[] toByteArray(MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to String the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param collection Object to be serialized
+	 * @param messageStatusRequest Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(Collection collection) throws SerializerException {
-		return this.objToXml(Collection.class, collection, false).toString();
+	public String toString(MessageStatusRequest messageStatusRequest) throws SerializerException {
+		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * Serialize to String the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
 	 * 
-	 * @param collection Object to be serialized
+	 * @param messageStatusRequest Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(Collection collection,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Collection.class, collection, prettyPrint).toString();
+	public String toString(MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, prettyPrint).toString();
 	}
 	
 	
 	
 	/*
 	 =================================================================================
-	 Object: downloadMessageRequest
+	 Object: errorResultImpl
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>downloadMessageRequest</var>
-	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>errorResultImpl</var>
+	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,DownloadMessageRequest downloadMessageRequest) throws SerializerException {
-		this.objToXml(fileName, DownloadMessageRequest.class, downloadMessageRequest, false);
+	public void write(String fileName,ErrorResultImpl errorResultImpl) throws SerializerException {
+		this.objToXml(fileName, ErrorResultImpl.class, errorResultImpl, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>downloadMessageRequest</var>
-	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>errorResultImpl</var>
+	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, DownloadMessageRequest.class, downloadMessageRequest, prettyPrint);
+	public void write(String fileName,ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ErrorResultImpl.class, errorResultImpl, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to file system in <var>file</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param file Xml file to serialize the object <var>downloadMessageRequest</var>
-	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>errorResultImpl</var>
+	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,DownloadMessageRequest downloadMessageRequest) throws SerializerException {
-		this.objToXml(file, DownloadMessageRequest.class, downloadMessageRequest, false);
+	public void write(File file,ErrorResultImpl errorResultImpl) throws SerializerException {
+		this.objToXml(file, ErrorResultImpl.class, errorResultImpl, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to file system in <var>file</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param file Xml file to serialize the object <var>downloadMessageRequest</var>
-	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>errorResultImpl</var>
+	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, DownloadMessageRequest.class, downloadMessageRequest, prettyPrint);
+	public void write(File file,ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ErrorResultImpl.class, errorResultImpl, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to output stream <var>out</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param out OutputStream to serialize the object <var>downloadMessageRequest</var>
-	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>errorResultImpl</var>
+	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,DownloadMessageRequest downloadMessageRequest) throws SerializerException {
-		this.objToXml(out, DownloadMessageRequest.class, downloadMessageRequest, false);
+	public void write(OutputStream out,ErrorResultImpl errorResultImpl) throws SerializerException {
+		this.objToXml(out, ErrorResultImpl.class, errorResultImpl, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to output stream <var>out</var> the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param out OutputStream to serialize the object <var>downloadMessageRequest</var>
-	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>errorResultImpl</var>
+	 * @param errorResultImpl Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, DownloadMessageRequest.class, downloadMessageRequest, prettyPrint);
+	public void write(OutputStream out,ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ErrorResultImpl.class, errorResultImpl, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to byte array the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param downloadMessageRequest Object to be serialized
+	 * @param errorResultImpl Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(DownloadMessageRequest downloadMessageRequest) throws SerializerException {
-		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, false).toByteArray();
+	public byte[] toByteArray(ErrorResultImpl errorResultImpl) throws SerializerException {
+		return this.objToXml(ErrorResultImpl.class, errorResultImpl, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to byte array the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param downloadMessageRequest Object to be serialized
+	 * @param errorResultImpl Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, prettyPrint).toByteArray();
+	public byte[] toByteArray(ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ErrorResultImpl.class, errorResultImpl, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to String the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param downloadMessageRequest Object to be serialized
+	 * @param errorResultImpl Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(DownloadMessageRequest downloadMessageRequest) throws SerializerException {
-		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, false).toString();
+	public String toString(ErrorResultImpl errorResultImpl) throws SerializerException {
+		return this.objToXml(ErrorResultImpl.class, errorResultImpl, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
+	 * Serialize to String the object <var>errorResultImpl</var> of type {@link backend.ecodex.org._1_1.ErrorResultImpl}
 	 * 
-	 * @param downloadMessageRequest Object to be serialized
+	 * @param errorResultImpl Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, prettyPrint).toString();
+	public String toString(ErrorResultImpl errorResultImpl,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ErrorResultImpl.class, errorResultImpl, prettyPrint).toString();
 	}
 	
 	
@@ -1311,118 +845,826 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: messageStatusRequest
+	 Object: statusRequest
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to file system in <var>fileName</var> the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>messageStatusRequest</var>
-	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>statusRequest</var>
+	 * @param statusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,MessageStatusRequest messageStatusRequest) throws SerializerException {
-		this.objToXml(fileName, MessageStatusRequest.class, messageStatusRequest, false);
+	public void write(String fileName,StatusRequest statusRequest) throws SerializerException {
+		this.objToXml(fileName, StatusRequest.class, statusRequest, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to file system in <var>fileName</var> the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>messageStatusRequest</var>
-	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>statusRequest</var>
+	 * @param statusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, MessageStatusRequest.class, messageStatusRequest, prettyPrint);
+	public void write(String fileName,StatusRequest statusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, StatusRequest.class, statusRequest, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to file system in <var>file</var> the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param file Xml file to serialize the object <var>messageStatusRequest</var>
-	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>statusRequest</var>
+	 * @param statusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,MessageStatusRequest messageStatusRequest) throws SerializerException {
-		this.objToXml(file, MessageStatusRequest.class, messageStatusRequest, false);
+	public void write(File file,StatusRequest statusRequest) throws SerializerException {
+		this.objToXml(file, StatusRequest.class, statusRequest, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to file system in <var>file</var> the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param file Xml file to serialize the object <var>messageStatusRequest</var>
-	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>statusRequest</var>
+	 * @param statusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, MessageStatusRequest.class, messageStatusRequest, prettyPrint);
+	public void write(File file,StatusRequest statusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, StatusRequest.class, statusRequest, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to output stream <var>out</var> the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param out OutputStream to serialize the object <var>messageStatusRequest</var>
-	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>statusRequest</var>
+	 * @param statusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,MessageStatusRequest messageStatusRequest) throws SerializerException {
-		this.objToXml(out, MessageStatusRequest.class, messageStatusRequest, false);
+	public void write(OutputStream out,StatusRequest statusRequest) throws SerializerException {
+		this.objToXml(out, StatusRequest.class, statusRequest, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to output stream <var>out</var> the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param out OutputStream to serialize the object <var>messageStatusRequest</var>
-	 * @param messageStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>statusRequest</var>
+	 * @param statusRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, MessageStatusRequest.class, messageStatusRequest, prettyPrint);
+	public void write(OutputStream out,StatusRequest statusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, StatusRequest.class, statusRequest, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to byte array the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param messageStatusRequest Object to be serialized
+	 * @param statusRequest Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(MessageStatusRequest messageStatusRequest) throws SerializerException {
-		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, false).toByteArray();
+	public byte[] toByteArray(StatusRequest statusRequest) throws SerializerException {
+		return this.objToXml(StatusRequest.class, statusRequest, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to byte array the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param messageStatusRequest Object to be serialized
+	 * @param statusRequest Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, prettyPrint).toByteArray();
+	public byte[] toByteArray(StatusRequest statusRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatusRequest.class, statusRequest, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to String the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param messageStatusRequest Object to be serialized
+	 * @param statusRequest Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(MessageStatusRequest messageStatusRequest) throws SerializerException {
-		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, false).toString();
+	public String toString(StatusRequest statusRequest) throws SerializerException {
+		return this.objToXml(StatusRequest.class, statusRequest, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>messageStatusRequest</var> of type {@link backend.ecodex.org._1_1.MessageStatusRequest}
+	 * Serialize to String the object <var>statusRequest</var> of type {@link backend.ecodex.org._1_1.StatusRequest}
 	 * 
-	 * @param messageStatusRequest Object to be serialized
+	 * @param statusRequest Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(MessageStatusRequest messageStatusRequest,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(MessageStatusRequest.class, messageStatusRequest, prettyPrint).toString();
+	public String toString(StatusRequest statusRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(StatusRequest.class, statusRequest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: LargePayloadType
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>largePayloadType</var>
+	 * @param largePayloadType Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,LargePayloadType largePayloadType) throws SerializerException {
+		this.objToXml(fileName, LargePayloadType.class, largePayloadType, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>largePayloadType</var>
+	 * @param largePayloadType Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,LargePayloadType largePayloadType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, LargePayloadType.class, largePayloadType, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param file Xml file to serialize the object <var>largePayloadType</var>
+	 * @param largePayloadType Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,LargePayloadType largePayloadType) throws SerializerException {
+		this.objToXml(file, LargePayloadType.class, largePayloadType, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param file Xml file to serialize the object <var>largePayloadType</var>
+	 * @param largePayloadType Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,LargePayloadType largePayloadType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, LargePayloadType.class, largePayloadType, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param out OutputStream to serialize the object <var>largePayloadType</var>
+	 * @param largePayloadType Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,LargePayloadType largePayloadType) throws SerializerException {
+		this.objToXml(out, LargePayloadType.class, largePayloadType, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param out OutputStream to serialize the object <var>largePayloadType</var>
+	 * @param largePayloadType Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,LargePayloadType largePayloadType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, LargePayloadType.class, largePayloadType, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param largePayloadType Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(LargePayloadType largePayloadType) throws SerializerException {
+		return this.objToXml(LargePayloadType.class, largePayloadType, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param largePayloadType Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(LargePayloadType largePayloadType,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(LargePayloadType.class, largePayloadType, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param largePayloadType Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(LargePayloadType largePayloadType) throws SerializerException {
+		return this.objToXml(LargePayloadType.class, largePayloadType, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>largePayloadType</var> of type {@link backend.ecodex.org._1_1.LargePayloadType}
+	 * 
+	 * @param largePayloadType Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(LargePayloadType largePayloadType,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(LargePayloadType.class, largePayloadType, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: retrieveMessageResponse
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>retrieveMessageResponse</var>
+	 * @param retrieveMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RetrieveMessageResponse retrieveMessageResponse) throws SerializerException {
+		this.objToXml(fileName, RetrieveMessageResponse.class, retrieveMessageResponse, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>retrieveMessageResponse</var>
+	 * @param retrieveMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RetrieveMessageResponse retrieveMessageResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, RetrieveMessageResponse.class, retrieveMessageResponse, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param file Xml file to serialize the object <var>retrieveMessageResponse</var>
+	 * @param retrieveMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RetrieveMessageResponse retrieveMessageResponse) throws SerializerException {
+		this.objToXml(file, RetrieveMessageResponse.class, retrieveMessageResponse, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param file Xml file to serialize the object <var>retrieveMessageResponse</var>
+	 * @param retrieveMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RetrieveMessageResponse retrieveMessageResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, RetrieveMessageResponse.class, retrieveMessageResponse, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param out OutputStream to serialize the object <var>retrieveMessageResponse</var>
+	 * @param retrieveMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RetrieveMessageResponse retrieveMessageResponse) throws SerializerException {
+		this.objToXml(out, RetrieveMessageResponse.class, retrieveMessageResponse, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param out OutputStream to serialize the object <var>retrieveMessageResponse</var>
+	 * @param retrieveMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RetrieveMessageResponse retrieveMessageResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, RetrieveMessageResponse.class, retrieveMessageResponse, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param retrieveMessageResponse Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RetrieveMessageResponse retrieveMessageResponse) throws SerializerException {
+		return this.objToXml(RetrieveMessageResponse.class, retrieveMessageResponse, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param retrieveMessageResponse Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RetrieveMessageResponse retrieveMessageResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RetrieveMessageResponse.class, retrieveMessageResponse, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param retrieveMessageResponse Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RetrieveMessageResponse retrieveMessageResponse) throws SerializerException {
+		return this.objToXml(RetrieveMessageResponse.class, retrieveMessageResponse, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>retrieveMessageResponse</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageResponse}
+	 * 
+	 * @param retrieveMessageResponse Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RetrieveMessageResponse retrieveMessageResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RetrieveMessageResponse.class, retrieveMessageResponse, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: retrieveMessageRequest
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>retrieveMessageRequest</var>
+	 * @param retrieveMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RetrieveMessageRequest retrieveMessageRequest) throws SerializerException {
+		this.objToXml(fileName, RetrieveMessageRequest.class, retrieveMessageRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>retrieveMessageRequest</var>
+	 * @param retrieveMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RetrieveMessageRequest retrieveMessageRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, RetrieveMessageRequest.class, retrieveMessageRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>retrieveMessageRequest</var>
+	 * @param retrieveMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RetrieveMessageRequest retrieveMessageRequest) throws SerializerException {
+		this.objToXml(file, RetrieveMessageRequest.class, retrieveMessageRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>retrieveMessageRequest</var>
+	 * @param retrieveMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RetrieveMessageRequest retrieveMessageRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, RetrieveMessageRequest.class, retrieveMessageRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>retrieveMessageRequest</var>
+	 * @param retrieveMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RetrieveMessageRequest retrieveMessageRequest) throws SerializerException {
+		this.objToXml(out, RetrieveMessageRequest.class, retrieveMessageRequest, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>retrieveMessageRequest</var>
+	 * @param retrieveMessageRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RetrieveMessageRequest retrieveMessageRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, RetrieveMessageRequest.class, retrieveMessageRequest, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param retrieveMessageRequest Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RetrieveMessageRequest retrieveMessageRequest) throws SerializerException {
+		return this.objToXml(RetrieveMessageRequest.class, retrieveMessageRequest, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param retrieveMessageRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RetrieveMessageRequest retrieveMessageRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RetrieveMessageRequest.class, retrieveMessageRequest, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param retrieveMessageRequest Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RetrieveMessageRequest retrieveMessageRequest) throws SerializerException {
+		return this.objToXml(RetrieveMessageRequest.class, retrieveMessageRequest, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>retrieveMessageRequest</var> of type {@link backend.ecodex.org._1_1.RetrieveMessageRequest}
+	 * 
+	 * @param retrieveMessageRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RetrieveMessageRequest retrieveMessageRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RetrieveMessageRequest.class, retrieveMessageRequest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: getStatusRequest
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>getStatusRequest</var>
+	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,GetStatusRequest getStatusRequest) throws SerializerException {
+		this.objToXml(fileName, GetStatusRequest.class, getStatusRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>getStatusRequest</var>
+	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, GetStatusRequest.class, getStatusRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>getStatusRequest</var>
+	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,GetStatusRequest getStatusRequest) throws SerializerException {
+		this.objToXml(file, GetStatusRequest.class, getStatusRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>getStatusRequest</var>
+	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, GetStatusRequest.class, getStatusRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>getStatusRequest</var>
+	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,GetStatusRequest getStatusRequest) throws SerializerException {
+		this.objToXml(out, GetStatusRequest.class, getStatusRequest, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>getStatusRequest</var>
+	 * @param getStatusRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, GetStatusRequest.class, getStatusRequest, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param getStatusRequest Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(GetStatusRequest getStatusRequest) throws SerializerException {
+		return this.objToXml(GetStatusRequest.class, getStatusRequest, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param getStatusRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(GetStatusRequest.class, getStatusRequest, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param getStatusRequest Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(GetStatusRequest getStatusRequest) throws SerializerException {
+		return this.objToXml(GetStatusRequest.class, getStatusRequest, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>getStatusRequest</var> of type {@link backend.ecodex.org._1_1.GetStatusRequest}
+	 * 
+	 * @param getStatusRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(GetStatusRequest getStatusRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(GetStatusRequest.class, getStatusRequest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: sendResponse
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>sendResponse</var>
+	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,SendResponse sendResponse) throws SerializerException {
+		this.objToXml(fileName, SendResponse.class, sendResponse, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>sendResponse</var>
+	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, SendResponse.class, sendResponse, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param file Xml file to serialize the object <var>sendResponse</var>
+	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,SendResponse sendResponse) throws SerializerException {
+		this.objToXml(file, SendResponse.class, sendResponse, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param file Xml file to serialize the object <var>sendResponse</var>
+	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, SendResponse.class, sendResponse, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param out OutputStream to serialize the object <var>sendResponse</var>
+	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,SendResponse sendResponse) throws SerializerException {
+		this.objToXml(out, SendResponse.class, sendResponse, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param out OutputStream to serialize the object <var>sendResponse</var>
+	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, SendResponse.class, sendResponse, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param sendResponse Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(SendResponse sendResponse) throws SerializerException {
+		return this.objToXml(SendResponse.class, sendResponse, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param sendResponse Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(SendResponse.class, sendResponse, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param sendResponse Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(SendResponse sendResponse) throws SerializerException {
+		return this.objToXml(SendResponse.class, sendResponse, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
+	 * 
+	 * @param sendResponse Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(SendResponse.class, sendResponse, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: PayloadType
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>payloadType</var>
+	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PayloadType payloadType) throws SerializerException {
+		this.objToXml(fileName, PayloadType.class, payloadType, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>payloadType</var>
+	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PayloadType payloadType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, PayloadType.class, payloadType, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param file Xml file to serialize the object <var>payloadType</var>
+	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PayloadType payloadType) throws SerializerException {
+		this.objToXml(file, PayloadType.class, payloadType, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param file Xml file to serialize the object <var>payloadType</var>
+	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PayloadType payloadType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, PayloadType.class, payloadType, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param out OutputStream to serialize the object <var>payloadType</var>
+	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PayloadType payloadType) throws SerializerException {
+		this.objToXml(out, PayloadType.class, payloadType, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param out OutputStream to serialize the object <var>payloadType</var>
+	 * @param payloadType Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PayloadType payloadType,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, PayloadType.class, payloadType, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param payloadType Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PayloadType payloadType) throws SerializerException {
+		return this.objToXml(PayloadType.class, payloadType, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param payloadType Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PayloadType payloadType,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PayloadType.class, payloadType, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param payloadType Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PayloadType payloadType) throws SerializerException {
+		return this.objToXml(PayloadType.class, payloadType, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>payloadType</var> of type {@link backend.ecodex.org._1_1.PayloadType}
+	 * 
+	 * @param payloadType Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PayloadType payloadType,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PayloadType.class, payloadType, prettyPrint).toString();
 	}
 	
 	
@@ -1665,124 +1907,6 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: sendResponse
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>sendResponse</var>
-	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,SendResponse sendResponse) throws SerializerException {
-		this.objToXml(fileName, SendResponse.class, sendResponse, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>sendResponse</var>
-	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, SendResponse.class, sendResponse, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param file Xml file to serialize the object <var>sendResponse</var>
-	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,SendResponse sendResponse) throws SerializerException {
-		this.objToXml(file, SendResponse.class, sendResponse, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param file Xml file to serialize the object <var>sendResponse</var>
-	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, SendResponse.class, sendResponse, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param out OutputStream to serialize the object <var>sendResponse</var>
-	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,SendResponse sendResponse) throws SerializerException {
-		this.objToXml(out, SendResponse.class, sendResponse, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param out OutputStream to serialize the object <var>sendResponse</var>
-	 * @param sendResponse Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, SendResponse.class, sendResponse, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param sendResponse Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(SendResponse sendResponse) throws SerializerException {
-		return this.objToXml(SendResponse.class, sendResponse, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param sendResponse Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(SendResponse.class, sendResponse, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param sendResponse Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(SendResponse sendResponse) throws SerializerException {
-		return this.objToXml(SendResponse.class, sendResponse, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>sendResponse</var> of type {@link backend.ecodex.org._1_1.SendResponse}
-	 * 
-	 * @param sendResponse Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(SendResponse sendResponse,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(SendResponse.class, sendResponse, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: getErrorsRequest
 	 =================================================================================
 	*/
@@ -1901,118 +2025,708 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: PayloadURLType
+	 Object: downloadMessageRequest
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>payloadURLType</var>
-	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>downloadMessageRequest</var>
+	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,PayloadURLType payloadURLType) throws SerializerException {
-		this.objToXml(fileName, PayloadURLType.class, payloadURLType, false);
+	public void write(String fileName,DownloadMessageRequest downloadMessageRequest) throws SerializerException {
+		this.objToXml(fileName, DownloadMessageRequest.class, downloadMessageRequest, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>payloadURLType</var>
-	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>downloadMessageRequest</var>
+	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, PayloadURLType.class, payloadURLType, prettyPrint);
+	public void write(String fileName,DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, DownloadMessageRequest.class, downloadMessageRequest, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to file system in <var>file</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param file Xml file to serialize the object <var>payloadURLType</var>
-	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>downloadMessageRequest</var>
+	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,PayloadURLType payloadURLType) throws SerializerException {
-		this.objToXml(file, PayloadURLType.class, payloadURLType, false);
+	public void write(File file,DownloadMessageRequest downloadMessageRequest) throws SerializerException {
+		this.objToXml(file, DownloadMessageRequest.class, downloadMessageRequest, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to file system in <var>file</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param file Xml file to serialize the object <var>payloadURLType</var>
-	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>downloadMessageRequest</var>
+	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, PayloadURLType.class, payloadURLType, prettyPrint);
+	public void write(File file,DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, DownloadMessageRequest.class, downloadMessageRequest, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to output stream <var>out</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param out OutputStream to serialize the object <var>payloadURLType</var>
-	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>downloadMessageRequest</var>
+	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,PayloadURLType payloadURLType) throws SerializerException {
-		this.objToXml(out, PayloadURLType.class, payloadURLType, false);
+	public void write(OutputStream out,DownloadMessageRequest downloadMessageRequest) throws SerializerException {
+		this.objToXml(out, DownloadMessageRequest.class, downloadMessageRequest, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to output stream <var>out</var> the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param out OutputStream to serialize the object <var>payloadURLType</var>
-	 * @param payloadURLType Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>downloadMessageRequest</var>
+	 * @param downloadMessageRequest Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, PayloadURLType.class, payloadURLType, prettyPrint);
+	public void write(OutputStream out,DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, DownloadMessageRequest.class, downloadMessageRequest, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to byte array the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param payloadURLType Object to be serialized
+	 * @param downloadMessageRequest Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(PayloadURLType payloadURLType) throws SerializerException {
-		return this.objToXml(PayloadURLType.class, payloadURLType, false).toByteArray();
+	public byte[] toByteArray(DownloadMessageRequest downloadMessageRequest) throws SerializerException {
+		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to byte array the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param payloadURLType Object to be serialized
+	 * @param downloadMessageRequest Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(PayloadURLType.class, payloadURLType, prettyPrint).toByteArray();
+	public byte[] toByteArray(DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to String the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param payloadURLType Object to be serialized
+	 * @param downloadMessageRequest Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(PayloadURLType payloadURLType) throws SerializerException {
-		return this.objToXml(PayloadURLType.class, payloadURLType, false).toString();
+	public String toString(DownloadMessageRequest downloadMessageRequest) throws SerializerException {
+		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>payloadURLType</var> of type {@link backend.ecodex.org._1_1.PayloadURLType}
+	 * Serialize to String the object <var>downloadMessageRequest</var> of type {@link backend.ecodex.org._1_1.DownloadMessageRequest}
 	 * 
-	 * @param payloadURLType Object to be serialized
+	 * @param downloadMessageRequest Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(PayloadURLType payloadURLType,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(PayloadURLType.class, payloadURLType, prettyPrint).toString();
+	public String toString(DownloadMessageRequest downloadMessageRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(DownloadMessageRequest.class, downloadMessageRequest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: downloadMessageResponse
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>downloadMessageResponse</var>
+	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,DownloadMessageResponse downloadMessageResponse) throws SerializerException {
+		this.objToXml(fileName, DownloadMessageResponse.class, downloadMessageResponse, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>downloadMessageResponse</var>
+	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, DownloadMessageResponse.class, downloadMessageResponse, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param file Xml file to serialize the object <var>downloadMessageResponse</var>
+	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,DownloadMessageResponse downloadMessageResponse) throws SerializerException {
+		this.objToXml(file, DownloadMessageResponse.class, downloadMessageResponse, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param file Xml file to serialize the object <var>downloadMessageResponse</var>
+	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, DownloadMessageResponse.class, downloadMessageResponse, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param out OutputStream to serialize the object <var>downloadMessageResponse</var>
+	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,DownloadMessageResponse downloadMessageResponse) throws SerializerException {
+		this.objToXml(out, DownloadMessageResponse.class, downloadMessageResponse, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param out OutputStream to serialize the object <var>downloadMessageResponse</var>
+	 * @param downloadMessageResponse Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, DownloadMessageResponse.class, downloadMessageResponse, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param downloadMessageResponse Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(DownloadMessageResponse downloadMessageResponse) throws SerializerException {
+		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param downloadMessageResponse Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param downloadMessageResponse Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(DownloadMessageResponse downloadMessageResponse) throws SerializerException {
+		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>downloadMessageResponse</var> of type {@link backend.ecodex.org._1_1.DownloadMessageResponse}
+	 * 
+	 * @param downloadMessageResponse Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(DownloadMessageResponse downloadMessageResponse,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(DownloadMessageResponse.class, downloadMessageResponse, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: errorResultImplArray
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>errorResultImplArray</var>
+	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ErrorResultImplArray errorResultImplArray) throws SerializerException {
+		this.objToXml(fileName, ErrorResultImplArray.class, errorResultImplArray, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>errorResultImplArray</var>
+	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ErrorResultImplArray.class, errorResultImplArray, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param file Xml file to serialize the object <var>errorResultImplArray</var>
+	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ErrorResultImplArray errorResultImplArray) throws SerializerException {
+		this.objToXml(file, ErrorResultImplArray.class, errorResultImplArray, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param file Xml file to serialize the object <var>errorResultImplArray</var>
+	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ErrorResultImplArray.class, errorResultImplArray, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param out OutputStream to serialize the object <var>errorResultImplArray</var>
+	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ErrorResultImplArray errorResultImplArray) throws SerializerException {
+		this.objToXml(out, ErrorResultImplArray.class, errorResultImplArray, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param out OutputStream to serialize the object <var>errorResultImplArray</var>
+	 * @param errorResultImplArray Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ErrorResultImplArray.class, errorResultImplArray, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param errorResultImplArray Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ErrorResultImplArray errorResultImplArray) throws SerializerException {
+		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param errorResultImplArray Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param errorResultImplArray Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ErrorResultImplArray errorResultImplArray) throws SerializerException {
+		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>errorResultImplArray</var> of type {@link backend.ecodex.org._1_1.ErrorResultImplArray}
+	 * 
+	 * @param errorResultImplArray Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ErrorResultImplArray errorResultImplArray,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ErrorResultImplArray.class, errorResultImplArray, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: messageErrorsRequest
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>messageErrorsRequest</var>
+	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,MessageErrorsRequest messageErrorsRequest) throws SerializerException {
+		this.objToXml(fileName, MessageErrorsRequest.class, messageErrorsRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>messageErrorsRequest</var>
+	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, MessageErrorsRequest.class, messageErrorsRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>messageErrorsRequest</var>
+	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,MessageErrorsRequest messageErrorsRequest) throws SerializerException {
+		this.objToXml(file, MessageErrorsRequest.class, messageErrorsRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>messageErrorsRequest</var>
+	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, MessageErrorsRequest.class, messageErrorsRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>messageErrorsRequest</var>
+	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,MessageErrorsRequest messageErrorsRequest) throws SerializerException {
+		this.objToXml(out, MessageErrorsRequest.class, messageErrorsRequest, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>messageErrorsRequest</var>
+	 * @param messageErrorsRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, MessageErrorsRequest.class, messageErrorsRequest, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param messageErrorsRequest Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(MessageErrorsRequest messageErrorsRequest) throws SerializerException {
+		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param messageErrorsRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param messageErrorsRequest Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(MessageErrorsRequest messageErrorsRequest) throws SerializerException {
+		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>messageErrorsRequest</var> of type {@link backend.ecodex.org._1_1.MessageErrorsRequest}
+	 * 
+	 * @param messageErrorsRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(MessageErrorsRequest messageErrorsRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(MessageErrorsRequest.class, messageErrorsRequest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: submitRequest
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>submitRequest</var>
+	 * @param submitRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,SubmitRequest submitRequest) throws SerializerException {
+		this.objToXml(fileName, SubmitRequest.class, submitRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>submitRequest</var>
+	 * @param submitRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,SubmitRequest submitRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, SubmitRequest.class, submitRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>submitRequest</var>
+	 * @param submitRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,SubmitRequest submitRequest) throws SerializerException {
+		this.objToXml(file, SubmitRequest.class, submitRequest, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param file Xml file to serialize the object <var>submitRequest</var>
+	 * @param submitRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,SubmitRequest submitRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, SubmitRequest.class, submitRequest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>submitRequest</var>
+	 * @param submitRequest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,SubmitRequest submitRequest) throws SerializerException {
+		this.objToXml(out, SubmitRequest.class, submitRequest, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>submitRequest</var>
+	 * @param submitRequest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,SubmitRequest submitRequest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, SubmitRequest.class, submitRequest, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param submitRequest Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(SubmitRequest submitRequest) throws SerializerException {
+		return this.objToXml(SubmitRequest.class, submitRequest, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param submitRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(SubmitRequest submitRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(SubmitRequest.class, submitRequest, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param submitRequest Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(SubmitRequest submitRequest) throws SerializerException {
+		return this.objToXml(SubmitRequest.class, submitRequest, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>submitRequest</var> of type {@link backend.ecodex.org._1_1.SubmitRequest}
+	 * 
+	 * @param submitRequest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(SubmitRequest submitRequest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(SubmitRequest.class, submitRequest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: collection
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>collection</var>
+	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Collection collection) throws SerializerException {
+		this.objToXml(fileName, Collection.class, collection, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>collection</var>
+	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Collection collection,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Collection.class, collection, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param file Xml file to serialize the object <var>collection</var>
+	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Collection collection) throws SerializerException {
+		this.objToXml(file, Collection.class, collection, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param file Xml file to serialize the object <var>collection</var>
+	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Collection collection,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Collection.class, collection, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param out OutputStream to serialize the object <var>collection</var>
+	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Collection collection) throws SerializerException {
+		this.objToXml(out, Collection.class, collection, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param out OutputStream to serialize the object <var>collection</var>
+	 * @param collection Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Collection collection,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Collection.class, collection, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param collection Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Collection collection) throws SerializerException {
+		return this.objToXml(Collection.class, collection, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param collection Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Collection collection,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Collection.class, collection, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param collection Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Collection collection) throws SerializerException {
+		return this.objToXml(Collection.class, collection, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>collection</var> of type {@link backend.ecodex.org._1_1.Collection}
+	 * 
+	 * @param collection Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Collection collection,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Collection.class, collection, prettyPrint).toString();
 	}
 	
 	
