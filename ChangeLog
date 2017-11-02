@@ -1,3 +1,16 @@
+2017-10-31  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Risolto Bug OP-664
+	Durante l'utilizzo dell'utility di validazione/comparazione dei subject SSL se il subject era simile al seguente:
+	C=it , ST= ,O=Test,CN=prova
+	si otteneva il seguente errore
+	javax.naming.ldap.LdapName reader failed: Invalid name: C=it , ST= ,O=Test,CN=prova
+	First method error: (C=it , ST= ,O=Test,CN=prova) Comprensione subject non riuscita: [ST= ] 
+		non contiene un valore? Verificare che non esistano coppie che possiedono 
+		valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\')
+	Il Problema è stato risolto
+
 2017-10-25  Andrea Poli <apoli@link.it>
 
 	* [Pdd, Utils]
