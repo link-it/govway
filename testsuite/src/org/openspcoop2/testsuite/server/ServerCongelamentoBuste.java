@@ -104,7 +104,9 @@ public class ServerCongelamentoBuste extends ServerCore{
 			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
 					request.getContentType(), bout.toByteArray());
 			OpenSPCoop2Message msg = pr.getMessage_throwParseException();
-			msg.castAsSoap().setSoapAction("TestSuite");
+			if(msg.castAsSoap().getSoapAction()==null) {
+				msg.castAsSoap().setSoapAction("\"TestSuite\"");
+			}
 			// ??? Serve ancora ??? Configurazione.init(checkInterval, gestoreRepositoryBuste, sqlQueryObject, this.log);
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
 			ValidazioneSintattica validator = new ValidazioneSintattica(null,msg,pf);
@@ -128,7 +130,9 @@ public class ServerCongelamentoBuste extends ServerCore{
 			
 			SOAPConnection connection = OpenSPCoop2MessageFactory.getMessageFactory().getSOAPConnectionFactory().createConnection();
 			javax.xml.messaging.URLEndpoint urlConnection = new  javax.xml.messaging.URLEndpoint(urlForward);
-			SOAPMessage responseMsgSoap = (SOAPMessage) connection.call((SOAPMessage)msg,urlConnection);
+			Object responseMsgSoapAsObject = connection.call(msg.castAsSoap().getSOAPMessage(),urlConnection);
+			//System.out.println("RESPONSE ["+responseMsgSoapAsObject.getClass().getName()+"] CONNECTION ["+connection.getClass().getName()+"]");
+			SOAPMessage responseMsgSoap = (SOAPMessage) responseMsgSoapAsObject;
 			OpenSPCoop2Message responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getMessageType(),MessageRole.RESPONSE,responseMsgSoap);
 
 			if(responseMsg!=null){

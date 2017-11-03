@@ -22,11 +22,13 @@ package org.openspcoop2.message.soap;
 
 import java.util.List;
 
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.context.MessageContext;
 import org.openspcoop2.message.context.Soap;
 import org.openspcoop2.message.exception.MessageException;
@@ -83,6 +85,12 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 			SOAPMessage soapMessage = this._getSOAPMessage();
 			if(soapMessage!=null){
 				soapMessage.setProperty(Costanti.SOAP_MESSAGE_PROPERTY_MESSAGE_TYPE, this.getMessageType());
+				
+				if(MessageType.SOAP_11.equals(this.getMessageType())) {
+					MimeHeaders mhs = soapMessage.getMimeHeaders();
+					mhs.removeHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+					mhs.addHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, this.getSoapAction());
+				}
 			}
 			return soapMessage;
 		}
