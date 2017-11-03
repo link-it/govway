@@ -381,14 +381,25 @@ public class DataElement {
 		this.setPostBack(postBack, true);
 	}
 	public void setPostBack(boolean postBack,boolean setElementName) {
+		this.setPostBack(postBack, setElementName, false);
+	}
+	public void setPostBack_viaPOST(boolean postBack) {
+		this.setPostBack(postBack, true, true); // obbligatorio il nome
+	}
+	private void setPostBack(boolean postBack,boolean setElementName, boolean viaPOST) {
 		this.postBack = postBack;
 		if (this.postBack) {
 			if(setElementName){
 				if(this.name==null || "".equals(this.name)){
 					throw new RuntimeException("Per poter impostare il nome dell'element che scaturira' il postBack deve prima essere indicato tramite il metodo setName");
 				}
-				this.setOnClick(Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START+this.name+Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END);
-				this.setOnChange(Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START+this.name+Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END);
+				String prefix = "";
+				if(viaPOST) {
+					prefix=Costanti.POSTBACK_VIA_POST_FUNCTION_PREFIX;
+				}
+				prefix+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START;
+				this.setOnClick(prefix+this.name+Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END);
+				this.setOnChange(prefix+this.name+Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END);
 			}
 			else{
 				this.setOnClick(Costanti.POSTBACK_FUNCTION);

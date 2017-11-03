@@ -72,6 +72,7 @@ public class Costanti {
 	public final static String POSTBACK_FUNCTION = "postBack()";
 	public final static String POSTBACK_FUNCTION_WITH_PARAMETER_START = "postBack('";
 	public final static String POSTBACK_FUNCTION_WITH_PARAMETER_END = "')";
+	public final static String POSTBACK_VIA_POST_FUNCTION_PREFIX = "postVersion_";
 	
 	
 	/** CHECK BOX */

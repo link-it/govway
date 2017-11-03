@@ -1,3 +1,11 @@
+2017-11-03  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-668
+	La modifica di un elemento (es. Livello Severità) nella Sezione 'Runtime' mandava in crash 
+	la finestra di Internet Explorer rendendo inutilizzabile l'intero browser.
+	Il problema è stato risolto.
+
 2017-11-02  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
