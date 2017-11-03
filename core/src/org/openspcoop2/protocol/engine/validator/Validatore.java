@@ -260,11 +260,19 @@ public class Validatore  {
 				this.mittente.setCodicePorta(this.busta.getIdentificativoPortaMittente());
 			}
 			if(this.isBustaDiServizio==false) {
-				this.servizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
-						this.busta.getTipoDestinatario(),this.busta.getDestinatario(),
-						this.busta.getVersioneServizio());
-				this.servizio.setAzione(this.busta.getAzione());
-				this.servizio.getSoggettoErogatore().setCodicePorta(this.busta.getIdentificativoPortaDestinatario());
+				try {
+					this.servizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
+							this.busta.getTipoDestinatario(),this.busta.getDestinatario(),
+							this.busta.getVersioneServizio());
+				}catch(Exception e) {
+					this.log.debug("Generazione IDServizio non possibile: "+ e.getMessage());
+				}
+				if(this.servizio!=null) {
+					this.servizio.setAzione(this.busta.getAzione());
+					if(this.servizio!=null && this.servizio.getSoggettoErogatore()!=null) {
+						this.servizio.getSoggettoErogatore().setCodicePorta(this.busta.getIdentificativoPortaDestinatario());
+					}
+				}
 			}
 			
 			//	Se la lettura precedente ha riscontrato anomalie, ho gia' finito

@@ -1720,7 +1720,7 @@ public class RicezioneBuste {
 		IDPortaDelegata idPD = null;
 		IDPortaApplicativa idPA = null;
 		String servizioApplicativoErogatoreAsincronoSimmetricoRisposta = null;
-		if(functionAsRouter==false){
+		if(functionAsRouter==false && idServizio!=null){
 			msgDiag.mediumDebug("Lettura porta applicativa/delegata...");
 			try{
 
@@ -2212,14 +2212,18 @@ public class RicezioneBuste {
 		if(bustaRichiesta!=null){
 			this.msgContext.getProtocol().setIndirizzoFruitore(bustaRichiesta.getIndirizzoMittente());
 		}
-		this.msgContext.getProtocol().setErogatore(idServizio.getSoggettoErogatore());
+		if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
+			this.msgContext.getProtocol().setErogatore(idServizio.getSoggettoErogatore());
+		}
 		if(bustaRichiesta!=null){
 			this.msgContext.getProtocol().setIndirizzoErogatore(bustaRichiesta.getIndirizzoDestinatario());
 		}
-		this.msgContext.getProtocol().setTipoServizio(idServizio.getTipo());
-		this.msgContext.getProtocol().setServizio(idServizio.getNome());
-		this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
-		this.msgContext.getProtocol().setAzione(idServizio.getAzione());
+		if(idServizio!=null) {
+			this.msgContext.getProtocol().setTipoServizio(idServizio.getTipo());
+			this.msgContext.getProtocol().setServizio(idServizio.getNome());
+			this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
+			this.msgContext.getProtocol().setAzione(idServizio.getAzione());
+		}
 		this.msgContext.getProtocol().setIdRichiesta(idMessageRequest);
 		this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
 		this.msgContext.getProtocol().setCollaborazione(bustaRichiesta.getCollaborazione());
@@ -2543,11 +2547,15 @@ public class RicezioneBuste {
 			if(soggettoFruitore!=null){
 				implementazionePdDMittente = registroServiziReader.getImplementazionePdD(soggettoFruitore, null);
 			}
-			implementazionePdDDestinatario = registroServiziReader.getImplementazionePdD(idServizio.getSoggettoErogatore(), null);
+			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
+				implementazionePdDDestinatario = registroServiziReader.getImplementazionePdD(idServizio.getSoggettoErogatore(), null);
+			}
 			if(soggettoFruitore!=null){
 				idPdDMittente = registroServiziReader.getIdPortaDominio(soggettoFruitore, null);
 			}
-			idPdDDestinatario = registroServiziReader.getIdPortaDominio(idServizio.getSoggettoErogatore(), null);
+			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
+				idPdDDestinatario = registroServiziReader.getIdPortaDominio(idServizio.getSoggettoErogatore(), null);
+			}
 			parametriGenerazioneBustaErrore.setImplementazionePdDMittente(implementazionePdDMittente);
 			parametriGenerazioneBustaErrore.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
 			parametriInvioBustaErrore.setImplementazionePdDMittente(implementazionePdDMittente);
@@ -2604,7 +2612,9 @@ public class RicezioneBuste {
 		if(soggettoFruitore!=null){
 			msgDiag.mediumDebug("ImplementazionePdD soggetto fruitore ("+soggettoFruitore.toString()+"): ["+implementazionePdDMittente+"]");
 		}
-		msgDiag.mediumDebug("ImplementazionePdD soggetto erogatore ("+idServizio.getSoggettoErogatore().toString()+"): ["+implementazionePdDDestinatario+"]");
+		if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
+			msgDiag.mediumDebug("ImplementazionePdD soggetto erogatore ("+idServizio.getSoggettoErogatore().toString()+"): ["+implementazionePdDDestinatario+"]");
+		}
 		
 		
 		
@@ -3230,7 +3240,7 @@ public class RicezioneBuste {
 		boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
 		// Se ho un msg Errore e' interessante solo utilizzare mittente/destinatario poiche' il servizio non esistera'
 		// La busta e' stata invertita tra mittente e destinatario
-		if(isMessaggioErroreProtocollo){
+		if(isMessaggioErroreProtocollo && idServizio!=null){
 			this.cleanDatiServizio(idServizio);
 			idServizio.setAzione(null);
 		}
@@ -3412,7 +3422,7 @@ public class RicezioneBuste {
 			this.msgContext.getIntegrazione().setIdCorrelazioneApplicativa(correlazioneApplicativa);
 		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
 		parametriInvioBustaErrore.setMsgDiag(msgDiag);
-		if(!isMessaggioErroreProtocollo && 
+		if(!isMessaggioErroreProtocollo && idServizio!=null &&
 				idServizio.getNome()!=null && idServizio.getTipo()!=null && idServizio.getVersione()!=null ){
 			
 			// Viene impostato a null se sopra e' un errore di protocollo, oppure se nella busta ci sono errori relativi al servizio.
@@ -6376,14 +6386,25 @@ public class RicezioneBuste {
 				if(bustaRichiesta.getRiferimentoMessaggio()==null){
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
-								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-								bustaRichiesta.getVersioneServizio());
-						idServizioPA.setAzione(bustaRichiesta.getAzione());
-						pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						IDServizio idServizioPA = null;
+						try {
+							idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+									bustaRichiesta.getVersioneServizio());
+						}catch(Exception e) {
+							// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+						}
+						if(idServizioPA!=null) {
+							idServizioPA.setAzione(bustaRichiesta.getAzione());
+							try {
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+					if(pa!=null) {
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+					}
 				}
 				// Risposta
 				else{
@@ -6406,14 +6427,25 @@ public class RicezioneBuste {
 
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
-								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-								bustaRichiesta.getVersioneServizio());
-						idServizioPA.setAzione(bustaRichiesta.getAzione());
-						pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						IDServizio idServizioPA = null;
+						try {
+							idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+									bustaRichiesta.getVersioneServizio());
+						}catch(Exception e) {
+							// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+						}
+						if(idServizioPA!=null) {
+							idServizioPA.setAzione(bustaRichiesta.getAzione());
+							try {
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+					if(pa!=null) {
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+					}
 
 				}else{
 
@@ -6468,14 +6500,25 @@ public class RicezioneBuste {
 
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
-								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-								bustaRichiesta.getVersioneServizio());
-						idServizioPA.setAzione(bustaRichiesta.getAzione());
-						pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						IDServizio idServizioPA = null;
+						try {
+							idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+									bustaRichiesta.getVersioneServizio());
+						}catch(Exception e) {
+							// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+						}
+						if(idServizioPA!=null) {
+							idServizioPA.setAzione(bustaRichiesta.getAzione());
+							try {
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+					if(pa!=null) {
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+					}
 
 				}else{
 
@@ -6488,14 +6531,25 @@ public class RicezioneBuste {
 						IDServizio idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRichiesta.getRiferimentoMessaggio());
 						PortaApplicativa pa = paFind;
 						if(pa==null){
-							IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(idServizioOriginale.getTipo(),idServizioOriginale.getNome(), 
-									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-									idServizioOriginale.getVersione());
-							idServizioPA.setAzione(idServizioOriginale.getAzione());
-							pa = this.getPortaApplicativa(configurazionePdDReader,idServizioPA);
+							IDServizio idServizioPA = null;
+							try {
+								idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(idServizioOriginale.getTipo(),idServizioOriginale.getNome(), 
+										bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+										idServizioOriginale.getVersione());
+							}catch(Exception e) {
+								// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+							}
+							if(idServizioPA!=null) {
+								idServizioPA.setAzione(idServizioOriginale.getAzione());
+								try {
+									pa = this.getPortaApplicativa(configurazionePdDReader,idServizioPA);
+								}catch(DriverConfigurazioneNotFound notFound) {}
+							}
 						}
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
-						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+						if(pa!=null) {
+							flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+							flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
+						}
 
 					}
 					//	Ricevuta alla richiesta.
@@ -6584,14 +6638,25 @@ public class RicezioneBuste {
 						bustaRichiesta.getServizio()!=null){
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
-								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-								bustaRichiesta.getVersioneServizio());
-						idServizioPA.setAzione(bustaRichiesta.getAzione());
-						pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						IDServizio idServizioPA = null;
+						try {
+							idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+									bustaRichiesta.getVersioneServizio());
+						}catch(Exception e) {
+							// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+						}
+						if(idServizioPA!=null) {
+							idServizioPA.setAzione(bustaRichiesta.getAzione());
+							try {
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					if(pa!=null) {
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
+						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					}
 				}
 			}
 			// Messaggi con profilo
@@ -6600,14 +6665,25 @@ public class RicezioneBuste {
 			) {	
 				PortaApplicativa pa = paFind;
 				if(pa==null){
-					IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
-							bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-							bustaRichiesta.getVersioneServizio());
-					idServizioPA.setAzione(bustaRichiesta.getAzione());
-					pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+					IDServizio idServizioPA = null;
+					try {
+						idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+								bustaRichiesta.getVersioneServizio());
+					}catch(Exception e) {
+						// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+					}
+					if(idServizioPA!=null) {
+						idServizioPA.setAzione(bustaRichiesta.getAzione());
+						try {
+							pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						}catch(DriverConfigurazioneNotFound notFound) {}
+					}
 				}
-				flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-				flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+				if(pa!=null) {
+					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
+					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+				}
 			}
 
 			//	 Profilo Asincrono Simmetrico
@@ -6618,14 +6694,25 @@ public class RicezioneBuste {
 
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
-								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-								bustaRichiesta.getVersioneServizio());
-						idServizioPA.setAzione(bustaRichiesta.getAzione());
-						pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						IDServizio idServizioPA = null;
+						try {
+							idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+									bustaRichiesta.getVersioneServizio());
+						}catch(Exception e) {
+							// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+						}
+						if(idServizioPA!=null) {
+							idServizioPA.setAzione(bustaRichiesta.getAzione());
+							try {
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					if(pa!=null) {
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
+						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					}
 
 				}
 
@@ -6654,14 +6741,25 @@ public class RicezioneBuste {
 
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
-								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-								bustaRichiesta.getVersioneServizio());
-						idServizioPA.setAzione(bustaRichiesta.getAzione());
-						pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						IDServizio idServizioPA = null;
+						try {
+							idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+									bustaRichiesta.getVersioneServizio());
+						}catch(Exception e) {
+							// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+						}
+						if(idServizioPA!=null) {
+							idServizioPA.setAzione(bustaRichiesta.getAzione());
+							try {
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					if(pa!=null) {
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
+						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					}
 
 				}
 
@@ -6672,14 +6770,25 @@ public class RicezioneBuste {
 					IDServizio idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRichiesta.getRiferimentoMessaggio());
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(idServizioOriginale.getTipo(),idServizioOriginale.getNome(), 
-								bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
-								idServizioOriginale.getVersione());
-						idServizioPA.setAzione(idServizioOriginale.getAzione());
-						pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+						IDServizio idServizioPA = null;
+						try {
+							idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(idServizioOriginale.getTipo(),idServizioOriginale.getNome(), 
+									bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(), 
+									idServizioOriginale.getVersione());
+						}catch(Exception e) {
+							// se non sono presenti dati identificativi del servizio non potro poi localizzare la PA
+						}
+						if(idServizioPA!=null) {
+							idServizioPA.setAzione(idServizioOriginale.getAzione());
+							try {
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
-					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
-					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					if(pa!=null) {
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
+						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
+					}
 
 				}
 
