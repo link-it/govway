@@ -72,6 +72,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.VERSIONE_PROTOCOLLO = new Field("versione-protocollo",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.MESSAGE_TYPE = new Field("message-type",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 	
 	}
 	
@@ -111,6 +112,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.VERSIONE_PROTOCOLLO = new ComplexField(father,"versione-protocollo",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.MESSAGE_TYPE = new ComplexField(father,"message-type",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 	
 	}
 	
@@ -179,6 +181,8 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	public IField VERSIONE_PROTOCOLLO = null;
 	 
 	public IField DESCRIZIONE = null;
+	 
+	public IField MESSAGE_TYPE = null;
 	 
 
 	@Override

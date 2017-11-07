@@ -39,8 +39,8 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.registry.IdAccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazione;
+import org.openspcoop2.core.registry.IdAccordoCooperazione;
 
 /**     
  * UpdateAccordoCooperazione

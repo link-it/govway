@@ -44,6 +44,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SERVIZIO_COMPOSTO = new org.openspcoop2.core.registry.model.AccordoServizioParteComuneServizioCompostoModel(new Field("servizio-composto",org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.AZIONE = new org.openspcoop2.core.registry.model.AzioneModel(new Field("azione",org.openspcoop2.core.registry.Azione.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PORT_TYPE = new org.openspcoop2.core.registry.model.PortTypeModel(new Field("port-type",org.openspcoop2.core.registry.PortType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
+		this.RESOURCE = new org.openspcoop2.core.registry.model.ResourceModel(new Field("resource",org.openspcoop2.core.registry.Resource.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.ALLEGATO = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("allegato",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
@@ -58,6 +59,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.BYTE_SPECIFICA_CONVERSAZIONE_EROGATORE = new Field("byte-specifica-conversazione-erogatore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_SPECIFICA_CONVERSAZIONE_FRUITORE = new Field("byte-specifica-conversazione-fruitore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.SERVICE_BINDING = new Field("service-binding",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.MESSAGE_TYPE = new Field("message-type",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PROFILO_COLLABORAZIONE = new Field("profilo-collaborazione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -87,6 +89,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.SERVIZIO_COMPOSTO = new org.openspcoop2.core.registry.model.AccordoServizioParteComuneServizioCompostoModel(new ComplexField(father,"servizio-composto",org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.AZIONE = new org.openspcoop2.core.registry.model.AzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.registry.Azione.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PORT_TYPE = new org.openspcoop2.core.registry.model.PortTypeModel(new ComplexField(father,"port-type",org.openspcoop2.core.registry.PortType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
+		this.RESOURCE = new org.openspcoop2.core.registry.model.ResourceModel(new ComplexField(father,"resource",org.openspcoop2.core.registry.Resource.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.ALLEGATO = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"allegato",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
@@ -101,6 +104,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.BYTE_SPECIFICA_CONVERSAZIONE_EROGATORE = new ComplexField(father,"byte-specifica-conversazione-erogatore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_SPECIFICA_CONVERSAZIONE_FRUITORE = new ComplexField(father,"byte-specifica-conversazione-fruitore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.SERVICE_BINDING = new ComplexField(father,"service-binding",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.MESSAGE_TYPE = new ComplexField(father,"message-type",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PROFILO_COLLABORAZIONE = new ComplexField(father,"profilo-collaborazione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -132,6 +136,8 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	 
 	public org.openspcoop2.core.registry.model.PortTypeModel PORT_TYPE = null;
 	 
+	public org.openspcoop2.core.registry.model.ResourceModel RESOURCE = null;
+	 
 	public org.openspcoop2.core.registry.model.DocumentoModel ALLEGATO = null;
 	 
 	public org.openspcoop2.core.registry.model.DocumentoModel SPECIFICA_SEMIFORMALE = null;
@@ -159,6 +165,8 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	public IField BYTE_SPECIFICA_CONVERSAZIONE_FRUITORE = null;
 	 
 	public IField SERVICE_BINDING = null;
+	 
+	public IField MESSAGE_TYPE = null;
 	 
 	public IField NOME = null;
 	 

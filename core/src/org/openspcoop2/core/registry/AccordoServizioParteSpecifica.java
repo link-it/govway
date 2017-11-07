@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import java.io.Serializable;
@@ -74,6 +75,7 @@ import java.util.List;
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * 		&lt;attribute name="versione-protocollo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -536,6 +538,26 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     this.descrizione = descrizione;
   }
 
+  public void set_value_messageType(String value) {
+    this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_messageType() {
+    if(this.messageType == null){
+    	return null;
+    }else{
+    	return this.messageType.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.MessageType getMessageType() {
+    return this.messageType;
+  }
+
+  public void setMessageType(org.openspcoop2.core.registry.constants.MessageType messageType) {
+    this.messageType = messageType;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -848,5 +870,11 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_messageType;
+
+  @XmlAttribute(name="message-type",required=false)
+  protected MessageType messageType;
 
 }

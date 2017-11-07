@@ -53,6 +53,7 @@ public class PortTypeModel extends AbstractModel<PortType> {
 		this.ID_COLLABORAZIONE = new Field("id-collaborazione",java.lang.String.class,"port-type",PortType.class);
 		this.CONSEGNA_IN_ORDINE = new Field("consegna-in-ordine",java.lang.String.class,"port-type",PortType.class);
 		this.SCADENZA = new Field("scadenza",java.lang.String.class,"port-type",PortType.class);
+		this.MESSAGE_TYPE = new Field("message-type",java.lang.String.class,"port-type",PortType.class);
 	
 	}
 	
@@ -73,6 +74,7 @@ public class PortTypeModel extends AbstractModel<PortType> {
 		this.ID_COLLABORAZIONE = new ComplexField(father,"id-collaborazione",java.lang.String.class,"port-type",PortType.class);
 		this.CONSEGNA_IN_ORDINE = new ComplexField(father,"consegna-in-ordine",java.lang.String.class,"port-type",PortType.class);
 		this.SCADENZA = new ComplexField(father,"scadenza",java.lang.String.class,"port-type",PortType.class);
+		this.MESSAGE_TYPE = new ComplexField(father,"message-type",java.lang.String.class,"port-type",PortType.class);
 	
 	}
 	
@@ -103,6 +105,8 @@ public class PortTypeModel extends AbstractModel<PortType> {
 	public IField CONSEGNA_IN_ORDINE = null;
 	 
 	public IField SCADENZA = null;
+	 
+	public IField MESSAGE_TYPE = null;
 	 
 
 	@Override

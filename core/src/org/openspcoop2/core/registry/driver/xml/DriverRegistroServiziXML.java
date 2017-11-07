@@ -43,6 +43,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -54,6 +55,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.RegistroServizi;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
@@ -69,6 +71,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
@@ -624,7 +627,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<IDAccordo> getAllIdAccordiServizioParteComune(FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		List<IDAccordo> list = new ArrayList<IDAccordo>();
-		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAccordiServizioParteComune", filtroRicerca, null, null, null, list);
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAccordiServizioParteComune", filtroRicerca, null, null, null, null, list);
 		return list;
 	
 	}
@@ -633,7 +636,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<IDPortType> getAllIdPortType(FiltroRicercaPortTypes filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		List<IDPortType> list = new ArrayList<IDPortType>();
-		_fillAllIdAccordiServizioParteComuneEngine("getAllIdPortType", filtroRicerca, filtroRicerca, null, null, list);
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdPortType", filtroRicerca, filtroRicerca, null, null, null, list);
 		return list;
 		
 	}
@@ -642,7 +645,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<IDPortTypeAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 	
 		List<IDPortTypeAzione> list = new ArrayList<IDPortTypeAzione>();
-		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzionePortType", filtroRicerca, null, filtroRicerca, null, list);
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzionePortType", filtroRicerca, null, filtroRicerca, null, null, list);
 		return list;
 		
 	}
@@ -651,7 +654,16 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<IDAccordoAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		List<IDAccordoAzione> list = new ArrayList<IDAccordoAzione>();
-		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzioneAccordo", filtroRicerca, null, null, filtroRicerca, list);
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzioneAccordo", filtroRicerca, null, null, filtroRicerca, null, list);
+		return list;
+		
+	}
+	
+	@Override
+	public List<IDResource> getAllIdResource(FiltroRicercaResources filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		List<IDResource> list = new ArrayList<IDResource>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdResource", filtroRicerca, null, null, null, filtroRicerca, list);
 		return list;
 		
 	}
@@ -660,6 +672,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public <T> void _fillAllIdAccordiServizioParteComuneEngine(String nomeMetodo, 
 			FiltroRicercaAccordi filtroRicercaBase,
 			FiltroRicercaPortTypes filtroPT, FiltroRicercaOperations filtroOP, FiltroRicercaAzioni filtroAZ,
+			FiltroRicercaResources filtroResource,
 			List<T> listReturn) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
 
@@ -825,6 +838,25 @@ public class DriverRegistroServiziXML extends BeanUtilities
 						idAzione.setIdAccordo(idAccordo);
 						idAzione.setNome(az.getNome());
 						listReturn.add((T)idAzione);
+					}
+				}
+				else if(filtroResource!=null){
+					for (Resource resource : as.getResourceList()) {
+						// Nome Risorsa
+						if(filtroResource.getResourceName()!=null){
+							if(resource.getNome().equals(filtroResource.getResourceName()) == false){
+								continue;
+							}
+						}
+						// ProtocolProperties PT
+						if(ProtocolPropertiesUtilities.isMatch(resource, filtroResource.getProtocolPropertiesPortType())==false){
+							continue;
+						}
+						
+						IDResource idResource = new IDResource();
+						idResource.setIdAccordo(idAccordo);
+						idResource.setNome(resource.getNome());
+						listReturn.add((T)idResource);
 					}
 				}
 				else{

@@ -32,6 +32,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -54,6 +55,7 @@ import java.util.Date;
 import org.openspcoop2.core.registry.ws.server.filter.beans.IdSoggetto;
 import org.openspcoop2.core.registry.ws.server.filter.beans.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.core.registry.constants.MessageType;
 
 /**     
  * SearchFilterAccordoServizioParteComune
@@ -70,6 +72,7 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
     "statoPackage",
     "privato",
     "serviceBinding",
+    "messageType",
     "nome",
     "descrizione",
     "oraRegistrazioneMin",
@@ -143,6 +146,18 @@ public class SearchFilterAccordoServizioParteComune extends org.openspcoop2.util
 	
 	public ServiceBinding getServiceBinding(){
 		return this.serviceBinding;
+	}
+	
+	
+	@XmlElement(name="message-type",required=false,nillable=false)
+	private MessageType messageType;
+	
+	public void setMessageType(MessageType messageType){
+		this.messageType = messageType;
+	}
+	
+	public MessageType getMessageType(){
+		return this.messageType;
 	}
 	
 	

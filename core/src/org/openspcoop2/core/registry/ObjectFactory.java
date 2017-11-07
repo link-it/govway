@@ -115,6 +115,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ResourceRepresentation }
+     */
+    public ResourceRepresentation createResourceRepresentation() {
+        return new ResourceRepresentation();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneServizioAzione }
      */
     public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
@@ -126,6 +133,13 @@ public class ObjectFactory {
      */
     public RuoliSoggetto createRuoliSoggetto() {
         return new RuoliSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link ResourceResponse }
+     */
+    public ResourceResponse createResourceResponse() {
+        return new ResourceResponse();
     }
 
     /**
@@ -147,6 +161,13 @@ public class ObjectFactory {
      */
     public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
         return new AccordoServizioParteSpecifica();
+    }
+
+    /**
+     * Create an instance of {@link ResourceRequest }
+     */
+    public ResourceRequest createResourceRequest() {
+        return new ResourceRequest();
     }
 
     /**
@@ -259,6 +280,13 @@ public class ObjectFactory {
      */
     public Documento createDocumento() {
         return new Documento();
+    }
+
+    /**
+     * Create an instance of {@link Resource }
+     */
+    public Resource createResource() {
+        return new Resource();
     }
 
     /**

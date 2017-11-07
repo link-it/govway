@@ -61,6 +61,9 @@
     <collection field="portType" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.PortType"/>
     </collection>
+    <collection field="resource" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.registry.Resource"/>
+    </collection>
     <collection field="allegato" create-type="java.util.ArrayList">
       <structure name="allegato" map-as="_Documento_Type"/>
     </collection>
@@ -81,6 +84,7 @@
     <value name="byte-specifica-conversazione-erogatore" field="byteSpecificaConversazioneErogatore" usage="optional" style="attribute"/>
     <value name="byte-specifica-conversazione-fruitore" field="byteSpecificaConversazioneFruitore" usage="optional" style="attribute"/>
     <value name="service-binding" field="serviceBinding" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="profilo-collaborazione" field="profiloCollaborazione" usage="required" enum-value-method="toString" style="attribute"/>
@@ -140,6 +144,7 @@
     <value name="id-collaborazione" field="idCollaborazione" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="consegna-in-ordine" field="consegnaInOrdine" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.registry.Azione">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
@@ -202,6 +207,52 @@
     <value name="element-namespace" field="elementNamespace" usage="optional" style="attribute"/>
     <value name="type-name" field="typeName" usage="optional" style="attribute"/>
     <value name="type-namespace" field="typeNamespace" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="resource" class="org.openspcoop2.core.registry.Resource">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <structure field="request" usage="optional" map-as="org.openspcoop2.core.registry.ResourceRequest"/>
+    <collection field="response" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.registry.ResourceResponse"/>
+    </collection>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
+    </collection>
+    <value name="id-accordo" field="idAccordo" usage="optional" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="path" field="path" usage="optional" style="attribute"/>
+    <value name="method" field="method" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="request" class="org.openspcoop2.core.registry.ResourceRequest">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <collection field="representation" create-type="java.util.ArrayList">
+      <structure name="representation" map-as="_ResourceRepresentation_Type"/>
+    </collection>
+    <value name="id-resource" field="idResource" usage="optional" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="response" class="org.openspcoop2.core.registry.ResourceResponse">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <collection field="representation" create-type="java.util.ArrayList">
+      <structure name="representation" map-as="_ResourceRepresentation_Type"/>
+    </collection>
+    <value name="id-resource" field="idResource" usage="optional" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="status" field="status" usage="optional" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="representation" class="org.openspcoop2.core.registry.ResourceRepresentation" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="media-type" field="mediaType" usage="optional" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_ResourceRepresentation_Type" class="org.openspcoop2.core.registry.ResourceRepresentation" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="media-type" field="mediaType" usage="optional" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="porta-dominio" class="org.openspcoop2.core.registry.PortaDominio">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
@@ -326,6 +377,7 @@
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
     <value name="versione-protocollo" field="versioneProtocollo" usage="optional" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="configurazione-servizio" class="org.openspcoop2.core.registry.ConfigurazioneServizio">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
@@ -428,7 +480,7 @@
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
-  <mapping name="soggetto-partecipante" class="org.openspcoop2.core.registry.IdSoggetto" abstract="false">
+  <mapping name="soggetto-erogatore" class="org.openspcoop2.core.registry.IdSoggetto" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <value name="id-soggetto" field="idSoggetto" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>

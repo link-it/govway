@@ -628,6 +628,38 @@ public class DBUtils {
 		}
 	}
 	
+	public static long getIdResource(Long idAccordo,String nomeRisorsa,Connection con) throws CoreException{
+		PreparedStatement selectStmt = null;
+		ResultSet selectRS = null;
+		long id=-1;
+		try
+		{
+			String selectQuery = "SELECT id FROM " + CostantiDB.API_RESOURCES + " WHERE id_accordo = ? AND nome=?";
+			selectStmt = con.prepareStatement(selectQuery);
+			selectStmt.setLong(1, idAccordo);
+			selectStmt.setString(2, nomeRisorsa);
+			selectRS = selectStmt.executeQuery();
+			if (selectRS.next()) {
+				id = selectRS.getLong("id");	
+			}
+			selectRS.close();
+			selectStmt.close();
+			return id;
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(selectRS!=null) selectRS.close();
+				if(selectStmt!=null) selectStmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
 	public static long getIdAccordoServizioParteComune(IDAccordo idAccordo,Connection con, String tipoDB) throws CoreException{
 		PreparedStatement stm = null;
 		ResultSet rs = null;

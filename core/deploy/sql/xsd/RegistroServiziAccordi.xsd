@@ -26,6 +26,9 @@
                                 <linkit:sql-table object-name="port-type" object-type="port-type"/>
                                 <linkit:sql-table object-name="port-type-azioni" object-type="port-type-azioni"/>
                                 <linkit:sql-table object-name="operation-messages" object-type="operation-messages"/>
+                                <linkit:sql-table object-name="resource" object-type="resource"/>
+                                <linkit:sql-table object-name="resource-detail" object-type="resource-detail"/>
+                                <linkit:sql-table object-name="resource-rapresentation" object-type="resource-rapresentation"/>
                                 <linkit:sql-comment><![CDATA[**** Accordi di Cooperazione ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="accordi-cooperazione" object-type="accordi-cooperazione"/>
                                 <linkit:sql-table object-name="accordi-coop-partecipanti" object-type="accordi-coop-partecipanti"/>
@@ -228,6 +231,37 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
                                 <linkit:sql-ddl-column-comment>Descrizione generica dell'accordo di servizio parte comune</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="service_binding" type="ServiceBinding">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="service_binding"/>
+                                <linkit:sql-ddl-column-comment>Tipologia dell'accordo di servizio (rest/soap)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="message_type"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il message processor da utilizzare per processare il messaggio.
+Se la tipologia dell'accordo è soap (colonna service_binding='soap') i processori utilizzabili sono:
+- soap11: il messaggio viene processato secondo la specifica SOAP 1.1
+- soap12: il messaggio viene processato secondo la specifica SOAP 1.2
+Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processori utilizzabili sono:
+- xml: il messaggio viene processato come xml
+- json: il messaggio viene processato come json
+- mimeMultipart: il messaggio viene processato secondo la specifica MIME
+- binary: il messaggio viene gestito come flusso binario senza entrare nel merito della struttura
+]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -470,6 +504,22 @@
             <xsd:enumeration value="finale"/>
             <xsd:enumeration value="bozza"/>
             <xsd:enumeration value="operativo"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="ServiceBinding">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="soap"/>
+            <xsd:enumeration value="rest"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="MessageType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="soap11"/>
+            <xsd:enumeration value="soap12"/>
+            <xsd:enumeration value="xml"/>
+            <xsd:enumeration value="json"/>
+            <xsd:enumeration value="binary"/>
+            <xsd:enumeration value="mimeMultipart"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -765,7 +815,27 @@
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
-                </xsd:element>         
+                </xsd:element>   
+                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="message_type"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il message processor da utilizzare per processare il messaggio.
+Se la tipologia dell'accordo è soap (colonna service_binding='soap') i processori utilizzabili sono:
+- soap11: il messaggio viene processato secondo la specifica SOAP 1.1
+- soap12: il messaggio viene processato secondo la specifica SOAP 1.2
+Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processori utilizzabili sono:
+- xml: il messaggio viene processato come xml
+- json: il messaggio viene processato come json
+- mimeMultipart: il messaggio viene processato secondo la specifica MIME
+- binary: il messaggio viene gestito come flusso binario senza entrare nel merito della struttura
+]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -1100,8 +1170,292 @@
         </xsd:complexType>
     </xsd:element>
     
+    <xsd:element name="resource">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="api_resources"
+                                              comment="Risorse definite all'interno dell'accordo di servizio relative ad una API rest">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="accordi"
+                            reference-object-type="accordi"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_accordo"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_accordo"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_accordo"/>
+                            <linkit:sql-table-unique-field name="http_method"/>
+                            <linkit:sql-table-unique-field name="path"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_accordo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_accordo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo [FK verso tabella accordi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della risorsa all'interno dell'accordo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="descrizione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica della risorsa</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="http_method" type="HttpMethod">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="http_method"/>
+                                <linkit:sql-ddl-column-comment>Metodo HTTP utilizzato dalla risorsa api (insieme al valore indicato nella colonna 'path' rappresenta un identificativo univoco all'interno dell'accordo)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="path" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="path"/>
+                                <linkit:sql-ddl-column-comment>Path utilizzato dalla risorsa api (insieme al valore indicato nella colonna 'http_method' rappresenta un identificativo univoco all'interno dell'accordo)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="message_type"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il message processor da utilizzare per processare il messaggio.
+Se la tipologia dell'accordo è soap (colonna service_binding='soap') i processori utilizzabili sono:
+- soap11: il messaggio viene processato secondo la specifica SOAP 1.1
+- soap12: il messaggio viene processato secondo la specifica SOAP 1.2
+Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processori utilizzabili sono:
+- xml: il messaggio viene processato come xml
+- json: il messaggio viene processato come json
+- mimeMultipart: il messaggio viene processato secondo la specifica MIME
+- binary: il messaggio viene gestito come flusso binario senza entrare nel merito della struttura
+]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="HttpMethod">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="GET"/>
+            <xsd:enumeration value="POST"/>
+            <xsd:enumeration value="PUT"/>
+            <xsd:enumeration value="DELETE"/>
+            <xsd:enumeration value="OPTIONS"/>
+            <xsd:enumeration value="HEAD"/>
+            <xsd:enumeration value="TRACE"/>
+            <xsd:enumeration value="PATCH"/>
+            <xsd:enumeration value="ALL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
     
+    <xsd:element name="resource-detail">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="api_resources_details"
+                        comment="Dettagli sulla richiesta o risposta generabile da una risorsa definita all'interno dell'accordo di servizio (API rest)">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="resource"
+                            reference-object-type="resource"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_resource"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_resource"/>
+                            <linkit:sql-table-unique-field name="resource_type"/>
+                            <linkit:sql-table-unique-field name="status"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_resource" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_resource"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della risorsa [FK verso tabella api_resources(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="descrizione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica della risposta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="resource_type" type="ResourceType">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="resource_type"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se le informazioni definite in questa entry si riferiscono ad una richiesta o risposta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="status" type="xsd:int">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="status"/>
+                                <linkit:sql-ddl-column-comment>Http return code atteso associato alla risposta definita dalla entry</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="message_type"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il message processor da utilizzare per processare il messaggio.
+Se la tipologia dell'accordo è soap (colonna service_binding='soap') i processori utilizzabili sono:
+- soap11: il messaggio viene processato secondo la specifica SOAP 1.1
+- soap12: il messaggio viene processato secondo la specifica SOAP 1.2
+Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processori utilizzabili sono:
+- xml: il messaggio viene processato come xml
+- json: il messaggio viene processato come json
+- mimeMultipart: il messaggio viene processato secondo la specifica MIME
+- binary: il messaggio viene gestito come flusso binario senza entrare nel merito della struttura
+]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="ResourceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="REQUEST"/>
+            <xsd:enumeration value="RESPONSE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
     
+    <xsd:element name="resource-rapresentation">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="api_resources_media"
+                        comment="Indicazioni sulla rappresentazione e sui contenuti che transitano all'interno della risorsa definita nell'accordo di servizio (API rest)">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="resource-detail"
+                            reference-object-type="resource-detail"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_resource_details"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_resource_details"/>
+                            <linkit:sql-table-unique-field name="media_type"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_resource_details" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_resource_details"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della risorsa [FK verso tabella api_resources_details(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="media_type" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="media_type"/>
+                                <linkit:sql-ddl-column-comment>MediaType associato al messaggio</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="message_type"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il message processor da utilizzare per processare il messaggio.
+Se la tipologia dell'accordo è soap (colonna service_binding='soap') i processori utilizzabili sono:
+- soap11: il messaggio viene processato secondo la specifica SOAP 1.1
+- soap12: il messaggio viene processato secondo la specifica SOAP 1.2
+Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processori utilizzabili sono:
+- xml: il messaggio viene processato come xml
+- json: il messaggio viene processato come json
+- mimeMultipart: il messaggio viene processato secondo la specifica MIME
+- binary: il messaggio viene gestito come flusso binario senza entrare nel merito della struttura
+]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     
     
     <xsd:element name="accordi-cooperazione">
@@ -1492,6 +1846,26 @@
 - 'bozza': l'accordo è in fase di definizione e può essere ignorato dalla Porta di Dominio per l'operatività
 - 'operativo': l'accordo è utilizzabile in una sessione operativa, ma può ancora subire modifiche
 - 'finale': l'accordo è stato completato e non è soggetto a future modifiche]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="message_type"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica il message processor da utilizzare per processare il messaggio.
+Se la tipologia dell'accordo è soap (colonna service_binding='soap') i processori utilizzabili sono:
+- soap11: il messaggio viene processato secondo la specifica SOAP 1.1
+- soap12: il messaggio viene processato secondo la specifica SOAP 1.2
+Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processori utilizzabili sono:
+- xml: il messaggio viene processato come xml
+- json: il messaggio viene processato come json
+- mimeMultipart: il messaggio viene processato secondo la specifica MIME
+- binary: il messaggio viene gestito come flusso binario senza entrare nel merito della struttura
+]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

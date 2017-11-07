@@ -37,6 +37,8 @@ CREATE TABLE accordi
 (
 	nome VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
+	service_binding VARCHAR(255) NOT NULL,
+	message_type VARCHAR(255),
 	profilo_collaborazione VARCHAR(255),
 	wsdl_definitorio VARCHAR(max),
 	wsdl_concettuale VARCHAR(max),
@@ -63,7 +65,9 @@ CREATE TABLE accordi
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints
-	CONSTRAINT chk_accordi_1 CHECK (stato IN ('finale','bozza','operativo')),
+	CONSTRAINT chk_accordi_1 CHECK (service_binding IN ('soap','rest')),
+	CONSTRAINT chk_accordi_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
+	CONSTRAINT chk_accordi_3 CHECK (stato IN ('finale','bozza','operativo')),
 	-- unique constraints
 	CONSTRAINT unique_accordi_1 UNIQUE (nome,id_referente,versione),
 	-- fk/pk keys constraints
@@ -117,8 +121,11 @@ CREATE TABLE port_type
 	profilo_pt VARCHAR(255),
 	-- document/RPC
 	soap_style VARCHAR(255),
+	message_type VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
+	-- check constraints
+	CONSTRAINT chk_port_type_1 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
 	-- unique constraints
 	CONSTRAINT unique_port_type_1 UNIQUE (id_accordo,nome),
 	-- fk/pk keys constraints
@@ -192,6 +199,78 @@ CREATE INDEX INDEX_OP_MESSAGES ON operation_messages (id_port_type_azione,input_
 
 
 
+CREATE TABLE api_resources
+(
+	id_accordo BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	descrizione VARCHAR(255),
+	http_method VARCHAR(255) NOT NULL,
+	path VARCHAR(255) NOT NULL,
+	message_type VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- check constraints
+	CONSTRAINT chk_api_resources_1 CHECK (http_method IN ('GET','POST','PUT','DELETE','OPTIONS','HEAD','TRACE','PATCH','ALL')),
+	CONSTRAINT chk_api_resources_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
+	-- unique constraints
+	CONSTRAINT unique_api_resources_1 UNIQUE (id_accordo,nome),
+	CONSTRAINT unique_api_resources_2 UNIQUE (id_accordo,http_method,path),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_api_resources_1 FOREIGN KEY (id_accordo) REFERENCES accordi(id),
+	CONSTRAINT pk_api_resources PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_api_resources_1 ON api_resources (id_accordo,nome);
+CREATE UNIQUE INDEX index_api_resources_2 ON api_resources (id_accordo,http_method,path);
+
+
+
+CREATE TABLE api_resources_details
+(
+	id_resource BIGINT NOT NULL,
+	descrizione VARCHAR(255),
+	resource_type VARCHAR(255) NOT NULL,
+	status INT NOT NULL,
+	message_type VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- check constraints
+	CONSTRAINT chk_api_resources_details_1 CHECK (resource_type IN ('REQUEST','RESPONSE')),
+	CONSTRAINT chk_api_resources_details_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
+	-- unique constraints
+	CONSTRAINT unique_api_resources_details_1 UNIQUE (id_resource,resource_type,status),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_api_resources_details_1 FOREIGN KEY (id_resource) REFERENCES api_resources(id),
+	CONSTRAINT pk_api_resources_details PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_api_resources_details_1 ON api_resources_details (id_resource,resource_type,status);
+
+
+
+CREATE TABLE api_resources_media
+(
+	id_resource_details BIGINT NOT NULL,
+	media_type VARCHAR(255) NOT NULL,
+	message_type VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- check constraints
+	CONSTRAINT chk_api_resources_media_1 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
+	-- unique constraints
+	CONSTRAINT unique_api_resources_media_1 UNIQUE (id_resource_details,media_type),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_api_resources_media_1 FOREIGN KEY (id_resource_details) REFERENCES api_resources_details(id),
+	CONSTRAINT pk_api_resources_media PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_api_resources_media_1 ON api_resources_media (id_resource_details,media_type);
+
+
+
 -- **** Accordi di Cooperazione ****
 
 CREATE TABLE accordi_cooperazione
@@ -261,10 +340,12 @@ CREATE TABLE servizi
 	profilo VARCHAR(255),
 	descrizione VARCHAR(255),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
+	message_type VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints
 	CONSTRAINT chk_servizi_1 CHECK (stato IN ('finale','bozza','operativo')),
+	CONSTRAINT chk_servizi_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
 	-- unique constraints
 	CONSTRAINT unique_servizi_1 UNIQUE (id_soggetto,tipo_servizio,nome_servizio,versione_servizio),
 	-- fk/pk keys constraints

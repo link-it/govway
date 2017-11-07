@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.registry.constants.BindingStyle;
+import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import java.io.Serializable;
@@ -55,6 +56,7 @@ import java.util.List;
  * 		&lt;attribute name="id-collaborazione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="consegna-in-ordine" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -300,6 +302,26 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.scadenza = scadenza;
   }
 
+  public void set_value_messageType(String value) {
+    this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_messageType() {
+    if(this.messageType == null){
+    	return null;
+    }else{
+    	return this.messageType.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.MessageType getMessageType() {
+    return this.messageType;
+  }
+
+  public void setMessageType(org.openspcoop2.core.registry.constants.MessageType messageType) {
+    this.messageType = messageType;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -421,5 +443,11 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="scadenza",required=false)
   protected java.lang.String scadenza;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_messageType;
+
+  @XmlAttribute(name="message-type",required=false)
+  protected MessageType messageType;
 
 }

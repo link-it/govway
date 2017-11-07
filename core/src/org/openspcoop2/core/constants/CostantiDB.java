@@ -65,6 +65,9 @@ public final class CostantiDB {
     public static final String PORT_TYPE = "port_type";
     public static final String PORT_TYPE_AZIONI = "port_type_azioni";
     public static final String PORT_TYPE_AZIONI_OPERATION_MESSAGES = "operation_messages";
+    public static final String API_RESOURCES = "api_resources";
+    public static final String API_RESOURCES_DETAILS = "api_resources_details";
+    public static final String API_RESOURCES_MEDIA = "api_resources_media";
     public static final String CONNETTORI_PROPERTIES = "connettori_properties";
     public static final String DOCUMENTI = "documenti";
     public static final String ACCORDI_SERVIZI_COMPOSTO = "acc_serv_composti";
@@ -386,5 +389,11 @@ public final class CostantiDB {
     
     public static final String TIPO_FILTRO_ABILITAZIONE_SERVIZIO_PDD = "abilitazione";
     public static final String TIPO_FILTRO_DISABILITAZIONE_SERVIZIO_PDD = "disabilitazione";
+    
+    public static final String API_RESOURCE_HTTP_METHOD_ALL_VALUE = "ALL";
+    public static final String API_RESOURCE_PATH_ALL_VALUE = "*";
+    public static final String API_RESOURCE_DETAIL_REQUEST = "REQUEST";
+    public static final String API_RESOURCE_DETAIL_RESPONSE = "RESPONSE";
+    public static final int API_RESOURCE_DETAIL_STATUS_UNDEFINED = -1;
     
 }

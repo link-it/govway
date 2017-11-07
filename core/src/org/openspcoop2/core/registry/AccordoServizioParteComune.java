@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
@@ -46,6 +47,7 @@ import java.util.List;
  * 			&lt;element name="servizio-composto" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune-servizio-composto" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/registry}azione" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="port-type" type="{http://www.openspcoop2.org/core/registry}port-type" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="resource" type="{http://www.openspcoop2.org/core/registry}resource" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
@@ -61,6 +63,7 @@ import java.util.List;
  * 		&lt;attribute name="byte-specifica-conversazione-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
  * 		&lt;attribute name="byte-specifica-conversazione-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
  * 		&lt;attribute name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" use="required"/>
+ * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/registry}ProfiloCollaborazione" use="required"/>
@@ -95,6 +98,7 @@ import java.util.List;
   	"servizioComposto",
   	"azione",
   	"portType",
+  	"resource",
   	"allegato",
   	"specificaSemiformale",
   	"protocolProperty"
@@ -191,6 +195,30 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public int sizePortTypeList() {
     return this.portType.size();
+  }
+
+  public void addResource(Resource resource) {
+    this.resource.add(resource);
+  }
+
+  public Resource getResource(int index) {
+    return this.resource.get( index );
+  }
+
+  public Resource removeResource(int index) {
+    return this.resource.remove( index );
+  }
+
+  public List<Resource> getResourceList() {
+    return this.resource;
+  }
+
+  public void setResourceList(List<Resource> resource) {
+    this.resource=resource;
+  }
+
+  public int sizeResourceList() {
+    return this.resource.size();
   }
 
   public void addAllegato(Documento allegato) {
@@ -363,6 +391,26 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public void setServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
     this.serviceBinding = serviceBinding;
+  }
+
+  public void set_value_messageType(String value) {
+    this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_messageType() {
+    if(this.messageType == null){
+    	return null;
+    }else{
+    	return this.messageType.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.MessageType getMessageType() {
+    return this.messageType;
+  }
+
+  public void setMessageType(org.openspcoop2.core.registry.constants.MessageType messageType) {
+    this.messageType = messageType;
   }
 
   public java.lang.String getNome() {
@@ -661,6 +709,36 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   	return this.portType.size();
   }
 
+  @XmlElement(name="resource",required=true,nillable=false)
+  protected List<Resource> resource = new ArrayList<Resource>();
+
+  /**
+   * @deprecated Use method getResourceList
+   * @return List<Resource>
+  */
+  @Deprecated
+  public List<Resource> getResource() {
+  	return this.resource;
+  }
+
+  /**
+   * @deprecated Use method setResourceList
+   * @param resource List<Resource>
+  */
+  @Deprecated
+  public void setResource(List<Resource> resource) {
+  	this.resource=resource;
+  }
+
+  /**
+   * @deprecated Use method sizeResourceList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeResource() {
+  	return this.resource.size();
+  }
+
   @XmlElement(name="allegato",required=true,nillable=false)
   protected List<Documento> allegato = new ArrayList<Documento>();
 
@@ -795,6 +873,12 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @XmlAttribute(name="service-binding",required=true)
   protected ServiceBinding serviceBinding;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_messageType;
+
+  @XmlAttribute(name="message-type",required=false)
+  protected MessageType messageType;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

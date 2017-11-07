@@ -52,9 +52,9 @@ package org.openspcoop2.core.registry.ws.server.filter;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.registry.ws.server.filter.beans.CredenzialiSoggetto;
-import java.util.Date;
 import org.openspcoop2.core.registry.ws.server.filter.beans.Connettore;
+import java.util.Date;
+import org.openspcoop2.core.registry.ws.server.filter.beans.CredenzialiSoggetto;
 
 /**     
  * SearchFilterSoggetto

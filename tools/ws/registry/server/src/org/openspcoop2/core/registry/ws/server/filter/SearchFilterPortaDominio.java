@@ -47,8 +47,8 @@ package org.openspcoop2.core.registry.ws.server.filter;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import java.util.Date;
+import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 
 /**     
  * SearchFilterPortaDominio

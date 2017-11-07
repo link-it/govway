@@ -42,6 +42,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="versione-protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
@@ -58,6 +59,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import java.util.Date;
 import org.openspcoop2.core.registry.ws.server.filter.beans.ConfigurazioneServizio;
+import org.openspcoop2.core.registry.constants.MessageType;
 
 /**     
  * SearchFilterAccordoServizioParteSpecifica
@@ -84,6 +86,7 @@ import org.openspcoop2.core.registry.ws.server.filter.beans.ConfigurazioneServiz
     "oraRegistrazioneMax",
     "versioneProtocollo",
     "descrizione",
+    "messageType",
     "orCondition",
     "limit",
     "offset"
@@ -285,6 +288,18 @@ public class SearchFilterAccordoServizioParteSpecifica extends org.openspcoop2.u
 	
 	public String getDescrizione(){
 		return this.descrizione;
+	}
+	
+	
+	@XmlElement(name="message-type",required=false,nillable=false)
+	private MessageType messageType;
+	
+	public void setMessageType(MessageType messageType){
+		this.messageType = messageType;
+	}
+	
+	public MessageType getMessageType(){
+		return this.messageType;
 	}
 	
 	

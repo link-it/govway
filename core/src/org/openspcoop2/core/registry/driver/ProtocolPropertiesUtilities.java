@@ -30,6 +30,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 
 /**
@@ -58,6 +59,9 @@ public class ProtocolPropertiesUtilities {
 	}
 	public static boolean isMatch(Azione az,List<FiltroRicercaProtocolProperty> list){
 		return isMatch(az.getProtocolPropertyList(), list);
+	}
+	public static boolean isMatch(Resource resource,List<FiltroRicercaProtocolProperty> list){
+		return isMatch(resource.getProtocolPropertyList(), list);
 	}
 	public static boolean isMatch(AccordoServizioParteSpecifica accordo,List<FiltroRicercaProtocolProperty> list){
 		return isMatch(accordo.getProtocolPropertyList(), list);

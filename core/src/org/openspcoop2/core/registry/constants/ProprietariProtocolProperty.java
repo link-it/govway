@@ -33,6 +33,7 @@ public enum ProprietariProtocolProperty {
 	ACCORDO_SERVIZIO_PARTE_COMUNE,  // vale anche per il servizio composto
 	PORT_TYPE, OPERATION,
 	AZIONE_ACCORDO,
+	RESOURCE,
 	ACCORDO_SERVIZIO_PARTE_SPECIFICA,
 	FRUITORE;
 	

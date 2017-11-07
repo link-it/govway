@@ -39,8 +39,8 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.registry.IdRuolo;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.IdRuolo;
 
 /**     
  * UpdateOrCreateRuolo

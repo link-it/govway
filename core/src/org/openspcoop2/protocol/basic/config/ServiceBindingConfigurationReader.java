@@ -24,6 +24,8 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.config.ConfigurationServiceBindingRest;
 import org.openspcoop2.message.config.ConfigurationServiceBindingSoap;
@@ -56,6 +58,7 @@ import org.openspcoop2.protocol.manifest.constants.RestMessageType;
 import org.openspcoop2.protocol.manifest.constants.SoapMessageType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
@@ -88,6 +91,26 @@ public class ServiceBindingConfigurationReader  {
 
 	public static ServiceBindingConfiguration getDefaultServiceBindingConfiguration(Openspcoop2 manifest, TransportRequestContext transportRequest) throws ProtocolException{
 		return getServiceBindingConfiguration(manifest, transportRequest, null, null, null);
+	}
+	
+	private static MessageType convertMessageType(org.openspcoop2.core.registry.constants.MessageType mt) {
+		if(mt!=null) {
+			switch (mt) {
+			case SOAP_11:
+				return MessageType.SOAP_11;
+			case SOAP_12:
+				return MessageType.SOAP_12;
+			case XML:
+				return MessageType.XML;
+			case JSON:
+				return MessageType.JSON;
+			case BINARY:
+				return MessageType.BINARY;
+			case MIME_MULTIPART:
+				return MessageType.MIME_MULTIPART;
+			}
+		}
+		return null;
 	}
 	
 	public static ServiceBindingConfiguration getServiceBindingConfiguration(Openspcoop2 manifest, TransportRequestContext transportRequest, 
@@ -138,74 +161,124 @@ public class ServiceBindingConfigurationReader  {
 					}
 				}				
 				
+				// Accordi
+				AccordoServizioParteComune aspc = null;
+				AccordoServizioParteSpecifica asps = null;
+				try {
+					asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
+				}catch(RegistryNotFound notFound) {}
+				if(asps!=null) {
+					try {
+						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+						aspc = registryReader.getAccordoServizioParteComune(idAccordo, false);
+					}catch(RegistryNotFound notFound) {}
+				}
+				
 				// ricerca per servizio dell'accordo parte comune
-				// TODO 
 				// Se presente viene forzato un message type indipendente dal mediaType e valido sia per la richiesta che per la risposta
-				MessageType messageTypeService = null;
-				if(messageTypeService!=null){
-					if(ServiceBinding.SOAP.equals(serviceBinding)){
-						updateSoapMediaTypeCollection(soap, messageTypeService, true, true);
+				if(aspc!=null) {
+					MessageType messageTypeService = convertMessageType(aspc.getMessageType());
+					if(messageTypeService!=null){
+						if(ServiceBinding.SOAP.equals(serviceBinding)){
+							updateSoapMediaTypeCollection(soap, messageTypeService, true, true);
+						}
+						else if(ServiceBinding.REST.equals(serviceBinding)){
+							updateRestMediaTypeCollection(rest, messageTypeService, true, true);
+						}
 					}
-					else if(ServiceBinding.REST.equals(serviceBinding)){
-						updateRestMediaTypeCollection(rest, messageTypeService, true, true);
+				}
+				
+				if(ServiceBinding.SOAP.equals(serviceBinding) && aspc!=null && asps!=null && asps.getPortType()!=null) {
+					// ricerca per port-type dell'accordo parte comune
+					// Se presente viene forzato un message type indipendente dal mediaType e valido sia per la richiesta che per la risposta
+					for (PortType pt : aspc.getPortTypeList()) {
+						if(pt.getNome().equals(asps.getPortType())) {
+							MessageType messageTypeService = convertMessageType(pt.getMessageType());
+							if(messageTypeService!=null){
+								if(ServiceBinding.SOAP.equals(serviceBinding)){
+									updateSoapMediaTypeCollection(soap, messageTypeService, true, true);
+								}
+								else if(ServiceBinding.REST.equals(serviceBinding)){
+									updateRestMediaTypeCollection(rest, messageTypeService, true, true);
+								}
+							}
+							break;
+						}
 					}
 				}
 				
 				// ricerca per servizio dell'accordo parte specifica
-				// TODO 
 				// Se presente viene forzato un message type indipendente dal mediaType e valido sia per la richiesta che per la risposta
-				MessageType messageTypeParteSpecifica = null;
-				if(messageTypeParteSpecifica!=null){
-					if(ServiceBinding.SOAP.equals(serviceBinding)){
-						updateSoapMediaTypeCollection(soap, messageTypeParteSpecifica, true, true);
-					}
-					else if(ServiceBinding.REST.equals(serviceBinding)){
-						updateRestMediaTypeCollection(rest, messageTypeParteSpecifica, true, true);
-					}
-				}
-				
-				// ricerca per azione del servizio dell'accordo parte comune
-				// TODO 
-				// Se presente viene forzato un message type indipendente dal mediaType e valido sia per la richiesta che per la risposta
-				MessageType messageTypeAzione = null;
-				if(messageTypeAzione!=null){
-					if(ServiceBinding.SOAP.equals(serviceBinding)){
-						updateSoapMediaTypeCollection(soap, messageTypeAzione, true, true);
-					}
-					else if(ServiceBinding.REST.equals(serviceBinding)){
-						updateRestMediaTypeCollection(rest, messageTypeAzione, true, true);
+				if(asps!=null) {
+					MessageType messageTypeParteSpecifica = convertMessageType(asps.getMessageType());
+					if(messageTypeParteSpecifica!=null){
+						if(ServiceBinding.SOAP.equals(serviceBinding)){
+							updateSoapMediaTypeCollection(soap, messageTypeParteSpecifica, true, true);
+						}
+						else if(ServiceBinding.REST.equals(serviceBinding)){
+							updateRestMediaTypeCollection(rest, messageTypeParteSpecifica, true, true);
+						}
 					}
 				}
 				
-				// ricerca per azione - richiesta
-				// TODO 
-				// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la richiesta
-				MessageType messageTypeAzioneRichiesta = null;
-				if(messageTypeAzioneRichiesta!=null){
-					if(ServiceBinding.SOAP.equals(serviceBinding)){
-						updateSoapMediaTypeCollection(soap, messageTypeAzioneRichiesta, true, false);
-					}
-					else if(ServiceBinding.REST.equals(serviceBinding)){
-						updateRestMediaTypeCollection(rest, messageTypeAzioneRichiesta, true, false);
-					}
-				}
+				if(idServizio.getAzione()!=null && aspc!=null && ServiceBinding.REST.equals(serviceBinding)) {
 				
-				// ricerca per azione - risposta
-				// TODO 
-				// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la richiesta
-				MessageType messageTypeAzioneRisposta = null;
-				if(messageTypeAzioneRisposta!=null){
-					if(ServiceBinding.SOAP.equals(serviceBinding)){
-						updateSoapMediaTypeCollection(soap, messageTypeAzioneRisposta, false, true);
+					if(aspc.sizeResourceList()>0) {
+						for (Resource resource : aspc.getResourceList()) {
+							if(resource.getNome().equals(idServizio.getAzione())) {
+								
+								// Se presente viene forzato un message type indipendente dal mediaType e valido sia per la richiesta che per la risposta
+								MessageType messageTypeRisorsa = convertMessageType(resource.getMessageType());
+								if(messageTypeRisorsa!=null){
+									if(ServiceBinding.SOAP.equals(serviceBinding)){
+										updateSoapMediaTypeCollection(soap, messageTypeRisorsa, true, true);
+									}
+									else if(ServiceBinding.REST.equals(serviceBinding)){
+										updateRestMediaTypeCollection(rest, messageTypeRisorsa, true, true);
+									}
+								}
+								
+								if(resource.getRequest()!=null) {
+									// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la richiesta
+									MessageType messageTypeAzioneRichiesta = convertMessageType(resource.getRequest().getMessageType());
+									if(messageTypeAzioneRichiesta!=null){
+										if(ServiceBinding.SOAP.equals(serviceBinding)){
+											updateSoapMediaTypeCollection(soap, messageTypeAzioneRichiesta, true, false);
+										}
+										else if(ServiceBinding.REST.equals(serviceBinding)){
+											updateRestMediaTypeCollection(rest, messageTypeAzioneRichiesta, true, false);
+										}
+									}
+								}
+								
+								if(resource.sizeResponseList()>0) {
+									
+									// CAPIRE COME SI GESTISCE LO STATO DELLA RISPOSTA
+									
+									// ricerca per azione - risposta
+									// TODO 
+									// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la richiesta
+									MessageType messageTypeAzioneRisposta = null;
+									if(messageTypeAzioneRisposta!=null){
+										if(ServiceBinding.SOAP.equals(serviceBinding)){
+											updateSoapMediaTypeCollection(soap, messageTypeAzioneRisposta, false, true);
+										}
+										else if(ServiceBinding.REST.equals(serviceBinding)){
+											updateRestMediaTypeCollection(rest, messageTypeAzioneRisposta, false, true);
+										}
+									}
+								}
+								
+								// TODO ultimo step di replace singolo mediaType sulla richiesta o sulla risposta con i metodi seguenti:
+								//	soap.getRequest().addOrReplaceMediaType(mediaType, version, regExpr);
+								//	rest.getRequest().addOrReplaceMediaType(mediaType, version, regExpr);
+								
+								break;
+							}
+						}
 					}
-					else if(ServiceBinding.REST.equals(serviceBinding)){
-						updateRestMediaTypeCollection(rest, messageTypeAzioneRisposta, false, true);
-					}
+
 				}
-			
-				// TODO ultimo step di replace singolo mediaType sulla richiesta o sulla risposta con i metodi seguenti:
-				//	soap.getRequest().addOrReplaceMediaType(mediaType, version, regExpr);
-				//	rest.getRequest().addOrReplaceMediaType(mediaType, version, regExpr);
 			}
 			
 			ServiceBindingConfiguration config = new ServiceBindingConfiguration(defaultBinding, soap, rest, contextUrlCollection);

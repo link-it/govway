@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/registry" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/registry">
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/registry" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/registry">
 	
 	
 	
@@ -90,6 +90,8 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione" type="azione"/>
 			<!-- Port-Type inclusi nell'accordo -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="port-type" type="port-type"/>
+			<!-- Risorse definite nell'accordo -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="resource" type="resource"/>
 			<!-- Allegati -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="allegato" type="documento"/>
 			<!-- Specifiche Semiformale -->
@@ -133,6 +135,7 @@
 		</xsd:attribute>
 		<!-- end-extensions -->
 		<xsd:attribute name="service-binding" type="ServiceBinding" use="required"/>
+		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
 		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione" use="required">
@@ -241,6 +244,7 @@
 		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
 		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
 		<xsd:attribute name="scadenza" type="xsd:string"/>
+		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
 	</xsd:complexType>
 	
 	<!-- azione -->
@@ -311,6 +315,63 @@
 		<xsd:attribute name="element-namespace" type="xsd:string" use="optional"/>
 		<xsd:attribute name="type-name" type="xsd:string" use="optional"/>
 		<xsd:attribute name="type-namespace" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Risorsa REST -->
+	<xsd:complexType name="resource">
+		<xsd:sequence>
+			<!-- Reqeust -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="request" type="resource-request"/>
+			<!-- Response -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="response" type="resource-response"/>
+			<!-- Protocol Properties -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="id-accordo" type="xsd:unsignedLong" use="optional">
+			
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="path" type="xsd:string" use="optional"/>
+		<xsd:attribute name="method" type="HttpMethod" use="optional"/>
+		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Definizione di una richiesta per una risorsa REST -->
+	<xsd:complexType name="resource-request">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="representation" type="resource-representation"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="id-resource" type="xsd:unsignedLong" use="optional">
+			
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Definizione di una risposta per una risorsa REST -->
+	<xsd:complexType name="resource-response">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="representation" type="resource-representation"/>
+		</xsd:sequence>
+		<!-- start-extensions -->
+		<xsd:attribute name="id-resource" type="xsd:unsignedLong" use="optional">
+			
+		</xsd:attribute>
+		<!-- end-extensions -->
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="status" type="xsd:integer" use="optional"/>
+		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Definizione di una rappresentazione per una richiesta/risposta della risorsa REST -->
+	<xsd:complexType name="resource-representation">
+		<xsd:attribute name="media-type" type="xsd:string"/>
+		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
 	</xsd:complexType>
 	
 	
@@ -541,6 +602,7 @@
 		</xsd:attribute>
 		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
 	</xsd:complexType>
 	
 	<!-- Servizio/ServizioCorrelato -->
@@ -666,6 +728,28 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="soap"/>
 			<xsd:enumeration value="rest"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="soap11"/>
+			<xsd:enumeration value="soap12"/>
+			<xsd:enumeration value="xml"/>
+			<xsd:enumeration value="json"/>
+			<xsd:enumeration value="binary"/>
+			<xsd:enumeration value="mimeMultipart"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="HttpMethod">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="GET"/>
+			<xsd:enumeration value="POST"/>
+			<xsd:enumeration value="PUT"/>
+			<xsd:enumeration value="DELETE"/>
+			<xsd:enumeration value="OPTIONS"/>
+			<xsd:enumeration value="HEAD"/>
+			<xsd:enumeration value="TRACE"/>
+			<xsd:enumeration value="PATCH"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProfiloCollaborazione">
