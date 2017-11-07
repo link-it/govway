@@ -124,7 +124,10 @@ public class ServiceBindingConfigurationReader  {
 			ContextUrlCollection contextUrlCollection = readContextUrlCollection(manifest,soap,rest);
 			
 			// aggiornamento per contesto
-			String context = transportRequest.getProtocolWebContext();
+			String context = null;
+			if(transportRequest!=null) {
+				context = transportRequest.getProtocolWebContext();
+			}
 			if(context!=null && !Costanti.CONTEXT_EMPTY.equals(context)){
 				for (int i = 0; i < manifest.getWeb().sizeContextList(); i++) {
 					if(manifest.getWeb().getContext(i).getName().equals(context)){
