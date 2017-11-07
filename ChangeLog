@@ -1,3 +1,16 @@
+2017-11-06  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Risolto Bug OP-670
+	Durante l'utilizzo dell'utility di validazione/comparazione dei subject SSL se il subject è simile al seguente:
+		/C=IT/ST= /O=Esempio di Agenzia/OU=Servizi Informatici/CN=Ministero/prova/23234234554/DEMO/
+	si ottiene il seguente errore
+		javax.naming.ldap.LdapName reader failed: Invalid name: 
+		/C=IT/ST= /O=Esempio di Agenzia/OU=Servizi Informatici/CN=Ministero/prova/23234234554/DEMO/ 
+		First method error: (/C=IT/ST= /O=Esempio di Agenzia/OU=Servizi Informatici/CN=Ministero dell'Interno/prova/23234234554/DEMO/) 
+		Comprensione subject non riuscita: [prova] non separata dal carattere "=". 
+		Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\')
+
 2017-11-03  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole]

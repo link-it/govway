@@ -51,14 +51,21 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	public static final String PDtoSOAP_FUNCTION = "PDtoSOAP";
 	public static final String IntegrationManager_FUNCTION = "IntegrationManager";
 	public static final String IntegrationManager_ENGINE = "IntegrationManagerEngine";
-	public static final String IntegrationManager_FUNCTION_PD = "IntegrationManager/PD";
-	public static final String IntegrationManager_FUNCTION_MessageBox = "IntegrationManager/MessageBox";
+	public static final String IntegrationManager_SERVICE_PD = "PD";
+	public static final String IntegrationManager_SERVICE_MessageBox = "MessageBox";
+	public static final String IntegrationManager_FUNCTION_PD = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_PD;
+	public static final String IntegrationManager_FUNCTION_MessageBox = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_MessageBox;
+	public static final String IntegrationManager_ENGINE_FUNCTION_PD = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_PD;
+	public static final String IntegrationManager_ENGINE_FUNCTION_MessageBox = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_MessageBox;
 	public static final String CheckPdD_FUNCTION = "checkPdD";
 	
 	public URLProtocolContext() throws UtilsException{
 		super();
 	}
 	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug) throws ProtocolException, UtilsException{
+		this(req, logCore, debug, false);
+	}
+	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug, boolean integrationManagerEngine) throws ProtocolException, UtilsException{
 		super(req, logCore, debug);
 				
 		String servletContext = req.getContextPath();
@@ -98,10 +105,48 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				logCore.debug("PROTOCOLLO["+protocollo+"] FUNCTION["+function+"]");
 			
 			// Vedo se ho un protocollo prima della funzione o direttamente il protocollo
-			if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || 
+			if(integrationManagerEngine && protocollo.equals(URLProtocolContext.IntegrationManager_ENGINE)) {
+				if(logCore!=null)
+					logCore.debug("SERVLET INTEGRATION MANAGER SERVICE");
+				function = protocollo;
+				
+				Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+				if(o == null || !(o instanceof String)){
+					throw new Exception("Indicazione del protocollo non presente");
+				}
+				protocollo = (String) o;
+				
+				int sizePrefix = (req.getContextPath() + "/" + function + "/").length();
+				if(req.getRequestURI().length()>sizePrefix){
+					functionParameters = req.getRequestURI().substring(sizePrefix);
+				}
+				
+				if(functionParameters.startsWith(IntegrationManager_SERVICE_PD)) {
+					function+="_"+IntegrationManager_SERVICE_PD;
+					
+					Object oPD = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA);
+					if(oPD == null || !(oPD instanceof String)){
+						throw new Exception("Indicazione della porta delegata non presente");
+					}
+					
+					functionParameters=(String)oPD;
+					
+				} 
+				else if(functionParameters.startsWith(IntegrationManager_SERVICE_MessageBox)) {
+					function+="_"+IntegrationManager_SERVICE_MessageBox;
+					
+					if(functionParameters.length()>IntegrationManager_SERVICE_MessageBox.length()) {
+						functionParameters = functionParameters.substring(IntegrationManager_SERVICE_MessageBox.length());
+					}
+					else {
+						functionParameters = null;
+					}
+				}
+			}
+			else if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
-					protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) || 
+					protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
 					protocollo.equals(URLProtocolContext.CheckPdD_FUNCTION)) {
 				// ContextProtocol Empty
 				if(logCore!=null)
@@ -113,7 +158,6 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				if(req.getRequestURI().length()>sizePrefix){
 					functionParameters = req.getRequestURI().substring(sizePrefix);
 				}
-
 			}
 			else{
 				// Calcolo function
@@ -130,7 +174,6 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				if(req.getRequestURI().length()>sizePrefix){
 					functionParameters = req.getRequestURI().substring(sizePrefix);
 				}
-
 			}
 						
 			if(logCore!=null)

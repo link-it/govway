@@ -120,7 +120,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		RequestInfo requestInfo = null;
 		try{
 			// Request Info
-			URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true);
+			URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true);
 			requestInfo = ConnectorUtils.getRequestInfo(protocolFactory, urlProtocolContext);
 		}catch(Exception e){
 			String msgError = "Lettura RequestInfo non riuscita: "+Utilities.readFirstErrorValidMessageFromException(e);
@@ -191,10 +191,22 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		
 		
+		// GeneratoreErrore
+		RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = null;
+		try{
+			generatoreErrore = 
+						new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, idModulo, requestInfo);
+		}catch(Exception e){
+			String msgError = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
+			msgDiag.logErroreGenerico(e,"Inizializzazione Generatore Errore");
+			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(msgError));
+		}
+		
 		// Aggiorno RequestInfo
 		try{
 			if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
-					null, serviceIdentificationReader,msgDiag)==false){
+					generatoreErrore, serviceIdentificationReader,msgDiag)==false){
 				try{
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							getErroreIntegrazione());
@@ -579,23 +591,13 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			context.setUrlProtocolContext(urlProtocolContext);
 			context.setHeaderIntegrazioneRichiesta(headerIntegrazioneRichiesta);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
+			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, requestInfo);
+			context.setProprietaErroreAppl(generatoreErrore.getProprietaErroreAppl());
 			// Location
 			context.setFromLocation(requestInfo.getProtocolContext().getSource());
 			
 			// Log elaborazione dati completata
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
-			
-			// GeneratoreErrore
-			RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = null;
-			try{
-				generatoreErrore = 
-							new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, idModulo, requestInfo);
-			}catch(Exception e){
-				String msgError = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
-				msgDiag.logErroreGenerico(e,"Inizializzazione Generatore Errore");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgError));
-			}
 			
 			// Invocazione...
 			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context,generatoreErrore);

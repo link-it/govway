@@ -719,8 +719,15 @@ public class Utilities {
 	
 	private static final boolean _trimValue_beforeSaveDB = true;
 	
+	@Deprecated
 	public static boolean sslVerify(String subjectPresenteNellaConfigurazione, String subjectArrivatoConnessioneSSL) throws UtilsException{
+		return sslVerify(subjectPresenteNellaConfigurazione, subjectArrivatoConnessioneSSL, log);
+	}
+	public static boolean sslVerify(String subjectPresenteNellaConfigurazione, String subjectArrivatoConnessioneSSL, Logger log) throws UtilsException{
 
+		if(log!=null) {
+			log.debug("SSL VERIFY CONF["+subjectPresenteNellaConfigurazione+"] SSL["+subjectArrivatoConnessioneSSL+"]");
+		}
 		//System.out.println("SSL VERIFY CONF["+subjectPresenteNellaConfigurazione+"] SSL["+subjectArrivatoConnessioneSSL+"]");
 
 		// Costruzione key=value
@@ -729,6 +736,10 @@ public class Utilities {
 
 		if(hashSubjectArrivatoConnessioneSSL.size() != hashSubjectPresenteNellaConfigurazione.size()){
 			//System.out.println("LUNGHEZZA DIVERSA");
+			if(log!=null) {
+				log.debug("sslVerify SubjectConfigurazione["+subjectPresenteNellaConfigurazione+"]("+hashSubjectPresenteNellaConfigurazione.size()+
+					") SSL["+subjectArrivatoConnessioneSSL+"]("+hashSubjectArrivatoConnessioneSSL.size()+"): lunghezza differente");
+			}
 			return false;
 		}
 
@@ -739,6 +750,10 @@ public class Utilities {
 
 			if(hashSubjectPresenteNellaConfigurazione.containsKey(key)==false){
 				//System.out.println("KEY ["+key+"] non presente");
+				if(log!=null) {
+					log.debug("sslVerify key["+key+"] non trovata in SubjectConfigurazione["+subjectPresenteNellaConfigurazione+"], key riscontrate: "+
+						hashSubjectPresenteNellaConfigurazione.keys());
+				}
 				return false;
 			}
 
@@ -761,6 +776,9 @@ public class Utilities {
 			}
 			
 			if(connessioneSSLValue.equals(configurazioneInternaValue)==false){
+				if(log!=null) {
+					log.debug("sslVerify key["+key+"] SubjectConfigurazione["+configurazioneInternaValue+"] SSL["+connessioneSSLValue+"] not match");
+				}
 				//System.out.println("VALUE SSL["+connessioneSSLValue+"]=CONF["+configurazioneInternaValue+"] non match");
 				return false;
 			}
@@ -970,7 +988,29 @@ public class Utilities {
 				}
 				//System.out.println("SUBJECT _getValoriSubject preSplit / ["+subject+"] ..");
 				//valori =  subject.split("/");
-				valori = split(subject, '/');
+				String [] tmp_valori = split(subject, '/');
+				
+				// Bug Fix OP-670 certificato formato come:
+				// C=IT/ST= /O=Esempio di Agenzia/OU=Servizi Informatici/CN=Ministero dell'Interno/prova/23234234554/DEMO
+				List<String> normalize = new ArrayList<>();
+				StringBuffer bf = new StringBuffer();
+				for (String tmp : tmp_valori) {
+					if(tmp.contains("=")) {
+						if(bf.length()>0) {
+							normalize.add(bf.toString());
+							bf.delete(0, bf.length());
+						}
+						bf.append(tmp);
+					}
+					else {
+						bf.append("/").append(tmp);
+					}
+				}
+				if(bf.length()>0) {
+					normalize.add(bf.toString());
+					bf.delete(0, bf.length());
+				}
+				valori = normalize.toArray(new String[1]);
 			}
 		}
 		if(valori==null || valori.length<1){

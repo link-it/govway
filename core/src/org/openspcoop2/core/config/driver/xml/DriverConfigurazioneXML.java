@@ -1324,7 +1324,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						if(sa.getInvocazionePorta().getCredenziali(z).getTipo() == null){
 							try{
 								//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, this.log)){
 									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
 									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 									return sa;
@@ -1337,7 +1337,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
 							try{
 								//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
+								if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject, this.log)){
 									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
 									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
 									return sa;

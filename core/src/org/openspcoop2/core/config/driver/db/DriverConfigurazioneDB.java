@@ -3045,7 +3045,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				while(rs.next()){
 					// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 					String subjectPotenziale =  rs.getString("subject");
-					if(Utilities.sslVerify(subjectPotenziale, aSubject)){
+					if(Utilities.sslVerify(subjectPotenziale, aSubject, this.log)){
 						idSA = rs.getLong("id");
 						break;
 					}
@@ -9854,7 +9854,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 				String subjectPotenziale =  risultato.getString("subject");
-				if(Utilities.sslVerify(subjectPotenziale, subject)){
+				if(Utilities.sslVerify(subjectPotenziale, subject, this.log)){
 					sa=this.getServizioApplicativo(risultato.getLong("id"));
 					lista.add(sa);
 				}

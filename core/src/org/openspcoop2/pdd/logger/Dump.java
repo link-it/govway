@@ -356,7 +356,7 @@ public class Dump {
 		// Colleziono dati di dump header
 		java.util.Properties transportHeader = new java.util.Properties();
 		try{
-			if(transportHeaderParam.size()>0){
+			if(transportHeaderParam!=null && transportHeaderParam.size()>0){
 				transportHeader.putAll(transportHeaderParam);
 				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
 					OpenSPCoop2MessageProperties forwardHeader = null;

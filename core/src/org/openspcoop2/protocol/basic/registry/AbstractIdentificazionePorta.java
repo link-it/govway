@@ -163,7 +163,7 @@ public abstract class AbstractIdentificazionePorta {
 					this.erroreIntegrazione = 
 							ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
 								getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
-					this.log.error(this.erroreIntegrazione.getDescrizione(this.protocolFactory)+": "+dNotFound.getMessage());
+					this.log.error(this.erroreIntegrazione.getDescrizione(this.protocolFactory)+": "+dNotFound.getMessage(),dNotFound);
 					return false;
 				}	
 				if(this.identificativoPorta!=null){

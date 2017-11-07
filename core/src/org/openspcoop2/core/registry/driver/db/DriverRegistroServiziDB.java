@@ -18327,7 +18327,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 				// Possono esistere piu' pdd che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 				String subjectPotenziale =  risultato.getString("subject");
-				if(Utilities.sslVerify(subjectPotenziale, subject)){
+				if(Utilities.sslVerify(subjectPotenziale, subject, this.log)){
 					pdd=this.getPortaDominio(risultato.getString("nome"));
 					lista.add(pdd);
 				}

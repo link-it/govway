@@ -162,6 +162,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
 		} 
 	}
+	private void setNomePortaDelegata(Logger log,String nomePorta) throws IntegrationManagerException{
+		try {
+			getHttpServletRequest().setAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, nomePorta);
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+			throw new IntegrationManagerException(null,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
+		} 
+	}
 	
 	
 	public static InfoConnettoreIngresso buildInfoConnettoreIngresso(javax.servlet.http.HttpServletRequest req,Credenziali credenziali,URLProtocolContext urlProtocolContext){
@@ -1681,6 +1689,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		
 		// Verifica risorse sistema
 		this.verificaRisorseSistema(protocolFactory,logCore, tipoOperazione);
+		
+		// SetNomePD
+		this.setNomePortaDelegata(logCore, portaDelegata);
 		
 		RicezioneContenutiApplicativiIntegrationManagerService service = new RicezioneContenutiApplicativiIntegrationManagerService();
 		return service.process(tipoOperazione, portaDelegata, msg, idInvocazionePerRiferimento, 

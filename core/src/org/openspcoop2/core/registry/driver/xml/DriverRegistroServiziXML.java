@@ -1195,7 +1195,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 				break;
 			case SSL:
 				try{
-					if(Utilities.sslVerify(credenziali.getSubject(), subject)){
+					if(Utilities.sslVerify(credenziali.getSubject(), subject, this.log)){
 						return ss;
 					}
 				}catch(Exception e){
@@ -1315,7 +1315,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 								if(credenziali.getSubject()==null){
 									continue;
 								}
-								if(Utilities.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject())==false){
+								if(Utilities.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject(), this.log)==false){
 									continue;
 								}
 							}catch(Exception e){

@@ -1361,7 +1361,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 								if(credenziali.getSubject()==null){
 									continue;
 								}
-								if(Utilities.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject())==false){
+								if(Utilities.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject(), this.log)==false){
 									continue;
 								}
 							}catch(Exception e){

@@ -254,7 +254,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	
 	@Override
 	public AbstractEccezioneBuilderParameter readErroreApplicativo(Node erroreApplicativo,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException{
-		if(XMLUtils.isErroreApplicativo(erroreApplicativo)==false){
+		if(this.isErroreApplicativo(erroreApplicativo)==false){
 			throw new ProtocolException("Node fornito non contiene un errore applicativo per il protocollo "+this.getProtocolFactory().getProtocol());
 		}
 		try{

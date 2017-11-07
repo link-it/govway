@@ -504,7 +504,7 @@ public class XMLUtils  {
 	}
 	private static boolean isErroreApplicativo_engine(Node nodeXml){
 		try{
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
+			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_ERRORE_APPLICATIVO+"]vs["+nodeXml.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+nodeXml.getNamespaceURI()+"]");
 			if(Costanti.ROOT_LOCAL_NAME_ERRORE_APPLICATIVO.equals(nodeXml.getLocalName()) && 
 					Costanti.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
 				){

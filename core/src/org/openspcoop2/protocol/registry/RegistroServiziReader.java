@@ -1699,7 +1699,7 @@ public class RegistroServiziReader {
 									esitoAutorizzazione.setDetails(error);
 									return esitoAutorizzazione;
 								}
-								if(Utilities.sslVerify(portaDominio.getSubject(), pdd)==false){
+								if(Utilities.sslVerify(portaDominio.getSubject(), pdd, this.log)==false){
 								//if(pdd.equals(portaDominio.getSubject())==false){
 									String error = "subject estratto dal certificato client ["+pdd+"] diverso da quello registrato per la porta di dominio "+portaDominio.getNome()+" del mittente ["+portaDominio.getSubject()+"]";
 									this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita: "+error);
@@ -1744,7 +1744,7 @@ public class RegistroServiziReader {
 							esitoAutorizzazione.setDetails(error);
 							return esitoAutorizzazione;
 						}
-						if(Utilities.sslVerify(portaDominio.getSubject(), pdd)==false){
+						if(Utilities.sslVerify(portaDominio.getSubject(), pdd, this.log)==false){
 						//if(pdd.equals(portaDominio.getSubject())==false){
 							String error = "subject estratto dal certificato client ["+pdd+"] diverso da quello registrato per la porta di dominio "+portaDominio.getNome()+" del mittente ["+portaDominio.getSubject()+"]";
 							this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita (FR): "+error);
