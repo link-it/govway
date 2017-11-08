@@ -239,6 +239,7 @@ public class SwaggerApiReader implements IApiReader {
 					String type = reference.replaceAll("#/definitions/", "");
 					ApiRequestBodyParameter bodyParam = new ApiRequestBodyParameter(type);
 					bodyParam.setMediaType(consume);
+					bodyParam.setElement(type);
 					lst.add(bodyParam);
 				}
 			} else {
@@ -267,7 +268,14 @@ public class SwaggerApiReader implements IApiReader {
 	private List<ApiResponse> createResponses(String responseK, Response response, List<String> produces) {
 		List<ApiResponse> responses = new ArrayList<ApiResponse>();
 		if(produces != null && !produces.isEmpty()) {
-			for(String prod: produces) {
+			
+			List<String> list = produces;
+			if(response.getSchema()==null) {
+				list = new ArrayList<String>();
+				list.add("---- NESSUN CONTENUTO GENERATO ------");
+			}
+			
+			for(String prod: list) {
 
 				ApiResponse apiResponse = new ApiResponse();
 				int status = -1;
@@ -291,6 +299,8 @@ public class SwaggerApiReader implements IApiReader {
 				
 				if(response.getSchema() != null) {
 					apiResponse.setMediaType(prod);
+					String type = response.getSchema().getName();
+					apiResponse.setElement(type);
 				}
 					
 				responses.add(apiResponse);
