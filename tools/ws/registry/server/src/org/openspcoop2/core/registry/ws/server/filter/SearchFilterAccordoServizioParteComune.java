@@ -35,6 +35,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="formato-specifica" type="{http://www.openspcoop2.org/core/registry}FormatoSpecifica" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1" />
@@ -56,6 +57,7 @@ import org.openspcoop2.core.registry.ws.server.filter.beans.IdSoggetto;
 import org.openspcoop2.core.registry.ws.server.filter.beans.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.MessageType;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 
 /**     
  * SearchFilterAccordoServizioParteComune
@@ -75,6 +77,7 @@ import org.openspcoop2.core.registry.constants.MessageType;
     "messageType",
     "nome",
     "descrizione",
+    "formatoSpecifica",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
     "versione",
@@ -184,6 +187,18 @@ public class SearchFilterAccordoServizioParteComune extends org.openspcoop2.util
 	
 	public String getDescrizione(){
 		return this.descrizione;
+	}
+	
+	
+	@XmlElement(name="formato-specifica",required=false,nillable=false)
+	private FormatoSpecifica formatoSpecifica;
+	
+	public void setFormatoSpecifica(FormatoSpecifica formatoSpecifica){
+		this.formatoSpecifica = formatoSpecifica;
+	}
+	
+	public FormatoSpecifica getFormatoSpecifica(){
+		return this.formatoSpecifica;
 	}
 	
 	

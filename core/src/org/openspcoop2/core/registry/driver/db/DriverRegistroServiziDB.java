@@ -94,6 +94,7 @@ import org.openspcoop2.core.registry.RuoloSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
@@ -1294,6 +1295,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				//		    accordoServizio
 				//			    .setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 
+				tmp = rs.getString("formato_specifica");
+				accordoServizio.setFormatoSpecifica(DriverRegistroServiziDB_LIB.getEnumFormatoSpecifica((tmp == null || tmp.equals("")) ? null : tmp));
+				
 				tmp = rs.getString("wsdl_definitorio");
 				accordoServizio.setByteWsdlDefinitorio(((tmp == null || tmp.trim().equals("")) ? null : tmp.getBytes()));
 
@@ -2825,6 +2829,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String conversazioneFruitore = (accordoServizio.getByteSpecificaConversazioneFruitore()!=null ? new String(accordoServizio.getByteSpecificaConversazioneFruitore()) : null);
 		String superUser = accordoServizio.getSuperUser();
 
+		FormatoSpecifica formatoSpecifica = accordoServizio.getFormatoSpecifica();
 		wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replaceAll("\n", "")) ? wsdlConcettuale : null;
 		wsdlDefinitorio = wsdlDefinitorio!=null && !"".equals(wsdlDefinitorio.trim().replaceAll("\n", "")) ? wsdlDefinitorio : null;
 		wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replaceAll("\n", "")) ? wsdlLogicoErogatore : null;
@@ -2866,6 +2871,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addInsertField("nome", "?");
 			sqlQueryObject.addInsertField("profilo_collaborazione", "?");
 			sqlQueryObject.addInsertField("scadenza", "?");
+			sqlQueryObject.addInsertField("formato_specifica", "?");
 			sqlQueryObject.addInsertField("wsdl_concettuale", "?");
 			sqlQueryObject.addInsertField("wsdl_definitorio", "?");
 			sqlQueryObject.addInsertField("wsdl_logico_erogatore", "?");
@@ -2896,6 +2902,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(index++, nome);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(profiloCollaborazione));
 			stm.setString(index++, scadenza);
+			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(formatoSpecifica));
 			stm.setString(index++, wsdlConcettuale!=null && !wsdlConcettuale.trim().equals("") ? wsdlConcettuale : null);
 			stm.setString(index++, wsdlDefinitorio!=null && !wsdlDefinitorio.trim().equals("") ? wsdlDefinitorio : null );
 			stm.setString(index++ ,wsdlLogicoErogatore!=null && !wsdlLogicoErogatore.trim().equals("") ? wsdlLogicoErogatore : null );
@@ -3638,6 +3645,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String scadenza = accordoServizio.getScadenza();
 		boolean utilizzioSenzaAzione = accordoServizio.getUtilizzoSenzaAzione();
 
+		FormatoSpecifica formatoSpecifica = accordoServizio.getFormatoSpecifica();
+		
 		String wsdlConcettuale = (accordoServizio.getByteWsdlConcettuale()!=null ? new String(accordoServizio.getByteWsdlConcettuale()) : null);
 		String wsdlDefinitorio = (accordoServizio.getByteWsdlDefinitorio()!=null ? new String(accordoServizio.getByteWsdlDefinitorio()) : null);
 		String wsdlLogicoErogatore = (accordoServizio.getByteWsdlLogicoErogatore()!=null ? new String(accordoServizio.getByteWsdlLogicoErogatore()) : null);
@@ -3715,6 +3724,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addUpdateField("nome", "?");
 			sqlQueryObject.addUpdateField("profilo_collaborazione", "?");
 			sqlQueryObject.addUpdateField("scadenza", "?");
+			sqlQueryObject.addUpdateField("formato_specifica", "?");
 			sqlQueryObject.addUpdateField("wsdl_concettuale", "?");
 			sqlQueryObject.addUpdateField("wsdl_definitorio", "?");
 			sqlQueryObject.addUpdateField("wsdl_logico_erogatore", "?");
@@ -3751,6 +3761,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(index++, nome);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(profiloCollaborazione));
 			stm.setString(index++, scadenza);
+			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(formatoSpecifica));
 			stm.setString(index++, wsdlConcettuale);
 			stm.setString(index++, wsdlDefinitorio);
 			stm.setString(index++, wsdlLogicoErogatore);

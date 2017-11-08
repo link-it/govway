@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
@@ -67,6 +68,7 @@ import java.util.List;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/registry}ProfiloCollaborazione" use="required"/>
+ * 		&lt;attribute name="formato-specifica" type="{http://www.openspcoop2.org/core/registry}FormatoSpecifica" use="optional"/>
  * 		&lt;attribute name="wsdl-definitorio" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="wsdl-concettuale" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="wsdl-logico-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -447,6 +449,26 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public void setProfiloCollaborazione(org.openspcoop2.core.registry.constants.ProfiloCollaborazione profiloCollaborazione) {
     this.profiloCollaborazione = profiloCollaborazione;
+  }
+
+  public void set_value_formatoSpecifica(String value) {
+    this.formatoSpecifica = (FormatoSpecifica) FormatoSpecifica.toEnumConstantFromString(value);
+  }
+
+  public String get_value_formatoSpecifica() {
+    if(this.formatoSpecifica == null){
+    	return null;
+    }else{
+    	return this.formatoSpecifica.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.FormatoSpecifica getFormatoSpecifica() {
+    return this.formatoSpecifica;
+  }
+
+  public void setFormatoSpecifica(org.openspcoop2.core.registry.constants.FormatoSpecifica formatoSpecifica) {
+    this.formatoSpecifica = formatoSpecifica;
   }
 
   public java.lang.String getWsdlDefinitorio() {
@@ -893,6 +915,12 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @XmlAttribute(name="profilo-collaborazione",required=true)
   protected ProfiloCollaborazione profiloCollaborazione;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_formatoSpecifica;
+
+  @XmlAttribute(name="formato-specifica",required=false)
+  protected FormatoSpecifica formatoSpecifica;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="wsdl-definitorio",required=false)

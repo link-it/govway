@@ -24,6 +24,7 @@ import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -95,6 +96,14 @@ public interface IConsoleDynamicConfiguration {
 			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException;
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
 			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException;
+	
+	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
+			IRegistryReader registryReader, IDResource id) throws ProtocolException;
+	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
+			ProtocolProperties properties, 
+			IRegistryReader registryReader, IDResource id) throws ProtocolException;
+	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
+			IRegistryReader registryReader, IDResource id) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			IRegistryReader registryReader, IDServizio id) throws ProtocolException;

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.basic.archive;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -33,7 +34,13 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceRepresentation;
+import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.registry.constants.HttpMethod;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -56,6 +63,17 @@ import org.openspcoop2.protocol.sdk.archive.MappingModeTypesExtensions;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
+import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.swagger.Test;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -115,20 +133,48 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			throw new ProtocolException("Protocol Info already exists");
 		}
 		
-		byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
-		if(wsdlConcettuale!=null){
-			_setProtocolInfo(wsdlConcettuale, accordoServizioParteComune, "Concettuale", log);
+		if(ServiceBinding.SOAP.equals(accordoServizioParteComune.getServiceBinding())) {
+		
+			if(accordoServizioParteComune.getFormatoSpecifica()==null || FormatoSpecifica.WSDL.equals(accordoServizioParteComune.getFormatoSpecifica())) {
+				byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
+				if(wsdlConcettuale!=null){
+					_setProtocolInfoFromWsdl(wsdlConcettuale, accordoServizioParteComune, "Concettuale", log);
+				}
+				else{
+					if(accordoServizioParteComune.getByteWsdlLogicoErogatore()!=null){
+						_setProtocolInfoFromWsdl(accordoServizioParteComune.getByteWsdlLogicoErogatore(), accordoServizioParteComune, "LogicoErogatore", log);
+					}
+					if(accordoServizioParteComune.getByteWsdlLogicoFruitore()!=null){
+						_setProtocolInfoFromWsdl(accordoServizioParteComune.getByteWsdlLogicoFruitore(), accordoServizioParteComune, "LogicoFruitore", log);
+					}
+				}
+			}
+			
 		}
-		else{
-			if(accordoServizioParteComune.getByteWsdlLogicoErogatore()!=null){
-				_setProtocolInfo(accordoServizioParteComune.getByteWsdlLogicoErogatore(), accordoServizioParteComune, "LogicoErogatore", log);
+		else {
+			
+			if(accordoServizioParteComune.getFormatoSpecifica()!=null) {
+				
+				byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
+				if(wsdlConcettuale!=null){
+					switch (accordoServizioParteComune.getFormatoSpecifica()) {
+					case WADL:
+						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.WADL, log);
+						break;
+					case SWAGGER:
+						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER, log);
+						break;
+					default:
+						// altre interfacce non supportate per rest
+						break;
+					}
+				}
+				
 			}
-			if(accordoServizioParteComune.getByteWsdlLogicoFruitore()!=null){
-				_setProtocolInfo(accordoServizioParteComune.getByteWsdlLogicoFruitore(), accordoServizioParteComune, "LogicoFruitore", log);
-			}
+			
 		}
 	}
-	private void _setProtocolInfo(byte [] wsdlBytes,AccordoServizioParteComune accordoServizioParteComune,String tipo,Logger log) throws ProtocolException{
+	private void _setProtocolInfoFromWsdl(byte [] wsdlBytes,AccordoServizioParteComune accordoServizioParteComune,String tipo,Logger log) throws ProtocolException{
 		
 		try{
 		
@@ -281,7 +327,116 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		}
 	}
 	
-	
+	private void _setProtocolInfoFromRestInterface(byte [] bytes,AccordoServizioParteComune accordoServizioParteComune,ApiFormats format,Logger log) throws ProtocolException{
+		
+		try {
+			
+			ApiReaderConfig config = new ApiReaderConfig();
+			
+			IApiReader apiReader = ApiFactory.newApiReader(format);
+			apiReader.init(log, bytes, config);
+			
+	         Api api = apiReader.read();
+	         
+	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {
+	        	 if(api.getDescription()!=null) {
+	        		 api.setDescription(api.getDescription());
+	        	 }
+	         }
+	         
+	         if(api.sizeOperations()>0) {
+	        	 for (ApiOperation apiOp : api.getOperations()) {
+					
+					// cerco resource
+					boolean foundResource = false;
+					Resource resourceOpenSPCoop = null;
+					for (Resource resourceCheck : accordoServizioParteComune.getResourceList()) {
+						if(resourceCheck.getPath()!=null && resourceCheck.getMethod()!=null) {
+							HttpRequestMethod httpMethodCheck = HttpRequestMethod.valueOf(resourceCheck.getMethod().getValue());
+							if(resourceCheck.getPath().equals(apiOp.getPath()) && 
+									httpMethodCheck!=null &&
+									httpMethodCheck.equals(apiOp.getHttpMethod())) {
+								foundResource = true;
+								resourceOpenSPCoop = resourceCheck;
+								break;
+							}
+						}
+					}
+	        		
+					// se non esiste creo la risorsa
+					if(resourceOpenSPCoop==null){
+						resourceOpenSPCoop = new Resource();
+						resourceOpenSPCoop.setNome(APIUtils.normalizeResourceName(apiOp.getHttpMethod(), apiOp.getPath()));
+						resourceOpenSPCoop.setDescrizione(apiOp.getDescription());	
+						resourceOpenSPCoop.setMethod(HttpMethod.toEnumConstant(apiOp.getHttpMethod().name()));
+						resourceOpenSPCoop.setPath(apiOp.getPath());
+					}
+
+					// Richiesta
+					if(resourceOpenSPCoop.getRequest()==null) {
+						resourceOpenSPCoop.setRequest(new ResourceRequest());
+					}
+					if(apiOp.getRequest()!=null) {
+						if(apiOp.getRequest().sizeBodyParameters()>0) {
+							for (ApiRequestBodyParameter body : apiOp.getRequest().getBodyParameters()) {
+								String mediaType = body.getMediaType();
+								if(mediaType!=null) {
+									boolean foundMediaType = false;
+									if(resourceOpenSPCoop.getRequest().sizeRepresentationList()>0) {
+										for (ResourceRepresentation rr : resourceOpenSPCoop.getRequest().getRepresentationList()) {
+											if(mediaType.equals(rr.getMediaType())) {
+												foundMediaType = true;
+											}
+										}
+									}
+									if(!foundMediaType) {
+										ResourceRepresentation rrNew = new ResourceRepresentation();
+										rrNew.setMediaType(mediaType);
+										resourceOpenSPCoop.getRequest().addRepresentation(rrNew);;
+									}
+								}
+							}
+						}
+					}
+					
+//					// Risposta
+//					if(apiOp.sizeResponses()>0) {
+//						for (ApiResponse apiResponse : apiOp.getResponses()) {
+//							
+//							int status = apiResponse.getHttpReturnCode();
+//							
+//							if(apiResponse..sizeBodyParameters()>0) {
+//								for (ApiRequestBodyParameter body : apiOp.getRequest().getBodyParameters()) {
+//									String mediaType = body.getMediaType();
+//									if(mediaType!=null) {
+//										boolean foundMediaType = false;
+//										if(resourceOpenSPCoop.getRequest().sizeRepresentationList()>0) {
+//											for (ResourceRepresentation rr : resourceOpenSPCoop.getRequest().getRepresentationList()) {
+//												if(mediaType.equals(rr.getMediaType())) {
+//													foundMediaType = true;
+//												}
+//											}
+//										}
+//										if(!foundMediaType) {
+//											ResourceRepresentation rrNew = new ResourceRepresentation();
+//											rrNew.setMediaType(mediaType);
+//											resourceOpenSPCoop.getRequest().addRepresentation(rrNew);;
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+				}
+	         }
+	         
+//	         FILTRO PER NOMI UNIVOCI
+			
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		
+	}
 	
 	
 	

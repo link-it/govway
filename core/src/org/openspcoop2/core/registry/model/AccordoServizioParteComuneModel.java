@@ -63,6 +63,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PROFILO_COLLABORAZIONE = new Field("profilo-collaborazione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.FORMATO_SPECIFICA = new Field("formato-specifica",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.WSDL_DEFINITORIO = new Field("wsdl-definitorio",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.WSDL_CONCETTUALE = new Field("wsdl-concettuale",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.WSDL_LOGICO_EROGATORE = new Field("wsdl-logico-erogatore",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -108,6 +109,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PROFILO_COLLABORAZIONE = new ComplexField(father,"profilo-collaborazione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.FORMATO_SPECIFICA = new ComplexField(father,"formato-specifica",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.WSDL_DEFINITORIO = new ComplexField(father,"wsdl-definitorio",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.WSDL_CONCETTUALE = new ComplexField(father,"wsdl-concettuale",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.WSDL_LOGICO_EROGATORE = new ComplexField(father,"wsdl-logico-erogatore",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -173,6 +175,8 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	public IField DESCRIZIONE = null;
 	 
 	public IField PROFILO_COLLABORAZIONE = null;
+	 
+	public IField FORMATO_SPECIFICA = null;
 	 
 	public IField WSDL_DEFINITORIO = null;
 	 

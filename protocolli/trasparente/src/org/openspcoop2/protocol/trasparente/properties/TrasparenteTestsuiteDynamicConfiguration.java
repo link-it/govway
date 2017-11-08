@@ -27,6 +27,7 @@ import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
@@ -200,6 +201,30 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
 			IDPortType id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+	
+	/*** RESOURCE ***/
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDResource id)
+					throws ProtocolException {
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+
+	@Override
+	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDResource id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDResource id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
 	

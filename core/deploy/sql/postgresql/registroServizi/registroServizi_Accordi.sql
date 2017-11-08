@@ -43,6 +43,7 @@ CREATE TABLE accordi
 	service_binding VARCHAR(255) NOT NULL,
 	message_type VARCHAR(255),
 	profilo_collaborazione VARCHAR(255),
+	formato_specifica VARCHAR(255),
 	wsdl_definitorio TEXT,
 	wsdl_concettuale TEXT,
 	wsdl_logico_erogatore TEXT,
@@ -69,8 +70,7 @@ CREATE TABLE accordi
 	id BIGINT DEFAULT nextval('seq_accordi') NOT NULL,
 	-- check constraints
 	CONSTRAINT chk_accordi_1 CHECK (service_binding IN ('soap','rest')),
-	CONSTRAINT chk_accordi_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
-	CONSTRAINT chk_accordi_3 CHECK (stato IN ('finale','bozza','operativo')),
+	CONSTRAINT chk_accordi_2 CHECK (stato IN ('finale','bozza','operativo')),
 	-- unique constraints
 	CONSTRAINT unique_accordi_1 UNIQUE (nome,id_referente,versione),
 	-- fk/pk keys constraints
@@ -127,8 +127,6 @@ CREATE TABLE port_type
 	message_type VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_port_type') NOT NULL,
-	-- check constraints
-	CONSTRAINT chk_port_type_1 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
 	-- unique constraints
 	CONSTRAINT unique_port_type_1 UNIQUE (id_accordo,nome),
 	-- fk/pk keys constraints
@@ -214,9 +212,6 @@ CREATE TABLE api_resources
 	message_type VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_api_resources') NOT NULL,
-	-- check constraints
-	CONSTRAINT chk_api_resources_1 CHECK (http_method IN ('GET','POST','PUT','DELETE','OPTIONS','HEAD','TRACE','PATCH','ALL')),
-	CONSTRAINT chk_api_resources_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
 	-- unique constraints
 	CONSTRAINT unique_api_resources_1 UNIQUE (id_accordo,nome),
 	CONSTRAINT unique_api_resources_2 UNIQUE (id_accordo,http_method,path),
@@ -241,7 +236,6 @@ CREATE TABLE api_resources_details
 	id BIGINT DEFAULT nextval('seq_api_resources_details') NOT NULL,
 	-- check constraints
 	CONSTRAINT chk_api_resources_details_1 CHECK (resource_type IN ('REQUEST','RESPONSE')),
-	CONSTRAINT chk_api_resources_details_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
 	-- unique constraints
 	CONSTRAINT unique_api_resources_details_1 UNIQUE (id_resource,resource_type,status),
 	-- fk/pk keys constraints
@@ -261,8 +255,6 @@ CREATE TABLE api_resources_media
 	message_type VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_api_resources_media') NOT NULL,
-	-- check constraints
-	CONSTRAINT chk_api_resources_media_1 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
 	-- unique constraints
 	CONSTRAINT unique_api_resources_media_1 UNIQUE (id_resource_details,media_type),
 	-- fk/pk keys constraints
@@ -351,7 +343,6 @@ CREATE TABLE servizi
 	id BIGINT DEFAULT nextval('seq_servizi') NOT NULL,
 	-- check constraints
 	CONSTRAINT chk_servizi_1 CHECK (stato IN ('finale','bozza','operativo')),
-	CONSTRAINT chk_servizi_2 CHECK (message_type IN ('soap11','soap12','xml','json','binary','mimeMultipart')),
 	-- unique constraints
 	CONSTRAINT unique_servizi_1 UNIQUE (id_soggetto,tipo_servizio,nome_servizio,versione_servizio),
 	-- fk/pk keys constraints

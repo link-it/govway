@@ -639,6 +639,57 @@ public class Utilities {
 
 
 
+	/* STRING UTILS NORMALIZE NAME */
+	
+	public static String convertNameToSistemaOperativoCompatible(String nome,boolean convertCharNotPermitted,Character charJollyCharNotPermitted,
+			List<Character> permit, boolean addUniqueSuffixIfFoundCharNotPermitted){
+		StringBuffer bf = new StringBuffer();
+		boolean charNotPermittedFound = false;
+		for (int i = 0; i < nome.length(); i++) {
+			if(Character.isLetterOrDigit(nome.charAt(i))){
+				bf.append(nome.charAt(i));
+			}
+			else {
+				if(permit!=null){
+					// check che sia nella lista dei caratteri permessi
+					boolean found = false;
+					for (char charPermit : permit) {
+						if(charPermit == nome.charAt(i)){
+							found = true;
+							break;
+						}
+					}
+					if(found){
+						bf.append(nome.charAt(i));
+						continue;
+					}
+				}
+				
+				// Se non e' nella lista dei caratteri permessi, se e' abilitata la conversione, converto il carattere non permesso nel carattere jolly
+				// altrimenti lo "brucio"
+				if(convertCharNotPermitted){
+					// sostituisco tutto con il carattere jolly
+					bf.append(charJollyCharNotPermitted);
+				}
+				charNotPermittedFound = true;
+			}
+		}
+		if(charNotPermittedFound && addUniqueSuffixIfFoundCharNotPermitted){
+			bf.append("_");
+			bf.append(getNextCounterFile());
+		}
+		return bf.toString();
+	}
+	private static int counterFileNameWithCharNotPermitted = 0;
+	private static synchronized int getNextCounterFile(){
+		if(counterFileNameWithCharNotPermitted==Integer.MAX_VALUE){
+			counterFileNameWithCharNotPermitted = 0;
+		}
+		counterFileNameWithCharNotPermitted++;
+		return counterFileNameWithCharNotPermitted;
+	}
+	
+	
 	
 	
 	

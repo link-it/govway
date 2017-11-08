@@ -77,6 +77,7 @@ import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
@@ -196,10 +197,17 @@ public class DriverRegistroServiziDB_LIB {
 			return tipo.getValue();
 		}
 	}
-
 	public static String getValue(HttpMethod tipo){
 		if(tipo==null){
 			return CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE;
+		}
+		else{
+			return tipo.getValue();
+		}
+	}
+	public static String getValue(FormatoSpecifica tipo){
+		if(tipo==null){
+			return null;
 		}
 		else{
 			return tipo.getValue();
@@ -268,6 +276,14 @@ public class DriverRegistroServiziDB_LIB {
 		}
 		else{
 			return HttpMethod.toEnumConstant(value);
+		}
+	}
+	public static FormatoSpecifica getEnumFormatoSpecifica(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return FormatoSpecifica.toEnumConstant(value);
 		}
 	}
 

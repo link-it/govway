@@ -88,6 +88,7 @@
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="profilo-collaborazione" field="profiloCollaborazione" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="formato-specifica" field="formatoSpecifica" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="wsdl-definitorio" field="wsdlDefinitorio" usage="optional" style="attribute"/>
     <value name="wsdl-concettuale" field="wsdlConcettuale" usage="optional" style="attribute"/>
     <value name="wsdl-logico-erogatore" field="wsdlLogicoErogatore" usage="optional" style="attribute"/>

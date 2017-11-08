@@ -246,7 +246,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                <xsd:element name="message_type" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -277,6 +277,17 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
 - 'sincrono': indica una operazione che prevede lo scambio di due messaggi (input/output)
 - 'asincronoAsimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda chi ha generato la richiesta chiede al server se è pronta la risposta (polling)
 - 'asincronoSimmetrico': definisce un profilo di interscambio di messaggi che prevede due transazioni differenti correlate tra di loro. Nella prima viene inoltrata la richiesta, mentre nella seconda è il server che ha ricevuto la richiesta che si occupa di inviare al richiedente la risposta]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="formato_specifica" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="formato_specifica"/>
+                                <linkit:sql-ddl-column-comment>Formato della specifica dell'accordo di servizio parte comune</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -510,16 +521,6 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="soap"/>
             <xsd:enumeration value="rest"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    <xsd:simpleType name="MessageType">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="soap11"/>
-            <xsd:enumeration value="soap12"/>
-            <xsd:enumeration value="xml"/>
-            <xsd:enumeration value="json"/>
-            <xsd:enumeration value="binary"/>
-            <xsd:enumeration value="mimeMultipart"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -816,7 +817,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>   
-                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                <xsd:element name="message_type" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -1231,7 +1232,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="http_method" type="HttpMethod">
+                <xsd:element name="http_method" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -1253,7 +1254,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                <xsd:element name="message_type" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -1276,19 +1277,6 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    <xsd:simpleType name="HttpMethod">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="GET"/>
-            <xsd:enumeration value="POST"/>
-            <xsd:enumeration value="PUT"/>
-            <xsd:enumeration value="DELETE"/>
-            <xsd:enumeration value="OPTIONS"/>
-            <xsd:enumeration value="HEAD"/>
-            <xsd:enumeration value="TRACE"/>
-            <xsd:enumeration value="PATCH"/>
-            <xsd:enumeration value="ALL"/>
-        </xsd:restriction>
-    </xsd:simpleType>
     
     <xsd:element name="resource-detail">
         <xsd:annotation>
@@ -1358,7 +1346,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                <xsd:element name="message_type" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -1433,7 +1421,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                <xsd:element name="message_type" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -1850,7 +1838,7 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="message_type" type="MessageType" minOccurs="0">
+                <xsd:element name="message_type" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator

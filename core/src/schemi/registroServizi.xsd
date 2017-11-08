@@ -81,6 +81,7 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
 		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione" use="required"/>
+		<xsd:attribute name="formato-specifica" type="FormatoSpecifica" use="optional"/>
 		<xsd:attribute name="wsdl-definitorio" type="xsd:string"/>
 		<xsd:attribute name="wsdl-concettuale" type="xsd:string"/> <!-- Utilizzato anche per la specifica API -->
 		<xsd:attribute name="wsdl-logico-erogatore" type="xsd:string"/>
@@ -464,6 +465,13 @@
 			<xsd:enumeration value="HEAD"/>
 			<xsd:enumeration value="TRACE"/>
 			<xsd:enumeration value="PATCH"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FormatoSpecifica">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="wsdl"/>
+			<xsd:enumeration value="swagger"/>
+			<xsd:enumeration value="wadl"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProfiloCollaborazione">

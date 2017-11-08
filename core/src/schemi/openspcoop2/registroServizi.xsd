@@ -289,6 +289,7 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="formato-specifica" type="FormatoSpecifica" use="optional"/>
 		<xsd:attribute name="wsdl-definitorio" type="xsd:string">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -1392,6 +1393,13 @@
 			<xsd:enumeration value="HEAD"/>
 			<xsd:enumeration value="TRACE"/>
 			<xsd:enumeration value="PATCH"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FormatoSpecifica">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="wsdl"/>
+			<xsd:enumeration value="swagger"/>
+			<xsd:enumeration value="wadl"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProfiloCollaborazione">
