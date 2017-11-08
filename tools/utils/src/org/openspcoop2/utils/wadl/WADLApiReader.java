@@ -42,7 +42,7 @@ import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiRequest;
-import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
+import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
@@ -206,7 +206,7 @@ public class WADLApiReader implements IApiReader {
 					    			if(operation.getRequest()==null){
 										operation.setRequest(new ApiRequest());
 									}
-					    			ApiRequestBodyParameter query = new ApiRequestBodyParameter(null);
+					    			ApiBodyParameter query = new ApiBodyParameter(null);
 					    			query.setMediaType(representationNode.getMediaType());
 					    			query.setElement(representationNode.getElement());
 									operation.getRequest().addBodyParameter(query);
@@ -219,22 +219,46 @@ public class WADLApiReader implements IApiReader {
 					    		while (itOutput.hasNext()) {
 									List<java.lang.Long> listLong = (List<java.lang.Long>) itOutput.next();
 									List<RepresentationNode> representationNode = mapOutput.get(listLong);
+									
 									for (int i = 0; i < listLong.size(); i++) {
-										ApiResponse apiResponse = new ApiResponse();
-										apiResponse.setHttpReturnCode(listLong.get(i).intValue());
-										apiResponse.setMediaType(representationNode.get(i).getMediaType());
-										apiResponse.setElement(representationNode.get(i).getElement());
+										int httpStatus = listLong.get(i).intValue();
+										RepresentationNode rNodeHttpStatus = representationNode.get(i);
 										
-										if(representationNode.get(i).getParam()!=null){
-											for (Param param : representationNode.get(i).getParam()) {
-												ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
-												header.setRequired(param.isRequired());
-												apiResponse.addHeaderParameter(header);
+										ApiResponse apiResponse = null;
+										for (ApiResponse responseExists : operation.getResponses()) {
+											if(responseExists.getHttpReturnCode() == httpStatus) {
+												apiResponse = responseExists;
+												break;
 											}
-						    			}
+										}
 										
-										operation.addResponse(apiResponse);
+										if(apiResponse==null) {
+											apiResponse=new ApiResponse();
+											apiResponse.setHttpReturnCode(httpStatus);
+											
+											if(rNodeHttpStatus.getParam()!=null){
+												for (Param param : rNodeHttpStatus.getParam()) {
+													ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
+													header.setRequired(param.isRequired());
+													apiResponse.addHeaderParameter(header);
+												}
+							    			}
+											
+											operation.addResponse(apiResponse);
+										}
+										
+										if(rNodeHttpStatus.getMediaType()!=null) {
+											String name = null;
+											if(rNodeHttpStatus.getElement()!=null) {
+												name = rNodeHttpStatus.getElement().getLocalPart();
+											}
+											ApiBodyParameter bodyParameter = new ApiBodyParameter(name);
+											bodyParameter.setMediaType(rNodeHttpStatus.getMediaType());
+											bodyParameter.setElement(rNodeHttpStatus.getElement());
+											apiResponse.addBodyParameter(bodyParameter);
+										}
 									}
+									
 								}
 				    		}
 				    		
@@ -244,21 +268,44 @@ public class WADLApiReader implements IApiReader {
 					    		while (itFault.hasNext()) {
 									List<java.lang.Long> listLong = (List<java.lang.Long>) itFault.next();
 									List<FaultNode> representationNode = mapFault.get(listLong);
+									
 									for (int i = 0; i < listLong.size(); i++) {
-										ApiResponse apiResponse = new ApiResponse();
-										apiResponse.setHttpReturnCode(listLong.get(i).intValue());
-										apiResponse.setMediaType(representationNode.get(i).getMediaType());
-										apiResponse.setElement(representationNode.get(i).getElement());
+										int httpStatus = listLong.get(i).intValue();
+										FaultNode rNodeHttpStatus = representationNode.get(i);
 										
-										if(representationNode.get(i).getParam()!=null){
-											for (Param param : representationNode.get(i).getParam()) {
-												ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
-												header.setRequired(param.isRequired());
-												apiResponse.addHeaderParameter(header);
+										ApiResponse apiResponse = null;
+										for (ApiResponse responseExists : operation.getResponses()) {
+											if(responseExists.getHttpReturnCode() == httpStatus) {
+												apiResponse = responseExists;
+												break;
 											}
-						    			}
+										}
 										
-										operation.addResponse(apiResponse);
+										if(apiResponse==null) {
+											apiResponse=new ApiResponse();
+											apiResponse.setHttpReturnCode(httpStatus);
+											
+											if(rNodeHttpStatus.getParam()!=null){
+												for (Param param : rNodeHttpStatus.getParam()) {
+													ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
+													header.setRequired(param.isRequired());
+													apiResponse.addHeaderParameter(header);
+												}
+							    			}
+											
+											operation.addResponse(apiResponse);
+										}
+										
+										if(rNodeHttpStatus.getMediaType()!=null) {
+											String name = null;
+											if(rNodeHttpStatus.getElement()!=null) {
+												name = rNodeHttpStatus.getElement().getLocalPart();
+											}
+											ApiBodyParameter bodyParameter = new ApiBodyParameter(name);
+											bodyParameter.setMediaType(rNodeHttpStatus.getMediaType());
+											bodyParameter.setElement(rNodeHttpStatus.getElement());
+											apiResponse.addBodyParameter(bodyParameter);
+										}
 									}
 								}
 				    		}
@@ -273,4 +320,5 @@ public class WADLApiReader implements IApiReader {
 			throw new ProcessingException(e.getMessage(),e);
 		}
 	}
+
 }

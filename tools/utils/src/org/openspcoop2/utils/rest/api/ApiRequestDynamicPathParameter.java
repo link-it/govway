@@ -28,7 +28,7 @@ package org.openspcoop2.utils.rest.api;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiRequestDynamicPathParameter extends AbstractApiRequestParameter {
+public class ApiRequestDynamicPathParameter extends AbstractApiParameter {
 
 	private String type;
 

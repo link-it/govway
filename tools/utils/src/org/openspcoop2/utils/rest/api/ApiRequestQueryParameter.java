@@ -28,7 +28,7 @@ package org.openspcoop2.utils.rest.api;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ApiRequestQueryParameter extends AbstractApiRequestParameter {
+public class ApiRequestQueryParameter extends AbstractApiParameter {
 
 	private String type;
 

@@ -43,7 +43,7 @@ import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiOperation;
-import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
+import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.swagger.SwaggerApi;
@@ -121,9 +121,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 		boolean required = false;
 		if(httpEntity instanceof HttpBaseRequestEntity) {
-			List<ApiRequestBodyParameter> bodyParameters = operation.getRequest().getBodyParameters();
+			List<ApiBodyParameter> bodyParameters = operation.getRequest().getBodyParameters();
 
-			for(ApiRequestBodyParameter body: bodyParameters) {
+			for(ApiBodyParameter body: bodyParameters) {
 				if(body.isRequired())
 					required = true;
 			}
@@ -167,7 +167,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		List<IJsonSchemaValidator> lst = new ArrayList<>();
 		
 		if(httpEntity instanceof HttpBaseRequestEntity) {
-			for(ApiRequestBodyParameter body: operation.getRequest().getBodyParameters()) {
+			for(ApiBodyParameter body: operation.getRequest().getBodyParameters()) {
 				lst.add(this.validatorMap.get(body.getName()));
 			}
 		}

@@ -40,7 +40,8 @@ public class ApiRequest extends BaseBean {
 	private List<ApiRequestQueryParameter> queryParameters = new ArrayList<>();
 	private List<ApiRequestDynamicPathParameter> dynamicPathParameters = new ArrayList<>();
 	private List<ApiRequestFormParameter> formParameters = new ArrayList<>();
-	private List<ApiRequestBodyParameter> bodyParameters = new ArrayList<>();
+	
+	private List<ApiBodyParameter> bodyParameters = new ArrayList<>();
 		
 	
 	public void addCookieParameter(ApiCookieParameter parameter) {
@@ -169,23 +170,23 @@ public class ApiRequest extends BaseBean {
 	}
 	
 	
-	public void addBodyParameter(ApiRequestBodyParameter parameter) {
+	public void addBodyParameter(ApiBodyParameter parameter) {
 		this.bodyParameters.add(parameter);
 	}
 
-	public ApiRequestBodyParameter getBodyParameter(int index) {
+	public ApiBodyParameter getBodyParameter(int index) {
 		return this.bodyParameters.get( index );
 	}
 
-	public ApiRequestBodyParameter removeBodyParameter(int index) {
+	public ApiBodyParameter removeBodyParameter(int index) {
 		return this.bodyParameters.remove( index );
 	}
 
-	public List<ApiRequestBodyParameter> getBodyParameters() {
+	public List<ApiBodyParameter> getBodyParameters() {
 		return this.bodyParameters;
 	}
 
-	public void setBodyParameters(List<ApiRequestBodyParameter> parameters) {
+	public void setBodyParameters(List<ApiBodyParameter> parameters) {
 		this.bodyParameters=parameters;
 	}
 

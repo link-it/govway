@@ -32,13 +32,13 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.ProcessingException;
-import org.openspcoop2.utils.rest.api.AbstractApiRequestParameter;
+import org.openspcoop2.utils.rest.api.AbstractApiParameter;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiRequest;
-import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
+import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
@@ -180,30 +180,18 @@ public class SwaggerApiReader implements IApiReader {
 
 	private ApiOperation getOperation(Operation operation, HttpRequestMethod method, String pathK) {
 		ApiOperation apiOperation = new ApiOperation(method, pathK);
-		
-		String summaryDescription = operation.getSummary();
-		
-		if(summaryDescription == null) {
-			summaryDescription = operation.getDescription();
-		} else {
-			if(operation.getDescription() != null && !operation.getDescription().isEmpty()) {
-				summaryDescription += ". " + operation.getDescription();
-			}
-		}
-		
-		apiOperation.setDescription(summaryDescription);
 		if(operation.getParameters() != null) {
 			ApiRequest request = new ApiRequest();
 
 			for(Parameter param: operation.getParameters()) {
 
-				List<AbstractApiRequestParameter> abstractParamList = createRequestParameters(param, operation.getConsumes());
+				List<AbstractApiParameter> abstractParamList = createRequestParameters(param, operation.getConsumes());
 
 				if(!abstractParamList.isEmpty()) {
 					
-					for(AbstractApiRequestParameter abstractParam: abstractParamList) {
-						if(abstractParam instanceof ApiRequestBodyParameter) {
-							request.addBodyParameter((ApiRequestBodyParameter) abstractParam);
+					for(AbstractApiParameter abstractParam: abstractParamList) {
+						if(abstractParam instanceof ApiBodyParameter) {
+							request.addBodyParameter((ApiBodyParameter) abstractParam);
 						} else if(abstractParam instanceof ApiRequestDynamicPathParameter) {
 							request.addDynamicPathParameter((ApiRequestDynamicPathParameter) abstractParam);
 						} else if(abstractParam instanceof ApiRequestQueryParameter) {
@@ -238,26 +226,26 @@ public class SwaggerApiReader implements IApiReader {
 	 * @param produces
 	 * @return
 	 */
-	private List<AbstractApiRequestParameter> createRequestParameters(Parameter param, List<String> consumes) {
+	private List<AbstractApiParameter> createRequestParameters(Parameter param, List<String> consumes) {
 		
 		Parameter realParam = param;
 		while (realParam instanceof RefParameter) {
 			realParam = this.swagger.getParameter(realParam.getName());
 		}
 		
-		List<AbstractApiRequestParameter> lst = new ArrayList<AbstractApiRequestParameter>();
+		List<AbstractApiParameter> lst = new ArrayList<AbstractApiParameter>();
 		if(realParam instanceof BodyParameter) {
 			if(consumes != null && !consumes.isEmpty()) {
 				for(String consume: consumes) {
 					String reference = ((BodyParameter) realParam).getSchema().getReference();
 					String type = reference.replaceAll("#/definitions/", "");
-					ApiRequestBodyParameter bodyParam = new ApiRequestBodyParameter(type);
+					ApiBodyParameter bodyParam = new ApiBodyParameter(type);
 					bodyParam.setMediaType(consume);
 					bodyParam.setElement(type);
 					lst.add(bodyParam);
 				}
 			} else {
-				ApiRequestBodyParameter bodyParam = new ApiRequestBodyParameter(realParam.getName());
+				ApiBodyParameter bodyParam = new ApiBodyParameter(realParam.getName());
 				lst.add(bodyParam);
 			}
 		} else if(realParam instanceof PathParameter) {
@@ -272,56 +260,47 @@ public class SwaggerApiReader implements IApiReader {
 			lst.add(new ApiRequestFormParameter(realParam.getName(), ((FormParameter)realParam).getType()));
 		}
 
-		for(AbstractApiRequestParameter abstractParam: lst) {
+		for(AbstractApiParameter abstractParam: lst) {
 			abstractParam.setDescription(realParam.getDescription());
 			abstractParam.setRequired(realParam.getRequired());
-			abstractParam.setName(realParam.getName());
 		}
 		return lst;
 	}
 
 	private List<ApiResponse> createResponses(String responseK, Response response, List<String> produces) {
-		
 		List<ApiResponse> responses = new ArrayList<ApiResponse>();
 		if(produces != null && !produces.isEmpty()) {
 			
-			List<String> list = produces;
+			ApiResponse apiResponse = new ApiResponse();
+			int status = -1;
+			try{
+				status = Integer.parseInt(responseK);
+			} catch(NumberFormatException e) {}
 			
-			if(response.getSchema()==null) {
-				list = new ArrayList<String>();
-				list.add("---- NESSUN CONTENUTO GENERATO ------");
+			apiResponse.setHttpReturnCode(status);
+			apiResponse.setDescription(response.getDescription());
+			
+			if(response.getHeaders() != null) {
+				for(String header: response.getHeaders().keySet()) {
+					Property property = response.getHeaders().get(header);
+					Property realProperty = property;
+					ApiHeaderParameter parameter = new ApiHeaderParameter(realProperty.getName(), realProperty.getType());
+					parameter.setDescription(realProperty.getDescription());
+					parameter.setRequired(property.getRequired());
+					apiResponse.addHeaderParameter(parameter);
+				}
 			}
 			
-			for(String prod: list) {
+			for(String prod: produces) {
 
-				ApiResponse apiResponse = new ApiResponse();
-				int status = -1;
-				try{
-					status = Integer.parseInt(responseK);
-				} catch(NumberFormatException e) {}
-				
-				apiResponse.setHttpReturnCode(status);
-				apiResponse.setDescription(response.getDescription());
-				
-				if(response.getHeaders() != null) {
-					for(String header: response.getHeaders().keySet()) {
-						Property property = response.getHeaders().get(header);
-						Property realProperty = property;
-						ApiHeaderParameter parameter = new ApiHeaderParameter(realProperty.getName(), realProperty.getType());
-						parameter.setDescription(realProperty.getDescription());
-						parameter.setName(property.getName());
-						parameter.setRequired(property.getRequired());
-						apiResponse.addHeaderParameter(parameter);
-					}
-				}
-				
 				if(response.getSchema() != null) {
-					Property responseSchema = response.getSchema();
-
-					apiResponse.setMediaType(prod);
-					apiResponse.setName(responseSchema.getName());
-					String type = null;
 					
+					Property responseSchema = response.getSchema();
+					
+					ApiBodyParameter bodyParameter = new ApiBodyParameter(responseSchema.getName());
+					bodyParameter.setMediaType(prod);
+					
+					String type = null;				
 					if(responseSchema instanceof RefProperty) {
 						type = ((RefProperty)responseSchema).getSimpleRef();
 					}else if(responseSchema instanceof ArrayProperty) {
@@ -334,12 +313,14 @@ public class SwaggerApiReader implements IApiReader {
 							type = schema.getName();
 						}
 					}
+					bodyParameter.setElement(type);
 					
-					apiResponse.setElement(type);
+					apiResponse.addBodyParameter(bodyParameter);
 				}
 					
-				responses.add(apiResponse);
 			}
+			
+			responses.add(apiResponse);
 		}
 		return responses;
 	}

@@ -20,33 +20,43 @@
 
 package org.openspcoop2.utils.rest.api;
 
+import org.openspcoop2.utils.beans.BaseBean;
+
 /**
- * ApiRequestBodyParameter
+ * AbstractApiRequestParameter
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13343 $, $Date: 2017-10-09 14:13:31 +0200 (Mon, 09 Oct 2017) $
  */
-public class ApiRequestBodyParameter extends AbstractApiRequestParameter {
+public abstract class AbstractApiParameter extends BaseBean {
 
-	private String mediaType;
-	private Object element;
-
-	public ApiRequestBodyParameter(String name) {
-		super(name);
+	private String name;
+	private String description;
+	private boolean required;
+		
+	public AbstractApiParameter(String name){
+		this.name = name;
 	}
 	
-	public Object getElement() {
-		return this.element;
+	public String getName() {
+		return this.name;
 	}
-	public void setElement(Object element) {
-		this.element = element;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getMediaType() {
-		return this.mediaType;
+	public String getDescription() {
+		return this.description;
 	}
-	public void setMediaType(String mediaType) {
-		this.mediaType = mediaType;
+	public void setDescription(String description) {
+		this.description = description;
 	}
+	public boolean isRequired() {
+		return this.required;
+	}
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+	
 }

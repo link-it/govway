@@ -35,21 +35,14 @@ import org.openspcoop2.utils.beans.BaseBean;
  */
 public class ApiResponse extends BaseBean {
 
-	private String name;
 	private String description;
 	private int httpReturnCode;
-	private String mediaType;
-	private Object element;
-
+	
 	private List<ApiCookieParameter> cookieParameters = new ArrayList<>();
 	private List<ApiHeaderParameter> headerParameters = new ArrayList<>();
 	
-	public String getName() {
-		return this.name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+	private List<ApiBodyParameter> bodyParameters = new ArrayList<>();
+	
 	public String getDescription() {
 		return this.description;
 	}
@@ -61,18 +54,6 @@ public class ApiResponse extends BaseBean {
 	}
 	public void setHttpReturnCode(int httpReturnCode) {
 		this.httpReturnCode = httpReturnCode;
-	}
-	public String getMediaType() {
-		return this.mediaType;
-	}
-	public void setMediaType(String mediaType) {
-		this.mediaType = mediaType;
-	}
-	public Object getElement() {
-		return this.element;
-	}
-	public void setElement(Object element) {
-		this.element = element;
 	}
 	
 	public void addCookieParameter(ApiCookieParameter parameter) {
@@ -122,5 +103,30 @@ public class ApiResponse extends BaseBean {
 
 	public int sizeHeaderParameters() {
 		return this.headerParameters.size();
+	}
+	
+	
+	public void addBodyParameter(ApiBodyParameter parameter) {
+		this.bodyParameters.add(parameter);
+	}
+
+	public ApiBodyParameter getBodyParameter(int index) {
+		return this.bodyParameters.get( index );
+	}
+
+	public ApiBodyParameter removeBodyParameter(int index) {
+		return this.bodyParameters.remove( index );
+	}
+
+	public List<ApiBodyParameter> getBodyParameters() {
+		return this.bodyParameters;
+	}
+
+	public void setBodyParameters(List<ApiBodyParameter> parameters) {
+		this.bodyParameters=parameters;
+	}
+
+	public int sizeBodyParameters() {
+		return this.bodyParameters.size();
 	}
 }

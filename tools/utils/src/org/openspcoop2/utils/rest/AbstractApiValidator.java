@@ -24,12 +24,12 @@ import java.net.URL;
 import java.util.List;
 
 import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
+import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
-import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
-import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiUtilities;
@@ -37,7 +37,6 @@ import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
-import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 
 /**
  * ApiValidatorConfig
@@ -80,7 +79,7 @@ public abstract class AbstractApiValidator   {
 			
 			if(httpEntity.getContentType() != null) {
 				boolean contentTypeSupported = false;
-				List<ApiRequestBodyParameter> requestBodyParametersList = null;
+				List<ApiBodyParameter> requestBodyParametersList = null;
 				List<ApiResponse> responses = null;
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeBodyParameters()>0){
 					requestBodyParametersList = operation.getRequest().getBodyParameters();
@@ -93,9 +92,10 @@ public abstract class AbstractApiValidator   {
 				if(httpEntity instanceof HttpBaseRequestEntity<?>) {
 					
 					if(requestBodyParametersList != null) {
-						for(ApiRequestBodyParameter input: requestBodyParametersList) {
+						for(ApiBodyParameter input: requestBodyParametersList) {
 							if(input.getMediaType().equals(httpEntity.getContentType())) {
 								contentTypeSupported = true;
+								break;
 							} 
 						}
 					}
@@ -104,10 +104,16 @@ public abstract class AbstractApiValidator   {
 					
 					if(responses != null) {
 						for(ApiResponse output: responses) {
-							if(status==output.getHttpReturnCode() && 
-									output.getMediaType().equalsIgnoreCase(ContentTypeUtilities.readBaseTypeFromContentType(httpEntity.getContentType()))) {
-								contentTypeSupported = true;
-							} 
+							if(status==output.getHttpReturnCode()) {
+								if(output.sizeBodyParameters()>0) {
+									for(ApiBodyParameter outputBodyParameter: output.getBodyParameters()) {
+										if(outputBodyParameter.getMediaType().equals(httpEntity.getContentType())) {
+											contentTypeSupported = true;
+											break;
+										} 
+									}
+								}
+							}
 						}
 					}
 	
