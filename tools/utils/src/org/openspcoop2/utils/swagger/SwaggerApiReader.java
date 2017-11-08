@@ -60,7 +60,9 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.parameters.RefParameter;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 import io.swagger.parser.SwaggerParser;
 
 
@@ -178,6 +180,18 @@ public class SwaggerApiReader implements IApiReader {
 
 	private ApiOperation getOperation(Operation operation, HttpRequestMethod method, String pathK) {
 		ApiOperation apiOperation = new ApiOperation(method, pathK);
+		
+		String summaryDescription = operation.getSummary();
+		
+		if(summaryDescription == null) {
+			summaryDescription = operation.getDescription();
+		} else {
+			if(operation.getDescription() != null && !operation.getDescription().isEmpty()) {
+				summaryDescription += ". " + operation.getDescription();
+			}
+		}
+		
+		apiOperation.setDescription(summaryDescription);
 		if(operation.getParameters() != null) {
 			ApiRequest request = new ApiRequest();
 
@@ -261,15 +275,18 @@ public class SwaggerApiReader implements IApiReader {
 		for(AbstractApiRequestParameter abstractParam: lst) {
 			abstractParam.setDescription(realParam.getDescription());
 			abstractParam.setRequired(realParam.getRequired());
+			abstractParam.setName(realParam.getName());
 		}
 		return lst;
 	}
 
 	private List<ApiResponse> createResponses(String responseK, Response response, List<String> produces) {
+		
 		List<ApiResponse> responses = new ArrayList<ApiResponse>();
 		if(produces != null && !produces.isEmpty()) {
 			
 			List<String> list = produces;
+			
 			if(response.getSchema()==null) {
 				list = new ArrayList<String>();
 				list.add("---- NESSUN CONTENUTO GENERATO ------");
@@ -292,14 +309,32 @@ public class SwaggerApiReader implements IApiReader {
 						Property realProperty = property;
 						ApiHeaderParameter parameter = new ApiHeaderParameter(realProperty.getName(), realProperty.getType());
 						parameter.setDescription(realProperty.getDescription());
+						parameter.setName(property.getName());
 						parameter.setRequired(property.getRequired());
 						apiResponse.addHeaderParameter(parameter);
 					}
 				}
 				
 				if(response.getSchema() != null) {
+					Property responseSchema = response.getSchema();
+
 					apiResponse.setMediaType(prod);
-					String type = response.getSchema().getName();
+					apiResponse.setName(responseSchema.getName());
+					String type = null;
+					
+					if(responseSchema instanceof RefProperty) {
+						type = ((RefProperty)responseSchema).getSimpleRef();
+					}else if(responseSchema instanceof ArrayProperty) {
+						ArrayProperty schema = (ArrayProperty) responseSchema;
+						
+						if(schema.getItems() instanceof RefProperty) {
+							RefProperty items = (RefProperty) schema.getItems();
+							type = items.getSimpleRef();
+						} else {
+							type = schema.getName();
+						}
+					}
+					
 					apiResponse.setElement(type);
 				}
 					

@@ -59,12 +59,16 @@ public class Test {
 
         String testConPetid = "/pet/2";
         System.out.println("API-Op ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.GET, testConPetid));
-        
         System.out.println("API-Op PUT ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.PUT, testConPetid));
+
+        String testConPetid2 = "/pet/2/uploadImage";
+        System.out.println("API-Op ["+testConPetid2+"]: "+api.findOperation(HttpRequestMethod.POST, testConPetid2));
 
         String testPathInesistente = "/pet/find/inesistente";
         System.out.println("API-Op ["+testPathInesistente+"]: "+api.findOperation(HttpRequestMethod.GET, testPathInesistente));
         
+        String testConRequestConParametriInline = "/pet/findByTags";
+        System.out.println("API-Op ["+testConRequestConParametriInline+"]: "+api.findOperation(HttpRequestMethod.GET, testConRequestConParametriInline));
         
 	}
 }
