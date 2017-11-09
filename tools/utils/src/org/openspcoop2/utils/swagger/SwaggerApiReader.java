@@ -239,7 +239,14 @@ public class SwaggerApiReader implements IApiReader {
 				for(String consume: consumes) {
 					String reference = ((BodyParameter) realParam).getSchema().getReference();
 					String type = reference.replaceAll("#/definitions/", "");
-					ApiBodyParameter bodyParam = new ApiBodyParameter(type);
+
+					String name = this.swagger.getDefinitions().get(type).getTitle();
+
+					if(name == null) {
+						name = realParam.getName();
+					}
+					
+					ApiBodyParameter bodyParam = new ApiBodyParameter(name);
 					bodyParam.setMediaType(consume);
 					bodyParam.setElement(type);
 					lst.add(bodyParam);
@@ -297,22 +304,29 @@ public class SwaggerApiReader implements IApiReader {
 					
 					Property responseSchema = response.getSchema();
 					
-					ApiBodyParameter bodyParameter = new ApiBodyParameter(responseSchema.getName());
-					bodyParameter.setMediaType(prod);
-					
-					String type = null;				
+					String type = null;
+					String name = null;
 					if(responseSchema instanceof RefProperty) {
 						type = ((RefProperty)responseSchema).getSimpleRef();
+						name = this.swagger.getDefinitions().get(type).getTitle();
 					}else if(responseSchema instanceof ArrayProperty) {
 						ArrayProperty schema = (ArrayProperty) responseSchema;
 						
 						if(schema.getItems() instanceof RefProperty) {
 							RefProperty items = (RefProperty) schema.getItems();
 							type = items.getSimpleRef();
+							name = this.swagger.getDefinitions().get(type).getTitle();
 						} else {
 							type = schema.getName();
+							name = this.swagger.getDefinitions().get(type).getTitle();
 						}
 					}
+					
+					if(name == null)
+						name = responseSchema.getName();
+
+					ApiBodyParameter bodyParameter = new ApiBodyParameter(name);
+					bodyParameter.setMediaType(prod);
 					bodyParameter.setElement(type);
 					
 					apiResponse.addBodyParameter(bodyParameter);

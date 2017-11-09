@@ -264,7 +264,10 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid ID supplied",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           },
           "404": {
             "description": "Pet not found"
@@ -969,6 +972,7 @@
   },
   "Pet" : {
     "type" : "object",
+    "title": "petTitle",
     "required" : [ "name", "photoUrls" ],
     "properties" : {
       "id" : {

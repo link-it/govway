@@ -45,30 +45,38 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		URI uri = Test.class.getResource("/org/openspcoop2/utils/swagger/test.json").toURI();
-        
-        IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER);
-        apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
-        Api api = apiReader.read();
-        
-        String test = "http://petstore.swagger.io/v2/pet";
-        System.out.println("API-Op ["+test+"]: "+api.findOperation(HttpRequestMethod.POST, test));
-        
-        String testSenzaBaseUri = "/pet";
-        System.out.println("API-Op ["+testSenzaBaseUri+"]: "+api.findOperation(HttpRequestMethod.POST, testSenzaBaseUri));
+		URI jsonUri = Test.class.getResource("/org/openspcoop2/utils/swagger/test.json").toURI();
+		URI yamlUri = Test.class.getResource("/org/openspcoop2/utils/swagger/test.yaml").toURI();
 
-        String testConPetid = "/pet/2";
-        System.out.println("API-Op ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.GET, testConPetid));
-        System.out.println("API-Op PUT ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.PUT, testConPetid));
+		test(jsonUri,"json");
+		test(yamlUri,"yaml");
 
-        String testConPetid2 = "/pet/2/uploadImage";
-        System.out.println("API-Op ["+testConPetid2+"]: "+api.findOperation(HttpRequestMethod.POST, testConPetid2));
+	}
 
-        String testPathInesistente = "/pet/find/inesistente";
-        System.out.println("API-Op ["+testPathInesistente+"]: "+api.findOperation(HttpRequestMethod.GET, testPathInesistente));
-        
-        String testConRequestConParametriInline = "/pet/findByTags";
-        System.out.println("API-Op ["+testConRequestConParametriInline+"]: "+api.findOperation(HttpRequestMethod.GET, testConRequestConParametriInline));
-        
+	public static void test(URI uri, String testName) throws Exception {
+
+		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER);
+		apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
+		Api api = apiReader.read();
+
+		String test = "http://petstore.swagger.io/v2/pet";
+		System.out.println("["+testName+"] API-Op ["+test+"]: "+api.findOperation(HttpRequestMethod.POST, test));
+
+		String testSenzaBaseUri = "/pet";
+		System.out.println("["+testName+"] API-Op ["+testSenzaBaseUri+"]: "+api.findOperation(HttpRequestMethod.POST, testSenzaBaseUri));
+
+		String testConPetid = "/pet/2";
+		System.out.println("["+testName+"] API-Op ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.GET, testConPetid));
+		System.out.println("["+testName+"] API-Op PUT ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.PUT, testConPetid));
+
+		String testConPetid2 = "/pet/2/uploadImage";
+		System.out.println("["+testName+"] API-Op ["+testConPetid2+"]: "+api.findOperation(HttpRequestMethod.POST, testConPetid2));
+
+		String testPathInesistente = "/pet/find/inesistente";
+		System.out.println("["+testName+"] API-Op ["+testPathInesistente+"]: "+api.findOperation(HttpRequestMethod.GET, testPathInesistente));
+
+		String testConRequestConParametriInline = "/pet/findByTags";
+		System.out.println("["+testName+"] API-Op ["+testConRequestConParametriInline+"]: "+api.findOperation(HttpRequestMethod.GET, testConRequestConParametriInline));
+
 	}
 }

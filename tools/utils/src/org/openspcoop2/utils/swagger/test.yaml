@@ -184,6 +184,8 @@ paths:
             $ref: '#/definitions/Pet'
         '400':
           description: Invalid ID supplied
+          schema:
+            $ref: '#/definitions/ApiResponse'
         '404':
           description: Pet not found
       security:
@@ -659,6 +661,7 @@ definitions:
       name: Tag
   Pet:
     type: object
+    title: petTitle
     required:
       - name
       - photoUrls
