@@ -1,39 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocolName>sdi</protocolName>
+    <protocol name="sdi">
+    	<factory>org.openspcoop2.protocol.sdi.SDIFactory</factory>
+    </protocol>
 
-    <factory>org.openspcoop2.protocol.sdi.SDIFactory</factory>
+	<binding>
+    	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
+    		  soap12="false" soap12_withAttachments="false" soap12_mtom="false">
+   			<integrationError>
+    			<internal>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</internal>	
+    			<external>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</external>	
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="soap11">text/xml</mediaType>
+    		</mediaTypeCollection>
+    	</soap>
+    </binding>
 
-    <web>
-        <context>sdi</context>
+ 	<web>
+        <context name="sdi"/>
     </web>
 
-    <registroServizi>
+    <registry>
 
-        <soggetti autenticazione="false">
-            <tipi>
-            	<tipo>SDI</tipo>
-            </tipi>
-        </soggetti>
+        <organization authentication="false">
+            <types>
+            	<type name="SDI"/>
+            </types>
+        </organization>
 
-        <servizi>
-            <tipi>
-                <tipo>SDI</tipo>
-            </tipi>
-        </servizi>
+        <service>
+            <types>
+                <type name="SDI"/>
+            </types>
+        </service>
 
-        <versioni>
-            <versione>1.0</versione>
-        </versioni>
+        <versions>
+            <version name="1.0"/>
+        </versions>
 
-    </registroServizi>
+    </registry>
 
-    <urlMapping>
+    <urlMapping type="PROPERTIES">
         <file>/sdi-url-mapping.properties</file>
-        <tipo>PROPERTIES</tipo>
     </urlMapping>
-
-    <binding soap11="true" soap12="false"/>
 
 </openspcoop2>
