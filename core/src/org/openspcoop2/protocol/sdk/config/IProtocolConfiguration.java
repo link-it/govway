@@ -25,6 +25,7 @@ import java.util.List;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -85,6 +86,27 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public ServiceBindingConfiguration getServiceBindingConfiguration(TransportRequestContext transportRequest, ServiceBinding serviceBinding,
 			IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound;
 		
+	/**
+	 * Ritorna la lista delle interfacce supportate dal protocollo, rispetto al service binding
+	 * 
+	 * @return lista delle interfacce supportate dal protocollo, rispetto al service binding
+	 */
+	public List<InterfaceType> getInterfacceSupportate(ServiceBinding serviceBinding);
+	
+	/**
+	 * Ritorna l'indicazione se la specifica delle interfacce prevede uno schema esterno all'interfaccia
+	 * 
+	 * @return True se la specifica delle interfacce prevede uno schema esterno all'interfaccia
+	 */
+	public boolean isSupportoSchemaEsternoInterfaccia(ServiceBinding serviceBinding, InterfaceType interfaceType);
+	
+	/**
+	 * Ritorna l'indicazione se la specifica delle conversazioni viene supportata dal protocollo
+	 * 
+	 * @return True se la specifica delle conversazioni viene supportata dal protocollo
+	 */
+	public boolean isSupportoSpecificaConversazioni(ServiceBinding serviceBinding, InterfaceType interfaceType);
+	
 	/**
 	 * Restituisce la lista dei tipi associabili ai soggetti
 	 * 
@@ -164,21 +186,7 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se la gestione dell'indirizzo di risposta viene supportata dal protocollo
 	 */
 	public boolean isSupportoIndirizzoRisposta();
-	
-	/**
-	 * Ritorna l'indicazione se la specifica delle interfacce prevede il wsdl definitorio
-	 * 
-	 * @return True se la specifica delle interfacce prevede il wsdl definitorio
-	 */
-	public boolean isSupportoWsdlDefinitorio();
-	
-	/**
-	 * Ritorna l'indicazione se la specifica delle conversazioni viene supportata dal protocollo
-	 * 
-	 * @return True se la specifica delle conversazioni viene supportata dal protocollo
-	 */
-	public boolean isSupportoSpecificaConversazioni();
-	
+			
 	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo
 	 * 

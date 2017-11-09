@@ -21,7 +21,10 @@
 package org.openspcoop2.message.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 
@@ -65,4 +68,15 @@ public class ConfigurationServiceBindingSoap extends AbstractConfigurationServic
 		return this.binding;
 	}
 	
+	@Override
+	public List<MessageType> getMessageTypeSupported(){
+		 List<MessageType> list = new ArrayList<MessageType>();
+		 if(this.binding.isBinding_soap11()) {
+			 list.add(MessageType.SOAP_11);
+		 }
+		 if(this.binding.isBinding_soap12()) {
+			 list.add(MessageType.SOAP_12);
+		 }
+		 return list;
+	}
 }

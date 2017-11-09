@@ -25,7 +25,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
-import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
@@ -172,7 +171,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				
 				// Aggiorno message type
 				try{
-					requestMessageType = bindingConfig.getMessageType(integrationServiceBinding, MessageRole.REQUEST, 
+					requestMessageType = bindingConfig.getRequestMessageType(integrationServiceBinding, 
 							protocolContext, protocolContext.getContentType());
 					requestInfo.setIntegrationRequestMessageType(requestMessageType);
 					generatoreErrore.updateRequestMessageType(requestMessageType);

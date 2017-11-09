@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="integrationError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorConfiguration" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="mediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeCollection" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="interfaces" type="{http://www.openspcoop2.org/protocol/manifest}InterfacesConfiguration" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="soapHeaderBypassMustUnderstand" type="{http://www.openspcoop2.org/protocol/manifest}SoapHeaderBypassMustUnderstand" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="soap11" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
@@ -59,6 +60,7 @@ import java.io.Serializable;
   propOrder = {
   	"integrationError",
   	"mediaTypeCollection",
+  	"interfaces",
   	"soapHeaderBypassMustUnderstand"
   }
 )
@@ -83,6 +85,14 @@ public class SoapConfiguration extends org.openspcoop2.utils.beans.BaseBean impl
 
   public void setMediaTypeCollection(SoapMediaTypeCollection mediaTypeCollection) {
     this.mediaTypeCollection = mediaTypeCollection;
+  }
+
+  public InterfacesConfiguration getInterfaces() {
+    return this.interfaces;
+  }
+
+  public void setInterfaces(InterfacesConfiguration interfaces) {
+    this.interfaces = interfaces;
   }
 
   public SoapHeaderBypassMustUnderstand getSoapHeaderBypassMustUnderstand() {
@@ -174,6 +184,9 @@ public class SoapConfiguration extends org.openspcoop2.utils.beans.BaseBean impl
 
   @XmlElement(name="mediaTypeCollection",required=false,nillable=false)
   protected SoapMediaTypeCollection mediaTypeCollection;
+
+  @XmlElement(name="interfaces",required=false,nillable=false)
+  protected InterfacesConfiguration interfaces;
 
   @XmlElement(name="soapHeaderBypassMustUnderstand",required=false,nillable=false)
   protected SoapHeaderBypassMustUnderstand soapHeaderBypassMustUnderstand;

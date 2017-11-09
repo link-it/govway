@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
-import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
@@ -84,7 +83,7 @@ public class ConnectorUtils {
 			pa = true;
 		}
 		
-		MessageType requestMessageType = bindingConfig.getMessageType(serviceBindingDaUtilizzare, MessageRole.REQUEST, 
+		MessageType requestMessageType = bindingConfig.getRequestMessageType(serviceBindingDaUtilizzare, 
 				protocolContext, protocolContext.getContentType());
 		
 		RequestInfo requestInfo = new RequestInfo();

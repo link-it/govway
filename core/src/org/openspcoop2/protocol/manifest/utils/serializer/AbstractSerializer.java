@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping;
 import org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
 import org.openspcoop2.protocol.manifest.RestMediaTypeCollection;
+import org.openspcoop2.protocol.manifest.InterfacesConfiguration;
 import org.openspcoop2.protocol.manifest.IntegrationErrorCollection;
 import org.openspcoop2.protocol.manifest.SoapConfiguration;
 import org.openspcoop2.protocol.manifest.IntegrationError;
@@ -52,6 +53,7 @@ import org.openspcoop2.protocol.manifest.WebEmptyContext;
 import org.openspcoop2.protocol.manifest.EmptySubContextMapping;
 import org.openspcoop2.protocol.manifest.RestMediaTypeMapping;
 import org.openspcoop2.protocol.manifest.OrganizationTypes;
+import org.openspcoop2.protocol.manifest.InterfaceConfiguration;
 import org.openspcoop2.protocol.manifest.Version;
 import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping;
@@ -2157,6 +2159,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: InterfacesConfiguration
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>interfacesConfiguration</var>
+	 * @param interfacesConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,InterfacesConfiguration interfacesConfiguration) throws SerializerException {
+		this.objToXml(fileName, InterfacesConfiguration.class, interfacesConfiguration, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>interfacesConfiguration</var>
+	 * @param interfacesConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,InterfacesConfiguration interfacesConfiguration,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, InterfacesConfiguration.class, interfacesConfiguration, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param file Xml file to serialize the object <var>interfacesConfiguration</var>
+	 * @param interfacesConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,InterfacesConfiguration interfacesConfiguration) throws SerializerException {
+		this.objToXml(file, InterfacesConfiguration.class, interfacesConfiguration, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param file Xml file to serialize the object <var>interfacesConfiguration</var>
+	 * @param interfacesConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,InterfacesConfiguration interfacesConfiguration,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, InterfacesConfiguration.class, interfacesConfiguration, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param out OutputStream to serialize the object <var>interfacesConfiguration</var>
+	 * @param interfacesConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,InterfacesConfiguration interfacesConfiguration) throws SerializerException {
+		this.objToXml(out, InterfacesConfiguration.class, interfacesConfiguration, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param out OutputStream to serialize the object <var>interfacesConfiguration</var>
+	 * @param interfacesConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,InterfacesConfiguration interfacesConfiguration,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, InterfacesConfiguration.class, interfacesConfiguration, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param interfacesConfiguration Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(InterfacesConfiguration interfacesConfiguration) throws SerializerException {
+		return this.objToXml(InterfacesConfiguration.class, interfacesConfiguration, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param interfacesConfiguration Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(InterfacesConfiguration interfacesConfiguration,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(InterfacesConfiguration.class, interfacesConfiguration, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param interfacesConfiguration Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(InterfacesConfiguration interfacesConfiguration) throws SerializerException {
+		return this.objToXml(InterfacesConfiguration.class, interfacesConfiguration, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>interfacesConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfacesConfiguration}
+	 * 
+	 * @param interfacesConfiguration Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(InterfacesConfiguration interfacesConfiguration,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(InterfacesConfiguration.class, interfacesConfiguration, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: IntegrationErrorCollection
 	 =================================================================================
 	*/
@@ -3567,6 +3687,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(OrganizationTypes organizationTypes,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(OrganizationTypes.class, organizationTypes, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: InterfaceConfiguration
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>interfaceConfiguration</var>
+	 * @param interfaceConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,InterfaceConfiguration interfaceConfiguration) throws SerializerException {
+		this.objToXml(fileName, InterfaceConfiguration.class, interfaceConfiguration, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>interfaceConfiguration</var>
+	 * @param interfaceConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,InterfaceConfiguration interfaceConfiguration,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, InterfaceConfiguration.class, interfaceConfiguration, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param file Xml file to serialize the object <var>interfaceConfiguration</var>
+	 * @param interfaceConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,InterfaceConfiguration interfaceConfiguration) throws SerializerException {
+		this.objToXml(file, InterfaceConfiguration.class, interfaceConfiguration, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param file Xml file to serialize the object <var>interfaceConfiguration</var>
+	 * @param interfaceConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,InterfaceConfiguration interfaceConfiguration,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, InterfaceConfiguration.class, interfaceConfiguration, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param out OutputStream to serialize the object <var>interfaceConfiguration</var>
+	 * @param interfaceConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,InterfaceConfiguration interfaceConfiguration) throws SerializerException {
+		this.objToXml(out, InterfaceConfiguration.class, interfaceConfiguration, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param out OutputStream to serialize the object <var>interfaceConfiguration</var>
+	 * @param interfaceConfiguration Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,InterfaceConfiguration interfaceConfiguration,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, InterfaceConfiguration.class, interfaceConfiguration, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param interfaceConfiguration Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(InterfaceConfiguration interfaceConfiguration) throws SerializerException {
+		return this.objToXml(InterfaceConfiguration.class, interfaceConfiguration, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param interfaceConfiguration Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(InterfaceConfiguration interfaceConfiguration,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(InterfaceConfiguration.class, interfaceConfiguration, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param interfaceConfiguration Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(InterfaceConfiguration interfaceConfiguration) throws SerializerException {
+		return this.objToXml(InterfaceConfiguration.class, interfaceConfiguration, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>interfaceConfiguration</var> of type {@link org.openspcoop2.protocol.manifest.InterfaceConfiguration}
+	 * 
+	 * @param interfaceConfiguration Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(InterfaceConfiguration interfaceConfiguration,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(InterfaceConfiguration.class, interfaceConfiguration, prettyPrint).toString();
 	}
 	
 	

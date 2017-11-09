@@ -50,6 +50,8 @@ import java.util.List;
  * 		&lt;attribute name="path" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="method" type="{http://www.openspcoop2.org/core/registry}HttpMethod" use="optional"/>
  * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
+ * 		&lt;attribute name="request-message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
+ * 		&lt;attribute name="response-message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -216,6 +218,46 @@ public class Resource extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.messageType = messageType;
   }
 
+  public void set_value_requestMessageType(String value) {
+    this.requestMessageType = (MessageType) MessageType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_requestMessageType() {
+    if(this.requestMessageType == null){
+    	return null;
+    }else{
+    	return this.requestMessageType.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.MessageType getRequestMessageType() {
+    return this.requestMessageType;
+  }
+
+  public void setRequestMessageType(org.openspcoop2.core.registry.constants.MessageType requestMessageType) {
+    this.requestMessageType = requestMessageType;
+  }
+
+  public void set_value_responseMessageType(String value) {
+    this.responseMessageType = (MessageType) MessageType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_responseMessageType() {
+    if(this.responseMessageType == null){
+    	return null;
+    }else{
+    	return this.responseMessageType.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.MessageType getResponseMessageType() {
+    return this.responseMessageType;
+  }
+
+  public void setResponseMessageType(org.openspcoop2.core.registry.constants.MessageType responseMessageType) {
+    this.responseMessageType = responseMessageType;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -312,5 +354,17 @@ public class Resource extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   @XmlAttribute(name="message-type",required=false)
   protected MessageType messageType;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_requestMessageType;
+
+  @XmlAttribute(name="request-message-type",required=false)
+  protected MessageType requestMessageType;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_responseMessageType;
+
+  @XmlAttribute(name="response-message-type",required=false)
+  protected MessageType responseMessageType;
 
 }

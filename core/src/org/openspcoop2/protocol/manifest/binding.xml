@@ -83,10 +83,30 @@
     <value name="httpReturnCode" field="httpReturnCode" usage="required" style="attribute"/>
     <value name="messageType" field="messageType" usage="required" enum-value-method="toString" style="attribute"/>
   </mapping>
+  <mapping name="interfaces" class="org.openspcoop2.protocol.manifest.InterfacesConfiguration" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="specification" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.manifest.InterfaceConfiguration"/>
+    </collection>
+  </mapping>
+
+  <mapping type-name="_InterfacesConfiguration_Type" class="org.openspcoop2.protocol.manifest.InterfacesConfiguration" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="specification" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.manifest.InterfaceConfiguration"/>
+    </collection>
+  </mapping>
+  <mapping name="specification" class="org.openspcoop2.protocol.manifest.InterfaceConfiguration">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="type" field="type" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="schema" field="schema" default="false" usage="optional" style="attribute"/>
+    <value name="conversations" field="conversations" default="false" usage="optional" style="attribute"/>
+  </mapping>
   <mapping name="soap" class="org.openspcoop2.protocol.manifest.SoapConfiguration">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure name="integrationError" field="integrationError" usage="required" map-as="_IntegrationErrorConfiguration_Type"/>
     <structure name="mediaTypeCollection" field="mediaTypeCollection" usage="optional" map-as="_SoapMediaTypeCollection_Type"/>
+    <structure name="interfaces" field="interfaces" usage="optional" map-as="_InterfacesConfiguration_Type"/>
     <structure field="soapHeaderBypassMustUnderstand" usage="optional" map-as="org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand"/>
     <value name="soap11" field="soap11" usage="required" style="attribute"/>
     <value name="soap11_withAttachments" field="soap11WithAttachments" default="true" usage="optional" style="attribute"/>
@@ -141,6 +161,7 @@
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure name="integrationError" field="integrationError" usage="required" map-as="_IntegrationErrorConfiguration_Type"/>
     <structure name="mediaTypeCollection" field="mediaTypeCollection" usage="optional" map-as="_RestMediaTypeCollection_Type"/>
+    <structure name="interfaces" field="interfaces" usage="optional" map-as="_InterfacesConfiguration_Type"/>
     <value name="xml" field="xml" usage="required" style="attribute"/>
     <value name="json" field="json" usage="required" style="attribute"/>
     <value name="binary" field="binary" usage="required" style="attribute"/>
@@ -245,8 +266,6 @@
     <structure field="types" usage="required" map-as="org.openspcoop2.protocol.manifest.ServiceTypes"/>
     <structure field="profile" usage="optional" map-as="org.openspcoop2.protocol.manifest.CollaborationProfile"/>
     <structure field="functionality" usage="optional" map-as="org.openspcoop2.protocol.manifest.Functionality"/>
-    <value name="wsdlSchema" field="wsdlSchema" default="false" usage="optional" style="attribute"/>
-    <value name="conversations" field="conversations" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="types" class="org.openspcoop2.protocol.manifest.ServiceTypes">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>

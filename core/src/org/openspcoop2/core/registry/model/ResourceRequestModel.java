@@ -40,10 +40,9 @@ public class ResourceRequestModel extends AbstractModel<ResourceRequest> {
 	
 		super();
 	
+		this.PARAMETER = new org.openspcoop2.core.registry.model.ResourceParameterModel(new Field("parameter",org.openspcoop2.core.registry.ResourceParameter.class,"resource-request",ResourceRequest.class));
 		this.REPRESENTATION = new org.openspcoop2.core.registry.model.ResourceRepresentationModel(new Field("representation",org.openspcoop2.core.registry.ResourceRepresentation.class,"resource-request",ResourceRequest.class));
 		this.ID_RESOURCE = new Field("id-resource",java.lang.Long.class,"resource-request",ResourceRequest.class);
-		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"resource-request",ResourceRequest.class);
-		this.MESSAGE_TYPE = new Field("message-type",java.lang.String.class,"resource-request",ResourceRequest.class);
 	
 	}
 	
@@ -51,22 +50,19 @@ public class ResourceRequestModel extends AbstractModel<ResourceRequest> {
 	
 		super(father);
 	
+		this.PARAMETER = new org.openspcoop2.core.registry.model.ResourceParameterModel(new ComplexField(father,"parameter",org.openspcoop2.core.registry.ResourceParameter.class,"resource-request",ResourceRequest.class));
 		this.REPRESENTATION = new org.openspcoop2.core.registry.model.ResourceRepresentationModel(new ComplexField(father,"representation",org.openspcoop2.core.registry.ResourceRepresentation.class,"resource-request",ResourceRequest.class));
 		this.ID_RESOURCE = new ComplexField(father,"id-resource",java.lang.Long.class,"resource-request",ResourceRequest.class);
-		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"resource-request",ResourceRequest.class);
-		this.MESSAGE_TYPE = new ComplexField(father,"message-type",java.lang.String.class,"resource-request",ResourceRequest.class);
 	
 	}
 	
 	
 
+	public org.openspcoop2.core.registry.model.ResourceParameterModel PARAMETER = null;
+	 
 	public org.openspcoop2.core.registry.model.ResourceRepresentationModel REPRESENTATION = null;
 	 
 	public IField ID_RESOURCE = null;
-	 
-	public IField DESCRIZIONE = null;
-	 
-	public IField MESSAGE_TYPE = null;
 	 
 
 	@Override

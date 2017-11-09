@@ -43,8 +43,6 @@ public class ServiceModel extends AbstractModel<Service> {
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.ServiceTypesModel(new Field("types",org.openspcoop2.protocol.manifest.ServiceTypes.class,"Service",Service.class));
 		this.PROFILE = new org.openspcoop2.protocol.manifest.model.CollaborationProfileModel(new Field("profile",org.openspcoop2.protocol.manifest.CollaborationProfile.class,"Service",Service.class));
 		this.FUNCTIONALITY = new org.openspcoop2.protocol.manifest.model.FunctionalityModel(new Field("functionality",org.openspcoop2.protocol.manifest.Functionality.class,"Service",Service.class));
-		this.WSDL_SCHEMA = new Field("wsdlSchema",boolean.class,"Service",Service.class);
-		this.CONVERSATIONS = new Field("conversations",boolean.class,"Service",Service.class);
 	
 	}
 	
@@ -55,8 +53,6 @@ public class ServiceModel extends AbstractModel<Service> {
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.ServiceTypesModel(new ComplexField(father,"types",org.openspcoop2.protocol.manifest.ServiceTypes.class,"Service",Service.class));
 		this.PROFILE = new org.openspcoop2.protocol.manifest.model.CollaborationProfileModel(new ComplexField(father,"profile",org.openspcoop2.protocol.manifest.CollaborationProfile.class,"Service",Service.class));
 		this.FUNCTIONALITY = new org.openspcoop2.protocol.manifest.model.FunctionalityModel(new ComplexField(father,"functionality",org.openspcoop2.protocol.manifest.Functionality.class,"Service",Service.class));
-		this.WSDL_SCHEMA = new ComplexField(father,"wsdlSchema",boolean.class,"Service",Service.class);
-		this.CONVERSATIONS = new ComplexField(father,"conversations",boolean.class,"Service",Service.class);
 	
 	}
 	
@@ -67,10 +63,6 @@ public class ServiceModel extends AbstractModel<Service> {
 	public org.openspcoop2.protocol.manifest.model.CollaborationProfileModel PROFILE = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.FunctionalityModel FUNCTIONALITY = null;
-	 
-	public IField WSDL_SCHEMA = null;
-	 
-	public IField CONVERSATIONS = null;
 	 
 
 	@Override

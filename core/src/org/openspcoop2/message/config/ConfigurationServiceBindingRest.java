@@ -21,7 +21,10 @@
 package org.openspcoop2.message.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 
@@ -63,6 +66,24 @@ public class ConfigurationServiceBindingRest extends AbstractConfigurationServic
 	
 	public RestBinding getBinding() {
 		return this.binding;
+	}
+	
+	@Override
+	public List<MessageType> getMessageTypeSupported(){
+		 List<MessageType> list = new ArrayList<MessageType>();
+		 if(this.binding.isBinding_xml()) {
+			 list.add(MessageType.XML);
+		 }
+		 if(this.binding.isBinding_json()) {
+			 list.add(MessageType.JSON);
+		 }
+		 if(this.binding.isBinding_binary()) {
+			 list.add(MessageType.BINARY);
+		 }
+		 if(this.binding.isBinding_mimeMultipart()) {
+			 list.add(MessageType.MIME_MULTIPART);
+		 }
+		 return list;
 	}
 	
 }

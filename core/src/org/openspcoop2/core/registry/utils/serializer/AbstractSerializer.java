@@ -28,11 +28,13 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
-import org.openspcoop2.core.registry.ResourceRepresentation;
+import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRequest;
+import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.IdRuolo;
+import org.openspcoop2.core.registry.ResourceRepresentationJson;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.IdPortaDominio;
@@ -47,6 +49,7 @@ import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.RuoloSoggetto;
+import org.openspcoop2.core.registry.ResourceRepresentationXml;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.PortType;
@@ -741,118 +744,118 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: resource-representation
+	 Object: resource-parameter
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>resourceRepresentation</var>
-	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>resourceParameter</var>
+	 * @param resourceParameter Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,ResourceRepresentation resourceRepresentation) throws SerializerException {
-		this.objToXml(fileName, ResourceRepresentation.class, resourceRepresentation, false);
+	public void write(String fileName,ResourceParameter resourceParameter) throws SerializerException {
+		this.objToXml(fileName, ResourceParameter.class, resourceParameter, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>resourceRepresentation</var>
-	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>resourceParameter</var>
+	 * @param resourceParameter Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, ResourceRepresentation.class, resourceRepresentation, prettyPrint);
+	public void write(String fileName,ResourceParameter resourceParameter,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResourceParameter.class, resourceParameter, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to file system in <var>file</var> the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param file Xml file to serialize the object <var>resourceRepresentation</var>
-	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>resourceParameter</var>
+	 * @param resourceParameter Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,ResourceRepresentation resourceRepresentation) throws SerializerException {
-		this.objToXml(file, ResourceRepresentation.class, resourceRepresentation, false);
+	public void write(File file,ResourceParameter resourceParameter) throws SerializerException {
+		this.objToXml(file, ResourceParameter.class, resourceParameter, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to file system in <var>file</var> the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param file Xml file to serialize the object <var>resourceRepresentation</var>
-	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>resourceParameter</var>
+	 * @param resourceParameter Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, ResourceRepresentation.class, resourceRepresentation, prettyPrint);
+	public void write(File file,ResourceParameter resourceParameter,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResourceParameter.class, resourceParameter, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to output stream <var>out</var> the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param out OutputStream to serialize the object <var>resourceRepresentation</var>
-	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>resourceParameter</var>
+	 * @param resourceParameter Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,ResourceRepresentation resourceRepresentation) throws SerializerException {
-		this.objToXml(out, ResourceRepresentation.class, resourceRepresentation, false);
+	public void write(OutputStream out,ResourceParameter resourceParameter) throws SerializerException {
+		this.objToXml(out, ResourceParameter.class, resourceParameter, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to output stream <var>out</var> the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param out OutputStream to serialize the object <var>resourceRepresentation</var>
-	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>resourceParameter</var>
+	 * @param resourceParameter Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, ResourceRepresentation.class, resourceRepresentation, prettyPrint);
+	public void write(OutputStream out,ResourceParameter resourceParameter,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResourceParameter.class, resourceParameter, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to byte array the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param resourceRepresentation Object to be serialized
+	 * @param resourceParameter Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(ResourceRepresentation resourceRepresentation) throws SerializerException {
-		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, false).toByteArray();
+	public byte[] toByteArray(ResourceParameter resourceParameter) throws SerializerException {
+		return this.objToXml(ResourceParameter.class, resourceParameter, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to byte array the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param resourceRepresentation Object to be serialized
+	 * @param resourceParameter Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, prettyPrint).toByteArray();
+	public byte[] toByteArray(ResourceParameter resourceParameter,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceParameter.class, resourceParameter, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to String the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param resourceRepresentation Object to be serialized
+	 * @param resourceParameter Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(ResourceRepresentation resourceRepresentation) throws SerializerException {
-		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, false).toString();
+	public String toString(ResourceParameter resourceParameter) throws SerializerException {
+		return this.objToXml(ResourceParameter.class, resourceParameter, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Serialize to String the object <var>resourceParameter</var> of type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param resourceRepresentation Object to be serialized
+	 * @param resourceParameter Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, prettyPrint).toString();
+	public String toString(ResourceParameter resourceParameter,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceParameter.class, resourceParameter, prettyPrint).toString();
 	}
 	
 	
@@ -971,6 +974,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(ResourceRequest resourceRequest,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(ResourceRequest.class, resourceRequest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: resource-representation
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>resourceRepresentation</var>
+	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResourceRepresentation resourceRepresentation) throws SerializerException {
+		this.objToXml(fileName, ResourceRepresentation.class, resourceRepresentation, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>resourceRepresentation</var>
+	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResourceRepresentation.class, resourceRepresentation, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param file Xml file to serialize the object <var>resourceRepresentation</var>
+	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResourceRepresentation resourceRepresentation) throws SerializerException {
+		this.objToXml(file, ResourceRepresentation.class, resourceRepresentation, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param file Xml file to serialize the object <var>resourceRepresentation</var>
+	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResourceRepresentation.class, resourceRepresentation, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param out OutputStream to serialize the object <var>resourceRepresentation</var>
+	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResourceRepresentation resourceRepresentation) throws SerializerException {
+		this.objToXml(out, ResourceRepresentation.class, resourceRepresentation, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param out OutputStream to serialize the object <var>resourceRepresentation</var>
+	 * @param resourceRepresentation Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResourceRepresentation.class, resourceRepresentation, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param resourceRepresentation Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResourceRepresentation resourceRepresentation) throws SerializerException {
+		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param resourceRepresentation Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param resourceRepresentation Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResourceRepresentation resourceRepresentation) throws SerializerException {
+		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>resourceRepresentation</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param resourceRepresentation Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResourceRepresentation resourceRepresentation,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceRepresentation.class, resourceRepresentation, prettyPrint).toString();
 	}
 	
 	
@@ -1325,6 +1446,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(IdRuolo idRuolo,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(IdRuolo.class, idRuolo, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: resource-representation-json
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>resourceRepresentationJson</var>
+	 * @param resourceRepresentationJson Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResourceRepresentationJson resourceRepresentationJson) throws SerializerException {
+		this.objToXml(fileName, ResourceRepresentationJson.class, resourceRepresentationJson, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>resourceRepresentationJson</var>
+	 * @param resourceRepresentationJson Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResourceRepresentationJson resourceRepresentationJson,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResourceRepresentationJson.class, resourceRepresentationJson, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param file Xml file to serialize the object <var>resourceRepresentationJson</var>
+	 * @param resourceRepresentationJson Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResourceRepresentationJson resourceRepresentationJson) throws SerializerException {
+		this.objToXml(file, ResourceRepresentationJson.class, resourceRepresentationJson, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param file Xml file to serialize the object <var>resourceRepresentationJson</var>
+	 * @param resourceRepresentationJson Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResourceRepresentationJson resourceRepresentationJson,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResourceRepresentationJson.class, resourceRepresentationJson, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param out OutputStream to serialize the object <var>resourceRepresentationJson</var>
+	 * @param resourceRepresentationJson Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResourceRepresentationJson resourceRepresentationJson) throws SerializerException {
+		this.objToXml(out, ResourceRepresentationJson.class, resourceRepresentationJson, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param out OutputStream to serialize the object <var>resourceRepresentationJson</var>
+	 * @param resourceRepresentationJson Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResourceRepresentationJson resourceRepresentationJson,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResourceRepresentationJson.class, resourceRepresentationJson, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param resourceRepresentationJson Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResourceRepresentationJson resourceRepresentationJson) throws SerializerException {
+		return this.objToXml(ResourceRepresentationJson.class, resourceRepresentationJson, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param resourceRepresentationJson Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResourceRepresentationJson resourceRepresentationJson,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceRepresentationJson.class, resourceRepresentationJson, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param resourceRepresentationJson Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResourceRepresentationJson resourceRepresentationJson) throws SerializerException {
+		return this.objToXml(ResourceRepresentationJson.class, resourceRepresentationJson, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>resourceRepresentationJson</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param resourceRepresentationJson Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResourceRepresentationJson resourceRepresentationJson,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceRepresentationJson.class, resourceRepresentationJson, prettyPrint).toString();
 	}
 	
 	
@@ -2977,6 +3216,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(RuoloSoggetto ruoloSoggetto,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(RuoloSoggetto.class, ruoloSoggetto, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: resource-representation-xml
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>resourceRepresentationXml</var>
+	 * @param resourceRepresentationXml Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResourceRepresentationXml resourceRepresentationXml) throws SerializerException {
+		this.objToXml(fileName, ResourceRepresentationXml.class, resourceRepresentationXml, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>resourceRepresentationXml</var>
+	 * @param resourceRepresentationXml Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResourceRepresentationXml resourceRepresentationXml,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResourceRepresentationXml.class, resourceRepresentationXml, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param file Xml file to serialize the object <var>resourceRepresentationXml</var>
+	 * @param resourceRepresentationXml Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResourceRepresentationXml resourceRepresentationXml) throws SerializerException {
+		this.objToXml(file, ResourceRepresentationXml.class, resourceRepresentationXml, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param file Xml file to serialize the object <var>resourceRepresentationXml</var>
+	 * @param resourceRepresentationXml Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResourceRepresentationXml resourceRepresentationXml,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResourceRepresentationXml.class, resourceRepresentationXml, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param out OutputStream to serialize the object <var>resourceRepresentationXml</var>
+	 * @param resourceRepresentationXml Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResourceRepresentationXml resourceRepresentationXml) throws SerializerException {
+		this.objToXml(out, ResourceRepresentationXml.class, resourceRepresentationXml, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param out OutputStream to serialize the object <var>resourceRepresentationXml</var>
+	 * @param resourceRepresentationXml Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResourceRepresentationXml resourceRepresentationXml,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResourceRepresentationXml.class, resourceRepresentationXml, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param resourceRepresentationXml Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResourceRepresentationXml resourceRepresentationXml) throws SerializerException {
+		return this.objToXml(ResourceRepresentationXml.class, resourceRepresentationXml, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param resourceRepresentationXml Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResourceRepresentationXml resourceRepresentationXml,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceRepresentationXml.class, resourceRepresentationXml, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param resourceRepresentationXml Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResourceRepresentationXml resourceRepresentationXml) throws SerializerException {
+		return this.objToXml(ResourceRepresentationXml.class, resourceRepresentationXml, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>resourceRepresentationXml</var> of type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param resourceRepresentationXml Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResourceRepresentationXml resourceRepresentationXml,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResourceRepresentationXml.class, resourceRepresentationXml, prettyPrint).toString();
 	}
 	
 	

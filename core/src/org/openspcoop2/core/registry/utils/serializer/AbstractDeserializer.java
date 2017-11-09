@@ -26,11 +26,13 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
-import org.openspcoop2.core.registry.ResourceRepresentation;
+import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRequest;
+import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.IdRuolo;
+import org.openspcoop2.core.registry.ResourceRepresentationJson;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.IdPortaDominio;
@@ -45,6 +47,7 @@ import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.RuoloSoggetto;
+import org.openspcoop2.core.registry.ResourceRepresentationXml;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.PortType;
@@ -440,63 +443,63 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
-	 Object: resource-representation
+	 Object: resource-parameter
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
-	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceParameter}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ResourceRepresentation readResourceRepresentation(String fileName) throws DeserializerException {
-		return (ResourceRepresentation) this.xmlToObj(fileName, ResourceRepresentation.class);
+	public ResourceParameter readResourceParameter(String fileName) throws DeserializerException {
+		return (ResourceParameter) this.xmlToObj(fileName, ResourceParameter.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
-	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceParameter}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ResourceRepresentation readResourceRepresentation(File file) throws DeserializerException {
-		return (ResourceRepresentation) this.xmlToObj(file, ResourceRepresentation.class);
+	public ResourceParameter readResourceParameter(File file) throws DeserializerException {
+		return (ResourceParameter) this.xmlToObj(file, ResourceParameter.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
-	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceParameter}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ResourceRepresentation readResourceRepresentation(InputStream in) throws DeserializerException {
-		return (ResourceRepresentation) this.xmlToObj(in, ResourceRepresentation.class);
+	public ResourceParameter readResourceParameter(InputStream in) throws DeserializerException {
+		return (ResourceParameter) this.xmlToObj(in, ResourceParameter.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
-	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceParameter}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ResourceRepresentation readResourceRepresentation(byte[] in) throws DeserializerException {
-		return (ResourceRepresentation) this.xmlToObj(in, ResourceRepresentation.class);
+	public ResourceParameter readResourceParameter(byte[] in) throws DeserializerException {
+		return (ResourceParameter) this.xmlToObj(in, ResourceParameter.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
-	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceParameter}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceParameter}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public ResourceRepresentation readResourceRepresentationFromString(String in) throws DeserializerException {
-		return (ResourceRepresentation) this.xmlToObj(in.getBytes(), ResourceRepresentation.class);
+	public ResourceParameter readResourceParameterFromString(String in) throws DeserializerException {
+		return (ResourceParameter) this.xmlToObj(in.getBytes(), ResourceParameter.class);
 	}	
 	
 	
@@ -560,6 +563,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public ResourceRequest readResourceRequestFromString(String in) throws DeserializerException {
 		return (ResourceRequest) this.xmlToObj(in.getBytes(), ResourceRequest.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: resource-representation
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentation readResourceRepresentation(String fileName) throws DeserializerException {
+		return (ResourceRepresentation) this.xmlToObj(fileName, ResourceRepresentation.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentation readResourceRepresentation(File file) throws DeserializerException {
+		return (ResourceRepresentation) this.xmlToObj(file, ResourceRepresentation.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentation readResourceRepresentation(InputStream in) throws DeserializerException {
+		return (ResourceRepresentation) this.xmlToObj(in, ResourceRepresentation.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentation readResourceRepresentation(byte[] in) throws DeserializerException {
+		return (ResourceRepresentation) this.xmlToObj(in, ResourceRepresentation.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentation}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentation readResourceRepresentationFromString(String in) throws DeserializerException {
+		return (ResourceRepresentation) this.xmlToObj(in.getBytes(), ResourceRepresentation.class);
 	}	
 	
 	
@@ -749,6 +815,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public IdRuolo readIdRuoloFromString(String in) throws DeserializerException {
 		return (IdRuolo) this.xmlToObj(in.getBytes(), IdRuolo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: resource-representation-json
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationJson readResourceRepresentationJson(String fileName) throws DeserializerException {
+		return (ResourceRepresentationJson) this.xmlToObj(fileName, ResourceRepresentationJson.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationJson readResourceRepresentationJson(File file) throws DeserializerException {
+		return (ResourceRepresentationJson) this.xmlToObj(file, ResourceRepresentationJson.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationJson readResourceRepresentationJson(InputStream in) throws DeserializerException {
+		return (ResourceRepresentationJson) this.xmlToObj(in, ResourceRepresentationJson.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationJson readResourceRepresentationJson(byte[] in) throws DeserializerException {
+		return (ResourceRepresentationJson) this.xmlToObj(in, ResourceRepresentationJson.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationJson}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationJson readResourceRepresentationJsonFromString(String in) throws DeserializerException {
+		return (ResourceRepresentationJson) this.xmlToObj(in.getBytes(), ResourceRepresentationJson.class);
 	}	
 	
 	
@@ -1631,6 +1760,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public RuoloSoggetto readRuoloSoggettoFromString(String in) throws DeserializerException {
 		return (RuoloSoggetto) this.xmlToObj(in.getBytes(), RuoloSoggetto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: resource-representation-xml
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationXml readResourceRepresentationXml(String fileName) throws DeserializerException {
+		return (ResourceRepresentationXml) this.xmlToObj(fileName, ResourceRepresentationXml.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationXml readResourceRepresentationXml(File file) throws DeserializerException {
+		return (ResourceRepresentationXml) this.xmlToObj(file, ResourceRepresentationXml.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationXml readResourceRepresentationXml(InputStream in) throws DeserializerException {
+		return (ResourceRepresentationXml) this.xmlToObj(in, ResourceRepresentationXml.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationXml readResourceRepresentationXml(byte[] in) throws DeserializerException {
+		return (ResourceRepresentationXml) this.xmlToObj(in, ResourceRepresentationXml.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @return Object type {@link org.openspcoop2.core.registry.ResourceRepresentationXml}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ResourceRepresentationXml readResourceRepresentationXmlFromString(String in) throws DeserializerException {
+		return (ResourceRepresentationXml) this.xmlToObj(in.getBytes(), ResourceRepresentationXml.class);
 	}	
 	
 	

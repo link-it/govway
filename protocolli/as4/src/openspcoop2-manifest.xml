@@ -22,6 +22,9 @@
     			<mediaType messageType="soap11">text/xml</mediaType>
     			<default messageType="soap12"/>
     		</mediaTypeCollection>
+    		<interfaces>
+    			<specification type="wsdl" />
+    		</interfaces>
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">
@@ -56,6 +59,11 @@
     			<default messageType="binary"/>
     			<undefined messageType="binary"/>
     		</mediaTypeCollection>
+    		<interfaces>
+    			<specification type="wadl" />
+    			<specification type="swagger" />
+    			<specification type="openApi" />
+    		</interfaces>
     	</rest>
     </binding>
 

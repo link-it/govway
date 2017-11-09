@@ -26,6 +26,8 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceRepresentation;
+import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.config.ConfigurationServiceBindingRest;
 import org.openspcoop2.message.config.ConfigurationServiceBindingSoap;
@@ -201,9 +203,6 @@ public class ServiceBindingConfigurationReader  {
 								if(ServiceBinding.SOAP.equals(serviceBinding)){
 									updateSoapMediaTypeCollection(soap, messageTypeService, true, true);
 								}
-								else if(ServiceBinding.REST.equals(serviceBinding)){
-									updateRestMediaTypeCollection(rest, messageTypeService, true, true);
-								}
 							}
 							break;
 						}
@@ -233,49 +232,42 @@ public class ServiceBindingConfigurationReader  {
 								// Se presente viene forzato un message type indipendente dal mediaType e valido sia per la richiesta che per la risposta
 								MessageType messageTypeRisorsa = convertMessageType(resource.getMessageType());
 								if(messageTypeRisorsa!=null){
-									if(ServiceBinding.SOAP.equals(serviceBinding)){
-										updateSoapMediaTypeCollection(soap, messageTypeRisorsa, true, true);
-									}
-									else if(ServiceBinding.REST.equals(serviceBinding)){
-										updateRestMediaTypeCollection(rest, messageTypeRisorsa, true, true);
-									}
+									updateRestMediaTypeCollection(rest, messageTypeRisorsa, true, true);
 								}
 								
-								if(resource.getRequest()!=null) {
-									// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la richiesta
-									MessageType messageTypeAzioneRichiesta = convertMessageType(resource.getRequest().getMessageType());
-									if(messageTypeAzioneRichiesta!=null){
-										if(ServiceBinding.SOAP.equals(serviceBinding)){
-											updateSoapMediaTypeCollection(soap, messageTypeAzioneRichiesta, true, false);
-										}
-										else if(ServiceBinding.REST.equals(serviceBinding)){
-											updateRestMediaTypeCollection(rest, messageTypeAzioneRichiesta, true, false);
+								// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la richiesta
+								MessageType messageTypeAzioneRichiesta = convertMessageType(resource.getRequestMessageType());
+								if(messageTypeAzioneRichiesta!=null){
+									updateRestMediaTypeCollection(rest, messageTypeAzioneRichiesta, true, false);
+								}
+								
+								// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la risposta
+								MessageType messageTypeAzioneRisposta = convertMessageType(resource.getResponseMessageType());
+								if(messageTypeAzioneRisposta!=null){
+									updateRestMediaTypeCollection(rest, messageTypeAzioneRisposta, false, true);
+								}
+								
+								// ultimo step di replace singolo mediaType sulla richiesta o sulla risposta (solo per REST)
+								if(resource.getRequest()!=null && resource.getRequest().sizeRepresentationList()>0) {
+									for (ResourceRepresentation rr : resource.getRequest().getRepresentationList()) {
+										MessageType messageTypeMediaType = convertMessageType(rr.getMessageType());
+										if(messageTypeMediaType!=null) {
+											rest.getRequest().addOrReplaceMediaType(rr.getMediaType(), messageTypeMediaType, false);
 										}
 									}
 								}
-								
 								if(resource.sizeResponseList()>0) {
-									
-									// CAPIRE COME SI GESTISCE LO STATO DELLA RISPOSTA
-									
-									// ricerca per azione - risposta
-									// TODO 
-									// Se presente viene forzato un message type indipendente dal mediaType ma valido solo per la richiesta
-									MessageType messageTypeAzioneRisposta = null;
-									if(messageTypeAzioneRisposta!=null){
-										if(ServiceBinding.SOAP.equals(serviceBinding)){
-											updateSoapMediaTypeCollection(soap, messageTypeAzioneRisposta, false, true);
-										}
-										else if(ServiceBinding.REST.equals(serviceBinding)){
-											updateRestMediaTypeCollection(rest, messageTypeAzioneRisposta, false, true);
+									for (ResourceResponse response : resource.getResponseList()) {
+										if(response.sizeRepresentationList()>0) {
+											for (ResourceRepresentation rr : response.getRepresentationList()) {
+												MessageType messageTypeMediaType = convertMessageType(rr.getMessageType());
+												if(messageTypeMediaType!=null) {
+													rest.getResponse().addOrReplaceMediaType(rr.getMediaType(), response.getStatus(), messageTypeMediaType, false);
+												}
+											}
 										}
 									}
 								}
-								
-								// TODO ultimo step di replace singolo mediaType sulla richiesta o sulla risposta con i metodi seguenti:
-								//	soap.getRequest().addOrReplaceMediaType(mediaType, version, regExpr);
-								//	rest.getRequest().addOrReplaceMediaType(mediaType, version, regExpr);
-								
 								break;
 							}
 						}
@@ -354,7 +346,8 @@ public class ServiceBindingConfigurationReader  {
 			
 	}
 	
-	private static void updateMediaTypeCollection(ConfigurationServiceBindingSoap soap, SoapMediaTypeCollection mediaTypesCollection, boolean request, boolean response) throws MessageException{
+	private static void updateMediaTypeCollection(ConfigurationServiceBindingSoap soap, SoapMediaTypeCollection mediaTypesCollection, 
+			boolean request, boolean response) throws MessageException{
 		
 		if(mediaTypesCollection.sizeMediaTypeList()<=0 && mediaTypesCollection.getDefault()==null && mediaTypesCollection.getUndefined()==null){
 			return;
@@ -369,7 +362,7 @@ public class ServiceBindingConfigurationReader  {
 		for (int i = 0; i < mediaTypesCollection.sizeMediaTypeList(); i++) {
 			SoapMediaTypeMapping mapping = mediaTypesCollection.getMediaType(i);
 			if(request){
-				soap.getRequest().addMediaType(mapping.getBase(), convertToMessageType(mapping.getMessageType()), mapping.isRegExpr());
+				soap.getRequest().addMediaType(mapping.getBase(),  convertToMessageType(mapping.getMessageType()), mapping.isRegExpr());
 			}
 			if(response){
 				soap.getResponse().addMediaType(mapping.getBase(), convertToMessageType(mapping.getMessageType()), mapping.isRegExpr());

@@ -3656,247 +3656,248 @@ public class DriverRegistroServiziDB_LIB {
 	
 	public static long _CRUDResourceRequestResponse(int type, AccordoServizioParteComune as,Resource resource,
 			ResourceRequest resourceRequest,ResourceResponse resourceResponse, Connection con, long idResource) throws DriverRegistroServiziException {
-		PreparedStatement updateStmt = null;
-		String updateQuery;
-		PreparedStatement selectStmt = null;
-		String selectQuery = "";
-		ResultSet selectRS = null;
-		long n = 0;
-		if (idResource <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] ID Risorda non valido.");
-
-		try {
-			switch (type) {
-			case CREATE:
-				// create
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_DETAILS);
-				sqlQueryObject.addInsertField("id_resource", "?");
-				sqlQueryObject.addInsertField("descrizione", "?");
-				sqlQueryObject.addInsertField("resource_type", "?");
-				sqlQueryObject.addInsertField("status", "?");
-				sqlQueryObject.addInsertField("message_type", "?");
-				updateQuery = sqlQueryObject.createSQLInsert();
-				updateStmt = con.prepareStatement(updateQuery);
-				int index = 1;
-				updateStmt.setLong(index++, idResource);
-				if(resourceRequest!=null) {
-					updateStmt.setString(index++, resourceRequest.getDescrizione());
-					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_REQUEST);
-					updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
-					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceRequest.getMessageType()));
-				}
-				else {
-					updateStmt.setString(index++, resourceResponse.getDescrizione());
-					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
-					if(resourceResponse.getStatus()!=null) {
-						updateStmt.setInt(index++, resourceResponse.getStatus());
-					}
-					else {
-						updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
-					}
-					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceResponse.getMessageType()));
-				}
-
-				DriverRegistroServiziDB_LIB.log.debug("Aggiungo dettaglio alla risorsa ["+idResource+"]");
-
-				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse CREATE :\n"+updateQuery);
-				n = updateStmt.executeUpdate();
-				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
-				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_DETAILS);
-				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addWhereCondition("resource_type = ?");
-				if(resourceResponse!=null) {
-					sqlQueryObject.addWhereCondition("status = ?");
-				}
-				sqlQueryObject.setANDLogicOperator(true);
-				selectQuery = sqlQueryObject.createSQLQuery();
-				selectStmt = con.prepareStatement(selectQuery);
-				if(resourceRequest!=null) {
-					selectStmt.setString(1, CostantiDB.API_RESOURCE_DETAIL_REQUEST);
-				}
-				else {
-					selectStmt.setString(1, CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
-					if(resourceResponse.getStatus()!=null) {
-						selectStmt.setLong(1, resourceResponse.getStatus());
-					}
-					else {
-						selectStmt.setLong(1, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
-					}
-				}
-
-				break;
-
-			case UPDATE:
-				// update
-				//
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addUpdateTable(CostantiDB.API_RESOURCES_DETAILS);
-				sqlQueryObject.addUpdateField("descrizione", "?");
-				sqlQueryObject.addUpdateField("status", "?");
-				sqlQueryObject.addUpdateField("message_type", "?");
-				sqlQueryObject.addWhereCondition("id_resource=?");
-				sqlQueryObject.addWhereCondition("resource_type=?");
-				sqlQueryObject.setANDLogicOperator(true);
-				updateQuery = sqlQueryObject.createSQLUpdate();
-				updateStmt = con.prepareStatement(updateQuery);
-				index = 1;
-				if(resourceRequest!=null) {
-					updateStmt.setString(index++, resourceRequest.getDescrizione());
-					updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
-					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceRequest.getMessageType()));
-				}
-				else {
-					updateStmt.setString(index++, resourceResponse.getDescrizione());
-					if(resourceResponse.getStatus()!=null) {
-						updateStmt.setInt(index++, resourceResponse.getStatus());
-					}
-					else {
-						updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
-					}
-					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceResponse.getMessageType()));
-				}
-				updateStmt.setLong(index++, idResource);
-				if(resourceRequest!=null) {
-					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_REQUEST);
-				}
-				else {
-					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
-				}
-				n = updateStmt.executeUpdate();
-
-				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
-				// log.debug("CRUDAzione UPDATE :
-				// \n"+formatSQLString(updateQuery,wsdlImplementativoErogatore,wsdlImplementativoFruitore,
-				// idServizio,idSoggettoFruitore,idConnettore));
-
-				break;
-
-			case DELETE:
-				// delete
-
-				Long idResourceDetail = null;
-				if(resourceRequest!=null) {
-					idResourceDetail = resourceRequest.getId();
-				}
-				else {
-					idResourceDetail = resourceResponse.getId();
-				}
-				if(idResourceDetail==null || idResourceDetail<=0) {
-					throw new Exception("IdResourceDetails undefined");
-				}
-				
-				// message-part
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_MEDIA);
-				sqlQueryObject.addWhereCondition("id_resource_details=?");
-				sqlQueryObject.setANDLogicOperator(true);
-				updateQuery = sqlQueryObject.createSQLDelete();
-				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse DELETE MEDIA:\n"+
-						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idResourceDetail));
-				updateStmt = con.prepareStatement(updateQuery);
-				updateStmt.setLong(1, idResourceDetail);
-				n = updateStmt.executeUpdate();
-				updateStmt.close();
-				
-				// azioni
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_DETAILS);
-				sqlQueryObject.addWhereCondition("id=?");
-				sqlQueryObject.setANDLogicOperator(true);
-				updateQuery = sqlQueryObject.createSQLDelete();
-				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse DELETE DETAILS:\n"+
-						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idResourceDetail));
-				updateStmt = con.prepareStatement(updateQuery);
-				updateStmt.setLong(1, idResourceDetail);
-				n = updateStmt.executeUpdate();
-				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
-
-				break;
-			}
-
-
-
-			if (CostantiDB.CREATE == type) {
-				selectRS = selectStmt.executeQuery();
-				if (selectRS.next()) {
-
-					if(resourceRequest!=null) {
-						resourceRequest.setId(selectRS.getLong("id"));
-						
-						if(resourceRequest.sizeRepresentationList()>0) {
-							for (ResourceRepresentation rr : resourceRequest.getRepresentationList()) {
-								
-								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-								sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_MEDIA);
-								sqlQueryObject.addInsertField("id_resource_details", "?");
-								sqlQueryObject.addInsertField("message_type", "?");
-								updateQuery = sqlQueryObject.createSQLInsert();
-								updateStmt = con.prepareStatement(updateQuery);
-								int index = 1;
-								updateStmt.setLong(index++, resourceRequest.getId());
-								updateStmt.setString(index++, rr.getMediaType());
-								updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rr.getMessageType()));
-								
-								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse CREATE :\n"+updateQuery);
-								n = updateStmt.executeUpdate();
-								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
-								
-							}
-						}
-					}
-					else {
-						resourceResponse.setId(selectRS.getLong("id"));
-						
-						if(resourceResponse.sizeRepresentationList()>0) {
-							for (ResourceRepresentation rr : resourceResponse.getRepresentationList()) {
-								
-								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-								sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_MEDIA);
-								sqlQueryObject.addInsertField("id_resource_details", "?");
-								sqlQueryObject.addInsertField("message_type", "?");
-								updateQuery = sqlQueryObject.createSQLInsert();
-								updateStmt = con.prepareStatement(updateQuery);
-								int index = 1;
-								updateStmt.setLong(index++, resourceResponse.getId());
-								updateStmt.setString(index++, rr.getMediaType());
-								updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rr.getMessageType()));
-								
-								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse CREATE :\n"+updateQuery);
-								n = updateStmt.executeUpdate();
-								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
-								
-							}
-						}
-					}
-
-				}
-			}
-
-			return n;
-
-		} catch (SQLException se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] SQLException : " + se.getMessage(),se);
-		} catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] Exception : " + se.getMessage(),se);
-		} finally {
-			try {
-				if(selectRS!=null)selectRS.close();
-			} catch (Exception e) {
-			}
-			try {
-				if(selectStmt!=null)selectStmt.close();
-			} catch (Exception e) {
-			}
-			try {
-				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception e) {
-			}
-		}
+		return -1;
+//		PreparedStatement updateStmt = null;
+//		String updateQuery;
+//		PreparedStatement selectStmt = null;
+//		String selectQuery = "";
+//		ResultSet selectRS = null;
+//		long n = 0;
+//		if (idResource <= 0)
+//			new Exception("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] ID Risorda non valido.");
+//
+//		try {
+//			switch (type) {
+//			case CREATE:
+//				// create
+//				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+//				sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_DETAILS);
+//				sqlQueryObject.addInsertField("id_resource", "?");
+//				sqlQueryObject.addInsertField("descrizione", "?");
+//				sqlQueryObject.addInsertField("resource_type", "?");
+//				sqlQueryObject.addInsertField("status", "?");
+//				sqlQueryObject.addInsertField("message_type", "?");
+//				updateQuery = sqlQueryObject.createSQLInsert();
+//				updateStmt = con.prepareStatement(updateQuery);
+//				int index = 1;
+//				updateStmt.setLong(index++, idResource);
+//				if(resourceRequest!=null) {
+//					updateStmt.setString(index++, resourceRequest.getDescrizione());
+//					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_REQUEST);
+//					updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
+//					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceRequest.getMessageType()));
+//				}
+//				else {
+//					updateStmt.setString(index++, resourceResponse.getDescrizione());
+//					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
+//					if(resourceResponse.getStatus()!=null) {
+//						updateStmt.setInt(index++, resourceResponse.getStatus());
+//					}
+//					else {
+//						updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
+//					}
+//					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceResponse.getMessageType()));
+//				}
+//
+//				DriverRegistroServiziDB_LIB.log.debug("Aggiungo dettaglio alla risorsa ["+idResource+"]");
+//
+//				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse CREATE :\n"+updateQuery);
+//				n = updateStmt.executeUpdate();
+//				updateStmt.close();
+//				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
+//				
+//				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+//				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_DETAILS);
+//				sqlQueryObject.addSelectField("id");
+//				sqlQueryObject.addWhereCondition("resource_type = ?");
+//				if(resourceResponse!=null) {
+//					sqlQueryObject.addWhereCondition("status = ?");
+//				}
+//				sqlQueryObject.setANDLogicOperator(true);
+//				selectQuery = sqlQueryObject.createSQLQuery();
+//				selectStmt = con.prepareStatement(selectQuery);
+//				if(resourceRequest!=null) {
+//					selectStmt.setString(1, CostantiDB.API_RESOURCE_DETAIL_REQUEST);
+//				}
+//				else {
+//					selectStmt.setString(1, CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
+//					if(resourceResponse.getStatus()!=null) {
+//						selectStmt.setLong(1, resourceResponse.getStatus());
+//					}
+//					else {
+//						selectStmt.setLong(1, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
+//					}
+//				}
+//
+//				break;
+//
+//			case UPDATE:
+//				// update
+//				//
+//				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+//				sqlQueryObject.addUpdateTable(CostantiDB.API_RESOURCES_DETAILS);
+//				sqlQueryObject.addUpdateField("descrizione", "?");
+//				sqlQueryObject.addUpdateField("status", "?");
+//				sqlQueryObject.addUpdateField("message_type", "?");
+//				sqlQueryObject.addWhereCondition("id_resource=?");
+//				sqlQueryObject.addWhereCondition("resource_type=?");
+//				sqlQueryObject.setANDLogicOperator(true);
+//				updateQuery = sqlQueryObject.createSQLUpdate();
+//				updateStmt = con.prepareStatement(updateQuery);
+//				index = 1;
+//				if(resourceRequest!=null) {
+//					updateStmt.setString(index++, resourceRequest.getDescrizione());
+//					updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
+//					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceRequest.getMessageType()));
+//				}
+//				else {
+//					updateStmt.setString(index++, resourceResponse.getDescrizione());
+//					if(resourceResponse.getStatus()!=null) {
+//						updateStmt.setInt(index++, resourceResponse.getStatus());
+//					}
+//					else {
+//						updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
+//					}
+//					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resourceResponse.getMessageType()));
+//				}
+//				updateStmt.setLong(index++, idResource);
+//				if(resourceRequest!=null) {
+//					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_REQUEST);
+//				}
+//				else {
+//					updateStmt.setString(index++, CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
+//				}
+//				n = updateStmt.executeUpdate();
+//
+//				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
+//				// log.debug("CRUDAzione UPDATE :
+//				// \n"+formatSQLString(updateQuery,wsdlImplementativoErogatore,wsdlImplementativoFruitore,
+//				// idServizio,idSoggettoFruitore,idConnettore));
+//
+//				break;
+//
+//			case DELETE:
+//				// delete
+//
+//				Long idResourceDetail = null;
+//				if(resourceRequest!=null) {
+//					idResourceDetail = resourceRequest.getId();
+//				}
+//				else {
+//					idResourceDetail = resourceResponse.getId();
+//				}
+//				if(idResourceDetail==null || idResourceDetail<=0) {
+//					throw new Exception("IdResourceDetails undefined");
+//				}
+//				
+//				// message-part
+//				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+//				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_MEDIA);
+//				sqlQueryObject.addWhereCondition("id_resource_details=?");
+//				sqlQueryObject.setANDLogicOperator(true);
+//				updateQuery = sqlQueryObject.createSQLDelete();
+//				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse DELETE MEDIA:\n"+
+//						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idResourceDetail));
+//				updateStmt = con.prepareStatement(updateQuery);
+//				updateStmt.setLong(1, idResourceDetail);
+//				n = updateStmt.executeUpdate();
+//				updateStmt.close();
+//				
+//				// azioni
+//				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+//				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_DETAILS);
+//				sqlQueryObject.addWhereCondition("id=?");
+//				sqlQueryObject.setANDLogicOperator(true);
+//				updateQuery = sqlQueryObject.createSQLDelete();
+//				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse DELETE DETAILS:\n"+
+//						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idResourceDetail));
+//				updateStmt = con.prepareStatement(updateQuery);
+//				updateStmt.setLong(1, idResourceDetail);
+//				n = updateStmt.executeUpdate();
+//				updateStmt.close();
+//				DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
+//
+//				break;
+//			}
+//
+//
+//
+//			if (CostantiDB.CREATE == type) {
+//				selectRS = selectStmt.executeQuery();
+//				if (selectRS.next()) {
+//
+//					if(resourceRequest!=null) {
+//						resourceRequest.setId(selectRS.getLong("id"));
+//						
+//						if(resourceRequest.sizeRepresentationList()>0) {
+//							for (ResourceRepresentation rr : resourceRequest.getRepresentationList()) {
+//								
+//								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+//								sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_MEDIA);
+//								sqlQueryObject.addInsertField("id_resource_details", "?");
+//								sqlQueryObject.addInsertField("message_type", "?");
+//								updateQuery = sqlQueryObject.createSQLInsert();
+//								updateStmt = con.prepareStatement(updateQuery);
+//								int index = 1;
+//								updateStmt.setLong(index++, resourceRequest.getId());
+//								updateStmt.setString(index++, rr.getMediaType());
+//								updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rr.getMessageType()));
+//								
+//								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse CREATE :\n"+updateQuery);
+//								n = updateStmt.executeUpdate();
+//								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
+//								
+//							}
+//						}
+//					}
+//					else {
+//						resourceResponse.setId(selectRS.getLong("id"));
+//						
+//						if(resourceResponse.sizeRepresentationList()>0) {
+//							for (ResourceRepresentation rr : resourceResponse.getRepresentationList()) {
+//								
+//								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+//								sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_MEDIA);
+//								sqlQueryObject.addInsertField("id_resource_details", "?");
+//								sqlQueryObject.addInsertField("message_type", "?");
+//								updateQuery = sqlQueryObject.createSQLInsert();
+//								updateStmt = con.prepareStatement(updateQuery);
+//								int index = 1;
+//								updateStmt.setLong(index++, resourceResponse.getId());
+//								updateStmt.setString(index++, rr.getMediaType());
+//								updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rr.getMessageType()));
+//								
+//								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse CREATE :\n"+updateQuery);
+//								n = updateStmt.executeUpdate();
+//								DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse type = " + type + " row affected =" + n);
+//								
+//							}
+//						}
+//					}
+//
+//				}
+//			}
+//
+//			return n;
+//
+//		} catch (SQLException se) {
+//			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] SQLException : " + se.getMessage(),se);
+//		} catch (Exception se) {
+//			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] Exception : " + se.getMessage(),se);
+//		} finally {
+//			try {
+//				if(selectRS!=null)selectRS.close();
+//			} catch (Exception e) {
+//			}
+//			try {
+//				if(selectStmt!=null)selectStmt.close();
+//			} catch (Exception e) {
+//			}
+//			try {
+//				if(updateStmt!=null)updateStmt.close();
+//			} catch (Exception e) {
+//			}
+//		}
 	}
 	
 

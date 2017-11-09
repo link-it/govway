@@ -49,6 +49,8 @@ public class ResourceModel extends AbstractModel<Resource> {
 		this.PATH = new Field("path",java.lang.String.class,"resource",Resource.class);
 		this.METHOD = new Field("method",java.lang.String.class,"resource",Resource.class);
 		this.MESSAGE_TYPE = new Field("message-type",java.lang.String.class,"resource",Resource.class);
+		this.REQUEST_MESSAGE_TYPE = new Field("request-message-type",java.lang.String.class,"resource",Resource.class);
+		this.RESPONSE_MESSAGE_TYPE = new Field("response-message-type",java.lang.String.class,"resource",Resource.class);
 	
 	}
 	
@@ -65,6 +67,8 @@ public class ResourceModel extends AbstractModel<Resource> {
 		this.PATH = new ComplexField(father,"path",java.lang.String.class,"resource",Resource.class);
 		this.METHOD = new ComplexField(father,"method",java.lang.String.class,"resource",Resource.class);
 		this.MESSAGE_TYPE = new ComplexField(father,"message-type",java.lang.String.class,"resource",Resource.class);
+		this.REQUEST_MESSAGE_TYPE = new ComplexField(father,"request-message-type",java.lang.String.class,"resource",Resource.class);
+		this.RESPONSE_MESSAGE_TYPE = new ComplexField(father,"response-message-type",java.lang.String.class,"resource",Resource.class);
 	
 	}
 	
@@ -87,6 +91,10 @@ public class ResourceModel extends AbstractModel<Resource> {
 	public IField METHOD = null;
 	 
 	public IField MESSAGE_TYPE = null;
+	 
+	public IField REQUEST_MESSAGE_TYPE = null;
+	 
+	public IField RESPONSE_MESSAGE_TYPE = null;
 	 
 
 	@Override

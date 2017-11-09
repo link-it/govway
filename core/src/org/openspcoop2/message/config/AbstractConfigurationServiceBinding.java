@@ -21,7 +21,9 @@
 package org.openspcoop2.message.config;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 
@@ -68,6 +70,8 @@ public abstract class AbstractConfigurationServiceBinding implements Serializabl
 	}
 	
 	public abstract void init();
+	
+	public abstract List<MessageType> getMessageTypeSupported();
 	
 	public ServiceBinding getServiceBinding() {
 		return this.serviceBinding;

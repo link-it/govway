@@ -2037,142 +2037,142 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 	
 	private void readResourcesDetails(Resource resource,boolean request, Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		// Aggiungo resource
-
-		Connection con = null;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		String sqlQuery = null;
-
-		try {
-			this.log.debug("operazione atomica = " + this.atomica);
-			// prendo la connessione dal pool
-			if(conParam!=null)
-				con = conParam;
-			else if (this.atomica)
-				con = this.getConnectionFromDatasource("readResourcesDetails(request:"+request+")");
-			else
-				con = this.globalConnection;
-
-			if(resource.getId()==null || resource.getId()<=0)
-				throw new Exception("Resource id non definito");
-
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_DETAILS);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id_resource = ?");
-			sqlQueryObject.addWhereCondition("resource_type = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = con.prepareStatement(sqlQuery);
-			stm.setLong(1, resource.getId());
-			stm.setString(2, request ? CostantiDB.API_RESOURCE_DETAIL_REQUEST : CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
-
-			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, resource.getId()));
-			rs = stm.executeQuery();
-
-			if(request) {
-				
-				if(rs.next()) {
-					
-					ResourceRequest rr = new ResourceRequest();
-					
-					rr.setIdResource(resource.getId());
-					
-					String tmp = rs.getString("descrizione");
-					rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
-					
-					tmp = rs.getString("message_type");
-					rr.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
-					
-					long idRR = rs.getLong("id");
-					rr.setId(idRR);
-					
-					resource.setRequest(rr);
-				}
-				
-			}
-			else {
-				while (rs.next()) {
-					
-					ResourceResponse rr = new ResourceResponse();
-					
-					rr.setIdResource(resource.getId());
-					
-					String tmp = rs.getString("descrizione");
-					rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
-					
-					int status = rs.getInt("status");
-					if(CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED!=status) {
-						rr.setStatus(status);
-					}
-					
-					tmp = rs.getString("message_type");
-					rr.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
-					
-					long idRR = rs.getLong("id");
-					rr.setId(idRR);
-					
-					resource.addResponse(rr);
-					
-				}
-			}
-			
-			rs.close();
-			stm.close();
-			
-			
-			// Leggo media
-			
-			if(request) {
-				
-				if(resource.getRequest()!=null) {
-					
-					List<ResourceRepresentation> l = this.readResourcesMedia(resource.getRequest().getId(), con);
-					if(l!=null && l.size()<0) {
-						resource.getRequest().getRepresentationList().addAll(l);
-					}
-					
-				}
-				
-			}
-			else {
-				
-				if(resource.sizeResponseList()>0) {
-					for (ResourceResponse rr : resource.getResponseList()) {
-						List<ResourceRepresentation> l = this.readResourcesMedia(rr.getId(), con);
-						if(l!=null && l.size()<0) {
-							rr.getRepresentationList().addAll(l);
-						}
-					}
-				}
-				
-			}
-			
-
-		}catch (DriverRegistroServiziNotFound e) {
-			throw e;
-		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readResourcesDetails] Exception :" + se.getMessage(),se);
-		} finally {
-
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-			try {
-				if (conParam==null && this.atomica) {
-					this.log.debug("rilascio connessione al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-
-		}
+//		// Aggiungo resource
+//
+//		Connection con = null;
+//		PreparedStatement stm = null;
+//		ResultSet rs = null;
+//		String sqlQuery = null;
+//
+//		try {
+//			this.log.debug("operazione atomica = " + this.atomica);
+//			// prendo la connessione dal pool
+//			if(conParam!=null)
+//				con = conParam;
+//			else if (this.atomica)
+//				con = this.getConnectionFromDatasource("readResourcesDetails(request:"+request+")");
+//			else
+//				con = this.globalConnection;
+//
+//			if(resource.getId()==null || resource.getId()<=0)
+//				throw new Exception("Resource id non definito");
+//
+//			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+//			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_DETAILS);
+//			sqlQueryObject.addSelectField("*");
+//			sqlQueryObject.addWhereCondition("id_resource = ?");
+//			sqlQueryObject.addWhereCondition("resource_type = ?");
+//			sqlQueryObject.setANDLogicOperator(true);
+//			sqlQuery = sqlQueryObject.createSQLQuery();
+//			stm = con.prepareStatement(sqlQuery);
+//			stm.setLong(1, resource.getId());
+//			stm.setString(2, request ? CostantiDB.API_RESOURCE_DETAIL_REQUEST : CostantiDB.API_RESOURCE_DETAIL_RESPONSE);
+//
+//			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, resource.getId()));
+//			rs = stm.executeQuery();
+//
+//			if(request) {
+//				
+//				if(rs.next()) {
+//					
+//					ResourceRequest rr = new ResourceRequest();
+//					
+//					rr.setIdResource(resource.getId());
+//					
+//					String tmp = rs.getString("descrizione");
+//					rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
+//					
+//					tmp = rs.getString("message_type");
+//					rr.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
+//					
+//					long idRR = rs.getLong("id");
+//					rr.setId(idRR);
+//					
+//					resource.setRequest(rr);
+//				}
+//				
+//			}
+//			else {
+//				while (rs.next()) {
+//					
+//					ResourceResponse rr = new ResourceResponse();
+//					
+//					rr.setIdResource(resource.getId());
+//					
+//					String tmp = rs.getString("descrizione");
+//					rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
+//					
+//					int status = rs.getInt("status");
+//					if(CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED!=status) {
+//						rr.setStatus(status);
+//					}
+//					
+//					tmp = rs.getString("message_type");
+//					rr.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
+//					
+//					long idRR = rs.getLong("id");
+//					rr.setId(idRR);
+//					
+//					resource.addResponse(rr);
+//					
+//				}
+//			}
+//			
+//			rs.close();
+//			stm.close();
+//			
+//			
+//			// Leggo media
+//			
+//			if(request) {
+//				
+//				if(resource.getRequest()!=null) {
+//					
+//					List<ResourceRepresentation> l = this.readResourcesMedia(resource.getRequest().getId(), con);
+//					if(l!=null && l.size()<0) {
+//						resource.getRequest().getRepresentationList().addAll(l);
+//					}
+//					
+//				}
+//				
+//			}
+//			else {
+//				
+//				if(resource.sizeResponseList()>0) {
+//					for (ResourceResponse rr : resource.getResponseList()) {
+//						List<ResourceRepresentation> l = this.readResourcesMedia(rr.getId(), con);
+//						if(l!=null && l.size()<0) {
+//							rr.getRepresentationList().addAll(l);
+//						}
+//					}
+//				}
+//				
+//			}
+//			
+//
+//		}catch (DriverRegistroServiziNotFound e) {
+//			throw e;
+//		}catch (Exception se) {
+//			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readResourcesDetails] Exception :" + se.getMessage(),se);
+//		} finally {
+//
+//			try{
+//				if(rs!=null) rs.close();
+//				if(stm!=null) stm.close();
+//			}catch (Exception e) {
+//				//ignore
+//			}
+//
+//			try {
+//				if (conParam==null && this.atomica) {
+//					this.log.debug("rilascio connessione al db...");
+//					con.close();
+//				}
+//			} catch (Exception e) {
+//				// ignore
+//			}
+//
+//		}
 	}
 	
 	private List<ResourceRepresentation> readResourcesMedia(long idResourceDetail,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

@@ -40,8 +40,13 @@ public class ResourceRepresentationModel extends AbstractModel<ResourceRepresent
 	
 		super();
 	
+		this.XML = new org.openspcoop2.core.registry.model.ResourceRepresentationXmlModel(new Field("xml",org.openspcoop2.core.registry.ResourceRepresentationXml.class,"resource-representation",ResourceRepresentation.class));
+		this.JSON = new org.openspcoop2.core.registry.model.ResourceRepresentationJsonModel(new Field("json",org.openspcoop2.core.registry.ResourceRepresentationJson.class,"resource-representation",ResourceRepresentation.class));
 		this.MEDIA_TYPE = new Field("media-type",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
+		this.NOME = new Field("nome",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
+		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
 		this.MESSAGE_TYPE = new Field("message-type",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
+		this.REPRESENTATION_TYPE = new Field("representation-type",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
 	
 	}
 	
@@ -49,16 +54,31 @@ public class ResourceRepresentationModel extends AbstractModel<ResourceRepresent
 	
 		super(father);
 	
+		this.XML = new org.openspcoop2.core.registry.model.ResourceRepresentationXmlModel(new ComplexField(father,"xml",org.openspcoop2.core.registry.ResourceRepresentationXml.class,"resource-representation",ResourceRepresentation.class));
+		this.JSON = new org.openspcoop2.core.registry.model.ResourceRepresentationJsonModel(new ComplexField(father,"json",org.openspcoop2.core.registry.ResourceRepresentationJson.class,"resource-representation",ResourceRepresentation.class));
 		this.MEDIA_TYPE = new ComplexField(father,"media-type",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
+		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
+		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
 		this.MESSAGE_TYPE = new ComplexField(father,"message-type",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
+		this.REPRESENTATION_TYPE = new ComplexField(father,"representation-type",java.lang.String.class,"resource-representation",ResourceRepresentation.class);
 	
 	}
 	
 	
 
+	public org.openspcoop2.core.registry.model.ResourceRepresentationXmlModel XML = null;
+	 
+	public org.openspcoop2.core.registry.model.ResourceRepresentationJsonModel JSON = null;
+	 
 	public IField MEDIA_TYPE = null;
 	 
+	public IField NOME = null;
+	 
+	public IField DESCRIZIONE = null;
+	 
 	public IField MESSAGE_TYPE = null;
+	 
+	public IField REPRESENTATION_TYPE = null;
 	 
 
 	@Override

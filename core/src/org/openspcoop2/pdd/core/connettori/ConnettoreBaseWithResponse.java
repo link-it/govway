@@ -149,9 +149,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		String msgErrore = null;
 		Exception exErrore = null;
 		try{
-			messageTypeResponse = this.requestInfo.getBindingConfig().getMessageType(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
+			messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
 					this.requestMsg.getTransportRequestContext(),
-					this.tipoRisposta);				
+					this.tipoRisposta, 
+					this.codice>0?this.codice:null);				
 			if(messageTypeResponse==null){
 				String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
 						this.requestMsg.getTransportRequestContext());
@@ -269,9 +270,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						msgErrore = "Header Content-Type non definito nell'http reply";
 					}
 					else{
-						messageTypeResponse = this.requestInfo.getBindingConfig().getMessageType(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
+						messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
 								this.requestMsg.getTransportRequestContext(),
-								this.tipoRisposta);				
+								this.tipoRisposta, 
+								this.codice>0?this.codice:null);
 					}	
 				
 					if(messageTypeResponse==null){

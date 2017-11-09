@@ -20,7 +20,6 @@
 
 package org.openspcoop2.protocol.basic.archive;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -29,17 +28,24 @@ import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.BindingOperation;
+import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRepresentation;
+import org.openspcoop2.core.registry.ResourceRepresentationJson;
+import org.openspcoop2.core.registry.ResourceRepresentationXml;
 import org.openspcoop2.core.registry.ResourceRequest;
+import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.HttpMethod;
+import org.openspcoop2.core.registry.constants.ParameterType;
+import org.openspcoop2.core.registry.constants.RepresentationType;
+import org.openspcoop2.core.registry.constants.RepresentationXmlType;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -63,20 +69,24 @@ import org.openspcoop2.protocol.sdk.archive.MappingModeTypesExtensions;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiBodyParameter;
+import org.openspcoop2.utils.rest.api.ApiCookieParameter;
+import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
-import org.openspcoop2.utils.rest.api.ApiRequestBodyParameter;
+import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
+import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
+import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
-import org.openspcoop2.utils.swagger.Test;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -348,7 +358,6 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	        	 for (ApiOperation apiOp : api.getOperations()) {
 					
 					// cerco resource
-					boolean foundResource = false;
 					Resource resourceOpenSPCoop = null;
 					for (Resource resourceCheck : accordoServizioParteComune.getResourceList()) {
 						if(resourceCheck.getPath()!=null && resourceCheck.getMethod()!=null) {
@@ -356,7 +365,6 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							if(resourceCheck.getPath().equals(apiOp.getPath()) && 
 									httpMethodCheck!=null &&
 									httpMethodCheck.equals(apiOp.getHttpMethod())) {
-								foundResource = true;
 								resourceOpenSPCoop = resourceCheck;
 								break;
 							}
@@ -370,6 +378,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						resourceOpenSPCoop.setDescrizione(apiOp.getDescription());	
 						resourceOpenSPCoop.setMethod(HttpMethod.toEnumConstant(apiOp.getHttpMethod().name()));
 						resourceOpenSPCoop.setPath(apiOp.getPath());
+						accordoServizioParteComune.addResource(resourceOpenSPCoop);
 					}
 
 					// Richiesta
@@ -377,60 +386,309 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						resourceOpenSPCoop.setRequest(new ResourceRequest());
 					}
 					if(apiOp.getRequest()!=null) {
+						
 						if(apiOp.getRequest().sizeBodyParameters()>0) {
-							for (ApiRequestBodyParameter body : apiOp.getRequest().getBodyParameters()) {
+							for (ApiBodyParameter body : apiOp.getRequest().getBodyParameters()) {
 								String mediaType = body.getMediaType();
-								if(mediaType!=null) {
-									boolean foundMediaType = false;
-									if(resourceOpenSPCoop.getRequest().sizeRepresentationList()>0) {
-										for (ResourceRepresentation rr : resourceOpenSPCoop.getRequest().getRepresentationList()) {
-											if(mediaType.equals(rr.getMediaType())) {
-												foundMediaType = true;
-											}
-										}
+								ResourceRepresentation rr = null;
+								for (ResourceRepresentation rrCheck : resourceOpenSPCoop.getRequest().getRepresentationList()) {
+									if(mediaType.equals(rrCheck.getMediaType())) {
+										rr = rrCheck;
+										break;
 									}
-									if(!foundMediaType) {
-										ResourceRepresentation rrNew = new ResourceRepresentation();
-										rrNew.setMediaType(mediaType);
-										resourceOpenSPCoop.getRequest().addRepresentation(rrNew);;
+								}
+								if(rr==null) {
+									rr = new ResourceRepresentation();
+									rr.setMediaType(mediaType);
+									resourceOpenSPCoop.getRequest().addRepresentation(rr);
+								}
+								rr.setNome(body.getName());
+								rr.setDescrizione(body.getDescription());
+								if(body.getElement()!=null) {
+									if(body.getElement() instanceof QName) {
+										QName qname = (QName)body.getElement();
+										rr.setRepresentationType(RepresentationType.XML);
+										ResourceRepresentationXml xml = new ResourceRepresentationXml();
+										xml.setXmlType(RepresentationXmlType.ELEMENT);
+										xml.setNome(qname.getLocalPart());
+										xml.setNamespace(qname.getNamespaceURI());
+										rr.setXml(xml);
 									}
+									else if(body.getElement() instanceof String) {
+										String jsonType = (String)body.getElement();
+										rr.setRepresentationType(RepresentationType.JSON);
+										ResourceRepresentationJson json = new ResourceRepresentationJson();
+										json.setTipo(jsonType);
+										rr.setJson(json);
+									}
+									else {
+										rr.setRepresentationType(null);
+										rr.setJson(null);
+										rr.setXml(null);
+									}
+								}
+								else {
+									rr.setRepresentationType(null);
+									rr.setJson(null);
+									rr.setXml(null);
 								}
 							}
 						}
+
+						if(apiOp.getRequest().sizeCookieParameters()>0) {
+							for (ApiCookieParameter cookie : apiOp.getRequest().getCookieParameters()) {
+								String nome = cookie.getName();
+								ResourceParameter rp = null;
+								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
+									if(ParameterType.COOKIE.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
+										rp = rpCheck;
+										break;
+									}
+								}
+								if(rp==null) {
+									rp = new ResourceParameter();
+									rp.setParameterType(ParameterType.COOKIE);
+									rp.setNome(cookie.getName());
+									resourceOpenSPCoop.getRequest().addParameter(rp);
+								}
+								rp.setDescrizione(cookie.getDescription());
+								rp.setRequired(cookie.isRequired());
+								rp.setTipo(cookie.getType());
+							}							
+						}
+						
+						if(apiOp.getRequest().sizeDynamicPathParameters()>0) {
+							for (ApiRequestDynamicPathParameter dynamicPath : apiOp.getRequest().getDynamicPathParameters()) {
+								String nome = dynamicPath.getName();
+								ResourceParameter rp = null;
+								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
+									if(ParameterType.DYNAMIC_PATH.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
+										rp = rpCheck;
+										break;
+									}
+								}
+								if(rp==null) {
+									rp = new ResourceParameter();
+									rp.setParameterType(ParameterType.DYNAMIC_PATH);
+									rp.setNome(dynamicPath.getName());
+									resourceOpenSPCoop.getRequest().addParameter(rp);
+								}
+								rp.setDescrizione(dynamicPath.getDescription());
+								rp.setRequired(dynamicPath.isRequired());
+								rp.setTipo(dynamicPath.getType());
+							}							
+						}
+						
+						if(apiOp.getRequest().sizeFormParameters()>0) {
+							for (ApiRequestFormParameter form : apiOp.getRequest().getFormParameters()) {
+								String nome = form.getName();
+								ResourceParameter rp = null;
+								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
+									if(ParameterType.FORM.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
+										rp = rpCheck;
+										break;
+									}
+								}
+								if(rp==null) {
+									rp = new ResourceParameter();
+									rp.setParameterType(ParameterType.FORM);
+									rp.setNome(form.getName());
+									resourceOpenSPCoop.getRequest().addParameter(rp);
+								}
+								rp.setDescrizione(form.getDescription());
+								rp.setRequired(form.isRequired());
+								rp.setTipo(form.getType());
+							}							
+						}
+						
+						if(apiOp.getRequest().sizeHeaderParameters()>0) {
+							for (ApiHeaderParameter header : apiOp.getRequest().getHeaderParameters()) {
+								String nome = header.getName();
+								ResourceParameter rp = null;
+								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
+									if(ParameterType.HEADER.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
+										rp = rpCheck;
+										break;
+									}
+								}
+								if(rp==null) {
+									rp = new ResourceParameter();
+									rp.setParameterType(ParameterType.HEADER);
+									rp.setNome(header.getName());
+									resourceOpenSPCoop.getRequest().addParameter(rp);
+								}
+								rp.setDescrizione(header.getDescription());
+								rp.setRequired(header.isRequired());
+								rp.setTipo(header.getType());
+							}							
+						}
+						
+						if(apiOp.getRequest().sizeQueryParameters()>0) {
+							for (ApiRequestQueryParameter query : apiOp.getRequest().getQueryParameters()) {
+								String nome = query.getName();
+								ResourceParameter rp = null;
+								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
+									if(ParameterType.QUERY.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
+										rp = rpCheck;
+										break;
+									}
+								}
+								if(rp==null) {
+									rp = new ResourceParameter();
+									rp.setParameterType(ParameterType.QUERY);
+									rp.setNome(query.getName());
+									resourceOpenSPCoop.getRequest().addParameter(rp);
+								}
+								rp.setDescrizione(query.getDescription());
+								rp.setRequired(query.isRequired());
+								rp.setTipo(query.getType());
+							}							
+						}
+						
 					}
 					
-//					// Risposta
-//					if(apiOp.sizeResponses()>0) {
-//						for (ApiResponse apiResponse : apiOp.getResponses()) {
-//							
-//							int status = apiResponse.getHttpReturnCode();
-//							
-//							if(apiResponse..sizeBodyParameters()>0) {
-//								for (ApiRequestBodyParameter body : apiOp.getRequest().getBodyParameters()) {
-//									String mediaType = body.getMediaType();
-//									if(mediaType!=null) {
-//										boolean foundMediaType = false;
-//										if(resourceOpenSPCoop.getRequest().sizeRepresentationList()>0) {
-//											for (ResourceRepresentation rr : resourceOpenSPCoop.getRequest().getRepresentationList()) {
-//												if(mediaType.equals(rr.getMediaType())) {
-//													foundMediaType = true;
-//												}
-//											}
-//										}
-//										if(!foundMediaType) {
-//											ResourceRepresentation rrNew = new ResourceRepresentation();
-//											rrNew.setMediaType(mediaType);
-//											resourceOpenSPCoop.getRequest().addRepresentation(rrNew);;
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
+					// Risposta
+					if(apiOp.sizeResponses()>0) {
+						for (ApiResponse apiResponse : apiOp.getResponses()) {
+							
+							int status = apiResponse.getHttpReturnCode();
+							ResourceResponse resourceOpenSPCoopResponse = null;
+							for (ResourceResponse resourceCheck : resourceOpenSPCoop.getResponseList()) {
+								if(status == resourceCheck.getStatus()) {
+									resourceOpenSPCoopResponse = resourceCheck;
+									break;
+								}
+							}
+							if(resourceOpenSPCoopResponse==null) {
+								resourceOpenSPCoopResponse = new ResourceResponse();
+								resourceOpenSPCoopResponse.setStatus(apiResponse.getHttpReturnCode());
+								resourceOpenSPCoop.addResponse(resourceOpenSPCoopResponse);
+							}
+							resourceOpenSPCoopResponse.setDescrizione(apiResponse.getDescription());
+							
+							if(apiResponse.sizeBodyParameters()>0) {
+								for (ApiBodyParameter body : apiResponse.getBodyParameters()) {
+									String mediaType = body.getMediaType();
+									ResourceRepresentation rr = null;
+									for (ResourceRepresentation rrCheck : resourceOpenSPCoopResponse.getRepresentationList()) {
+										if(mediaType.equals(rrCheck.getMediaType())) {
+											rr = rrCheck;
+											break;
+										}
+									}
+									if(rr==null) {
+										rr = new ResourceRepresentation();
+										rr.setMediaType(mediaType);
+										resourceOpenSPCoopResponse.addRepresentation(rr);
+									}
+									rr.setNome(body.getName());
+									rr.setDescrizione(body.getDescription());
+									if(body.getElement()!=null) {
+										if(body.getElement() instanceof QName) {
+											QName qname = (QName)body.getElement();
+											rr.setRepresentationType(RepresentationType.XML);
+											ResourceRepresentationXml xml = new ResourceRepresentationXml();
+											xml.setXmlType(RepresentationXmlType.ELEMENT);
+											xml.setNome(qname.getLocalPart());
+											xml.setNamespace(qname.getNamespaceURI());
+											rr.setXml(xml);
+										}
+										else if(body.getElement() instanceof String) {
+											String jsonType = (String)body.getElement();
+											rr.setRepresentationType(RepresentationType.JSON);
+											ResourceRepresentationJson json = new ResourceRepresentationJson();
+											json.setTipo(jsonType);
+											rr.setJson(json);
+										}
+										else {
+											rr.setRepresentationType(null);
+											rr.setJson(null);
+											rr.setXml(null);
+										}
+									}
+									else {
+										rr.setRepresentationType(null);
+										rr.setJson(null);
+										rr.setXml(null);
+									}
+								}
+							}
+							
+							if(apiResponse.sizeCookieParameters()>0) {
+								for (ApiCookieParameter cookie : apiResponse.getCookieParameters()) {
+									String nome = cookie.getName();
+									ResourceParameter rp = null;
+									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
+										if(ParameterType.COOKIE.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
+											rp = rpCheck;
+											break;
+										}
+									}
+									if(rp==null) {
+										rp = new ResourceParameter();
+										rp.setParameterType(ParameterType.COOKIE);
+										rp.setNome(cookie.getName());
+										resourceOpenSPCoopResponse.addParameter(rp);
+									}
+									rp.setDescrizione(cookie.getDescription());
+									rp.setRequired(cookie.isRequired());
+									rp.setTipo(cookie.getType());
+								}							
+							}
+							
+							if(apiResponse.sizeHeaderParameters()>0) {
+								for (ApiHeaderParameter header : apiResponse.getHeaderParameters()) {
+									String nome = header.getName();
+									ResourceParameter rp = null;
+									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
+										if(ParameterType.HEADER.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
+											rp = rpCheck;
+											break;
+										}
+									}
+									if(rp==null) {
+										rp = new ResourceParameter();
+										rp.setParameterType(ParameterType.HEADER);
+										rp.setNome(header.getName());
+										resourceOpenSPCoopResponse.addParameter(rp);
+									}
+									rp.setDescrizione(header.getDescription());
+									rp.setRequired(header.isRequired());
+									rp.setTipo(header.getType());
+								}							
+							}
+						}
+					}
 				}
 	         }
 	         
-//	         FILTRO PER NOMI UNIVOCI
+	         //	Check nomi univoci delle risorse
+	         if(accordoServizioParteComune.sizeResourceList()>0) {
+	        	 boolean foundEquals = true;
+	        	 while (foundEquals) {
+	        		 foundEquals = false;
+	        		 
+	        		 for (int i = 0; i < accordoServizioParteComune.sizeResourceList(); i++) {
+		        		 Resource resource = accordoServizioParteComune.getResource(i);
+		        		 List<Resource> lR = new ArrayList<>();
+		        		 for (Resource resourceCheck : accordoServizioParteComune.getResourceList()) {
+		        			 if(resourceCheck.getNome().equals(resource.getNome())) {
+		        				 lR.add(resourceCheck);
+		        			 }
+		        		 }
+		        		 if(lR.size()>1) {
+		        			 for (int j = 0; j < lR.size(); j++) {
+		        				 Resource resourceDaModificare = lR.get(j);
+		        				 String newName = resourceDaModificare.getNome().substring(0, 250)+"_"+(j+1);
+		        				 resourceDaModificare.setNome(newName);
+		        			 }
+		        			 foundEquals = true;
+		        		 }
+		        	 }
+	        	 }
+	        	 
+	         }
+
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);

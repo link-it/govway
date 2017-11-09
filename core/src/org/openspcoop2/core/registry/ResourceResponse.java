@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.openspcoop2.core.registry.constants.MessageType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +38,12 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="resource-response">
  * 		&lt;sequence>
+ * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/registry}resource-parameter" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="representation" type="{http://www.openspcoop2.org/core/registry}resource-representation" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-resource" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
+ * 		&lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -57,6 +56,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-response", 
   propOrder = {
+  	"parameter",
   	"representation"
   }
 )
@@ -79,6 +79,30 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
 		this.id=id;
 	else
 		this.id=new Long(-1);
+  }
+
+  public void addParameter(ResourceParameter parameter) {
+    this.parameter.add(parameter);
+  }
+
+  public ResourceParameter getParameter(int index) {
+    return this.parameter.get( index );
+  }
+
+  public ResourceParameter removeParameter(int index) {
+    return this.parameter.remove( index );
+  }
+
+  public List<ResourceParameter> getParameterList() {
+    return this.parameter;
+  }
+
+  public void setParameterList(List<ResourceParameter> parameter) {
+    this.parameter=parameter;
+  }
+
+  public int sizeParameterList() {
+    return this.parameter.size();
   }
 
   public void addRepresentation(ResourceRepresentation representation) {
@@ -121,32 +145,12 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
     this.descrizione = descrizione;
   }
 
-  public java.lang.Integer getStatus() {
+  public int getStatus() {
     return this.status;
   }
 
-  public void setStatus(java.lang.Integer status) {
+  public void setStatus(int status) {
     this.status = status;
-  }
-
-  public void set_value_messageType(String value) {
-    this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
-  }
-
-  public String get_value_messageType() {
-    if(this.messageType == null){
-    	return null;
-    }else{
-    	return this.messageType.toString();
-    }
-  }
-
-  public org.openspcoop2.core.registry.constants.MessageType getMessageType() {
-    return this.messageType;
-  }
-
-  public void setMessageType(org.openspcoop2.core.registry.constants.MessageType messageType) {
-    this.messageType = messageType;
   }
 
   private static final long serialVersionUID = 1L;
@@ -155,6 +159,36 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
   private Long id;
 
 
+
+  @XmlElement(name="parameter",required=true,nillable=false)
+  protected List<ResourceParameter> parameter = new ArrayList<ResourceParameter>();
+
+  /**
+   * @deprecated Use method getParameterList
+   * @return List<ResourceParameter>
+  */
+  @Deprecated
+  public List<ResourceParameter> getParameter() {
+  	return this.parameter;
+  }
+
+  /**
+   * @deprecated Use method setParameterList
+   * @param parameter List<ResourceParameter>
+  */
+  @Deprecated
+  public void setParameter(List<ResourceParameter> parameter) {
+  	this.parameter=parameter;
+  }
+
+  /**
+   * @deprecated Use method sizeParameterList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeParameter() {
+  	return this.parameter.size();
+  }
 
   @XmlElement(name="representation",required=true,nillable=false)
   protected List<ResourceRepresentation> representation = new ArrayList<ResourceRepresentation>();
@@ -193,14 +227,8 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlAttribute(name="status",required=false)
-  protected java.lang.Integer status;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
-
-  @XmlAttribute(name="message-type",required=false)
-  protected MessageType messageType;
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlAttribute(name="status",required=true)
+  protected int status;
 
 }

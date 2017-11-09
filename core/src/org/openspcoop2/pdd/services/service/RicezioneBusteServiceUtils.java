@@ -24,7 +24,6 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
-import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
@@ -167,11 +166,11 @@ public class RicezioneBusteServiceUtils {
 				
 				// Aggiorno message type
 				try{
-					MessageType requestMessageTypeIntegration = bindingConfig.getMessageType(integrationServiceBinding, MessageRole.REQUEST, 
+					MessageType requestMessageTypeIntegration = bindingConfig.getRequestMessageType(integrationServiceBinding, 
 							protocolContext, protocolContext.getContentType());
 					requestInfo.setIntegrationRequestMessageType(requestMessageTypeIntegration);
 					
-					MessageType requestMessageTypeProtocol = bindingConfig.getMessageType(protocolServiceBinding, MessageRole.REQUEST, 
+					MessageType requestMessageTypeProtocol = bindingConfig.getRequestMessageType(protocolServiceBinding, 
 							protocolContext, protocolContext.getContentType());
 					requestInfo.setProtocolRequestMessageType(requestMessageTypeProtocol);
 					

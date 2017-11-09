@@ -19,6 +19,9 @@
     		<mediaTypeCollection>
     			<mediaType messageType="soap11">text/xml</mediaType>
     		</mediaTypeCollection>
+    		<interfaces>
+    			<specification type="wsdl" schema="true" conversations="true"/>
+    		</interfaces>
     		<soapHeaderBypassMustUnderstand>
 	    		<header>
 	    			<localName>Intestazione</localName>
@@ -49,7 +52,7 @@
             </types>
         </organization>
 
-        <service wsdlSchema="true" conversations="true">
+        <service>
             <types>
                 <type name="SPC"/>
                 <type name="TEST"/>

@@ -21,12 +21,10 @@ package org.openspcoop2.core.registry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.openspcoop2.core.registry.constants.MessageType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +37,10 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="resource-request">
  * 		&lt;sequence>
+ * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/registry}resource-parameter" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="representation" type="{http://www.openspcoop2.org/core/registry}resource-representation" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-resource" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -56,6 +53,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-request", 
   propOrder = {
+  	"parameter",
   	"representation"
   }
 )
@@ -78,6 +76,30 @@ public class ResourceRequest extends org.openspcoop2.utils.beans.BaseBean implem
 		this.id=id;
 	else
 		this.id=new Long(-1);
+  }
+
+  public void addParameter(ResourceParameter parameter) {
+    this.parameter.add(parameter);
+  }
+
+  public ResourceParameter getParameter(int index) {
+    return this.parameter.get( index );
+  }
+
+  public ResourceParameter removeParameter(int index) {
+    return this.parameter.remove( index );
+  }
+
+  public List<ResourceParameter> getParameterList() {
+    return this.parameter;
+  }
+
+  public void setParameterList(List<ResourceParameter> parameter) {
+    this.parameter=parameter;
+  }
+
+  public int sizeParameterList() {
+    return this.parameter.size();
   }
 
   public void addRepresentation(ResourceRepresentation representation) {
@@ -112,40 +134,42 @@ public class ResourceRequest extends org.openspcoop2.utils.beans.BaseBean implem
     this.idResource = idResource;
   }
 
-  public java.lang.String getDescrizione() {
-    return this.descrizione;
-  }
-
-  public void setDescrizione(java.lang.String descrizione) {
-    this.descrizione = descrizione;
-  }
-
-  public void set_value_messageType(String value) {
-    this.messageType = (MessageType) MessageType.toEnumConstantFromString(value);
-  }
-
-  public String get_value_messageType() {
-    if(this.messageType == null){
-    	return null;
-    }else{
-    	return this.messageType.toString();
-    }
-  }
-
-  public org.openspcoop2.core.registry.constants.MessageType getMessageType() {
-    return this.messageType;
-  }
-
-  public void setMessageType(org.openspcoop2.core.registry.constants.MessageType messageType) {
-    this.messageType = messageType;
-  }
-
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
   private Long id;
 
 
+
+  @XmlElement(name="parameter",required=true,nillable=false)
+  protected List<ResourceParameter> parameter = new ArrayList<ResourceParameter>();
+
+  /**
+   * @deprecated Use method getParameterList
+   * @return List<ResourceParameter>
+  */
+  @Deprecated
+  public List<ResourceParameter> getParameter() {
+  	return this.parameter;
+  }
+
+  /**
+   * @deprecated Use method setParameterList
+   * @param parameter List<ResourceParameter>
+  */
+  @Deprecated
+  public void setParameter(List<ResourceParameter> parameter) {
+  	this.parameter=parameter;
+  }
+
+  /**
+   * @deprecated Use method sizeParameterList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeParameter() {
+  	return this.parameter.size();
+  }
 
   @XmlElement(name="representation",required=true,nillable=false)
   protected List<ResourceRepresentation> representation = new ArrayList<ResourceRepresentation>();
@@ -179,15 +203,5 @@ public class ResourceRequest extends org.openspcoop2.utils.beans.BaseBean implem
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idResource;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="descrizione",required=false)
-  protected java.lang.String descrizione;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_messageType;
-
-  @XmlAttribute(name="message-type",required=false)
-  protected MessageType messageType;
 
 }

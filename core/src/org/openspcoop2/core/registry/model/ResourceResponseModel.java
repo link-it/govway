@@ -40,11 +40,11 @@ public class ResourceResponseModel extends AbstractModel<ResourceResponse> {
 	
 		super();
 	
+		this.PARAMETER = new org.openspcoop2.core.registry.model.ResourceParameterModel(new Field("parameter",org.openspcoop2.core.registry.ResourceParameter.class,"resource-response",ResourceResponse.class));
 		this.REPRESENTATION = new org.openspcoop2.core.registry.model.ResourceRepresentationModel(new Field("representation",org.openspcoop2.core.registry.ResourceRepresentation.class,"resource-response",ResourceResponse.class));
 		this.ID_RESOURCE = new Field("id-resource",java.lang.Long.class,"resource-response",ResourceResponse.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"resource-response",ResourceResponse.class);
-		this.STATUS = new Field("status",java.lang.Integer.class,"resource-response",ResourceResponse.class);
-		this.MESSAGE_TYPE = new Field("message-type",java.lang.String.class,"resource-response",ResourceResponse.class);
+		this.STATUS = new Field("status",int.class,"resource-response",ResourceResponse.class);
 	
 	}
 	
@@ -52,16 +52,18 @@ public class ResourceResponseModel extends AbstractModel<ResourceResponse> {
 	
 		super(father);
 	
+		this.PARAMETER = new org.openspcoop2.core.registry.model.ResourceParameterModel(new ComplexField(father,"parameter",org.openspcoop2.core.registry.ResourceParameter.class,"resource-response",ResourceResponse.class));
 		this.REPRESENTATION = new org.openspcoop2.core.registry.model.ResourceRepresentationModel(new ComplexField(father,"representation",org.openspcoop2.core.registry.ResourceRepresentation.class,"resource-response",ResourceResponse.class));
 		this.ID_RESOURCE = new ComplexField(father,"id-resource",java.lang.Long.class,"resource-response",ResourceResponse.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"resource-response",ResourceResponse.class);
-		this.STATUS = new ComplexField(father,"status",java.lang.Integer.class,"resource-response",ResourceResponse.class);
-		this.MESSAGE_TYPE = new ComplexField(father,"message-type",java.lang.String.class,"resource-response",ResourceResponse.class);
+		this.STATUS = new ComplexField(father,"status",int.class,"resource-response",ResourceResponse.class);
 	
 	}
 	
 	
 
+	public org.openspcoop2.core.registry.model.ResourceParameterModel PARAMETER = null;
+	 
 	public org.openspcoop2.core.registry.model.ResourceRepresentationModel REPRESENTATION = null;
 	 
 	public IField ID_RESOURCE = null;
@@ -69,8 +71,6 @@ public class ResourceResponseModel extends AbstractModel<ResourceResponse> {
 	public IField DESCRIZIONE = null;
 	 
 	public IField STATUS = null;
-	 
-	public IField MESSAGE_TYPE = null;
 	 
 
 	@Override

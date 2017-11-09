@@ -51,10 +51,12 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLDiff;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -152,11 +154,11 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public boolean showWsdlDefinitorio(String tipoSoggetto,SoggettiCore soggettiCore) throws DriverRegistroServiziException{
+	public boolean showWsdlDefinitorio(String tipoSoggetto,SoggettiCore soggettiCore, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
 		String nomeMetodo = "showWsdlDefinitorio";
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
-			return this.showWsdlDefinitorio(protocollo);
+			return this.showWsdlDefinitorio(protocollo,serviceBinding, interfaceType);
 
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -164,12 +166,12 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean showWsdlDefinitorio(String protocollo) throws DriverRegistroServiziException{
+	public boolean showWsdlDefinitorio(String protocollo, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
 		String nomeMetodo = "showWsdlDefinitorio";
 		try {
 
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			return protocol.createProtocolConfiguration().isSupportoWsdlDefinitorio();
+			return protocol.createProtocolConfiguration().isSupportoSchemaEsternoInterfaccia(serviceBinding, interfaceType);
 
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -177,12 +179,12 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean showConversazioni(String tipoSoggetto,SoggettiCore soggettiCore) throws DriverRegistroServiziException{
+	public boolean showConversazioni(String tipoSoggetto,SoggettiCore soggettiCore, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
 		String nomeMetodo = "showConversazioni";
 		try {
 
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
-			return this.showConversazioni(protocollo);
+			return this.showConversazioni(protocollo,serviceBinding,interfaceType);
 
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -190,12 +192,12 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean showConversazioni(String protocollo) throws DriverRegistroServiziException{
+	public boolean showConversazioni(String protocollo, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
 		String nomeMetodo = "showConversazioni";
 		try {
 
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			return protocol.createProtocolConfiguration().isSupportoSpecificaConversazioni();
+			return protocol.createProtocolConfiguration().isSupportoSpecificaConversazioni(serviceBinding,interfaceType);
 
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

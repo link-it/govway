@@ -27,14 +27,17 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.manifest.Binding;
 import org.openspcoop2.protocol.manifest.CollaborationProfile;
 import org.openspcoop2.protocol.manifest.Functionality;
+import org.openspcoop2.protocol.manifest.InterfaceConfiguration;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.OrganizationType;
 import org.openspcoop2.protocol.manifest.Registry;
 import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader;
 import org.openspcoop2.protocol.manifest.Version;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -54,12 +57,14 @@ import org.openspcoop2.utils.transport.TransportRequestContext;
 public class BasicConfiguration extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.config.IProtocolConfiguration {
 
 	private Registry registroManifest;
+	private Binding bindingManifest;
 	private Openspcoop2 manifest;
 
 	public BasicConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 		this.manifest = this.protocolFactory.getManifest();
 		this.registroManifest = this.manifest.getRegistry();
+		this.bindingManifest = this.manifest.getBinding();
 	}
 	
 
@@ -87,6 +92,90 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public List<InterfaceType> getInterfacceSupportate(ServiceBinding serviceBinding){
+		List<InterfaceType> list = new ArrayList<InterfaceType>();
+		switch (serviceBinding) {
+		case SOAP:
+			if(this.bindingManifest.getSoap()!=null && 
+				this.bindingManifest.getSoap().getInterfaces()!=null &&
+				this.bindingManifest.getSoap().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getSoap().getInterfaces().getSpecificationList()) {
+					list.add(interfaceConfiguration.getType());
+				}
+			}
+			break;
+		case REST:
+			if(this.bindingManifest.getRest()!=null && 
+				this.bindingManifest.getRest().getInterfaces()!=null &&
+				this.bindingManifest.getRest().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getRest().getInterfaces().getSpecificationList()) {
+					list.add(interfaceConfiguration.getType());
+				}
+			}
+			break;
+		}
+		return list;
+	}
+	
+	@Override
+	public boolean isSupportoSchemaEsternoInterfaccia(ServiceBinding serviceBinding, InterfaceType interfaceType) {
+		switch (serviceBinding) {
+		case SOAP:
+			if(this.bindingManifest.getSoap()!=null && 
+				this.bindingManifest.getSoap().getInterfaces()!=null &&
+				this.bindingManifest.getSoap().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getSoap().getInterfaces().getSpecificationList()) {
+					if(interfaceType.equals(interfaceConfiguration.getType())) {
+						return interfaceConfiguration.isSchema();
+					}
+				}
+			}
+			break;
+		case REST:
+			if(this.bindingManifest.getRest()!=null && 
+				this.bindingManifest.getRest().getInterfaces()!=null &&
+				this.bindingManifest.getRest().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getRest().getInterfaces().getSpecificationList()) {
+					if(interfaceType.equals(interfaceConfiguration.getType())) {
+						return interfaceConfiguration.isSchema();
+					}
+				}
+			}
+			break;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isSupportoSpecificaConversazioni(ServiceBinding serviceBinding, InterfaceType interfaceType) {
+		switch (serviceBinding) {
+		case SOAP:
+			if(this.bindingManifest.getSoap()!=null && 
+				this.bindingManifest.getSoap().getInterfaces()!=null &&
+				this.bindingManifest.getSoap().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getSoap().getInterfaces().getSpecificationList()) {
+					if(interfaceType.equals(interfaceConfiguration.getType())) {
+						return interfaceConfiguration.isConversations();
+					}
+				}
+			}
+			break;
+		case REST:
+			if(this.bindingManifest.getRest()!=null && 
+				this.bindingManifest.getRest().getInterfaces()!=null &&
+				this.bindingManifest.getRest().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getRest().getInterfaces().getSpecificationList()) {
+					if(interfaceType.equals(interfaceConfiguration.getType())) {
+						return interfaceConfiguration.isConversations();
+					}
+				}
+			}
+			break;
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean isSupportoAutenticazioneSoggetti() {
 		return this.registroManifest.getOrganization().getAuthentication();
 	}
@@ -100,17 +189,7 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	public boolean isSupportoIndirizzoRisposta(){
 		return this.registroManifest.getOrganization().isReplyToAddress();
 	}
-	
-	@Override
-	public boolean isSupportoWsdlDefinitorio(){
-		return this.registroManifest.getService().isWsdlSchema();
-	}
-	
-	@Override
-	public boolean isSupportoSpecificaConversazioni(){
-		return this.registroManifest.getService().isConversations();
-	}
-		
+			
 	@Override
 	public List<String> getTipiSoggetti() throws ProtocolException {
 		List<String> tipi = new ArrayList<String>();

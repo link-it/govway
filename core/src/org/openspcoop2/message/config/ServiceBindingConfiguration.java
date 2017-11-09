@@ -249,16 +249,30 @@ public class ServiceBindingConfiguration implements Serializable {
 		return bf.toString();
 	}
 	
-	public MessageType getMessageType(ServiceBinding serviceBinding, MessageRole messageRole, 
+	public MessageType getRequestMessageType(ServiceBinding serviceBinding, 
 			TransportRequestContext transportContext, 
 			String contentType) throws MessageException{
+		return this.getMessageType(serviceBinding, MessageRole.REQUEST, 
+				transportContext.getProtocolWebContext(), transportContext.getFunction(), transportContext.getFunctionParameters(), 
+				contentType, null);
+	}
+	public MessageType getResponseMessageType(ServiceBinding serviceBinding, 
+			TransportRequestContext transportContext, 
+			String contentType, Integer status) throws MessageException{
+		return this.getMessageType(serviceBinding, MessageRole.RESPONSE, 
+				transportContext.getProtocolWebContext(), transportContext.getFunction(), transportContext.getFunctionParameters(), 
+				contentType, status);
+	}
+	public MessageType getMessageType(ServiceBinding serviceBinding, MessageRole messageRole, 
+			TransportRequestContext transportContext, 
+			String contentType, Integer status) throws MessageException{
 		return this.getMessageType(serviceBinding, messageRole, 
 				transportContext.getProtocolWebContext(), transportContext.getFunction(), transportContext.getFunctionParameters(), 
-				contentType);
+				contentType, status);
 	}
 	public MessageType getMessageType(ServiceBinding serviceBinding, MessageRole messageRole, 
 			String protocol, String function, String functionParameters, 
-			String contentType) throws MessageException{
+			String contentType, Integer status) throws MessageException{
 		
 		if(serviceBinding==null){
 			throw new MessageException("ServiceBinding not defined");
@@ -339,7 +353,7 @@ public class ServiceBindingConfiguration implements Serializable {
 				}
 			}
 					
-			messageType = mediaTypeCollecton.getMessageProcessor(mediaType); // può essere null
+			messageType = mediaTypeCollecton.getMessageProcessor(mediaType,status); // può essere null
 			return messageType;
 		}
 		finally{

@@ -21,7 +21,6 @@ package org.openspcoop2.protocol.manifest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -39,8 +38,6 @@ import java.io.Serializable;
  * 			&lt;element name="profile" type="{http://www.openspcoop2.org/protocol/manifest}CollaborationProfile" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="functionality" type="{http://www.openspcoop2.org/protocol/manifest}Functionality" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="wsdlSchema" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="conversations" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -89,30 +86,6 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.functionality = functionality;
   }
 
-  public boolean isWsdlSchema() {
-    return this.wsdlSchema;
-  }
-
-  public boolean getWsdlSchema() {
-    return this.wsdlSchema;
-  }
-
-  public void setWsdlSchema(boolean wsdlSchema) {
-    this.wsdlSchema = wsdlSchema;
-  }
-
-  public boolean isConversations() {
-    return this.conversations;
-  }
-
-  public boolean getConversations() {
-    return this.conversations;
-  }
-
-  public void setConversations(boolean conversations) {
-    this.conversations = conversations;
-  }
-
   private static final long serialVersionUID = 1L;
 
 
@@ -125,13 +98,5 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   @XmlElement(name="functionality",required=false,nillable=false)
   protected Functionality functionality;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlAttribute(name="wsdlSchema",required=false)
-  protected boolean wsdlSchema = false;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlAttribute(name="conversations",required=false)
-  protected boolean conversations = false;
 
 }

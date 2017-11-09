@@ -209,31 +209,54 @@
 		<xsd:attribute name="path" type="xsd:string" use="optional"/>
 		<xsd:attribute name="method" type="HttpMethod" use="optional"/>
 		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
+		<xsd:attribute name="request-message-type" type="MessageType" use="optional"/>
+		<xsd:attribute name="response-message-type" type="MessageType" use="optional"/>
 	</xsd:complexType>
 	
 	<!-- Definizione di una richiesta per una risorsa REST -->
 	<xsd:complexType name="resource-request">
 		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="parameter" type="resource-parameter"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="representation" type="resource-representation"/>
 		</xsd:sequence>
-		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
-		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
 	</xsd:complexType>
 	
 	<!-- Definizione di una risposta per una risorsa REST -->
 	<xsd:complexType name="resource-response">
 		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="parameter" type="resource-parameter"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="representation" type="resource-representation"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
-		<xsd:attribute name="status" type="xsd:integer" use="optional"/>
-		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
+		<xsd:attribute name="status" type="xsd:int" use="required"/>
 	</xsd:complexType>
 	
 	<!-- Definizione di una rappresentazione per una richiesta/risposta della risorsa REST -->
+	<xsd:complexType name="resource-parameter">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="parameter-type" type="ParameterType" use="required"/>
+		<xsd:attribute name="required" type="xsd:boolean" use="optional" default="false"/>
+		<xsd:attribute name="tipo" type="xsd:string" use="required" />
+	</xsd:complexType>
 	<xsd:complexType name="resource-representation">
-		<xsd:attribute name="media-type" type="xsd:string" />
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="xml" type="resource-representation-xml"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="json" type="resource-representation-json"/>
+		</xsd:sequence>
+		<xsd:attribute name="media-type" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="optional"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
+		<xsd:attribute name="representation-type" type="RepresentationType" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="resource-representation-xml">
+		<xsd:attribute name="xml-type" type="RepresentationXmlType" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="namespace" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="resource-representation-json">
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	
 	
@@ -472,6 +495,27 @@
 			<xsd:enumeration value="wsdl"/>
 			<xsd:enumeration value="swagger"/>
 			<xsd:enumeration value="wadl"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RepresentationType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="xml"/>
+			<xsd:enumeration value="json"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RepresentationXmlType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="element"/>
+			<xsd:enumeration value="type"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ParameterType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="header"/>
+			<xsd:enumeration value="query"/>
+			<xsd:enumeration value="dynamicPath"/>
+			<xsd:enumeration value="form"/>
+			<xsd:enumeration value="cookie"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ProfiloCollaborazione">

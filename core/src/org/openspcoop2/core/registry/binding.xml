@@ -224,36 +224,78 @@
     <value name="path" field="path" usage="optional" style="attribute"/>
     <value name="method" field="method" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="request-message-type" field="requestMessageType" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="response-message-type" field="responseMessageType" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="request" class="org.openspcoop2.core.registry.ResourceRequest">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <collection field="parameter" create-type="java.util.ArrayList">
+      <structure name="parameter" map-as="_ResourceParameter_Type"/>
+    </collection>
     <collection field="representation" create-type="java.util.ArrayList">
       <structure name="representation" map-as="_ResourceRepresentation_Type"/>
     </collection>
     <value name="id-resource" field="idResource" usage="optional" style="attribute"/>
-    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
-    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="response" class="org.openspcoop2.core.registry.ResourceResponse">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <collection field="parameter" create-type="java.util.ArrayList">
+      <structure name="parameter" map-as="_ResourceParameter_Type"/>
+    </collection>
     <collection field="representation" create-type="java.util.ArrayList">
       <structure name="representation" map-as="_ResourceRepresentation_Type"/>
     </collection>
     <value name="id-resource" field="idResource" usage="optional" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
-    <value name="status" field="status" usage="optional" style="attribute"/>
-    <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="status" field="status" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="parameter" class="org.openspcoop2.core.registry.ResourceParameter" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="parameter-type" field="parameterType" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="required" field="required" default="false" usage="optional" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_ResourceParameter_Type" class="org.openspcoop2.core.registry.ResourceParameter" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="parameter-type" field="parameterType" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="required" field="required" default="false" usage="optional" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
   </mapping>
   <mapping name="representation" class="org.openspcoop2.core.registry.ResourceRepresentation" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
-    <value name="media-type" field="mediaType" usage="optional" style="attribute"/>
+    <structure field="xml" usage="optional" map-as="org.openspcoop2.core.registry.ResourceRepresentationXml"/>
+    <structure field="json" usage="optional" map-as="org.openspcoop2.core.registry.ResourceRepresentationJson"/>
+    <value name="media-type" field="mediaType" usage="required" style="attribute"/>
+    <value name="nome" field="nome" usage="optional" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="representation-type" field="representationType" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
 
   <mapping type-name="_ResourceRepresentation_Type" class="org.openspcoop2.core.registry.ResourceRepresentation" abstract="true">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
-    <value name="media-type" field="mediaType" usage="optional" style="attribute"/>
+    <structure field="xml" usage="optional" map-as="org.openspcoop2.core.registry.ResourceRepresentationXml"/>
+    <structure field="json" usage="optional" map-as="org.openspcoop2.core.registry.ResourceRepresentationJson"/>
+    <value name="media-type" field="mediaType" usage="required" style="attribute"/>
+    <value name="nome" field="nome" usage="optional" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="representation-type" field="representationType" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="xml" class="org.openspcoop2.core.registry.ResourceRepresentationXml">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="xml-type" field="xmlType" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="namespace" field="namespace" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="json" class="org.openspcoop2.core.registry.ResourceRepresentationJson">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
   </mapping>
   <mapping name="porta-dominio" class="org.openspcoop2.core.registry.PortaDominio">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>

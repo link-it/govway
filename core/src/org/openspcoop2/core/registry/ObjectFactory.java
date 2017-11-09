@@ -199,6 +199,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ResourceRepresentationXml }
+     */
+    public ResourceRepresentationXml createResourceRepresentationXml() {
+        return new ResourceRepresentationXml();
+    }
+
+    /**
      * Create an instance of {@link Fruitore }
      */
     public Fruitore createFruitore() {
@@ -217,6 +224,13 @@ public class ObjectFactory {
      */
     public IdRuolo createIdRuolo() {
         return new IdRuolo();
+    }
+
+    /**
+     * Create an instance of {@link ResourceParameter }
+     */
+    public ResourceParameter createResourceParameter() {
+        return new ResourceParameter();
     }
 
     /**
@@ -294,6 +308,13 @@ public class ObjectFactory {
      */
     public Operation createOperation() {
         return new Operation();
+    }
+
+    /**
+     * Create an instance of {@link ResourceRepresentationJson }
+     */
+    public ResourceRepresentationJson createResourceRepresentationJson() {
+        return new ResourceRepresentationJson();
     }
 
     /**

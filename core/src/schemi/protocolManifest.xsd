@@ -99,6 +99,22 @@
               <xsd:attribute name="messageType" type="DefaultIntegrationErrorMessageType" use="required" />
        </xsd:complexType>
        
+       
+       
+       
+       <!-- Interface Configuration -->
+       
+       <xsd:complexType name="InterfacesConfiguration">
+              <xsd:sequence>
+                     <xsd:element minOccurs="1" maxOccurs="unbounded" name="specification" type="InterfaceConfiguration" />
+              </xsd:sequence>
+       </xsd:complexType>
+       <xsd:complexType name="InterfaceConfiguration">
+              <xsd:attribute name="type" type="InterfaceType" use="required"/>
+              <xsd:attribute name="schema" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="conversations" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+       
  
  
        <!-- Soap Configuration -->
@@ -107,6 +123,7 @@
               <xsd:all>
                      <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
                      <xsd:element name="mediaTypeCollection" type="SoapMediaTypeCollection" minOccurs="0"/>
+                     <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
                      <xsd:element name="soapHeaderBypassMustUnderstand" type="SoapHeaderBypassMustUnderstand" minOccurs="0"/>
               </xsd:all>
               <xsd:attribute name="soap11" type="xsd:boolean" use="required" />
@@ -163,6 +180,7 @@
               <xsd:all>
                      <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
                      <xsd:element name="mediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
+                     <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
               </xsd:all>
               <xsd:attribute name="xml" type="xsd:boolean" use="required" />
               <xsd:attribute name="json" type="xsd:boolean" use="required" />
@@ -268,8 +286,6 @@
                      <xsd:element name="profile" type="CollaborationProfile" minOccurs="0"/>
                      <xsd:element name="functionality" type="Functionality" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="wsdlSchema" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="conversations" type="xsd:boolean" use="optional" default="false"/>
        </xsd:complexType>
        
        <xsd:complexType name="ServiceTypes">
@@ -379,6 +395,15 @@
               <xsd:restriction base="xsd:string">
                      <xsd:enumeration value="PROPERTIES"/>
                      <xsd:enumeration value="XML"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="InterfaceType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="wsdl"/>
+                     <xsd:enumeration value="wadl"/>
+                     <xsd:enumeration value="swagger"/>
+                     <xsd:enumeration value="openApi"/>
               </xsd:restriction>
        </xsd:simpleType>
        
