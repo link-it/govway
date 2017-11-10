@@ -360,15 +360,19 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 						if(opOLD.getMessageInput() != null && opOLD.getMessageOutput() != null){
 							opTypeOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE_INOUT;
 						}
-						else if(opOLD.getMessageInput() != null){
-							opTypeOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE_IN;	
+						else if(ProfiloCollaborazione.SINCRONO.equals(ProfiloCollaborazione.toEnumConstant(profcollop))){
+							opTypeOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE_INOUT;
 						}
 						else if(ProfiloCollaborazione.ONEWAY.equals(ProfiloCollaborazione.toEnumConstant(profcollop))){
 							opTypeOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE_IN;
 						}
-						else{
-							opTypeOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE_INOUT;
+						else if(opOLD.getMessageOutput() != null){
+							opTypeOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE_INOUT;	
 						}
+						else{
+							opTypeOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE_IN;
+						}
+						
 					} 
 
 					if(nsWSDLOp == null){

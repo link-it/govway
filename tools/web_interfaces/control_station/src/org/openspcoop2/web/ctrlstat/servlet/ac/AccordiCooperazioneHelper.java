@@ -365,8 +365,13 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 							new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, accordoCooperazione.getNome())
 							);
 					if (contaListe) {
-						List<org.openspcoop2.core.registry.Documento> tmpLista = this.acCore.accordiCoopAllegatiList(accordoCooperazione.getId().intValue(), new Search(true));
-						ServletUtils.setDataElementVisualizzaLabel(de, (long)  tmpLista.size() );
+						// BugFix OP-674
+						//List<org.openspcoop2.core.registry.Documento> tmpLista = this.acCore.accordiCoopAllegatiList(accordoCooperazione.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.acCore.accordiCoopAllegatiList(accordoCooperazione.getId().intValue(), searchForCount);
+						//int num = tmpLista.size();
+						int num = searchForCount.getNumEntries(Liste.ACCORDI_COOP_ALLEGATI);
+						ServletUtils.setDataElementVisualizzaLabel(de, (long)  num );
 
 					} else {
 						ServletUtils.setDataElementVisualizzaLabel(de);
@@ -685,7 +690,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, nome));
 
 			if(contaListe){
-				int num = this.acCore.accordiCoopPartecipantiList(Long.parseLong(id), new Search(true)).size();
+				// BugFix OP-674
+				//int num = this.acCore.accordiCoopPartecipantiList(Long.parseLong(id), new Search(true)).size();
+				Search searchForCount = new Search(true,1);
+				this.acCore.accordiCoopPartecipantiList(Long.parseLong(id), searchForCount);
+				int num = searchForCount.getNumEntries(Liste.ACCORDI_COOP_PARTECIPANTI);
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI +"("+num+")");
 			}else{
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI);
@@ -699,7 +708,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id+""),
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, nome));
 			if(contaListe){
-				int num = this.acCore.accordiCoopAllegatiList(Integer.parseInt(id), new Search(true)).size();
+				// BugFix OP-674
+				//int num = this.acCore.accordiCoopAllegatiList(Integer.parseInt(id), new Search(true)).size();
+				Search searchForCount = new Search(true,1);
+				this.acCore.accordiCoopAllegatiList(Integer.parseInt(id), searchForCount);
+				int num = searchForCount.getNumEntries(Liste.ACCORDI_COOP_ALLEGATI);
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI +"("+num+")");
 			}else{
 				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI);
@@ -850,41 +863,6 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setValue(stato);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 		dati.addElement(de);
-
-
-//		if (tipoOp.equals(TipoOperazione.ADD) == false) {
-//
-//			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-//
-//			de = new DataElement();
-//			de.setType(DataElementType.LINK);
-//			de.setUrl(AccordiCooperazioneCostanti.SERVLET_NAME_AC_PARTECIPANTI_LIST,
-//					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id+""),
-//					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, nome));
-//
-//			if(contaListe){
-//				int num = this.acCore.accordiCoopPartecipantiList(Long.parseLong(id), new Search(true)).size();
-//				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI +"("+num+")");
-//			}else{
-//				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI);
-//			}
-//			dati.addElement(de);
-//
-//			de = new DataElement();
-//			de.setType(DataElementType.LINK);
-//			de.setUrl(
-//					AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
-//					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id+""),
-//					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, nome));
-//			if(contaListe){
-//				int num = this.acCore.accordiCoopAllegatiList(Integer.parseInt(id), new Search(true)).size();
-//				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI +"("+num+")");
-//			}else{
-//				de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI);
-//			}
-//			dati.addElement(de);
-//
-//		}
 
 		return dati;
 	}

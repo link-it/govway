@@ -467,8 +467,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
 				}
 				if (contaListe) {
-					List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
-					int numRuoli = lista1.size();
+					// BugFix OP-674
+					//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
+					//int numRuoli = lista1.size();
+					int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
 					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);

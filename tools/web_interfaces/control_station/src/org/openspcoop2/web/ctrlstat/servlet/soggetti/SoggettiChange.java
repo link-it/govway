@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -232,9 +233,17 @@ public final class SoggettiChange extends Action {
 			if (contaListe) {
 				// Conto il numero di porte applicative
 				IDSoggetto soggetto = new IDSoggetto(soggettoConfig.getTipo(),soggettoConfig.getNome());
-				numPA = porteApplicativeCore.porteAppList(idSogg, new Search(true)).size();// soggettoConfig.sizePortaApplicativaList();
-				numPD = porteDelegateCore.porteDelegateList(idSogg, new Search(true)).size();// soggettoConfig.sizePortaDelegataList();
-				numSA = saCore.servizioApplicativoList(soggetto, new Search(true)).size();
+				// BugFix OP-674
+//				numPA = porteApplicativeCore.porteAppList(idSogg, new Search(true)).size();// soggettoConfig.sizePortaApplicativaList();
+//				numPD = porteDelegateCore.porteDelegateList(idSogg, new Search(true)).size();// soggettoConfig.sizePortaDelegataList();
+//				numSA = saCore.servizioApplicativoList(soggetto, new Search(true)).size();
+				Search searchForCount = new Search(true,1);
+				porteApplicativeCore.porteAppList(idSogg, searchForCount);
+				numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
+				porteDelegateCore.porteDelegateList(idSogg, searchForCount);
+				numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
+				saCore.servizioApplicativoList(soggetto, searchForCount);
+				numSA = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO);
 			}
 
 			if(soggettiCore.isSinglePdD()){

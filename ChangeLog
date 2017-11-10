@@ -1,3 +1,11 @@
+2017-11-10  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-674
+	Quando sono presenti piu' di mille oggetti collegati ad un oggetto principale, 
+	nell'elenco o nella maschera di modifica dell'oggetto principale 
+	veniva riportato erroneamente il numero 1000.
+
 2017-11-06  Andrea Poli <apoli@link.it>
 
 	* [Utils]

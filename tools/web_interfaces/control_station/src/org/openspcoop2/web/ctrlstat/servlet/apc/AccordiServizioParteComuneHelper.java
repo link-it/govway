@@ -1491,8 +1491,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								break;
 							}
 						}
-						List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-						ServletUtils.setDataElementVisualizzaLabel(de, new Long(tmpLista.size()));
+						// BugFix OP-674
+						//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.apcCore.accordiPorttypeOperationList(idPortType, searchForCount);
+						//int num = tmpLista.size();
+						int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE_AZIONI);
+						ServletUtils.setDataElementVisualizzaLabel(de, new Long(num));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
@@ -2920,7 +2925,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 				if(contaListe){
-					int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();
+					// BugFix OP-674
+					//int num = this.apcCore.accordiAzioniList(Integer.parseInt(id), new Search(true)).size();
+					Search searchForCount = new Search(true,1);
+					this.apcCore.accordiAzioniList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.ACCORDI_AZIONI);
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_AZIONI+" ("+num+")");
 				}else{
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_AZIONI);
@@ -2936,7 +2945,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 				if(contaListe){
-					int num = this.apcCore.accordiPorttypeList(Integer.parseInt(id), new Search(true)).size();
+					// BugFix OP-674
+					//int num = this.apcCore.accordiPorttypeList(Integer.parseInt(id), new Search(true)).size();
+					Search searchForCount = new Search(true,1);
+					this.apcCore.accordiPorttypeList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES+" ("+num+")");
 				}else{
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES);
@@ -2951,7 +2964,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
 					AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 			if(contaListe){
-				int num = this.apcCore.accordiErogatoriList(Integer.parseInt(id), new Search(true)).size();
+				// BugFix OP-674
+				//int num = this.apcCore.accordiErogatoriList(Integer.parseInt(id), new Search(true)).size();
+				Search searchForCount = new Search(true,1);
+				this.apcCore.accordiErogatoriList(Integer.parseInt(id), searchForCount);
+				int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI+" ("+num+")");
 			}else{
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI);
@@ -2965,7 +2982,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
 					AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 			if(contaListe){
-				int num = this.apcCore.accordiAllegatiList(Integer.parseInt(id), new Search(true)).size();
+				// BugFix OP-674
+				//int num = this.apcCore.accordiAllegatiList(Integer.parseInt(id), new Search(true)).size();
+				Search searchForCount = new Search(true,1);
+				this.apcCore.accordiAllegatiList(Integer.parseInt(id), searchForCount);
+				int num = searchForCount.getNumEntries(Liste.ACCORDI_ALLEGATI);
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI+" ("+num+")");
 			}else{
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI);
@@ -2979,7 +3000,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome));
 				if(contaListe){
-					int num = this.apcCore.accordiComponentiList(Integer.parseInt(id), new Search(true)).size();
+					// BugFix OP-674
+					//int num = this.apcCore.accordiComponentiList(Integer.parseInt(id), new Search(true)).size();
+					Search searchForCount = new Search(true,1);
+					this.apcCore.accordiComponentiList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.ACCORDI_COMPONENTI);
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_SERVIZI_COMPONENTI+" ("+num+")");
 				}else{
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_SERVIZI_COMPONENTI);
@@ -4251,8 +4276,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 					if (contaListe) {
-						List<org.openspcoop2.core.registry.Soggetto> tmpLista = this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), new Search(true));
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)tmpLista.size());
+						// BugFix OP-674
+						//List<org.openspcoop2.core.registry.Soggetto> tmpLista = this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), searchForCount);
+						//int num = tmpLista.size();
+						int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
+						ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
@@ -4264,8 +4294,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 						if (contaListe) {
-							List<Azione> tmpLista = this.apcCore.accordiAzioniList(accordoServizio.getId().intValue(), new Search(true));
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)tmpLista.size());
+							// BugFix OP-674
+							//List<Azione> tmpLista = this.apcCore.accordiAzioniList(accordoServizio.getId().intValue(), new Search(true));
+							Search searchForCount = new Search(true,1);
+							this.apcCore.accordiAzioniList(accordoServizio.getId().intValue(), searchForCount);
+							//int num = tmpLista.size();
+							int num = searchForCount.getNumEntries(Liste.ACCORDI_AZIONI);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
@@ -4278,8 +4313,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 						if (contaListe) {
-							List<PortType> tmpLista = this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), new Search(true));
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)tmpLista.size());
+							// BugFix OP-674
+							//List<PortType> tmpLista = this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), new Search(true));
+							Search searchForCount = new Search(true,1);
+							this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), searchForCount);
+							//int num = tmpLista.size();
+							int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
@@ -4310,8 +4350,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 					if (contaListe) {
-						List<org.openspcoop2.core.registry.Documento> tmpLista = this.apcCore.accordiAllegatiList(accordoServizio.getId().intValue(), new Search(true));
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)tmpLista.size());
+						// BugFix OP-674
+						//List<org.openspcoop2.core.registry.Documento> tmpLista = this.apcCore.accordiAllegatiList(accordoServizio.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.apcCore.accordiAllegatiList(accordoServizio.getId().intValue(), searchForCount);
+						//int num = tmpLista.size();
+						int num = searchForCount.getNumEntries(Liste.ACCORDI_ALLEGATI);
+						ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);

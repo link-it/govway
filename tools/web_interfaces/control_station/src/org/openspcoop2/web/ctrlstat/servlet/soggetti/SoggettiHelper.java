@@ -29,9 +29,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -400,8 +397,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
 					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id+""));
 			if (contaListe) {
-				List<String> lista1 = this.soggettiCore.soggettiRuoliList(Long.parseLong(id),new Search(true));
-				int numRuoli = lista1.size();
+				// BugFix OP-674
+				//List<String> lista1 = this.soggettiCore.soggettiRuoliList(Long.parseLong(id),new Search(true));
+				Search searchForCount = new Search(true,1);
+				this.soggettiCore.soggettiRuoliList(Long.parseLong(id),searchForCount);
+				//int numRuoli = lista1.size();
+				int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
 				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,new Long(numRuoli));
 			} else{
 				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
@@ -796,8 +797,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
 				if (contaListe) {
-					List<String> lista1 = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
-					int numRuoli = lista1.size();
+					// BugFix OP-674
+					//List<String> lista1 = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.soggettiCore.soggettiRuoliList(elem.getId(),searchForCount);
+					//int numRuoli = lista1.size();
+					int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
 					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
@@ -814,8 +819,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
 					if (contaListe) {
-						List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
-						int numSA = lista1.size();
+						// BugFix OP-674
+						//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
+						Search searchForCount = new Search(true,1);
+						this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
+						//int numSA = lista1.size();
+						int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
 						ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
@@ -835,8 +844,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
 					if (contaListe) {
-						List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
-						int numPA = lista1.size();
+						// BugFix OP-674
+						//List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
+						//int numPA = lista1.size();
+						int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
 						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
@@ -856,8 +869,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
 					if (contaListe) {
-						List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
-						int numPD = lista1.size();
+						// BugFix OP-674
+						//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
+						//int numPD = lista1.size();
+						int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
 						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
@@ -971,8 +988,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
 				if (contaListe) {
-					List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
-					int numPA = lista1.size();
+					// BugFix OP-674
+					// List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
+					//int numPA = lista1.size();
+					int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
 					ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
@@ -985,8 +1006,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
 				if (contaListe) {
-					List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
-					int numPD = lista1.size();
+					// BugFix OP-674
+					//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
+					//int numPD = lista1.size();
+					int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
 					ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
@@ -998,8 +1023,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
 				if (contaListe) {
-					List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
-					int numSA = lista1.size();
+					// BugFix OP-674
+					//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
+					Search searchForCount = new Search(true,1);
+					this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
+					//int numSA = lista1.size();
+					int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
 					ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);

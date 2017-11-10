@@ -73,6 +73,9 @@ public class Search implements Serializable, ISearch {
 	}
 
 	public Search(boolean showAllResult) {
+		this(showAllResult, ISQLQueryObject.LIMIT_DEFAULT_VALUE);
+	}
+	public Search(boolean showAllResult, int initialLimit) {
 		this.pageSize = new HashMap<Integer, Integer>();
 		this.indexIniziale = new HashMap<Integer, Integer>();
 		this.searchString = new HashMap<Integer, String>();
@@ -80,7 +83,7 @@ public class Search implements Serializable, ISearch {
 		this.filter = new HashMap<Integer, String>();
 
 		for (int i = 0; i < Liste.getTotaleListe(); i++) {
-			this.pageSize.put(i, ISQLQueryObject.LIMIT_DEFAULT_VALUE);// prendo
+			this.pageSize.put(i, initialLimit);// prendo
 			// il
 			// valore
 			// massimo

@@ -568,10 +568,14 @@ public class PddHelper extends ConsoleHelper {
 				de.setUrl(PddCostanti.SERVLET_NAME_PDD_SOGGETTI_LIST,
 						new Parameter(PddCostanti.PARAMETRO_PDD_ID, pdd.getId().toString()));
 				if (contaListe) {
-					List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
+					// BugFix OP-674
+					//List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.pddCore.pddSoggettiList(pdd.getId().intValue(), searchForCount);
 					int numSog = 0;
-					if (lista1 != null)
-						numSog = lista1.size();
+//					if (lista1 != null)
+//						numSog = lista1.size();
+					numSog = searchForCount.getNumEntries(Liste.PDD_SOGGETTI);
 					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSog));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
@@ -691,10 +695,14 @@ public class PddHelper extends ConsoleHelper {
 				de.setUrl(PddCostanti.SERVLET_NAME_PDD_SOGGETTI_LIST,
 						new Parameter(PddCostanti.PARAMETRO_PDD_ID, pdd.getId().toString()));
 				if (contaListe) {
-					List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
+					// BugFix OP-674
+					//List<org.openspcoop2.core.config.Soggetto> lista1 = this.pddCore.pddSoggettiList(pdd.getId().intValue(), new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.pddCore.pddSoggettiList(pdd.getId().intValue(), searchForCount);
 					int numSog = 0;
-					if (lista1 != null)
-						numSog = lista1.size();
+//					if (lista1 != null)
+//						numSog = lista1.size();
+					numSog = searchForCount.getNumEntries(Liste.PDD_SOGGETTI);
 					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSog));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
