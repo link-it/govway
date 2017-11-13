@@ -3558,32 +3558,89 @@ public class DriverRegistroServiziDB_LIB {
 					if(idResource==null || idResource<=0)
 						throw new Exception("ID della risorsa ["+resource.getNome()+"] idAccordo["+idAccordo+"] non trovato");
 				}
-
-				// Request Detail
-				if(resource.getRequest()!=null) {
-					DriverRegistroServiziDB_LIB.CRUDResourceRequest(CostantiDB.DELETE, as, resource, resource.getRequest(), con, idResource);
-				}
 				
-				// Response Detail
-				for(int i=0;i<resource.sizeResponseList();i++){
-					DriverRegistroServiziDB_LIB.CRUDResourceResponse(CostantiDB.DELETE, as, resource, resource.getResponse(i), con, idResource);
-				}
-				
-				// ProtocolProperties
-				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
-						idResource, ProprietariProtocolProperty.RESOURCE, con, tipoDB);
-				
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES);
-				sqlQueryObject.addWhereCondition("id_accordo=?");
-				sqlQueryObject.addWhereCondition("nome=?");
+				// gestione request
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_MEDIA);
+				sqlQueryObject.addWhereCondition("id_resource_media=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				updateQuery = sqlQueryObject.createSQLDelete();
-				updateStmt = con.prepareStatement(updateQuery);
-
-				updateStmt.setLong(1, idAccordo);
-				updateStmt.setString(2, resource.getNome());
+				updateStmt=con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idResource );
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_PARAMETER);
+				sqlQueryObject.addWhereCondition("id_resource_parameter=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt=con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idResource);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				// gestione response
+				List<Long> idResourceResponse = new ArrayList<Long>();
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_resource=?");
+				updateQuery = sqlQueryObject.createSQLQuery();
+				updateStmt=con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idResource);
+				selectRS=updateStmt.executeQuery();
+				while(selectRS.next()){
+					idResourceResponse.add(selectRS.getLong("id"));
+				}
+				selectRS.close();
+				updateStmt.close();
+	
+				while(idResourceResponse.size()>0){
+					
+					long idRR = idResourceResponse.remove(0);
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_MEDIA);
+					sqlQueryObject.addWhereCondition("id_resource_response_media=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					updateQuery = sqlQueryObject.createSQLDelete();
+					updateStmt=con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idRR );
+					updateStmt.executeUpdate();
+					updateStmt.close();
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_PARAMETER);
+					sqlQueryObject.addWhereCondition("id_resource_response_par=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					updateQuery = sqlQueryObject.createSQLDelete();
+					updateStmt=con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idRR);
+					updateStmt.executeUpdate();
+					updateStmt.close();
+				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_RESPONSE);
+				sqlQueryObject.addWhereCondition("id_resource=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt=con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idResource);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				// elimino risorsa
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES);
+				sqlQueryObject.addWhereCondition("id=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt=con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idResource);
 				n = updateStmt.executeUpdate();
+				updateStmt.close();
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDResource type = " + type + " row affected =" + n);
 				// log.debug("CRUDAzione DELETE :

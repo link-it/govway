@@ -290,6 +290,8 @@ CREATE TABLE api_resources
 	http_method VARCHAR2(255) NOT NULL,
 	path VARCHAR2(255) NOT NULL,
 	message_type VARCHAR2(255),
+	message_type_request VARCHAR2(255),
+	message_type_response VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -314,33 +316,29 @@ end;
 
 
 
-CREATE SEQUENCE seq_api_resources_details MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_api_resources_response MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE api_resources_details
+CREATE TABLE api_resources_response
 (
 	id_resource NUMBER NOT NULL,
 	descrizione VARCHAR2(255),
-	resource_type VARCHAR2(255) NOT NULL,
 	status NUMBER NOT NULL,
-	message_type VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
-	-- check constraints
-	CONSTRAINT chk_api_resources_details_1 CHECK (resource_type IN ('REQUEST','RESPONSE')),
 	-- unique constraints
-	CONSTRAINT unique_api_resources_details_1 UNIQUE (id_resource,resource_type,status),
+	CONSTRAINT uniq_api_resp_1 UNIQUE (id_resource,status),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_api_resources_details_1 FOREIGN KEY (id_resource) REFERENCES api_resources(id),
-	CONSTRAINT pk_api_resources_details PRIMARY KEY (id)
+	CONSTRAINT fk_api_resources_response_1 FOREIGN KEY (id_resource) REFERENCES api_resources(id),
+	CONSTRAINT pk_api_resources_response PRIMARY KEY (id)
 );
 
-CREATE TRIGGER trg_api_resources_details
+CREATE TRIGGER trg_api_resources_response
 BEFORE
-insert on api_resources_details
+insert on api_resources_response
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_api_resources_details.nextval INTO :new.id
+      SELECT seq_api_resources_response.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;
@@ -352,15 +350,22 @@ CREATE SEQUENCE seq_api_resources_media MINVALUE 1 MAXVALUE 9223372036854775807 
 
 CREATE TABLE api_resources_media
 (
-	id_resource_details NUMBER NOT NULL,
+	id_resource_media NUMBER,
+	id_resource_response_media NUMBER,
 	media_type VARCHAR2(255) NOT NULL,
 	message_type VARCHAR2(255),
+	nome VARCHAR2(255),
+	descrizione VARCHAR2(255),
+	tipo VARCHAR2(255),
+	xml_tipo VARCHAR2(255),
+	xml_name VARCHAR2(255),
+	xml_namespace VARCHAR2(255),
+	json_type VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_api_resources_media_1 UNIQUE (id_resource_details,media_type),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_api_resources_media_1 FOREIGN KEY (id_resource_details) REFERENCES api_resources_details(id),
+	CONSTRAINT fk_api_resources_media_1 FOREIGN KEY (id_resource_response_media) REFERENCES api_resources_response(id),
+	CONSTRAINT fk_api_resources_media_2 FOREIGN KEY (id_resource_media) REFERENCES api_resources(id),
 	CONSTRAINT pk_api_resources_media PRIMARY KEY (id)
 );
 
@@ -371,6 +376,42 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_api_resources_media.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_api_resources_parameter MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE api_resources_parameter
+(
+	id_resource_parameter NUMBER,
+	id_resource_response_par NUMBER,
+	nome VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
+	tipo_parametro VARCHAR2(255) NOT NULL,
+	required NUMBER NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_api_resources_parameter_1 FOREIGN KEY (id_resource_response_par) REFERENCES api_resources_response(id),
+	CONSTRAINT fk_api_resources_parameter_2 FOREIGN KEY (id_resource_parameter) REFERENCES api_resources(id),
+	CONSTRAINT pk_api_resources_parameter PRIMARY KEY (id)
+);
+
+
+ALTER TABLE api_resources_parameter MODIFY required DEFAULT 0;
+
+CREATE TRIGGER trg_api_resources_parameter
+BEFORE
+insert on api_resources_parameter
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_api_resources_parameter.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

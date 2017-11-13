@@ -210,6 +210,8 @@ CREATE TABLE api_resources
 	http_method VARCHAR(255) NOT NULL,
 	path VARCHAR(255) NOT NULL,
 	message_type VARCHAR(255),
+	message_type_request VARCHAR(255),
+	message_type_response VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_api_resources') NOT NULL,
 	-- unique constraints
@@ -223,24 +225,20 @@ CREATE TABLE api_resources
 
 
 
-CREATE SEQUENCE seq_api_resources_details start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+CREATE SEQUENCE seq_api_resources_response start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
-CREATE TABLE api_resources_details
+CREATE TABLE api_resources_response
 (
 	id_resource BIGINT NOT NULL,
 	descrizione VARCHAR(255),
-	resource_type VARCHAR(255) NOT NULL,
 	status INT NOT NULL,
-	message_type VARCHAR(255),
 	-- fk/pk columns
-	id BIGINT DEFAULT nextval('seq_api_resources_details') NOT NULL,
-	-- check constraints
-	CONSTRAINT chk_api_resources_details_1 CHECK (resource_type IN ('REQUEST','RESPONSE')),
+	id BIGINT DEFAULT nextval('seq_api_resources_response') NOT NULL,
 	-- unique constraints
-	CONSTRAINT unique_api_resources_details_1 UNIQUE (id_resource,resource_type,status),
+	CONSTRAINT uniq_api_resp_1 UNIQUE (id_resource,status),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_api_resources_details_1 FOREIGN KEY (id_resource) REFERENCES api_resources(id),
-	CONSTRAINT pk_api_resources_details PRIMARY KEY (id)
+	CONSTRAINT fk_api_resources_response_1 FOREIGN KEY (id_resource) REFERENCES api_resources(id),
+	CONSTRAINT pk_api_resources_response PRIMARY KEY (id)
 );
 
 
@@ -250,16 +248,45 @@ CREATE SEQUENCE seq_api_resources_media start 1 increment 1 maxvalue 92233720368
 
 CREATE TABLE api_resources_media
 (
-	id_resource_details BIGINT NOT NULL,
+	id_resource_media BIGINT,
+	id_resource_response_media BIGINT,
 	media_type VARCHAR(255) NOT NULL,
 	message_type VARCHAR(255),
+	nome VARCHAR(255),
+	descrizione VARCHAR(255),
+	tipo VARCHAR(255),
+	xml_tipo VARCHAR(255),
+	xml_name VARCHAR(255),
+	xml_namespace VARCHAR(255),
+	json_type VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_api_resources_media') NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_api_resources_media_1 UNIQUE (id_resource_details,media_type),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_api_resources_media_1 FOREIGN KEY (id_resource_details) REFERENCES api_resources_details(id),
+	CONSTRAINT fk_api_resources_media_1 FOREIGN KEY (id_resource_response_media) REFERENCES api_resources_response(id),
+	CONSTRAINT fk_api_resources_media_2 FOREIGN KEY (id_resource_media) REFERENCES api_resources(id),
 	CONSTRAINT pk_api_resources_media PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_api_resources_parameter start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE api_resources_parameter
+(
+	id_resource_parameter BIGINT,
+	id_resource_response_par BIGINT,
+	nome VARCHAR(255) NOT NULL,
+	descrizione VARCHAR(255),
+	tipo_parametro VARCHAR(255) NOT NULL,
+	required BOOLEAN NOT NULL DEFAULT false,
+	tipo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_api_resources_parameter') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_api_resources_parameter_1 FOREIGN KEY (id_resource_response_par) REFERENCES api_resources_response(id),
+	CONSTRAINT fk_api_resources_parameter_2 FOREIGN KEY (id_resource_parameter) REFERENCES api_resources(id),
+	CONSTRAINT pk_api_resources_parameter PRIMARY KEY (id)
 );
 
 

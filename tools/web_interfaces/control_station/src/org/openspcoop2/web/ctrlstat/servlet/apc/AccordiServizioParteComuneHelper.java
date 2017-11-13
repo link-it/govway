@@ -5121,6 +5121,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri));
 
+			@SuppressWarnings("unused")
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			int idLista = Liste.ACCORDI_API_RESOURCES;

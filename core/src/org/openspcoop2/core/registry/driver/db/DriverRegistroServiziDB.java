@@ -4000,7 +4000,38 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordoLong);
 
 			// risorse
+			//TODO possibile ottimizzazione
+			//la lista contiene tutte e sole le risorse necessarie
+			//prima cancello le risorse e poi reinserisco quelle nuove
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id_accordo = ?");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm=connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idAccordoLong);
+			rs=stm.executeQuery();
+			List<Long> idResources = new ArrayList<Long>();
+			while(rs.next()){
+				idResources.add(rs.getLong("id"));
+			}
+			rs.close();
+			stm.close();
+	
+			while(idResources.size()>0){
+				Long idR = idResources.remove(0);
+				Resource resource = new Resource();
+				resource.setId(idR);
+				DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, connection, idAccordoLong);
+			}
+			this.log.debug("Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
 			
+			Resource resource = null;
+			for (int i = 0; i < accordoServizio.sizeResourceList(); i++) {
+				resource = accordoServizio.getResource(i);
+				DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, connection, idAccordoLong);
+			}
+			this.log.debug("inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordoLong);
 			
 			
 			// Accordo servizio composto
@@ -4197,90 +4228,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			
 //			Operation azione = null;
 			for (int i = 0; i < portType.sizeAzioneList(); i++) {
-				Operation azione = portType.getAzione(i);
-				
-				
+				Operation azione = portType.getAzione(i);			
 				DriverRegistroServiziDB_LIB.CRUDAzionePortType(CostantiDB.CREATE,as,portType,azione, connection, portType.getId());
-
-//				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-//				sqlQueryObject.addInsertTable(CostantiDB.PORT_TYPE_AZIONI);
-//				sqlQueryObject.addInsertField("id_port_type", "?");
-//				sqlQueryObject.addInsertField("nome", "?");
-//				sqlQueryObject.addInsertField("profilo_pt_azione", "?");
-//				sqlQueryObject.addInsertField("filtro_duplicati", "?");
-//				sqlQueryObject.addInsertField("conferma_ricezione", "?");
-//				sqlQueryObject.addInsertField("identificativo_collaborazione", "?");
-//				sqlQueryObject.addInsertField("consegna_in_ordine", "?");
-//				sqlQueryObject.addInsertField("scadenza", "?");
-//				sqlQueryObject.addInsertField("profilo_collaborazione", "?");
-//				sqlQueryObject.addInsertField("correlata", "?");
-//				sqlQueryObject.addInsertField("correlata_servizio", "?");
-//
-//
-//				updateQuery = sqlQueryObject.createSQLInsert();
-//				updateStmt = connection.prepareStatement(updateQuery);
-//				updateStmt.setLong(1, portType.getId());
-//				updateStmt.setString(2, azione.getNome());
-//				updateStmt.setString(3, azione.getProfAzione());
-//
-//				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(azione.getProfAzione())){
-//					updateStmt.setString(4, DriverRegistroServiziDB_LIB.getValue(azione.getFiltroDuplicati()));
-//					updateStmt.setString(5, DriverRegistroServiziDB_LIB.getValue(azione.getConfermaRicezione()));
-//					updateStmt.setString(6, DriverRegistroServiziDB_LIB.getValue(azione.getIdCollaborazione()));
-//					updateStmt.setString(7, DriverRegistroServiziDB_LIB.getValue(azione.getConsegnaInOrdine()));
-//					updateStmt.setString(8, azione.getScadenza());
-//					updateStmt.setString(9, DriverRegistroServiziDB_LIB.getValue(azione.getProfiloCollaborazione()));
-//					updateStmt.setString(10, azione.getCorrelata());
-//					updateStmt.setString(11, azione.getCorrelataServizio());
-//				}else{
-//					if(azione.getFiltroDuplicati()!=null)
-//						updateStmt.setString(4, DriverRegistroServiziDB_LIB.getValue(azione.getFiltroDuplicati()));
-//					else if(portType.getFiltroDuplicati()!=null)
-//						updateStmt.setString(4, DriverRegistroServiziDB_LIB.getValue(portType.getFiltroDuplicati()));
-//					else
-//						updateStmt.setString(4, DriverRegistroServiziDB_LIB.getValue(as.getFiltroDuplicati()));
-//
-//					if(azione.getConfermaRicezione()!=null)
-//						updateStmt.setString(5, DriverRegistroServiziDB_LIB.getValue(azione.getConfermaRicezione()));
-//					else if(portType.getConfermaRicezione()!=null)
-//						updateStmt.setString(5, DriverRegistroServiziDB_LIB.getValue(portType.getConfermaRicezione()));
-//					else
-//						updateStmt.setString(5, DriverRegistroServiziDB_LIB.getValue(as.getConfermaRicezione()));
-//
-//					if(azione.getIdCollaborazione()!=null)
-//						updateStmt.setString(6, DriverRegistroServiziDB_LIB.getValue(azione.getIdCollaborazione()));
-//					else if(portType.getIdCollaborazione()!=null)
-//						updateStmt.setString(6, DriverRegistroServiziDB_LIB.getValue(portType.getIdCollaborazione()));
-//					else
-//						updateStmt.setString(6, DriverRegistroServiziDB_LIB.getValue(as.getIdCollaborazione()));
-//
-//					if(azione.getConsegnaInOrdine()!=null)
-//						updateStmt.setString(7, DriverRegistroServiziDB_LIB.getValue(azione.getConsegnaInOrdine()));
-//					else if(portType.getConsegnaInOrdine()!=null)
-//						updateStmt.setString(7, DriverRegistroServiziDB_LIB.getValue(portType.getConsegnaInOrdine()));
-//					else
-//						updateStmt.setString(7, DriverRegistroServiziDB_LIB.getValue(as.getConsegnaInOrdine()));
-//
-//					if(azione.getScadenza()!=null)
-//						updateStmt.setString(8, azione.getScadenza());
-//					else if(portType.getScadenza()!=null)
-//						updateStmt.setString(8, portType.getScadenza());
-//					else
-//						updateStmt.setString(8, as.getScadenza());
-//
-//					if(azione.getProfiloCollaborazione()!=null)
-//						updateStmt.setString(9, DriverRegistroServiziDB_LIB.getValue(azione.getProfiloCollaborazione()));
-//					else if(portType.getProfiloCollaborazione()!=null)
-//						updateStmt.setString(9, DriverRegistroServiziDB_LIB.getValue(portType.getProfiloCollaborazione()));
-//					else
-//						updateStmt.setString(9, DriverRegistroServiziDB_LIB.getValue(as.getProfiloCollaborazione()));
-//
-//					updateStmt.setString(10, azione.getCorrelata());
-//					updateStmt.setString(11, azione.getCorrelataServizio());
-//
-//				}
-//				n = updateStmt.executeUpdate();
-//				updateStmt.close();
 			}
 			DriverRegistroServiziDB_LIB.log.debug("inserite " + portType.sizeAzioneList() + " azioni relative al port type["+portType.getNome()+"] id-porttype["+portType.getId()+"]");
 		} 
@@ -4455,6 +4404,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			
 			
+			// Risorse
 			// elimino tutte le risorse api comprese di struttura interna
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
@@ -4470,60 +4420,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			rs.close();
 			stm.close();
-
+	
 			while(idResources.size()>0){
 				Long idR = idResources.remove(0);
-
-				// gestione details
-				List<Long> idResourceDetails = new ArrayList<Long>();
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_DETAILS);
-				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addWhereCondition("id_resource=?");
-				sqlQuery = sqlQueryObject.createSQLQuery();
-				stm=connection.prepareStatement(sqlQuery);
-				stm.setLong(1, idR);
-				rs=stm.executeQuery();
-				while(rs.next()){
-					idResourceDetails.add(rs.getLong("id"));
-				}
-				rs.close();
-				stm.close();
-
-				while(idResourceDetails.size()>0){
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-					sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_MEDIA);
-					sqlQueryObject.addWhereCondition("id_resource_details=?");
-					sqlQueryObject.setANDLogicOperator(true);
-					sqlQuery = sqlQueryObject.createSQLDelete();
-					stm=connection.prepareStatement(sqlQuery);
-					stm.setLong(1, idResourceDetails.remove(0));
-					n=stm.executeUpdate();
-					stm.close();
-				}
-
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES_DETAILS);
-				sqlQueryObject.addWhereCondition("id_resource=?");
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQuery = sqlQueryObject.createSQLDelete();
-				stm=connection.prepareStatement(sqlQuery);
-				stm.setLong(1, idR);
-				n=stm.executeUpdate();
-				stm.close();
-				this.log.debug("Cancellate "+n+" dettagli della risorsa api ["+idR+"] associata all'accordo "+idAccordoLong);
+				Resource resource = new Resource();
+				resource.setId(idR);
+				DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, connection, idAccordoLong);
 			}
-
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addDeleteTable(CostantiDB.API_RESOURCES);
-			sqlQueryObject.addWhereCondition("id_accordo=?");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLDelete();
-			stm=connection.prepareStatement(sqlQuery);
-			stm.setLong(1, idAccordoLong);
-			n=stm.executeUpdate();
-			stm.close();
-			this.log.debug("Cancellate "+n+" risorse api associate all'accordo "+idAccordoLong);
 			
 			
 			

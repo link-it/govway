@@ -66,8 +66,9 @@ public final class CostantiDB {
     public static final String PORT_TYPE_AZIONI = "port_type_azioni";
     public static final String PORT_TYPE_AZIONI_OPERATION_MESSAGES = "operation_messages";
     public static final String API_RESOURCES = "api_resources";
-    public static final String API_RESOURCES_DETAILS = "api_resources_details";
+    public static final String API_RESOURCES_RESPONSE = "api_resources_response";
     public static final String API_RESOURCES_MEDIA = "api_resources_media";
+    public static final String API_RESOURCES_PARAMETER = "api_resources_parameter";
     public static final String CONNETTORI_PROPERTIES = "connettori_properties";
     public static final String DOCUMENTI = "documenti";
     public static final String ACCORDI_SERVIZI_COMPOSTO = "acc_serv_composti";
