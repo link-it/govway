@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.as4.config;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -247,5 +248,63 @@ public class AS4Properties {
     	
     	return AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
+    
+	private File getFile(String fileName) throws Exception {
+		File file = new File(fileName);
+		
+		if(!file.exists())
+			throw new Exception("Directory ["+fileName+"] non esiste");
+		
+		if(!file.isDirectory())
+			throw new Exception("File ["+fileName+"] non e' una directory");
+		
+		if(!file.canRead())
+			throw new Exception("Directory ["+fileName+"] non puo' essere letto");
+		
+		return file;
+	}
+
+	private static File pModeTranslatorPolicyFolder;
+	public File getPModeTranslatorPolicyFolder() throws ProtocolException {
+		if(AS4Properties.pModeTranslatorPolicyFolder==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPolicyFolder"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.pModeTranslatorPolicyFolder = this.getFile(value);
+				}else{
+					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.payloadProfilesFolder' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.payloadProfilesFolder', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.pModeTranslatorPolicyFolder;
+	}
+	
+	private static File pModeTranslatorPayloadProfilesFolder;
+	public File getPModeTranslatorPayloadProfilesFolder() throws ProtocolException {
+		if(AS4Properties.pModeTranslatorPayloadProfilesFolder==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.pModeTranslatorPayloadProfilesFolder = this.getFile(value);
+				}else{
+					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.pModeTranslatorPayloadProfilesFolder;
+	}
+
 
 }
