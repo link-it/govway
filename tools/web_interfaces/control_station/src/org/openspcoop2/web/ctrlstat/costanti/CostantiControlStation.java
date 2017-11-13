@@ -147,6 +147,22 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Regole";
 	public final static String LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL = "Scadenza (minuti)";
 	public final static String LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE = "Definisce una scadenza per il riuso del solito ID Protocollo";
+	public final static String LABEL_PARAMETRO_SERVICE_BINDING = "Service Binding";
+	public final static String LABEL_PARAMETRO_SERVICE_BINDING_SOAP = "Soap";
+	public final static String LABEL_PARAMETRO_SERVICE_BINDING_REST = "Rest";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE = "Tipo Messaggio";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT = "Default";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "Soap-1.1";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_12 = "Soap-1.2";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_XML = "Xml";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_JSON = "Json";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_BINARY = "Binary";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME-Multipart";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE = "Formato Specifica";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL = "Wsdl";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WADL = "Wadl";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER = "Swagger";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API = "Open API";
 	
 	/** PARAMETERS **/
 	
@@ -185,6 +201,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
 	
+	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
+	public final static String PARAMETRO_MESSAGE_TYPE = "messageType";
+	public final static String PARAMETRO_INTERFACE_TYPE = "interfaceType";
 	
 	/** DEFAULT VALUES **/
 	
@@ -199,6 +218,23 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM =  "custom";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "custom";
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP = "SOAP";
+	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST = "REST";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_DEFAULT = "D";
+	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "SOAP_11";
+	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_12 = "SOAP_12";
+	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_XML = "XML";
+	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_JSON = "JSON";
+	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_BINARY = "BINARY";
+	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME_MULTIPART";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL = "wsdl";
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL = "wadl";
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER = "swagger";
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API = "openApi";
+	
+	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
 	
 	/** OTHER */
 	public final static String IMAGES_DIR = "images";

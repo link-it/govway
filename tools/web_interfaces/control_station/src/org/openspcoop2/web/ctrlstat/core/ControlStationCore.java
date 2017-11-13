@@ -75,11 +75,15 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
@@ -4612,7 +4616,166 @@ public class ControlStationCore {
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
-
+	
+	public List<ServiceBinding> getServiceBindingList(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
+		String nomeMetodo = "getServiceBindingList";
+		List<ServiceBinding> lst = new ArrayList<>();
+		try {
+			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
+			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.REST))
+				lst.add(ServiceBinding.REST);
+			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.SOAP))
+				lst.add(ServiceBinding.SOAP);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		return lst;
+	}
+	
+	public List<MessageType> getMessageTypeList(IProtocolFactory<?> protocolFactory,ServiceBinding serviceBinding) throws DriverConfigurazioneException{
+		String nomeMetodo = "getMessageTypeList";
+		List<MessageType> messageTypeSupported = new ArrayList<MessageType>();
+		try {
+			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
+			messageTypeSupported = defaultServiceBindingConfiguration.getMessageTypeSupported(serviceBinding);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		return messageTypeSupported;
+	}
+	
+	
+	public List<InterfaceType> getInterfaceTypeList(IProtocolFactory<?> protocolFactory,ServiceBinding serviceBinding) throws DriverConfigurazioneException{
+		String nomeMetodo = "getInterfaceTypeList";
+		List<InterfaceType> interfacceSupportate = new ArrayList<InterfaceType>();
+		try {
+			interfacceSupportate = protocolFactory.createProtocolConfiguration().getInterfacceSupportate(serviceBinding);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		return interfacceSupportate;
+	}
+	
+	public ServiceBinding getDefaultServiceBinding(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
+		String nomeMetodo = "getDefaultServiceBinding";
+		try {
+			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
+			return defaultServiceBindingConfiguration.getDefaultBinding();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
+	public ServiceBinding toMessageServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
+		if(serviceBinding == null)
+			return null;
+		
+		switch (serviceBinding) {
+		case REST:
+			return ServiceBinding.REST;
+		case SOAP:
+		default:
+			return ServiceBinding.SOAP;
+		}			
+	}
+	
+	public org.openspcoop2.core.registry.constants.ServiceBinding fromMessageServiceBinding(ServiceBinding serviceBinding) {
+		if(serviceBinding == null)
+			return null;
+		
+		switch (serviceBinding) {
+		case REST:
+			return org.openspcoop2.core.registry.constants.ServiceBinding.REST;
+		case SOAP:
+		default:
+			return org.openspcoop2.core.registry.constants.ServiceBinding.SOAP;
+		}			
+	}
+	
+	public MessageType toMessageMessageType(org.openspcoop2.core.registry.constants.MessageType messageType) {
+		if(messageType == null)
+			return null;
+		
+		switch (messageType) {
+		case BINARY:
+			return MessageType.BINARY;
+		case JSON:
+			return MessageType.JSON;
+		case MIME_MULTIPART:
+			return MessageType.MIME_MULTIPART;
+		case SOAP_11:
+			return MessageType.SOAP_11;
+		case SOAP_12:
+			return MessageType.SOAP_12;
+		case XML:
+		default:
+			return MessageType.XML;
+		
+		}			
+	}
+	
+	public org.openspcoop2.core.registry.constants.MessageType fromMessageMessageType(MessageType messageType) {
+		if(messageType == null)
+			return null;
+		
+		switch (messageType) {
+		case BINARY:
+			return org.openspcoop2.core.registry.constants.MessageType.BINARY;
+		case JSON:
+			return org.openspcoop2.core.registry.constants.MessageType.JSON;
+		case MIME_MULTIPART:
+			return org.openspcoop2.core.registry.constants.MessageType.MIME_MULTIPART;
+		case SOAP_11:
+			return org.openspcoop2.core.registry.constants.MessageType.SOAP_11;
+		case SOAP_12:
+			return org.openspcoop2.core.registry.constants.MessageType.SOAP_12;
+		case XML:
+		default:
+			return org.openspcoop2.core.registry.constants.MessageType.XML;
+		
+		}			
+	}
+	
+	public InterfaceType formatoSpecifica2InterfaceType(org.openspcoop2.core.registry.constants.FormatoSpecifica formatoSpecifica) {
+		if(formatoSpecifica == null)
+			return null;
+		
+		switch (formatoSpecifica) {
+		case SWAGGER:
+			return InterfaceType.SWAGGER;
+		case WADL:
+			return InterfaceType.WADL;
+			// [ TODO ] sbloccami!
+//		case OPEN_API:
+//			return InterfaceType.OPEN_API;
+			
+		case WSDL:
+		default:
+			return InterfaceType.WSDL;
+		}			
+	}
+	
+	public org.openspcoop2.core.registry.constants.FormatoSpecifica interfaceType2FormatoSpecifica(InterfaceType formatoSpecifica) {
+		if(formatoSpecifica == null)
+			return null;
+		
+		switch (formatoSpecifica) {
+		case SWAGGER:
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.SWAGGER;
+		case WADL:
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WADL;
+			// [ TODO ] sbloccami!
+//		case OPEN_API:
+//			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPEN_API;
+		case WSDL:
+		default:
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WSDL;
+		}			
+	}
 	
 	public List<IExtendedMenu> getExtendedMenu(){
 		return this.pluginMenu;

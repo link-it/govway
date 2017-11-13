@@ -172,6 +172,7 @@ public class GestoreAutorizzazioni {
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_ALLEGATI);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_EROGATORI);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_COMPONENTI);
+		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_RESOURCES);
 		this.servletAccordiServizio.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
 		/** Permessi associati alla gestione degli accordi di servizio */
 		this.permessiAccordiServizio = new PermessiUtente();

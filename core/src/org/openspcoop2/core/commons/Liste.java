@@ -76,45 +76,46 @@ public final class Liste
 	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT = 35;
 	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT = 36;
 	public final static int ACCORDI_ALLEGATI = 37;
+	public final static int ACCORDI_API_RESOURCES = 38;
 	
-	public final static int ACCORDI_COOPERAZIONE = 38;
-	public final static int ACCORDI_COOP_PARTECIPANTI= 39;
-	public final static int ACCORDI_COOP_ALLEGATI= 40;
-	public final static int ACCORDI_COMPONENTI = 41;
+	public final static int ACCORDI_COOPERAZIONE = 39;
+	public final static int ACCORDI_COOP_PARTECIPANTI= 40;
+	public final static int ACCORDI_COOP_ALLEGATI= 41;
+	public final static int ACCORDI_COMPONENTI = 42;
 	
-	public final static int SERVIZI = 42;	
-	public final static int SERVIZI_FRUITORI= 43;
-	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE = 44;
-	public final static int SERVIZI_ALLEGATI= 45;
-	public final static int SERVIZI_PORTE_APPLICATIVE = 46;
+	public final static int SERVIZI = 43;	
+	public final static int SERVIZI_FRUITORI= 44;
+	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE = 45;
+	public final static int SERVIZI_ALLEGATI= 46;
+	public final static int SERVIZI_PORTE_APPLICATIVE = 47;
 	
-	public final static int	RUOLI	= 47;	
-	public final static int	REGISTRI = 48;
-	public final static int	ROUTING = 49;
-	public final static int SYSTEM_PROPERTIES = 50;
+	public final static int	RUOLI	= 48;	
+	public final static int	REGISTRI = 49;
+	public final static int	ROUTING = 50;
+	public final static int SYSTEM_PROPERTIES = 51;
 	
-	public final static int	TRACCE = 51;
+	public final static int	TRACCE = 52;
 	
-	public final static int MESSAGGI_DIAGNOSTICI = 52;
+	public final static int MESSAGGI_DIAGNOSTICI = 53;
 	
-	public final static int STATISTICHE_STATO = 53;
+	public final static int STATISTICHE_STATO = 54;
 	
-	public final static int SU = 54;
+	public final static int SU = 55;
 
-	public final static int MONITOR_MSG = 55;
+	public final static int MONITOR_MSG = 56;
 	
-	public final static int FILTRI = 56;
+	public final static int FILTRI = 57;
 
-	public final static int AUDIT_REPORT = 57;
+	public final static int AUDIT_REPORT = 58;
 	
-	public final static int OPERATIONS_CODA = 58;
-    public final static int OPERATIONS_ESEGUITE = 59;
-    public final static int OPERATIONS_FALLITE = 60;
-    public final static int OPERATIONS_INVALIDE = 61;
-    public final static int OPERATIONS_RICERCA = 62;
-    public final static int OPERATIONS_WAITING = 63;
+	public final static int OPERATIONS_CODA = 59;
+    public final static int OPERATIONS_ESEGUITE = 60;
+    public final static int OPERATIONS_FALLITE = 61;
+    public final static int OPERATIONS_INVALIDE = 62;
+    public final static int OPERATIONS_RICERCA = 63;
+    public final static int OPERATIONS_WAITING = 64;
     
-    public final static int CONFIGURAZIONE_EXTENDED = 64;	
+    public final static int CONFIGURAZIONE_EXTENDED = 65;	
 	
 
     
@@ -122,7 +123,7 @@ public final class Liste
 	
 	public static int getTotaleListe()
 	{
-		return 65;
+		return 66;
 	}
 	
 	

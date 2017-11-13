@@ -508,6 +508,33 @@
 		
 		
 		
+		<!--  Accordi di Servizio Parte Comune Resources -->
+
+ 		<action path="/accordiServizioParteComuneResourcesAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesAdd" 
+ 			scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesError" path="/jsplib/info.jsp"/>
+        </action>
+		
 		
 		<!--  Accordi di Servizio Parte Specifica -->
 		

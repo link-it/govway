@@ -52,12 +52,12 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.config.constants.RuoloTipoMatch;
-import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
@@ -67,6 +67,9 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -1862,8 +1865,6 @@ public class ConsoleHelper {
 		return true;
 	}
 	
-
-
 	// *** Utilities condivise tra Porte Delegate e Porte Applicative ***
 	
 	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
@@ -3174,4 +3175,170 @@ public class ConsoleHelper {
 		}
 	}
 	
+	
+	public DataElement getServiceBindingDataElement(IProtocolFactory<?> protocolFactory, boolean used, ServiceBinding serviceBinding) throws Exception{
+		DataElement de = null;
+		try {
+			List<ServiceBinding> serviceBindingList = this.core.getServiceBindingList(protocolFactory);
+			
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_SERVICE_BINDING);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
+			
+			if(serviceBindingList != null && serviceBindingList.size() > 1){
+				if(used){
+					de.setType(DataElementType.TEXT);
+					de.setValue(serviceBinding.toString());
+				}else {
+					de.setSelected(serviceBinding.toString());
+					de.setType(DataElementType.SELECT);
+					de.setPostBack(true);
+
+					String [] values = new String[serviceBindingList.size()];
+					String [] labels = new String[serviceBindingList.size()];
+					for (int i =0; i < serviceBindingList.size() ; i ++) {
+						ServiceBinding serviceBinding2 = serviceBindingList.get(i);
+						switch (serviceBinding2) {
+						case REST:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
+							break;
+						case SOAP:
+						default:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
+							break;
+						}
+					}
+					
+					de.setValues(values);
+					de.setLabels(labels);
+				}
+			} else {
+				de.setValue(serviceBinding.toString());
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setSize(this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return de;
+	}
+	
+	public DataElement getMessageTypeDataElement(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value) throws Exception{
+		DataElement de = null;
+		try {
+			List<MessageType> messageTypeList = this.core.getMessageTypeList(protocolFactory, serviceBinding);
+			
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_MESSAGE_TYPE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE);
+			
+			if(messageTypeList != null && messageTypeList.size() > 1){
+					de.setSelected(value != null ? value.toString() : null);
+					de.setType(DataElementType.SELECT);
+					//de.setPostBack(true);
+
+					String [] values = new String[messageTypeList.size()+ 1];
+					String [] labels = new String[messageTypeList.size()+ 1];
+					labels[0] = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT;
+					values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_DEFAULT;
+					for (int i = 1 ; i <= messageTypeList.size() ; i ++) {
+						MessageType type = messageTypeList.get(i-1);
+						switch (type) {
+						case BINARY:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_BINARY;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_BINARY;
+							break;
+						case JSON:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_JSON;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_JSON;
+							break;
+						case MIME_MULTIPART:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART;
+							break;
+						case SOAP_11:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_11;
+							break;
+						case SOAP_12:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_12;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_12;
+							break;
+						case XML:
+						default:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_XML;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_XML;
+							break;
+						}
+					}
+					
+					de.setValues(values);
+					de.setLabels(labels);
+			} else {
+				de.setValue(value != null ? value.toString() : null);
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setSize(this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return de;
+	}
+	
+	public DataElement getInterfaceTypeDataElement(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,org.openspcoop2.protocol.manifest.constants.InterfaceType value) throws Exception{
+		DataElement de = null;
+		try {
+			List<org.openspcoop2.protocol.manifest.constants.InterfaceType> interfaceTypeList = this.core.getInterfaceTypeList(protocolFactory, serviceBinding);
+			
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_INTERFACE_TYPE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE);
+			
+			if(interfaceTypeList != null && interfaceTypeList.size() > 1){
+					de.setSelected(value != null ? value.toString() : null);
+					de.setType(DataElementType.SELECT);
+					de.setPostBack(true);
+
+					String [] values = new String[interfaceTypeList.size()];
+					String [] labels = new String[interfaceTypeList.size()];
+					for (int i =0; i < interfaceTypeList.size() ; i ++) {
+						org.openspcoop2.protocol.manifest.constants.InterfaceType type = interfaceTypeList.get(i);
+						switch (type) {
+						case OPEN_API:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API;
+							break;
+						case SWAGGER:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER;
+							break;
+						case WADL:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL;
+							break;
+						case WSDL:
+						default:
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL;
+							break;
+						}
+					}
+					
+					de.setValues(values);
+					de.setLabels(labels);
+			} else {
+				de.setValue(value != null ? value.toString() : null);
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setSize(this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return de;
+	}
 }

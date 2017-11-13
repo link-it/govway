@@ -48,6 +48,8 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -193,6 +195,10 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			IdSoggetto idSoggettoReferente = as.getSoggettoReferente();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggettoReferente.getTipo());
 			isSupportoProfiloAsincrono = acCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo );
+			
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+			MessageType messageType = apcCore.toMessageMessageType(as.getMessageType());
+			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
@@ -208,6 +214,17 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				wsdlbyte = as.getByteWsdlConcettuale();
 				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE+" di " + uriAS;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE;
+				
+				switch (serviceBinding) {
+				case REST:
+					label = apcHelper.getLabelWSDLFromFormatoSpecifica(formatoSpecifica) +" di " + uriAS;
+					break;
+				case SOAP:
+				default:
+					// per ora non faccio nulla
+					break;
+				}
+				
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
 				wsdlbyte = as.getByteWsdlLogicoErogatore();
@@ -661,6 +678,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					URLEncoder.encode(parameterApcChange.getValue(), "UTF-8"));
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, tipoProtocollo);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, this.tipoAccordo);
+			
+			
+			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+			messageType = apcCore.toMessageMessageType(as.getMessageType());
+			formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -672,7 +694,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 
-					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati);
+					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,serviceBinding,messageType,formatoSpecifica);
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

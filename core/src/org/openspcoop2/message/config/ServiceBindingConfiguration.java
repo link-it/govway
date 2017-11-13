@@ -103,6 +103,15 @@ public class ServiceBindingConfiguration implements Serializable {
 		}
 	}
 	
+	public List<MessageType> getMessageTypeSupported(ServiceBinding serviceBinding){
+		if(ServiceBinding.SOAP.equals(serviceBinding)){
+			return this.soap.getMessageTypeSupported();
+		}
+		else {
+			return this.rest.getMessageTypeSupported();
+		}
+	}
+	
 	public boolean isServiceBindingContextEnabled(ServiceBinding serviceBinding, String contextParam){
 		String context = normalizeContext(contextParam);
 		if(this.restrictedServiceBindingContextUrl.containsKey(context)){

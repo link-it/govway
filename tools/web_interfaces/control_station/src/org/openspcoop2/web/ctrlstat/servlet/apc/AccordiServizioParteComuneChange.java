@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -57,7 +58,10 @@ import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -102,6 +106,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 	private String id, descr, profcoll, filtrodup, confric, idcoll, consord, scadenza, utilizzo, referente, versione,accordoCooperazioneId,statoPackage,
 	tipoAccordo, tipoProtocollo, actionConfirm, backToStato;
 	boolean utilizzoSenzaAzione, showUtilizzoSenzaAzione = false,privato ,isServizioComposto,  validazioneDocumenti = true;
+	private ServiceBinding serviceBinding = null;
+	private MessageType messageType = null;
+	private InterfaceType formatoSpecifica = null;
 
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
@@ -113,9 +120,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
 
-	
+
 	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -143,7 +150,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 
 		AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
-		
+
 		this.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 		int idAcc = 0;
 		try {
@@ -180,6 +187,13 @@ public final class AccordiServizioParteComuneChange extends Action {
 		this.tipoProtocollo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 		this.actionConfirm = apcHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 		this.backToStato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RIPRISTINA_STATO);
+		String serviceBindingS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING);
+		this.serviceBinding = StringUtils.isNotEmpty(serviceBindingS) ? ServiceBinding.valueOf(serviceBindingS) : null;
+		String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE);
+		this.messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) 
+				? MessageType.valueOf(messageProcessorS) : null;
+		String formatoSpecificaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_INTERFACE_TYPE);
+		this.formatoSpecifica = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
 
 		if("".equals(this.tipoAccordo))
 			this.tipoAccordo = null;
@@ -205,7 +219,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}else{
 			this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 		}
-		
+
 		// Preparo il menu
 		apcHelper.makeMenu();
 
@@ -260,71 +274,71 @@ public final class AccordiServizioParteComuneChange extends Action {
 			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
 					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD)
 					: this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD);
-					
-			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
-			// se this.initProtocolPropertiesFromDb = true allora leggo le properties dal db... 
+					this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
-			try{
-				AccordoServizioParteComune apcOLD = this.registryReader.getAccordoServizioParteComune(idAccordoOLD);
-				oldProtocolPropertyList = apcOLD.getProtocolPropertyList(); 
+					// se this.initProtocolPropertiesFromDb = true allora leggo le properties dal db... 
 
-			}catch(RegistryNotFound r){}
+					try{
+						AccordoServizioParteComune apcOLD = this.registryReader.getAccordoServizioParteComune(idAccordoOLD);
+						oldProtocolPropertyList = apcOLD.getProtocolPropertyList(); 
 
-			if(this.protocolPropertiesSet == null){
-				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
-			}
+					}catch(RegistryNotFound r){}
 
-			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
-			List<Soggetto> listaSoggetti=null;
-
-			if(apcCore.isVisioneOggettiGlobale(userLogin)){
-				listaSoggetti = soggettiCore.soggettiList(null, new Search(true));
-			}else{
-				listaSoggetti = soggettiCore.soggettiList(userLogin, new Search(true));
-			}
-
-			List<String> soggettiListTmp = new ArrayList<String>();
-			List<String> soggettiListLabelTmp = new ArrayList<String>();
-			soggettiListTmp.add("-");
-			soggettiListLabelTmp.add("-");
-
-			if (listaSoggetti.size() > 0) {
-				for (Soggetto soggetto : listaSoggetti) {
-					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
-						soggettiListTmp.add(soggetto.getId().toString());
-						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+					if(this.protocolPropertiesSet == null){
+						ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 					}
-				}
-			}
-			providersList = soggettiListTmp.toArray(new String[1]);
-			providersListLabel = soggettiListLabelTmp.toArray(new String[1]);
 
-			List<AccordoCooperazione> lista = null;
-			if(apcCore.isVisioneOggettiGlobale(userLogin)){
-				lista = acCore.accordiCooperazioneList(null, new Search(true));
-			}else{
-				lista = acCore.accordiCooperazioneList(userLogin, new Search(true));
-			}
-			if (lista != null && lista.size() > 0) {
-				accordiCooperazioneEsistenti = new String[lista.size()+1];
-				accordiCooperazioneEsistentiLabel = new String[lista.size()+1];
-				int i = 1;
-				accordiCooperazioneEsistenti[0]="-";
-				accordiCooperazioneEsistentiLabel[0]="-";
-				Iterator<AccordoCooperazione> itL = lista.iterator();
-				while (itL.hasNext()) {
-					AccordoCooperazione singleAC = itL.next();
-					accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
-					accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
-					i++;
-				}
-			} else {
-				accordiCooperazioneEsistenti = new String[1];
-				accordiCooperazioneEsistentiLabel = new String[1];
-				accordiCooperazioneEsistenti[0]="-";
-				accordiCooperazioneEsistentiLabel[0]="-";
-			}
+					List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
+					List<Soggetto> listaSoggetti=null;
+
+					if(apcCore.isVisioneOggettiGlobale(userLogin)){
+						listaSoggetti = soggettiCore.soggettiList(null, new Search(true));
+					}else{
+						listaSoggetti = soggettiCore.soggettiList(userLogin, new Search(true));
+					}
+
+					List<String> soggettiListTmp = new ArrayList<String>();
+					List<String> soggettiListLabelTmp = new ArrayList<String>();
+					soggettiListTmp.add("-");
+					soggettiListLabelTmp.add("-");
+
+					if (listaSoggetti.size() > 0) {
+						for (Soggetto soggetto : listaSoggetti) {
+							if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
+								soggettiListTmp.add(soggetto.getId().toString());
+								soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+							}
+						}
+					}
+					providersList = soggettiListTmp.toArray(new String[1]);
+					providersListLabel = soggettiListLabelTmp.toArray(new String[1]);
+
+					List<AccordoCooperazione> lista = null;
+					if(apcCore.isVisioneOggettiGlobale(userLogin)){
+						lista = acCore.accordiCooperazioneList(null, new Search(true));
+					}else{
+						lista = acCore.accordiCooperazioneList(userLogin, new Search(true));
+					}
+					if (lista != null && lista.size() > 0) {
+						accordiCooperazioneEsistenti = new String[lista.size()+1];
+						accordiCooperazioneEsistentiLabel = new String[lista.size()+1];
+						int i = 1;
+						accordiCooperazioneEsistenti[0]="-";
+						accordiCooperazioneEsistentiLabel[0]="-";
+						Iterator<AccordoCooperazione> itL = lista.iterator();
+						while (itL.hasNext()) {
+							AccordoCooperazione singleAC = itL.next();
+							accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
+							accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
+							i++;
+						}
+					} else {
+						accordiCooperazioneEsistenti = new String[1];
+						accordiCooperazioneEsistentiLabel = new String[1];
+						accordiCooperazioneEsistenti[0]="-";
+						accordiCooperazioneEsistentiLabel[0]="-";
+					}
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
@@ -337,7 +351,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		String uriAS = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
 		String oldStatoPackage = as.getStatoPackage();			
-		
+
 		Properties propertiesProprietario = new Properties();
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, this.id);
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_PARTE_COMUNE);
@@ -427,45 +441,81 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 					if(this.statoPackage==null)
 						this.statoPackage = as.getStatoPackage();
-					
+
 					if(this.wsdlconc == null){
 						this.wsdlconc = new BinaryParameter();
 						this.wsdlconc.setValue(as.getByteWsdlConcettuale());
 					}
-					
+
 					if(this.wsdldef == null){
 						this.wsdldef = new BinaryParameter();
 						this.wsdldef.setValue(as.getByteWsdlDefinitorio());
 					}
-					
+
 					if(this.wsdlserv == null){
 						this.wsdlserv = new BinaryParameter();
 						this.wsdlserv.setValue(as.getByteWsdlLogicoErogatore());
 					}
-					
+
 					if(this.wsdlservcorr == null){
 						this.wsdlservcorr = new BinaryParameter();
 						this.wsdlservcorr.setValue(as.getByteWsdlLogicoFruitore());
 					}
-					
+
 					if(this.wsblconc == null){
 						this.wsblconc = new BinaryParameter();
 						this.wsblconc.setValue(as.getByteSpecificaConversazioneConcettuale());
 					}
-					
+
 					if(this.wsblserv == null){
 						this.wsblserv = new BinaryParameter();
 						this.wsblserv.setValue(as.getByteSpecificaConversazioneErogatore());
 					}
-					
+
 					if(this.wsblservcorr == null){
 						this.wsblservcorr = new BinaryParameter();
 						this.wsblservcorr.setValue(as.getByteSpecificaConversazioneFruitore());
 					}
 
+					if(this.serviceBinding == null){
+						this.serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+					
+						if(this.messageType == null){
+							this.messageType = apcCore.toMessageMessageType(as.getMessageType());
+						}
+					}
+					
+					if(this.formatoSpecifica == null)
+						this.formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
+			}
+
+			String postBackElementName = apcHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
+
+			// Controllo se ho modificato il protocollo, resetto il referente e il service binding
+			if(postBackElementName != null ){
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING)){
+					this.formatoSpecifica = null;
+					this.messageType = null;
+				}
+			}
+
+			// fromato specifica
+			if(this.formatoSpecifica == null) {
+				if(this.serviceBinding != null) {
+					switch(this.serviceBinding) {
+					case REST:
+						this.formatoSpecifica = InterfaceType.SWAGGER;
+						break;
+					case SOAP:
+					default:
+						this.formatoSpecifica = InterfaceType.WSDL;
+						break;
+					}
+				}
 			}
 
 
@@ -478,7 +528,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// update della configurazione 
 				if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 				else 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
@@ -489,7 +539,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.formatoSpecifica);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -518,7 +568,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,  
 				this.filtrodup, this.confric, this.idcoll, this.consord, 
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
-				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato);
+				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.formatoSpecifica);
 
 		// Validazione base dei parametri custom 
 		if(isOk){
@@ -561,7 +611,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			// update della configurazione 
 			if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-					this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 			else 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
@@ -571,7 +621,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 					this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.formatoSpecifica);
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -602,7 +652,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// update della configurazione 
 				if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 				else 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
@@ -611,7 +661,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,this.tipoProtocollo, listaTipiProtocollo,used);
+						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,this.tipoProtocollo, listaTipiProtocollo,used,
+						this.serviceBinding,this.messageType,this.formatoSpecifica);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -691,7 +742,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		as.setOldIDAccordoForUpdate(idAccordoOLD);
 
-
+		// servicebinding / messagetype / formatospecifica
+		as.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
+		as.setMessageType(apcCore.fromMessageMessageType(this.messageType));
+		as.setFormatoSpecifica(apcCore.interfaceType2FormatoSpecifica(this.formatoSpecifica));
 
 		// stato
 		as.setStatoPackage(this.statoPackage);
@@ -722,7 +776,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// update della configurazione 
 				if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 				else 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
@@ -732,7 +786,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.formatoSpecifica);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -827,7 +881,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 							// update della configurazione 
 							if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 								this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-									this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+										this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 							else 
 								this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 										this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
@@ -837,7 +891,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 									this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 									this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 									this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,
+									this.serviceBinding,this.messageType,this.formatoSpecifica);
 
 							// aggiunta campi custom
 							dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

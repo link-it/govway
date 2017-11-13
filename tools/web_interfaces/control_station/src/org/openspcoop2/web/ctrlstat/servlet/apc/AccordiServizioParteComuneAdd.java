@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -46,7 +47,10 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -92,6 +96,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private String tipoAccordo;
 	private boolean validazioneDocumenti = true;
 	private boolean decodeRequestValidazioneDocumenti = false;
+
+	private ServiceBinding serviceBinding = null;
+	private MessageType messageType = null;
+	private InterfaceType interfaceType = null;
 	
 	private String tipoProtocollo;
 	// Non utilizzato veniva sempre impostato false, lo lascio commentato in questo punto perche' veniva passato nella decode della richiesta multipart... 
@@ -102,7 +110,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
 	private ConsoleConfiguration consoleConfiguration =null;
 	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
+	private IProtocolFactory<?> protocolFactory = null;
 	private IRegistryReader registryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
@@ -160,6 +168,15 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.scadenza = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SCADENZA);
 			this.referente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
 			this.versione = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
+			
+			String serviceBindingS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING);
+			this.serviceBinding = StringUtils.isNotEmpty(serviceBindingS) ? ServiceBinding.valueOf(serviceBindingS) : null;
+			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE);
+			this.messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
+			String formatoSpecificaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_INTERFACE_TYPE);
+			this.interfaceType = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
+			
+			
 
 			// patch per version spinner fino a che non si trova un modo piu' elegante
 			// Veniva sempre impostato false, lo lascio commentato in questo punto perche' veniva passato nella decode della richiesta multipart...
@@ -226,6 +243,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 
+			// service binding 
+			if(this.serviceBinding == null) {
+				this.serviceBinding  = soggettiCore.getDefaultServiceBinding(this.protocolFactory);
+			}
+
 			// ID Accordo Null per default
 			IDAccordo idApc = null;
 			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
@@ -275,15 +297,18 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			String[] accordiCooperazioneEsistenti=null;
 			String[] accordiCooperazioneEsistentiLabel=null;
 
-
+ 
 			String postBackElementName = apcHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 
-			// Controllo se ho modificato il protocollo, resetto il referente
+			// Controllo se ho modificato il protocollo, resetto il referente e il service binding
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO)){
 					this.referente = null;
 					apcHelper.deleteBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);
 					apcHelper.deleteProtocolPropertiesBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);
+					this.serviceBinding  = soggettiCore.getDefaultServiceBinding(this.protocolFactory);
+					this.interfaceType = null;
+					this.messageType = null;
 				}
 			}
 
@@ -330,6 +355,22 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				accordiCooperazioneEsistenti[0]="-";
 				accordiCooperazioneEsistentiLabel[0]="-";
 			}
+			
+			// message type resta null
+			// fromato specifica
+			if(this.interfaceType == null) {
+				if(this.serviceBinding != null) {
+					switch(this.serviceBinding) {
+					case REST:
+						this.interfaceType = InterfaceType.SWAGGER;
+						break;
+					case SOAP:
+					default:
+						this.interfaceType = InterfaceType.WSDL;
+						break;
+					}
+				}
+			}
 
 			// Se nome = null, devo visualizzare la pagina per l'inserimento dati
 			if(ServletUtils.isEditModeInProgress(this.editMode)){ // && ServletUtils.isEditModeInProgress(request)){
@@ -372,6 +413,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					//}else{
 					this.versione="1";
 					//}
+					
+					
 				}
 
 				// preparo i campi
@@ -392,7 +435,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						false, true, this.referente, this.versione, providersList, providersListLabel, 
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
-						this.tipoProtocollo, listaTipiProtocollo,false,false);
+						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
+						this.serviceBinding,this.messageType,this.interfaceType);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -416,7 +460,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, 
 					this.filtrodup, this.confric, this.idcoll, this.consord, 
 					this.scadenza, "0",this.referente, this.versione,this.accordoCooperazione,this.privato,visibilitaAccordoCooperazione,null,
-					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null);
+					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null,this.serviceBinding,this.messageType,this.interfaceType);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -466,7 +510,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						false, true,this.referente, this.versione, providersList, providersListLabel,
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
-						this.tipoProtocollo, listaTipiProtocollo,false,false);
+						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
+						this.serviceBinding,this.messageType,this.interfaceType);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -522,6 +567,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			as.setByteSpecificaConversazioneErogatore((wsblservS != null) && !wsblservS.trim().replaceAll("\n", "").equals("") ? wsblservS.trim().getBytes() : null);
 			String wsblservcorrS = this.wsblservcorr.getValue() != null ? new String(this.wsblservcorr.getValue()) : null;
 			as.setByteSpecificaConversazioneFruitore((wsblservcorrS != null) && !wsblservcorrS.trim().replaceAll("\n", "").equals("") ? wsblservcorrS.trim().getBytes() : null);
+			
+			// servicebinding / messagetype / formatospecifica
+			as.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
+			as.setMessageType(apcCore.fromMessageMessageType(this.messageType));
+			as.setFormatoSpecifica(apcCore.interfaceType2FormatoSpecifica(this.interfaceType));
 			
 			if(this.referente!=null && !"".equals(this.referente) && !"-".equals(this.referente)){
 				int idRef = 0;
@@ -588,7 +638,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							false, true,this.referente, this.versione, providersList, providersListLabel,
 							this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 							this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
-							this.tipoProtocollo, listaTipiProtocollo,false,false);
+							this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
+							this.serviceBinding,this.messageType,this.interfaceType);
 
 					// aggiunta campi custom
 					dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties);
@@ -640,7 +691,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			//imposto properties custom
 			as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
-
+			
 			// effettuo le operazioni
 			apcCore.performCreateOperation(userLogin, apcHelper.smista(), as);
 			

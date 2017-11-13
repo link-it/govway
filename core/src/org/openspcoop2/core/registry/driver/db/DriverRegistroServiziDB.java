@@ -86,8 +86,6 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceRepresentation;
-import org.openspcoop2.core.registry.ResourceRequest;
-import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.RuoliSoggetto;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.RuoloSoggetto;
@@ -2989,6 +2987,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			this.log.debug("inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordo);
 
+			Resource resource = null;
+			for (int i = 0; i < accordoServizio.sizeResourceList(); i++) {
+				resource = accordoServizio.getResource(i);
+				DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.CREATE,accordoServizio,resource, connection, idAccordo);
+			}
+			this.log.debug("inserite " + accordoServizio.sizeResourceList() + " resources relative all'accordo :" + nome + " id :" + idAccordo);
+			
 			// Accordo servizio composto
 			if(accordoServizio.getServizioComposto()!=null){
 				DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteComuneServizioComposto(CostantiDB.CREATE, 
@@ -3020,7 +3025,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			// CRUD
 			DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.CREATE, documenti, idAccordo, ProprietariDocumento.accordoServizio, connection, this.tipoDB);
-
 			
 			// ProtocolProperties
 			DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, accordoServizio.getProtocolPropertyList(), 
@@ -3607,6 +3611,76 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		return exist;
 	}
+	
+	
+	/**
+	 * Verifica l'esistenza di un port-type in un accordo
+	 * 
+	 * @param nome
+	 *                del port-type da verificare
+	 * @param idAccordo
+	 *                dell'accordo
+	 * @return true se il port-type esiste, false altrimenti
+	 */
+	public boolean existsAccordoServizioParteComuneResource(String nome, long idAccordo) throws DriverRegistroServiziException {
+
+		boolean exist = false;
+		Connection connection;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		if (this.atomica) {
+			try {
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(nome,longId)");
+				connection.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneResource] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			connection = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_accordo = ?");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idAccordo);
+			stm.setString(2, nome);
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+		} catch (Exception e) {
+			exist = false;
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+		return exist;
+	}
 
 	/**
 	 * Aggiorna l'elemento nel database con i nuovi valori. Se il parametro
@@ -3925,7 +3999,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			this.log.debug("inserite " + accordoServizio.sizePortTypeList() + " porttype relative all'accordo :" + nome + " id :" + idAccordoLong);
 
-
+			// risorse
+			
+			
+			
 			// Accordo servizio composto
 			if(accordoServizio.getServizioComposto()!=null){
 				// Elimino eventualmente se prima era presente
@@ -15876,6 +15953,165 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
+	public List<Resource> accordiResourceList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+		String nomeMetodo = "accordiResourceList";
+		int idLista = Liste.ACCORDI_API_RESOURCES;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		ricerca.getSearchString(idLista);
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		ArrayList<Resource> lista = new ArrayList<Resource>();
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("accordiResourceList");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition("id_accordo = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition("id_accordo = ?");
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setInt(1,idAccordo);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
+				sqlQueryObject.addSelectField("id_accordo");
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("http_method");
+				sqlQueryObject.addSelectField("path");
+				sqlQueryObject.addSelectField("message_type");
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_accordo = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
+				sqlQueryObject.addSelectField("id_accordo");
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("http_method");
+				sqlQueryObject.addSelectField("path");
+				sqlQueryObject.addSelectField("message_type");
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_accordo = ?");
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setInt(1, idAccordo);
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+				
+				Resource resource = new Resource();
+
+				String tmp = risultato.getString("nome");
+				resource.setNome(((tmp == null || tmp.equals("")) ? null : tmp));
+
+				tmp = risultato.getString("descrizione");
+				resource.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
+
+				tmp = risultato.getString("http_method");
+				resource.setMethod(DriverRegistroServiziDB_LIB.getEnumHttpMethod(((tmp == null || tmp.equals("")) ? null : tmp)));
+
+				tmp = risultato.getString("path");
+				if(tmp!=null) {
+					if(CostantiDB.API_RESOURCE_PATH_ALL_VALUE.equals(tmp.trim())==false) {
+						resource.setPath(tmp);
+					}
+				}
+				
+				tmp = risultato.getString("message_type");
+				resource.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				resource.setIdAccordo(risultato.getLong("id_accordo"));
+
+				long idResource = risultato.getLong("id");
+				resource.setId(idResource);
+				
+				lista.add(resource);
+			}
+
+			return lista;
+
+		} catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 	/**
 	 * Controlla se l'azione e' usata come Azione correlata in qualche azione dell'accordo con id idAccordo 
 	 * @param idAccordo

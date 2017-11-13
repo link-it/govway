@@ -25,6 +25,7 @@ import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -60,6 +61,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String OBJECT_NAME_ACCORDI_COOPERAZIONE = "accordiCooperazione";
 	
 	public final static String OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE = "accordiServizioParteComunePortTypeOperationsMessage";
+	
+	public final static String OBJECT_NAME_APC_RESOURCES = "accordiServizioParteComuneResources";
 
 	/* SERVLET NAME */
 
@@ -157,6 +160,18 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_PORT_TYPE_OPERATIONS_MESSAGE.add(SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_LIST);
 	}
 
+	public final static String SERVLET_NAME_APC_RESOURCES_ADD = OBJECT_NAME_APC_RESOURCES+"Add.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_CHANGE = OBJECT_NAME_APC_RESOURCES+"Change.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_DELETE = OBJECT_NAME_APC_RESOURCES+"Del.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_LIST = OBJECT_NAME_APC_RESOURCES+"List.do";
+	public final static Vector<String> SERVLET_APC_RESOURCES = new Vector<String>();
+	static{
+		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_ADD);
+		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_CHANGE);
+		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_DELETE);
+		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_LIST);
+	}
+	
 
 	/* LABEL GENERALI */
 
@@ -199,16 +214,19 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
 	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invia' senza selezionare alcun file"; //fornirne un'altra versione";
 	public final static String LABEL_COMPONENTI = "Componenti";
-	public final static String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento WSDL";
+	public final static String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento";
 	public final static String LABEL_WSDL_NOT_FOUND = "non fornito";
 	public final static String LABEL_WSDL_ATTUALE = "Attuale";
-	public final static String LABEL_WSDL_NUOVO = "Nuovo WSDL";
+	public final static String LABEL_WSDL_NUOVO = "Nuovo";
 
 	public final static String LABEL_APC_MENU_VISUALE_AGGREGATA = "Accordi Parte Comune";
 	public final static String LABEL_ASC_MENU_VISUALE_AGGREGATA = "Servizi Composti";
 	public final static String LABEL_OPERATION_MESSAGE = "Message";
 	public final static String LABEL_OPERATION_MESSAGE_INPUT = "Message Input";
 	public final static String LABEL_OPERATION_MESSAGE_OUTPUT = "Message Output";
+	
+	public final static String LABEL_RISORSE = "Risorse";
+	public final static String LABEL_RISORSA = "Risorsa";
 
 	/* PARAMETRI */
 
@@ -246,7 +264,9 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_VERSIONE_PROTOCOLLO = "profilo";
 	public final static String PARAMETRO_CLIENT_AUTH = "clientAuth";
 	public final static String PARAMETRO_APC_RIPRISTINA_STATO = "backToStato";
-
+	public final static String PARAMETRO_APC_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
+	public final static String PARAMETRO_APC_MESSAGE_TYPE = CostantiControlStation.PARAMETRO_MESSAGE_TYPE;
+	public final static String PARAMETRO_APC_INTERFACE_TYPE = CostantiControlStation.PARAMETRO_INTERFACE_TYPE;
 
 	public final static String PARAMETRO_APC_AZIONI_NOME = "nomeaz";
 	public final static String PARAMETRO_APC_AZIONI_CORRELATA = "azicorr";
@@ -316,6 +336,14 @@ public class AccordiServizioParteComuneCostanti {
 
 	public final static String PARAMETRO_APC_WSDL_CHANGE_TMP = "apcWsdlTMP";
 	
+	public final static String PARAMETRO_APC_RESOURCES_NOME = "nomeRs";
+	public final static String PARAMETRO_APC_RESOURCES_DESCRIZIONE = "descrizioneRs";
+	public final static String PARAMETRO_APC_RESOURCES_PATH = "pathRs";
+	public final static String PARAMETRO_APC_RESOURCES_HTTP_METHOD = "httpMethodRs";
+	public final static String PARAMETRO_APC_RESOURCES_MESSAGE_TYPE = "messageTypeReq";
+	public final static String PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST = "messageTypeReq";
+	public final static String PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE = "messageTypeRes";
+	
 	/* LABEL PARAMETRI */
 
 	public final static String LABEL_PARAMETRO_APC_NOME = "Nome";
@@ -343,6 +371,22 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_CONSEGNA_ORDINE = "Consegna in ordine";
 	public final static String LABEL_PARAMETRO_APC_SCADENZA = "Scadenza";
 	public final static String LABEL_PARAMETRO_APC_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";
+	public final static String LABEL_PARAMETRO_APC_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
+	public final static String LABEL_PARAMETRO_APC_SERVICE_BINDING_SOAP = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
+	public final static String LABEL_PARAMETRO_APC_SERVICE_BINDING_REST = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_SOAP_11 = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_SOAP_12 = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_12;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_XML = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_XML;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_JSON = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_JSON;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_BINARY = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_BINARY;
+	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_MIME_MULTIPART = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_WSDL = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_WADL = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API;
 
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE = "Tipo";
@@ -363,6 +407,25 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME = "Name";
 	public final static String LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME = "Local Name";
 	public final static String LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS = "Namespace";
+	
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE = "Descrizione";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PATH = "Path";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD = "HTTP Method";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_SERVICE_BINDING = "Service Binding";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE = "Tipo Messaggio";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST = "Tipo Messaggio Richiesta";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE = "Tipo Messaggio Risposta";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_FORMATO_SPECIFICA = "Formato Specifica";
+	
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE = "Delete";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET = "Get";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD = "Head";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS = "Options";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH = "Patch";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST = "Post";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT = "Put";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE = "Trace";
 	
 	/* DEFAULT VALUE PARAMETRI */
 
@@ -421,4 +484,30 @@ public class AccordiServizioParteComuneCostanti {
 	
 	public final static String[] PORT_TYPE_OPERATION_MESSAGE_PART_TYPE = {  DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE_ELEMENT, DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE_TYPE };
 	public final static String[] LABEL_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE = {  DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE_ELEMENT, DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE_TYPE  };
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_SERVICE_BINDING_SOAP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_SERVICE_BINDING_REST = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
+		
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_DEFAULT;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_SOAP_11 = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_11;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_SOAP_12 = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_12;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_XML = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_XML;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_JSON = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_JSON;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_BINARY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_BINARY;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_MIME_MULTIPART = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART;
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WSDL = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WADL = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API;
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE = "DELETE";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET = "GET";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD = "HEAD";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS = "OPTIONS";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH = "PATCH";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST = "POST";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT = "PUT";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE = "TRACE";
+	
 }

@@ -567,6 +567,28 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public List<org.openspcoop2.core.registry.Resource> accordiResourceList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "accordiResourceList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().accordiResourceList(idAccordo, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
 
 	public boolean existsAccordoServizioPorttype(String nome, long idAccordo) throws DriverRegistroServiziException {
 		Connection con = null;
@@ -628,6 +650,25 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			}
 			return false;
 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsAccordoServizioResource(String nome, long idAccordo) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "existsAccordoServizioResource";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverRegistroServiziDB().existsAccordoServizioParteComuneResource(nome, idAccordo);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1596,5 +1637,4 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			return null;
 		}
 	}
-
 }
