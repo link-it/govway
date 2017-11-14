@@ -34,6 +34,6 @@ import java.io.Serializable;
 
 public enum ApiFormats implements Serializable{
 
-	WADL, SWAGGER
+	WADL, SWAGGER_2, OPEN_API_3
 	
 }

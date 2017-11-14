@@ -4745,17 +4745,17 @@ public class ControlStationCore {
 			return null;
 		
 		switch (formatoSpecifica) {
-		case SWAGGER:
-			return InterfaceType.SWAGGER;
+		case SWAGGER_2:
+			return InterfaceType.SWAGGER_2;
+		case OPENAPI_3:
+			return InterfaceType.OPEN_API_3;
 		case WADL:
 			return InterfaceType.WADL;
-			// [ TODO ] sbloccami!
-//		case OPEN_API:
-//			return InterfaceType.OPEN_API;
+
 			
-		case WSDL:
+		case WSDL_11:
 		default:
-			return InterfaceType.WSDL;
+			return InterfaceType.WSDL_11;
 		}			
 	}
 	
@@ -4764,16 +4764,16 @@ public class ControlStationCore {
 			return null;
 		
 		switch (formatoSpecifica) {
-		case SWAGGER:
-			return org.openspcoop2.core.registry.constants.FormatoSpecifica.SWAGGER;
+		case SWAGGER_2:
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.SWAGGER_2;
+		case OPEN_API_3:
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPENAPI_3;
 		case WADL:
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WADL;
-			// [ TODO ] sbloccami!
-//		case OPEN_API:
-//			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPEN_API;
-		case WSDL:
+			
+		case WSDL_11:
 		default:
-			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WSDL;
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WSDL_11;
 		}			
 	}
 	

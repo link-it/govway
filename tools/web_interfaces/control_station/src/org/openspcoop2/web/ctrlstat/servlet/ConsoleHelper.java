@@ -3308,11 +3308,11 @@ public class ConsoleHelper {
 					for (int i =0; i < interfaceTypeList.size() ; i ++) {
 						org.openspcoop2.protocol.manifest.constants.InterfaceType type = interfaceTypeList.get(i);
 						switch (type) {
-						case OPEN_API:
+						case OPEN_API_3:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API;
 							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API;
 							break;
-						case SWAGGER:
+						case SWAGGER_2:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER;
 							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER;
 							break;
@@ -3320,7 +3320,7 @@ public class ConsoleHelper {
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
 							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL;
 							break;
-						case WSDL:
+						case WSDL_11:
 						default:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL;
 							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL;

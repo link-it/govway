@@ -36,10 +36,12 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 @javax.xml.bind.annotation.XmlEnum(String.class)
 public enum FormatoSpecifica implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("wsdl")
-	WSDL ("wsdl"),
-	@javax.xml.bind.annotation.XmlEnumValue("swagger")
-	SWAGGER ("swagger"),
+	@javax.xml.bind.annotation.XmlEnumValue("wsdl11")
+	WSDL_11 ("wsdl11"),
+	@javax.xml.bind.annotation.XmlEnumValue("swagger2")
+	SWAGGER_2 ("swagger2"),
+	@javax.xml.bind.annotation.XmlEnumValue("openapi3")
+	OPENAPI_3 ("openapi3"),
 	@javax.xml.bind.annotation.XmlEnumValue("wadl")
 	WADL ("wadl");
 	

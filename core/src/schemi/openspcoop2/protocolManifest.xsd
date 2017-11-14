@@ -442,10 +442,10 @@
        
        <xsd:simpleType name="InterfaceType">
               <xsd:restriction base="xsd:string">
-                     <xsd:enumeration value="wsdl"/>
+                     <xsd:enumeration value="wsdl11"/>
                      <xsd:enumeration value="wadl"/>
-                     <xsd:enumeration value="swagger"/>
-                     <xsd:enumeration value="openApi"/>
+                     <xsd:enumeration value="swagger2"/>
+                     <xsd:enumeration value="openApi3"/>
               </xsd:restriction>
        </xsd:simpleType>
        

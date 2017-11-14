@@ -159,10 +159,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_BINARY = "Binary";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME-Multipart";
 	public final static String LABEL_PARAMETRO_INTERFACE_TYPE = "Formato Specifica";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL = "Wsdl";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL = "Wsdl 1.1";
 	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WADL = "Wadl";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER = "Swagger";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API = "Open API";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER = "Swagger 2.0";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API = "Open API 3.0";
 	
 	/** PARAMETERS **/
 	

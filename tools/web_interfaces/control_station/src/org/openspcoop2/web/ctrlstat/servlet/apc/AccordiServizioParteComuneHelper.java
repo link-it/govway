@@ -3625,13 +3625,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	
 	public String getLabelWSDLFromFormatoSpecifica(org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica) {
 		switch (formatoSpecifica) {
-		case SWAGGER:
+		case SWAGGER_2:
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER;
+		case OPEN_API_3:
+			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API;
 		case WADL:
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_WADL;
-		case WSDL:
+		case WSDL_11:
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_WSDL;
-		case OPEN_API:
 		default:
 			return AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API;
 		}

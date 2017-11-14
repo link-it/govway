@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.TipiDocumentoConversazione;
 import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoInterfaccia;
@@ -48,6 +49,11 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.rest.ApiFactory;
+import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.ApiReaderConfig;
+import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
@@ -84,115 +90,171 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 		ValidazioneResult result = new ValidazioneResult();
 		result.setEsito(false);
 
+		if(ServiceBinding.SOAP.equals(accordoServizioParteComune.getServiceBinding())) {
 
-		// interfaccia wsdl Definitoria
-		try{
-			objectInEsame = "[InterfacciaWSDL Definitoria] ";
-
-			byte[]wsdlDefinitorio = null;
-			if(accordoServizioParteComune.getByteWsdlDefinitorio()!=null){
-				wsdlDefinitorio = accordoServizioParteComune.getByteWsdlDefinitorio();
+			// interfaccia wsdl Definitoria
+			try{
+				objectInEsame = "[InterfacciaWSDL Definitoria] ";
+	
+				byte[]wsdlDefinitorio = null;
+				if(accordoServizioParteComune.getByteWsdlDefinitorio()!=null){
+					wsdlDefinitorio = accordoServizioParteComune.getByteWsdlDefinitorio();
+				}
+				else if(accordoServizioParteComune.getWsdlDefinitorio()!=null){
+					wsdlDefinitorio = this.readDocumento(accordoServizioParteComune.getWsdlDefinitorio());		
+				}
+				if(wsdlDefinitorio!=null){
+					// Verifico che sia un documento xml valido
+					this.xmlUtils.newDocument(wsdlDefinitorio);
+					// Verifico che sia un xsd, leggendone il targetNamespace
+					this.xsdUtils.getTargetNamespace(wsdlDefinitorio);				
+				}	
+			}catch(Exception e){
+				result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
+				result.setException(e);
+				return result;
 			}
-			else if(accordoServizioParteComune.getWsdlDefinitorio()!=null){
-				wsdlDefinitorio = this.readDocumento(accordoServizioParteComune.getWsdlDefinitorio());		
-			}
-			if(wsdlDefinitorio!=null){
-				// Verifico che sia un documento xml valido
-				this.xmlUtils.newDocument(wsdlDefinitorio);
-				// Verifico che sia un xsd, leggendone il targetNamespace
-				this.xsdUtils.getTargetNamespace(wsdlDefinitorio);				
+	
+	
+			// interfaccia wsdl Concettuale
+			try{
+				objectInEsame = "[InterfacciaWSDL Concettuale] ";
+	
+				byte[]wsdlConcettuale = null;
+				if(accordoServizioParteComune.getByteWsdlConcettuale()!=null){
+					wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
+				}
+				else if(accordoServizioParteComune.getWsdlConcettuale()!=null){
+					wsdlConcettuale = this.readDocumento(accordoServizioParteComune.getWsdlConcettuale());		
+				}
+				if(wsdlConcettuale!=null){
+					// Verifico che sia un documento xml valido
+					Document d = this.xmlUtils.newDocument(wsdlConcettuale);
+					// Verifico che sia un wsdl, leggendone il targetNamespace
+					this.wsdlUtilities.getTargetNamespace(wsdlConcettuale);
+					// Costruisco wsdl
+					this.wsdlUtilities.removeSchemiIntoTypes(d);
+					DefinitionWrapper wsdl = new DefinitionWrapper(d,this.xmlUtils,false,false);
+					// Valido
+					wsdl.valida(false);
+				}
+			}catch(Exception e){
+				result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
+				result.setException(e);
+				return result;
 			}	
-		}catch(Exception e){
-			result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
-			result.setException(e);
-			return result;
+	
+	
+			// interfaccia wsdl Erogatore
+			try{
+				objectInEsame = "[InterfacciaWSDL Erogatore] ";
+	
+				byte[]wsdlErogatore = null;
+				if(accordoServizioParteComune.getByteWsdlLogicoErogatore()!=null){
+					wsdlErogatore = accordoServizioParteComune.getByteWsdlLogicoErogatore();
+				}
+				else if(accordoServizioParteComune.getWsdlLogicoErogatore()!=null){
+					wsdlErogatore = this.readDocumento(accordoServizioParteComune.getWsdlLogicoErogatore());		
+				}
+				if(wsdlErogatore!=null){
+					// Verifico che sia un documento xml valido
+					Document d = this.xmlUtils.newDocument(wsdlErogatore);
+					// Verifico che sia un wsdl, leggendone il targetNamespace
+					this.wsdlUtilities.getTargetNamespace(wsdlErogatore);
+					// Costruisco wsdl
+					this.wsdlUtilities.removeSchemiIntoTypes(d);
+					DefinitionWrapper wsdl = new DefinitionWrapper(d, this.xmlUtils,false,false);
+					// Valido
+					wsdl.valida(false);
+				}	
+			}catch(Exception e){
+				result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
+				result.setException(e);
+				return result;
+			}
+	
+	
+			// interfaccia wsdl Fruitore
+			try{
+				objectInEsame = "[InterfacciaWSDL Fruitore] ";
+	
+				byte[]wsdlFruitore = null;
+				if(accordoServizioParteComune.getByteWsdlLogicoFruitore()!=null){
+					wsdlFruitore = accordoServizioParteComune.getByteWsdlLogicoFruitore();
+				}
+				else if(accordoServizioParteComune.getWsdlLogicoFruitore()!=null){
+					wsdlFruitore = this.readDocumento(accordoServizioParteComune.getWsdlLogicoFruitore());		
+				}
+				if(wsdlFruitore!=null){
+					// Verifico che sia un documento xml valido
+					Document d = this.xmlUtils.newDocument(wsdlFruitore);
+					// Verifico che sia un wsdl, leggendone il targetNamespace
+					this.wsdlUtilities.getTargetNamespace(wsdlFruitore);
+					// Costruisco wsdl
+					this.wsdlUtilities.removeSchemiIntoTypes(d);
+					DefinitionWrapper wsdl = new DefinitionWrapper(d,this.xmlUtils,false,false);
+					// Valido
+					wsdl.valida(false);
+				}	
+			}catch(Exception e){
+				result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
+				result.setException(e);
+				return result;
+			}
+			
 		}
+		else {
+			
+			
+			// interfaccia
+			try{
+				
+				byte[]wsdlConcettuale = null;
+				if(accordoServizioParteComune.getByteWsdlConcettuale()!=null){
+					wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
+				}
+				else if(accordoServizioParteComune.getWsdlConcettuale()!=null){
+					wsdlConcettuale = this.readDocumento(accordoServizioParteComune.getWsdlConcettuale());		
+				}
+				if(wsdlConcettuale!=null){
+				
+					if(accordoServizioParteComune.getFormatoSpecifica()!=null) {
+						
+						ApiFormats format = null;
+						switch (accordoServizioParteComune.getFormatoSpecifica()) {
+						case WADL:
+							objectInEsame = "[Interfaccia WADL] ";
+							format=ApiFormats.WADL;
+							break;
+						case SWAGGER_2:
+							objectInEsame = "[Interfaccia Swagger 2.0] ";
+							format=ApiFormats.SWAGGER_2;
+							break;
+						case OPENAPI_3:
+							objectInEsame = "[Interfaccia OpenAPI 3.0] ";
+							format=ApiFormats.OPEN_API_3;
+							break;
+						default:
+							// altre interfacce non supportate per rest
+							break;
+						}
+						
+						ApiReaderConfig config = new ApiReaderConfig();
+						IApiReader apiReader = ApiFactory.newApiReader(format);
+						apiReader.init(this.log, wsdlConcettuale, config);
+						@SuppressWarnings("unused")
+						Api api = apiReader.read();
+						
+					}
+					
 
-
-		// interfaccia wsdl Concettuale
-		try{
-			objectInEsame = "[InterfacciaWSDL Concettuale] ";
-
-			byte[]wsdlConcettuale = null;
-			if(accordoServizioParteComune.getByteWsdlConcettuale()!=null){
-				wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
-			}
-			else if(accordoServizioParteComune.getWsdlConcettuale()!=null){
-				wsdlConcettuale = this.readDocumento(accordoServizioParteComune.getWsdlConcettuale());		
-			}
-			if(wsdlConcettuale!=null){
-				// Verifico che sia un documento xml valido
-				Document d = this.xmlUtils.newDocument(wsdlConcettuale);
-				// Verifico che sia un wsdl, leggendone il targetNamespace
-				this.wsdlUtilities.getTargetNamespace(wsdlConcettuale);
-				// Costruisco wsdl
-				this.wsdlUtilities.removeSchemiIntoTypes(d);
-				DefinitionWrapper wsdl = new DefinitionWrapper(d,this.xmlUtils,false,false);
-				// Valido
-				wsdl.valida(false);
-			}
-		}catch(Exception e){
-			result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
-			result.setException(e);
-			return result;
-		}	
-
-
-		// interfaccia wsdl Erogatore
-		try{
-			objectInEsame = "[InterfacciaWSDL Erogatore] ";
-
-			byte[]wsdlErogatore = null;
-			if(accordoServizioParteComune.getByteWsdlLogicoErogatore()!=null){
-				wsdlErogatore = accordoServizioParteComune.getByteWsdlLogicoErogatore();
-			}
-			else if(accordoServizioParteComune.getWsdlLogicoErogatore()!=null){
-				wsdlErogatore = this.readDocumento(accordoServizioParteComune.getWsdlLogicoErogatore());		
-			}
-			if(wsdlErogatore!=null){
-				// Verifico che sia un documento xml valido
-				Document d = this.xmlUtils.newDocument(wsdlErogatore);
-				// Verifico che sia un wsdl, leggendone il targetNamespace
-				this.wsdlUtilities.getTargetNamespace(wsdlErogatore);
-				// Costruisco wsdl
-				this.wsdlUtilities.removeSchemiIntoTypes(d);
-				DefinitionWrapper wsdl = new DefinitionWrapper(d, this.xmlUtils,false,false);
-				// Valido
-				wsdl.valida(false);
+				}
+			}catch(Exception e){
+				result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
+				result.setException(e);
+				return result;
 			}	
-		}catch(Exception e){
-			result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
-			result.setException(e);
-			return result;
-		}
-
-
-		// interfaccia wsdl Fruitore
-		try{
-			objectInEsame = "[InterfacciaWSDL Fruitore] ";
-
-			byte[]wsdlFruitore = null;
-			if(accordoServizioParteComune.getByteWsdlLogicoFruitore()!=null){
-				wsdlFruitore = accordoServizioParteComune.getByteWsdlLogicoFruitore();
-			}
-			else if(accordoServizioParteComune.getWsdlLogicoFruitore()!=null){
-				wsdlFruitore = this.readDocumento(accordoServizioParteComune.getWsdlLogicoFruitore());		
-			}
-			if(wsdlFruitore!=null){
-				// Verifico che sia un documento xml valido
-				Document d = this.xmlUtils.newDocument(wsdlFruitore);
-				// Verifico che sia un wsdl, leggendone il targetNamespace
-				this.wsdlUtilities.getTargetNamespace(wsdlFruitore);
-				// Costruisco wsdl
-				this.wsdlUtilities.removeSchemiIntoTypes(d);
-				DefinitionWrapper wsdl = new DefinitionWrapper(d,this.xmlUtils,false,false);
-				// Valido
-				wsdl.valida(false);
-			}	
-		}catch(Exception e){
-			result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
-			result.setException(e);
-			return result;
+			
 		}
 
 

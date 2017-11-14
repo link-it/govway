@@ -362,11 +362,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				if(this.serviceBinding != null) {
 					switch(this.serviceBinding) {
 					case REST:
-						this.interfaceType = InterfaceType.SWAGGER;
+						this.interfaceType = InterfaceType.OPEN_API_3;
 						break;
 					case SOAP:
 					default:
-						this.interfaceType = InterfaceType.WSDL;
+						this.interfaceType = InterfaceType.WSDL_11;
 						break;
 					}
 				}

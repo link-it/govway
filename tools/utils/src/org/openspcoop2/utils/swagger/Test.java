@@ -55,7 +55,7 @@ public class Test {
 
 	public static void test(URI uri, String testName) throws Exception {
 
-		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER);
+		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
 		apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
 		Api api = apiReader.read();
 

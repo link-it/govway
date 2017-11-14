@@ -53,10 +53,10 @@ public class Test {
 		try {
 			URI uri = Test.class.getResource("/org/openspcoop2/utils/swagger/test.json").toURI();
 	
-			IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER);
+			IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
 			apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
 			Api api = apiReader.read();
-			IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.SWAGGER);
+			IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.SWAGGER_2);
 			SwaggerApiValidatorConfig config = new SwaggerApiValidatorConfig();
 			config.setJsonValidatorAPI(ApiName.FGE);
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);

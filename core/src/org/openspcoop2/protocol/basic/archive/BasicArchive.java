@@ -139,13 +139,15 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		// NOTA non usare in questo metodo e nel metodo _setProtocolInfo il protocolFactory e dipendenze su di uno specifico protocollo.
 		//      Viene usato dal meccanismo di import per definire la struttura di un accordo in base al wsdl, indipendentemente dallo specifico protocollo
 		
-		if(accordoServizioParteComune.sizePortTypeList()>0){
-			throw new ProtocolException("Protocol Info already exists");
-		}
+
 		
 		if(ServiceBinding.SOAP.equals(accordoServizioParteComune.getServiceBinding())) {
 		
-			if(accordoServizioParteComune.getFormatoSpecifica()==null || FormatoSpecifica.WSDL.equals(accordoServizioParteComune.getFormatoSpecifica())) {
+			if(accordoServizioParteComune.sizePortTypeList()>0){
+				throw new ProtocolException("Protocol Info already exists");
+			}
+			
+			if(accordoServizioParteComune.getFormatoSpecifica()==null || FormatoSpecifica.WSDL_11.equals(accordoServizioParteComune.getFormatoSpecifica())) {
 				byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
 				if(wsdlConcettuale!=null){
 					_setProtocolInfoFromWsdl(wsdlConcettuale, accordoServizioParteComune, "Concettuale", log);
@@ -163,6 +165,10 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		}
 		else {
 			
+			if(accordoServizioParteComune.sizeResourceList()>0){
+				throw new ProtocolException("Protocol Info already exists");
+			}
+			
 			if(accordoServizioParteComune.getFormatoSpecifica()!=null) {
 				
 				byte[] wsdlConcettuale = accordoServizioParteComune.getByteWsdlConcettuale();
@@ -171,8 +177,11 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 					case WADL:
 						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.WADL, log);
 						break;
-					case SWAGGER:
-						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER, log);
+					case SWAGGER_2:
+						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER_2, log);
+						break;
+					case OPENAPI_3:
+						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.OPEN_API_3, log);
 						break;
 					default:
 						// altre interfacce non supportate per rest

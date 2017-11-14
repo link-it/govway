@@ -492,8 +492,9 @@
 	</xsd:simpleType>
 	<xsd:simpleType name="FormatoSpecifica">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="wsdl"/>
-			<xsd:enumeration value="swagger"/>
+			<xsd:enumeration value="wsdl11"/>
+			<xsd:enumeration value="swagger2"/>
+			<xsd:enumeration value="openapi3"/>
 			<xsd:enumeration value="wadl"/>
 		</xsd:restriction>
 	</xsd:simpleType>

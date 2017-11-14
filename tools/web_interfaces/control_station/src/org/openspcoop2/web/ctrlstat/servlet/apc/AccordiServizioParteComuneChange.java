@@ -508,11 +508,11 @@ public final class AccordiServizioParteComuneChange extends Action {
 				if(this.serviceBinding != null) {
 					switch(this.serviceBinding) {
 					case REST:
-						this.formatoSpecifica = InterfaceType.SWAGGER;
+						this.formatoSpecifica = InterfaceType.OPEN_API_3;
 						break;
 					case SOAP:
 					default:
-						this.formatoSpecifica = InterfaceType.WSDL;
+						this.formatoSpecifica = InterfaceType.WSDL_11;
 						break;
 					}
 				}
