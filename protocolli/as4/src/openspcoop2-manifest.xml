@@ -23,7 +23,7 @@
     			<default messageType="soap12"/>
     		</mediaTypeCollection>
     		<interfaces>
-    			<specification type="wsdl" />
+    			<specification type="wsdl11" />
     		</interfaces>
     	</soap>
     	<rest xml="true" json="true" 
@@ -61,8 +61,8 @@
     		</mediaTypeCollection>
     		<interfaces>
     			<specification type="wadl" />
-    			<specification type="swagger" />
-    			<specification type="openApi" />
+    			<specification type="swagger2" />
+    			<specification type="openApi3" />
     		</interfaces>
     	</rest>
     </binding>
