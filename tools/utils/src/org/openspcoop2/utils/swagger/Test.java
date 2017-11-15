@@ -49,6 +49,8 @@ public class Test {
 		URI yamlUri = Test.class.getResource("/org/openspcoop2/utils/swagger/test.yaml").toURI();
 
 		test(jsonUri,"json");
+		
+		System.out.println("\n\n\n==============================================================");
 		test(yamlUri,"yaml");
 
 	}
@@ -59,6 +61,8 @@ public class Test {
 		apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
 		Api api = apiReader.read();
 
+		System.out.println("["+testName+"] API COMPLESSIVA: "+api);
+		
 		String test = "http://petstore.swagger.io/v2/pet";
 		System.out.println("["+testName+"] API-Op ["+test+"]: "+api.findOperation(HttpRequestMethod.POST, test));
 

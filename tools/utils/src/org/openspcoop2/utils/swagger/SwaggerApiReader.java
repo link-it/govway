@@ -291,7 +291,11 @@ public class SwaggerApiReader implements IApiReader {
 				for(String header: response.getHeaders().keySet()) {
 					Property property = response.getHeaders().get(header);
 					Property realProperty = property;
-					ApiHeaderParameter parameter = new ApiHeaderParameter(realProperty.getName(), realProperty.getType());
+					String name = realProperty.getName();
+					if(name==null) {
+						name = header;
+					}
+					ApiHeaderParameter parameter = new ApiHeaderParameter(name, realProperty.getType());
 					parameter.setDescription(realProperty.getDescription());
 					parameter.setRequired(property.getRequired());
 					apiResponse.addHeaderParameter(parameter);
