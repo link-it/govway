@@ -48,10 +48,7 @@ public class APIUtils {
 		permit.add('-');
 		Character cJolly = '.'; // uso un carattere come jolly '.'
 		
-		String nomeAzione = Utilities.convertNameToSistemaOperativoCompatible(path,true,cJolly,permit,false);
-		if(nomeAzione.startsWith((cJolly+""))) {
-			nomeAzione = nomeAzione.substring(1);
-		}
+		String nomeAzione = requestMethod.name() + "_" + Utilities.convertNameToSistemaOperativoCompatible(path,true,cJolly,permit,false);
 		if(nomeAzione.length()>255) {
 			nomeAzione = nomeAzione.substring(0, 255);
 		}
