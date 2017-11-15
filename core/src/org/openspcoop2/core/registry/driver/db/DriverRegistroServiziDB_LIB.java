@@ -3896,6 +3896,7 @@ public class DriverRegistroServiziDB_LIB {
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (MEDIA) CREATE :\n"+updateQuery);
 					n = updateStmt.executeUpdate();
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (MEDIA) type = " + type + " row affected =" + n);
+					updateStmt.close();
 					
 				}
 				
@@ -3933,6 +3934,7 @@ public class DriverRegistroServiziDB_LIB {
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) CREATE :\n"+updateQuery);
 					n = updateStmt.executeUpdate();
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) type = " + type + " row affected =" + n);
+					updateStmt.close();
 					
 				}
 				
