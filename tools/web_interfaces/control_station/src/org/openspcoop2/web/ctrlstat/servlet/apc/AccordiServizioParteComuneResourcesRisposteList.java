@@ -44,7 +44,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * AccordiServizioParteComuneResourcesList
+ * AccordiServizioParteComuneResourcesRisposteList
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author: pintori $

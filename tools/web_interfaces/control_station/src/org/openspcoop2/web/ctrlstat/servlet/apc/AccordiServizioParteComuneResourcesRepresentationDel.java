@@ -32,19 +32,15 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.ResourceResponse;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -52,11 +48,9 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * accordiPorttypeDel
+ * AccordiServizioParteComuneResourcesRepresentationDel
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author Stefano Corallo (corallo@link.it)
- * @author Sandra Giangrandi (sandra@link.it)
  * @author $Author: pintori $
  * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
  * 
@@ -81,11 +75,8 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -126,7 +117,6 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 			Long idResource = null;
 			ResourceRequest resourceRequest = null;
 			ResourceResponse resourceResponse = null;
-			ResourceRepresentation resourceRepresentationOLD = null;
 			List<ResourceRepresentation> representationList = null;
 			if(isRequest) {
 				resourceRequest = risorsa.getRequest();
@@ -147,14 +137,8 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 				}
 			}
 			
-			List<IDServizio> idServiziWithAccordo = null;
-			try{
-				idServiziWithAccordo = apsCore.getIdServiziWithAccordo(idAccordoFactory.getIDAccordoFromAccordo(as),true);
-			}catch(DriverRegistroServiziNotFound dNotF){}
-			
 			String mediaType = "";
 			boolean modificaAS_effettuata = false;
-			boolean checkPorte = true;
 			StringBuffer errori = new StringBuffer();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
 				mediaType = resourcesToRemove.get(i);

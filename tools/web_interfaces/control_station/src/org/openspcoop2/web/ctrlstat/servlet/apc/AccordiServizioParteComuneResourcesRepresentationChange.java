@@ -64,11 +64,9 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
- * AccordiServizioParteComuneResourcesChange
+ * AccordiServizioParteComuneResourcesRepresentationChange
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author Stefano Corallo (corallo@link.it)
- * @author Sandra Giangrandi (sandra@link.it)
  * @author $Author: pintori $
  * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
  * 
