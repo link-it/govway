@@ -709,10 +709,14 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		        		 if(lR.size()>1) {
 		        			 for (int j = 0; j < lR.size(); j++) {
 		        				 Resource resourceDaModificare = lR.get(j);
-		        				 if(resourceDaModificare.getNome().length()>255) {
-		        					 String newName = resourceDaModificare.getNome().substring(0, 250)+"_"+(j+1);
-		        					 resourceDaModificare.setNome(newName);
+		        				 String newName = null;
+		        				 if(resourceDaModificare.getNome().length()>250) {
+		        					 newName = resourceDaModificare.getNome().substring(0, 250)+"_"+(j+1);
 		        				 }
+		        				 else {
+		        					 newName = newName +"_"+(j+1);
+		        				 }
+		        				 resourceDaModificare.setNome(newName);
 		        			 }
 		        			 foundEquals = true;
 		        		 }
