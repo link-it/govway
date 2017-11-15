@@ -41,6 +41,8 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceRequest;
+import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -347,11 +349,15 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.CHANGE());
 			}
 
+			List<ResourceResponse> oldResponseList = null;
+			ResourceRequest oldRequest = null;
 			// Modifico i dati del port-type nel db
 			for (int i = 0; i < as.sizeResourceList(); i++) {
 				Resource res = as.getResource(i);
 				if (nomeRisorsa.equals(res.getNome())) {
 					as.removeResource(i);
+					oldResponseList = res.getResponseList();
+					oldRequest = res.getRequest();
 					break;
 				}
 			}
@@ -364,6 +370,9 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			newResource.setMessageType(apcCore.fromMessageMessageType(messageType));
 			newResource.setRequestMessageType(apcCore.fromMessageMessageType(messageTypeRequest));
 			newResource.setResponseMessageType(apcCore.fromMessageMessageType(messageTypeResponse));
+			// riporto i figli
+			newResource.setRequest(oldRequest);
+			newResource.setResponseList(oldResponseList);
 			
 			as.addResource(newResource);
 			

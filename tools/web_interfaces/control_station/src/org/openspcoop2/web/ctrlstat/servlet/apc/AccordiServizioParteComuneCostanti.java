@@ -512,6 +512,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML = "Xml";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON = "Json";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO = "Xml Tipo";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT = "Element";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE = "Type";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME = "Xml Name";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE = "Xml Namespace";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE = "Json Type";
@@ -622,5 +624,8 @@ public class AccordiServizioParteComuneCostanti {
 	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM = "form";
 	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER = "header";
 	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY = "query";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT = "element";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE = "type";
 	
 }

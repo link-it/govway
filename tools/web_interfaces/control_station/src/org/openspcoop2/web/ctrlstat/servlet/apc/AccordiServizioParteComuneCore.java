@@ -780,6 +780,25 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public boolean existsAccordoServizioResourceRepresentation(Long idRisorsa, boolean isRequest, Long idResponse, String mediaType) throws DriverRegistroServiziException{
+		Connection con = null;
+		String nomeMetodo = "existsAccordoServizioResourceRepresentation";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverRegistroServiziDB().existsAccordoServizioResourceRepresentation(idRisorsa, isRequest,idResponse,mediaType);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 
 
 	public boolean isUnicaAzioneInAccordi(String azione) throws DriverRegistroServiziException {
@@ -1741,5 +1760,4 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			return null;
 		}
 	}
-
 }

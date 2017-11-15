@@ -108,7 +108,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 	boolean utilizzoSenzaAzione, showUtilizzoSenzaAzione = false,privato ,isServizioComposto,  validazioneDocumenti = true;
 	private ServiceBinding serviceBinding = null;
 	private MessageType messageType = null;
-	private InterfaceType formatoSpecifica = null;
+	private InterfaceType interfaceType = null;
 
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
@@ -193,7 +193,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		this.messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) 
 				? MessageType.valueOf(messageProcessorS) : null;
 		String formatoSpecificaS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_INTERFACE_TYPE);
-		this.formatoSpecifica = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
+		this.interfaceType = StringUtils.isNotEmpty(formatoSpecificaS) ? InterfaceType.toEnumConstant(formatoSpecificaS) : null;
 
 		if("".equals(this.tipoAccordo))
 			this.tipoAccordo = null;
@@ -485,8 +485,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						}
 					}
 					
-					if(this.formatoSpecifica == null)
-						this.formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+					if(this.interfaceType == null)
+						this.interfaceType = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
@@ -498,21 +498,21 @@ public final class AccordiServizioParteComuneChange extends Action {
 			// Controllo se ho modificato il protocollo, resetto il referente e il service binding
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING)){
-					this.formatoSpecifica = null;
+					this.interfaceType = null;
 					this.messageType = null;
 				}
 			}
 
 			// fromato specifica
-			if(this.formatoSpecifica == null) {
+			if(this.interfaceType == null) {
 				if(this.serviceBinding != null) {
 					switch(this.serviceBinding) {
 					case REST:
-						this.formatoSpecifica = InterfaceType.OPEN_API_3;
+						this.interfaceType = InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3);
 						break;
 					case SOAP:
 					default:
-						this.formatoSpecifica = InterfaceType.WSDL_11;
+						this.interfaceType = InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WSDL_11);
 						break;
 					}
 				}
@@ -539,7 +539,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.formatoSpecifica);
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -568,7 +568,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,  
 				this.filtrodup, this.confric, this.idcoll, this.consord, 
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
-				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.formatoSpecifica);
+				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.interfaceType);
 
 		// Validazione base dei parametri custom 
 		if(isOk){
@@ -621,7 +621,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 					this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.formatoSpecifica);
+					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -662,7 +662,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,this.tipoProtocollo, listaTipiProtocollo,used,
-						this.serviceBinding,this.messageType,this.formatoSpecifica);
+						this.serviceBinding,this.messageType,this.interfaceType);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -745,7 +745,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		// servicebinding / messagetype / formatospecifica
 		as.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
 		as.setMessageType(apcCore.fromMessageMessageType(this.messageType));
-		as.setFormatoSpecifica(apcCore.interfaceType2FormatoSpecifica(this.formatoSpecifica));
+		as.setFormatoSpecifica(apcCore.interfaceType2FormatoSpecifica(this.interfaceType));
 
 		// stato
 		as.setStatoPackage(this.statoPackage);
@@ -786,7 +786,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
-						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.formatoSpecifica);
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -892,7 +892,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 									this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 									this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,
-									this.serviceBinding,this.messageType,this.formatoSpecifica);
+									this.serviceBinding,this.messageType,this.interfaceType);
 
 							// aggiunta campi custom
 							dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

@@ -32,21 +32,19 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceRepresentation;
+import org.openspcoop2.core.registry.ResourceRequest;
+import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore; 
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -88,8 +86,6 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -98,80 +94,84 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 			String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
+			
+			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
+			if (nomeRisorsa == null) {
+				nomeRisorsa = "";
+			}
+			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			Integer status = null;
+			try {
+				if(statusS!=null)
+					status = Integer.parseInt(statusS);
+			} catch(Exception e) {}
+			String isReq = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
 
 			// Preparo il menu
 			apcHelper.makeMenu();
 
-			// Elimino i port-types dell'accordo dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 			ArrayList<String> resourcesToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
-			IDResource idRisorsa = new IDResource();
-			idRisorsa.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
+
+			Resource risorsa = null;
+			for (int j = 0; j < as.sizeResourceList(); j++) {
+				risorsa = as.getResource(j);
+				if (nomeRisorsa.equals(risorsa.getNome())) {
+					break;
+				}
+			}
+			
+			Long idResponse = null;
+			Long idResource = null;
+			ResourceRequest resourceRequest = null;
+			ResourceResponse resourceResponse = null;
+			ResourceRepresentation resourceRepresentationOLD = null;
+			List<ResourceRepresentation> representationList = null;
+			if(isRequest) {
+				resourceRequest = risorsa.getRequest();
+				idResource = risorsa.getId();
+				if(resourceRequest != null)
+					representationList = resourceRequest.getRepresentationList();
+			} else {
+				if(risorsa.getResponseList() != null) {
+					for (int i = 0; i < risorsa.getResponseList().size(); i++) {
+						resourceResponse = risorsa.getResponse(i);
+						if (resourceResponse.getStatus() == status) {
+							idResponse = resourceResponse.getId();
+							break;
+						}
+					}
+					if(resourceResponse != null)
+						representationList = resourceResponse.getRepresentationList();
+				}
+			}
 			
 			List<IDServizio> idServiziWithAccordo = null;
 			try{
 				idServiziWithAccordo = apsCore.getIdServiziWithAccordo(idAccordoFactory.getIDAccordoFromAccordo(as),true);
 			}catch(DriverRegistroServiziNotFound dNotF){}
 			
-			String nomeRisorsa = "";
+			String mediaType = "";
 			boolean modificaAS_effettuata = false;
 			boolean checkPorte = true;
 			StringBuffer errori = new StringBuffer();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
-				nomeRisorsa = resourcesToRemove.get(i);
-				
-				// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
-				if(idServiziWithAccordo!=null && idServiziWithAccordo.size()>0){
-				
-					if(checkPorte){
-						
-						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano PA/PD esistenti.
-						if (porteApplicativeCore.existsPortaApplicativaAzione(nomeRisorsa)) {
-							List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeRisorsa);
-							errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' in uso in porte applicative: <BR>");
-							for(int j=0;j<idPAs.size();j++){
-								errori.append("- "+idPAs.get(j).toString()+"<BR>");
-							}
-							continue;
-						}
-						if (porteDelegateCore.existsPortaDelegataAzione(nomeRisorsa)) {
-							List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeRisorsa);
-							errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' in uso in porte delegate: <BR>");
-							for(int j=0;j<idPDs.size();j++){
-								errori.append("- "+idPDs.get(j).toString()+"<BR>");
-							}
-							continue;
-						}
-						
-					}else{
-						
-						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano PA/PD esistenti,
-						// poiche' non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
-						// Allora non permetto l'eliminazione poiche' esistono dei servizi che implementano l'accordo
-						errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' l'accordo di servizio parte comune viene implementato dai seguenti servizi: <br>");
-						for(int j=0; j<idServiziWithAccordo.size();j++){
-							errori.append("- "+idServiziWithAccordo.get(j).toString()+"<br>");
-						}
-						continue;
-						
-					}
-					
-				}
+				mediaType = resourcesToRemove.get(i);
 				
 				// Effettuo eliminazione
-				for (int j = 0; j < as.sizeResourceList(); j++) {
-					Resource risorsa = as.getResource(j);
-					if (nomeRisorsa.equals(risorsa.getNome())) {
+				int idx = -1;			
+				if(representationList != null && representationList.size() > 0) {
+					for (int j  = 0; j  < representationList.size(); j ++) {
+						ResourceRepresentation resourceRepresentation = representationList.get(j );
+						if(resourceRepresentation.getMediaType().equals(mediaType)) {
+							idx = j ;
+							break;
+						}
+					}
+					if(idx > -1) {
 						modificaAS_effettuata = true;
-						as.removeResource(j);
-						break;
+						representationList.remove(idx);
 					}
 				}
 			}
@@ -187,21 +187,48 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			List<Resource> lista = apcCore.accordiResourceList(idInt, ricerca);
-
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
 			as = apcCore.getAccordoServizio(new Long(idInt));
+			
+			risorsa = null;
+			for (int j = 0; j < as.sizeResourceList(); j++) {
+				risorsa = as.getResource(j);
+				if (nomeRisorsa.equals(risorsa.getNome())) {
+					break;
+				}
+			}
+			
+			idResponse = null;
+			idResource = null;
+			resourceRequest = null;
+			resourceResponse = null;
+			if(isRequest) {
+				resourceRequest = risorsa.getRequest();
+				idResource = risorsa.getId();
+			} else {
+				if(risorsa.getResponseList() != null) {
+					for (int i = 0; i < risorsa.getResponseList().size(); i++) {
+						resourceResponse = risorsa.getResponse(i);
+						if (resourceResponse.getStatus() == status) {
+							idResponse = resourceResponse.getId();
+							break;
+						}
+					}
+				}
+			}
 
-			apcHelper.prepareAccordiResourcesList(id,as, lista, ricerca, tipoAccordo);
+			List<ResourceRepresentation> lista = apcCore.accordiResourceRepresentationsList(idResource, isRequest, idResponse, ricerca);
+
+			apcHelper.prepareAccordiResourcesRepresentationsList(id, as, lista, ricerca, tipoAccordo, isRequest, nomeRisorsa, idResource, resourceRequest, resourceResponse);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
-			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.DEL());
+			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS, ForwardParams.DEL());
 			
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.DEL());
+					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS, ForwardParams.DEL());
 		} 
 	}
 }

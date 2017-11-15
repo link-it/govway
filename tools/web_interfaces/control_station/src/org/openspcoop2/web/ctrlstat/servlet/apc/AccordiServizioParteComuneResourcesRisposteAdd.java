@@ -216,11 +216,19 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId().intValue(), ricerca);
-
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id delle risorse
 			as = apcCore.getAccordoServizio(new Long(idInt));
+			
+			risorsa = null;
+			for (int j = 0; j < as.sizeResourceList(); j++) {
+				risorsa = as.getResource(j);
+				if (nomeRisorsa.equals(risorsa.getNome())) {
+					break;
+				}
+			}
+			
+			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId().intValue(), ricerca);
 
 			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, nomeRisorsa); 
 

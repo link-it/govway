@@ -56,6 +56,8 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
+import org.openspcoop2.core.registry.constants.RepresentationType;
+import org.openspcoop2.core.registry.constants.RepresentationXmlType;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -5946,6 +5948,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			// setto le label delle colonne nome, descrizione, tipo
 			List<String> labelList = new ArrayList<>();
+			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
@@ -5971,10 +5974,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, isRequest+""),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa)
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE, representation.getMediaType())
 							);
+					de.setValue(representation.getMediaType());
+					de.setIdToRemove(representation.getMediaType());
+					e.addElement(de);
+					
+					de = new DataElement();
 					de.setValue(representation.getNome());
-					de.setIdToRemove(representation.getNome());
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -6275,7 +6283,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "false"),
-						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_ID, idResponse+""),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						);
 				if (contaListe) {
@@ -6301,7 +6309,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "false"),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_ID, idResponse+""),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
 					if (contaListe) {
@@ -6325,6 +6333,272 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+
+
+
+	public Vector<DataElement> addAccordiResourceRepresentationToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati,
+			String id,  String stato, String tipoAccordo, String protocollo, IProtocolFactory<?> protocolFactory,
+			ServiceBinding serviceBinding, String nomeRisorsa, boolean isRequest, String statusS, String mediaType, String nome,
+			String descrizione, MessageType messageType, RepresentationType tipo, String tipoJson, String nomeXml, String namespaceXml,
+			RepresentationXmlType xmlType)  throws Exception{
+		try {
+			boolean modificheAbilitate = false;
+			if( tipoOperazione.equals(TipoOperazione.ADD) ){
+				modificheAbilitate = true;
+			}else if(this.core.isShowGestioneWorkflowStatoDocumenti()==false){
+				modificheAbilitate = true;
+			}else if(StatiAccordo.finale.toString().equals(stato)==false){
+				modificheAbilitate = true;
+			}
+			
+			DataElement de = new DataElement();
+			de.setValue(id);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setValue(tipoAccordo);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setValue(statusS);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setValue(isRequest +"");
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setValue(nomeRisorsa);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
+			de.setValue(mediaType);
+			de.setRequired(true); 
+			if (tipoOperazione.equals(TipoOperazione.ADD)) {
+				de.setType(DataElementType.TEXT_EDIT);
+			} else {
+				de.setType(DataElementType.TEXT);
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
+			de.setValue(nome);
+			if (tipoOperazione.equals(TipoOperazione.ADD)) {
+				de.setType(DataElementType.TEXT_EDIT);
+			} else {
+				de.setType(DataElementType.TEXT);
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
+			de.setValue(descrizione);
+			de.setType(DataElementType.TEXT_EDIT);
+			if( !modificheAbilitate && (descrizione==null || "".equals(descrizione)) )
+				de.setValue(" ");
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+
+			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType));
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
+			de.setSelected(tipo.getValue());
+			de.setType(DataElementType.SELECT);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
+			de.setSize(this.getSize());
+			de.setPostBack(true); 
+			
+			RepresentationType[] representationTypes = RepresentationType.values();
+			String [] values = new String[representationTypes.length];
+			String [] labels = new String[representationTypes.length];
+			
+			for (int i = 0; i < representationTypes.length; i++) {
+				RepresentationType type = representationTypes[i];
+				switch (type) {
+				case JSON:
+					labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON;
+					values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON;
+					break;
+				case XML:
+				default:
+					labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML;
+					values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML;
+					break;
+				}
+			}
+			
+			de.setLabels(labels);
+			de.setValues(values);
+			dati.addElement(de);
+			
+			switch (tipo) {
+			case JSON:
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+				de.setValue(tipoJson);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+				de.setValue(nomeXml);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+				de.setSize(this.getSize());
+				dati.addElement(de);	
+				
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+				de.setValue(namespaceXml);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+				de.setValue(xmlType.getValue());
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				break;
+			case XML:
+			default:
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+				de.setValue(tipoJson);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+				de.setValue(nomeXml);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+				de.setValue(namespaceXml);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+				de.setSelected(xmlType.getValue());
+				de.setType(DataElementType.SELECT);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+				de.setSize(this.getSize());
+				RepresentationXmlType[] representationXmlTypes = RepresentationXmlType.values();
+				String [] values2 = new String[representationXmlTypes.length];
+				String [] labels2 = new String[representationXmlTypes.length];
+				
+				for (int i = 0; i < representationXmlTypes.length; i++) {
+					RepresentationXmlType type = representationXmlTypes[i];
+					switch (type) {
+					case ELEMENT:
+						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT;
+						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT;
+						break;
+					case TYPE:
+					default:
+						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE;
+						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE;
+						break;
+					}
+				}
+				
+				de.setLabels(labels2);
+				de.setValues(values2);
+				dati.addElement(de);
+				
+				break;
+			}
+			
+
+			
+			
+			this.pd.setDati(dati);
+
+			if(this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(stato)){
+				this.pd.setAddButton(false);
+				this.pd.setRemoveButton(false);
+				this.pd.setSelect(false);
+			}else{
+				this.pd.setAddButton(true);
+				this.pd.setRemoveButton(true);
+				this.pd.setSelect(true);
+			}
+
+			
+		return dati;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	public boolean accordiResourceRepresentationCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa,
+			String nomeRisorsa2, boolean isRequest, String statusS,  String mediaType,  String nome, String descr, MessageType messageType,
+			RepresentationType tipo, String tipoJson, String nomeXml, String namespaceXml,
+			RepresentationXmlType xmlType, Long idRisorsa,Long idResponse)  throws Exception{
+		
+		try{
+			// Campi obbligatori
+			// mediaType
+			if (mediaType.equals("")) {
+				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
+				return false;
+			}
+			
+			// Se tipoOp = add, controllo che la risorsa non sia gia' stato registrata per l'accordo
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = this.apcCore.existsAccordoServizioResourceRepresentation(idRisorsa, isRequest, idResponse, mediaType);
+				if (giaRegistrato) {
+					String owner = isRequest ? "Risorsa " + nomeRisorsa : "Response "+statusS;
+					this.pd.setMessage("La Response con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE + " &egrave; gi&agrave; stata associata alla " + owner);
+					return false;
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		
+		
 	}
 
 
