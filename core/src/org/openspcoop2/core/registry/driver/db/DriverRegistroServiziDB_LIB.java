@@ -3892,7 +3892,7 @@ public class DriverRegistroServiziDB_LIB {
 					updateStmt.setString(index++, rr.getXml()!=null ? DriverRegistroServiziDB_LIB.getValue(rr.getXml().getXmlType()) : null);
 					updateStmt.setString(index++, rr.getXml()!=null ? rr.getXml().getNome() : null);
 					updateStmt.setString(index++, rr.getXml()!=null ? rr.getXml().getNamespace() : null);
-					updateStmt.setString(index++, rr.getXml()!=null ? rr.getJson().getTipo() : null);					
+					updateStmt.setString(index++, rr.getJson()!=null ? rr.getJson().getTipo() : null);					
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (MEDIA) CREATE :\n"+updateQuery);
 					n = updateStmt.executeUpdate();
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (MEDIA) type = " + type + " row affected =" + n);

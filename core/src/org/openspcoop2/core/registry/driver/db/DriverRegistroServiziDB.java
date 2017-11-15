@@ -2071,12 +2071,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				resource.getRequest().setIdResource(resource.getId());
 				
 				List<ResourceRepresentation> l = this.readResourcesMedia(resource.getId(), true, con);
-				if(l!=null && l.size()<0) {
+				if(l!=null && l.size() > 0) {
 					resource.getRequest().getRepresentationList().addAll(l);
 				}
 				
 				List<ResourceParameter> lp = this.readResourcesParameters(resource.getId(), true, con);
-				if(lp!=null && lp.size()<0) {
+				if(lp!=null && lp.size() > 0) {
 					resource.getRequest().getParameterList().addAll(lp);
 				}
 			}
@@ -2109,12 +2109,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 					rr.setId(idRR);
 										
 					List<ResourceRepresentation> l = this.readResourcesMedia(idRR, false, con);
-					if(l!=null && l.size()<0) {
+					if(l!=null && l.size() > 0) {
 						rr.getRepresentationList().addAll(l);
 					}
 					
 					List<ResourceParameter> lp = this.readResourcesParameters(idRR, false, con);
-					if(lp!=null && lp.size()<0) {
+					if(lp!=null && lp.size() > 0) {
 						rr.getParameterList().addAll(lp);
 					}
 					
@@ -3748,7 +3748,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(nome,longId)");
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(nome,idAccordo)");
 				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneResource] Exception accedendo al datasource :" + e.getMessage(),e);
@@ -3817,7 +3817,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(nome,longId)");
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(httpMethod,path,idAccordo)");
 				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneResource] Exception accedendo al datasource :" + e.getMessage(),e);
@@ -3872,13 +3872,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 	
 	/**
-	 * Verifica l'esistenza di un risorsa con determinata coppia HttpMethod, Path  in un accordo
+	 * Verifica l'esistenza di un response con Status in una Resource
 	 * 
-	 * @param nome
-	 *                del port-type da verificare
-	 * @param idAccordo
-	 *                dell'accordo
-	 * @return true se il port-type esiste, false altrimenti
+	 * @param httpStatus
+	 *                 della response da verificare
+	 * @param idRisorsa
+	 *                della resource
+	 * @return true se la risposta esiste, false altrimenti
 	 */
 	public boolean existsAccordoServizioResourceResponse(int idRisorsa, int httpStatus) throws DriverRegistroServiziException {
 
@@ -3888,7 +3888,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		ResultSet rs = null;
 		if (this.atomica) {
 			try {
-				connection = this.getConnectionFromDatasource("existsAccordoServizioResourceResponse(nome,longId)");
+				connection = this.getConnectionFromDatasource("existsAccordoServizioResourceResponse(idRisorsa,httpStatus)");
 				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioResourceResponse] Exception accedendo al datasource :" + e.getMessage(),e);
@@ -3910,6 +3910,161 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idRisorsa);
 			stm.setInt(2, httpStatus);
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+		} catch (Exception e) {
+			exist = false;
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+		return exist;
+	}
+	
+	/***
+	 * Verifica se esiste una representation associata alla resource o alla risposta indicata
+	 * 
+	 * @param idRisorsa
+	 * @param isRequest
+	 * @param idResponse
+	 * @param mediaType
+	 * @return
+	 * @throws DriverRegistroServiziException
+	 */
+	public boolean existsAccordoServizioResourceRepresentation(Long idRisorsa, boolean isRequest, Long idResponse, String mediaType) throws DriverRegistroServiziException {
+
+		boolean exist = false;
+		Connection connection;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		if (this.atomica) {
+			try {
+				connection = this.getConnectionFromDatasource("existsAccordoServizioResourceRepresentation(idRisorsa,isRequest,idResponse,mediaType)");
+				connection.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioResourceRepresentation] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			connection = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_MEDIA);
+			sqlQueryObject.addSelectField("*");
+			if(isRequest)
+				sqlQueryObject.addWhereCondition("id_resource_media = ?");
+			else 
+				sqlQueryObject.addWhereCondition("id_resource_response_media = ?");
+			sqlQueryObject.addWhereCondition("media_type = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			if(isRequest)
+				stm.setLong(1, idRisorsa);
+			else 
+				stm.setLong(1, idResponse);
+			stm.setString(2, mediaType);
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+		} catch (Exception e) {
+			exist = false;
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+		return exist;
+	}
+	
+	/***
+	 * Verifica se esiste un parameter associato alla resource o alla risposta indicata
+	 * 
+	 * @param idRisorsa
+	 * @param isRequest
+	 * @param idResponse
+	 * @param tipo
+	 * @param nome
+	 * @return
+	 * @throws DriverRegistroServiziException
+	 */
+	public boolean existsAccordoServizioResourceParameter(Long idRisorsa, boolean isRequest, Long idResponse, String tipo, String nome) throws DriverRegistroServiziException {
+
+		boolean exist = false;
+		Connection connection;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		if (this.atomica) {
+			try {
+				connection = this.getConnectionFromDatasource("existsAccordoServizioResourceRepresentation(idRisorsa,isRequest,idResponse,tipo,nome)");
+				connection.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioResourceRepresentation] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			connection = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_PARAMETER);
+			sqlQueryObject.addSelectField("*");
+			if(isRequest)
+				sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
+			else 
+				sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
+			sqlQueryObject.addWhereCondition("tipo = ?");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			if(isRequest)
+				stm.setLong(1, idRisorsa);
+			else 
+				stm.setLong(1, idResponse);
+			stm.setString(2, tipo);
+			stm.setString(3, nome);
 			rs = stm.executeQuery();
 			if (rs.next())
 				exist = true;
@@ -16319,7 +16474,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_resource = ?");
-				sqlQueryObject.addWhereCondition("status = ?");
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition("descrizione", search, true, true),
+						"status = ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -16355,7 +16512,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("status");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_resource = ?");
-				sqlQueryObject.addWhereCondition("status = ?");
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition("descrizione", search, true, true),
+						"status = ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("status");
 				sqlQueryObject.setSortType(true);
@@ -16740,6 +16899,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("tipo");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -16762,6 +16922,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				else
 					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
 				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("tipo");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
