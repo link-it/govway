@@ -242,9 +242,8 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 						ApiReaderConfig config = new ApiReaderConfig();
 						IApiReader apiReader = ApiFactory.newApiReader(format);
 						apiReader.init(this.log, wsdlConcettuale, config);
-						@SuppressWarnings("unused")
 						Api api = apiReader.read();
-						
+						api.validate();
 					}
 					
 

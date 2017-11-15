@@ -96,4 +96,136 @@ public abstract class Api extends BaseBean {
 	public void setBaseURL(URL baseURL) {
 		this.baseURL = baseURL;
 	}
+	
+	public void validate() throws ProcessingException {
+		this.validate(false);
+	}
+	public void validate(boolean validateBodyParameterElement) throws ProcessingException {
+		
+		for (int i = 0; i < this.operations.size(); i++) {
+			
+			ApiOperation op = this.operations.get(i);
+			
+			String prefix = "Operation["+i+"] ";
+			
+			if(op.getHttpMethod()==null) {
+				throw new ProcessingException("HttpMethod is null");
+			}
+			if(op.getPath()==null) {
+				throw new ProcessingException("Path is null");
+			}
+			prefix = "Operation["+op.getHttpMethod().name()+" "+op.getPath()+"] ";
+			
+			if(op.getRequest()!=null) {
+				String pRequest = prefix +"[request] ";
+				
+				for (int j = 0; j < op.getRequest().sizeBodyParameters(); j++) {
+					ApiBodyParameter bodyParm = op.getRequest().getBodyParameter(j);
+					if(bodyParm.getMediaType()==null) {
+						throw new ProcessingException(pRequest+"MediaType undefined in body parameter (position '"+j+"')");
+					}
+					if(validateBodyParameterElement) {
+						if(bodyParm.getElement()==null) {
+							throw new ProcessingException(pRequest+"Element undefined in body parameter '"+bodyParm.getMediaType()+"'");
+						}
+					}
+				}
+				
+				for (int j = 0; j < op.getRequest().sizeCookieParameters(); j++) {
+					ApiCookieParameter par = op.getRequest().getCookieParameter(j);
+					if(par.getName()==null) {
+						throw new ProcessingException(pRequest+"Name undefined in cookie parameter (position '"+j+"')");
+					}
+					if(par.getType()==null) {
+						throw new ProcessingException(pRequest+"Type undefined in cookie parameter '"+par.getName()+"'");
+					}
+				}
+				
+				for (int j = 0; j < op.getRequest().sizeDynamicPathParameters(); j++) {
+					ApiRequestDynamicPathParameter par = op.getRequest().getDynamicPathParameter(j);
+					if(par.getName()==null) {
+						throw new ProcessingException(pRequest+"Name undefined in dynamic path parameter (position '"+j+"')");
+					}
+					if(par.getType()==null) {
+						throw new ProcessingException(pRequest+"Type undefined in dynamic path parameter '"+par.getName()+"'");
+					}
+				}
+				
+				for (int j = 0; j < op.getRequest().sizeFormParameters(); j++) {
+					ApiRequestFormParameter par = op.getRequest().getFormParameter(j);
+					if(par.getName()==null) {
+						throw new ProcessingException(pRequest+"Name undefined in form parameter (position '"+j+"')");
+					}
+					if(par.getType()==null) {
+						throw new ProcessingException(pRequest+"Type undefined in form parameter '"+par.getName()+"'");
+					}
+				}
+				
+				for (int j = 0; j < op.getRequest().sizeHeaderParameters(); j++) {
+					ApiHeaderParameter par = op.getRequest().getHeaderParameter(j);
+					if(par.getName()==null) {
+						throw new ProcessingException(pRequest+"Name undefined in header parameter (position '"+j+"')");
+					}
+					if(par.getType()==null) {
+						throw new ProcessingException(pRequest+"Type undefined in header parameter '"+par.getName()+"'");
+					}
+				}
+				
+				for (int j = 0; j < op.getRequest().sizeQueryParameters(); j++) {
+					ApiRequestQueryParameter par = op.getRequest().getQueryParameter(j);
+					if(par.getName()==null) {
+						throw new ProcessingException(pRequest+"Name undefined in query parameter (position '"+j+"')");
+					}
+					if(par.getType()==null) {
+						throw new ProcessingException(pRequest+"Type undefined in query parameter '"+par.getName()+"'");
+					}
+				}
+			}
+			
+			for (int k = 0; k < op.sizeResponses(); k++) {
+		
+				String pResponse = prefix +"[response '"+k+"'] ";
+				
+				ApiResponse response = op.getResponse(k);
+				
+				if(response.getHttpReturnCode()<=0) {
+					throw new ProcessingException(pResponse+"Http Return Code undefined");
+				}
+		
+				pResponse = prefix +"[response status '"+response.getHttpReturnCode()+"'] ";
+				
+				for (int j = 0; j < response.sizeBodyParameters(); j++) {
+					ApiBodyParameter bodyParm = response.getBodyParameter(j);
+					if(bodyParm.getMediaType()==null) {
+						throw new ProcessingException(pResponse+"MediaType undefined in body parameter (position '"+j+"')");
+					}
+					if(validateBodyParameterElement) {
+						if(bodyParm.getElement()==null) {
+							throw new ProcessingException(pResponse+"Element undefined in body parameter '"+bodyParm.getMediaType()+"'");
+						}
+					}
+				}
+				
+				for (int j = 0; j < response.sizeCookieParameters(); j++) {
+					ApiCookieParameter par = response.getCookieParameter(j);
+					if(par.getName()==null) {
+						throw new ProcessingException(pResponse+"Name undefined in cookie parameter (position '"+j+"')");
+					}
+					if(par.getType()==null) {
+						throw new ProcessingException(pResponse+"Type undefined in cookie parameter '"+par.getName()+"'");
+					}
+				}
+				
+				for (int j = 0; j < response.sizeHeaderParameters(); j++) {
+					ApiHeaderParameter par = response.getHeaderParameter(j);
+					if(par.getName()==null) {
+						throw new ProcessingException(pResponse+"Name undefined in header parameter (position '"+j+"')");
+					}
+					if(par.getType()==null) {
+						throw new ProcessingException(pResponse+"Type undefined in header parameter '"+par.getName()+"'");
+					}
+				}
+			}
+		}
+	}
 }

@@ -98,6 +98,10 @@ public class Test {
         Api api = apiReader.read();
         System.out.println("API: "+api);
         
+		System.out.println("Validazione ... ");
+		api.validate(false);
+		System.out.println("Validazione effettuata con successo");
+        
         // http://localhost:8080/smartproxy/ws/rest/allineamentopendenze
         String test = "http://localhost:8080/smartproxy/ws/rest/allineamentopendenze/id23/ulterioreParametro/id45";
         System.out.println("API-Op ["+test+"]: "+api.findOperation(HttpRequestMethod.GET, test));

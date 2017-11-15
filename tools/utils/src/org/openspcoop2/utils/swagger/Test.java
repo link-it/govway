@@ -63,6 +63,10 @@ public class Test {
 
 		System.out.println("["+testName+"] API COMPLESSIVA: "+api);
 		
+		System.out.println("["+testName+"] Validazione ... ");
+		api.validate(false);
+		System.out.println("["+testName+"] Validazione effettuata con successo");
+		
 		String test = "http://petstore.swagger.io/v2/pet";
 		System.out.println("["+testName+"] API-Op ["+test+"]: "+api.findOperation(HttpRequestMethod.POST, test));
 

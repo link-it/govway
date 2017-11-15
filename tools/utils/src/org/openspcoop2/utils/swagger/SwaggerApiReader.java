@@ -43,13 +43,17 @@ import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
+import io.swagger.models.RefModel;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
@@ -185,7 +189,7 @@ public class SwaggerApiReader implements IApiReader {
 
 			for(Parameter param: operation.getParameters()) {
 
-				List<AbstractApiParameter> abstractParamList = createRequestParameters(param, operation.getConsumes());
+				List<AbstractApiParameter> abstractParamList = createRequestParameters(param, operation.getConsumes(), method, pathK);
 
 				if(!abstractParamList.isEmpty()) {
 					
@@ -213,7 +217,7 @@ public class SwaggerApiReader implements IApiReader {
 		if(operation.getResponses()!= null && !operation.getResponses().isEmpty()) {
 			List<ApiResponse> responses = new ArrayList<ApiResponse>();
 			for(String responseK: operation.getResponses().keySet()) {
-				responses.addAll(createResponses(responseK, operation.getResponses().get(responseK), operation.getProduces()));	
+				responses.addAll(createResponses(responseK, operation.getResponses().get(responseK), operation.getProduces(), method, pathK));	
 			}
 			apiOperation.setResponses(responses);
 		}
@@ -226,35 +230,64 @@ public class SwaggerApiReader implements IApiReader {
 	 * @param produces
 	 * @return
 	 */
-	private List<AbstractApiParameter> createRequestParameters(Parameter param, List<String> consumes) {
+	private List<AbstractApiParameter> createRequestParameters(Parameter param, List<String> consumes, HttpRequestMethod method, String path) {
+		
+		String prefix = "["+method.name()+" "+path+"]";
 		
 		Parameter realParam = param;
 		while (realParam instanceof RefParameter) {
 			realParam = this.swagger.getParameter(realParam.getName());
 		}
-		
+				
 		List<AbstractApiParameter> lst = new ArrayList<AbstractApiParameter>();
 		if(realParam instanceof BodyParameter) {
-			if(consumes != null && !consumes.isEmpty()) {
-				for(String consume: consumes) {
-					String reference = ((BodyParameter) realParam).getSchema().getReference();
-					String type = reference.replaceAll("#/definitions/", "");
+			
+			if(consumes==null || consumes.isEmpty()) {
+				consumes = new ArrayList<String>();
+				consumes.add(HttpConstants.CONTENT_TYPE_JSON);
+			}
+			
+			for(String consume: consumes) {
+				
+				Model model = ((BodyParameter) realParam).getSchema();
+				
+				String type = null;
+				String name = null;
+				String reference = null;
+				if(model instanceof RefModel) {
+					RefModel ref = (RefModel) model;
+					reference = ref.getReference();
 
-					String name = this.swagger.getDefinitions().get(type).getTitle();
-
-					if(name == null) {
-						name = realParam.getName();
-					}
-					
-					ApiBodyParameter bodyParam = new ApiBodyParameter(name);
-					bodyParam.setMediaType(consume);
-					bodyParam.setElement(type);
-					lst.add(bodyParam);
 				}
-			} else {
-				ApiBodyParameter bodyParam = new ApiBodyParameter(realParam.getName());
+				else if(model instanceof ArrayModel) {
+					ArrayModel arrayModel = (ArrayModel) model;
+					Property p = arrayModel.getItems();
+					if(p instanceof io.swagger.models.properties.RefProperty) {
+						io.swagger.models.properties.RefProperty ref = (io.swagger.models.properties.RefProperty) p;
+						reference = ref.get$ref();
+					}
+					else {
+						throw new RuntimeException("Not Implemented "+prefix+" (property): "+p.getClass().getName());
+					}
+				}
+				else {
+					throw new RuntimeException("Not Implemented "+prefix+" (model): "+model.getClass().getName());
+				}
+				
+				type = reference.replaceAll("#/definitions/", "");
+
+				name = this.swagger.getDefinitions().get(type).getTitle();
+
+				if(name == null) {
+					name = realParam.getName();
+				}
+				
+				ApiBodyParameter bodyParam = new ApiBodyParameter(name);
+				bodyParam.setMediaType(consume);
+				bodyParam.setElement(type);
 				lst.add(bodyParam);
 			}
+
 		} else if(realParam instanceof PathParameter) {
 			lst.add(new ApiRequestDynamicPathParameter(param.getName(), ((PathParameter)realParam).getType()));
 		} else if(realParam instanceof QueryParameter) {
@@ -274,72 +307,86 @@ public class SwaggerApiReader implements IApiReader {
 		return lst;
 	}
 
-	private List<ApiResponse> createResponses(String responseK, Response response, List<String> produces) {
+	private List<ApiResponse> createResponses(String responseK, Response response, List<String> produces, HttpRequestMethod method, String path) {
+		
+		String prefix = "[status:"+responseK+" "+method.name()+" "+path+"]";
+		
 		List<ApiResponse> responses = new ArrayList<ApiResponse>();
-		if(produces != null && !produces.isEmpty()) {
-			
-			ApiResponse apiResponse = new ApiResponse();
-			int status = -1;
-			try{
-				status = Integer.parseInt(responseK);
-			} catch(NumberFormatException e) {}
-			
-			apiResponse.setHttpReturnCode(status);
-			apiResponse.setDescription(response.getDescription());
-			
-			if(response.getHeaders() != null) {
-				for(String header: response.getHeaders().keySet()) {
-					Property property = response.getHeaders().get(header);
-					Property realProperty = property;
-					String name = realProperty.getName();
-					if(name==null) {
-						name = header;
-					}
-					ApiHeaderParameter parameter = new ApiHeaderParameter(name, realProperty.getType());
-					parameter.setDescription(realProperty.getDescription());
-					parameter.setRequired(property.getRequired());
-					apiResponse.addHeaderParameter(parameter);
-				}
-			}
-			
-			for(String prod: produces) {
-
-				if(response.getSchema() != null) {
-					
-					Property responseSchema = response.getSchema();
-					
-					String type = null;
-					String name = null;
-					if(responseSchema instanceof RefProperty) {
-						type = ((RefProperty)responseSchema).getSimpleRef();
-						name = this.swagger.getDefinitions().get(type).getTitle();
-					}else if(responseSchema instanceof ArrayProperty) {
-						ArrayProperty schema = (ArrayProperty) responseSchema;
-						
-						if(schema.getItems() instanceof RefProperty) {
-							RefProperty items = (RefProperty) schema.getItems();
-							type = items.getSimpleRef();
-							name = this.swagger.getDefinitions().get(type).getTitle();
-						} else {
-							type = schema.getName();
-							name = this.swagger.getDefinitions().get(type).getTitle();
-						}
-					}
-					
-					if(name == null)
-						name = responseSchema.getName();
-
-					ApiBodyParameter bodyParameter = new ApiBodyParameter(name);
-					bodyParameter.setMediaType(prod);
-					bodyParameter.setElement(type);
-					
-					apiResponse.addBodyParameter(bodyParameter);
-				}
-					
-			}
-			
-			responses.add(apiResponse);
+		
+		if(produces==null || produces.isEmpty()) {
+			produces = new ArrayList<String>();
+			produces.add(HttpConstants.CONTENT_TYPE_JSON);
 		}
+					
+		ApiResponse apiResponse = new ApiResponse();
+		int status = -1;
+		try{
+			status = Integer.parseInt(responseK);
+		} catch(NumberFormatException e) {}
+		if(status<=0) {
+			status = 200;
+		}
+		
+		apiResponse.setHttpReturnCode(status);
+		apiResponse.setDescription(response.getDescription());
+		
+		if(response.getHeaders() != null) {
+			for(String header: response.getHeaders().keySet()) {
+				Property property = response.getHeaders().get(header);
+				Property realProperty = property;
+				String name = realProperty.getName();
+				if(name==null) {
+					name = header;
+				}
+				ApiHeaderParameter parameter = new ApiHeaderParameter(name, realProperty.getType());
+				parameter.setDescription(realProperty.getDescription());
+				parameter.setRequired(property.getRequired());
+				apiResponse.addHeaderParameter(parameter);
+			}
+		}
+		
+		for(String prod: produces) {
+
+			if(response.getSchema() != null) {
+				
+				Property responseSchema = response.getSchema();
+				
+				String type = null;
+				String name = null;
+				if(responseSchema instanceof RefProperty) {
+					type = ((RefProperty)responseSchema).getSimpleRef();
+					name = this.swagger.getDefinitions().get(type).getTitle();
+				}
+				else if(responseSchema instanceof ArrayProperty) {
+					ArrayProperty schema = (ArrayProperty) responseSchema;
+					
+					if(schema.getItems() instanceof RefProperty) {
+						RefProperty items = (RefProperty) schema.getItems();
+						type = items.getSimpleRef();
+						name = this.swagger.getDefinitions().get(type).getTitle();
+					} else {
+						type = schema.getName();
+						name = this.swagger.getDefinitions().get(type).getTitle();
+					}
+				}
+				else {
+					throw new RuntimeException("Not Implemented "+prefix+" (property): "+responseSchema.getClass().getName());
+				}
+				
+				if(name == null)
+					name = responseSchema.getName();
+
+				ApiBodyParameter bodyParameter = new ApiBodyParameter(name);
+				bodyParameter.setMediaType(prod);
+				bodyParameter.setElement(type);
+				
+				apiResponse.addBodyParameter(bodyParameter);
+			}
+				
+		}
+		
+		responses.add(apiResponse);
+
 		return responses;
 	}
 

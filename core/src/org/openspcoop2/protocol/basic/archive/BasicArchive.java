@@ -356,6 +356,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			apiReader.init(log, bytes, config);
 			
 	         Api api = apiReader.read();
+	         api.validate();
 	         
 	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {
 	        	 if(api.getDescription()!=null) {
