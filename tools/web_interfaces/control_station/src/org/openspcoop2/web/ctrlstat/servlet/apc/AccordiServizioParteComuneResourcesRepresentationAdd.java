@@ -38,7 +38,9 @@ import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.constants.HttpMethod;
+import org.openspcoop2.core.registry.constants.RepresentationType;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -77,17 +79,9 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
  * 
  */
-public final class AccordiServizioParteComuneResourcesAdd extends Action {
+public final class AccordiServizioParteComuneResourcesRepresentationAdd extends Action {
 
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
-
 	private String editMode = null;
 	
 
@@ -108,13 +102,8 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
-		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.ADD;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
-
 
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
@@ -130,20 +119,29 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			if (nomeRisorsa == null) {
 				nomeRisorsa = "";
 			}
-			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_DESCRIZIONE);
+			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			Integer status = null;
+			try {
+				if(statusS!=null)
+					status = Integer.parseInt(statusS);
+			} catch(Exception e) {}
+			String isReq = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
+			
+			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
 			if (descr == null) {
 				descr = "";
 			}
-			
-			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE);
+
+			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE);
 			MessageType messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
 		
-			String messageProcessorReqS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST);
-			MessageType messageTypeRequest = (StringUtils.isNotEmpty(messageProcessorReqS) && !messageProcessorReqS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorReqS) : null;
+			String mediaType = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
+			String tipoS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
+			RepresentationType tipo = StringUtils.isNotEmpty(tipoS) ? RepresentationType.toEnumConstant(tipoS) : null;
 			
-			String messageProcessorResS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE);
-			MessageType messageTypeResponse = (StringUtils.isNotEmpty(messageProcessorResS) && !messageProcessorResS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorResS) : null;
-		
+			
+			
 			String path = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PATH);
 			if (path == null) {
 				path = "";
@@ -173,8 +171,6 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			}
 
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory);
 			
 			ServiceBinding serviceBinding = null;
 			//calcolo del serviceBinding dall'accordo
@@ -187,9 +183,6 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			IDResource idRisorsa = new IDResource();
 			idRisorsa.setIdAccordo(idAs);
 			idRisorsa.setNome(nomeRisorsa);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigPortType(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idRisorsa );
-			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
-
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
@@ -215,13 +208,8 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
-
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
-
-				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+//				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
+//						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
 
 				pd.setDati(dati);
 
@@ -242,28 +230,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null);
-
-			// Validazione base dei parametri custom 
-			if(isOk){
-				try{
-					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
-				}catch(ProtocolException e){
-					pd.setMessage(e.getMessage());
-					isOk = false;
-				}
-			}
-
-			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
-			if(isOk){
-				try{
-					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idRisorsa);
-				}catch(ProtocolException e){
-					pd.setMessage(e.getMessage());
-					isOk = false;
-				}
-			}
+			boolean isOk = false; // apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType);
 
 			if (!isOk) {
 
@@ -287,12 +254,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
-
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
-
-				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+//				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
 
 				pd.setDati(dati);
 
@@ -309,20 +271,23 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			newRes.setPath(pathNormalizzato);
 			newRes.set_value_method(httpMethod);
 			newRes.setMessageType(apcCore.fromMessageMessageType(messageType));
-			newRes.setRequestMessageType(apcCore.fromMessageMessageType(messageTypeRequest));
-			newRes.setResponseMessageType(apcCore.fromMessageMessageType(messageTypeResponse));
+			
+			
+//			ResourceRepresentation newRepresentation = new ResourceRepresentation();
+//			newRepresentation.setMessageType(apcCore.fromMessageMessageType(messageType));
+//			newRepresentation.setDescrizione(descr);
+//			newRepresentation.setJson(json);
+//			newRepresentation.setXml(xml);
+//			newRepresentation.setNome(nome);
+//			newRepresentation.setMediaType(mediaType);
+			
+			
 		
 			as.addResource(newRes);
 			
-			//imposto properties custom
-			newRes.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
-
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 			
-			// cancello i file temporanei
-			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
-
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

@@ -416,6 +416,11 @@ public class ConsoleProperties {
 		return Integer.parseInt(lunghezzaS); 
 	}
 	
+	public int getConsoleNumeroColonneDefaultTextArea() throws UtilsException{
+		String lunghezzaS = this.readProperty(true, "console.colonneTextArea.default");
+		return Integer.parseInt(lunghezzaS); 
+	}
+	
 	public String getLogoHeaderImage() throws Exception{
 		return this.readProperty(false,"console.header.logo.image");
 	}

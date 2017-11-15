@@ -63,6 +63,10 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE = "accordiServizioParteComunePortTypeOperationsMessage";
 	
 	public final static String OBJECT_NAME_APC_RESOURCES = "accordiServizioParteComuneResources";
+	
+	public final static String OBJECT_NAME_APC_RESOURCES_RISPOSTE = "accordiServizioParteComuneResourcesRisposte";
+	public final static String OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS = "accordiServizioParteComuneResourcesRepresentation";
+	public final static String OBJECT_NAME_APC_RESOURCES_PARAMETERS = "accordiServizioParteComuneResourcesParameters";
 
 	/* SERVLET NAME */
 
@@ -172,6 +176,42 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_RESOURCES.add(SERVLET_NAME_APC_RESOURCES_LIST);
 	}
 	
+	public final static String SERVLET_NAME_APC_RESOURCES_RISPOSTE_ADD = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"Add.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_RISPOSTE_CHANGE = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"Change.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_RISPOSTE_DELETE = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"Del.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST = OBJECT_NAME_APC_RESOURCES_RISPOSTE+"List.do";
+	public final static Vector<String> SERVLET_APC_RESOURCES_RISPOSTE = new Vector<String>();
+	static{
+		SERVLET_APC_RESOURCES_RISPOSTE.add(SERVLET_NAME_APC_RESOURCES_RISPOSTE_ADD);
+		SERVLET_APC_RESOURCES_RISPOSTE.add(SERVLET_NAME_APC_RESOURCES_RISPOSTE_CHANGE);
+		SERVLET_APC_RESOURCES_RISPOSTE.add(SERVLET_NAME_APC_RESOURCES_RISPOSTE_DELETE);
+		SERVLET_APC_RESOURCES_RISPOSTE.add(SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST);
+	}
+	
+	public final static String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_ADD = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"Add.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_CHANGE = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"Change.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_DELETE = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"Del.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST = OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS+"List.do";
+	public final static Vector<String> SERVLET_APC_RESOURCES_REPRESENTATIONS = new Vector<String>();
+	static{
+		SERVLET_APC_RESOURCES_REPRESENTATIONS.add(SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_ADD);
+		SERVLET_APC_RESOURCES_REPRESENTATIONS.add(SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_CHANGE);
+		SERVLET_APC_RESOURCES_REPRESENTATIONS.add(SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_DELETE);
+		SERVLET_APC_RESOURCES_REPRESENTATIONS.add(SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST);
+	}
+	
+	public final static String SERVLET_NAME_APC_RESOURCES_PARAMETERS_ADD = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"Add.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_PARAMETERS_CHANGE = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"Change.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_PARAMETERS_DELETE = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"Del.do";
+	public final static String SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST = OBJECT_NAME_APC_RESOURCES_PARAMETERS+"List.do";
+	public final static Vector<String> SERVLET_APC_RESOURCES_PARAMETERS = new Vector<String>();
+	static{
+		SERVLET_APC_RESOURCES_PARAMETERS.add(SERVLET_NAME_APC_RESOURCES_PARAMETERS_ADD);
+		SERVLET_APC_RESOURCES_PARAMETERS.add(SERVLET_NAME_APC_RESOURCES_PARAMETERS_CHANGE);
+		SERVLET_APC_RESOURCES_PARAMETERS.add(SERVLET_NAME_APC_RESOURCES_PARAMETERS_DELETE);
+		SERVLET_APC_RESOURCES_PARAMETERS.add(SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST);
+	}
+	
 
 	/* LABEL GENERALI */
 
@@ -227,6 +267,12 @@ public class AccordiServizioParteComuneCostanti {
 	
 	public final static String LABEL_RISORSE = "Risorse";
 	public final static String LABEL_RISORSA = "Risorsa";
+	public final static String LABEL_APC_RESOURCES_RICHIESTA = "Richiesta";
+	public final static String LABEL_APC_RESOURCES_RISPOSTA = "Risposta";
+	public final static String LABEL_RISPOSTE = "Risposte";
+	public final static String LABEL_RISPOSTA = "Risposta";
+	public final static String LABEL_REPRESENTATION = "Representation";
+	public final static String LABEL_PARAMETERS = "Parametri";
 
 	/* PARAMETRI */
 
@@ -340,9 +386,34 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_RESOURCES_DESCRIZIONE = "descrizioneRs";
 	public final static String PARAMETRO_APC_RESOURCES_PATH = "pathRs";
 	public final static String PARAMETRO_APC_RESOURCES_HTTP_METHOD = "httpMethodRs";
-	public final static String PARAMETRO_APC_RESOURCES_MESSAGE_TYPE = "messageTypeReq";
+	public final static String PARAMETRO_APC_RESOURCES_MESSAGE_TYPE = PARAMETRO_APC_MESSAGE_TYPE;
 	public final static String PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST = "messageTypeReq";
 	public final static String PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE = "messageTypeRes";
+	
+	public final static String PARAMETRO_APC_RESOURCE_REQUEST = "req";
+	
+	public final static String PARAMETRO_APC_RESOURCES_RESPONSE_ID = "idResRisposta";
+	public final static String PARAMETRO_APC_RESOURCES_RESPONSE_STATUS = "statusResRisposta";
+	public final static String PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE = "descrizioneResRisposta";
+	
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_ID = "idResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE = "mediaTypeResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE = "messageTypeResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME = "nomeResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE = "descrResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO = "tipoResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO = "xmlTipoResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME = "xmlNameResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE = "xmlNamespaceResRepres";
+	public final static String PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE = "jsonTypeResRepres";
+	
+	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_ID = "idResParam";
+	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_NOME = "nomeResParam";
+	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE = "descrResParam";
+	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO = "tipoParametroResParam";
+	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "requiredResParam";
+	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "tipoResParam";
+	
 	
 	/* LABEL PARAMETRI */
 
@@ -383,10 +454,10 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_BINARY = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_BINARY;
 	public final static String LABEL_PARAMETRO_APC_MESSAGE_TYPE_MIME_MULTIPART = CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART;
 	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE;
-	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_WSDL = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_WSDL_11 = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_WADL = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
-	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER;
-	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER_2 = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
+	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3 = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
 
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE = "Tipo";
@@ -409,6 +480,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS = "Namespace";
 	
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE = "Se non viene definito verr&agrave; automaticamente generato un identificativo univoco";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PATH = "Path";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD = "HTTP Method";
@@ -418,14 +490,46 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE = "Tipo Messaggio Risposta";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_FORMATO_SPECIFICA = "Formato Specifica";
 	
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE = "Delete";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET = "Get";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD = "Head";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS = "Options";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH = "Patch";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST = "Post";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT = "Put";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE = "Trace";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE = "DELETE";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET = "GET";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD = "HEAD";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS = "OPTIONS";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH = "PATCH";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST = "POST";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT = "PUT";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE = "TRACE";
+	
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_ID = "ID";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS = "HTTP Status";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE = "Descrizione";
+	
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_ID = "ID";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE = "Media Type";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE = "Message Type";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE = "Descrizione";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML = "Xml";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON = "Json";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO = "Xml Tipo";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME = "Xml Name";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE = "Xml Namespace";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE = "Json Type";
+	
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_ID = "ID";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE = "Descrizione";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO = "Tipo Parametro";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "Required";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "Tipo";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE = "Cookie";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH = "Dynamic Path";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM = "Form";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER = "Header";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY = "Query";
+	
+	public final static String LABEL_SI = "Si";
+	public final static String LABEL_NO = "No";
 	
 	/* DEFAULT VALUE PARAMETRI */
 
@@ -496,10 +600,10 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_BINARY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_BINARY;
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_MIME_MULTIPART = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART;
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WSDL = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WSDL_11 = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WADL = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL;
-	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER;
-	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_SWAGGER_2 = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3 = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE = "DELETE";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET = "GET";
@@ -509,5 +613,14 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST = "POST";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT = "PUT";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE = "TRACE";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML = "xml";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON = "json";
+	
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE = "cookie";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH = "dynamicPath";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM = "form";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER = "header";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY = "query";
 	
 }

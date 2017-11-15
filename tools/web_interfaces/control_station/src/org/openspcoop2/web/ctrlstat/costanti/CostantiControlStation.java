@@ -159,10 +159,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_BINARY = "Binary";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME-Multipart";
 	public final static String LABEL_PARAMETRO_INTERFACE_TYPE = "Formato Specifica";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL = "Wsdl 1.1";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11 = "Wsdl 1.1";
 	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WADL = "Wadl";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER = "Swagger 2.0";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API = "Open API 3.0";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = "Swagger 2.0";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = "Open API 3.0";
 	
 	/** PARAMETERS **/
 	
@@ -229,10 +229,10 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_BINARY = "BINARY";
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME_MULTIPART";
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL = "wsdl";
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11 = "wsdl11";
 	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL = "wadl";
-	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER = "swagger";
-	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API = "openApi";
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = "swagger2";
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = "openApi3";
 	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
 	

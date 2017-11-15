@@ -235,8 +235,10 @@ public class InitListener implements ServletContextListener {
 		InitListener.log.info("Inizializzazione DataElement in corso...");
 		try{
 			int consoleLunghezzaLabel = consoleProperties.getConsoleLunghezzaLabel();
+			int numeroColonneTextArea = consoleProperties.getConsoleNumeroColonneDefaultTextArea();
 			DataElementParameter dep = new DataElementParameter();
 			dep.setSize(consoleLunghezzaLabel);
+			dep.setCols(numeroColonneTextArea); 
 			DataElement.initialize(dep);
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);

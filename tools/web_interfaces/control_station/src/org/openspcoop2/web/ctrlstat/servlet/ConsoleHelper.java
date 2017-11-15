@@ -3226,13 +3226,13 @@ public class ConsoleHelper {
 		return de;
 	}
 	
-	public DataElement getMessageTypeDataElement(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value) throws Exception{
+	public DataElement getMessageTypeDataElement(String parametroMessageType, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value) throws Exception{
 		DataElement de = null;
 		try {
 			List<MessageType> messageTypeList = this.core.getMessageTypeList(protocolFactory, serviceBinding);
 			
 			de = new DataElement();
-			de.setName(CostantiControlStation.PARAMETRO_MESSAGE_TYPE);
+			de.setName(parametroMessageType);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE);
 			
 			if(messageTypeList != null && messageTypeList.size() > 1){
@@ -3289,7 +3289,7 @@ public class ConsoleHelper {
 		return de;
 	}
 	
-	public DataElement getInterfaceTypeDataElement(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,org.openspcoop2.protocol.manifest.constants.InterfaceType value) throws Exception{
+	public DataElement getInterfaceTypeDataElement(TipoOperazione tipoOperazione, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,org.openspcoop2.protocol.manifest.constants.InterfaceType value) throws Exception{
 		DataElement de = null;
 		try {
 			List<org.openspcoop2.protocol.manifest.constants.InterfaceType> interfaceTypeList = this.core.getInterfaceTypeList(protocolFactory, serviceBinding);
@@ -3298,7 +3298,9 @@ public class ConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_INTERFACE_TYPE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE);
 			
-			if(interfaceTypeList != null && interfaceTypeList.size() > 1){
+			switch (tipoOperazione) {
+			case ADD:
+				if(interfaceTypeList != null && interfaceTypeList.size() > 1){
 					de.setSelected(value != null ? value.toString() : null);
 					de.setType(DataElementType.SELECT);
 					de.setPostBack(true);
@@ -3309,12 +3311,12 @@ public class ConsoleHelper {
 						org.openspcoop2.protocol.manifest.constants.InterfaceType type = interfaceTypeList.get(i);
 						switch (type) {
 						case OPEN_API_3:
-							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API;
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
 							break;
 						case SWAGGER_2:
-							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER;
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 							break;
 						case WADL:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
@@ -3322,8 +3324,8 @@ public class ConsoleHelper {
 							break;
 						case WSDL_11:
 						default:
-							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL;
+							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11;
+							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 							break;
 						}
 					}
@@ -3334,6 +3336,19 @@ public class ConsoleHelper {
 				de.setValue(value != null ? value.toString() : null);
 				de.setType(DataElementType.HIDDEN);
 			}
+				break;
+			case CHANGE:
+			case DEL:
+			case LIST:
+			case LOGIN:
+			case LOGOUT:
+			case OTHER:
+			default:
+				de.setValue(value != null ? value.toString() : null);
+				de.setType(DataElementType.HIDDEN);
+				break;
+			}
+			
 			de.setSize(this.getSize());
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

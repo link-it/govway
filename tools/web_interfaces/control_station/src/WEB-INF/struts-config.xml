@@ -534,6 +534,88 @@
             <forward name="accordiServizioParteComuneResourcesDel" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteComuneResourcesError" path="/jsplib/info.jsp"/>
         </action>
+        
+        
+   		<!--  Accordi di Servizio Parte Comune Resources Risposte -->
+
+ 		<action path="/accordiServizioParteComuneResourcesRisposteAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRisposteAdd" 
+ 			scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRisposteAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesRisposteList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRisposteList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRisposteList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesRisposteChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRisposteChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRisposteChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesRisposteDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRisposteDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRisposteDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRisposteError" path="/jsplib/info.jsp"/>
+        </action>
+        
+           		<!--  Accordi di Servizio Parte Comune Resources Representation -->
+
+ 		<action path="/accordiServizioParteComuneResourcesRepresentationAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRepresentationAdd" 
+ 			scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRepresentationAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesRepresentationList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRepresentationList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRepresentationList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesRepresentationChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRepresentationChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRepresentationChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesRepresentationDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesRepresentationDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesRepresentationDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesRepresentationError" path="/jsplib/info.jsp"/>
+        </action>
+        
+           		<!--  Accordi di Servizio Parte Comune Resources Parameters -->
+
+ 		<action path="/accordiServizioParteComuneResourcesParametersAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesParametersAdd" 
+ 			scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesParametersAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesParametersList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesParametersList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesParametersList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesParametersChange" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesParametersChange" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesParametersChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteComuneResourcesParametersDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneResourcesParametersDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteComuneResourcesParametersDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteComuneResourcesParametersError" path="/jsplib/info.jsp"/>
+        </action>
 		
 		
 		<!--  Accordi di Servizio Parte Specifica -->

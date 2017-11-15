@@ -455,6 +455,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			soggettoErogatoreID = soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoSoggettoErogatore,nomeSoggettoErogatore));
 
+			if(versione == null)
+				versione = oldversioneaccordo;
 
 			if(as!=null){
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();

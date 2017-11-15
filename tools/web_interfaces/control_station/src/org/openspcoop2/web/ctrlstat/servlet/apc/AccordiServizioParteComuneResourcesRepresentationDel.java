@@ -34,12 +34,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore; 
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -62,7 +63,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
  * 
  */
-public final class AccordiServizioParteComuneResourcesDel extends Action {
+public final class AccordiServizioParteComuneResourcesRepresentationDel extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -111,8 +112,8 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			// }
 			ArrayList<String> resourcesToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
-//			IDResource idRisorsa = new IDResource();
-//			idRisorsa.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
+			IDResource idRisorsa = new IDResource();
+			idRisorsa.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
 			
 			List<IDServizio> idServiziWithAccordo = null;
 			try{

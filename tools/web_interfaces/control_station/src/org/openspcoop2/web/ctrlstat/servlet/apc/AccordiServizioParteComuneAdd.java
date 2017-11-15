@@ -387,6 +387,18 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.filtrodup = "yes";
 					this.idcoll = "";
 					this.profcoll = "oneway";
+					
+					if(this.serviceBinding != null) {
+						switch(this.serviceBinding) {
+						case REST:
+							this.profcoll = "sincrono";
+							break;
+						case SOAP:
+						default:
+							break;
+						}
+					}
+					
 					this.accordoCooperazione = "-1";
 					this.scadenza= "";
 					this.privato = false;

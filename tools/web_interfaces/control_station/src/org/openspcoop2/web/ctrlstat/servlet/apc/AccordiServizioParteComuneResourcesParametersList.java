@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -34,6 +35,9 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceParameter;
+import org.openspcoop2.core.registry.ResourceRequest;
+import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -50,7 +54,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
  * 
  */
-public final class AccordiServizioParteComuneResourcesList extends Action {
+public final class AccordiServizioParteComuneResourcesParametersList extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -66,44 +70,84 @@ public final class AccordiServizioParteComuneResourcesList extends Action {
 
 		try {
 
-			// DriverControlStationDB driver = new
-			// DriverControlStationDB(con,null);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			
+
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
-			
+
 			String id = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idAccordo = Integer.parseInt(id);
+			String nomeRisorsa = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
+
 			String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(id));
-			
+			String statusResponseS = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			Integer statusResponse = null;
+			try {
+				if(StringUtils.isNotEmpty(statusResponseS))
+					statusResponse = Integer.parseInt(statusResponseS);
+			}catch(Exception e) {
+				statusResponse = null;
+			}
+
+			String isReq = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
+
 			// Preparo il menu
 			apcHelper.makeMenu();
+			
+			// Prendo l'id della risorsa
+			Long idRisorsa = 0L;
+			Resource res =  null;
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
+			for (int i = 0; i < as.sizeResourceList(); i++) {
+				res = as.getResource(i);
+				if (nomeRisorsa.equals(res.getNome())) {
+					idRisorsa = res.getId();
+					break;
+				}
+			}
+			
+			Long idResponse = null;
+			ResourceRequest resourceRequest = null;
+			ResourceResponse resourceResponse = null;
+			if(isRequest) {
+				resourceRequest = res.getRequest();
+			} else {
+				if(res.getResponseList() != null) {
+					for (int i = 0; i < res.getResponseList().size(); i++) {
+						resourceResponse = res.getResponse(i);
+						if (resourceResponse.getStatus() == statusResponse) {
+							idResponse = resourceResponse.getId();
+							break;
+						}
+					}
+				}
+			}
+						
 
 			// Controllo i criteri di ricerca e recupero eventuali parametri
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.ACCORDI_API_RESOURCES;
+			int idLista = isRequest ? Liste.ACCORDI_API_RESOURCES_PARAMETERS_REQUEST : Liste.ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE;
 
 			ricerca = apcHelper.checkSearchParameters(idLista, ricerca);
 
-			List<Resource> lista = apcCore.accordiResourceList(idAccordo, ricerca);
+			List<ResourceParameter> lista = apcCore.accordiResourceParametersList(idRisorsa, isRequest, idResponse, ricerca);
 
-			apcHelper.prepareAccordiResourcesList(id, as, lista, ricerca, tipoAccordo);
+			apcHelper.prepareAccordiResourcesParametersList(id, as, lista, ricerca, tipoAccordo, isRequest, nomeRisorsa, idRisorsa, resourceRequest, resourceResponse);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
-			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.LIST());
+			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.LIST());
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.LIST());
+					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.LIST());
 		} 
 	}
 }

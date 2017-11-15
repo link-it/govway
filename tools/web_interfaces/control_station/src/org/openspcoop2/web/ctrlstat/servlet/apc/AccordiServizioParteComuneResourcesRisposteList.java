@@ -34,6 +34,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -50,7 +51,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
  * 
  */
-public final class AccordiServizioParteComuneResourcesList extends Action {
+public final class AccordiServizioParteComuneResourcesRisposteList extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -65,45 +66,53 @@ public final class AccordiServizioParteComuneResourcesList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-
-			// DriverControlStationDB driver = new
-			// DriverControlStationDB(con,null);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			
 			String id = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idAccordo = Integer.parseInt(id);
+			int idAcc = Integer.parseInt(id);
+			String nomeRisorsa = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
+			
 			String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(id));
-			
 			// Preparo il menu
 			apcHelper.makeMenu();
+
+			// Prendo l'id della risorsa
+			int idRisorsa = 0;
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
+			for (int i = 0; i < as.sizeResourceList(); i++) {
+				Resource res = as.getResource(i);
+				if (nomeRisorsa.equals(res.getNome())) {
+					idRisorsa = res.getId().intValue();
+					break;
+				}
+			}
 
 			// Controllo i criteri di ricerca e recupero eventuali parametri
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.ACCORDI_API_RESOURCES;
+			int idLista = Liste.ACCORDI_API_RESOURCES_RESPONSE;
 
 			ricerca = apcHelper.checkSearchParameters(idLista, ricerca);
+			
+			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(idRisorsa, ricerca);
 
-			List<Resource> lista = apcCore.accordiResourceList(idAccordo, ricerca);
-
-			apcHelper.prepareAccordiResourcesList(id, as, lista, ricerca, tipoAccordo);
-
+			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, nomeRisorsa);
+			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
-			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.LIST());
+			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_RISPOSTE, ForwardParams.LIST());
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.LIST());
+					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_RISPOSTE, ForwardParams.LIST());
 		} 
 	}
 }

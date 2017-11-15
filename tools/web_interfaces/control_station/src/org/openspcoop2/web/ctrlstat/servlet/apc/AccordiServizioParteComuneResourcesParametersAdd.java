@@ -77,7 +77,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
  * 
  */
-public final class AccordiServizioParteComuneResourcesAdd extends Action {
+public final class AccordiServizioParteComuneResourcesParametersAdd extends Action {
 
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
@@ -242,7 +242,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null);
+			boolean isOk = false;//apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
