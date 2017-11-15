@@ -3732,7 +3732,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	
 	
 	/**
-	 * Verifica l'esistenza di un port-type in un accordo
+	 * Verifica l'esistenza di un risorsa con determinato nome in un accordo
 	 * 
 	 * @param nome
 	 *                del port-type da verificare
@@ -3770,6 +3770,146 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordo);
 			stm.setString(2, nome);
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+		} catch (Exception e) {
+			exist = false;
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+		return exist;
+	}
+	
+	/**
+	 * Verifica l'esistenza di un risorsa con determinata coppia HttpMethod, Path  in un accordo
+	 * 
+	 * @param nome
+	 *                del port-type da verificare
+	 * @param idAccordo
+	 *                dell'accordo
+	 * @return true se il port-type esiste, false altrimenti
+	 */
+	public boolean existsAccordoServizioParteComuneResource(String httpMethod, String path, long idAccordo) throws DriverRegistroServiziException {
+
+		boolean exist = false;
+		Connection connection;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		if (this.atomica) {
+			try {
+				connection = this.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(nome,longId)");
+				connection.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneResource] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			connection = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_accordo = ?");
+			sqlQueryObject.addWhereCondition("http_method = ?");
+			sqlQueryObject.addWhereCondition("path = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idAccordo);
+			stm.setString(2, httpMethod);
+			stm.setString(3, path);
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+		} catch (Exception e) {
+			exist = false;
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+		return exist;
+	}
+	
+	/**
+	 * Verifica l'esistenza di un risorsa con determinata coppia HttpMethod, Path  in un accordo
+	 * 
+	 * @param nome
+	 *                del port-type da verificare
+	 * @param idAccordo
+	 *                dell'accordo
+	 * @return true se il port-type esiste, false altrimenti
+	 */
+	public boolean existsAccordoServizioResourceResponse(int idRisorsa, int httpStatus) throws DriverRegistroServiziException {
+
+		boolean exist = false;
+		Connection connection;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		if (this.atomica) {
+			try {
+				connection = this.getConnectionFromDatasource("existsAccordoServizioResourceResponse(nome,longId)");
+				connection.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioResourceResponse] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			connection = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_resource = ?");
+			sqlQueryObject.addWhereCondition("status = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setLong(1, idRisorsa);
+			stm.setInt(2, httpStatus);
 			rs = stm.executeQuery();
 			if (rs.next())
 				exist = true;
@@ -16015,7 +16155,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
-				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
+						sqlQueryObject.getWhereLikeCondition("http_method", search, true, true),
+						sqlQueryObject.getWhereLikeCondition("path", search, true, true));
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -16047,7 +16190,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("message_type");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
-				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
+						sqlQueryObject.getWhereLikeCondition("http_method", search, true, true),
+						sqlQueryObject.getWhereLikeCondition("path", search, true, true));
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -16132,6 +16278,551 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 	
+	public List<ResourceResponse> accordiResourceResponseList(int idRisorsa, ISearch ricerca) throws DriverRegistroServiziException {
+		String nomeMetodo = "accordiResourceResponseList";
+		int idLista = Liste.ACCORDI_API_RESOURCES_RESPONSE;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		ricerca.getSearchString(idLista);
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		ArrayList<ResourceResponse> lista = new ArrayList<ResourceResponse>();
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("accordiResourceList");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition("id_resource = ?");
+				sqlQueryObject.addWhereCondition("status = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition("id_resource = ?");
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setInt(1,idRisorsa);
+			if (!search.equals("")) {
+				try {
+					stmt.setInt(2,Integer.parseInt(search));
+				}catch(Exception e) {
+					stmt.setInt(2,-1);	
+				}
+			}
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
+				sqlQueryObject.addSelectField("id_resource");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("status");
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_resource = ?");
+				sqlQueryObject.addWhereCondition("status = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("status");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
+				sqlQueryObject.addSelectField("id_resource");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("status");
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_resource = ?");
+				sqlQueryObject.addOrderBy("status");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setInt(1, idRisorsa);
+			if (!search.equals("")) {
+				try {
+					stmt.setInt(2,Integer.parseInt(search));
+				}catch(Exception e) {
+					stmt.setInt(2,-1);	
+				}
+			}
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+				
+				ResourceResponse resource = new ResourceResponse();
+
+				resource.setStatus(risultato.getInt("status"));
+
+				String tmp = risultato.getString("descrizione");
+				resource.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
+
+				resource.setIdResource(risultato.getLong("id_resource"));
+
+				long idResource = risultato.getLong("id");
+				resource.setId(idResource);
+				
+				lista.add(resource);
+			}
+
+			return lista;
+
+		} catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<ResourceRepresentation> accordiResourceRepresentationsList(Long idRisorsa, boolean isRequest, Long idRisposta, ISearch ricerca)  throws DriverRegistroServiziException {
+		String nomeMetodo = "accordiResourceRepresentationsList";
+		int idLista = Liste.ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST;
+		if(!isRequest)
+			idLista = Liste.ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		ricerca.getSearchString(idLista);
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		ArrayList<ResourceRepresentation> lista = new ArrayList<ResourceRepresentation>();
+		
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("accordiPorttypeOperationMessagePartList");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_MEDIA);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_media = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_media = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_MEDIA);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_media = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_media = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			
+			if(isRequest)
+				stmt.setInt(1,idRisorsa.intValue());
+			else 
+				stmt.setInt(1,idRisposta.intValue());
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_MEDIA);
+				sqlQueryObject.addSelectField("id_resource_media");
+				sqlQueryObject.addSelectField("id_resource_response_media");
+				sqlQueryObject.addSelectField("media_type");
+				sqlQueryObject.addSelectField("message_type");
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("tipo");
+				sqlQueryObject.addSelectField("xml_tipo");
+				sqlQueryObject.addSelectField("xml_name");
+				sqlQueryObject.addSelectField("xml_namespace");
+				sqlQueryObject.addSelectField("json_type");
+				sqlQueryObject.addSelectField("id");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_media = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_media = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_MEDIA);
+				sqlQueryObject.addSelectField("id_resource_media");
+				sqlQueryObject.addSelectField("id_resource_response_media");
+				sqlQueryObject.addSelectField("media_type");
+				sqlQueryObject.addSelectField("message_type");
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("tipo");
+				sqlQueryObject.addSelectField("xml_tipo");
+				sqlQueryObject.addSelectField("xml_name");
+				sqlQueryObject.addSelectField("xml_namespace");
+				sqlQueryObject.addSelectField("json_type");
+				sqlQueryObject.addSelectField("id");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_media = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_media = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			if(isRequest)
+				stmt.setInt(1,idRisorsa.intValue());
+			else 
+				stmt.setInt(1,idRisposta.intValue());
+			risultato = stmt.executeQuery();
+			
+			while (risultato.next()) {
+				ResourceRepresentation rr = new ResourceRepresentation();
+				
+				String tmp = risultato.getString("media_type");
+				rr.setMediaType(((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				tmp = risultato.getString("message_type");
+				rr.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				tmp = risultato.getString("nome");
+				rr.setNome(((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				tmp = risultato.getString("descrizione");
+				rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				tmp = risultato.getString("tipo");
+				rr.setRepresentationType(DriverRegistroServiziDB_LIB.getEnumRepresentationType((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				if(rr.getRepresentationType()!=null) {
+					switch (rr.getRepresentationType()) {
+					case XML:
+						
+						ResourceRepresentationXml xml = new ResourceRepresentationXml();
+						
+						tmp = risultato.getString("xml_tipo");
+						xml.setXmlType(DriverRegistroServiziDB_LIB.getEnumRepresentationXmlType((tmp == null || tmp.equals("")) ? null : tmp));
+						
+						tmp = risultato.getString("xml_name");
+						xml.setNome(((tmp == null || tmp.equals("")) ? null : tmp));
+						
+						tmp = risultato.getString("xml_namespace");
+						xml.setNamespace(((tmp == null || tmp.equals("")) ? null : tmp));
+						
+						rr.setXml(xml);
+						
+						break;
+	
+					case JSON:
+						
+						ResourceRepresentationJson json = new ResourceRepresentationJson();
+						
+						tmp = risultato.getString("json_type");
+						json.setTipo(((tmp == null || tmp.equals("")) ? null : tmp));
+						
+						rr.setJson(json);
+						
+						break;
+					}
+				}
+				
+				long idRR = risultato.getLong("id");
+				rr.setId(idRR);
+				
+				lista.add(rr);
+			}
+
+			return lista;
+
+		} catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<ResourceParameter> accordiResourceParametersList(Long idRisorsa, boolean isRequest, Long idRisposta, ISearch ricerca)  throws DriverRegistroServiziException {
+		String nomeMetodo = "accordiResourceParametersList";
+		int idLista = Liste.ACCORDI_API_RESOURCES_PARAMETERS_REQUEST;
+		if(!isRequest)
+			idLista = Liste.ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		ricerca.getSearchString(idLista);
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		ArrayList<ResourceParameter> lista = new ArrayList<ResourceParameter>();
+		
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("accordiPorttypeOperationMessagePartList");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_PARAMETER);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_PARAMETER);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			
+			if(isRequest)
+				stmt.setInt(1,idRisorsa.intValue());
+			else 
+				stmt.setInt(1,idRisposta.intValue());
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_PARAMETER);
+				sqlQueryObject.addSelectField("id_resource_parameter");
+				sqlQueryObject.addSelectField("id_resource_response_par");
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("tipo_parametro");
+				sqlQueryObject.addSelectField("required");
+				sqlQueryObject.addSelectField("tipo");
+				sqlQueryObject.addSelectField("id");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_PARAMETER);
+				sqlQueryObject.addSelectField("id_resource_parameter");
+				sqlQueryObject.addSelectField("id_resource_response_par");
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectField("tipo_parametro");
+				sqlQueryObject.addSelectField("required");
+				sqlQueryObject.addSelectField("tipo");
+				sqlQueryObject.addSelectField("id");
+				if(isRequest)
+					sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
+				else
+					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			if(isRequest)
+				stmt.setInt(1,idRisorsa.intValue());
+			else 
+				stmt.setInt(1,idRisposta.intValue());
+			risultato = stmt.executeQuery();
+			
+			while (risultato.next()) {
+				ResourceParameter rr = new ResourceParameter();
+				
+				String tmp = risultato.getString("nome");
+				rr.setNome(((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				tmp = risultato.getString("descrizione");
+				rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				tmp = risultato.getString("tipo_parametro");
+				rr.setParameterType(DriverRegistroServiziDB_LIB.getEnumParameterType((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				boolean req = risultato.getBoolean("required");
+				rr.setRequired(req);
+				
+				tmp = risultato.getString("tipo");
+				rr.setTipo(((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				long idRR = risultato.getLong("id");
+				rr.setId(idRR);
+				
+				lista.add(rr);
+			}
+
+			return lista;
+
+		} catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 	
 	/**
 	 * Controlla se l'azione e' usata come Azione correlata in qualche azione dell'accordo con id idAccordo 

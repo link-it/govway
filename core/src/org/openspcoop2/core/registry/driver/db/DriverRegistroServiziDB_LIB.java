@@ -3008,6 +3008,9 @@ public class DriverRegistroServiziDB_LIB {
 					if(idPT==null || idPT<=0)
 						throw new Exception("ID del porttype["+pt.getNome()+"] idAccordo["+idAccordo+"] non trovato");
 				}
+				else {
+					idPT = pt.getId();
+				}
 
 				// Operations
 				for(int i=0;i<pt.sizeAzioneList();i++){
@@ -3618,6 +3621,9 @@ public class DriverRegistroServiziDB_LIB {
 					if(idResource==null || idResource<=0)
 						throw new Exception("ID della risorsa ["+resource.getNome()+"] idAccordo["+idAccordo+"] non trovato");
 				}
+				else {
+					idResource = resource.getId();
+				}
 				
 				// gestione request
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -3814,6 +3820,7 @@ public class DriverRegistroServiziDB_LIB {
 					updateStmt.close();
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (RESPONSE) type = " + type + " row affected =" + n);
 					
+					index = 1;
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES_RESPONSE);
 					sqlQueryObject.addSelectField("id");

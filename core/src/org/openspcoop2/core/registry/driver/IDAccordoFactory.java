@@ -51,7 +51,7 @@ public class IDAccordoFactory {
 	
 	
 	@SuppressWarnings("deprecation")
-	private IDAccordo build(String nome,IDSoggetto soggettoReferente,int versione){
+	private IDAccordo build(String nome,IDSoggetto soggettoReferente,Integer versione){
 		IDAccordo idAccordo = new IDAccordo();
 		idAccordo.setNome(nome);
 		idAccordo.setSoggettoReferente(soggettoReferente);
@@ -97,7 +97,7 @@ public class IDAccordoFactory {
 		return this.getUriFromIDAccordo(idAccordo);
 	}
 	
-	public String getUriFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver)  throws DriverRegistroServiziException{
+	public String getUriFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,Integer ver)  throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
@@ -108,7 +108,7 @@ public class IDAccordoFactory {
 		return this.getUriFromIDAccordo(idAccordo);
 	}
 	
-	public String getUriFromValues(String nomeAS,IDSoggetto soggettoReferente,int ver)  throws DriverRegistroServiziException{
+	public String getUriFromValues(String nomeAS,IDSoggetto soggettoReferente,Integer ver)  throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
@@ -212,7 +212,7 @@ public class IDAccordoFactory {
 		return idAccordo;
 	}
 	
-	public IDAccordo getIDAccordoFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
+	public IDAccordo getIDAccordoFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,Integer ver) throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
@@ -222,12 +222,12 @@ public class IDAccordoFactory {
 		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
 		return idAccordo;
 	}
-	public IDAccordo getIDAccordoFromValuesWithoutCheck(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
+	public IDAccordo getIDAccordoFromValuesWithoutCheck(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,Integer ver) throws DriverRegistroServiziException{
 		IDSoggetto soggettoReferente = new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente);
 		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
 		return idAccordo;
 	}
-	public IDAccordo getIDAccordoFromValues(String nomeAS,IDSoggetto soggettoReferente,int ver) throws DriverRegistroServiziException{
+	public IDAccordo getIDAccordoFromValues(String nomeAS,IDSoggetto soggettoReferente,Integer ver) throws DriverRegistroServiziException{
 		if(soggettoReferente==null){
 			return this.getIDAccordoFromValues(nomeAS,null,null,ver);
 		}else{

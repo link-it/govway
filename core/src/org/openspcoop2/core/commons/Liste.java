@@ -77,45 +77,50 @@ public final class Liste
 	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT = 36;
 	public final static int ACCORDI_ALLEGATI = 37;
 	public final static int ACCORDI_API_RESOURCES = 38;
+	public final static int ACCORDI_API_RESOURCES_RESPONSE = 39;
+	public final static int ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST = 40;
+	public final static int ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE = 41;
+	public final static int ACCORDI_API_RESOURCES_PARAMETERS_REQUEST = 42;
+	public final static int ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE = 43;
 	
-	public final static int ACCORDI_COOPERAZIONE = 39;
-	public final static int ACCORDI_COOP_PARTECIPANTI= 40;
-	public final static int ACCORDI_COOP_ALLEGATI= 41;
-	public final static int ACCORDI_COMPONENTI = 42;
+	public final static int ACCORDI_COOPERAZIONE = 44;
+	public final static int ACCORDI_COOP_PARTECIPANTI= 45;
+	public final static int ACCORDI_COOP_ALLEGATI= 46;
+	public final static int ACCORDI_COMPONENTI = 47;
 	
-	public final static int SERVIZI = 43;	
-	public final static int SERVIZI_FRUITORI= 44;
-	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE = 45;
-	public final static int SERVIZI_ALLEGATI= 46;
-	public final static int SERVIZI_PORTE_APPLICATIVE = 47;
+	public final static int SERVIZI = 48;	
+	public final static int SERVIZI_FRUITORI= 49;
+	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE = 50;
+	public final static int SERVIZI_ALLEGATI= 51;
+	public final static int SERVIZI_PORTE_APPLICATIVE = 52;
 	
-	public final static int	RUOLI	= 48;	
-	public final static int	REGISTRI = 49;
-	public final static int	ROUTING = 50;
-	public final static int SYSTEM_PROPERTIES = 51;
+	public final static int	RUOLI = 53;	
+	public final static int	REGISTRI = 54;
+	public final static int	ROUTING = 55;
+	public final static int SYSTEM_PROPERTIES = 56;
 	
-	public final static int	TRACCE = 52;
+	public final static int	TRACCE = 57;
 	
-	public final static int MESSAGGI_DIAGNOSTICI = 53;
+	public final static int MESSAGGI_DIAGNOSTICI = 58;
 	
-	public final static int STATISTICHE_STATO = 54;
+	public final static int STATISTICHE_STATO = 59;
 	
-	public final static int SU = 55;
+	public final static int SU = 60;
 
-	public final static int MONITOR_MSG = 56;
+	public final static int MONITOR_MSG = 61;
 	
-	public final static int FILTRI = 57;
+	public final static int FILTRI = 62;
 
-	public final static int AUDIT_REPORT = 58;
+	public final static int AUDIT_REPORT = 63;
 	
-	public final static int OPERATIONS_CODA = 59;
-    public final static int OPERATIONS_ESEGUITE = 60;
-    public final static int OPERATIONS_FALLITE = 61;
-    public final static int OPERATIONS_INVALIDE = 62;
-    public final static int OPERATIONS_RICERCA = 63;
-    public final static int OPERATIONS_WAITING = 64;
+	public final static int OPERATIONS_CODA = 64;
+    public final static int OPERATIONS_ESEGUITE = 65;
+    public final static int OPERATIONS_FALLITE = 66;
+    public final static int OPERATIONS_INVALIDE = 67;
+    public final static int OPERATIONS_RICERCA = 68;
+    public final static int OPERATIONS_WAITING = 69;
     
-    public final static int CONFIGURAZIONE_EXTENDED = 65;	
+    public final static int CONFIGURAZIONE_EXTENDED = 70;	
 	
 
     
@@ -123,7 +128,7 @@ public final class Liste
 	
 	public static int getTotaleListe()
 	{
-		return 66;
+		return 71;
 	}
 	
 	
