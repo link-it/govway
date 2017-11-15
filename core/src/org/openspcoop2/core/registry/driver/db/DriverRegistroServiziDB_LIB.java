@@ -3854,8 +3854,14 @@ public class DriverRegistroServiziDB_LIB {
 					resourceResponse.setIdResource(idFK);
 				}
 				
-				
-				for (ResourceRepresentation rr : resourceRequest.getRepresentationList()) {
+				List<ResourceRepresentation> lRR = null;
+				if(resourceRequest!=null) {
+					lRR = resourceRequest.getRepresentationList();
+				}
+				else {
+					lRR = resourceResponse.getRepresentationList();
+				}
+				for (ResourceRepresentation rr : lRR) {
 					
 					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_MEDIA);
@@ -3893,7 +3899,14 @@ public class DriverRegistroServiziDB_LIB {
 					
 				}
 				
-				for (ResourceParameter rr : resourceRequest.getParameterList()) {
+				List<ResourceParameter> lRP = null;
+				if(resourceRequest!=null) {
+					lRP = resourceRequest.getParameterList();
+				}
+				else {
+					lRP = resourceResponse.getParameterList();
+				}
+				for (ResourceParameter rp : lRP) {
 					
 					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.API_RESOURCES_PARAMETER);
@@ -3912,11 +3925,11 @@ public class DriverRegistroServiziDB_LIB {
 					updateStmt = con.prepareStatement(updateQuery);
 					int index = 1;
 					updateStmt.setLong(index++, idFK);
-					updateStmt.setString(index++, rr.getNome());
-					updateStmt.setString(index++, rr.getDescrizione());
-					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rr.getParameterType()));
-					updateStmt.setBoolean(index++, rr.isRequired());
-					updateStmt.setString(index++, rr.getTipo());				
+					updateStmt.setString(index++, rp.getNome());
+					updateStmt.setString(index++, rp.getDescrizione());
+					updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(rp.getParameterType()));
+					updateStmt.setBoolean(index++, rp.isRequired());
+					updateStmt.setString(index++, rp.getTipo());				
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) CREATE :\n"+updateQuery);
 					n = updateStmt.executeUpdate();
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (PARAMETER) type = " + type + " row affected =" + n);

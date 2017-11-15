@@ -447,6 +447,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						if(apiOp.getRequest().sizeCookieParameters()>0) {
 							for (ApiCookieParameter cookie : apiOp.getRequest().getCookieParameters()) {
 								String nome = cookie.getName();
+								if(nome==null) {
+									throw new Exception("Trovato parametro cookie senza nome");
+								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
 									if(ParameterType.COOKIE.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
@@ -469,6 +472,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						if(apiOp.getRequest().sizeDynamicPathParameters()>0) {
 							for (ApiRequestDynamicPathParameter dynamicPath : apiOp.getRequest().getDynamicPathParameters()) {
 								String nome = dynamicPath.getName();
+								if(nome==null) {
+									throw new Exception("Trovato parametro dynamic path senza nome");
+								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
 									if(ParameterType.DYNAMIC_PATH.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
@@ -491,6 +497,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						if(apiOp.getRequest().sizeFormParameters()>0) {
 							for (ApiRequestFormParameter form : apiOp.getRequest().getFormParameters()) {
 								String nome = form.getName();
+								if(nome==null) {
+									throw new Exception("Trovato parametro form senza nome");
+								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
 									if(ParameterType.FORM.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
@@ -513,6 +522,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						if(apiOp.getRequest().sizeHeaderParameters()>0) {
 							for (ApiHeaderParameter header : apiOp.getRequest().getHeaderParameters()) {
 								String nome = header.getName();
+								if(nome==null) {
+									throw new Exception("Trovato parametro header senza nome");
+								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
 									if(ParameterType.HEADER.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
@@ -535,6 +547,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						if(apiOp.getRequest().sizeQueryParameters()>0) {
 							for (ApiRequestQueryParameter query : apiOp.getRequest().getQueryParameters()) {
 								String nome = query.getName();
+								if(nome==null) {
+									throw new Exception("Trovato parametro query senza nome");
+								}
 								ResourceParameter rp = null;
 								for (ResourceParameter rpCheck : resourceOpenSPCoop.getRequest().getParameterList()) {
 									if(ParameterType.QUERY.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
@@ -626,6 +641,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							if(apiResponse.sizeCookieParameters()>0) {
 								for (ApiCookieParameter cookie : apiResponse.getCookieParameters()) {
 									String nome = cookie.getName();
+									if(nome==null) {
+										throw new Exception("Trovato parametro cookie senza nome");
+									}
 									ResourceParameter rp = null;
 									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
 										if(ParameterType.COOKIE.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {
@@ -648,6 +666,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 							if(apiResponse.sizeHeaderParameters()>0) {
 								for (ApiHeaderParameter header : apiResponse.getHeaderParameters()) {
 									String nome = header.getName();
+									if(nome==null) {
+										throw new Exception("Trovato parametro header senza nome");
+									}
 									ResourceParameter rp = null;
 									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
 										if(ParameterType.HEADER.equals(rpCheck.getParameterType()) && nome.equals(rpCheck.getNome())) {

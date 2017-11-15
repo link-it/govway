@@ -49,6 +49,9 @@ public class APIUtils {
 		Character cJolly = '.'; // uso un carattere come jolly '.'
 		
 		String nomeAzione = Utilities.convertNameToSistemaOperativoCompatible(path,true,cJolly,permit,false);
+		if(nomeAzione.startsWith((cJolly+""))) {
+			nomeAzione = nomeAzione.substring(1);
+		}
 		if(nomeAzione.length()>255) {
 			nomeAzione = nomeAzione.substring(0, 255);
 		}
