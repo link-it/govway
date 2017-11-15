@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.HttpMethod;
+import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.RepresentationType;
 import org.openspcoop2.core.registry.constants.RepresentationXmlType;
@@ -6599,6 +6600,25 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		
 		
+	}
+
+
+
+	public Vector<DataElement> addAccordiResourceParameterToDati(TipoOperazione tipoOp, Vector<DataElement> dati,
+			String id, String statoPackage, String tipoAccordo,  String nomeRisorsa,
+			boolean isRequest, String statusS, String nome, String descr, ParameterType tipoParametro, String tipo,
+			boolean required) {
+		// TODO Auto-generated method stub
+		return dati;
+	}
+
+
+
+	public boolean accordiResourceParameterCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa,
+			String nomeRisorsa2, boolean isRequest, String statusS, String nome, String descr,
+			ParameterType tipoParametro, String tipo, boolean required, Long idResource, Long idResponse) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 

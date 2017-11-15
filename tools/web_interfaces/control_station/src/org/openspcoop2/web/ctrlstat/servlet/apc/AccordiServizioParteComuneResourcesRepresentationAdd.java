@@ -231,7 +231,8 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,listaLinkPageDataTitle); 
 				
-				if(nome == null) {
+				if(mediaType == null) {
+					nome = "";
 					descr = "";
 					tipoJson = "";
 					namespaceXml = "";

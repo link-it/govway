@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -33,30 +34,17 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Resource;
-import org.openspcoop2.core.registry.constants.HttpMethod;
+import org.openspcoop2.core.registry.ResourceParameter;
+import org.openspcoop2.core.registry.ResourceRequest;
+import org.openspcoop2.core.registry.ResourceResponse;
+import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.basic.archive.APIUtils;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
-import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
-import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
-import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
-import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -77,17 +65,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneResourcesParametersAdd extends Action {
 
-	// Protocol Properties
-	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
-	private ConsoleConfiguration consoleConfiguration =null;
-	private ProtocolProperties protocolProperties = null;
-	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
-	private ConsoleOperationType consoleOperationType = null;
-	private ConsoleInterfaceType consoleInterfaceType = null;
-
 	private String editMode = null;
-	
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -106,10 +84,6 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
-		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
-		this.consoleOperationType = ConsoleOperationType.ADD;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
 
@@ -121,105 +95,127 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-
+			
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idInt = Integer.parseInt(id);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			if (nomeRisorsa == null) {
 				nomeRisorsa = "";
 			}
-			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_DESCRIZIONE);
+			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			Integer status = null;
+			try {
+				if(statusS!=null)
+					status = Integer.parseInt(statusS);
+			} catch(Exception e) {}
+			String isReq = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
+			
+			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
 			if (descr == null) {
 				descr = "";
 			}
 			
-			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE);
-			MessageType messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
-		
-			String messageProcessorReqS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST);
-			MessageType messageTypeRequest = (StringUtils.isNotEmpty(messageProcessorReqS) && !messageProcessorReqS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorReqS) : null;
-			
-			String messageProcessorResS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE);
-			MessageType messageTypeResponse = (StringUtils.isNotEmpty(messageProcessorResS) && !messageProcessorResS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorResS) : null;
-		
-			String path = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PATH);
-			if (path == null) {
-				path = "";
-			}
-			String httpMethod = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_HTTP_METHOD); 
-			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-
+			String nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
+			String tipo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
+			String tipoParametroS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
+			ParameterType tipoParametro =  StringUtils.isNotEmpty(tipoParametroS) ? ParameterType.toEnumConstant(tipoParametroS) : null;
+			String requiredS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
+			boolean required = ServletUtils.isCheckBoxEnabled(requiredS);
+			
 			// Preparo il menu
 			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
-			IDAccordo idAs = idAccordoFactory.getIDAccordoFromAccordo(as);
 
-			String protocollo = null;
-			//calcolo del protocollo implementato dall'accordo
-			if(as != null){
-				IdSoggetto soggettoReferente = as.getSoggettoReferente();
-				String tipoSoggettoReferente = soggettoReferente.getTipo();
-				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
-			} else {
-				protocollo = apcCore.getProtocolloDefault();
+			Resource risorsa = null;
+			for (int j = 0; j < as.sizeResourceList(); j++) {
+				risorsa = as.getResource(j);
+				if (nomeRisorsa.equals(risorsa.getNome())) {
+					break;
+				}
 			}
-
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
-			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory);
 			
-			ServiceBinding serviceBinding = null;
-			//calcolo del serviceBinding dall'accordo
-			if(as != null){
-				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+			Long idResponse = null;
+			Long idResource = null;
+			ResourceRequest resourceRequest = null;
+			ResourceResponse resourceResponse = null;
+			if(isRequest) {
+				resourceRequest = risorsa.getRequest();
+				idResource = risorsa.getId();
 			} else {
-				serviceBinding = apcCore.getDefaultServiceBinding(this.protocolFactory);
+				if(risorsa.getResponseList() != null) {
+					for (int i = 0; i < risorsa.getResponseList().size(); i++) {
+						resourceResponse = risorsa.getResponse(i);
+						if (resourceResponse.getStatus() == status) {
+							idResponse = resourceResponse.getId();
+							break;
+						}
+					}
+				}
 			}
-
-			IDResource idRisorsa = new IDResource();
-			idRisorsa.setIdAccordo(idAs);
-			idRisorsa.setNome(nomeRisorsa);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigPortType(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idRisorsa );
-			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
-
+			List<Parameter> listaLinkPageDataTitle = new ArrayList<Parameter>();
+			
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null));
+			listaLinkPageDataTitle.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
+							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
+								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST,
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, as.getNome())));
+			String labelOwner = nomeRisorsa;
+			if(!isRequest) {
+				listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISPOSTE + " di " + nomeRisorsa, 
+						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST+"?"+
+								AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+								AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME+"="+nomeRisorsa+"&"+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));
+				labelOwner = statusS;
+			} 
+			
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS + " di " + labelOwner, 
+					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST,
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uriAS),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, isRequest+""),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, statusS),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa)));
+			
+			listaLinkPageDataTitle.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST+"?"+
-										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-						);
+				ServletUtils.setPageDataTitle(pd, listaLinkPageDataTitle);
+				
+				// init
+				if(nome == null) {
+					nome = "";
+					descr = "";
+					required = false;
+					tipoParametro = ParameterType.QUERY;
+					tipo = "";
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
-
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
-
-				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
+							 nomeRisorsa, isRequest, statusS, nome, descr,  tipoParametro, tipo, required);
 
 				pd.setDati(dati);
 
@@ -228,70 +224,22 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
 			}
 
-			// 1. se il path non inizia per '/' aggiungo all'inizio della stringa
-			String pathNormalizzato = path.trim();
-			if(!pathNormalizzato.startsWith("/"))
-				pathNormalizzato = "/" + pathNormalizzato;
-			
-			// 2. se il nome non e; stato impostato allora genero un nome automatico
-			String nomeRisorsaProposto = nomeRisorsa;
-			if(StringUtils.isEmpty(nomeRisorsaProposto)) {
-				nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
-			}
-			
 			// Controlli sui campi immessi
-			boolean isOk = false;//apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType);
-
-			// Validazione base dei parametri custom 
-			if(isOk){
-				try{
-					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
-				}catch(ProtocolException e){
-					pd.setMessage(e.getMessage());
-					isOk = false;
-				}
-			}
-
-			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
-			if(isOk){
-				try{
-					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idRisorsa);
-				}catch(ProtocolException e){
-					pd.setMessage(e.getMessage());
-					isOk = false;
-				}
-			}
+			boolean isOk = apcHelper.accordiResourceParameterCheckData(tipoOp, id, nomeRisorsa, nomeRisorsa, isRequest, statusS, nome, descr, tipoParametro, tipo, required, idResource,idResponse);
 
 			if (!isOk) {
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST+"?"+
-										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-						);
+				ServletUtils.setPageDataTitle(pd, listaLinkPageDataTitle);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
-
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
-
-				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
-
+				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
+						 nomeRisorsa, isRequest, statusS, nome, descr,  tipoParametro, tipo, required);
+				
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -299,38 +247,63 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
 			}
 
-			// Inserisco la risorsa nel db
-
-			Resource newRes = new Resource();
-			newRes.setNome(nomeRisorsaProposto);
-			newRes.setDescrizione(descr);
-			newRes.setPath(pathNormalizzato);
-			newRes.set_value_method(httpMethod);
-			newRes.setMessageType(apcCore.fromMessageMessageType(messageType));
-			newRes.setRequestMessageType(apcCore.fromMessageMessageType(messageTypeRequest));
-			newRes.setResponseMessageType(apcCore.fromMessageMessageType(messageTypeResponse));
-		
-			as.addResource(newRes);
+			// Inserisco il parametro nel db
+			ResourceParameter newParameter = new ResourceParameter();
+			newParameter.setParameterType(tipoParametro);
+			newParameter.setNome(nome);
+			newParameter.setTipo(tipo);
+			newParameter.setDescrizione(descr);
+			newParameter.setRequired(required);
 			
-			//imposto properties custom
-			newRes.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
-
+			
+			if(isRequest) {
+				if(resourceRequest == null)
+					resourceRequest = new ResourceRequest();
+				resourceRequest.addParameter(newParameter);
+			} else {
+				resourceResponse.addParameter(newParameter);
+			}
+			
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 			
-			// cancello i file temporanei
-			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
-
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
-			List<Resource> lista = apcCore.accordiResourceList(idInt, ricerca);
-
+			
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id delle risorse
 			as = apcCore.getAccordoServizio(new Long(idInt));
+			
+			risorsa = null;
+			for (int j = 0; j < as.sizeResourceList(); j++) {
+				risorsa = as.getResource(j);
+				if (nomeRisorsa.equals(risorsa.getNome())) {
+					break;
+				}
+			}
+			
+			idResponse = null;
+			idResource = null;
+			resourceRequest = null;
+			resourceResponse = null;
+			if(isRequest) {
+				resourceRequest = risorsa.getRequest();
+				idResource = risorsa.getId();
+			} else {
+				if(risorsa.getResponseList() != null) {
+					for (int i = 0; i < risorsa.getResponseList().size(); i++) {
+						resourceResponse = risorsa.getResponse(i);
+						if (resourceResponse.getStatus() == status) {
+							idResponse = resourceResponse.getId();
+							break;
+						}
+					}
+				}
+			}
+						
+			List<ResourceParameter> lista = apcCore.accordiResourceParametersList(idResource, isRequest, idResponse, ricerca);
 
-			apcHelper.prepareAccordiResourcesList(id,as, lista, ricerca,tipoAccordo);
+			apcHelper.prepareAccordiResourcesParametersList(id, as, lista, ricerca, tipoAccordo, isRequest, nomeRisorsa, idResource, resourceRequest, resourceResponse);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
