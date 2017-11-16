@@ -37,6 +37,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.ResourceResponse;
+import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -137,19 +138,22 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 				}
 			}
 			
-			String nomeParameter = "";
+			String tipoNomeParameter = "";
 			boolean modificaAS_effettuata = false;
 			StringBuffer errori = new StringBuffer();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
-				nomeParameter = resourcesToRemove.get(i);
+				tipoNomeParameter = resourcesToRemove.get(i);
+				String[] split = tipoNomeParameter.split("/");
+				String tipoParamaterS = (split != null && split.length > 0) ? split[0] : null;
+				String nomeParameter = (split != null && split.length > 1) ? split[1] : "";
+				ParameterType tipoParametro = tipoParamaterS!= null ? ParameterType.toEnumConstant(tipoParamaterS) : ParameterType.QUERY;
 				
 				// Effettuo eliminazione
 				int idx = -1;			
 				if(parameterList != null && parameterList.size() > 0) {
 					for (int j  = 0; j  < parameterList.size(); j ++) {
 						ResourceParameter resourceParameter = parameterList.get(j );
-						// [TODO] Aggiungere gestione del tipo
-						if(resourceParameter.getNome().equals(nomeParameter)) {
+						if(resourceParameter.getNome().equals(nomeParameter) && resourceParameter.getParameterType().equals(tipoParametro)) {
 							idx = j ;
 							break;
 						}

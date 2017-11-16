@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRequest;
@@ -90,8 +89,6 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
-
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
@@ -221,7 +218,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.ADD());
 			}
 
 			// Controlli sui campi immessi
@@ -244,7 +241,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.ADD());
 			}
 
 			// Inserisco il parametro nel db
@@ -307,11 +304,11 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.ADD());
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
+					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.ADD());
 		}
 	}
 }

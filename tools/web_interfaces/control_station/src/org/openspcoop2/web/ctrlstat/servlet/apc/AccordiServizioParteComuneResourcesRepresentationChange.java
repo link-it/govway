@@ -310,6 +310,8 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
+				
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
 						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);

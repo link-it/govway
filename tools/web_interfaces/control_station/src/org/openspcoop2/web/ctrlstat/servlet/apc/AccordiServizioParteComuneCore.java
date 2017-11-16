@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -792,6 +793,25 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverRegistroServiziDB().existsAccordoServizioResourceRepresentation(idRisorsa, isRequest,idResponse,mediaType);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsAccordoServizioResourceParameter(Long idRisorsa, boolean isRequest, Long idResponse, ParameterType tipoParametro, String nome) throws DriverRegistroServiziException{
+		Connection con = null;
+		String nomeMetodo = "existsAccordoServizioResourceParameter";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverRegistroServiziDB().existsAccordoServizioResourceParameter(idRisorsa, isRequest,idResponse,tipoParametro,nome);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

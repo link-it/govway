@@ -162,7 +162,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			
 			if(parameterList != null && parameterList.size() > 0) {
 				for (ResourceParameter resourceParameter : parameterList) {
-					if(resourceParameter.getNome().equals(nome)) {
+					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
 						resourceParameterOLD = resourceParameter;
 						break;
 					}
@@ -234,7 +234,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.CHANGE());
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.CHANGE());
 
 			}
 			
@@ -250,6 +250,8 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
+				
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
 						 nomeRisorsa, isRequest, statusS, nome, descr,  tipoParametro, tipo, required);
@@ -258,7 +260,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.CHANGE());
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.CHANGE());
 			}
 
 			// Modifico i dati del parameter nel db
@@ -273,7 +275,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			if(parameterList != null && parameterList.size() > 0) {
 				for (int i = 0; i < parameterList.size(); i++) {
 					ResourceParameter resourceParameter = parameterList.get(i);
-					if(resourceParameter.getNome().equals(nome)) {
+					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
 						idx = i;
 						break;
 					}
@@ -328,11 +330,11 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.CHANGE());
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.CHANGE());
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.CHANGE());
+					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.CHANGE());
 		} 
 	}
 }

@@ -273,6 +273,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_RISPOSTA = "Risposta";
 	public final static String LABEL_REPRESENTATION = "Representation";
 	public final static String LABEL_PARAMETERS = "Parametri";
+	public final static String LABEL_PARAMETER = "Parametro";
 
 	/* PARAMETRI */
 

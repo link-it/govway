@@ -148,7 +148,13 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(nomeRisorsa, null)
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISPOSTE + " di " + nomeRisorsa, 
+								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST+"?"+
+										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+										AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME+"="+nomeRisorsa+"&"+
+										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
+										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
+						new Parameter(statusS, null)
 						);
 
 				// Prendo i dati dell'accordo
@@ -190,6 +196,12 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST+"?"+
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
+										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISPOSTE + " di " + nomeRisorsa, 
+								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST+"?"+
+										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+										AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME+"="+nomeRisorsa+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 						new Parameter(nomeRisorsa, null)
