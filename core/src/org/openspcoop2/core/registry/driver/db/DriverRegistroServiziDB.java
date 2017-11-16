@@ -99,6 +99,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.MessageType;
+import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
@@ -2328,7 +2329,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				tmp = rs.getString("descrizione");
 				rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
 				
-				tmp = rs.getString("tipo");
+				tmp = rs.getString("tipo_parametro");
 				rr.setParameterType(DriverRegistroServiziDB_LIB.getEnumParameterType((tmp == null || tmp.equals("")) ? null : tmp));
 				
 				boolean req = rs.getBoolean("required");
@@ -4027,7 +4028,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @return
 	 * @throws DriverRegistroServiziException
 	 */
-	public boolean existsAccordoServizioResourceParameter(Long idRisorsa, boolean isRequest, Long idResponse, String tipo, String nome) throws DriverRegistroServiziException {
+	public boolean existsAccordoServizioResourceParameter(Long idRisorsa, boolean isRequest, Long idResponse, ParameterType tipo, String nome) throws DriverRegistroServiziException {
 
 		boolean exist = false;
 		Connection connection;
@@ -4054,7 +4055,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addWhereCondition("id_resource_parameter = ?");
 			else 
 				sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
-			sqlQueryObject.addWhereCondition("tipo = ?");
+			sqlQueryObject.addWhereCondition("tipo_parametro = ?");
 			sqlQueryObject.addWhereCondition("nome = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
@@ -4063,7 +4064,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				stm.setLong(1, idRisorsa);
 			else 
 				stm.setLong(1, idResponse);
-			stm.setString(2, tipo);
+			stm.setString(2, tipo.toString());
 			stm.setString(3, nome);
 			rs = stm.executeQuery();
 			if (rs.next())
@@ -16899,7 +16900,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("tipo");
+				sqlQueryObject.addOrderBy("tipo_parametro");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -16922,7 +16923,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				else
 					sqlQueryObject.addWhereCondition("id_resource_response_par = ?");
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("tipo");
+				sqlQueryObject.addOrderBy("tipo_parametro");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
