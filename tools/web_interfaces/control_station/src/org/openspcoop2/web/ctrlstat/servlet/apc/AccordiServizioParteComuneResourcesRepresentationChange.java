@@ -122,12 +122,15 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			if (descr == null) {
 				descr = "";
 			}
+			
+			String idRep = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_ID);
+			int idRepInt = Integer.parseInt(idRep);
 
 			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE);
 			MessageType messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
 			String mediaType = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
 			String tipoS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
-			RepresentationType tipo = StringUtils.isNotEmpty(tipoS) ? RepresentationType.toEnumConstant(tipoS) : null;
+			RepresentationType tipo = (StringUtils.isNotEmpty(tipoS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO)) ? RepresentationType.toEnumConstant(tipoS) : null;
 			String nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
 			String tipoJson = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
 			String namespaceXml = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
@@ -198,23 +201,18 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				}
 			}
 			
+			String oldMediaType = null;
 			if(representationList != null && representationList.size() > 0) {
 				for (ResourceRepresentation resourceRepresentation : representationList) {
-					if(resourceRepresentation.getMediaType().equals(mediaType)) {
+					if(resourceRepresentation.getId().intValue() == idRepInt) {
 						resourceRepresentationOLD = resourceRepresentation;
 						break;
 					}
 				}
 			}
 			
-			
-			String postBackElementName = apcHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
+			oldMediaType = resourceRepresentationOLD.getMediaType();
 
-			// se ho fatto una postback tengo i dati che ho inserito e non leggo quelli
-			if(postBackElementName != null ){
-				resourceRepresentationOLD = null;
-			}
-			
 			List<Parameter> listaLinkPageDataTitle = new ArrayList<Parameter>();
 			
 			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null));
@@ -257,37 +255,36 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				ServletUtils.setPageDataTitle(pd,listaLinkPageDataTitle); 
 
 				// Prendo i dati dell'accordo
-				if(resourceRepresentationOLD != null){
+				if(mediaType == null){
+					mediaType = resourceRepresentationOLD.getMediaType();
 					descr = resourceRepresentationOLD.getDescrizione();
 					nome = resourceRepresentationOLD.getNome();
 					messageType = apcCore.toMessageMessageType(resourceRepresentationOLD.getMessageType());
 					tipo = resourceRepresentationOLD.getRepresentationType();
-					switch (tipo) {
-					case JSON:
-						ResourceRepresentationJson json = resourceRepresentationOLD.getJson();
-						tipoJson = json.getTipo();
-						break;
-					case XML:
-					default:
-						ResourceRepresentationXml xml = resourceRepresentationOLD.getXml();
-						namespaceXml = xml.getNamespace();
-						nomeXml = xml.getNome();
-						xmlType = xml.getXmlType();
-						break;
+					if(tipo != null) {
+						switch (tipo) {
+						case JSON:
+							ResourceRepresentationJson json = resourceRepresentationOLD.getJson();
+							tipoJson = json.getTipo();
+							break;
+						case XML:
+						default:
+							ResourceRepresentationXml xml = resourceRepresentationOLD.getXml();
+							namespaceXml = xml.getNamespace();
+							nomeXml = xml.getNome();
+							xmlType = xml.getXmlType();
+							break;
+						}
 					}
 				}
 				
-				// nel caso di postback di un elemento che era json 
-				if(xmlType == null)
-					xmlType = RepresentationXmlType.ELEMENT;
-
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
+						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, idRepInt, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
 				pd.setDati(dati);
 
 				if(apcCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
@@ -301,7 +298,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceRepresentationCheckData(tipoOp, id, nomeRisorsa, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType, idResource,idResponse);
+			boolean isOk = apcHelper.accordiResourceRepresentationCheckData(tipoOp, id, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType, idResource,idResponse, oldMediaType);
 
 			if (!isOk) {
 
@@ -314,7 +311,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
+						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, idRepInt, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -331,27 +328,29 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			newRepresentation.setMediaType(mediaType);
 			newRepresentation.setRepresentationType(tipo); 
 			
-			switch (tipo) {
-			case JSON:
-				ResourceRepresentationJson json = new ResourceRepresentationJson();
-				json.setTipo(tipoJson);
-				newRepresentation.setJson(json);
-				break;
-			case XML:
-				ResourceRepresentationXml xml = new ResourceRepresentationXml();
-				xml.setXmlType(xmlType);
-				xml.setNome(nomeXml);
-				xml.setNamespace(namespaceXml);
-				newRepresentation.setXml(xml);
-				break;
-			default:
-				break;
+			if(tipo != null) {
+				switch (tipo) {
+				case JSON:
+					ResourceRepresentationJson json = new ResourceRepresentationJson();
+					json.setTipo(tipoJson);
+					newRepresentation.setJson(json);
+					break;
+				case XML:
+					ResourceRepresentationXml xml = new ResourceRepresentationXml();
+					xml.setXmlType(xmlType);
+					xml.setNome(nomeXml);
+					xml.setNamespace(namespaceXml);
+					newRepresentation.setXml(xml);
+					break;
+				default:
+					break;
+				}
 			}
 			int idx = -1;			
 			if(representationList != null && representationList.size() > 0) {
 				for (int i = 0; i < representationList.size(); i++) {
 					ResourceRepresentation resourceRepresentation = representationList.get(i);
-					if(resourceRepresentation.getMediaType().equals(mediaType)) {
+					if(resourceRepresentation.getId().intValue() == idRepInt) {
 						idx = i;
 						break;
 					}

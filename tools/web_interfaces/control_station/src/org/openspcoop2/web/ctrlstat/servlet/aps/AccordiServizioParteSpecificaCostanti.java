@@ -113,11 +113,11 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	/* LABEL GENERALI */
 	
-	public final static String LABEL_APS = "Accordi Servizio Parte Specifica";
-	public final static String LABEL_APS_SINGOLO = "Accordo Servizio Parte Specifica";
-	public final static String LABEL_APC_COMPOSTO = "Accordo Servizio (ParteComune/Composto)";
-	public final static String LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE = "Accordo Servizio Parte Comune";
-	public final static String LABEL_APC_COMPOSTO_SOLO_COMPOSTO = "Accordo Servizio Composto";
+	public final static String LABEL_APS = "Erogazioni";
+	public final static String LABEL_APS_SINGOLO = "Erogazione";
+	public final static String LABEL_APC_COMPOSTO = "API (ParteComune/Composto)";
+	public final static String LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE = "API";
+	public final static String LABEL_APC_COMPOSTO_SOLO_COMPOSTO = "API (Servizio Composto)";
 	public final static String LABEL_APS_SERVIZI = "Servizi";
 	public final static String LABEL_APS_FRUITORI = "Fruitori";
 	public final static String LABEL_APS_FRUITORE = "Fruitore";
@@ -147,16 +147,18 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_DI = "WSDL Implementativo di ";
 	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
-	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invia' senza selezionare alcun file"; //fornirne un'altra versione";
+	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invi&agrave; senza selezionare alcun file"; //fornirne un'altra versione";
 	public final static String LABEL_WSDL_AGGIORNAMENTO = "Aggiornamento WSDL";
 	public final static String LABEL_WSDL_NOT_FOUND = "non fornito";
 	public final static String LABEL_WSDL_ATTUALE = "Attuale";
 	public final static String LABEL_WSDL_NUOVO = "Nuovo WSDL";
 	public final static String LABEL_AGGIUNTA_FRUITORI_COMPLETATA = "Tutti i soggetti sono già stati aggiunti come fruitori";
+	public final static String LABEL_APS_VERSIONE_APS = "Versione Accordo Servizio Parte Specifica";
+	public static final String LABEL_APS_SOGGETTO = "Soggetto";
+	public static final String LABEL_APS_TIPO_SERVIZIO = "Tipo Servizio";
+	public static final String LABEL_APS_NOME_SERVIZIO = "Nome Servizio";
 	
-	
-	
-	public final static String LABEL_APS_MENU_VISUALE_AGGREGATA = "Accordi Parte Specifica";
+	public final static String LABEL_APS_MENU_VISUALE_AGGREGATA = "Erogazioni";
 	
 	/* PARAMETRI */
 	
@@ -226,6 +228,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	
 	public final static String SESSION_ATTRIBUTE_APS_SERVIZI_AGGIUNTI = "serviziAggiunti";
+	public final static String SESSION_ATTRIBUTE_APS_VERSION = "version";
 	
 
 	
@@ -280,6 +283,49 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String DEFAULT_VALUE_NORMALE = "normale";
 	public final static String DEFAULT_VALUE_PRIVATA = "privata";
 	public final static String DEFAULT_VALUE_PUBBLICA = "pubblica";	
+	
+	/* DEFAULT VALUE ATTRIBUTI SESSIONE */
+	public final static String DEFAULT_VALUE_SESSION_ATTRIBUTE_APS_VERSION = "required";
+	
+	
+	/* MESSAGGI INFO SEARCH */
+	public static final String MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY = "{0} contenenti la stringa '{1}'";
+	public static final String MESSAGGIO_SEARCH_FRUITORI_DI_XX_CONTENENTI_LA_STRINGA_YY = "Fruitori di {0} contenenti la stringa '{1}'";
+	public static final String MESSAGGIO_SEARCH_SERVIZI_CONTENENTI_LA_STRINGA = "Servizi contenenti la stringa '{0}'";
+	public static final String MESSAGGIO_SEARCH_ALLEGATI_CONTENENTI_LA_STRINGA = "Allegati contenenti la stringa '{0}'";
+
+	/* MESSAGGI ERRORE */
+	
+	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO = "La {0} con nome {1} (tipo: {2}) &egrave; gi&agrave; presente nel servizio.";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI = "L'allegato con nome {0} (tipo: {1}) &egrave; gi&agrave; presente nel servizio.";
+	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA_DIMENSIONE_ESTENSIONE_TROPPO_LUNGA = "L'estensione del documento non &egrave; valida. La dimensione dell'estensione &egrave; troppo lunga.";
+	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA = "L'estensione del documento non &egrave; valida.";
+	public static final String MESSAGGIO_ERRORE_DOCUMENTO_SELEZIONATO_NON_PUO_ESSERE_VUOTO = "Il documento selezionato non puo essere vuoto.";
+	public static final String MESSAGGIO_ERRORE_DOCUMENTO_OBBLIGATORIO = "&Egrave; necessario selezionare un documento.";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_IL_TIPO_DI_DOCUMENTO = "Dati incompleti. &Egrave; necessario indicare il Tipo di documento";
+	public static final String MESSAGGIO_ERRORE_FUNZIONALITÀ_DI_CLIENT_AUTH_NON_ABILITABILE_POICHÈ_NON_È_STATO_SPECIFICATO_UN_SUBJECT_NELLA_PORTA_DI_DOMINIO_0_DEL_SOGGETTO_1 = "Funzionalità di client-auth non abilitabile, poichè non è stato specificato un subject nella Porta di Dominio {0} del soggetto {1}";
+	public static final String MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO = "Esiste gi&agrave; un fruitore del Servizio con lo stesso Soggetto";
+	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE = "Per poter aggiungere il fruitore deve essere definito il connettore.<br/>In alternativa è possibile configurare un connettore sul servizio o sul soggetto erogatore prima di procedere con la creazione del fruitore.";
+	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE = "Per poter aggiungere il fruitore deve prima essere definito un connettore sul servizio o sul soggetto erogatore.";
+	public static final String MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE = "Per poter disabilitare il connettore deve prima essere definito un connettore sul servizio o sul soggetto erogatore";
+	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_PROTOCOLLO_CON_PARAMETRI = "[validazione-{0}] {1}";
+	public static final String MESSAGGIO_ERRORE_API_SELEZIONATA_NON_ESISTENTE_CON_PARAMETRI = "API selezionata ({0}) non esistente: {1}";
+	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_CON_PARAMETRO = "Esiste gi&agrave; una porta applicativa con nome {0}";
+	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO = "Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.";
+	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI = "Esiste gi&agrave; un servizio con il tipo e nome definito erogato dal Soggetto {0}/{1}";
+	public static final String MESSAGGIO_ERRORE_ID_ACCORDO_SERVIZIO_NON_DEFINITO = "id Accordo Servizio non definito";
+	public static final String MESSAGGIO_ERRORE_ID_SOGGETTO_EROGATORE_NON_DEFINITO = "id Soggetto erogatore non definito";
+	public static final String MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUÒ_ESSERE_DISABILITATO_POICHÈ_NON_È_STATO_DEFINITO_UN_CONNETTORE_SUL_SOGGETTO_EROGATORE_ED_ESISTONO_FRUIZIONI_DEL_SERVIZIO_DA_PARTE_DI_SOGGETTI_OPERATIVI_CHE_NON_HANNO_UN_CONNETTORE_DEFINITO = "Il connettore sul servizio non può essere disabilitato poichè non è stato definito un connettore sul soggetto erogatore ed esistono fruizioni del servizio, da parte di soggetti operativi, che non hanno un connettore definito";
+	public static final String MESSAGGIO_ERRORE_IL_CONNETTORE_DEL_SERVIZIO_DEVE_ESSERE_SPECIFICATO_SE_NON_EGRAVE_STATO_DEFINITO_UN_CONNETTORE_PER_IL_SOGGETTO_EROGATORE = "Il connettore del servizio deve essere specificato se non &egrave; stato definito un connettore per il soggetto erogatore";
+	public static final String MESSAGGIO_ERRORE_USO_SOGGETTO_EROGATORE_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA = "Non &egrave; possibile utilizzare un soggetto erogatore con visibilit&agrave; privata, in un servizio con visibilit&agrave; pubblica.";
+	public static final String MESSAGGIO_ERRORE_ACCORDO_SERVIZIO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_ACCORDI_SERVIZIO = "L'accordo servizio dev'essere scelto tra quelli definiti nel pannello Accordi servizio";
+	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI = "Il soggetto dev'essere scelto tra quelli definiti nel pannello Soggetti";
+	public static final String MESSAGGIO_ERRORE_SERVIZIO_CORRELATO_DEV_ESSERE_SELEZIONATO_O_DESELEZIONATO = "Servizio correlato dev'essere selezionato o deselezionato";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_CON_PARAMETRO = "Dati incompleti. &Egrave; necessario indicare: {0}";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_SOGGETTO_MANCANTE = "Dati incompleti. &Egrave; necessario indicare un Soggetto";
+	public static final String MESSAGGIO_ERRORE_SPAZI_BIANCHI_NON_CONSENTITI = "Non inserire spazi nei campi di testo";
+	public static final String MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO = "&Egrave; necessario indicare un Servizio.";
+	public static final String MESSAGGIO_ERRORE_USO_ACCORDO_SERVIZIO_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA = "Non &egrave; possibile utilizzare un accordo di servizio con visibilit&agrave; privata, in un servizio con visibilit&agrave; pubblica.";
 
 	
 }

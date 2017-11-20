@@ -44,7 +44,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -212,7 +211,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
-							 nomeRisorsa, isRequest, statusS, nome, descr,  tipoParametro, tipo, required);
+							 nomeRisorsa, isRequest, statusS, null, nome, descr,  tipoParametro, tipo, required);
 
 				pd.setDati(dati);
 
@@ -222,7 +221,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceParameterCheckData(tipoOp, id, nomeRisorsa, nomeRisorsa, isRequest, statusS, nome, descr, tipoParametro, tipo, required, idResource,idResponse);
+			boolean isOk = apcHelper.accordiResourceParameterCheckData(tipoOp, id, nomeRisorsa, isRequest, statusS, nome, descr, tipoParametro, tipo, required, idResource,idResponse,null,null);
 
 			if (!isOk) {
 
@@ -235,7 +234,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
-						 nomeRisorsa, isRequest, statusS, nome, descr,  tipoParametro, tipo, required);
+						 nomeRisorsa, isRequest, statusS, null, nome, descr,  tipoParametro, tipo, required);
 				
 				pd.setDati(dati);
 

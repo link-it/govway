@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -247,7 +248,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean visibile = false;
 			if(visibilitaServizio==visibile){
 				if(visibilitaAccordoServizio==nonVisibile){
-					this.pd.setMessage("Non e' possibile utilizzare un accordo di servizio con visibilita' privata, in un servizio con visibilita' pubblica.");
+					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_USO_ACCORDO_SERVIZIO_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA);
 					return false;
 				}
 			}
@@ -275,60 +276,60 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Campi obbligatori
 			if (!isModalitaAvanzata) {
 				if (portType == null || "".equals(portType) || "-".equals(portType)) {
-					this.pd.setMessage("E' necessario indicare un Servizio.");
+					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO);
 					return false;
 				}
 			}
 			if (nomeservizio.equals("") || tiposervizio.equals("") || idSoggErogatore.equals("") || idAccordo.equals("") || versione.equals("")) {
 				String tmpElenco = "";
 				if (nomeservizio.equals("")) {
-					tmpElenco = "Nome Servizio";
+					tmpElenco = AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO;
 				}
 				if (tiposervizio.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Tipo Servizio";
+						tmpElenco = AccordiServizioParteSpecificaCostanti.LABEL_APS_TIPO_SERVIZIO;
 					} else {
-						tmpElenco = tmpElenco + ", Tipo Servizio";
+						tmpElenco = tmpElenco + ", " + AccordiServizioParteSpecificaCostanti.LABEL_APS_TIPO_SERVIZIO;
 					}
 				}
 				if (idSoggErogatore.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Soggetto";
+						tmpElenco = AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO;
 					} else {
-						tmpElenco = tmpElenco + ", Soggetto";
+						tmpElenco = tmpElenco + ", " + AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO;
 					}
 				}
 				if (idAccordo.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Accordo Servizio Parte Comune";
+						tmpElenco = AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;
 					} else {
-						tmpElenco = tmpElenco + ", Accordo Servizio Parte Comune";
+						tmpElenco = tmpElenco + ", " + AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;
 					}
 				}
 				if (versione.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Versione Accordo Servizio Parte Specifica";
+						tmpElenco = AccordiServizioParteSpecificaCostanti.LABEL_APS_VERSIONE_APS;
 					} else {
-						tmpElenco = tmpElenco + ", Versione Accordo Servizio Parte Specifica";
+						tmpElenco = tmpElenco + ", " + AccordiServizioParteSpecificaCostanti.LABEL_APS_VERSIONE_APS;
 					}	
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_CON_PARAMETRO, tmpElenco));
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nomeservizio.indexOf(" ") != -1) || (tiposervizio.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_SPAZI_BIANCHI_NON_CONSENTITI);
 				return false;
 			}
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			if(this.checkNCName(nomeservizio,AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE+" Servizio")==false){
+			if(this.checkNCName(nomeservizio,AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO)==false){
 				return false;
 			}
 
 			// Il tipo deve contenere solo lettere e numeri
-			if(this.checkNCName(tiposervizio,AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO_FILE+" Servizio")==false){
+			if(this.checkNCName(tiposervizio,AccordiServizioParteSpecificaCostanti.LABEL_APS_TIPO_SERVIZIO)==false){
 				return false;
 			}
 
@@ -357,7 +358,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Controllo che i campi "checkbox" abbiano uno dei valori
 			// ammessi
 			if ((servcorr != null) && !servcorr.equals(Costanti.CHECK_BOX_ENABLED) && !servcorr.equals(Costanti.CHECK_BOX_DISABLED)) {
-				this.pd.setMessage("Servizio correlato dev'essere selezionato o deselezionato");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_SERVIZIO_CORRELATO_DEV_ESSERE_SELEZIONATO_O_DESELEZIONATO);
 				return false;
 			}
 
@@ -377,7 +378,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			if (!trovatoProv) {
-				this.pd.setMessage("Il soggetto dev'essere scelto tra quelli definiti nel pannello Soggetti");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_SOGGETTO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI);
 				return false;
 			}
 
@@ -391,7 +392,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			if (!trovatoAcc) {
-				this.pd.setMessage("L'accordo servizio dev'essere scelto tra quelli definiti nel pannello Accordi servizio");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ACCORDO_SERVIZIO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_ACCORDI_SERVIZIO);
 				return false;
 			}
 
@@ -400,7 +401,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(visibilitaServizio==visibile){
 				org.openspcoop2.core.registry.Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoErogatore, nomeErogatore));
 				if(tmpSogg.getPrivato()!=null && tmpSogg.getPrivato()==true){
-					this.pd.setMessage("Non e' possibile utilizzare un soggetto erogatore con visibilita' privata, in un servizio con visibilita' pubblica.");
+					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_USO_SOGGETTO_EROGATORE_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA);
 					return false;
 				}
 			}
@@ -419,7 +420,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 	
 					if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
-						this.pd.setMessage("Il connettore del servizio deve essere specificato se non &egrave; stato definito un connettore per il soggetto erogatore");
+						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_DEL_SERVIZIO_DEVE_ESSERE_SPECIFICATO_SE_NON_EGRAVE_STATO_DEFINITO_UN_CONNETTORE_PER_IL_SOGGETTO_EROGATORE);
 						return false;
 					}
 				}
@@ -428,7 +429,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						boolean escludiSoggettiEsterni = true;
 						boolean trovatoServ = this.apsCore.existFruizioniServizioWithoutConnettore(idInt,escludiSoggettiEsterni);
 						if (trovatoServ) {
-							this.pd.setMessage("Il connettore sul servizio non può essere disabilitato poichè non è stato definito un connettore sul soggetto erogatore ed esistono fruizioni del servizio, da parte di soggetti operativi, che non hanno un connettore definito");
+							this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUÒ_ESSERE_DISABILITATO_POICHÈ_NON_È_STATO_DEFINITO_UN_CONNETTORE_SUL_SOGGETTO_EROGATORE_ED_ESISTONO_FRUIZIONI_DEL_SERVIZIO_DA_PARTE_DI_SOGGETTI_OPERATIVI_CHE_NON_HANNO_UN_CONNETTORE_DEFINITO);
 							return false;
 						}
 					}
@@ -438,12 +439,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// idSoggettoErogatore
 			long idSoggettoErogatore = Long.parseLong(idSoggErogatore);
 			if (idSoggettoErogatore < 0)
-				throw new Exception("id Soggetto erogatore non definito");
+				throw new Exception(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ID_SOGGETTO_EROGATORE_NON_DEFINITO);
 
 			// idAccordo Servizio
 			long idAccordoServizio = Long.parseLong(idAccordo);
 			if (idAccordoServizio < 0)
-				throw new Exception("id Accordo Servizio non definito");
+				throw new Exception(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ID_ACCORDO_SERVIZIO_NON_DEFINITO);
 
 			// Indicazione se e' un servizio correlato
 			// boolean isServizioCorrelato = ((servcorr != null && servcorr
@@ -452,7 +453,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Controllo non esistenza gia' del servizio
 			if ((!tipoOp.equals(TipoOperazione.CHANGE)) || ((tipoOp.equals(TipoOperazione.CHANGE)) && (!oldTiposervizio.equals(tiposervizio) || !oldNomeservizio.equals(nomeservizio)))) {
 				if (this.apsCore.existServizio(nomeservizio, tiposervizio, idSoggettoErogatore) > 0) {
-					this.pd.setMessage("Esiste gi&agrave; un servizio con il tipo e nome definito erogato dal Soggetto " + tipoErogatore + "/" + nomeErogatore);
+					this.pd.setMessage(MessageFormat.format(
+							AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI,
+							tipoErogatore, nomeErogatore));
 					return false;
 				}
 			}
@@ -498,9 +501,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if (tipoOp.equals(TipoOperazione.ADD)){
 				if(this.apsCore.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
 					if(this.core.isShowVersioneAccordoServizioParteSpecifica())
-						this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
+						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 					else
-						this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
+						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 					return false;
 				}
 			}else{
@@ -510,9 +513,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					if(servizio!=null){
 						if (idInt != servizio.getId()) {
 							if(this.core.isShowVersioneAccordoServizioParteSpecifica())
-								this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
+								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 							else
-								this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
+								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 							return false;
 						}
 					}
@@ -527,7 +530,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(nomePA);
 					if(this.porteApplicativeCore.existsPortaApplicativa(idPA)){
-						this.pd.setMessage("Esiste gi&agrave; una porta applicativa con nome "+nomePA);
+						this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_CON_PARAMETRO, nomePA));
 						return false;
 					}
 				}
@@ -539,7 +542,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			try{
 				as = this.apcCore.getAccordoServizio(Long.parseLong(idAccordo));
 			}catch(Exception e){
-				this.pd.setMessage("Accordo di servizio parte comune selezionato ("+idAccordo+") non esistente: "+e.getMessage());
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_API_SELEZIONATA_NON_ESISTENTE_CON_PARAMETRI, idAccordo,
+						e.getMessage()));
 				return false;
 			}
 
@@ -561,11 +565,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			ValidazioneResult v = this.apsCore.validazione(aps, this.soggettiCore);
 			if(v.isEsito()==false){
-				this.pd.setMessage("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_PROTOCOLLO_CON_PARAMETRI, protocollo, v.getMessaggioErrore()));
 				if(v.getException()!=null)
-					this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore(),v.getException());
+					this.log.error(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_PROTOCOLLO_CON_PARAMETRI, protocollo, v.getMessaggioErrore()),v.getException());
 				else
-					this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+					this.log.error(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_PROTOCOLLO_CON_PARAMETRI, protocollo, v.getMessaggioErrore()));
 				return false;
 			}	
 
@@ -678,7 +682,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			// Campi obbligatori
 			if (idSoggettoFruitore.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_SOGGETTO_MANCANTE);
 				return false;
 			}
 
@@ -720,14 +724,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 						if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
 							if(tipoOp.equals(TipoOperazione.CHANGE)){
-								this.pd.setMessage("Per poter disabilitare il connettore deve prima essere definito un connettore sul servizio o sul soggetto erogatore");
+								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
 							}
 							else{
 								if(InterfaceType.AVANZATA.equals(userLogin.getInterfaceType())){
-									this.pd.setMessage("Per poter aggiungere il fruitore deve essere definito il connettore.<br/>In alternativa è possibile configurare un connettore sul servizio o sul soggetto erogatore prima di procedere con la creazione del fruitore.");
+									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE);
 								}
 								else{
-									this.pd.setMessage("Per poter aggiungere il fruitore deve prima essere definito un connettore sul servizio o sul soggetto erogatore.");
+									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
 								}
 							}
 							return false;
@@ -784,7 +788,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				IDServizio idserv = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 				int idFru = this.apsCore.getServizioFruitore(idserv, idProv);
 				if ((idFru != 0) && (tipoOp.equals(TipoOperazione.ADD) || ((tipoOp.equals(TipoOperazione.CHANGE)) && (myIdInt != idFru)))) {
-					this.pd.setMessage("Esiste gi&agrave; un fruitore del Servizio con lo stesso Soggetto");
+					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO);
 					return false;
 				}
 			}
@@ -796,7 +800,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				try{
 					as = this.apcCore.getAccordoServizio(idAccordo);
 				}catch(Exception e){
-					this.pd.setMessage("Accordo di servizio parte comune selezionato ("+idAccordo+") non esistente: "+e.getMessage());
+					this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_API_SELEZIONATA_NON_ESISTENTE_CON_PARAMETRI, idAccordo,e.getMessage()));
 					return false;
 				}
 
@@ -838,7 +842,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				IDSoggetto idfru = new IDSoggetto(mySogg.getTipo(),mySogg.getNome());
 				PortaDominio pdd = this.pddCore.getPortaDominio(mySogg.getPortaDominio());
 				if(pdd.getSubject()==null || "".equals(pdd.getSubject())){
-					this.pd.setMessage("Funzionalità di client-auth non abilitabile, poichè non è stato specificato un subject nella Porta di Dominio "+pdd.getNome()+" del soggetto "+idfru.toString());
+					this.pd.setMessage(MessageFormat.format(
+							AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_FUNZIONALITÀ_DI_CLIENT_AUTH_NON_ABILITABILE_POICHÈ_NON_È_STATO_SPECIFICATO_UN_SUBJECT_NELLA_PORTA_DI_DOMINIO_0_DEL_SOGGETTO_1,
+							pdd.getNome(), idfru.toString()));
 					return false;
 				}
 			}
@@ -862,25 +868,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Campi obbligatori
 			if (ruolo.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo di documento");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_IL_TIPO_DI_DOCUMENTO);
 				return false;
 			}
 
 			if(formFile==null || formFile.getFileName()!=null && "".equals(formFile.getFileName())){
-				this.pd.setMessage("E' necessario selezionare un documento.");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_DOCUMENTO_OBBLIGATORIO);
 				return false;
 			}
 
 			if(formFile==null || formFile.getFileSize()<=0){
-				this.pd.setMessage("Il documento selezionato non puo essere vuoto.");
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_DOCUMENTO_SELEZIONATO_NON_PUO_ESSERE_VUOTO);
 				return false;
 			}
 
 			if(documento.getTipo()==null || "".equals(documento.getTipo()) || documento.getTipo().length()>30 || formFile.getFileName().lastIndexOf(".")==-1){
 				if(documento.getTipo()==null || "".equals(documento.getTipo()) || formFile.getFileName().lastIndexOf(".")==-1){
-					this.pd.setMessage("L'estensione del documento non e' valida.");
+					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA);
 				}else{
-					this.pd.setMessage("L'estensione del documento non e' valida. La dimensione dell'estensione e' troppo lunga.");
+					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA_DIMENSIONE_ESTENSIONE_TROPPO_LUNGA);
 				}
 				return false;
 			}
@@ -893,9 +899,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					return true;
 
 				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()))
-					this.pd.setMessage("L'allegato con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") e' gia' presente nel servizio.");
+					this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI,
+							documento.getFile(), documento.getTipo()));
 				else
-					this.pd.setMessage("La "+documento.getRuolo()+" con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") e' gia' presente nel servizio.");
+					this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO, documento.getRuolo(),
+							documento.getFile(), documento.getTipo()));
 
 				return false;
 			}
@@ -949,7 +957,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Allegati contenenti la stringa '" + search + "'");
+				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_ALLEGATI_CONTENENTI_LA_STRINGA, search));
 			}
 
 			// setto le label delle colonne
@@ -1062,7 +1070,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Servizi contenenti la stringa '" + search + "'");
+				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_SERVIZI_CONTENENTI_LA_STRINGA, search));
 			}
 
 			// setto le label delle colonne
@@ -1404,7 +1412,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Fruitori di " + tmpTitle + " contenenti la stringa '" + search + "'");
+				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_FRUITORI_DI_XX_CONTENENTI_LA_STRINGA_YY, tmpTitle, search));
 			}
 
 			// setto le label delle colonne
@@ -1636,7 +1644,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
-				this.pd.setSearchDescription(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE + " contenenti la stringa '" + search + "'");
+				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, search));
 			}
 
 			// setto le label delle colonne
@@ -1943,7 +1951,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
-				this.pd.setSearchDescription(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE + " contenenti la stringa '" + search + "'");
+				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, search));
 			}
 
 
@@ -2459,7 +2467,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if( modificaAbilitata ){
 					de.setType(DataElementType.TEXT_EDIT);
 					//de.setRequired(true);
-					this.session.setAttribute("version", "required");
+					this.session.setAttribute(AccordiServizioParteSpecificaCostanti.SESSION_ATTRIBUTE_APS_VERSION, AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_SESSION_ATTRIBUTE_APS_VERSION);
 				}else{
 					de.setType(DataElementType.TEXT);
 				}

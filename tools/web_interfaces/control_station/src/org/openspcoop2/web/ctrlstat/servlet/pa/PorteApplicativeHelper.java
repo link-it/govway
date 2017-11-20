@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -100,7 +101,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			// String descr = this.request.getParameter("descr");
-			String soggvirt = this.request.getParameter("soggvirt");
+			String soggvirt = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
 			if (soggvirt == null) {
 				soggvirt = "-";
 			}
@@ -134,37 +135,37 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			if (nomePorta.equals("") || soggvirt.equals("") || servizio.equals("")) {
 				String tmpElenco = "";
 				if (nomePorta.equals("")) {
-					tmpElenco = "Nome";
+					tmpElenco = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME;
 				}
 				if (soggvirt.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Soggetto virtuale";
+						tmpElenco = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE;
 					} else {
-						tmpElenco = tmpElenco + ", Soggetto virtuale";
+						tmpElenco = tmpElenco + ", " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE;
 					}
 				}
 				if (servizio.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Servizio";
+						tmpElenco = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO;
 					} else {
-						tmpElenco = tmpElenco + ", Servizio";
+						tmpElenco = tmpElenco + ", " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if(behaviour!=null && !"".equals(behaviour)){
 				if (behaviour.indexOf(" ") != -1 || behaviour.indexOf(",") != -1 ) {
-					this.pd.setMessage("Non inserire ne spazi ne ',' nel campo 'behaviour'");
+					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_NE_SPAZI_NE_NEL_CAMPO_BEHAVIOUR);
 					return false;
 				}
 			}
 			
 			// Controllo che non ci siano spazi nei campi di testo
 			if (nomePorta.indexOf(" ") != -1) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 			if(this.checkIntegrationEntityName(nomePorta,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false){
@@ -172,8 +173,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!xsd.equals("abilitato") && !xsd.equals("disabilitato") && !xsd.equals("warningOnly")) {
-				this.pd.setMessage("Validazione XSD dev'essere abilitato, disabilitato o warningOnly");
+			if (!xsd.equals(CostantiControlStation.DEFAULT_VALUE_ABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY)) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY);
 				return false;
 			}
 
@@ -190,7 +191,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					}
 				}
 				if (!trovatoSogg && !soggvirt.equals("-")) {
-					this.pd.setMessage("Il Soggetto virtuale dev'essere scelto tra quelli definiti nel pannello Soggetti");
+					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_IL_SOGGETTO_VIRTUALE_DEVE_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI);
 					return false;
 				}
 
@@ -548,7 +549,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 

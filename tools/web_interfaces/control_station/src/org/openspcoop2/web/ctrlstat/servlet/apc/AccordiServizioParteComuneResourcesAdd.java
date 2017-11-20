@@ -217,7 +217,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
 
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
+				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
 						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
 
 				// aggiunta campi custom
@@ -242,7 +242,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null);
+			boolean isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null,null);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -289,7 +289,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
 
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
+				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);

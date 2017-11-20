@@ -215,8 +215,8 @@ public class AccordiServizioParteComuneCostanti {
 
 	/* LABEL GENERALI */
 
-	public final static String LABEL_APC = "Accordi Servizio Parte Comune";
-	public final static String LABEL_ASC = "Accordi Servizio Composto";
+	public final static String LABEL_APC = "API";
+	public final static String LABEL_ASC = "API (Servizio Composto)";
 	public final static String LABEL_ACCORDI_EROGATORI_DI = "Erogatori di ";
 	public final static String LABEL_ACCORDI_EROGATORI = "Erogatori";
 	public final static String LABEL_ACCORDI_FRUITORI_DI = "Fruitori di ";
@@ -259,8 +259,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_WSDL_ATTUALE = "Attuale";
 	public final static String LABEL_WSDL_NUOVO = "Nuovo";
 
-	public final static String LABEL_APC_MENU_VISUALE_AGGREGATA = "Accordi Parte Comune";
-	public final static String LABEL_ASC_MENU_VISUALE_AGGREGATA = "Servizi Composti";
+	public final static String LABEL_APC_MENU_VISUALE_AGGREGATA = "API";
+	public final static String LABEL_ASC_MENU_VISUALE_AGGREGATA = "API (Servizio Composto)";
 	public final static String LABEL_OPERATION_MESSAGE = "Message";
 	public final static String LABEL_OPERATION_MESSAGE_INPUT = "Message Input";
 	public final static String LABEL_OPERATION_MESSAGE_OUTPUT = "Message Output";
@@ -271,7 +271,8 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_APC_RESOURCES_RISPOSTA = "Risposta";
 	public final static String LABEL_RISPOSTE = "Risposte";
 	public final static String LABEL_RISPOSTA = "Risposta";
-	public final static String LABEL_REPRESENTATION = "Representation";
+	public final static String LABEL_REPRESENTATION = "Rappresentazione";
+	public final static String LABEL_REPRESENTATION_DEFINIZIONE = "Definizione";
 	public final static String LABEL_PARAMETERS = "Parametri";
 	public final static String LABEL_PARAMETER = "Parametro";
 
@@ -383,6 +384,7 @@ public class AccordiServizioParteComuneCostanti {
 
 	public final static String PARAMETRO_APC_WSDL_CHANGE_TMP = "apcWsdlTMP";
 	
+	public final static String PARAMETRO_APC_RESOURCES_ID = "idRs";
 	public final static String PARAMETRO_APC_RESOURCES_NOME = "nomeRs";
 	public final static String PARAMETRO_APC_RESOURCES_DESCRIZIONE = "descrizioneRs";
 	public final static String PARAMETRO_APC_RESOURCES_PATH = "pathRs";
@@ -509,15 +511,16 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE = "Message Type";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO = "Schema";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML = "Xml";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON = "Json";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO = "Xml Tipo";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO = "Non Definito";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT = "Element";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE = "Type";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME = "Xml Name";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE = "Xml Namespace";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE = "Json Type";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME = "Nome";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE = "Namespace";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE = "Tipo";
 	
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_ID = "ID";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME = "Nome";
@@ -525,11 +528,11 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO = "Tipo Parametro";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "Required";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "Tipo";
-	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE = "Cookie";
-	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH = "Dynamic Path";
-	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM = "Form";
-	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER = "Header";
-	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY = "Query";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_COOKIE = "Cookie";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_DYNAMIC_PATH = "Dynamic Path";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_FORM = "Form";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_HEADER = "Header";
+	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_QUERY = "Query";
 	
 	public final static String LABEL_SI = "Si";
 	public final static String LABEL_NO = "No";
@@ -619,14 +622,16 @@ public class AccordiServizioParteComuneCostanti {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML = "xml";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON = "json";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO = "nd";
 	
-	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE = "cookie";
-	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH = "dynamicPath";
-	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM = "form";
-	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER = "header";
-	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY = "query";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_COOKIE = "cookie";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_DYNAMIC_PATH = "dynamicPath";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_FORM = "form";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_HEADER = "header";
+	public static final String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_QUERY = "query";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT = "element";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE = "type";
 	
 }
+

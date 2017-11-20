@@ -245,7 +245,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		if(!configurazioneStandardNonApplicabile){
-			if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+			if (modesp != null && modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID);
@@ -292,14 +292,14 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				}
 	
 				de = new DataElement();
-				if (modesp.equals(IdentificazioneView.URL_BASED.toString()) || modesp.equals(IdentificazioneView.CONTENT_BASED.toString())) {
+				if (modesp != null && (modesp.equals(IdentificazioneView.URL_BASED.toString()) || modesp.equals(IdentificazioneView.CONTENT_BASED.toString()))) {
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
 					de.setValue(patternErogatore);
 				} else {
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 					de.setValue(sp);
 				}
-				if (!modesp.equals(IdentificazioneView.INPUT_BASED.toString())){
+				if (modesp != null && !modesp.equals(IdentificazioneView.INPUT_BASED.toString())){
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setRequired(true);
 				}else
@@ -350,7 +350,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 			else{
 				de.setType(DataElementType.SELECT);
-				if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+				if (modesp != null && modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 					de.setValues(tipoMode);
 				} else {
 					de.setValues(tipoModeSimple);
@@ -359,7 +359,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 		}else{
 			de.setType(DataElementType.SELECT);
-			if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+			if (modesp != null && modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				de.setValues(tipoMode);
 			} else {
 				de.setValues(tipoModeSimple);
@@ -373,7 +373,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		if(!configurazioneStandardNonApplicabile){
-			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+			if (modeservizio!= null && modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID);
@@ -420,14 +420,14 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				}
 	
 				de = new DataElement();
-				if (modeservizio.equals(IdentificazioneView.URL_BASED.toString()) || modeservizio.equals(IdentificazioneView.CONTENT_BASED.toString())) {
+				if (modeservizio!= null && (modeservizio.equals(IdentificazioneView.URL_BASED.toString()) || modeservizio.equals(IdentificazioneView.CONTENT_BASED.toString()))) {
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
 					de.setValue(patternServizio);
 				} else {
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 					de.setValue(servizio);
 				}
-				if (!modeservizio.equals(IdentificazioneView.INPUT_BASED.toString())){
+				if (modeservizio!= null && !modeservizio.equals(IdentificazioneView.INPUT_BASED.toString())){
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setRequired(true);
 				}else
@@ -630,7 +630,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				
 			}
 			else{
-				if (!(modeservizio.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((modeaz != null) && modeaz.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((azioniList == null) || (azioniList.length == 0))))) {
+				if (modeservizio!= null && !(modeservizio.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((modeaz != null) && modeaz.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((azioniList == null) || (azioniList.length == 0))))) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
 					de.setType(DataElementType.SUBTITLE);
@@ -640,7 +640,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 					de.setType(DataElementType.SELECT);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
-					if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+					if (modeservizio!= null && modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 						de.setValues(tipoModeAzione);
 					} else {
 						de.setValues(tipoModeSimpleAzione);
@@ -808,7 +808,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		// LocalForward
 		boolean localForwardShow = true;
 		Soggetto soggettoErogatoreLocalForward  = null;
-		if (modesp.equals(IdentificazioneView.REGISTER_INPUT.toString()) ) {
+		if (modesp != null && modesp.equals(IdentificazioneView.REGISTER_INPUT.toString()) ) {
 			try{
 				if(soggid!=null && soggid.contains("/")){
 					soggettoErogatoreLocalForward = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]));
@@ -818,7 +818,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				}
 			}catch(DriverRegistroServiziNotFound dNot){}
 		}
-		else if (modesp.equals(IdentificazioneView.USER_INPUT.toString()) ) {
+		else if (modesp != null && modesp.equals(IdentificazioneView.USER_INPUT.toString()) ) {
 			try{
 				String tipoSoggetto = null;
 				if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {

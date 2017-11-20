@@ -390,7 +390,8 @@ public class PorteApplicativeCore extends ControlStationCore {
 			List<PortaApplicativa> list = driver.getDriverConfigurazioneDB().getPorteApplicative(idServizio, ricercaPuntuale);
 			
 			return list!=null && list.size()>0;
-
+		} catch(DriverConfigurazioneNotFound nfe) {
+			return false;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

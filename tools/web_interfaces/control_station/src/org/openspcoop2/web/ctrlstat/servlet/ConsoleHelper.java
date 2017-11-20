@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -160,7 +161,6 @@ import org.slf4j.Logger;
  * 
  */
 public class ConsoleHelper {
-
 
 	protected HttpServletRequest request;
 	public HttpServletRequest getRequest() {
@@ -2170,12 +2170,12 @@ public class ConsoleHelper {
 				try{
 					scadCorrInt = Integer.parseInt(scadcorr);
 				}catch(Exception e){
-					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore di zero");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SCADENZA_CORRELAZIONE_APPLICATIVA_NON_VALIDA_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO); 
 					return false;
 				}
 				
 				if(scadCorrInt <= 0){
-					this.pd.setMessage("Scadenza Correlazione Applicativa non valida, inserire un numero intero maggiore di zero");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SCADENZA_CORRELAZIONE_APPLICATIVA_NON_VALIDA_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO);
 					return false;
 				}
 			}
@@ -2190,13 +2190,13 @@ public class ConsoleHelper {
 	// Controlla i dati della correlazione applicativa richiesta della porta delegata
 	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
 		try {
-			String id = this.request.getParameter("id");
+			String id = this.request.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
 			// String idsogg = this.request.getParameter("idsogg");
-			String elemxml = this.request.getParameter("elemxml");
-			String mode = this.request.getParameter("mode");
-			String pattern = this.request.getParameter("pattern");
-			String idcorr = this.request.getParameter("idcorr");
+			String elemxml = this.request.getParameter(CostantiControlStation.PARAMETRO_ELEMENTO_XML);
+			String mode = this.request.getParameter(CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA);
+			String pattern = this.request.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
+			String idcorr = this.request.getParameter(CostantiControlStation.PARAMETRO_ID_CORRELAZIONE);
 			int idcorrInt = 0;
 			if (idcorr != null) {
 				idcorrInt = Integer.parseInt(idcorr);
@@ -2204,22 +2204,26 @@ public class ConsoleHelper {
 
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
-			if (((mode.equals("urlBased") || mode.equals("contentBased")) && pattern.equals(""))) {
+			if (((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) 
+					&& pattern.equals(""))) {
 				String tmpElenco = "";
-				if ((mode.equals("urlBased") || mode.equals("contentBased")) && pattern.equals("")) {
+				if ((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Pattern";
+						tmpElenco = CostantiControlStation.LABEL_PATTERN;
 					} else {
-						tmpElenco = tmpElenco + ", Pattern";
+						tmpElenco = tmpElenco + ", " + CostantiControlStation.LABEL_PATTERN;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!mode.equals("urlBased") && !mode.equals("contentBased") && !mode.equals("inputBased") && !mode.equals("disabilitato")) {
-				this.pd.setMessage("Modalit&agrave; identificazione dev'essere disabilitato, urlBased, contentBased o inputBased ");
+			if (!mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) 
+					&& !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
+					&& !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
+					&& !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
 				return false;
 			}
 
@@ -2263,15 +2267,15 @@ public class ConsoleHelper {
 			}
 
 			if (giaRegistrato) {
-				String nomeElemento = "Non definito";
+				String nomeElemento = CostantiControlStation.LABEL_NON_DEFINITO;
 				if(elemxml!=null && ("".equals(elemxml)==false))
 					nomeElemento = elemxml;
 				String idPorta = null;
 				if(portaDelegata)
-					idPorta = "porta delegata "+nomePorta;
+					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_DELEGATA_CON_PARAMETRI, nomePorta);
 				else
-					idPorta = "porta applicativa "+nomePorta;
-				this.pd.setMessage("Esiste gi&agrave; una correlazione applicativa con elemento xml ["+nomeElemento+"] definita nella " + idPorta);
+					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_APPLICATIVA_CON_PARAMETRI, nomePorta);
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_CON_ELEMENTO_XML_DEFINITA_GIA_ESISTENTE,	nomeElemento, idPorta));
 				return false;
 			}
 
@@ -2286,13 +2290,13 @@ public class ConsoleHelper {
 	// Controlla i dati della correlazione applicativa della porta delegata
 	public boolean correlazioneApplicativaRispostaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
 		try {
-			String id = this.request.getParameter("id");
+			String id = this.request.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
 			// String idsogg = this.request.getParameter("idsogg");
-			String elemxml = this.request.getParameter("elemxml");
-			String mode = this.request.getParameter("mode");
-			String pattern = this.request.getParameter("pattern");
-			String idcorr = this.request.getParameter("idcorr");
+			String elemxml = this.request.getParameter(CostantiControlStation.PARAMETRO_ELEMENTO_XML);
+			String mode = this.request.getParameter(CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA);
+			String pattern = this.request.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
+			String idcorr = this.request.getParameter(CostantiControlStation.PARAMETRO_ID_CORRELAZIONE);
 			int idcorrInt = 0;
 			if (idcorr != null) {
 				idcorrInt = Integer.parseInt(idcorr);
@@ -2300,22 +2304,22 @@ public class ConsoleHelper {
 
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
-			if (((mode.equals("urlBased") || mode.equals("contentBased")) && pattern.equals(""))) {
+			if (((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals(""))) {
 				String tmpElenco = "";
-				if ((mode.equals("urlBased") || mode.equals("contentBased")) && pattern.equals("")) {
+				if ((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Pattern";
+						tmpElenco = CostantiControlStation.LABEL_PATTERN;
 					} else {
-						tmpElenco = tmpElenco + ", Pattern";
+						tmpElenco = tmpElenco + ", " + CostantiControlStation.LABEL_PATTERN;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!mode.equals("urlBased") && !mode.equals("contentBased") && !mode.equals("inputBased") && !mode.equals("disabilitato")) {
-				this.pd.setMessage("Modalit&agrave; identificazione dev'essere disabilitato, urlBased, contentBased o inputBased ");
+			if (!mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) && !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) && !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) && !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
 				return false;
 			}
 
@@ -2359,15 +2363,15 @@ public class ConsoleHelper {
 			}
 
 			if (giaRegistrato) {
-				String nomeElemento = "Non definito";
+				String nomeElemento = CostantiControlStation.LABEL_NON_DEFINITO;
 				if(elemxml!=null && ("".equals(elemxml)==false))
 					nomeElemento = elemxml;
 				String idPorta = null;
 				if(portaDelegata)
-					idPorta = "porta delegata "+nomePorta;
+					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_DELEGATA_CON_PARAMETRI, nomePorta);
 				else
-					idPorta = "porta applicativa "+nomePorta;
-				this.pd.setMessage("Esiste gi&agrave; una correlazione applicativa per la risposta con elemento xml ["+nomeElemento+"] definita nella " + idPorta);
+					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_APPLICATIVA_CON_PARAMETRI, nomePorta);
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_PER_LA_RISPOSTA_CON_ELEMENTO_DEFINITA_GIA_ESISTENTE,	nomeElemento, idPorta));
 				return false;
 			}
 
@@ -2393,7 +2397,7 @@ public class ConsoleHelper {
 					!mtomRichiesta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_PACKAGING) && 
 					!mtomRichiesta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_VERIFY) && 
 					!mtomRichiesta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_UNPACKAGING)) {
-				this.pd.setMessage("Stato della Richiesta dev'essere disabled, packaging, unpackaging o verify.");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_STATO_DELLA_RICHIESTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY);
 				return false;
 			}
 
@@ -2401,7 +2405,7 @@ public class ConsoleHelper {
 					!mtomRisposta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_PACKAGING) && 
 					!mtomRisposta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_VERIFY) && 
 					!mtomRisposta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_UNPACKAGING)) {
-				this.pd.setMessage("Stato della Risposta dev'essere disabled, packaging, unpackaging o verify.");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_STATO_DELLA_RISPOSTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY);
 				return false;
 			}
 
@@ -2427,34 +2431,34 @@ public class ConsoleHelper {
 			if (nome.equals("") || pattern.equals("")) {
 				String tmpElenco = "";
 				if (nome.equals("")) {
-					tmpElenco = "Nome";
+					tmpElenco = CostantiControlStation.LABEL_PARAMETRO_NOME;
 				}
 				if (pattern.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = "Pattern";
+						tmpElenco = CostantiControlStation.LABEL_PATTERN;
 					} else {
-						tmpElenco = tmpElenco + ", Pattern";
+						tmpElenco = tmpElenco + ", " + CostantiControlStation.LABEL_PATTERN;
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage("Non inserire spazi nel campo Nome");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME);
 				return false;
 			}
 			if(pattern.indexOf(" ") != -1){
-				this.pd.setMessage("Non inserire spazi nel campo Pattern");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRROE_NON_INSERIRE_SPAZI_NEL_CAMPO_PATTERN);
 				return false;
 			}
 
 
 
 			if(contentType.indexOf(" ") != -1){
-				this.pd.setMessage("Non inserire spazi nel campo Content-type");
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_CONTENT_TYPE);
 				return false;
 			}
 
@@ -2501,9 +2505,11 @@ public class ConsoleHelper {
 
 				if (giaRegistrato) {
 					if(isPortaDelegata)
-						this.pd.setMessage("La proprieta' di MTOM " + nome + " &egrave; gi&agrave; stato associata alla porta delegata " + nomeporta);
+						this.pd.setMessage(MessageFormat.format(
+								CostantiControlStation.MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_DELEGATA_XX, nome, nomeporta));
 					else 
-						this.pd.setMessage("La proprieta' di MTOM " + nome + " &egrave; gi&agrave; stato associata alla porta applicativa " + nomeporta);
+						this.pd.setMessage(MessageFormat.format(
+								CostantiControlStation.MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_XX, nome, nomeporta));
 					return false;
 				}
 			}
@@ -2612,32 +2618,32 @@ public class ConsoleHelper {
 					if(consoleItem instanceof StringConsoleItem){
 						StringProperty sp = (StringProperty) property;
 						if (consoleItem.isRequired() && StringUtils.isEmpty(sp.getValue())) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
+							throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 						}
 
 						if(StringUtils.isNotEmpty(consoleItem.getRegexpr())){
 							if(!RegularExpressionEngine.isMatch(sp.getValue(),consoleItem.getRegexpr())){
-								throw new ProtocolException("Il campo "+consoleItem.getLabel()+" deve rispettare il seguente pattern "+consoleItem.getRegexpr());
+								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_IL_CAMPO_XX_DEVE_RISPETTARE_IL_PATTERN_YY, consoleItem.getLabel(), consoleItem.getRegexpr()));
 							}
 						}
 					}
 					else if(consoleItem instanceof NumberConsoleItem){
 						NumberProperty np = (NumberProperty) property;
 						if (consoleItem.isRequired() && np.getValue() == null) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
+							throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 						}
 					}
 					else if(consoleItem instanceof BinaryConsoleItem){
 						BinaryProperty bp = (BinaryProperty) property;
 						if (consoleOperationType.equals(ConsoleOperationType.ADD) && consoleItem.isRequired() && (bp.getValue() == null || bp.getValue().length == 0)) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
+							throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 						}
 					}
 					else if(consoleItem instanceof BooleanConsoleItem){
 						BooleanProperty bp = (BooleanProperty) property;
 						// le checkbox obbligatorie non dovrebbero esserci...
 						if (consoleItem.isRequired() && bp.getValue() == null) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
+							throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 						}
 					}
 				}
@@ -2664,7 +2670,7 @@ public class ConsoleHelper {
 					if(consoleItem instanceof BinaryConsoleItem && consoleItem.getId().equals(nome)){ 
 						BinaryProperty bp = (BinaryProperty) property;
 						if (consoleItem.isRequired() && (bp.getValue() == null || bp.getValue().length == 0)) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
+							throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
 						}
 
 					}
@@ -2735,10 +2741,10 @@ public class ConsoleHelper {
 		else{
 			if(addMsgServiziApplicativoNonDisponibili){
 				if(allRuoli.size()>0){
-					this.pd.setMessage("Non esistono ulteriori ruoli associabili al soggetto");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_RUOLI_ASSOCIABILI_AL_SOGGETTO);
 				}
 				else{
-					this.pd.setMessage("Non esistono ruoli associabili al soggetto");
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_RUOLI_ASSOCIABILI_AL_SOGGETTO);
 				}
 				this.pd.disableEditMode();
 			}
@@ -2751,7 +2757,7 @@ public class ConsoleHelper {
 		try {
 			
 			if(ruoli!=null && ruoli.contains(nome)){
-				this.pd.setMessage("Il ruolo '" + nome + "' &egrave; gi&agrave; stato associata al soggetto");
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_IL_RUOLO_XX_E_GIA_STATO_ASSOCIATA_AL_SOGGETTO, nome));
 				return false;
 			}
 
@@ -3083,7 +3089,8 @@ public class ConsoleHelper {
 				
 				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false && 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false){
-					this.pd.setMessage("Selezionare almeno una modalità di autorizzazione tra '"+labelAutenticati+"' e '"+CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI+"'");
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_SELEZIONARE_ALMENO_UNA_MODALITÀ_DI_AUTORIZZAZIONE_TRA_XX_E_YY,
+							labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));
 					return false;
 				}
 				
@@ -3092,11 +3099,15 @@ public class ConsoleHelper {
 					// Se l'autorizzazione è solamente basata sull'autenticazione dei chiamanti, una autenticazione DEVE essere presente e non deve essere opzionale
 					if(isSupportatoAutenticazione){
 						if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
-							this.pd.setMessage("Con la sola modalità di autorizzazione '"+labelAutenticati+"' deve essere indicata anche una modalità di autenticazione");
+							this.pd.setMessage(MessageFormat.format(
+									CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_DEVE_ESSERE_INDICATA_ANCHE_UNA_MODALITA_DI_AUTENTICAZIONE_YY,
+									labelAutenticati));
 							return false;
 						}
 						if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
-							this.pd.setMessage("Con la sola modalità di autorizzazione '"+labelAutenticati+"' non è possibile associata una modalità di autenticazione 'opzionale'");
+							this.pd.setMessage(MessageFormat.format(
+									CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE,
+									labelAutenticati));
 							return false;
 						}
 					}
@@ -3105,8 +3116,9 @@ public class ConsoleHelper {
 				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati) && 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)){
 					if(isSupportatoAutenticazione && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)==false){
-						this.pd.setMessage("Con una modalità di autenticazione obbligatoria non è possibile selezionare entrambe le modalità di autorizzazione '"+labelAutenticati+"' e '"+
-							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI+"'.<BR/>Per usare entrambe le autorizzazioni rendere opzionale l'autenticazione");
+						this.pd.setMessage(MessageFormat.format(
+								CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_MODALITA_DI_AUTENTICAZIONE_OBBLIGATORIA_NON_E_POSSIBILE_SELEZIONARE_ENTRAMBE_LE_MODALITA_DI_AUTORIZZAZIONE,
+								labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));
 						return false;
 					}
 				}
@@ -3118,7 +3130,9 @@ public class ConsoleHelper {
 				
 				if(AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)){
 					if(ruoli!=null && ruoli.size()>0){
-						this.pd.setMessage("La porta contiene già dei ruoli che non sono compatibili con la nuova autorizzazione '"+AutorizzazioneUtilities.STATO_XACML_POLICY+"' scelta.<BR/>Eliminare i ruoli prima di procedere con la modifica del tipo di autorizzazione.");
+						this.pd.setMessage(MessageFormat.format(
+								CostantiControlStation.MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_GIA_DEI_RUOLI_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_AUTORIZZAZIONE,
+								AutorizzazioneUtilities.STATO_XACML_POLICY));
 						return false;
 					}
 				}
@@ -3127,11 +3141,15 @@ public class ConsoleHelper {
 				if(RuoloTipologia.INTERNO.equals(ruoloTipologia)){
 					if(isSupportatoAutenticazione){
 						if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
-							this.pd.setMessage("Con una "+RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase()+" per i ruoli di tipo '"+RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO+"' deve essere associata una modalità di autenticazione");
+							this.pd.setMessage(MessageFormat.format(
+									CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_FONTE_PER_I_RUOLI_DI_TIPO_XX_DEVE_ESSERE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE,
+									RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO));
 							return false;
 						}
 						if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
-							this.pd.setMessage("Con una "+RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase()+" per i ruoli di tipo '"+RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO+"' non è possibile associata una modalità di autenticazione 'opzionale'");
+							this.pd.setMessage(MessageFormat.format(
+									CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_FONTE_PER_I_RUOLI_DI_TIPO_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE,
+									RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO));
 							return false;
 						}
 					}
@@ -3162,7 +3180,9 @@ public class ConsoleHelper {
 					else{
 						label = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
 					}
-					this.pd.setMessage("La porta contiene già dei ruoli ("+ruoliNonCompatibili.toString()+") che non sono compatibili con la nuova "+RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase()+" '"+label+"' scelta.");
+					this.pd.setMessage(MessageFormat.format(
+							CostantiControlStation.MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_DEI_RUOLI_XX_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_FONTE_SCELTA,
+							ruoliNonCompatibili.toString(), RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), label));
 					return false;
 				}
 			}

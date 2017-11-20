@@ -133,13 +133,13 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idInt = Integer.parseInt(id);
 			String nomeRisorsa = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
-			if (nomeRisorsa == null) {
-				nomeRisorsa = "";
-			}
+			
 			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_DESCRIZIONE);
 			if (descr == null) {
 				descr = "";
 			}
+			String idRes = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID);
+			int idResInt = Integer.parseInt(idRes);
 			
 			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE);
 			MessageType messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
@@ -186,27 +186,33 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				serviceBinding = apcCore.getDefaultServiceBinding(this.protocolFactory);
 			}
 			
+			Resource resourceOLD = null;
+
+			for (int i = 0; i < as.sizeResourceList(); i++) {
+				Resource resource = as.getResource(i);
+				if (resource.getId().intValue() == idResInt) {
+					resourceOLD = resource;
+					break;
+				}
+			}
+			
+			String oldNomeRisorsa =null, oldNomeRisorsaGenerato = null, oldHttpMethod = null, oldPath = null;
+			if(resourceOLD != null){
+				oldProtocolPropertyList = resourceOLD.getProtocolPropertyList();
+				oldPath = resourceOLD.getPath();
+				oldHttpMethod = resourceOLD.get_value_method();
+				oldNomeRisorsa = resourceOLD.getNome();
+				oldNomeRisorsaGenerato = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(oldHttpMethod), oldPath);
+			}
+			
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			IDResource idRisorsa = new IDResource();
 			idRisorsa.setIdAccordo(idAs);
-			idRisorsa.setNome(nomeRisorsa);
+			idRisorsa.setNome(oldNomeRisorsa);
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigPortType(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idRisorsa);
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
-
-			Resource resourceOLD = null;
-
-			for (int i = 0; i < as.sizeResourceList(); i++) {
-				Resource resource = as.getResource(i);
-				if (nomeRisorsa.equals(resource.getNome())) {
-					resourceOLD = resource;
-					break;
-				}
-			}
-
-			if(resourceOLD != null)
-				oldProtocolPropertyList = resourceOLD.getProtocolPropertyList();
 
 			if(this.protocolPropertiesSet == null){
 				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
@@ -215,7 +221,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			Properties propertiesProprietario = new Properties();
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, id);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_RESOURCE);
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, nomeRisorsa);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, oldNomeRisorsa);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,
 					URLEncoder.encode( AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE + "?" + request.getQueryString(), "UTF-8"));
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
@@ -241,7 +247,8 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 						);
 
 				// Prendo i dati dell'accordo
-				if(resourceOLD != null){
+				if (nomeRisorsa == null) {
+					nomeRisorsa = resourceOLD.getNome();
 					descr = resourceOLD.getDescrizione();
 					path = resourceOLD.getPath();
 					httpMethod = resourceOLD.get_value_method();
@@ -258,7 +265,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
 
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr, path, httpMethod, messageType, as.getStatoPackage(), tipoAccordo, protocollo, this.protocolFactory, serviceBinding,messageTypeRequest,messageTypeResponse);
+				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, (long) idResInt, nomeRisorsa, descr, path, httpMethod, messageType, as.getStatoPackage(), tipoAccordo, protocollo, this.protocolFactory, serviceBinding,messageTypeRequest,messageTypeResponse);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -280,17 +287,14 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			if(!pathNormalizzato.startsWith("/"))
 				pathNormalizzato = "/" + pathNormalizzato;
 			
-			String nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
-			
-			String oldNomeRisorsaGenerato = null, oldHttpMethod = null, oldPath = null;
-			if(resourceOLD != null){
-				oldPath = resourceOLD.getPath();
-				oldHttpMethod = resourceOLD.get_value_method();
-				oldNomeRisorsaGenerato = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
+			// 2. se il nome non e; stato impostato allora genero un nome automatico
+			String nomeRisorsaProposto = nomeRisorsa;
+			if(StringUtils.isEmpty(nomeRisorsaProposto)) {
+				nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
 			}
-
+			
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa,nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType,oldNomeRisorsaGenerato,oldPath,oldHttpMethod);
+			boolean isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa,nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType,oldNomeRisorsa,oldNomeRisorsaGenerato,oldPath,oldHttpMethod);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -336,7 +340,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
 
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, nomeRisorsa, descr, path, httpMethod, messageType, as.getStatoPackage(), tipoAccordo, protocollo, this.protocolFactory, serviceBinding,messageTypeRequest,messageTypeResponse);
+				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, (long) idResInt, nomeRisorsa, descr, path, httpMethod, messageType, as.getStatoPackage(), tipoAccordo, protocollo, this.protocolFactory, serviceBinding,messageTypeRequest,messageTypeResponse);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -354,7 +358,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			// Modifico i dati del port-type nel db
 			for (int i = 0; i < as.sizeResourceList(); i++) {
 				Resource res = as.getResource(i);
-				if (nomeRisorsa.equals(res.getNome())) {
+				if (res.getId().intValue() == idResInt) {
 					as.removeResource(i);
 					oldResponseList = res.getResponseList();
 					oldRequest = res.getRequest();
@@ -363,7 +367,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			}
 
 			Resource newResource = new Resource();
-			newResource.setNome(nomeRisorsa);
+			newResource.setNome(nomeRisorsaProposto);
 			newResource.setDescrizione(descr);
 			newResource.setPath(pathNormalizzato);
 			newResource.set_value_method(httpMethod);

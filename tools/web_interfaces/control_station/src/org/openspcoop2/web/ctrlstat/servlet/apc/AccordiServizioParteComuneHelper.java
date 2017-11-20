@@ -5216,7 +5216,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					String nomeRisorsa = risorsa.getNome();
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, 
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
+//							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+""),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
 					de.setValue(nomeRisorsa);
@@ -5328,7 +5329,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public Vector<DataElement> addAccordiResourceToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id,
+	public Vector<DataElement> addAccordiResourceToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String idAccordo, Long idRisorsa,
 			String nomeRisorsa, String descrizione, String path, String httpMethod, MessageType messageType,
 			String stato, String tipoAccordo, String protocollo, IProtocolFactory<?> protocolFactory,ServiceBinding serviceBinding,MessageType messageTypeRichiesta, MessageType messageTypeRisposta) throws Exception {
 		try {
@@ -5344,7 +5345,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			
 			DataElement de = new DataElement();
-			de.setValue(id);
+			de.setValue(idAccordo);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			dati.addElement(de);
@@ -5376,12 +5377,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);
 			de.setValue(nomeRisorsa);
-			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE); 
-			} else {
-				de.setType(DataElementType.TEXT);
-			}
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE); 
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			de.setSize(this.getSize());
 			dati.addElement(de);
@@ -5410,14 +5407,18 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST,protocolFactory, serviceBinding, messageTypeRichiesta));
 			
-			Long idRisorsa = null;
 			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+				de = new DataElement();
+				de.setValue(idRisorsa.intValue()+"");
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID);
+				dati.addElement(de);
+				
 				if(contaListe) {
-					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(Integer.parseInt(id));
+					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(Integer.parseInt(idAccordo));
 					for (int i = 0; i < as.sizeResourceList(); i++) {
 						Resource res1 = as.getResource(i);
-						if ((nomeRisorsa).equals(res1.getNome())) {
-							idRisorsa = res1.getId();
+						if (idRisorsa.intValue() == res1.getId().intValue()) {
 							break;
 						}
 					}
@@ -5427,7 +5428,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST, 
-						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "true"),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
@@ -5452,7 +5453,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setType(DataElementType.LINK);
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "true"),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
@@ -5485,7 +5486,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_RISPOSTE_LIST, 
-						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo),
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						);
@@ -5515,7 +5516,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 	public boolean accordiResourceCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa, String nomeRisorsaProposto, String path,
-			String httpMethod, MessageType messageType, String oldNomeRisorsaProposto, String oldPath, String oldHttpMethod) throws Exception {
+			String httpMethod, MessageType messageType, String oldNomeRisorsa, String oldNomeRisorsaProposto, String oldPath, String oldHttpMethod) throws Exception {
 
 		try{
 			// Campi obbligatori
@@ -5562,17 +5563,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			} else {
 				// change
-				if(nomeRisorsa.equals(oldNomeRisorsaProposto)) {
-					// se ho modificato path o method controllo se e' disponibile
-					if(!oldPath.equals(path) || !oldHttpMethod.equals(httpMethod)) {
-						boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));
-						if (giaRegistrato) {
-							this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +httpMethod 
-										+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +path + ") &egrave; gi&agrave; stata associata all'accordo");
-							return false;
-						}
-						
-						if(!nomeRisorsaProposto.equals("")) {
+				// se ho modificato path o method controllo se e' disponibile
+				if(!oldPath.equals(path) || !oldHttpMethod.equals(httpMethod)) {
+					boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));
+					if (giaRegistrato) {
+						this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +httpMethod 
+									+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +path + ") &egrave; gi&agrave; stata associata all'accordo");
+						return false;
+					}
+					if(!nomeRisorsaProposto.equals(oldNomeRisorsa)) {
+						if(!nomeRisorsaProposto.equals("") ) {
 							giaRegistrato = this.apcCore.existsAccordoServizioResource(nomeRisorsaProposto, Integer.parseInt(id));
 							if (giaRegistrato) {
 								this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata all'accordo");
@@ -5976,7 +5976,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, isRequest+""),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status+""),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE, representation.getMediaType())
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_ID, representation.getId()+"")
 							);
 					de.setValue(representation.getMediaType());
 					de.setIdToRemove(representation.getMediaType());
@@ -5991,14 +5991,18 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					de = new DataElement();
-					switch (representation.getRepresentationType()) {
-					case JSON:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON);
-						break;
-					case XML:
-					default:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML);
-						break;
+					if(representation.getRepresentationType() != null) {
+						switch (representation.getRepresentationType()) {
+						case JSON:
+							de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON);
+							break;
+						case XML:
+						default:
+							de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML);
+							break;
+						}
+					}else { 
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO);
 					}
 					e.addElement(de);
 					
@@ -6101,9 +6105,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// setto le label delle colonne nome, descrizione, tipo
 			List<String> labelList = new ArrayList<>();
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
+			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
-			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
+			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
 			
 			String[] labels = labelList.toArray(new String[labelList.size()]);
 			this.pd.setLabels(labels);
@@ -6127,11 +6132,31 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, isRequest+""),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status+""),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_NOME, parameter.getNome()),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO, parameter.getParameterType().toString())
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_ID, parameter.getId()+"")
 							);
 					de.setValue(parameter.getNome());
 					de.setIdToRemove(parameter.getParameterType().toString() +"/"+parameter.getNome());
+					e.addElement(de);
+					
+					de = new DataElement();
+					switch (parameter.getParameterType()) {
+					case COOKIE:
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_COOKIE);
+						break;
+					case DYNAMIC_PATH:
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_DYNAMIC_PATH);
+						break;
+					case FORM:
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_FORM);
+						break;
+					case HEADER:
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_HEADER);
+						break;
+					case QUERY:
+					default:
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_QUERY);
+						break;
+					}
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -6139,28 +6164,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					de = new DataElement();
-					switch (parameter.getParameterType()) {
-					case COOKIE:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE);
-						break;
-					case DYNAMIC_PATH:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH);
-						break;
-					case FORM:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM);
-						break;
-					case HEADER:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER);
-						break;
-					case QUERY:
-					default:
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY);
-						break;
-					}
+					de.setValue(parameter.getRequired() ? AccordiServizioParteComuneCostanti.LABEL_SI : AccordiServizioParteComuneCostanti.LABEL_NO);
 					e.addElement(de);
 					
 					de = new DataElement();
-					de.setValue(parameter.getRequired() ? AccordiServizioParteComuneCostanti.LABEL_SI : AccordiServizioParteComuneCostanti.LABEL_NO);
+					de.setValue(parameter.getTipo());
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -6342,10 +6350,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addAccordiResourceRepresentationToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati,
 			String id,  String stato, String tipoAccordo, String protocollo, IProtocolFactory<?> protocolFactory,
-			ServiceBinding serviceBinding, String nomeRisorsa, boolean isRequest, String statusS, String mediaType, String nome,
+			ServiceBinding serviceBinding, String nomeRisorsa, boolean isRequest, String statusS, Integer idRepInt, String mediaType, String nome,
 			String descrizione, MessageType messageType, RepresentationType tipo, String tipoJson, String nomeXml, String namespaceXml,
 			RepresentationXmlType xmlType)  throws Exception{
 		try {
+			User user = ServletUtils.getUserFromSession(this.session);
+			InterfaceType gui = user.getInterfaceType();
 			boolean modificheAbilitate = false;
 			if( tipoOperazione.equals(TipoOperazione.ADD) ){
 				modificheAbilitate = true;
@@ -6385,6 +6395,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			dati.addElement(de);
 			
+			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+				de = new DataElement();
+				de.setValue(idRepInt+"");
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_ID);
+				dati.addElement(de);
+			}
+			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION);
@@ -6406,11 +6424,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
 			de.setValue(nome);
-			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.setType(DataElementType.TEXT_EDIT);
-			} else {
-				de.setType(DataElementType.TEXT);
-			}
+			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
 			de.setSize(this.getSize());
 			dati.addElement(de);
@@ -6427,131 +6441,174 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType));
 			
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
-			de.setSelected(tipo.getValue());
-			de.setType(DataElementType.SELECT);
-			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
-			de.setSize(this.getSize());
-			de.setPostBack(true); 
+			if (InterfaceType.AVANZATA.equals(gui)) {
+				
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION_DEFINIZIONE);
+				dati.addElement(de);
 			
-			RepresentationType[] representationTypes = RepresentationType.values();
-			String [] values = new String[representationTypes.length];
-			String [] labels = new String[representationTypes.length];
-			
-			for (int i = 0; i < representationTypes.length; i++) {
-				RepresentationType type = representationTypes[i];
-				switch (type) {
-				case JSON:
-					labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON;
-					values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON;
-					break;
-				case XML:
-				default:
-					labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML;
-					values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML;
-					break;
-				}
-			}
-			
-			de.setLabels(labels);
-			de.setValues(values);
-			dati.addElement(de);
-			
-			switch (tipo) {
-			case JSON:
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
-				de.setValue(tipoJson);
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
-				de.setValue(nomeXml);
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
-				de.setSize(this.getSize());
-				dati.addElement(de);	
-				
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
-				de.setValue(namespaceXml);
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
-				de.setValue(xmlType.getValue());
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-				break;
-			case XML:
-			default:
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
-				de.setValue(tipoJson);
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
-				de.setValue(nomeXml);
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
-				de.setValue(namespaceXml);
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
-				de.setSelected(xmlType.getValue());
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
+				de.setSelected(tipo != null ? tipo.getValue() : AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO);
 				de.setType(DataElementType.SELECT);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
 				de.setSize(this.getSize());
-				RepresentationXmlType[] representationXmlTypes = RepresentationXmlType.values();
-				String [] values2 = new String[representationXmlTypes.length];
-				String [] labels2 = new String[representationXmlTypes.length];
+				de.setPostBack(true); 
 				
-				for (int i = 0; i < representationXmlTypes.length; i++) {
-					RepresentationXmlType type = representationXmlTypes[i];
+				RepresentationType[] representationTypes = RepresentationType.values();
+				String [] values = new String[representationTypes.length+1];
+				String [] labels = new String[representationTypes.length+1];
+				
+				labels[0] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO;
+				values[0] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO;
+				
+				for (int i = 0; i < representationTypes.length; i++) {
+					RepresentationType type = representationTypes[i];
 					switch (type) {
-					case ELEMENT:
-						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT;
-						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT;
+					case JSON:
+						labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON;
+						values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON;
 						break;
-					case TYPE:
+					case XML:
 					default:
-						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE;
-						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE;
+						labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML;
+						values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML;
 						break;
 					}
 				}
 				
-				de.setLabels(labels2);
-				de.setValues(values2);
+				de.setLabels(labels);
+				de.setValues(values);
 				dati.addElement(de);
 				
-				break;
-			}
-			
+				if(tipo != null) {
+					switch (tipo) {
+					case JSON:
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+						de.setValue(tipoJson);
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+						de.setValue(nomeXml);
+						de.setType(DataElementType.HIDDEN);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+						de.setSize(this.getSize());
+						dati.addElement(de);	
+						
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+						de.setValue(namespaceXml);
+						de.setType(DataElementType.HIDDEN);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+						de.setValue(xmlType.getValue());
+						de.setType(DataElementType.HIDDEN);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+						break;
+					case XML:
+					default:
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+						de.setValue(tipoJson);
+						de.setType(DataElementType.HIDDEN);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+						de.setSelected(xmlType.getValue());
+						de.setType(DataElementType.SELECT);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+						de.setSize(this.getSize());
+						RepresentationXmlType[] representationXmlTypes = RepresentationXmlType.values();
+						String [] values2 = new String[representationXmlTypes.length];
+						String [] labels2 = new String[representationXmlTypes.length];
+						
+						for (int i = 0; i < representationXmlTypes.length; i++) {
+							RepresentationXmlType type = representationXmlTypes[i];
+							switch (type) {
+							case ELEMENT:
+								labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT;
+								values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_ELEMENT;
+								break;
+							case TYPE:
+							default:
+								labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE;
+								values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO_TYPE;
+								break;
+							}
+						}
+						
+						de.setLabels(labels2);
+						de.setValues(values2);
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+						de.setValue(nomeXml);
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+						de.setValue(namespaceXml);
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+						
+						break;
+					}
+				}else {
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+					de.setValue(tipoJson);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+					de.setValue(nomeXml);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+					de.setSize(this.getSize());
+					dati.addElement(de);	
+					
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+					de.setValue(namespaceXml);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+					de.setValue("");
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}
 
-			
+			}
 			
 			this.pd.setDati(dati);
 
@@ -6574,9 +6631,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	public boolean accordiResourceRepresentationCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa,
-			String nomeRisorsa2, boolean isRequest, String statusS,  String mediaType,  String nome, String descr, MessageType messageType,
+			 boolean isRequest, String statusS,  String mediaType,  String nome, String descr, MessageType messageType,
 			RepresentationType tipo, String tipoJson, String nomeXml, String namespaceXml,
-			RepresentationXmlType xmlType, Long idRisorsa,Long idResponse)  throws Exception{
+			RepresentationXmlType xmlType, Long idRisorsa,Long idResponse, String oldMediaType)  throws Exception{
 		
 		try{
 			// Campi obbligatori
@@ -6590,9 +6647,19 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioResourceRepresentation(idRisorsa, isRequest, idResponse, mediaType);
 				if (giaRegistrato) {
-					String owner = isRequest ? "Risorsa " + nomeRisorsa : "Response "+statusS;
-					this.pd.setMessage("La Response con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE + " &egrave; gi&agrave; stata associata alla " + owner);
+					String owner = isRequest ? "Risorsa " + nomeRisorsa : "Risposta  "+statusS;
+					this.pd.setMessage("La Response con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE + ": "+mediaType+" &egrave; gi&agrave; stata associata alla " + owner);
 					return false;
+				}
+			} else {
+				// se ho cambiato la chiave 
+				if(!oldMediaType.equals(mediaType)) {
+					boolean giaRegistrato = this.apcCore.existsAccordoServizioResourceRepresentation(idRisorsa, isRequest, idResponse, mediaType);
+					if (giaRegistrato) {
+						String owner = isRequest ? "Risorsa " + nomeRisorsa : "Risposta  "+statusS;
+						this.pd.setMessage("La Response con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE + ": "+mediaType+" &egrave; gi&agrave; stata associata alla " + owner);
+						return false;
+					}
 				}
 			}
 			return true;
@@ -6608,7 +6675,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addAccordiResourceParameterToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati,
 			String id, String statoPackage, String tipoAccordo,  String nomeRisorsa,
-			boolean isRequest, String statusS, String nome, String descrizione, ParameterType tipoParametro, String tipo,
+			boolean isRequest, String statusS, Integer idParInt, String nome, String descrizione, ParameterType tipoParametro, String tipo,
 			boolean required)  throws Exception{
 		try {
 			boolean modificheAbilitate = false;
@@ -6650,6 +6717,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			dati.addElement(de);
 			
+			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+				de = new DataElement();
+				de.setValue(idParInt+"");
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_ID);
+				dati.addElement(de);
+			}
+			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETER);
@@ -6658,85 +6733,48 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
 			de.setSize(this.getSize());
-			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
-				de.setSelected(tipoParametro.getValue());
-				de.setType(DataElementType.SELECT);
-				ParameterType[] parameterTypes = ParameterType.values();
-				String [] values2 = new String[parameterTypes.length];
-				String [] labels2 = new String[parameterTypes.length];
-				
-				for (int i = 0; i < parameterTypes.length; i++) {
-					ParameterType type = parameterTypes[i];
-					switch (type) {
-					case COOKIE:
-						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE;
-						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE;
-						break;
-					case DYNAMIC_PATH:
-						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH;
-						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH;
-						break;
-					case FORM:
-						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM;
-						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM;
-						break;
-					case HEADER:
-						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER;
-						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER;
-						break;
-					case QUERY:
-					default:
-						labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY;
-						values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY;
-						break;
-					}
-				}
-				
-				de.setLabels(labels2);
-				de.setValues(values2);
-			} else {
-				de.setName(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
-				de.setType(DataElementType.TEXT);
-				switch (tipoParametro) {
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
+			de.setSelected(tipoParametro.getValue());
+			de.setType(DataElementType.SELECT);
+			ParameterType[] parameterTypes = ParameterType.values();
+			String [] values2 = new String[parameterTypes.length];
+			String [] labels2 = new String[parameterTypes.length];
+			
+			for (int i = 0; i < parameterTypes.length; i++) {
+				ParameterType type = parameterTypes[i];
+				switch (type) {
 				case COOKIE:
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_COOKIE);
+					labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_COOKIE;
+					values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_COOKIE;
 					break;
 				case DYNAMIC_PATH:
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_DYNAMIC_PATH);
+					labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_DYNAMIC_PATH;
+					values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_DYNAMIC_PATH;
 					break;
 				case FORM:
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_FORM);
+					labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_FORM;
+					values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_FORM;
 					break;
 				case HEADER:
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_HEADER);
+					labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_HEADER;
+					values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_HEADER;
 					break;
 				case QUERY:
 				default:
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_QUERY);
+					labels2[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_QUERY;
+					values2[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_QUERY;
 					break;
 				}
-				
-				dati.addElement(de);
-				
-				
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
-				de.setSize(this.getSize());
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tipoParametro.getValue()); 
 			}
+			
+			de.setLabels(labels2);
+			de.setValues(values2);
 			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
 			de.setValue(nome);
-			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.setType(DataElementType.TEXT_EDIT);
-			} else {
-				de.setType(DataElementType.TEXT);
-			}
+			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
 			de.setSize(this.getSize());
 			de.setRequired(true);
@@ -6792,8 +6830,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 	public boolean accordiResourceParameterCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa,
-			String nomeRisorsa2, boolean isRequest, String statusS, String nome, String descr,
-			ParameterType tipoParametro, String tipo, boolean required, Long idResource, Long idResponse) throws Exception {
+			boolean isRequest, String statusS, String nome, String descr,
+			ParameterType tipoParametro, String tipo, boolean required, Long idResource, Long idResponse, ParameterType oldTipoParametro, String oldNome) throws Exception {
 		try{
 			// Campi obbligatori
 			// tipoparametro
@@ -6817,10 +6855,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioResourceParameter(idResource, isRequest, idResponse, tipoParametro, nome);
 				if (giaRegistrato) {
-					String owner = isRequest ? "Risorsa " + nomeRisorsa : "Response "+statusS;
-					this.pd.setMessage("Il Parameter con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO + "e " + 
-							AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME +" &egrave; gi&agrave; stato associato alla " + owner);
+					String owner = isRequest ? "Risorsa " + nomeRisorsa : "Risposta "+statusS;
+					this.pd.setMessage("Il Parametro con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO + ": "+ tipoParametro+" e " + 
+							AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME +": "+nome+" &egrave; gi&agrave; stato associato alla " + owner);
 					return false;
+				}
+			} else {
+				// se ho modificato uno dei due campi chiave ricontrollo la disponibilita;
+				if(!oldTipoParametro.equals(tipoParametro) || !oldNome.equals(nome)) {
+					boolean giaRegistrato = this.apcCore.existsAccordoServizioResourceParameter(idResource, isRequest, idResponse, tipoParametro, nome);
+					if (giaRegistrato) {
+						String owner = isRequest ? "Risorsa " + nomeRisorsa : "Risposta "+statusS;
+						this.pd.setMessage("Il Parametro con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO + ": "+ tipoParametro+" e " + 
+								AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME +": "+nome+" &egrave; gi&agrave; stato associato alla " + owner);
+						return false;
+					}
 				}
 			}
 			return true;

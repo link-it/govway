@@ -120,6 +120,9 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			String requiredS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
 			boolean required = ServletUtils.isCheckBoxEnabled(requiredS);
 			
+			String idPar = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_ID);
+			int idParInt = Integer.parseInt(idPar);
+			
 			// Preparo il menu
 			apcHelper.makeMenu();
 
@@ -162,12 +165,16 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			
 			if(parameterList != null && parameterList.size() > 0) {
 				for (ResourceParameter resourceParameter : parameterList) {
-					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
+					if(resourceParameter.getId().intValue() == idParInt) {
+//					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
 						resourceParameterOLD = resourceParameter;
 						break;
 					}
 				}
 			}
+			
+			String oldNome = resourceParameterOLD.getNome();
+			ParameterType oldTipoParametro = resourceParameterOLD.getParameterType();
 			
 			List<Parameter> listaLinkPageDataTitle = new ArrayList<Parameter>();
 			
@@ -205,16 +212,18 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
+		
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,listaLinkPageDataTitle); 
 
 				// Prendo i dati dell'accordo
-				if(resourceParameterOLD != null){
+				if(nome == null){
+					nome = resourceParameterOLD.getNome();
 					descr = resourceParameterOLD.getDescrizione();
 					required = resourceParameterOLD.isRequired();
-					tipoParametro = resourceParameterOLD.getParameterType();
+					tipoParametro = oldTipoParametro;
 					tipo = resourceParameterOLD.getTipo();
 				}
 
@@ -224,7 +233,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
-						 nomeRisorsa, isRequest, statusS, nome, descr,  tipoParametro, tipo, required);
+						 nomeRisorsa, isRequest, statusS, idParInt, nome, descr,  tipoParametro, tipo, required);
 
 				pd.setDati(dati);
 
@@ -238,10 +247,9 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 			}
 			
-
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceParameterCheckData(tipoOp, id, nomeRisorsa, nomeRisorsa, isRequest, statusS, nome, descr, tipoParametro, tipo, required, idResource,idResponse);
-
+			boolean isOk = apcHelper.accordiResourceParameterCheckData(tipoOp, id, nomeRisorsa, isRequest, statusS,  nome, descr, tipoParametro, tipo, required, idResource,idResponse,
+					oldTipoParametro,oldNome);
 
 			if (!isOk) {
 
@@ -254,7 +262,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceParameterToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,
-						 nomeRisorsa, isRequest, statusS, nome, descr,  tipoParametro, tipo, required);
+						 nomeRisorsa, isRequest, statusS, idParInt, nome, descr,  tipoParametro, tipo, required);
 				
 				pd.setDati(dati);
 
@@ -275,7 +283,8 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			if(parameterList != null && parameterList.size() > 0) {
 				for (int i = 0; i < parameterList.size(); i++) {
 					ResourceParameter resourceParameter = parameterList.get(i);
-					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
+					if(resourceParameter.getId().intValue() == idParInt) {
+//					if(resourceParameter.getNome().equals(nome) && resourceParameter.getParameterType().equals(tipoParametro)) {
 						idx = i;
 						break;
 					}

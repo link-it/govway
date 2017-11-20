@@ -128,7 +128,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			MessageType messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
 			String mediaType = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
 			String tipoS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
-			RepresentationType tipo = StringUtils.isNotEmpty(tipoS) ? RepresentationType.toEnumConstant(tipoS) : null;
+			RepresentationType tipo = (StringUtils.isNotEmpty(tipoS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO)) ? RepresentationType.toEnumConstant(tipoS) : null;
 			String nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
 			String tipoJson = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
 			String namespaceXml = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
@@ -238,7 +238,8 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 					namespaceXml = "";
 					nomeXml = "";
 					xmlType = RepresentationXmlType.ELEMENT;
-					tipo = RepresentationType.XML;
+					// default non definito
+					tipo = null;
 				}
 
 				// preparo i campi
@@ -247,7 +248,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
+						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, null, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
 				
 				pd.setDati(dati);
 
@@ -257,7 +258,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceRepresentationCheckData(tipoOp, id, nomeRisorsa, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType, idResource,idResponse);
+			boolean isOk = apcHelper.accordiResourceRepresentationCheckData(tipoOp, id, nomeRisorsa, isRequest, statusS, mediaType, nome, descr, messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType, idResource,idResponse,null);
 
 			if (!isOk) {
 
@@ -270,7 +271,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apcHelper.addAccordiResourceRepresentationToDati(tipoOp, dati, id, as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, mediaType, nome, descr,  messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
+						this.protocolFactory,serviceBinding, nomeRisorsa, isRequest, statusS, null, mediaType, nome, descr,  messageType, tipo, tipoJson, nomeXml, namespaceXml, xmlType);
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -286,22 +287,23 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			newRepresentation.setNome(nome);
 			newRepresentation.setMediaType(mediaType);
 			newRepresentation.setRepresentationType(tipo); 
-			
-			switch (tipo) {
-			case JSON:
-				ResourceRepresentationJson json = new ResourceRepresentationJson();
-				json.setTipo(tipoJson);
-				newRepresentation.setJson(json);
-				break;
-			case XML:
-				ResourceRepresentationXml xml = new ResourceRepresentationXml();
-				xml.setXmlType(xmlType);
-				xml.setNome(nomeXml);
-				xml.setNamespace(namespaceXml);
-				newRepresentation.setXml(xml);
-				break;
-			default:
-				break;
+			if(tipo !=null) {
+				switch (tipo) {
+				case JSON:
+					ResourceRepresentationJson json = new ResourceRepresentationJson();
+					json.setTipo(tipoJson);
+					newRepresentation.setJson(json);
+					break;
+				case XML:
+					ResourceRepresentationXml xml = new ResourceRepresentationXml();
+					xml.setXmlType(xmlType);
+					xml.setNome(nomeXml);
+					xml.setNamespace(namespaceXml);
+					newRepresentation.setXml(xml);
+					break;
+				default:
+					break;
+				}
 			}
 			
 			if(isRequest) {
