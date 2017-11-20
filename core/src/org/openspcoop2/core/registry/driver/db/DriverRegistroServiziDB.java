@@ -11802,7 +11802,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				risultato2.close();
 				stmt2.close();
-				
+
+				serv.setTipoSoggettoErogatore(sog.getTipo());
+				serv.setNomeSoggettoErogatore(sog.getNome());
 				sog.addAccordoServizioParteSpecifica(serv);
 			}
 
