@@ -351,6 +351,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		try {
 			
 			ApiReaderConfig config = new ApiReaderConfig();
+			config.setProcessInclude(false);
 			
 			IApiReader apiReader = ApiFactory.newApiReader(format);
 			apiReader.init(log, bytes, config);

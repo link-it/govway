@@ -159,19 +159,19 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	}
 	
 	@Override
-	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
+	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			IRegistryReader registryReader, IDResource id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	
 	@Override
-	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
+	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IDResource id) throws ProtocolException{
 	}
 	
 	@Override
-	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
+	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
 			IRegistryReader registryReader, IDResource id) throws ProtocolException{
 	}
 	

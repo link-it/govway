@@ -75,6 +75,7 @@ public class ProtocolPropertiesCostanti {
 	public final static String LABEL_AZIONE = "Azione";
 	public final static String LABEL_AZIONE_ACCORDO = "Azione Accordo";
 	public final static String LABEL_SERVIZIO = "Servizio";
+	public final static String LABEL_RESOURCE = "Risorsa";
 	public final static String LABEL_AC = "Accordo Cooperazione";
 	public final static String LABEL_OPERATION = "Operazione";
 	public final static String LABEL_FRUITORE = "Fruitore";

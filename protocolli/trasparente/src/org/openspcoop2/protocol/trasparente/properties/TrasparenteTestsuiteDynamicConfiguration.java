@@ -207,7 +207,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	/*** RESOURCE ***/
 
 	@Override
-	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType,
+	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDResource id)
 					throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
@@ -215,14 +215,14 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	}
 
 	@Override
-	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
+	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
 			ProtocolProperties properties, IRegistryReader registryReader, IDResource id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
-	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
+	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
 			IDResource id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);

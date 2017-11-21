@@ -362,6 +362,8 @@
 			<lib dir="${required_lib_pddConsole}/jax">
 				<include name="jaxws-*.jar" />
 				<include name="${jaxp_ri_jar}" />
+				<include name="jaxb-core-2.2.11.jar" /> <!-- serve al wadl -->
+				<include name="jaxb-xjc-2.2.11.jar" /> <!-- serve al wadl -->
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.21.jar"/>

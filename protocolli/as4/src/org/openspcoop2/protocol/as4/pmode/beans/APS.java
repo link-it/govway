@@ -61,13 +61,13 @@ public class APS {
 		this.azioni = azioniMap;
 	}
 	public String getEbmsSecurityProfile() {
-		return ebmsSecurityProfile;
+		return this.ebmsSecurityProfile;
 	}
 	public void setEbmsSecurityProfile(String ebmsSecurityProfile) {
 		this.ebmsSecurityProfile = ebmsSecurityProfile;
 	}
 	public String getId() {
-		return id;
+		return this.id;
 	}
 	public void setId(String id) {
 		this.id = id;

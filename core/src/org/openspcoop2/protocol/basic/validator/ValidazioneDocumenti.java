@@ -240,6 +240,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 						}
 						
 						ApiReaderConfig config = new ApiReaderConfig();
+						config.setProcessInclude(false);
 						IApiReader apiReader = ApiFactory.newApiReader(format);
 						apiReader.init(this.log, wsdlConcettuale, config);
 						Api api = apiReader.read();

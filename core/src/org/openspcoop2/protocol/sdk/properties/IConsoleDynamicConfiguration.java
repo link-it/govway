@@ -97,12 +97,12 @@ public interface IConsoleDynamicConfiguration {
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
 			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException;
 	
-	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
+	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			IRegistryReader registryReader, IDResource id) throws ProtocolException;
-	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
+	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
 			IRegistryReader registryReader, IDResource id) throws ProtocolException;
-	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
+	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
 			IRegistryReader registryReader, IDResource id) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 

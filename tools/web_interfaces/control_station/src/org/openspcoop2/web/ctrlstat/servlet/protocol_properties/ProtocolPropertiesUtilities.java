@@ -472,6 +472,8 @@ public class ProtocolPropertiesUtilities {
 				return ProtocolPropertiesCostanti.LABEL_OPERATION;
 			case PORT_TYPE:
 				return ProtocolPropertiesCostanti.LABEL_PORT_TYPE;
+			case RESOURCE:
+				return ProtocolPropertiesCostanti.LABEL_RESOURCE;
 			case SOGGETTO:
 				return ProtocolPropertiesCostanti.LABEL_SOGGETTO;
 			}

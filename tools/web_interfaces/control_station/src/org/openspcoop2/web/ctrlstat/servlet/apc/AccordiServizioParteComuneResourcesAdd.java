@@ -187,7 +187,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			IDResource idRisorsa = new IDResource();
 			idRisorsa.setIdAccordo(idAs);
 			idRisorsa.setNome(nomeRisorsa);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigPortType(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idRisorsa );
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigResource(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idRisorsa );
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 
@@ -215,7 +215,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
+				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
 
 				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
 						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
@@ -258,7 +258,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idRisorsa);
+					this.consoleDynamicConfiguration.validateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idRisorsa);
 				}catch(ProtocolException e){
 					pd.setMessage(e.getMessage());
 					isOk = false;
@@ -287,7 +287,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
+				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
 
 				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
 

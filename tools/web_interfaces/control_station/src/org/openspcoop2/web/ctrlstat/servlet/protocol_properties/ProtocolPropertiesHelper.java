@@ -30,6 +30,7 @@ import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
@@ -138,6 +140,16 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					idPt.setNome(pt.getNome());
 
 					return idPt;
+				case RESOURCE:
+					org.openspcoop2.core.registry.Resource risorsa = (org.openspcoop2.core.registry.Resource) proprietario;
+					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(Integer.parseInt(idProprietario));
+					IDAccordo idAccordoRisorsa = this.idAccordoFactory.getIDAccordoFromValues(apcr.getNome(),
+							BeanUtilities.getSoggettoReferenteID(apcr.getSoggettoReferente()),apcr.getVersione());
+					IDResource idAccordoR = new IDResource();
+					idAccordoR.setIdAccordo(idAccordoRisorsa);
+					idAccordoR.setNome(risorsa.getNome());
+
+					return idAccordoR;
 				case SOGGETTO:
 					Soggetto soggettoRegistro = (Soggetto) proprietario;
 					IDSoggetto idSoggetto = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome()); 
@@ -192,6 +204,13 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					for (PortType pt : apc.getPortTypeList()) {
 						if(pt.getNome().equals(nomeProprieta))
 							return pt;
+					}
+					return null;
+				case RESOURCE:
+					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(idProp);
+					for(Resource risorsa: apcr.getResourceList()){
+						if(risorsa.getNome().equals(nomeProprieta))
+							return risorsa;
 					}
 					return null;
 				case SOGGETTO:
@@ -403,6 +422,9 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case PORT_TYPE:
 					IDPortType idPt = (IDPortType) idOggettoProprietario;
 					return consoleDynamicConfiguration.getDynamicConfigPortType(consoleOperationType, consoleInterfaceType, registryReader, idPt);
+				case RESOURCE:
+					IDResource idAccordoRisorsa = (IDResource) idOggettoProprietario;
+					return consoleDynamicConfiguration.getDynamicConfigResource(consoleOperationType, consoleInterfaceType, registryReader, idAccordoRisorsa);
 				case SOGGETTO:
 					IDSoggetto idSoggetto = (IDSoggetto) idOggettoProprietario;
 					return consoleDynamicConfiguration.getDynamicConfigSoggetto(consoleOperationType, consoleInterfaceType, registryReader, idSoggetto);
@@ -448,6 +470,10 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case PORT_TYPE:
 					PortType pt = (PortType) proprietario;
 					protocolPropertyList = pt.getProtocolPropertyList();
+					break;
+				case RESOURCE:
+					Resource risorsa = (Resource) proprietario;
+					protocolPropertyList = risorsa.getProtocolPropertyList();
 					break;
 				case SOGGETTO:
 					Soggetto soggettoRegistro = (Soggetto) proprietario;
@@ -555,6 +581,21 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					// salvataggio
 					if(save)
 						this.core.performUpdateOperation(userLogin, smista, apc);
+					break;
+				case RESOURCE:
+					Resource newResource = (Resource) proprietario;
+					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(idProp);
+					for(Resource resource: apcr.getResourceList()){
+						if(resource.getNome().equals(newResource.getNome())){
+							resource.setProtocolPropertyList(protocolPropertiesAggiornate);
+							save = true;
+							break;
+						}
+					}
+					
+					// salvataggio
+					if(save)
+						this.core.performUpdateOperation(userLogin, smista, apcr);
 					break;
 				case SOGGETTO:
 					Soggetto soggettoRegistro = (Soggetto) proprietario;
