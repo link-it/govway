@@ -56,7 +56,7 @@ public abstract class AbstractMediaTypeCollection implements Serializable {
 		return key.split(SEPARATORE)[1];
 	}
 	private int extractStatusFromKey(String key) {
-		return Integer.parseInt(key.split(SEPARATORE)[1]);
+		return Integer.parseInt(key.split(SEPARATORE)[0]);
 	}
 	
 	// Vengono utilizzate due liste per preservare l'ordine di inserimento che si perde in una hashtable,

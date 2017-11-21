@@ -9,9 +9,7 @@
         <accordo-servizio-parte-comune nome="EsempioREST" profilo-collaborazione="sincrono" 
 		utilizzo-senza-azione="true" versione="1" service-binding="rest">
                     <soggetto-referente tipo="API" nome="MinisteroReferente"/>
-                    <port-type nome="API" profilo-collaborazione="sincrono">
-                        <azione nome="invoke"/>
-                    </port-type>
+		<resource nome="invoke" />
         </accordo-servizio-parte-comune>
 
 
@@ -203,7 +201,7 @@
 
 		<!-- **** Configurazione REST **** -->
 
-                <accordo-servizio-parte-specifica tipo="REST" nome="API" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioREST:1" port-type="API">
+                <accordo-servizio-parte-specifica tipo="REST" nome="API" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioREST:1">
 		        <configurazione-servizio>
 		                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_REST/API">
 		                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>

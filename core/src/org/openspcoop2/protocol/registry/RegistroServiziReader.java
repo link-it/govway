@@ -52,6 +52,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
@@ -1016,6 +1017,59 @@ public class RegistroServiziReader {
 			throw new DriverRegistroServiziNotFound("getInfoServizio, accordo di servizio ["+uriAccordo+"] non definito (o non registrato)");
 		}
 		infoServizio.setIdAccordo(idAccordo);
+		ServiceBinding serviceBinding = as.getServiceBinding();
+		
+		infoServizio.setIDServizio(idService);
+		
+		if(ServiceBinding.SOAP.equals(serviceBinding)) {
+			return this._getInfoServizioSOAP(idService, servizio, 
+					idAccordo, as, uriAccordo, 
+					azione, infoServizio, idSoggetto, 
+					verificaEsistenzaServizioAzioneCorrelato, servizioCorrelato, azioneCorrelata, nomeRegistro, connectionPdD);
+		}
+		else {
+			return this._getInfoServizioREST(as, uriAccordo, azione, infoServizio);
+		}
+		
+	}
+	
+	private Servizio _getInfoServizioREST(org.openspcoop2.core.registry.AccordoServizioParteComune as, String uriAccordo,
+			String azione, Servizio infoServizio) throws DriverRegistroServiziAzioneNotFound {
+		
+		@SuppressWarnings("unused")
+		org.openspcoop2.core.registry.Resource resource = null;
+		if(azione==null){
+			throw new DriverRegistroServiziAzioneNotFound("invocazione senza la definizione di una azione non permessa per l'accordo di servizio "+uriAccordo);
+		}else{
+			// Controllo esistenza azione
+			boolean find = false;
+			// search in accordo
+			for(int i=0; i<as.sizeResourceList(); i++){
+				if(azione.equals(as.getResource(i).getNome())){
+					resource = as.getResource(i);
+					find = true;
+					break;
+				}
+			}
+			if(find==false){
+				throw new DriverRegistroServiziAzioneNotFound("Risorsa ["+azione+"] non trovata nell'accordo di servizio "+uriAccordo);
+			}
+		}
+		
+		infoServizio.setProfiloDiCollaborazione(ProfiloDiCollaborazione.SINCRONO);
+		infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
+		infoServizio.setCollaborazione(false);
+		infoServizio.setConfermaRicezione(false);
+		infoServizio.setOrdineConsegna(false);
+		infoServizio.setCorrelato(false);
+			
+		return infoServizio;
+	}
+	
+	private Servizio _getInfoServizioSOAP(IDServizio idService, org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio,
+			IDAccordo idAccordo, org.openspcoop2.core.registry.AccordoServizioParteComune as, String uriAccordo,
+			String azione, Servizio infoServizio, IDSoggetto idSoggetto,
+			boolean verificaEsistenzaServizioAzioneCorrelato, boolean servizioCorrelato,boolean azioneCorrelata, String nomeRegistro, Connection connectionPdD) throws DriverRegistroServiziPortTypeNotFound, DriverRegistroServiziAzioneNotFound, DriverRegistroServiziCorrelatoNotFound, DriverRegistroServiziNotFound {
 		
 		org.openspcoop2.core.registry.PortType pt = null;
 		// search port type
@@ -1081,7 +1135,6 @@ public class RegistroServiziReader {
 
 		
 		// ----------- 1. Accordo di Servizio ------------------
-		infoServizio.setIDServizio(idService);
 
 		// profilo di collaborazione (default: oneway)
 		if(as.getProfiloCollaborazione() == null)
@@ -2208,114 +2261,85 @@ public class RegistroServiziReader {
 			risultato.setServizioRegistrato(false);
 			return risultato;
 		}
+		ServiceBinding serviceBinding = as.getServiceBinding();
 		
-		org.openspcoop2.core.registry.PortType pt = null;
-		// search port type
-		if (servizio.getPortType()!=null){
-			for(int i=0; i<as.sizePortTypeList();i++){
-				if(servizio.getPortType().equals(as.getPortType(i).getNome())){
-					pt = as.getPortType(i);
-				}
-			}
-			if(pt==null){
-				throw new DriverRegistroServiziPortTypeNotFound("Port-Type ["+servizio.getPortType()+"] associato al servizio non definito nell'accordo di servizio "+uriAccordo);
-			}
-		}
+		if(ServiceBinding.REST.equals(serviceBinding)) {
 		
-		
-		
-		// 4. Check di invocazione senza azione
-		// controllo possibilita di utilizzare il servizio senza azione
-		if(pt!=null){
-			// se e' definito un port-type non ha senso che si possa invocare il servizio (port-type) senza azione (operation).
 			risultato.setAccessoSenzaAzione(false);
-		}else{
-			risultato.setAccessoSenzaAzione(as.getUtilizzoSenzaAzione());
+			
+			for(int i=0; i<as.sizeResourceList(); i++) {
+				risultato.addAzione(as.getResource(i).getNome());
+			}
+			
+			risultato.setServizioRegistrato(true);
+			return risultato;
+			
 		}
-
-
+		else {
 		
-		// 5. Ricerca nome del servizio correlato	
-		if(correlato == false && soggettoFruitore!=null){
-			
-			// Profilo di collaborazione
-			ProfiloCollaborazione profiloCollaborazione = as.getProfiloCollaborazione();
-			
-			if(idService.getAzione()!=null){
-				if(pt!=null){
-					if(pt.getProfiloCollaborazione()!=null)
-						profiloCollaborazione = pt.getProfiloCollaborazione();
-					for(int k=0; k<pt.sizeAzioneList(); k++){
-						if(idService.getAzione().equals(pt.getAzione(k).getNome())){
-							if(pt.getAzione(k).getProfiloCollaborazione()!=null){
-								profiloCollaborazione = pt.getAzione(k).getProfiloCollaborazione();
-							}
-							break;
-						}
+			org.openspcoop2.core.registry.PortType pt = null;
+			// search port type
+			if (servizio.getPortType()!=null){
+				for(int i=0; i<as.sizePortTypeList();i++){
+					if(servizio.getPortType().equals(as.getPortType(i).getNome())){
+						pt = as.getPortType(i);
 					}
-				}else{
-					for(int k=0; k<as.sizeAzioneList(); k++){
-						if(idService.getAzione().equals(as.getAzione(k).getNome())){
-							if(as.getAzione(k).getProfiloCollaborazione()!=null){
-								profiloCollaborazione = as.getAzione(k).getProfiloCollaborazione();
-							}
-							break;
-						}
-					}
+				}
+				if(pt==null){
+					throw new DriverRegistroServiziPortTypeNotFound("Port-Type ["+servizio.getPortType()+"] associato al servizio non definito nell'accordo di servizio "+uriAccordo);
 				}
 			}
 			
-			//	Profilo Asincrono Simmetrico:
-			//  Si cerca un servizio correlato del soggetto fruitore
-			//  che contenga il riferimento all'accordo di servizio 'nomeAccordo'.
-			if(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione)){
-				org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizioC = null;
-				try{
-					servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,soggettoFruitore,idAccordo);
-				}catch(DriverRegistroServiziNotFound e){}
-				if(servizioC!=null){
-					if(servizioC.getNome()!=null && servizioC.getTipo()!=null && servizioC.getVersione()!=null){
-						risultato.setTipoServizioCorrelato(servizioC.getTipo());
-						risultato.setServizioCorrelato(servizioC.getNome());
-						risultato.setVersioneServizioCorrelato(servizioC.getVersione());
-					}
-				}
+			
+			
+			// 4. Check di invocazione senza azione
+			// controllo possibilita di utilizzare il servizio senza azione
+			if(pt!=null){
+				// se e' definito un port-type non ha senso che si possa invocare il servizio (port-type) senza azione (operation).
+				risultato.setAccessoSenzaAzione(false);
+			}else{
+				risultato.setAccessoSenzaAzione(as.getUtilizzoSenzaAzione());
 			}
-			// Profilo Asincrono Asimmetrico:
-			// Viene prima cercata nell'accordo, se presente, un'azione correlata all'azione della richiesta.
-			// Se non presente, o se l'azione della richiesta e' null allora si cerca un servizio correlato del soggetto erogatore (parametro idService.getSoggettoErogatore)
-			// che contenga il riferimento all'accordo di servizio 'nomeAccordo' di questo servizio.
-			else if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione)){
-				// Azione
-				String azioneRichiesta = idService.getAzione();
-				String azioneCorrelata = null;
-				if(azioneRichiesta!=null){
+	
+	
+			
+			// 5. Ricerca nome del servizio correlato	
+			if(correlato == false && soggettoFruitore!=null){
+				
+				// Profilo di collaborazione
+				ProfiloCollaborazione profiloCollaborazione = as.getProfiloCollaborazione();
+				
+				if(idService.getAzione()!=null){
 					if(pt!=null){
-						for(int i=0; i<pt.sizeAzioneList(); i++){
-							if( azioneRichiesta.equals(pt.getAzione(i).getCorrelata()) ){
-								azioneCorrelata = pt.getAzione(i).getCorrelata();
+						if(pt.getProfiloCollaborazione()!=null)
+							profiloCollaborazione = pt.getProfiloCollaborazione();
+						for(int k=0; k<pt.sizeAzioneList(); k++){
+							if(idService.getAzione().equals(pt.getAzione(k).getNome())){
+								if(pt.getAzione(k).getProfiloCollaborazione()!=null){
+									profiloCollaborazione = pt.getAzione(k).getProfiloCollaborazione();
+								}
 								break;
 							}
 						}
 					}else{
-						for(int i=0; i<as.sizeAzioneList(); i++){
-							if( azioneRichiesta.equals(as.getAzione(i).getCorrelata()) ){
-								azioneCorrelata = as.getAzione(i).getCorrelata();
+						for(int k=0; k<as.sizeAzioneList(); k++){
+							if(idService.getAzione().equals(as.getAzione(k).getNome())){
+								if(as.getAzione(k).getProfiloCollaborazione()!=null){
+									profiloCollaborazione = as.getAzione(k).getProfiloCollaborazione();
+								}
 								break;
 							}
 						}
 					}
 				}
 				
-				if(azioneCorrelata!=null){
-					risultato.setTipoServizioCorrelato(idService.getTipo());
-					risultato.setServizioCorrelato(idService.getNome());
-					risultato.setVersioneServizioCorrelato(idService.getVersione());
-					risultato.setAzioneCorrelata(azioneCorrelata);
-				}else{
+				//	Profilo Asincrono Simmetrico:
+				//  Si cerca un servizio correlato del soggetto fruitore
+				//  che contenga il riferimento all'accordo di servizio 'nomeAccordo'.
+				if(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione)){
 					org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizioC = null;
 					try{
-						servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,idService.getSoggettoErogatore(),idAccordo);
+						servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,soggettoFruitore,idAccordo);
 					}catch(DriverRegistroServiziNotFound e){}
 					if(servizioC!=null){
 						if(servizioC.getNome()!=null && servizioC.getTipo()!=null && servizioC.getVersione()!=null){
@@ -2325,86 +2349,132 @@ public class RegistroServiziReader {
 						}
 					}
 				}
+				// Profilo Asincrono Asimmetrico:
+				// Viene prima cercata nell'accordo, se presente, un'azione correlata all'azione della richiesta.
+				// Se non presente, o se l'azione della richiesta e' null allora si cerca un servizio correlato del soggetto erogatore (parametro idService.getSoggettoErogatore)
+				// che contenga il riferimento all'accordo di servizio 'nomeAccordo' di questo servizio.
+				else if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione)){
+					// Azione
+					String azioneRichiesta = idService.getAzione();
+					String azioneCorrelata = null;
+					if(azioneRichiesta!=null){
+						if(pt!=null){
+							for(int i=0; i<pt.sizeAzioneList(); i++){
+								if( azioneRichiesta.equals(pt.getAzione(i).getCorrelata()) ){
+									azioneCorrelata = pt.getAzione(i).getCorrelata();
+									break;
+								}
+							}
+						}else{
+							for(int i=0; i<as.sizeAzioneList(); i++){
+								if( azioneRichiesta.equals(as.getAzione(i).getCorrelata()) ){
+									azioneCorrelata = as.getAzione(i).getCorrelata();
+									break;
+								}
+							}
+						}
+					}
+					
+					if(azioneCorrelata!=null){
+						risultato.setTipoServizioCorrelato(idService.getTipo());
+						risultato.setServizioCorrelato(idService.getNome());
+						risultato.setVersioneServizioCorrelato(idService.getVersione());
+						risultato.setAzioneCorrelata(azioneCorrelata);
+					}else{
+						org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizioC = null;
+						try{
+							servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,idService.getSoggettoErogatore(),idAccordo);
+						}catch(DriverRegistroServiziNotFound e){}
+						if(servizioC!=null){
+							if(servizioC.getNome()!=null && servizioC.getTipo()!=null && servizioC.getVersione()!=null){
+								risultato.setTipoServizioCorrelato(servizioC.getTipo());
+								risultato.setServizioCorrelato(servizioC.getNome());
+								risultato.setVersioneServizioCorrelato(servizioC.getVersione());
+							}
+						}
+					}
+				}
 			}
-		}
-
-
-		// 6. Azioni
-		if(pt!=null){
-			for(int i=0; i<pt.sizeAzioneList(); i++) {
-				risultato.addAzione(pt.getAzione(i).getNome());
+	
+	
+			// 6. Azioni
+			if(pt!=null){
+				for(int i=0; i<pt.sizeAzioneList(); i++) {
+					risultato.addAzione(pt.getAzione(i).getNome());
+				}
+			}else{
+				for(int i=0; i<as.sizeAzioneList(); i++) {
+					risultato.addAzione(as.getAzione(i).getNome());
+				}
 			}
-		}else{
-			for(int i=0; i<as.sizeAzioneList(); i++) {
-				risultato.addAzione(as.getAzione(i).getNome());
-			}
-		}
-		
-		
-		
-		// 7. Tipologia di porta del soggetto fruitore
-		/*
-		Soggetto soggettoFruitore = null;
-		try{
-			soggettoFruitore = this.registroServizi.getSoggetto(nomeRegistro, soggettoFruitore);
-		}catch(DriverRegistroServiziNotFound e){}
-		if (soggettoFruitore == null){
-			this.log.debug("validaServizio, soggetto frutore ["+soggettoFruitore.toString()+"] non definito (o non registrato)");
-			risultato.setServizioRegistrato(false);
-			return risultato;
-		}
-		if(soggettoFruitore.getPortaDominio()!=null){
-			PortaDominio pdd = null;
+			
+			
+			
+			// 7. Tipologia di porta del soggetto fruitore
+			/*
+			Soggetto soggettoFruitore = null;
 			try{
-				pdd = this.registroServizi.getPortaDominio(nomeRegistro, soggettoFruitore.getPortaDominio());
+				soggettoFruitore = this.registroServizi.getSoggetto(nomeRegistro, soggettoFruitore);
 			}catch(DriverRegistroServiziNotFound e){}
-			if (pdd == null){
-				this.log.debug("validaServizio, porta di domino ["+soggettoFruitore.getPortaDominio()+"] associata al soggetto fruitore ["+soggettoFruitore.toString()+"] non definita (o non registrata)");
+			if (soggettoFruitore == null){
+				this.log.debug("validaServizio, soggetto frutore ["+soggettoFruitore.toString()+"] non definito (o non registrato)");
 				risultato.setServizioRegistrato(false);
 				return risultato;
 			}
-			if(pdd.getImplementazione()==null){
+			if(soggettoFruitore.getPortaDominio()!=null){
+				PortaDominio pdd = null;
+				try{
+					pdd = this.registroServizi.getPortaDominio(nomeRegistro, soggettoFruitore.getPortaDominio());
+				}catch(DriverRegistroServiziNotFound e){}
+				if (pdd == null){
+					this.log.debug("validaServizio, porta di domino ["+soggettoFruitore.getPortaDominio()+"] associata al soggetto fruitore ["+soggettoFruitore.toString()+"] non definita (o non registrata)");
+					risultato.setServizioRegistrato(false);
+					return risultato;
+				}
+				if(pdd.getImplementazione()==null){
+					risultato.setImplementazionePdDSoggettoFruitore(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+				}else{
+					risultato.setImplementazionePdDSoggettoFruitore(pdd.getImplementazione());
+				}
+			}else{
 				risultato.setImplementazionePdDSoggettoFruitore(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
-			}else{
-				risultato.setImplementazionePdDSoggettoFruitore(pdd.getImplementazione());
 			}
-		}else{
-			risultato.setImplementazionePdDSoggettoFruitore(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
-		}
-		*/
-		
-		
-		
-		// 8. Tipologia di porta del soggetto erogatore
-		/*
-		Soggetto soggettoErogatore = null;
-		try{
-			soggettoErogatore = this.registroServizi.getSoggetto(nomeRegistro, idService.getSoggettoErogatore());
-		}catch(DriverRegistroServiziNotFound e){}
-		if (soggettoErogatore == null){
-			this.log.debug("validaServizio, soggetto erogatore ["+idService.getSoggettoErogatore().toString()+"] non definito (o non registrato)");
-			risultato.setServizioRegistrato(false);
-			return risultato;
-		}
-		if(soggettoErogatore.getPortaDominio()!=null){
-			PortaDominio pdd = null;
+			*/
+			
+			
+			
+			// 8. Tipologia di porta del soggetto erogatore
+			/*
+			Soggetto soggettoErogatore = null;
 			try{
-				pdd = this.registroServizi.getPortaDominio(nomeRegistro, soggettoErogatore.getPortaDominio());
+				soggettoErogatore = this.registroServizi.getSoggetto(nomeRegistro, idService.getSoggettoErogatore());
 			}catch(DriverRegistroServiziNotFound e){}
-			if (pdd == null){
-				this.log.debug("validaServizio, porta di domino ["+soggettoErogatore.getPortaDominio()+"] associata al soggetto erogatore ["+idService.getSoggettoErogatore().toString()+"] non definita (o non registrata)");
+			if (soggettoErogatore == null){
+				this.log.debug("validaServizio, soggetto erogatore ["+idService.getSoggettoErogatore().toString()+"] non definito (o non registrato)");
 				risultato.setServizioRegistrato(false);
 				return risultato;
 			}
-			if(pdd.getImplementazione()==null){
-				risultato.setImplementazionePdDSoggettoErogatore(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+			if(soggettoErogatore.getPortaDominio()!=null){
+				PortaDominio pdd = null;
+				try{
+					pdd = this.registroServizi.getPortaDominio(nomeRegistro, soggettoErogatore.getPortaDominio());
+				}catch(DriverRegistroServiziNotFound e){}
+				if (pdd == null){
+					this.log.debug("validaServizio, porta di domino ["+soggettoErogatore.getPortaDominio()+"] associata al soggetto erogatore ["+idService.getSoggettoErogatore().toString()+"] non definita (o non registrata)");
+					risultato.setServizioRegistrato(false);
+					return risultato;
+				}
+				if(pdd.getImplementazione()==null){
+					risultato.setImplementazionePdDSoggettoErogatore(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+				}else{
+					risultato.setImplementazionePdDSoggettoErogatore(pdd.getImplementazione());
+				}
 			}else{
-				risultato.setImplementazionePdDSoggettoErogatore(pdd.getImplementazione());
+				risultato.setImplementazionePdDSoggettoErogatore(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			}
-		}else{
-			risultato.setImplementazionePdDSoggettoErogatore(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+			*/
+			
 		}
-		*/
 		
 		
 
