@@ -346,6 +346,7 @@
 				<include name="${xalan_serializer_jar}"/>	
 				<include name="soap.jar" />
 				<include name="xmlunit-1.6.jar" />
+				<include name="snakeyaml-1.19.jar" />
 			</lib>
 			<lib dir="${required_lib_pddConsole}/cxf">
 				<include name="cxf-core-*.jar" />

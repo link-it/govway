@@ -5186,10 +5186,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// "Accordo unilaterale", "Fruitori" };
 			
 			List<String> labelList = new ArrayList<>();
-			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);
-			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE);
-			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD);
+			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
+			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE);
+			//labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);
 			
 //			labelList.add(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION);
 //			if(gui.equals(InterfaceType.AVANZATA))
@@ -5213,6 +5213,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
+					de.setValue(risorsa.getMethod().toString());
+					e.addElement(de);
+					
+					de = new DataElement();
 					String nomeRisorsa = risorsa.getNome();
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, 
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
@@ -5220,22 +5224,27 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+""),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
-					de.setValue(nomeRisorsa);
+					de.setValue(risorsa.getPath());
+					de.setToolTip(nomeRisorsa);
 					de.setIdToRemove(nomeRisorsa);
 					e.addElement(de);
-
+					
 					de = new DataElement();
 					de.setValue(risorsa.getDescrizione());
 					e.addElement(de);
 					
-					de = new DataElement();
-					de.setValue(risorsa.getPath());
-					e.addElement(de);
-					
-					de = new DataElement();
-					de.setValue(risorsa.getMethod().toString());
-					e.addElement(de);
-					
+//					de = new DataElement();
+//					String nomeRisorsa = risorsa.getNome();
+//					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, 
+//							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
+////							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
+//							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+""),
+//							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
+//							);
+//					de.setValue(nomeRisorsa);
+//					de.setIdToRemove(nomeRisorsa);
+//					e.addElement(de);
+
 //					Long idRisorsa = risorsa.getId();
 //
 //					// link  rappresentazioni

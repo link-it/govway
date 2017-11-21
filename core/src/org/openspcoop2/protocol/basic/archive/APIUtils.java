@@ -48,7 +48,34 @@ public class APIUtils {
 		permit.add('-');
 		Character cJolly = '.'; // uso un carattere come jolly '.'
 		
-		String nomeAzione = requestMethod.name() + "_" + Utilities.convertNameToSistemaOperativoCompatible(path,true,cJolly,permit,false);
+		String nome = Utilities.convertNameToSistemaOperativoCompatible(path,true,cJolly,permit,false);
+		// Elimino caratteri iniziali
+		while(nome.startsWith((cJolly+"")) && nome.length()>1) {
+			nome = nome.substring(1);
+		}
+		// Elimino caratteri finali
+		while(nome.endsWith((cJolly+"")) && nome.length()>1) {
+			nome = nome.substring(0,nome.length()-1);
+		}
+		// elimino eventuali caratteri speciali se presenti piu' di una volta consecutivamente
+		int count = 0;
+		StringBuffer bf = new StringBuffer();
+		for (int i = 0; i < nome.length(); i++) {
+			char c = nome.charAt(i);
+			if(c == cJolly.charValue()) {
+				count++;
+				if(count==1) {
+					bf.append(c);
+				}
+			}
+			else {
+				count = 0;
+				bf.append(c);
+			}
+		}
+		
+		String nomeAzione = requestMethod.name() + "_" + bf.toString();
+		
 		if(nomeAzione.length()>255) {
 			nomeAzione = nomeAzione.substring(0, 255);
 		}
