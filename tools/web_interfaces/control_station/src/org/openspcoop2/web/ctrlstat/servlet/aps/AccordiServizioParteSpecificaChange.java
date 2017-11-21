@@ -67,7 +67,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -387,8 +386,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 				portType = asps.getPortType();
 			}
-			// [TODO] parlare con poli
-			ServiceBinding serviceBinding = as.getServiceBinding() != null ? Utilities.convert(as.getServiceBinding()) : ServiceBinding.SOAP;
+		
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 
 			// Lista di Accordi Compatibili
 			List<AccordoServizioParteComune> asParteComuneCompatibili = null;
@@ -817,7 +816,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio,
 							provider, provString,
-							soggettiList, soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+							soggettiList, soggettiListLabel, accordo,serviceBinding,accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
@@ -868,10 +867,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			boolean isOk = apsHelper.serviziCheckData(tipoOp, soggettiList,
 					accordiList, asps.getNome(), asps.getTipo(),
 					nomeservizio, tiposervizio, provider,
-					nomeSoggettoErogatore, tipoSoggettoErogatore, accordo,
+					nomeSoggettoErogatore, tipoSoggettoErogatore, accordo, serviceBinding, 
 					servcorr, endpointtype, url, nome, tipo, user, password,
 					initcont, urlpgk, provurl, connfact, sendas, this.wsdlimpler, this.wsdlimplfru, id,
-					profilo, portType,accordoPrivato,privato,
+					profilo, portType,ptList,accordoPrivato,privato,
 					httpsurl, httpstipologia, httpshostverify,
 					httpspath, httpstipo, httpspwd, httpsalgoritmo,
 					httpsstato, httpskeystore,
@@ -933,7 +932,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
 						provider, provString, soggettiList, 
-						soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+						soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 						null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
@@ -997,7 +996,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 					
 					dati = apsHelper.addServiziToDatiAsHidden(dati, nomeservizio, tiposervizio, provider, provString, soggettiList, 
-							soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
+							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto);
@@ -1168,7 +1167,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
 							provider, provString, soggettiList,
-							soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,

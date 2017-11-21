@@ -279,7 +279,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, deffiltroduppt, confricpt, defconfricpt, idcollpt, defidcollpt, consordpt, defconsordpt, scadenzapt, 
 						defscadenzapt, tipoOp, defprofcollpt, profcollpt, descr, as.getStatoPackage(),
-						tipoAccordo,protocollo,servizioStyle);
+						tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -346,7 +346,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, consordpt, consordpt, scadenzapt, scadenzapt, 
 						tipoOp, profcollpt, profcollpt, descr, as.getStatoPackage(),
-						tipoAccordo,protocollo,servizioStyle);
+						tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

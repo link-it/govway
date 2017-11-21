@@ -150,6 +150,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String oldPortType, oldTipoSoggettoErogatore, oldNomeSoggettoErogatore = null;
 	private String autenticazioneHttp;
 	private Properties parametersPOST;
+	private ServiceBinding serviceBinding = null;
 
 	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
 
@@ -471,13 +472,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					this.portType = null;
 					this.nomePA = null;
+					this.nomeservizio = "";
 				}  
+				
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE)){
+					this.nomeservizio = "";
+				}
 			}
 
 
 			// Lista port-type associati all'accordo di servizio
 			AccordoServizioParteComune as = null;
-			ServiceBinding serviceBinding = null;
 			if (this.accordo != null && !"".equals(this.accordo)) {
 				as = apcCore.getAccordoServizio(Long.parseLong(this.accordo));
 			} else {
@@ -492,7 +497,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// salvo il soggetto referente
 				soggettoReferente = new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome());
 
-				serviceBinding = as.getServiceBinding() != null ? org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding()) : ServiceBinding.SOAP;
+				this.serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
@@ -569,7 +574,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
+			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,this.serviceBinding);
 			boolean erogazioneIsSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
 
 			// calcolo soggetti compatibili con accordi
@@ -625,7 +630,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					// refresh di tutte le infromazioni
 					versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 					tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
+					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,this.serviceBinding);
 
 					for (Soggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
@@ -659,7 +664,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			if(this.tiposervizio == null){
-				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(protocollo,serviceBinding);
+				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(protocollo,this.serviceBinding);
 			}
 
 
@@ -751,7 +756,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				if (this.nomeservizio == null) {
 					this.nomeservizio = "";
-					this.tiposervizio = apsCore.getTipoServizioDefault(serviceBinding);
+					this.tiposervizio = apsCore.getTipoServizioDefault(this.serviceBinding);
 					//					this.provider = "";
 					//					this.accordo = "";
 					this.servcorr = "";
@@ -791,62 +796,72 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpspwdprivatekey = "";
 					this.versione="1";
 				}
-
-				if(this.portType!=null && !"".equals(this.portType) && !"-".equals(this.portType)){
-
-					boolean ptValid = true;
-
-					if(ptList!=null && ptList.length>0){
-						// controllo che l'attuale port Type sia tra quelli presenti nell'accordo.
-						boolean found = false;
-						for (String portType : ptList) {
-							if(portType.equals(this.portType)){
-								found = true;
-								break;
-							}
-						}
-						if(!found){
-							ptValid = false;
-						}
-
-					}
-
-					if(ptValid){
-
+				
+				switch (this.serviceBinding) {
+					case REST:
 						if(this.nomeservizio==null || "".equals(this.nomeservizio)){
-							this.nomeservizio = this.portType;
+							this.nomeservizio = as.getNome();
 						}
-						else if(this.nomeservizio.equals(this.oldPortType)){
-							this.nomeservizio = this.portType;
+						break;
+					case SOAP:
+					default:
+					if(this.portType!=null && !"".equals(this.portType) && !"-".equals(this.portType)){
+	
+						boolean ptValid = true;
+	
+						if(ptList!=null && ptList.length>0){
+							// controllo che l'attuale port Type sia tra quelli presenti nell'accordo.
+							boolean found = false;
+							for (String portType : ptList) {
+								if(portType.equals(this.portType)){
+									found = true;
+									break;
+								}
+							}
+							if(!found){
+								ptValid = false;
+							}
+	
 						}
-
-						if(this.nomePA==null || "".equals(this.nomePA)){
+	
+						if(ptValid){
+	
+							if(this.nomeservizio==null || "".equals(this.nomeservizio)){
+								this.nomeservizio = this.portType;
+							}
+							else if(this.nomeservizio.equals(this.oldPortType)){
+								this.nomeservizio = this.portType;
+							}
+	
+							if(this.nomePA==null || "".equals(this.nomePA)){
+								this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
+							}
+							else if(this.nomePA.equals(this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.oldPortType)){
+								this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
+							}
+	
+							this.oldPortType = this.portType;
+	
+						}
+						else{
+	
+							this.nomeservizio = null;
+							this.nomePA = null;
+							this.portType = null;
+							this.oldPortType = null;
+	
+						}
+					}
+	
+	
+					if(this.nomePA!=null && !"".equals(this.nomePA)){
+						if(this.nomePA.equals(this.oldTipoSoggettoErogatore+this.oldNomeSoggettoErogatore+"/"+this.tiposervizio+this.portType)){
 							this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
 						}
-						else if(this.nomePA.equals(this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.oldPortType)){
-							this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
-						}
-
-						this.oldPortType = this.portType;
-
+						this.oldTipoSoggettoErogatore = this.tipoSoggettoErogatore;
+						this.oldNomeSoggettoErogatore = this.nomeSoggettoErogatore;
 					}
-					else{
-
-						this.nomeservizio = null;
-						this.nomePA = null;
-						this.portType = null;
-						this.oldPortType = null;
-
-					}
-				}
-
-
-				if(this.nomePA!=null && !"".equals(this.nomePA)){
-					if(this.nomePA.equals(this.oldTipoSoggettoErogatore+this.oldNomeSoggettoErogatore+"/"+this.tiposervizio+this.portType)){
-						this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
-					}
-					this.oldTipoSoggettoErogatore = this.tipoSoggettoErogatore;
-					this.oldNomeSoggettoErogatore = this.nomeSoggettoErogatore;
+					break;
 				}
 
 
@@ -894,7 +909,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio,  null, null, 
 						this.provider, "", 
-						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
+						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, accordiList, accordiListLabel, this.servcorr, 
 						this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
@@ -934,8 +949,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-				// il nome del servizio e' quello del porttype selezionato
-				this.nomeservizio = this.portType;
+				switch (this.serviceBinding) {
+				case REST:
+					// il nome del servizio e' quello dell'accordo
+					this.nomeservizio = as.getNome();
+					break;
+				case SOAP:
+				default:
+					// il nome del servizio e' quello del porttype selezionato
+					this.nomeservizio = this.portType;
+					break;
+				}
 			}
 
 			// Controlli sui campi immessi
@@ -943,11 +967,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					accordiList, this.nomeservizio, this.tiposervizio,
 					this.nomeservizio, this.tiposervizio, this.provider,
 					this.nomeSoggettoErogatore, this.tipoSoggettoErogatore,
-					this.accordo, this.servcorr, this.endpointtype,
+					this.accordo, this.serviceBinding, this.servcorr, this.endpointtype,
 					this.url, this.nome, this.tipo, this.user,
 					this.password, this.initcont, this.urlpgk, this.provurl,
 					this.connfact, this.sendas, this.wsdlimpler,
-					this.wsdlimplfru, "0", this.profilo, this.portType,
+					this.wsdlimplfru, "0", this.profilo, this.portType, ptList,
 					accordoPrivato,this.privato, this.httpsurl, this.httpstipologia,
 					this.httpshostverify, this.httpspath, this.httpstipo,
 					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
@@ -1030,7 +1054,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
 						this.provider, "", 
-						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel,
+						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, accordiList, accordiListLabel,
 						this.servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
@@ -1177,7 +1201,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
 							this.provider, "", 
-							soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
+							soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, accordiList, accordiListLabel, this.servcorr, 
 							this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,

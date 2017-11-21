@@ -68,6 +68,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
@@ -98,6 +99,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -324,6 +326,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
@@ -558,7 +561,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idFruizione  );
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
-
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(asps.getIdAccordo());
+			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
@@ -688,7 +692,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							soggettiListLabel, "0", this.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
 							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-							saList);
+							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 	
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
 							,null,null,null,null,null,null,null,null,null);
@@ -808,7 +812,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						"", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
 						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-						saList);
+						saList,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, this.profilo, this.clientAuth,
 						dati,null
@@ -955,7 +959,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
 							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-							saList);
+							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
 							,null,null,null,null,null,null,null,null,null);

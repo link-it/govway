@@ -60,6 +60,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -328,9 +329,11 @@ public final class PorteApplicativeAdd extends Action {
 			}
 			
 			AccordoServizioParteComune as = null;
+			ServiceBinding serviceBinding = null;
 			if (servS != null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
 				as = apcCore.getAccordoServizio(idAccordo);
+				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			}
 			
 			// Prendo le azioni associate al servizio
@@ -468,7 +471,7 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
-						servS,as,
+						servS,as,serviceBinding,
 						statoPorta);
 
 				pd.setDati(dati);
@@ -510,7 +513,7 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
-						servS,as,
+						servS,as,serviceBinding,
 						statoPorta);
 
 				pd.setDati(dati);

@@ -309,7 +309,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
 						filtrodupaz, deffiltrodupaz, confricaz, defconfricaz, idcollaz, defidcollaz, consordaz, defconsordaz, scadenzaaz, 
 						defscadenzaaz, defprofcoll, profcoll, tipoOp, 
-						azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo);
+						azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 				
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -378,7 +378,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
 						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, consordaz, consordaz, scadenzaaz, scadenzaaz, 
 						profcoll, profcoll, tipoOp, 
-						azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo);
+						azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 				
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

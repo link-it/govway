@@ -52,7 +52,6 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -179,7 +178,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
-			ServiceBinding serviceBinding = as.getServiceBinding() != null ? Utilities.convert(as.getServiceBinding()) : ServiceBinding.SOAP;
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 
 			List<String> versioniProtocollo = null;
 			//String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();
@@ -187,7 +186,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 
 			String label = null;
-			if(apcCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){
+			if(apcCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){
 				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE)){
 					label = AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle;
 				}
@@ -656,7 +655,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, null, null, 
 					provider, provString, soggettiList,
-					soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru,
+					soggettiListLabel, accordo, serviceBinding, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru,
 					TipoOperazione.CHANGE, this.id, tipiServizi, profilo, portType, ptList,
 					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,

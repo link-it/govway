@@ -48,6 +48,7 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
@@ -74,6 +75,7 @@ import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
@@ -275,6 +277,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Prendo il servizio
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 			String nomeservizio = asps.getNome();
@@ -431,6 +434,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					URLEncoder.encode( urlChange.getValue() , "UTF-8"));
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
+			
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(asps.getIdAccordo());
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -685,7 +690,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
 							idServizioFruitore,tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio, correlato,
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-							null,null,null,null,null,null,null,null,null,null);
+							null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profilo, clientAuth, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
@@ -799,7 +804,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
 						idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  correlato,
 						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-						null,null,null,null,null,null,null,null,null,null);
+						null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1027,7 +1032,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio, 
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-							null,null,null,null,null,null,null,null,null,null);
+							null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,

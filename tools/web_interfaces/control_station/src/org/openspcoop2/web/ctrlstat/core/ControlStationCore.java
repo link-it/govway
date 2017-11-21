@@ -4494,20 +4494,20 @@ public class ControlStationCore {
 		}
 	}
 	
-	public String[] getProfiliDiCollaborazioneSupportatiDalProtocollo(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public String[] getProfiliDiCollaborazioneSupportatiDalProtocollo(String protocollo,ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getProfiliDiCollaborazioneSupportatiDalProtocollo";
 		List<String> lstProt = new ArrayList<String>();
 		try{
-			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, ProfiloDiCollaborazione.ONEWAY))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, serviceBinding, ProfiloDiCollaborazione.ONEWAY))
 				lstProt.add(CostantiRegistroServizi.ONEWAY.toString());
 
-			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, ProfiloDiCollaborazione.SINCRONO))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, serviceBinding, ProfiloDiCollaborazione.SINCRONO))
 				lstProt.add(CostantiRegistroServizi.SINCRONO.toString());
 			
-			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO))
 				lstProt.add(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.toString());
 			
-			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO))
 				lstProt.add(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.toString());
 			
 			return lstProt.toArray(new String[lstProt.size()]);
@@ -4517,20 +4517,20 @@ public class ControlStationCore {
 		}
 	}
 	
-	public String[] getProfiliDiCollaborazioneSupportatiDalProtocolloDefault() throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public String[] getProfiliDiCollaborazioneSupportatiDalProtocolloDefault(ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getProfiliDiCollaborazioneSupportatiDalProtocolloDefault";
 		List<String> lstProt = new ArrayList<String>();
 		try{
-			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault( ProfiloDiCollaborazione.ONEWAY))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(serviceBinding, ProfiloDiCollaborazione.ONEWAY))
 				lstProt.add(CostantiRegistroServizi.ONEWAY.toString());
 
-			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(  ProfiloDiCollaborazione.SINCRONO))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(serviceBinding, ProfiloDiCollaborazione.SINCRONO))
 				lstProt.add(CostantiRegistroServizi.SINCRONO.toString());
 			
-			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(  ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO))
 				lstProt.add(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.toString());
 			
-			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(  ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO))
+			if(isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO))
 				lstProt.add(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.toString());
 			
 			return lstProt.toArray(new String[lstProt.size()]);
@@ -4552,11 +4552,11 @@ public class ControlStationCore {
 		}
 	}
 	
-	public boolean isProfiloDiCollaborazioneAsincronoSupportatoDalProtocolloDefault() throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isProfiloDiCollaborazioneAsincronoSupportatoDalProtocolloDefault(ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isProfiloDiCollaborazioneAsincronoSupportatoDalProtocolloDefault";
 		try{
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
-					|| this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)
+			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(serviceBinding,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+					|| this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(serviceBinding,ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)
 					;
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -4564,11 +4564,11 @@ public class ControlStationCore {
 		}
 	}
 	
-	public boolean isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(String protocollo,ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo";
 		try{
-			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
-					|| this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+					|| this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -4576,41 +4576,40 @@ public class ControlStationCore {
 	}
 	
 	
-	public boolean isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(ProfiloDiCollaborazione profiloCollaborazione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isProfiloDiCollaborazioneSupportatoDalProtocolloDefault(ServiceBinding serviceBinding,ProfiloDiCollaborazione profiloCollaborazione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isProfiloDiCollaborazioneSupportatoDalProtocolloDefault";
 		try{
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(profiloCollaborazione );
+			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(serviceBinding, profiloCollaborazione );
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
 	
-	public boolean isProfiloDiCollaborazioneSupportatoDalProtocollo(String protocollo,ProfiloDiCollaborazione profiloCollaborazione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isProfiloDiCollaborazioneSupportatoDalProtocollo(String protocollo,ServiceBinding serviceBinding, ProfiloDiCollaborazione profiloCollaborazione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isProfiloDiCollaborazioneSupportatoDalProtocollo";
 		try{
-			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(profiloCollaborazione );
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,profiloCollaborazione );
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
 	
-
-	public boolean isFunzionalitaProtocolloSupportataDalProtocolloDefault(FunzionalitaProtocollo funzionalitaProtocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isFunzionalitaProtocolloSupportataDalProtocolloDefault(ServiceBinding serviceBinding,FunzionalitaProtocollo funzionalitaProtocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isFunzionalitaProtocolloSupportataDalProtocolloDefault";
 		try{
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(funzionalitaProtocollo );
+			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().isSupportato(serviceBinding,funzionalitaProtocollo );
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
 	
-	public boolean isFunzionalitaProtocolloSupportataDalProtocollo(String protocollo,FunzionalitaProtocollo funzionalitaProtocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean isFunzionalitaProtocolloSupportataDalProtocollo(String protocollo,ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isFunzionalitaProtocolloSupportataDalProtocollo";
 		try{
-			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(funzionalitaProtocollo );
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportato(serviceBinding,funzionalitaProtocollo);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -4619,8 +4618,25 @@ public class ControlStationCore {
 	
 	public List<ServiceBinding> getServiceBindingList(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
 		String nomeMetodo = "getServiceBindingList";
-		List<ServiceBinding> lst = new ArrayList<>();
+		List<ServiceBinding> lst = new ArrayList<ServiceBinding>();
 		try {
+			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
+			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.REST))
+				lst.add(ServiceBinding.REST);
+			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.SOAP))
+				lst.add(ServiceBinding.SOAP);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		return lst;
+	}
+	
+	public List<ServiceBinding> getServiceBindingListProtocollo(String protocollo) throws DriverConfigurazioneException{
+		String nomeMetodo = "getServiceBindingListProtocollo";
+		List<ServiceBinding> lst = new ArrayList<ServiceBinding>();
+		try {
+			IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocollo); 
 			ServiceBindingConfiguration defaultServiceBindingConfiguration = protocolFactory.createProtocolConfiguration().getDefaultServiceBindingConfiguration(null);
 			if(defaultServiceBindingConfiguration.isServiceBindingSupported(ServiceBinding.REST))
 				lst.add(ServiceBinding.REST);

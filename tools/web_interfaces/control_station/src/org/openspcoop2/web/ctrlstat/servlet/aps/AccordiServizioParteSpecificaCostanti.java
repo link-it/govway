@@ -222,7 +222,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA = CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA;
 	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH = CostantiControlStation.PARAMETRO_RUOLO_MATCH;
 	public final static String PARAMETRO_APS_RIPRISTINA_STATO = "backToStato";
-	
+	public final static String PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	
 	/* ATTRIBUTI SESSIONE */
 	
@@ -244,7 +244,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_NOME_FILE = "Nome";
 	public final static String LABEL_PARAMETRO_APS_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
-	public final static String LABEL_PARAMETRO_APS_ACCORDO = "Accordo";
+	public final static String LABEL_PARAMETRO_APS_ACCORDO = LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;//"API";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE = "Soggetto Referente";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE = "Versione";
@@ -267,14 +267,15 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_FRUITORE = "Nome";
 	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO = "WSDL Implementativo";
 	public final static String LABEL_PARAMETRO_APS_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";
-	
+	public final static String LABEL_PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE = "wsdlimplfru";
 	public final static String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE = "wsdlimpler";
 	
-	 
+	public final static String DEFAULT_VALUE_PARAMETRO_APS_SERVICE_BINDING_REST = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
+	public final static String DEFAULT_VALUE_PARAMETRO_APS_SERVICE_BINDING_SOAP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
 	
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato"; 
 	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";

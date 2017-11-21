@@ -1146,7 +1146,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO };
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
-			if(this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+			if(this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoGestManifest);
 				de.setSelected(gestManifest);

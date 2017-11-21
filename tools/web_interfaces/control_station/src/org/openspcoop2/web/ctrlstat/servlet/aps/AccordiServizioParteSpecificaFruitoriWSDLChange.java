@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -180,6 +181,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 
 			// Mi calcolo IDServizio, che servirà per recuperare il fruitore una
 			// volta che sarà stato rimosso/aggiunto e se ne sarà perso l'id
@@ -191,7 +193,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			
 			String label = null;
-			if(apcCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){
+			if(apcCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){
 				if(this.tipo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_EROGATORE)){
 					label = AccordiServizioParteSpecificaCostanti.LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI + tmpTitle;
 				}

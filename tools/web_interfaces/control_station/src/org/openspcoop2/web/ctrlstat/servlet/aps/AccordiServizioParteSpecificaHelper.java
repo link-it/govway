@@ -59,6 +59,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -166,12 +167,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String[] accordiList, String oldNomeservizio,
 			String oldTiposervizio, String nomeservizio,
 			String tiposervizio, String idSoggErogatore,
-			String nomeErogatore, String tipoErogatore, String idAccordo,
+			String nomeErogatore, String tipoErogatore, String idAccordo, ServiceBinding serviceBinding,
 			String servcorr, String endpointtype, String url, String nome,
 			String tipo, String user, String password, String initcont,
 			String urlpgk, String provurl, String connfact, String sendas,
 			BinaryParameter wsdlimpler, BinaryParameter wsdlimplfru, String id,
-			String profilo, String portType,
+			String profilo, String portType, String[] ptList,
 			boolean visibilitaAccordoServizio,boolean visibilitaServizio,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
 			String httpspath, String httpstipo, String httpspwd,
@@ -275,9 +276,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Campi obbligatori
 			if (!isModalitaAvanzata) {
-				if (portType == null || "".equals(portType) || "-".equals(portType)) {
-					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO);
-					return false;
+				switch (serviceBinding) {
+				case REST:
+					
+					break;
+				case SOAP:
+				default:
+					if (portType == null || "".equals(portType) || "-".equals(portType)) {
+						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO);
+						return false;
+					}
+					break;
 				}
 			}
 			if (nomeservizio.equals("") || tiposervizio.equals("") || idSoggErogatore.equals("") || idAccordo.equals("") || versione.equals("")) {
@@ -1095,14 +1104,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			String fruitoriLabel = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI;
 
-			// controllo visualizzazione colonna ruolo
-
-			List<String> protocolli = this.core.getProtocolli();
+			
+			List<AccordoServizioParteComune> listApc = new ArrayList<AccordoServizioParteComune>();
+			List<String> protocolli = new ArrayList<String>();
+			
 			boolean showRuoli = false;
-			for (String protocollo : protocolli) {
-				showRuoli = showRuoli || this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo);
+			for (AccordoServizioParteSpecifica asps : lista) {
+				AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo());
+				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+				String tipoSoggetto = asps.getTipoSoggettoErogatore();
+				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
+				showRuoli = showRuoli ||  this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
+				
+				listApc.add(apc);
+				protocolli.add(protocollo);
 			}
-
+			// controllo visualizzazione colonna ruolo
 			List<String> listaLabelTabella = new ArrayList<String>();
 
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
@@ -1135,7 +1152,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
-			for (AccordoServizioParteSpecifica asps : lista) {
+			for (int i = 0; i < lista.size(); i++) {
+				AccordoServizioParteSpecifica asps = lista.get(i);
 
 				Vector<DataElement> e = new Vector<DataElement>();
 
@@ -1195,7 +1213,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				//if (idsAcc.contains(servizio.getIdAccordo()))
 				// accordiChange.do
 
-				AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo());
+				AccordoServizioParteComune apc = listApc.get(i);
+				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
 				Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(apc);
 
@@ -1206,15 +1225,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setValue(asps.getAccordoServizioParteComune());
 				e.addElement(de);
 				
-				
-
 				// Colonna ruoli
-				String tipoSoggetto = asps.getTipoSoggettoErogatore();
-				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
-
+				String protocollo = protocolli.get(i);
 				if(showRuoli){
 					de = new DataElement();
-					if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){ 
+					if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){ 
 						de.setValue((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
 								AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
 									AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
@@ -2157,7 +2172,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addServiziToDati(Vector<DataElement> dati, String nomeServizio, String tipoServizio, String oldNomeServizio, String oldTipoServizio,
 			String provider, String provString, String[] soggettiList, String[] soggettiListLabel,
-			String accordo, String[] accordiList, String[] accordiListLabel, String servcorr, BinaryParameter wsdlimpler,
+			String accordo, ServiceBinding serviceBinding, String[] accordiList, String[] accordiListLabel, String servcorr, BinaryParameter wsdlimpler,
 			BinaryParameter wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
 			String statoPackage,String oldStato,String versione,
@@ -2291,42 +2306,57 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 		}
 
-		//Servizio (portType) 
-		if (ptList != null) {
-			if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
-				de.setType(DataElementType.SELECT);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-				de.setValues(ptList);
-				de.setLabels(ptList);
-				de.setSelected(portType);
-				//				de.setOnChange("CambiaAccordoServizio('" + tipoOp + "')");
-				de.setPostBack(true);
-				if (!isModalitaAvanzata) {
-					de.setRequired(true);
+		switch(serviceBinding) {
+		case REST:
+			
+			//Servizio (portType)  nascosto nel caso REST
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
+			de.setValue(portType != null && !"".equals(portType) ? portType : portType);
+			dati.addElement(de);
+			break;
+		case SOAP:
+		default:
+			//Servizio (portType)  visibile nel caso SOAP
+			if (ptList != null) {
+				if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
+					de.setType(DataElementType.SELECT);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
+					de.setValues(ptList);
+					de.setLabels(ptList);
+					de.setSelected(portType);
+					//				de.setOnChange("CambiaAccordoServizio('" + tipoOp + "')");
+					de.setPostBack(true);
+					if (!isModalitaAvanzata) {
+						de.setRequired(true);
+					}
+					dati.addElement(de);
+				}else{
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
+					de.setValue(portType != null && !"".equals(portType) ? portType : portType);
+					dati.addElement(de);
+
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
+					de.setType(DataElementType.TEXT);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE_LABEL);
+					de.setValue(portType != null && !"".equals(portType) ? portType : portType);
+					dati.addElement(de);
 				}
-				dati.addElement(de);
 			}else{
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
-				de.setType(DataElementType.HIDDEN);
+				de.setType(DataElementType.HIDDEN );
 				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-				de.setValue(portType != null && !"".equals(portType) ? portType : portType);
-				dati.addElement(de);
-
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
-				de.setType(DataElementType.TEXT);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE_LABEL);
-				de.setValue(portType != null && !"".equals(portType) ? portType : portType);
 				dati.addElement(de);
 			}
-		}else{
-			de = new DataElement();
-			de.setType(DataElementType.HIDDEN );
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-			dati.addElement(de);
+			
+			break;
 		}
 
 		//Sezione Soggetto Erogatore (provider)
@@ -2539,7 +2569,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}else{
 				de.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE);
 			}
-			if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){	
+			if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){	
 				de.setType(DataElementType.TEXT);
 			} else {
 				de.setType(DataElementType.HIDDEN);
@@ -2749,7 +2779,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 		}
 
-		//Specifica dei porti di accesso
+		//Specifica dei porti di accesso [TODO] aspettare risposta mail
 
 		if(isModalitaAvanzata){
 			de = new DataElement();
@@ -2775,7 +2805,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 
-			boolean isSupportoAsincrono = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo);
+			boolean isSupportoAsincrono = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 			boolean isRuoloNormale =  !( (servcorr != null) && ((servcorr.equals(Costanti.CHECK_BOX_ENABLED)) || servcorr.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_ABILITATO)) ) ;
 
 			if (tipoOp.equals(TipoOperazione.ADD)) {
@@ -3004,7 +3034,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addServiziToDatiAsHidden(Vector<DataElement> dati, String nomeservizio, String tiposervizio,
 			String provider, String provString, String[] soggettiList, String[] soggettiListLabel,
-			String accordo, String[] accordiList, String[] accordiListLabel, String servcorr, String wsdlimpler,
+			String accordo, ServiceBinding serviceBinding, String[] accordiList, String[] accordiListLabel, String servcorr, String wsdlimpler,
 			String wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
 			String statoPackage,String oldStato,String versione,
@@ -3598,7 +3628,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String tipoAccordo, boolean validazioneDocumenti,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
-			List<String> saList) throws Exception {
+			List<String> saList, ServiceBinding serviceBinding) throws Exception {
 		
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
@@ -3606,7 +3636,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		String protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(tiposervizio);
 
-		boolean isProfiloAsincronoSupportatoDalProtocollo = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo);
+		boolean isProfiloAsincronoSupportatoDalProtocollo = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 

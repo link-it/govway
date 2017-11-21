@@ -194,12 +194,29 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			IdSoggetto idSoggettoReferente = as.getSoggettoReferente();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggettoReferente.getTipo());
-			isSupportoProfiloAsincrono = acCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo );
+		
 			
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			MessageType messageType = apcCore.toMessageMessageType(as.getMessageType());
 			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
-
+			
+			isSupportoProfiloAsincrono = acCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
+			
+			// fromato specifica default se e' null
+			if(formatoSpecifica == null) {
+				if(serviceBinding != null) {
+					switch(serviceBinding) {
+					case REST:
+						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3);
+						break;
+					case SOAP:
+					default:
+						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WSDL_11);
+						break;
+					}
+				}
+			}
+			
 			String oldwsdl = "";
 			byte[] wsdlbyte = null;
 			String label = null;

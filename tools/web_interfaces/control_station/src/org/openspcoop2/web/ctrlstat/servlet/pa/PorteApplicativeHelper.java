@@ -59,6 +59,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -750,7 +751,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			String autenticazioneOpzionale, String autenticazioneCustom, String autorizzazioneCustom,
 			boolean isSupportatoAutenticazioneSoggetti,
 			String autorizzazioneAutenticati,String autorizzazioneRuoli,String autorizzazioneRuoliTipologia,
-			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc, ServiceBinding serviceBinding,
 			String statoPorta) throws Exception {
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
@@ -1430,7 +1431,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			};
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
-			if(this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+			if(this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoGestManifest);
 				de.setSelected(gestManifest);

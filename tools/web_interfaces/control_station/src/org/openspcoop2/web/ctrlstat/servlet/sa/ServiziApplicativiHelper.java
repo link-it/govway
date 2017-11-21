@@ -45,6 +45,7 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -1196,8 +1197,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
 				}
 				
-				supportAsincroni = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
-						|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+				List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
+				for (ServiceBinding serviceBinding : serviceBindingListProtocollo) {
+					supportAsincroni = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+							|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+				}
+				
 				if(supportAsincroni==false){
 					if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
 						supportAsincroni = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
@@ -1353,8 +1358,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						boolean supportoAsincronoPuntualeSoggetto = true;
 						if(useIdSogg==false){
 							String protocolloPuntuale = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario()); 
-							supportoAsincronoPuntualeSoggetto = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloPuntuale, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
-									|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloPuntuale, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+							List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocolloPuntuale);
+							for (ServiceBinding serviceBinding : serviceBindingListProtocollo) {
+								supportoAsincronoPuntualeSoggetto = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloPuntuale,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+										|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloPuntuale, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+							}
+
 							if(supportoAsincronoPuntualeSoggetto==false){
 								if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
 									supportoAsincronoPuntualeSoggetto = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();

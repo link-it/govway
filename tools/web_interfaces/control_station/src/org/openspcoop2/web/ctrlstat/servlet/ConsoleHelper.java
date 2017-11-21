@@ -3245,8 +3245,11 @@ public class ConsoleHelper {
 		}
 		return de;
 	}
-	
 	public DataElement getMessageTypeDataElement(String parametroMessageType, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value) throws Exception{
+		return this.getMessageTypeDataElement(parametroMessageType, protocolFactory, serviceBinding, value, false);
+	}
+	
+	public DataElement getMessageTypeDataElement(String parametroMessageType, IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding,MessageType value, boolean hidden) throws Exception{
 		DataElement de = null;
 		try {
 			List<MessageType> messageTypeList = this.core.getMessageTypeList(protocolFactory, serviceBinding);
@@ -3255,7 +3258,7 @@ public class ConsoleHelper {
 			de.setName(parametroMessageType);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE);
 			
-			if(messageTypeList != null && messageTypeList.size() > 1){
+			if(!hidden && messageTypeList != null && messageTypeList.size() > 1){
 					de.setSelected(value != null ? value.toString() : null);
 					de.setType(DataElementType.SELECT);
 					//de.setPostBack(true);

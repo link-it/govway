@@ -458,7 +458,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 								tipoAccordo, servCorrList != null ? servCorrList.toArray(new String[servCorrList.size()]) : null, servcorr, 
 										aziCorrList != null ? aziCorrList.toArray(new String[aziCorrList.size()]) : null, azicorr,protocollo,
 												soapActionOp, styleOp, useOp, nsWSDLOp, 
-												opTypeOp, messageInputCnt, messageOutputCnt);
+												opTypeOp, messageInputCnt, messageOutputCnt,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
@@ -584,7 +584,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 						opCorrelateList != null ? opCorrelateList.toArray(new String[opCorrelateList.size()]) : null,as.getStatoPackage(),
 								tipoAccordo, servCorrList != null ? servCorrList.toArray(new String[servCorrList.size()]) : null, servcorr, 
 										aziCorrList != null ? aziCorrList.toArray(new String[aziCorrList.size()]) : null, azicorr,protocollo,
-												soapActionOp, styleOp, useOp, nsWSDLOp,  opTypeOp, messageInputCnt, messageOutputCnt);
+												soapActionOp, styleOp, useOp, nsWSDLOp,  opTypeOp, messageInputCnt, messageOutputCnt,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

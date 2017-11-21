@@ -54,6 +54,7 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -1550,6 +1551,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 				Object object = importInformationMissingException.getObject();
 				AccordoServizioParteComune aspc = (AccordoServizioParteComune) object;
+				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(aspc.getServiceBinding());						
 				
 				// Provo a comprendere il protocollo associato all'accordo di servizio parte comune se e' definito il soggetto referente
 				// Serve per visualizzare i profili di collaborazione supportati
@@ -1657,7 +1659,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_PROFILO+contatoreAzione);
 							de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_PROFILO);
 							de.setType(DataElementType.SELECT);
-							de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocolloAccordo));
+							de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocolloAccordo,serviceBinding));
 							de.setSelected(profiloCollaborazione);
 							if(this.archiviCore.isShowCorrelazioneAsincronaInAccordi()){
 								de.setPostBack(true);
