@@ -170,8 +170,10 @@ for (int i = 0; i < dati.size(); i++) {
 	    				
 	    				%>
 	        			<div class="prop">
-	        				<label><%=deLabel %></label>
-	        				<span><%=noteValue %></span>
+						<label><%=deLabel %></label>
+        					<div class="<%=classDivNoEdit %>">
+							<span class="<%=classSpanNoEdit %>"><%=noteValue %></span>
+						</div>
 	        			</div>
 	        			<%
 	        		} else { // else note
