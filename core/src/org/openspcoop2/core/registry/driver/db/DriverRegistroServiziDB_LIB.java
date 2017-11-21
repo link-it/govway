@@ -2919,7 +2919,7 @@ public class DriverRegistroServiziDB_LIB {
 					else
 						updateStmt.setString(index++, getValue(as.getProfiloCollaborazione()));
 				}
-				updateStmt.setString(11,getValue(pt.getStyle()));
+				updateStmt.setString(index++,getValue(pt.getStyle()));
 				// log.debug("CRUDAzione CREATE :
 				// \n"+formatSQLString(updateQuery,idAccordo,idSoggettoFruitore,idConnettore,wsdlImplementativoErogatore,wsdlImplementativoFruitore));
 				n = updateStmt.executeUpdate();
