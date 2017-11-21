@@ -2726,19 +2726,19 @@ public class RicezioneBuste {
 			IProtocolConfiguration protocolConfiguration = protocolFactory.createProtocolConfiguration();
 			if(bustaRichiesta.getProfiloDiCollaborazione()!=null && 
 					!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.UNKNOWN.equals(bustaRichiesta.getProfiloDiCollaborazione()) ){
-				if(protocolConfiguration.isSupportato(bustaRichiesta.getProfiloDiCollaborazione())==false){
+				if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),bustaRichiesta.getProfiloDiCollaborazione())==false){
 					throw new Exception("Profilo di Collaborazione ["+bustaRichiesta.getProfiloDiCollaborazione().getEngineValue()+"]");
 				}
 			}
 			// NOTA:  FiltroDuplicati, consegnaAffidabile, idCollaborazione, consegnaInOrdine verificato in sbustamento.
 			if(bustaRichiesta.getScadenza()!=null){
-				if(protocolConfiguration.isSupportato(FunzionalitaProtocollo.SCADENZA)==false){
+				if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.SCADENZA)==false){
 					throw new Exception(FunzionalitaProtocollo.SCADENZA.getEngineValue());
 				}
 			}
 			
 			if(configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory)){
-				if(protocolConfiguration.isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)==false){
+				if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)==false){
 					throw new Exception(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS.getEngineValue());
 				}
 			}			

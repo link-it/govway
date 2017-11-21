@@ -38,6 +38,8 @@ import java.io.Serializable;
  * 			&lt;element name="integrationError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorConfiguration" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="mediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeCollection" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="interfaces" type="{http://www.openspcoop2.org/protocol/manifest}InterfacesConfiguration" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="profile" type="{http://www.openspcoop2.org/protocol/manifest}CollaborationProfile" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="functionality" type="{http://www.openspcoop2.org/protocol/manifest}Functionality" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="soapHeaderBypassMustUnderstand" type="{http://www.openspcoop2.org/protocol/manifest}SoapHeaderBypassMustUnderstand" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="soap11" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
@@ -61,6 +63,8 @@ import java.io.Serializable;
   	"integrationError",
   	"mediaTypeCollection",
   	"interfaces",
+  	"profile",
+  	"functionality",
   	"soapHeaderBypassMustUnderstand"
   }
 )
@@ -93,6 +97,22 @@ public class SoapConfiguration extends org.openspcoop2.utils.beans.BaseBean impl
 
   public void setInterfaces(InterfacesConfiguration interfaces) {
     this.interfaces = interfaces;
+  }
+
+  public CollaborationProfile getProfile() {
+    return this.profile;
+  }
+
+  public void setProfile(CollaborationProfile profile) {
+    this.profile = profile;
+  }
+
+  public Functionality getFunctionality() {
+    return this.functionality;
+  }
+
+  public void setFunctionality(Functionality functionality) {
+    this.functionality = functionality;
   }
 
   public SoapHeaderBypassMustUnderstand getSoapHeaderBypassMustUnderstand() {
@@ -187,6 +207,12 @@ public class SoapConfiguration extends org.openspcoop2.utils.beans.BaseBean impl
 
   @XmlElement(name="interfaces",required=false,nillable=false)
   protected InterfacesConfiguration interfaces;
+
+  @XmlElement(name="profile",required=false,nillable=false)
+  protected CollaborationProfile profile;
+
+  @XmlElement(name="functionality",required=false,nillable=false)
+  protected Functionality functionality;
 
   @XmlElement(name="soapHeaderBypassMustUnderstand",required=false,nillable=false)
   protected SoapHeaderBypassMustUnderstand soapHeaderBypassMustUnderstand;

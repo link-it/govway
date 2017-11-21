@@ -90,6 +90,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -1424,7 +1425,7 @@ public class ConfigurazionePdDReader {
 	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaDelegata pd, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			try{
-				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+				if(protocolFactory.createProtocolConfiguration().isSupportato(ServiceBinding.SOAP,FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
 					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
 				}
@@ -1441,7 +1442,7 @@ public class ConfigurazionePdDReader {
 			return false;
 		}else{
 			try{
-				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+				if(protocolFactory.createProtocolConfiguration().isSupportato(ServiceBinding.SOAP,FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
 					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
 				}
@@ -2058,7 +2059,7 @@ public class ConfigurazionePdDReader {
 
 		if(pa==null){
 			try{
-				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+				if(protocolFactory.createProtocolConfiguration().isSupportato(ServiceBinding.SOAP,FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
 					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
 				}
@@ -2076,7 +2077,7 @@ public class ConfigurazionePdDReader {
 			return false;
 		}else {
 			try{
-				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+				if(protocolFactory.createProtocolConfiguration().isSupportato(ServiceBinding.SOAP,FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 					// Bug: 286: devo usare il default della configurazione SOLO SE il protocollo lo supporta.
 					return this.isGestioneManifestAttachments(connectionPdD); //configurazione di default
 				}

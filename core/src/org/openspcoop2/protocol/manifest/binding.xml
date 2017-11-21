@@ -102,11 +102,29 @@
     <value name="schema" field="schema" default="false" usage="optional" style="attribute"/>
     <value name="conversations" field="conversations" default="false" usage="optional" style="attribute"/>
   </mapping>
+  <mapping name="profile" class="org.openspcoop2.protocol.manifest.CollaborationProfile">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="oneway" field="oneway" default="true" usage="optional" style="attribute"/>
+    <value name="inputOutput" field="inputOutput" default="true" usage="optional" style="attribute"/>
+    <value name="asyncInputOutput" field="asyncInputOutput" default="false" usage="optional" style="attribute"/>
+    <value name="polledInputOutput" field="polledInputOutput" default="false" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="functionality" class="org.openspcoop2.protocol.manifest.Functionality">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="duplicateFilter" field="duplicateFilter" default="false" usage="optional" style="attribute"/>
+    <value name="acknowledgement" field="acknowledgement" default="false" usage="optional" style="attribute"/>
+    <value name="conversationIdentifier" field="conversationIdentifier" default="false" usage="optional" style="attribute"/>
+    <value name="deliveryOrder" field="deliveryOrder" default="false" usage="optional" style="attribute"/>
+    <value name="expiration" field="expiration" default="false" usage="optional" style="attribute"/>
+    <value name="manifestAttachments" field="manifestAttachments" default="false" usage="optional" style="attribute"/>
+  </mapping>
   <mapping name="soap" class="org.openspcoop2.protocol.manifest.SoapConfiguration">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure name="integrationError" field="integrationError" usage="required" map-as="_IntegrationErrorConfiguration_Type"/>
     <structure name="mediaTypeCollection" field="mediaTypeCollection" usage="optional" map-as="_SoapMediaTypeCollection_Type"/>
     <structure name="interfaces" field="interfaces" usage="optional" map-as="_InterfacesConfiguration_Type"/>
+    <structure field="profile" usage="optional" map-as="org.openspcoop2.protocol.manifest.CollaborationProfile"/>
+    <structure field="functionality" usage="optional" map-as="org.openspcoop2.protocol.manifest.Functionality"/>
     <structure field="soapHeaderBypassMustUnderstand" usage="optional" map-as="org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand"/>
     <value name="soap11" field="soap11" usage="required" style="attribute"/>
     <value name="soap11_withAttachments" field="soap11WithAttachments" default="true" usage="optional" style="attribute"/>
@@ -264,8 +282,6 @@
   <mapping name="service" class="org.openspcoop2.protocol.manifest.Service">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure field="types" usage="required" map-as="org.openspcoop2.protocol.manifest.ServiceTypes"/>
-    <structure field="profile" usage="optional" map-as="org.openspcoop2.protocol.manifest.CollaborationProfile"/>
-    <structure field="functionality" usage="optional" map-as="org.openspcoop2.protocol.manifest.Functionality"/>
   </mapping>
   <mapping name="types" class="org.openspcoop2.protocol.manifest.ServiceTypes">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
@@ -280,22 +296,6 @@
     <value name="name" field="name" usage="required" style="attribute"/>
     <value name="messageType" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="binding" field="binding" usage="optional" enum-value-method="toString" style="attribute"/>
-  </mapping>
-  <mapping name="profile" class="org.openspcoop2.protocol.manifest.CollaborationProfile">
-    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
-    <value name="oneway" field="oneway" default="true" usage="optional" style="attribute"/>
-    <value name="inputOutput" field="inputOutput" default="true" usage="optional" style="attribute"/>
-    <value name="asyncInputOutput" field="asyncInputOutput" default="false" usage="optional" style="attribute"/>
-    <value name="polledInputOutput" field="polledInputOutput" default="false" usage="optional" style="attribute"/>
-  </mapping>
-  <mapping name="functionality" class="org.openspcoop2.protocol.manifest.Functionality">
-    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
-    <value name="duplicateFilter" field="duplicateFilter" default="false" usage="optional" style="attribute"/>
-    <value name="acknowledgement" field="acknowledgement" default="false" usage="optional" style="attribute"/>
-    <value name="conversationIdentifier" field="conversationIdentifier" default="false" usage="optional" style="attribute"/>
-    <value name="deliveryOrder" field="deliveryOrder" default="false" usage="optional" style="attribute"/>
-    <value name="expiration" field="expiration" default="false" usage="optional" style="attribute"/>
-    <value name="manifestAttachments" field="manifestAttachments" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="versions" class="org.openspcoop2.protocol.manifest.Versions">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>

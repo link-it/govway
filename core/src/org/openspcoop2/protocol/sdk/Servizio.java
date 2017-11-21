@@ -27,7 +27,6 @@ import java.util.Date;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 

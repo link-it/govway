@@ -157,14 +157,14 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * 
 	 * @return True se il protocollo fornito come parametro viene supportato dal protocollo
 	 */
-	public boolean isSupportato(ProfiloDiCollaborazione profiloCollaborazione) throws ProtocolException;
+	public boolean isSupportato(ServiceBinding serviceBinding, ProfiloDiCollaborazione profiloCollaborazione) throws ProtocolException;
 	
 	/**
 	 * Restituisce l'indicazione se la funzionalita' fornita come parametro viene supportata dal protocollo
 	 * 
 	 * @return True se la funzionalita' fornita come parametro viene supportata dal protocollo
 	 */
-	public boolean isSupportato(FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
+	public boolean isSupportato(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
 		
 	/**
 	 * Ritorna l'indicazione se l'autenticazione dei soggetti viene supportato dal protocollo

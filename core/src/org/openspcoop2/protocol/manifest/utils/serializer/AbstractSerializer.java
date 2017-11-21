@@ -31,8 +31,6 @@ import org.openspcoop2.protocol.manifest.Registry;
 import org.openspcoop2.protocol.manifest.UrlMapping;
 import org.openspcoop2.protocol.manifest.ServiceTypes;
 import org.openspcoop2.protocol.manifest.Service;
-import org.openspcoop2.protocol.manifest.CollaborationProfile;
-import org.openspcoop2.protocol.manifest.Functionality;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeMapping;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeCollection;
 import org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping;
@@ -55,6 +53,8 @@ import org.openspcoop2.protocol.manifest.RestMediaTypeMapping;
 import org.openspcoop2.protocol.manifest.OrganizationTypes;
 import org.openspcoop2.protocol.manifest.InterfaceConfiguration;
 import org.openspcoop2.protocol.manifest.Version;
+import org.openspcoop2.protocol.manifest.CollaborationProfile;
+import org.openspcoop2.protocol.manifest.Functionality;
 import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping;
 import org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping;
@@ -1091,242 +1091,6 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Service service,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Service.class, service, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: CollaborationProfile
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>collaborationProfile</var>
-	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,CollaborationProfile collaborationProfile) throws SerializerException {
-		this.objToXml(fileName, CollaborationProfile.class, collaborationProfile, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>collaborationProfile</var>
-	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, CollaborationProfile.class, collaborationProfile, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param file Xml file to serialize the object <var>collaborationProfile</var>
-	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,CollaborationProfile collaborationProfile) throws SerializerException {
-		this.objToXml(file, CollaborationProfile.class, collaborationProfile, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param file Xml file to serialize the object <var>collaborationProfile</var>
-	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, CollaborationProfile.class, collaborationProfile, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param out OutputStream to serialize the object <var>collaborationProfile</var>
-	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,CollaborationProfile collaborationProfile) throws SerializerException {
-		this.objToXml(out, CollaborationProfile.class, collaborationProfile, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param out OutputStream to serialize the object <var>collaborationProfile</var>
-	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, CollaborationProfile.class, collaborationProfile, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param collaborationProfile Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(CollaborationProfile collaborationProfile) throws SerializerException {
-		return this.objToXml(CollaborationProfile.class, collaborationProfile, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param collaborationProfile Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(CollaborationProfile.class, collaborationProfile, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param collaborationProfile Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(CollaborationProfile collaborationProfile) throws SerializerException {
-		return this.objToXml(CollaborationProfile.class, collaborationProfile, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
-	 * 
-	 * @param collaborationProfile Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(CollaborationProfile.class, collaborationProfile, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: Functionality
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>functionality</var>
-	 * @param functionality Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,Functionality functionality) throws SerializerException {
-		this.objToXml(fileName, Functionality.class, functionality, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>functionality</var>
-	 * @param functionality Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,Functionality functionality,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, Functionality.class, functionality, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param file Xml file to serialize the object <var>functionality</var>
-	 * @param functionality Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,Functionality functionality) throws SerializerException {
-		this.objToXml(file, Functionality.class, functionality, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param file Xml file to serialize the object <var>functionality</var>
-	 * @param functionality Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,Functionality functionality,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, Functionality.class, functionality, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param out OutputStream to serialize the object <var>functionality</var>
-	 * @param functionality Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,Functionality functionality) throws SerializerException {
-		this.objToXml(out, Functionality.class, functionality, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param out OutputStream to serialize the object <var>functionality</var>
-	 * @param functionality Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,Functionality functionality,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, Functionality.class, functionality, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param functionality Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(Functionality functionality) throws SerializerException {
-		return this.objToXml(Functionality.class, functionality, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param functionality Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(Functionality functionality,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Functionality.class, functionality, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param functionality Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(Functionality functionality) throws SerializerException {
-		return this.objToXml(Functionality.class, functionality, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
-	 * 
-	 * @param functionality Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(Functionality functionality,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Functionality.class, functionality, prettyPrint).toString();
 	}
 	
 	
@@ -3923,6 +3687,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Version version,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Version.class, version, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: CollaborationProfile
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>collaborationProfile</var>
+	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CollaborationProfile collaborationProfile) throws SerializerException {
+		this.objToXml(fileName, CollaborationProfile.class, collaborationProfile, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>collaborationProfile</var>
+	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CollaborationProfile.class, collaborationProfile, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param file Xml file to serialize the object <var>collaborationProfile</var>
+	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CollaborationProfile collaborationProfile) throws SerializerException {
+		this.objToXml(file, CollaborationProfile.class, collaborationProfile, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param file Xml file to serialize the object <var>collaborationProfile</var>
+	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CollaborationProfile.class, collaborationProfile, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param out OutputStream to serialize the object <var>collaborationProfile</var>
+	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CollaborationProfile collaborationProfile) throws SerializerException {
+		this.objToXml(out, CollaborationProfile.class, collaborationProfile, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param out OutputStream to serialize the object <var>collaborationProfile</var>
+	 * @param collaborationProfile Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CollaborationProfile.class, collaborationProfile, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param collaborationProfile Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CollaborationProfile collaborationProfile) throws SerializerException {
+		return this.objToXml(CollaborationProfile.class, collaborationProfile, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param collaborationProfile Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CollaborationProfile.class, collaborationProfile, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param collaborationProfile Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CollaborationProfile collaborationProfile) throws SerializerException {
+		return this.objToXml(CollaborationProfile.class, collaborationProfile, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>collaborationProfile</var> of type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * 
+	 * @param collaborationProfile Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CollaborationProfile collaborationProfile,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CollaborationProfile.class, collaborationProfile, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Functionality
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>functionality</var>
+	 * @param functionality Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Functionality functionality) throws SerializerException {
+		this.objToXml(fileName, Functionality.class, functionality, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>functionality</var>
+	 * @param functionality Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Functionality functionality,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Functionality.class, functionality, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param file Xml file to serialize the object <var>functionality</var>
+	 * @param functionality Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Functionality functionality) throws SerializerException {
+		this.objToXml(file, Functionality.class, functionality, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param file Xml file to serialize the object <var>functionality</var>
+	 * @param functionality Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Functionality functionality,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Functionality.class, functionality, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param out OutputStream to serialize the object <var>functionality</var>
+	 * @param functionality Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Functionality functionality) throws SerializerException {
+		this.objToXml(out, Functionality.class, functionality, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param out OutputStream to serialize the object <var>functionality</var>
+	 * @param functionality Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Functionality functionality,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Functionality.class, functionality, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param functionality Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Functionality functionality) throws SerializerException {
+		return this.objToXml(Functionality.class, functionality, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param functionality Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Functionality functionality,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Functionality.class, functionality, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param functionality Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Functionality functionality) throws SerializerException {
+		return this.objToXml(Functionality.class, functionality, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>functionality</var> of type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param functionality Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Functionality functionality,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Functionality.class, functionality, prettyPrint).toString();
 	}
 	
 	

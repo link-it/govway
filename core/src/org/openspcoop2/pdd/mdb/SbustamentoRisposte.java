@@ -413,7 +413,7 @@ public class SbustamentoRisposte extends GenericLib {
 			try{
 				IProtocolConfiguration protocolConfiguration = protocolFactory.createProtocolConfiguration();
 				if(imbustamentoFiltroDuplicatiAbilitato){
-					if(protocolConfiguration.isSupportato(FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
 						throw new Exception(FunzionalitaProtocollo.FILTRO_DUPLICATI.getEngineValue());
 					}
 				}				

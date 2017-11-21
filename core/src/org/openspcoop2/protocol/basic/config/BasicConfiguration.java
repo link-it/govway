@@ -256,12 +256,26 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
-	public boolean isSupportato(ProfiloDiCollaborazione profiloCollaborazione)
+	public boolean isSupportato(ServiceBinding serviceBinding, ProfiloDiCollaborazione profiloCollaborazione)
 			throws ProtocolException {
-		if(profiloCollaborazione==null){
-			throw new ProtocolException("Param not defined");
+		if(profiloCollaborazione==null || serviceBinding==null){
+			throw new ProtocolException("Params not defined");
 		}
-		CollaborationProfile profilo = this.registroManifest.getService().getProfile();
+		CollaborationProfile profilo = null;
+		if(ServiceBinding.REST.equals(serviceBinding)) {
+			if(this.bindingManifest.getRest()!=null) {
+				profilo = new CollaborationProfile();
+				profilo.setInputOutput(true);
+				profilo.setOneway(false);
+				profilo.setAsyncInputOutput(false);
+				profilo.setPolledInputOutput(false);
+			}
+		}
+		else {
+			if(this.bindingManifest.getSoap()!=null) {
+				profilo = this.bindingManifest.getSoap().getProfile();
+			}
+		}
 		switch (profiloCollaborazione) {
 		case ONEWAY:
 			return (profilo!=null ? profilo.isOneway() : true); 
@@ -279,12 +293,23 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 
 	@Override
-	public boolean isSupportato(FunzionalitaProtocollo funzionalitaProtocollo)
+	public boolean isSupportato(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo)
 			throws ProtocolException {
-		if(funzionalitaProtocollo==null){
-			throw new ProtocolException("Param not defined");
+		if(funzionalitaProtocollo==null || serviceBinding==null){
+			throw new ProtocolException("Params not defined");
 		}
-		Functionality funzionalita = this.registroManifest.getService().getFunctionality();
+		Functionality funzionalita = null;
+		if(ServiceBinding.REST.equals(serviceBinding)) {
+			if(this.bindingManifest.getRest()!=null) {
+				// non supportato ancora
+				//funzionalita = this.bindingManifest.getRest().getFunctionality();
+			}
+		}
+		else {
+			if(this.bindingManifest.getSoap()!=null) {
+				funzionalita = this.bindingManifest.getSoap().getFunctionality();
+			}
+		}
 		switch (funzionalitaProtocollo) {
 		case FILTRO_DUPLICATI:
 			return (funzionalita!=null ? funzionalita.isDuplicateFilter() : false); 

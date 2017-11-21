@@ -115,6 +115,26 @@
               <xsd:attribute name="conversations" type="xsd:boolean" use="optional" default="false"/>
        </xsd:complexType>
        
+       
+       
+       <!-- Collaboration and Functionality Configuration -->
+       
+       <xsd:complexType name="CollaborationProfile">
+              <xsd:attribute name="oneway" type="xsd:boolean" use="optional" default="true"/>
+              <xsd:attribute name="inputOutput" type="xsd:boolean" use="optional" default="true"/>
+              <xsd:attribute name="asyncInputOutput" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="polledInputOutput" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+       
+       <xsd:complexType name="Functionality">
+              <xsd:attribute name="duplicateFilter" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="acknowledgement" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="conversationIdentifier" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="deliveryOrder" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="expiration" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="manifestAttachments" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+       
  
  
        <!-- Soap Configuration -->
@@ -124,6 +144,8 @@
                      <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
                      <xsd:element name="mediaTypeCollection" type="SoapMediaTypeCollection" minOccurs="0"/>
                      <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
+                     <xsd:element name="profile" type="CollaborationProfile" minOccurs="0"/>
+                     <xsd:element name="functionality" type="Functionality" minOccurs="0"/>
                      <xsd:element name="soapHeaderBypassMustUnderstand" type="SoapHeaderBypassMustUnderstand" minOccurs="0"/>
               </xsd:all>
               <xsd:attribute name="soap11" type="xsd:boolean" use="required" />
@@ -181,6 +203,7 @@
                      <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
                      <xsd:element name="mediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
                      <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
+                     <xsd:element name="functionality" type="Functionality" minOccurs="0"/> <!-- Al momento inutilizzato -->
               </xsd:all>
               <xsd:attribute name="xml" type="xsd:boolean" use="required" />
               <xsd:attribute name="json" type="xsd:boolean" use="required" />
@@ -283,8 +306,6 @@
        <xsd:complexType name="Service">
               <xsd:sequence>
                      <xsd:element name="types" type="ServiceTypes"/>
-                     <xsd:element name="profile" type="CollaborationProfile" minOccurs="0"/>
-                     <xsd:element name="functionality" type="Functionality" minOccurs="0"/>
               </xsd:sequence>
        </xsd:complexType>
        
@@ -302,22 +323,6 @@
               <xsd:attribute name="name" type="xsd:string" use="required" />
               <xsd:attribute name="messageType" type="MessageType" use="optional"  />
               <xsd:attribute name="binding" type="ServiceBinding" use="optional" />
-       </xsd:complexType>
-       
-       <xsd:complexType name="CollaborationProfile">
-              <xsd:attribute name="oneway" type="xsd:boolean" use="optional" default="true"/>
-              <xsd:attribute name="inputOutput" type="xsd:boolean" use="optional" default="true"/>
-              <xsd:attribute name="asyncInputOutput" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="polledInputOutput" type="xsd:boolean" use="optional" default="false"/>
-       </xsd:complexType>
-       
-       <xsd:complexType name="Functionality">
-              <xsd:attribute name="duplicateFilter" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="acknowledgement" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="conversationIdentifier" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="deliveryOrder" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="expiration" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="manifestAttachments" type="xsd:boolean" use="optional" default="false"/>
        </xsd:complexType>
        
        

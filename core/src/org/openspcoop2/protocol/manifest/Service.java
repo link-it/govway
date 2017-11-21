@@ -35,8 +35,6 @@ import java.io.Serializable;
  * &lt;complexType name="Service">
  * 		&lt;sequence>
  * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}ServiceTypes" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="profile" type="{http://www.openspcoop2.org/protocol/manifest}CollaborationProfile" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="functionality" type="{http://www.openspcoop2.org/protocol/manifest}Functionality" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -50,9 +48,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Service", 
   propOrder = {
-  	"types",
-  	"profile",
-  	"functionality"
+  	"types"
   }
 )
 
@@ -70,33 +66,11 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.types = types;
   }
 
-  public CollaborationProfile getProfile() {
-    return this.profile;
-  }
-
-  public void setProfile(CollaborationProfile profile) {
-    this.profile = profile;
-  }
-
-  public Functionality getFunctionality() {
-    return this.functionality;
-  }
-
-  public void setFunctionality(Functionality functionality) {
-    this.functionality = functionality;
-  }
-
   private static final long serialVersionUID = 1L;
 
 
 
   @XmlElement(name="types",required=true,nillable=false)
   protected ServiceTypes types;
-
-  @XmlElement(name="profile",required=false,nillable=false)
-  protected CollaborationProfile profile;
-
-  @XmlElement(name="functionality",required=false,nillable=false)
-  protected Functionality functionality;
 
 }

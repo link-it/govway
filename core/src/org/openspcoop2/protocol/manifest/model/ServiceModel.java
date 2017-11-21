@@ -41,8 +41,6 @@ public class ServiceModel extends AbstractModel<Service> {
 		super();
 	
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.ServiceTypesModel(new Field("types",org.openspcoop2.protocol.manifest.ServiceTypes.class,"Service",Service.class));
-		this.PROFILE = new org.openspcoop2.protocol.manifest.model.CollaborationProfileModel(new Field("profile",org.openspcoop2.protocol.manifest.CollaborationProfile.class,"Service",Service.class));
-		this.FUNCTIONALITY = new org.openspcoop2.protocol.manifest.model.FunctionalityModel(new Field("functionality",org.openspcoop2.protocol.manifest.Functionality.class,"Service",Service.class));
 	
 	}
 	
@@ -51,18 +49,12 @@ public class ServiceModel extends AbstractModel<Service> {
 		super(father);
 	
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.ServiceTypesModel(new ComplexField(father,"types",org.openspcoop2.protocol.manifest.ServiceTypes.class,"Service",Service.class));
-		this.PROFILE = new org.openspcoop2.protocol.manifest.model.CollaborationProfileModel(new ComplexField(father,"profile",org.openspcoop2.protocol.manifest.CollaborationProfile.class,"Service",Service.class));
-		this.FUNCTIONALITY = new org.openspcoop2.protocol.manifest.model.FunctionalityModel(new ComplexField(father,"functionality",org.openspcoop2.protocol.manifest.Functionality.class,"Service",Service.class));
 	
 	}
 	
 	
 
 	public org.openspcoop2.protocol.manifest.model.ServiceTypesModel TYPES = null;
-	 
-	public org.openspcoop2.protocol.manifest.model.CollaborationProfileModel PROFILE = null;
-	 
-	public org.openspcoop2.protocol.manifest.model.FunctionalityModel FUNCTIONALITY = null;
 	 
 
 	@Override
