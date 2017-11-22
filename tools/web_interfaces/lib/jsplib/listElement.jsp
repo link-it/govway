@@ -74,12 +74,7 @@ var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 var nomeServletDel_Custom = '<%= nomeServletDel %>';
 var nomeServletList_Custom = '<%= nomeServletList %>';
 </SCRIPT>
-
-
 <jsp:include page="/jsp/listElementCustom.jsp" flush="true" />
-
-
-
 <SCRIPT type="text/javascript">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
@@ -202,16 +197,35 @@ function PrevPage(pageSize) {
     document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params;
 };
 
-function Search(string) {
+function Search(form) {
   if (nr != 0) {
     return false;
   }
   nr = 1;
-  string = URLEncode(string);
-  if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&search='+string+'&index=0&iddati='+iddati+params;
-  else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?search='+string+'&index=0&iddati='+iddati+params;
+
+  addHidden(form, 'index' , 0);
+  addHidden(form, 'iddati' , iddati);
+
+  // formatParams
+  
+   if (formatPar != null && formatPar != ""){
+  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
+  	for (var i = 0; i < pairs.length; i++) {
+      	var pair = pairs[i].split('=');
+      	addHidden(form, pair[0] , pair[1]);
+  	}
+   }
+   if (params != null && params != ""){
+	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
+	   for (var i = 0; i < pairs.length; i++) {
+	       var pair = pairs[i].split('=');
+	       addHidden(form, pair[0] , pair[1]);
+	   }
+   }
+      
+  // form submit
+  document.form.submit();
+ 
 };
 
 function Export(url){
@@ -242,11 +256,50 @@ function Esporta(tipo) {
 		  
 };
 
+function Change(form,dataElementName) {
+    
+    //aggiungo parametro per indicare che si tratta di postback e azzero idhid
+    addHidden(form, 'isPostBack' , true);
+    if(dataElementName!=null)
+    	addHidden(document.form, 'postBackElementName' , dataElementName);
+    addHidden(form, 'index' , 0);
+    addHidden(form, 'iddati' , iddati);
+  
+    // formatParams
+    
+     if (formatPar != null && formatPar != ""){
+    	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
+    	for (var i = 0; i < pairs.length; i++) {
+        	var pair = pairs[i].split('=');
+        	addHidden(form, pair[0] , pair[1]);
+    	}
+     }
+     if (params != null && params != ""){
+	   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
+	   for (var i = 0; i < pairs.length; i++) {
+	       var pair = pairs[i].split('=');
+	       addHidden(form, pair[0] , pair[1]);
+	   }
+     }
+        
+    // form submit
+    document.form.submit();
+}
+
+function addHidden(theForm, name, value) {
+    // Create a hidden input element, and append it to the form:
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    theForm.appendChild(input);
+}
+
 var panelListaRicercaOpen = false; // controlla l'aperture del pannello di ricerca.
 <%
 if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) || pd.getFilter() != null){
 	String searchDescription = pd.getSearchDescription();
-	if (!searchDescription.equals("")){
+	if (!searchDescription.equals("") || pd.getFilter() != null){
 	%>	panelListaRicercaOpen = true; <% 
 	} 
 }%>

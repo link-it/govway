@@ -42,7 +42,7 @@ PageData pd = (PageData) session.getAttribute(pdString);
 %>
 
 <td valign="top" class="td2PageBody">
-<form name='form' method='get' onSubmit='return false;' id="form">
+<form name='form' method='post' onSubmit='return false;' id="form">
 
 <%
 Hashtable<String,String> hidden = pd.getHidden();
@@ -112,21 +112,19 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 						  	String [] values = filtro.getValues();
 						  	String [] labels = filtro.getLabels();
 						  	String selezionato = filtro.getSelected();
-						
+						  	String selSubType = !filtro.getSubType().equals("") ? (" size='"+filtro.getRows()+"' " + filtro.getSubType() + " ") : " ";
+							String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\"Change(document.form,'filter')\" " ) : " ";
+							String classInput = filtro.getStyleClass();
 						  	%>
 									<tr>
 										<td>
-											<div class="filter">
-											  	<span class="history"><%= filtro.getLabel() %></span>&nbsp;&nbsp;
-											  	<select name="filter" onChange="Filtra()">
+											<div class="prop">
+												<label><%= filtro.getLabel() %></label>
+											  	<select name="filter" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>">
 											  	<%
-											  
 											  	for (int i = 0; i < values.length; i++) {
-											    	if (values[i].equals(selezionato)) {
-											      		%><option value='<%= values[i] %>' selected><%= labels[i] %><%
-											    	} else {
-											      		%><option value='<%= values[i] %>'><%= labels[i] %><%
-											    	}
+											  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
+											  		%><option value="<%= values[i]  %>" <%=optionSel %> ><%= labels[i] %></option><%
 											  	}
 											  	%></select>
 											</div>
@@ -137,8 +135,8 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 								<tr>
 									<td class="buttonrow">
 										<div class="buttonrowricerca">
-											<input type="button" onClick="Search(document.form.search.value)" value='Filtra' />
-											<input type="button" onClick="document.form.reset(); Search(document.form.search.value);" value='Ripulisci' />
+											<input type="button" onClick="Search(document.form)" value='Filtra' />
+											<input type="button" onClick="document.form.reset(); Search(document.form);" value='Ripulisci' />
 										</div>								
 									
 									</td>
