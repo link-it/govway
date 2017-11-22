@@ -85,6 +85,7 @@ public class Costanti {
 	}
 	
 	public final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = "undefined";
+	public final static String SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED = "undefined";
 	
 	private final static String JMX_NAME_DATASOURCE_PDD = "DatasourcePdD";
 	public static DataSourceParams getDataSourceParamsPdD(boolean bindJMX,String tipoDB){
