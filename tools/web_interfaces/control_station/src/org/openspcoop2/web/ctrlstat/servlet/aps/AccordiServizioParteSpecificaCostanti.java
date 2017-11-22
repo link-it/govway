@@ -326,6 +326,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_SOGGETTO_MANCANTE = "Dati incompleti. &Egrave; necessario indicare un Soggetto";
 	public static final String MESSAGGIO_ERRORE_SPAZI_BIANCHI_NON_CONSENTITI = "Non inserire spazi nei campi di testo";
 	public static final String MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO = "&Egrave; necessario indicare un Servizio.";
+	public static final String MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO_PORT_TYPE_NON_PRESENTI = "&Egrave; necessario indicare un Servizio, definire almeno un Port-Type per completare l'operazione.";
 	public static final String MESSAGGIO_ERRORE_USO_ACCORDO_SERVIZIO_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA = "Non &egrave; possibile utilizzare un accordo di servizio con visibilit&agrave; privata, in un servizio con visibilit&agrave; pubblica.";
 
 	

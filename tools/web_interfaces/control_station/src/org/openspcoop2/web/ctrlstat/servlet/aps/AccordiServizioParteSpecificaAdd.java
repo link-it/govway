@@ -151,6 +151,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String autenticazioneHttp;
 	private Properties parametersPOST;
 	private ServiceBinding serviceBinding = null;
+	private org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = null;
 
 	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
 
@@ -498,6 +499,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				soggettoReferente = new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome());
 
 				this.serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+				this.formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+				
 
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
@@ -851,8 +854,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.oldPortType = null;
 	
 						}
+					}  else {
+						if(ptList ==null || ptList.length < 1){
+							this.nomeservizio = as.getNome();
+						}
 					}
-	
 	
 					if(this.nomePA!=null && !"".equals(this.nomePA)){
 						if(this.nomePA.equals(this.oldTipoSoggettoErogatore+this.oldNomeSoggettoErogatore+"/"+this.tiposervizio+this.portType)){
@@ -909,7 +915,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio,  null, null, 
 						this.provider, "", 
-						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, accordiList, accordiListLabel, this.servcorr, 
+						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, this.formatoSpecifica, accordiList, accordiListLabel, this.servcorr, 
 						this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
@@ -1054,7 +1060,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
 						this.provider, "", 
-						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, accordiList, accordiListLabel,
+						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, this.formatoSpecifica, accordiList, accordiListLabel,
 						this.servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
@@ -1201,7 +1207,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
 							this.provider, "", 
-							soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, accordiList, accordiListLabel, this.servcorr, 
+							soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, this.formatoSpecifica, accordiList, accordiListLabel, this.servcorr, 
 							this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,

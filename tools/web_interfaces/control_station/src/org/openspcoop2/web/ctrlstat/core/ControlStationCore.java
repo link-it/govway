@@ -4675,6 +4675,18 @@ public class ControlStationCore {
 		return interfacceSupportate;
 	}
 	
+	public List<InterfaceType> getInterfaceTypeList(String protocollo, ServiceBinding serviceBinding) throws DriverConfigurazioneException{
+		String nomeMetodo = "getInterfaceTypeList";
+		List<InterfaceType> interfacceSupportate = new ArrayList<InterfaceType>();
+		try {
+			interfacceSupportate = this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getInterfacceSupportate(serviceBinding);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		return interfacceSupportate;
+	}
+	
 	public ServiceBinding getDefaultServiceBinding(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
 		String nomeMetodo = "getDefaultServiceBinding";
 		try {

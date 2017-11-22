@@ -388,6 +388,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 		
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 
 			// Lista di Accordi Compatibili
 			List<AccordoServizioParteComune> asParteComuneCompatibili = null;
@@ -816,7 +817,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio,
 							provider, provString,
-							soggettiList, soggettiListLabel, accordo,serviceBinding,accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+							soggettiList, soggettiListLabel, accordo,serviceBinding, formatoSpecifica, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
@@ -932,7 +933,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
 						provider, provString, soggettiList, 
-						soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+						soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
+						accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 						null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
@@ -1167,7 +1169,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
 							provider, provString, soggettiList,
-							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
+							soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
+							accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,

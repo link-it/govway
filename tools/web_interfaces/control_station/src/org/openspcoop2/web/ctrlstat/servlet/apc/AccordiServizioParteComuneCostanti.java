@@ -315,6 +315,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	public final static String PARAMETRO_APC_MESSAGE_TYPE = CostantiControlStation.PARAMETRO_MESSAGE_TYPE;
 	public final static String PARAMETRO_APC_INTERFACE_TYPE = CostantiControlStation.PARAMETRO_INTERFACE_TYPE;
+	public final static String PARAMETRO_APC_SERVICE_BINDING_SEARCH = CostantiControlStation.PARAMETRO_SERVICE_BINDING_SEARCH;
 
 	public final static String PARAMETRO_APC_AZIONI_NOME = "nomeaz";
 	public final static String PARAMETRO_APC_AZIONI_CORRELATA = "azicorr";
@@ -597,6 +598,7 @@ public class AccordiServizioParteComuneCostanti {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_SERVICE_BINDING_SOAP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_SERVICE_BINDING_REST = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_SERVICE_BINDING_QUALSIASI = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
 		
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_DEFAULT;
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_SOAP_11 = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_11;

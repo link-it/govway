@@ -1699,6 +1699,7 @@ public class ConsoleHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 
 			String search = ricerca.getSearchString(idLista);
+			String filter = ricerca.getFilter(idLista);
 
 			if (this.request.getParameter("index") != null) {
 				offset = Integer.parseInt(this.request.getParameter("index"));
@@ -1715,6 +1716,16 @@ public class ConsoleHelper {
 					ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
 				} else {
 					ricerca.setSearchString(idLista, search);
+				}
+			}
+			
+			if (this.request.getParameter("filter") != null) {
+				filter = this.request.getParameter("filter");
+				filter = filter.trim();
+				if (filter.equals("")) {
+					ricerca.setFilter(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED);
+				} else {
+					ricerca.setFilter(idLista, filter);
 				}
 			}
 

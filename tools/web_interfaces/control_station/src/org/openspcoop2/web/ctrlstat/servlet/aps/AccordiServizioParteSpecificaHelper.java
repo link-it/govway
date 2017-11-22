@@ -283,6 +283,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				case SOAP:
 				default:
 					if (portType == null || "".equals(portType) || "-".equals(portType)) {
+						if(ptList==null || ptList.length == 0){
+							this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO_PORT_TYPE_NON_PRESENTI);
+							return false;
+						}
+						
 						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO);
 						return false;
 					}
@@ -2172,7 +2177,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addServiziToDati(Vector<DataElement> dati, String nomeServizio, String tipoServizio, String oldNomeServizio, String oldTipoServizio,
 			String provider, String provString, String[] soggettiList, String[] soggettiListLabel,
-			String accordo, ServiceBinding serviceBinding, String[] accordiList, String[] accordiListLabel, String servcorr, BinaryParameter wsdlimpler,
+			String accordo, ServiceBinding serviceBinding, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType, String[] accordiList, String[] accordiListLabel, String servcorr, BinaryParameter wsdlimpler,
 			BinaryParameter wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
 			String statoPackage,String oldStato,String versione,
@@ -2779,127 +2784,142 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 		}
 
+		List<org.openspcoop2.protocol.manifest.constants.InterfaceType> interfaceTypeList = this.core.getInterfaceTypeList(protocollo, serviceBinding);
+		
 		//Specifica dei porti di accesso [TODO] aspettare risposta mail
-
-		if(isModalitaAvanzata){
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SPECIFICA_PORTI_ACCESSO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
+		
+		if(interfaceTypeList == null || interfaceTypeList.size() == 0) {
+			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI_ESTESA);
 			de.setValue(""+validazioneDocumenti);
-			//		if (tipoOp.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
-			if (tipoOp.equals(TipoOperazione.ADD) ) {
-				de.setType(DataElementType.CHECKBOX);
-				if(validazioneDocumenti){
-					de.setSelected(Costanti.CHECK_BOX_ENABLED);
-				}else{
-					de.setSelected(Costanti.CHECK_BOX_DISABLED);
-				}
-			}else{
-				de.setType(DataElementType.HIDDEN);
-			}
+			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 			de.setSize(this.getSize());
 			dati.addElement(de);
+			
+		} else {
 
-			boolean isSupportoAsincrono = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
-			boolean isRuoloNormale =  !( (servcorr != null) && ((servcorr.equals(Costanti.CHECK_BOX_ENABLED)) || servcorr.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_ABILITATO)) ) ;
-
-			if (tipoOp.equals(TipoOperazione.ADD)) {
-				if(isSupportoAsincrono){
-					if(isRuoloNormale){
-						dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE, "", getSize()));
+			if(isModalitaAvanzata){
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SPECIFICA_PORTI_ACCESSO);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI_ESTESA);
+				de.setValue(""+validazioneDocumenti);
+				//		if (tipoOp.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+				if (tipoOp.equals(TipoOperazione.ADD) ) {
+					de.setType(DataElementType.CHECKBOX);
+					if(validazioneDocumenti){
+						de.setSelected(Costanti.CHECK_BOX_ENABLED);
+					}else{
+						de.setSelected(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else{
+					de.setType(DataElementType.HIDDEN);
+				}
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+	
+				boolean isSupportoAsincrono = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
+				boolean isRuoloNormale =  !( (servcorr != null) && ((servcorr.equals(Costanti.CHECK_BOX_ENABLED)) || servcorr.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_ABILITATO)) ) ;
+	
+				if (tipoOp.equals(TipoOperazione.ADD)) {
+					if(isSupportoAsincrono){
+						if(isRuoloNormale){
+							dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE, "", getSize()));
+							dati.addAll(wsdlimpler.getFileNameDataElement());
+							dati.add(wsdlimpler.getFileIdDataElement());
+							
+	//						de = new DataElement();
+	//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
+	//						de.setValue(wsdlimpler);
+	//						de.setType(DataElementType.FILE);
+	//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+	//						de.setSize(this.getSize());
+	//						dati.addElement(de);
+						} else {
+							dati.add(wsdlimplfru.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE, "", getSize()));
+							dati.addAll(wsdlimplfru.getFileNameDataElement());
+							dati.add(wsdlimplfru.getFileIdDataElement());
+							
+	//						de = new DataElement();
+	//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
+	//						de.setValue(wsdlimplfru);
+	//						de.setType(DataElementType.FILE);
+	//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
+	//						de.setSize(this.getSize());
+	//						dati.addElement(de);
+						}
+					}else {
+						dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO, "", getSize()));
 						dati.addAll(wsdlimpler.getFileNameDataElement());
 						dati.add(wsdlimpler.getFileIdDataElement());
 						
-//						de = new DataElement();
-//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
-//						de.setValue(wsdlimpler);
-//						de.setType(DataElementType.FILE);
-//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-//						de.setSize(this.getSize());
-//						dati.addElement(de);
-					} else {
-						dati.add(wsdlimplfru.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE, "", getSize()));
-						dati.addAll(wsdlimplfru.getFileNameDataElement());
-						dati.add(wsdlimplfru.getFileIdDataElement());
-						
-//						de = new DataElement();
-//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
-//						de.setValue(wsdlimplfru);
-//						de.setType(DataElementType.FILE);
-//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
-//						de.setSize(this.getSize());
-//						dati.addElement(de);
+	//					de = new DataElement();
+	//					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
+	//					de.setValue(wsdlimpler);
+	//					de.setType(DataElementType.FILE);
+	//					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+	//					de.setSize(this.getSize());
+	//					dati.addElement(de);
 					}
-				}else {
-					dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO, "", getSize()));
-					dati.addAll(wsdlimpler.getFileNameDataElement());
-					dati.add(wsdlimpler.getFileIdDataElement());
-					
-//					de = new DataElement();
-//					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
-//					de.setValue(wsdlimpler);
-//					de.setType(DataElementType.FILE);
-//					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-//					de.setSize(this.getSize());
-//					dati.addElement(de);
-				}
-			} else {
-				if(isSupportoAsincrono){
-					if(isRuoloNormale){
+				} else {
+					if(isSupportoAsincrono){
+						if(isRuoloNormale){
+							de = new DataElement();
+							de.setType(DataElementType.LINK);
+							de.setUrl(
+									AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_WSDL_CHANGE,
+									new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
+									new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE));
+	
+							de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
+							dati.addElement(de);
+						}else{
+							de = new DataElement();
+							de.setType(DataElementType.LINK);
+							de.setUrl(
+									AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_WSDL_CHANGE,
+									new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
+									new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE));
+							de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
+							dati.addElement(de);
+						}
+					}else {
 						de = new DataElement();
 						de.setType(DataElementType.LINK);
 						de.setUrl(
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_WSDL_CHANGE,
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE));
-
-						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
-						dati.addElement(de);
-					}else{
-						de = new DataElement();
-						de.setType(DataElementType.LINK);
-						de.setUrl(
-								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_WSDL_CHANGE,
-								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
-								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE));
-						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
+	
+						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
 						dati.addElement(de);
 					}
-				}else {
+				}
+	
+			} else {
+				if (tipoOp.equals(TipoOperazione.ADD)) {
 					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_WSDL_CHANGE,
-							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
-							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE));
-
-					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
+					String wsdlimplerS =  wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : ""; 
+					de.setValue(wsdlimplerS);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+					dati.addElement(de);
+	
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
+					String wsdlimplfruS =  wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : ""; 
+					de.setValue(wsdlimplfruS);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
 					dati.addElement(de);
 				}
-			}
-
-		} else {
-			if (tipoOp.equals(TipoOperazione.ADD)) {
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
-				String wsdlimplerS =  wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : ""; 
-				de.setValue(wsdlimplerS);
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-				dati.addElement(de);
-
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
-				String wsdlimplfruS =  wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : ""; 
-				de.setValue(wsdlimplfruS);
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
-				dati.addElement(de);
 			}
 		}
 

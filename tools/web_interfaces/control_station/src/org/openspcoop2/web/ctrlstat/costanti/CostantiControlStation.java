@@ -152,6 +152,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING = "Service Binding";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_SOAP = "Soap";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_REST = "Rest";
+	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT = "Default";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "Soap-1.1";
@@ -208,12 +209,15 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
 	
 	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
+	public final static String PARAMETRO_SERVICE_BINDING_SEARCH = "serviceBindingSearch";
 	public final static String PARAMETRO_MESSAGE_TYPE = "messageType";
 	public final static String PARAMETRO_INTERFACE_TYPE = "interfaceType";
 	
 	public final static String PARAMETRO_ELEMENTO_XML = "elemxml";
 	public final static String PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA = "mode";
 	public final static String PARAMETRO_ID_CORRELAZIONE= "idcorr";
+	
+	public final static String PARAMETRO_FILTER = "filter";
 	
 	/** DEFAULT VALUES **/
 	
@@ -233,6 +237,7 @@ public class CostantiControlStation {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP = "SOAP";
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST = "REST";
+	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI = "";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_DEFAULT = "D";
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "SOAP_11";

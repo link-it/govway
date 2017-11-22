@@ -179,7 +179,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
-
+			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
+			
 			List<String> versioniProtocollo = null;
 			//String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
@@ -655,7 +656,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, null, null, 
 					provider, provString, soggettiList,
-					soggettiListLabel, accordo, serviceBinding, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru,
+					soggettiListLabel, accordo, serviceBinding, formatoSpecifica, 
+					accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru,
 					TipoOperazione.CHANGE, this.id, tipiServizi, profilo, portType, ptList,
 					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,

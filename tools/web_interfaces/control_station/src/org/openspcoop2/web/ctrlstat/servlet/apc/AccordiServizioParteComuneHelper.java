@@ -4263,12 +4263,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-
+			
 			int idLista = Liste.ACCORDI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-
+			String filter = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED.equals(ricerca.getFilter(idLista)) ? "" : ricerca.getFilter(idLista));
+			
+			this.pd.setFilter(this.getFilterServiceBinding(filter,false));
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -4641,6 +4644,49 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+
+
+	public DataElement getFilterServiceBinding(String serviceBinding,boolean postBack) throws Exception{
+		DataElement de = null;
+		try {
+			ServiceBinding[] serviceBindings = ServiceBinding.values();
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_FILTER);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
+			de.setSelected(serviceBinding != null ? serviceBinding : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(postBack);
+
+			String [] values = new String[serviceBindings.length + 1];
+			String [] labels = new String[serviceBindings.length + 1];
+			
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			for (int i =0; i < serviceBindings.length ; i ++) {
+				ServiceBinding serviceBinding2 = serviceBindings[i];
+				switch (serviceBinding2) {
+				case REST:
+					labels[i+1] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST;
+					values[i+1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
+					break;
+				case SOAP:
+				default:
+					labels[i+1] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
+					values[i+1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
+					break;
+				}
+			}
+			
+			de.setValues(values);
+			de.setLabels(labels);
+			de.setSize(this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return de;
+	}
+
 
 
 	public boolean accordiComponentiCheckData(TipoOperazione tipoOp,String idServizioComponente)
