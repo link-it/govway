@@ -1,3 +1,13 @@
+2017-11-23  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-678
+	La PdD non inoltrava correttamente un messaggio che presentava la particolarità di avere una struttura Multipart con solamente un allegato.
+	Il messaggio veniva processato correttamente dalla porta ma poi veniva inoltrato verso il nodo successivo senza una struttura Multipart
+	(veniva eliminato il boundary) lasciando inalterato il Content-Type che invece presentava sempre l'indicazione MultipartRelated.
+	L'effetto di questo errore era che il nodo che riceveva il messaggio non riusciva a processarlo: "Unable to internalize message"
+	Si trattava dello stesso errore individuato nel bug OP-374 però non circoscritto in mtom ma presente più in generale in qualsiasi struttura multipart.
+
 2017-11-10  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
