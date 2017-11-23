@@ -55,6 +55,7 @@ import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
@@ -615,9 +616,9 @@ public class ServletTestService extends HttpServlet {
 					}
 					else{
 						
-						if(contentTypeRichiesta!=null && contentTypeRichiesta.contains("multipart/related")==false)
-							contentTypeRisposta = contentTypeRichiesta; // uso lo stesso contentType della richiesta.
-						else
+						if(contentTypeRichiesta!=null && contentTypeRichiesta.contains("multipart/related")==false){
+							contentTypeRisposta = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta); // uso lo stesso contentType della richiesta.
+						}else
 							contentTypeRisposta = "text/xml"; // default soap 1.1
 						
 						byte[] a = boutStaticFile.toByteArray();

@@ -56,7 +56,9 @@ public class MultipartUtils {
 			boundary = new ByteArrayOutputStream();
 			int i=0;
 			while(i<input.length){
-				boundary.write(input[i]);
+				if(input[i]!='\n') {
+					boundary.write(input[i]);
+				}
 				if(input[i]=='\n' || i==input.length){
 					if(boundary.toString().startsWith("--"))
 						break;
@@ -67,8 +69,11 @@ public class MultipartUtils {
 			}
 
 			String bS = null;
-			if(boundary.size() != 0)
-				bS = boundary.toString().substring(0,boundary.toString().length()-2);
+			if(boundary.size() != 0) {
+				//bS = boundary.toString().substring(0,boundary.toString().length()-2);
+				// Lo \n non lo includo proprio nel calcolo del boundary
+				bS = boundary.toString();
+			}
 
 			boundary.close();
 			return bS;

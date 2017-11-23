@@ -215,6 +215,8 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 
 	/* ContentType */
 	
+	protected abstract String _super_getContentType();
+	
 	@Override
 	public void updateContentType() throws MessageException {
 		try{
@@ -224,6 +226,64 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 				// Bug Fix: OP-375  'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="application/xop+xml"'
 				//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
 				saveChanges();
+			}
+			if(countAttachments() > 0){
+				if(saveRequired()) {
+					saveChanges();
+				}
+			}
+			else {
+			
+				if(saveRequired()) {
+					
+					boolean pulizia = false;
+					if((ContentTypeUtilities.isMtom(this.getContentType())) ){
+						// Bug Fix: OP-375  'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="application/xop+xml"'
+						//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
+						saveChanges();
+						pulizia = true;
+					}
+					else if((ContentTypeUtilities.isMultipart( this.getContentType())) ){
+						// Bug Fix: OP-678 'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="text/xml"'
+						//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
+						saveChanges();
+						pulizia = true;
+					}
+					
+					if(pulizia) {
+						try {
+							String ct = _super_getContentType();
+							javax.mail.internet.ContentType ctObj = new javax.mail.internet.ContentType(ct);
+							
+							String type = ctObj.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE);
+							if(type!=null && !type.equals("")) {
+								ctObj.getParameterList().remove(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE);
+							}
+							
+							String boundary = ctObj.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY);
+							if(boundary!=null && !boundary.equals("")) {
+								ctObj.getParameterList().remove(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY);
+							}
+							
+							String start = ctObj.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START);
+							if(start!=null && !start.equals("")) {
+								ctObj.getParameterList().remove(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START);
+							}
+							
+							String startInfo = ctObj.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START_INFO);
+							if(startInfo!=null && !startInfo.equals("")) {
+								ctObj.getParameterList().remove(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START_INFO);
+							}
+							
+							this.setContentType(ctObj.toString());
+							
+						}catch(Throwable t) {
+							System.err.println("Pulizia messaggio Multipart normalizzato senza attachment non riuscita: "+t.getMessage());
+							t.printStackTrace(System.err);
+						}
+					}
+				}
+				
 			}
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);

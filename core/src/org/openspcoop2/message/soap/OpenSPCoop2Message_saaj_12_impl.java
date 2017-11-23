@@ -84,6 +84,11 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 	/* ContentType */
 	
 	@Override
+	protected String _super_getContentType() {
+		return getMessage1_2_FIX_Impl().getContentType();
+	}
+	
+	@Override
 	public void setContentType(String type) throws MessageException{
 		getMessage1_2_FIX_Impl().setContentType(type);
 	}
