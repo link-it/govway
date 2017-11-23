@@ -10717,7 +10717,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 //		ricerca.getSearchString(idLista);
 
 		this.log.debug("search : " + search);
-		this.log.debug("FILTER : " + filter);
+		this.log.debug("filter : " + filter);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -10767,44 +10767,42 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObjectExclude.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo="+CostantiDB.ACCORDI+".id");
 			}
 
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			if (superuser!=null && (!superuser.equals("")))
+				sqlQueryObject.addWhereCondition("superuser = ?");
+			
+			//query con search
 			if (!search.equals("")) {
-				//query con search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
-					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereCondition(false, 
 						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
 						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
 						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
-				if(excludeASParteComune){
-					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
-				}
-				if(excludeASComposti){
-					sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
-				}
-				sqlQueryObject.setANDLogicOperator(true);
-				queryString = sqlQueryObject.createSQLQuery();
-			} else {
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-				sqlQueryObject.addSelectCountField("*", "cont");
-				if (superuser!=null && (!superuser.equals("")))
-					sqlQueryObject.addWhereCondition("superuser = ?");
-				if(excludeASParteComune){
-					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
-				}
-				if(excludeASComposti){
-					sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
-				}
-				sqlQueryObject.setANDLogicOperator(true);
-				queryString = sqlQueryObject.createSQLQuery();
 			}
-
+			
+			if(excludeASParteComune){
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
+			}
+			if(excludeASComposti){
+				sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
+			}
+			
+			//query con filter
+			if(!filter.equals("")) {
+				sqlQueryObject.addWhereCondition("service_binding = ?");
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
+			int index = 1;
 			if (superuser!=null && (!superuser.equals("")))
-				stmt.setString(1, superuser);
+				stmt.setString(index++, superuser);
+			if(!filter.equals("")) {
+				stmt.setString(index++, filter);
+			}
+			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -10814,75 +10812,55 @@ IDriverWS ,IMonitoraggioRisorsa{
 			// ricavo le entries
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "id");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "nome");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "versione");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
+			//sqlQueryObject.addSelectField("id_referente");
+			if (superuser!=null && (!superuser.equals("")))
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
+			
 			if (!search.equals("")) { // con search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "id");
-				sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "nome");
-				sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "versione");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
-				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
-				//sqlQueryObject.addSelectField("id_referente");
-				if (superuser!=null && (!superuser.equals("")))
-					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
 				sqlQueryObject.addWhereCondition(false, 
 						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
 						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
 						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
-				if(excludeASParteComune){
-					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
-				}
-				if(excludeASComposti){
-					sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
-				}
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("tipo_soggetto");
-				sqlQueryObject.addOrderBy("nome_soggetto");
-				sqlQueryObject.addOrderBy("nome");
-				sqlQueryObject.addOrderBy("versione");
-				sqlQueryObject.setSortType(true);
-				sqlQueryObject.setLimit(limit);
-				sqlQueryObject.setOffset(offset);
-				queryString = sqlQueryObject.createSQLQuery();
-			} else {
-				// senza search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "id");
-				sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "nome");
-				sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "versione");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
-				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
-				//sqlQueryObject.addSelectField("id_referente");
-				if (superuser!=null && (!superuser.equals("")))
-					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
-				if(excludeASParteComune){
-					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
-				}
-				if(excludeASComposti){
-					sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
-				}
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("tipo_soggetto");
-				sqlQueryObject.addOrderBy("nome_soggetto");
-				sqlQueryObject.addOrderBy("nome");
-				sqlQueryObject.addOrderBy("versione");
-				sqlQueryObject.setSortType(true);
-				sqlQueryObject.setLimit(limit);
-				sqlQueryObject.setOffset(offset);
-				queryString = sqlQueryObject.createSQLQuery();
 			}
 
+			if(!filter.equals("")) { // con filter
+				sqlQueryObject.addWhereCondition("service_binding = ?");
+			}
+			
+			if(excludeASParteComune){
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
+			}
+			if(excludeASComposti){
+				sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectExclude);
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("tipo_soggetto");
+			sqlQueryObject.addOrderBy("nome_soggetto");
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.addOrderBy("versione");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
 
 			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(queryString));
 
 			stmt = con.prepareStatement(queryString);
+			index = 1;
 			if (superuser!=null && (!superuser.equals("")))
-				stmt.setString(1, superuser);
+				stmt.setString(index++, superuser);
+			if(!filter.equals("")) {
+				stmt.setString(index++, filter);
+			}
 			risultato = stmt.executeQuery();
 
 			AccordoServizioParteComune accordo = null;
