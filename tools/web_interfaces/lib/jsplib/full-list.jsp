@@ -136,7 +136,7 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 									<td class="buttonrow">
 										<div class="buttonrowricerca">
 											<input type="button" onClick="Search(document.form)" value='Filtra' />
-											<input type="button" onClick="document.form.reset(); Search(document.form);" value='Ripulisci' />
+											<input type="button" onClick="Reset(document.form);" value='Ripulisci' />
 										</div>								
 									
 									</td>

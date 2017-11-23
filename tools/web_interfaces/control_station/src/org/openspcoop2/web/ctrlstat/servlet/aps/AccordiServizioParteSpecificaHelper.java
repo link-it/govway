@@ -2784,21 +2784,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 		}
 
-		List<org.openspcoop2.protocol.manifest.constants.InterfaceType> interfaceTypeList = this.core.getInterfaceTypeList(protocollo, serviceBinding);
-		
-		//Specifica dei porti di accesso [TODO] aspettare risposta mail
-		
-		if(interfaceTypeList == null || interfaceTypeList.size() == 0) {
-			
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI_ESTESA);
-			de.setValue(""+validazioneDocumenti);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
-			de.setSize(this.getSize());
-			dati.addElement(de);
-			
-		} else {
+		if(serviceBinding.equals(ServiceBinding.SOAP) && interfaceType.equals(org.openspcoop2.protocol.manifest.constants.InterfaceType.WSDL_11)){
 
 			if(isModalitaAvanzata){
 				de = new DataElement();

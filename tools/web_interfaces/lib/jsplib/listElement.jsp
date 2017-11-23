@@ -228,6 +228,43 @@ function Search(form) {
  
 };
 
+function Reset(form) {
+	  if (nr != 0) {
+	    return false;
+	  }
+	  nr = 1;
+	  
+	  document.form.reset();
+	  if(document.form.filter){
+		document.form.filter.selectedIndex = 0;
+	  }
+
+	  addHidden(form, 'index' , 0);
+	  addHidden(form, 'iddati' , iddati);
+
+	  // formatParams
+	  
+	   if (formatPar != null && formatPar != ""){
+	  	var pairs = ((formatPar[0] === '?' || formatPar[0] === '&') ? formatPar.substr(1) : formatPar).split('&');
+	  	for (var i = 0; i < pairs.length; i++) {
+	      	var pair = pairs[i].split('=');
+	      	addHidden(form, pair[0] , pair[1]);
+	  	}
+	   }
+	   if (params != null && params != ""){
+		   var pairs = ((params[0] === '?' || params[0] === '&') ? params.substr(1) : params).split('&');
+		   for (var i = 0; i < pairs.length; i++) {
+		       var pair = pairs[i].split('=');
+		       addHidden(form, pair[0] , pair[1]);
+		   }
+	  }
+	     
+	   
+	  // form submit
+	  document.form.submit();
+	 
+	};
+
 function Export(url){
 	document.location='<%= request.getContextPath() %>/'+url
 };
