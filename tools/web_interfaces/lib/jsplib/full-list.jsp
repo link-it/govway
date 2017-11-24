@@ -284,7 +284,7 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 								  
 							for (int j = 0; j < e.size(); j++) {
 							    DataElement de = (DataElement) e.elementAt(j);
-						
+							    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
 							    String classLink = "";
 							    String classSpan = "";
 							    
@@ -351,7 +351,7 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 								} else { 
 								      // Tipo hidden
 								      if (de.getType().equals("hidden")) {
-										%><input type="hidden" name="<%= de.getName() %>" value="<%= de.getValue() %>" /><%
+										%><input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>" /><%
 								      } else {
 										// Tipo image
 										if (de.getType().equals("image")) {
@@ -386,9 +386,9 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 											    // Ciclo sulla lista di valori 
 											    for (int r = 0; r < stValues.length; r++) {
 											      if (stValues[r].equals(de.getSelected())) {
-										                 %><input type="radio" checked name='<%= de.getName() %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
+										                 %><input type="radio" checked name='<%= deName %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
 											      } else {
-										                 %><input type="radio" name='<%= de.getName() %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
+										                 %><input type="radio" name='<%= deName %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
 										              }
 										    	  if (r<stValues.length-1) {
 													%><br/><%

@@ -133,14 +133,15 @@ boolean fieldsetOpen = false;
 for (int i = 0; i < dati.size(); i++) {
 	DataElement de = (DataElement) dati.elementAt(i);
   
+	String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
   	String type = de.getType();
-  	String rowName="row_"+de.getName();
+  	String rowName="row_"+deName;
   	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
   	String deNote = de.getNote();
   	String classInput= de.getStyleClass();
 	
     	if (type.equals("hidden")) {
-    		%><input type="hidden" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"/><%
+    		%><input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/><%
     	} else { // else hidden
     		if (type.equals("title")){
     			// se c'e' un altro field set aperto viene chiuso
@@ -192,7 +193,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                				<label><%=deLabel %></label>
 	                				<div class="<%=classDivNoEdit %>"> 
 		                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
-		                				<input type="hidden" name="<%= de.getName() %>" value="<%= de.getValue() %>"/>
+		                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 		                			</div>
 	                				<% if(!deNote.equals("")){ %>
 							      		<p class="note"><%=deNote %></p>
@@ -211,7 +212,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
 								    			</div><%
 								    	} else {
-								      		%><input type="text" name="<%= de.getName() %>" value="<%= de.getValue() %>" class="<%= classInput %>">
+								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>">
 								      	<%
 								    	}
 								      	%>
@@ -229,7 +230,7 @@ for (int i = 0; i < dati.size(); i++) {
 						          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 												%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>">********</span></div><%
 						   					} else {
-												%><input class="<%= classInput %>" type="password" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"><%
+												%><input class="<%= classInput %>" type="password" name="<%= deName  %>" value="<%= de.getValue()  %>"><%
 						   					}
 					     					%>
 					     					<% if(!deNote.equals("")){ %>
@@ -252,7 +253,7 @@ for (int i = 0; i < dati.size(); i++) {
 						     						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= taValNoEdit %></span></div><%
 						     					} else {
 						     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
-						     						%><textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>" class="<%= classInput %>"><%= de.getValue() %></textarea><%
+						     						%><textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= de.getValue() %></textarea><%
 						     					}
 												%>
 						     					<% if(!deNote.equals("")){ %>
@@ -282,7 +283,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                                    	            	%> 
 	                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=fileValue %></span></div><%
 	                                    	      		} else {
-	                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= de.getName()  %>" class="<%= classInput %>"  
+	                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  
 										  	<%
 											  if (!de.getOnChange().equals("")) {
 												    %> onChange="postVersion_<%= de.getOnChange() %>"<%
@@ -308,7 +309,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                               								String selSubType = !de.getSubType().equals("") ? (" size='"+de.getRows()+"' " + de.getSubType() + " ") : " ";
 	                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + de.getOnChange() + "\" " ) : " ";
 	                               								
-	                          									%><select name="<%= de.getName()  %>" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>"><%
+	                          									%><select name="<%= deName  %>" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>"><%
 	                          									String [] values = de.getValues();
 	                                        					if (values != null) {
 	                            									String [] labels = de.getLabels();
@@ -343,7 +344,7 @@ for (int i = 0; i < dati.size(); i++) {
 						    									%>	<table class="controlset">
 				    													<tr> 
 				    														<td>
-						   														<input type="checkbox" name="<%= de.getName()  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> <%=disVal %> >
+						   														<input type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> <%=disVal %> >
 						   													</td>
 					   													</tr>
 					   												</table>
@@ -370,13 +371,13 @@ for (int i = 0; i < dati.size(); i++) {
 					  													String [] labels = de.getLabels();
 					  													for (int v = 0; v < values.length; v++) {
 					  														String chkVal = values[v].equals(de.getSelected()) ? " checked " : " ";
-					  														String id = de.getName() + "_" + v;
+					  														String id = deName + "_" + v;
 					  														
 					  														if (labels != null) {
-		                            											%><td><input type="radio" <%=chkVal %> name="<%= de.getName()  %>" value="<%= values[v]  %>" id="<%=id %>" />
+		                            											%><td><input type="radio" <%=chkVal %> name="<%= deName  %>" value="<%= values[v]  %>" id="<%=id %>" />
 		                            											<label for="<%=id %>"><%= labels[v] %></label></td><%
 		                            										} else {
-		                            											%><td><input type="radio" <%=chkVal %> name="<%= de.getName()  %>" value="<%= values[v]  %>" id="<%=id %>" />
+		                            											%><td><input type="radio" <%=chkVal %> name="<%= deName  %>" value="<%= values[v]  %>" id="<%=id %>" />
 																				<label for="<%=id %>"><%= values[v] %></label></td><%
 		                            										}
 					  														%><%

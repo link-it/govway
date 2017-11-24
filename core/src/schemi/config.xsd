@@ -99,7 +99,7 @@
 		<xsd:attribute name="identificazione" type="PortaDelegataAzioneIdentificazione" default="static"/>
 		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string"/>
-		<xsd:attribute name="force-wsdl-based" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="force-interface-based" type="StatoFunzionalita" default="disabilitato"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.ServizioApplicativo -->
 	<xsd:complexType name="porta-delegata-servizio-applicativo">
@@ -161,7 +161,7 @@
 		<xsd:attribute name="identificazione" type="PortaApplicativaAzioneIdentificazione" default="static"/>
 		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string"/>
-		<xsd:attribute name="force-wsdl-based" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="force-interface-based" type="StatoFunzionalita" default="disabilitato"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa.ServizioApplicativo -->
 	<xsd:complexType name="porta-applicativa-servizio-applicativo">
@@ -648,7 +648,7 @@
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
 			<xsd:enumeration value="soapActionBased"/>
-			<xsd:enumeration value="wsdlBased"/>
+			<xsd:enumeration value="interfaceBased"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PortaApplicativaAzioneIdentificazione">

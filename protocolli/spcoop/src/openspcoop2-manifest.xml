@@ -8,6 +8,39 @@
     <binding>
     	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
     		  soap12="false" soap12_withAttachments="false" soap12_mtom="false">
+    		<integration>
+    		    <implementation>
+    		    	<default name="{provider.type}{provider.name}/{service.type}{service.name}/{service.version}">
+    		    		<resource-identification default="protocol">
+    		    			<identification-mode>registry</identification-mode>
+    		    			<identification-mode>protocol</identification-mode>
+    		    		</resource-identification>
+    		    	</default>
+    		    	<resource name="${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${action.name}">
+    		    		<resource-identification default="registry" forceInterfaceMode="false">
+    		    			<identification-mode>registry</identification-mode>
+    		    		</action>
+    		    	</resource>
+    			</implementation>
+    			<subscrition>
+    				<default name="{subscriber.type}{subscriber.name}/{provider.type}{provider.name}/{service.type}{service.name}/{service.version}">
+    		    		<resource-identification default="urlBased" forceInterfaceMode="true" pattern=".*{implementation.name}/([^/|^?]*).*">
+    		    			<identification-mode>registry</identification-mode>
+    		    			<identification-mode>interface</identification-mode>
+    		    			<identification-mode>header</identification-mode>
+    		    			<identification-mode>url</identification-mode>
+    		    			<identification-mode>content</identification-mode>
+    		    			<identification-mode>input</identification-mode>
+    		    			<identification-mode>soapAction</identification-mode>
+    		    		</resource-identification>
+    		    	</default>
+    		    	<resource name="{subscriber.type}{subscriber.name}/${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${action.name}">
+    		    		<resource-identification default="registry" forceInterfaceMode="false">
+    		    			<identification-mode>registry</identification-mode>
+    		    		</action>
+    		    	</resource>
+    			</subscrition>
+    		</integration>
    			<integrationError>
     			<internal>
     				<default httpReturnCode="500" messageType="soap" />

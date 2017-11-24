@@ -1,3 +1,14 @@
+2017-11-24  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole, PddLoader]
+	Risolto Bug OP-676
+	In un accordo di servizio parte comune dove è stato creato un servizio con profilo sincrono e una azione con profilo ridefinito oneway,
+	se si procedeva a cambiare profilo all'azione, la console andava in errore e nei log si riscontrava quanto segue:
+	ERROR ... : Parameters processing failed.
+		java.lang.IllegalStateException: Parameters processing failed.
+		...
+	Il problema si riscontrava utilizzando Internet Explorer come browser
+
 2017-11-23  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
