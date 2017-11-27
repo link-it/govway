@@ -3801,15 +3801,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return exist;
 	}
 	
-	/**
-	 * Verifica l'esistenza di un risorsa con determinata coppia HttpMethod, Path  in un accordo
-	 * 
-	 * @param nome
-	 *                del port-type da verificare
-	 * @param idAccordo
-	 *                dell'accordo
-	 * @return true se il port-type esiste, false altrimenti
-	 */
 	public boolean existsAccordoServizioParteComuneResource(String httpMethod, String path, long idAccordo) throws DriverRegistroServiziException {
 
 		boolean exist = false;
@@ -3941,16 +3932,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return exist;
 	}
 	
-	/***
-	 * Verifica se esiste una representation associata alla resource o alla risposta indicata
-	 * 
-	 * @param idRisorsa
-	 * @param isRequest
-	 * @param idResponse
-	 * @param mediaType
-	 * @return
-	 * @throws DriverRegistroServiziException
-	 */
+
 	public boolean existsAccordoServizioResourceRepresentation(Long idRisorsa, boolean isRequest, Long idResponse, String mediaType) throws DriverRegistroServiziException {
 
 		boolean exist = false;
@@ -4017,17 +3999,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return exist;
 	}
 	
-	/***
-	 * Verifica se esiste un parameter associato alla resource o alla risposta indicata
-	 * 
-	 * @param idRisorsa
-	 * @param isRequest
-	 * @param idResponse
-	 * @param tipo
-	 * @param nome
-	 * @return
-	 * @throws DriverRegistroServiziException
-	 */
 	public boolean existsAccordoServizioResourceParameter(Long idRisorsa, boolean isRequest, Long idResponse, ParameterType tipo, String nome) throws DriverRegistroServiziException {
 
 		boolean exist = false;

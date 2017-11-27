@@ -32,7 +32,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.protocol.sdk.RegistryAPI;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.ApiFactory;

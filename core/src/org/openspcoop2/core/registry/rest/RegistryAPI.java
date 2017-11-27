@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.protocol.sdk;
+package org.openspcoop2.core.registry.rest;
 
 import java.net.URL;
 import java.util.List;
@@ -30,6 +30,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.ResourceResponse;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
@@ -57,7 +58,7 @@ public class RegistryAPI extends Api {
 		return this.aspc;
 	}
 
-	public RegistryAPI(AccordoServizioParteComune aspc,String baseURL) throws ProtocolException {
+	public RegistryAPI(AccordoServizioParteComune aspc,String baseURL) throws DriverRegistroServiziException {
 		try {
 		
 			this.aspc = aspc;
@@ -101,7 +102,7 @@ public class RegistryAPI extends Api {
 			}
 			
 		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
 	
