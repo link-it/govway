@@ -42,6 +42,35 @@ public abstract class Api extends BaseBean {
 	private String description;
 	private URL baseURL;
 	
+	
+	private List<ApiSchema> schemas = new ArrayList<>();
+
+	public void addSchema(ApiSchema schema) {
+		this.schemas.add(schema);
+	}
+
+	public ApiSchema getSchema(int index) {
+		return this.schemas.get( index );
+	}
+
+	public ApiSchema removeSchema(int index) {
+		return this.schemas.remove( index );
+	}
+
+	public List<ApiSchema> getSchemas() {
+		return this.schemas;
+	}
+
+	public void setSchemas(List<ApiSchema> schemas) {
+		this.schemas=schemas;
+	}
+
+	public int sizeSchemas() {
+		return this.schemas.size();
+	}
+	
+	
+	
 	private List<ApiOperation> operations = new ArrayList<>();
 
 	public void addOperation(ApiOperation operation) {

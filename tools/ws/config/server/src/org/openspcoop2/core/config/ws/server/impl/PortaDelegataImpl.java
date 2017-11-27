@@ -313,9 +313,9 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".azione=?");
 				paramTypes.add(new JDBCObject(filter.getAzione().getNome(),String.class));
 			}
-			if(filter.getAzione().getForceWsdlBased()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".force_wsdl_based_azione=?");
-				paramTypes.add(new JDBCObject(filter.getAzione().getForceWsdlBased().getValue(),String.class));
+			if(filter.getAzione().getForceInterfaceBased()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".force_interface_based_azione=?");
+				paramTypes.add(new JDBCObject(filter.getAzione().getForceInterfaceBased().getValue(),String.class));
 			}
 		}
 		

@@ -48,8 +48,10 @@ public enum PortaDelegataAzioneIdentificazione implements IEnumeration , Seriali
 	INPUT_BASED ("inputBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("soapActionBased")
 	SOAP_ACTION_BASED ("soapActionBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("wsdlBased")
-	WSDL_BASED ("wsdlBased");
+	@javax.xml.bind.annotation.XmlEnumValue("interfaceBased")
+	INTERFACE_BASED ("interfaceBased"),
+	@javax.xml.bind.annotation.XmlEnumValue("delegatedBy")
+	DELEGATED_BY ("delegatedBy");
 	
 	
 	/** Value */

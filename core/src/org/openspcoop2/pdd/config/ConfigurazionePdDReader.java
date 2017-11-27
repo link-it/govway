@@ -1124,7 +1124,7 @@ public class ConfigurazionePdDReader {
 				if( pd.getAzione().getIdentificazione() != null  ){
 					modalitaIdentificazione = ModalitaIdentificazioneAzione.convert(pd.getAzione().getIdentificazione());
 				}
-				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceWsdlBased());
+				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceInterfaceBased());
 			}
 
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
@@ -1693,7 +1693,7 @@ public class ConfigurazionePdDReader {
 				if( pa.getAzione().getIdentificazione() != null  ){
 					modalitaIdentificazione = ModalitaIdentificazioneAzione.convert(pa.getAzione().getIdentificazione());
 				}
-				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pa.getAzione().getForceWsdlBased());
+				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pa.getAzione().getForceInterfaceBased());
 			}
 
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 

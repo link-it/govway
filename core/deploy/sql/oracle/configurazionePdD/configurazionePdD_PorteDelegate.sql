@@ -29,8 +29,9 @@ CREATE TABLE porte_delegate
 	nome_azione VARCHAR2(255),
 	mode_azione VARCHAR2(255),
 	pattern_azione VARCHAR2(255),
+	nome_porta_delegante_azione VARCHAR2(255),
 	-- abilitato/disabilitato
-	force_wsdl_based_azione VARCHAR2(255),
+	force_interface_based_azione VARCHAR2(255),
 	-- Controllo Accessi
 	autenticazione VARCHAR2(255),
 	-- abilitato/disabilitato
@@ -75,6 +76,8 @@ CREATE TABLE porte_delegate
 	local_forward_pa VARCHAR2(255),
 	-- all/any
 	ruoli_match VARCHAR2(255),
+	-- abilitato/disabilitato
+	ricerca_porta_azione_delegata VARCHAR2(255),
 	-- abilitato/disabilitato
 	stato VARCHAR2(255),
 	-- proprietario porta delegata (Soggetto fruitore)
@@ -353,6 +356,35 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_pd_ruoli.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pd_azioni MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pd_azioni
+(
+	id_porta NUMBER NOT NULL,
+	azione VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_azioni_1 UNIQUE (id_porta,azione),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_azioni_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_azioni PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pd_azioni
+BEFORE
+insert on pd_azioni
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pd_azioni.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

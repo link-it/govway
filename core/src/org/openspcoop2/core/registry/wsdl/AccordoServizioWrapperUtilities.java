@@ -660,8 +660,7 @@ public class AccordoServizioWrapperUtilities {
 				}
 			}
 			else{
-				// TODO
-				return null;
+				throw new DriverRegistroServiziException("Tipologia REST non supportata");
 			}
 			
 			return null;

@@ -39,8 +39,8 @@ package org.openspcoop2.core.config.ws.server.wrapped;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.IdPortaApplicativa;
 
 /**     
  * UpdateOrCreatePortaApplicativa

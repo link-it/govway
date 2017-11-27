@@ -1083,9 +1083,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				pdAzione.setPattern(pattern);
 
 				if(apsCore.isForceWsdlBasedAzione_generazioneAutomaticaPorteDelegate()){
-					pdAzione.setForceWsdlBased(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+					pdAzione.setForceInterfaceBased(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
 				} else {
-					pdAzione.setForceWsdlBased(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
+					pdAzione.setForceInterfaceBased(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
 				}
 
 				portaDelegata.setAzione(pdAzione);

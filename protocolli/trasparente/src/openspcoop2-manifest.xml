@@ -10,6 +10,40 @@
     <binding default="rest">
     	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
     		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
+    		  <!-- 
+    		<integration>
+    		    <implementation>
+    		    	<default name="{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
+    		    	<rule name="${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
+    		    	<resource-identification default="urlBased" forceInterfaceMode="true" 
+    		    		pattern=".*{implementation.default.name}/([^/|^?]*).*"
+   		    			findSpecificResource="true">
+   		    			<identification-mode>registry</identification-mode>
+   		    			<identification-mode>interface</identification-mode>
+   		    			<identification-mode>header</identification-mode>
+   		    			<identification-mode>url</identification-mode>
+   		    			<identification-mode>content</identification-mode>
+   		    			<identification-mode>input</identification-mode>
+   		    			<identification-mode>soapAction</identification-mode>
+   		    		</resource-identification>
+    			</implementation>
+    			<subscrition>
+    			    <default name="{subscriber.type}{subscriber.name}/{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
+    		    	<rule name="{subscriber.type}{subscriber.name}/${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
+    		    	<resource-identification default="urlBased" forceInterfaceMode="true" 
+    		    		pattern=".*{subscrition.default.name}/([^/|^?]*).*"
+   		    			findSpecificResource="true">
+   		    			<identification-mode>registry</identification-mode>
+   		    			<identification-mode>interface</identification-mode>
+   		    			<identification-mode>header</identification-mode>
+   		    			<identification-mode>url</identification-mode>
+   		    			<identification-mode>content</identification-mode>
+   		    			<identification-mode>input</identification-mode>
+   		    			<identification-mode>soapAction</identification-mode>
+   		    		</resource-identification>
+    			</subscrition>
+    		</integration>
+    		 -->
     		<integrationError>
     			<internal>
     				<default httpReturnCode="500" messageType="soap" />
@@ -28,6 +62,24 @@
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">
+    		<integration>
+    		    <implementation>
+    		    	<default name="{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
+    		    	<rule name="${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
+    		    	<resource-identification default="interface" forceInterfaceMode="false" findSpecificResource="true">
+   		    			<identification-mode>registry</identification-mode>
+   		    			<identification-mode>interface</identification-mode>
+   		    		</resource-identification>
+    			</implementation>
+    			<subscrition>
+    			    <default name="{subscriber.type}{subscriber.name}/{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
+    		    	<rule name="{subscriber.type}{subscriber.name}/${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
+    		    	<resource-identification default="interface" forceInterfaceMode="false" findSpecificResource="true">
+   		    			<identification-mode>registry</identification-mode>
+   		    			<identification-mode>interface</identification-mode>
+   		    		</resource-identification>
+    			</subscrition>
+    		</integration>
     		<integrationError>
     			<internal>
 	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />

@@ -22,12 +22,15 @@ package org.openspcoop2.core.config;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for porta-delegata-azione complex type.
@@ -36,10 +39,14 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="porta-delegata-azione">
+ * 		&lt;sequence>
+ * 			&lt;element name="azione-delegata" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
  * 		&lt;attribute name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaDelegataAzioneIdentificazione" use="optional" default="static"/>
  * 		&lt;attribute name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="force-wsdl-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="nome-porta-delegante" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="force-interface-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -50,7 +57,11 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "porta-delegata-azione")
+@XmlType(name = "porta-delegata-azione", 
+  propOrder = {
+  	"azioneDelegata"
+  }
+)
 
 @XmlRootElement(name = "porta-delegata-azione")
 
@@ -70,6 +81,30 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean im
 		this.id=id;
 	else
 		this.id=new Long(-1);
+  }
+
+  public void addAzioneDelegata(java.lang.String azioneDelegata) {
+    this.azioneDelegata.add(azioneDelegata);
+  }
+
+  public java.lang.String getAzioneDelegata(int index) {
+    return this.azioneDelegata.get( index );
+  }
+
+  public java.lang.String removeAzioneDelegata(int index) {
+    return this.azioneDelegata.remove( index );
+  }
+
+  public List<java.lang.String> getAzioneDelegataList() {
+    return this.azioneDelegata;
+  }
+
+  public void setAzioneDelegataList(List<java.lang.String> azioneDelegata) {
+    this.azioneDelegata=azioneDelegata;
+  }
+
+  public int sizeAzioneDelegataList() {
+    return this.azioneDelegata.size();
   }
 
   public void set_value_identificazione(String value) {
@@ -108,24 +143,32 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean im
     this.nome = nome;
   }
 
-  public void set_value_forceWsdlBased(String value) {
-    this.forceWsdlBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  public java.lang.String getNomePortaDelegante() {
+    return this.nomePortaDelegante;
   }
 
-  public String get_value_forceWsdlBased() {
-    if(this.forceWsdlBased == null){
+  public void setNomePortaDelegante(java.lang.String nomePortaDelegante) {
+    this.nomePortaDelegante = nomePortaDelegante;
+  }
+
+  public void set_value_forceInterfaceBased(String value) {
+    this.forceInterfaceBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_forceInterfaceBased() {
+    if(this.forceInterfaceBased == null){
     	return null;
     }else{
-    	return this.forceWsdlBased.toString();
+    	return this.forceInterfaceBased.toString();
     }
   }
 
-  public org.openspcoop2.core.config.constants.StatoFunzionalita getForceWsdlBased() {
-    return this.forceWsdlBased;
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getForceInterfaceBased() {
+    return this.forceInterfaceBased;
   }
 
-  public void setForceWsdlBased(org.openspcoop2.core.config.constants.StatoFunzionalita forceWsdlBased) {
-    this.forceWsdlBased = forceWsdlBased;
+  public void setForceInterfaceBased(org.openspcoop2.core.config.constants.StatoFunzionalita forceInterfaceBased) {
+    this.forceInterfaceBased = forceInterfaceBased;
   }
 
   private static final long serialVersionUID = 1L;
@@ -134,6 +177,37 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean im
   private Long id;
 
 
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="azione-delegata",required=true,nillable=false)
+  protected List<java.lang.String> azioneDelegata = new ArrayList<java.lang.String>();
+
+  /**
+   * @deprecated Use method getAzioneDelegataList
+   * @return List<java.lang.String>
+  */
+  @Deprecated
+  public List<java.lang.String> getAzioneDelegata() {
+  	return this.azioneDelegata;
+  }
+
+  /**
+   * @deprecated Use method setAzioneDelegataList
+   * @param azioneDelegata List<java.lang.String>
+  */
+  @Deprecated
+  public void setAzioneDelegata(List<java.lang.String> azioneDelegata) {
+  	this.azioneDelegata=azioneDelegata;
+  }
+
+  /**
+   * @deprecated Use method sizeAzioneDelegataList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeAzioneDelegata() {
+  	return this.azioneDelegata.size();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_identificazione;
@@ -149,10 +223,14 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean im
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_forceWsdlBased;
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="nome-porta-delegante",required=false)
+  protected java.lang.String nomePortaDelegante;
 
-  @XmlAttribute(name="force-wsdl-based",required=false)
-  protected StatoFunzionalita forceWsdlBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_forceInterfaceBased;
+
+  @XmlAttribute(name="force-interface-based",required=false)
+  protected StatoFunzionalita forceInterfaceBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
 }

@@ -213,6 +213,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneSoggetto }
+     */
+    public PortaApplicativaAutorizzazioneSoggetto createPortaApplicativaAutorizzazioneSoggetto() {
+        return new PortaApplicativaAutorizzazioneSoggetto();
+    }
+
+    /**
      * Create an instance of {@link Cache }
      */
     public Cache createCache() {
@@ -518,6 +525,13 @@ public class ObjectFactory {
      */
     public RoutingTableDestinazione createRoutingTableDestinazione() {
         return new RoutingTableDestinazione();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneSoggetti }
+     */
+    public PortaApplicativaAutorizzazioneSoggetti createPortaApplicativaAutorizzazioneSoggetti() {
+        return new PortaApplicativaAutorizzazioneSoggetti();
     }
 
     /**

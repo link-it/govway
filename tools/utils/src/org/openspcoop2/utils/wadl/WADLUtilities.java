@@ -25,9 +25,10 @@ package org.openspcoop2.utils.wadl;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.jvnet.ws.wadl.HTTPMethods;
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.jvnet.ws.wadl.ast.MethodNode;
@@ -35,6 +36,7 @@ import org.jvnet.ws.wadl.ast.ResourceNode;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -207,9 +209,21 @@ public class WADLUtilities {
 		return readWADLFromFile(log, file, false, true, true);
 	}
 	public ApplicationWrapper readWADLFromFile(Logger log, File file,boolean verbose,boolean processInclude, boolean processInlineSchema) throws WADLException{
+		return this.readWADLFromFile(log, file, verbose, processInclude, processInlineSchema, null);
+	}
+	public ApplicationWrapper readWADLFromFile(Logger log, File file,boolean verbose,boolean processInclude, boolean processInlineSchema, 
+			Hashtable<String, byte[]> xsdSchemas) throws WADLException{
 		try{
 			if (file == null) throw new Exception("Path non definito");
 			WADLReader reader = getWADLReader(log, verbose, processInclude, processInlineSchema);
+			if(xsdSchemas!=null && xsdSchemas.size()>0) {
+				Enumeration	<String> en = xsdSchemas.keys();
+				while (en.hasMoreElements()) {
+					String name = (String) en.nextElement();
+					byte[] content = xsdSchemas.get(name);
+					reader.addSchema(name, content);
+				}
+			}
 			ApplicationNode appNode = reader.readWADL(file.getAbsolutePath());
 			ApplicationWrapper ap = new ApplicationWrapper(appNode, reader.getResources(), reader.getMappingNamespaceLocations(), this.xmlUtils);
 			return ap;
@@ -226,10 +240,22 @@ public class WADLUtilities {
 		return readWADLFromLocation(log, path, false, true, true);
 	}
 	public ApplicationWrapper readWADLFromLocation(Logger log, String path,boolean verbose,boolean processInclude, boolean processInlineSchema) throws WADLException{
+		return this.readWADLFromLocation(log, path, verbose, processInclude, processInlineSchema, null);
+	}
+	public ApplicationWrapper readWADLFromLocation(Logger log, String path,boolean verbose,boolean processInclude, boolean processInlineSchema, 
+			Hashtable<String, byte[]> xsdSchemas) throws WADLException{
 		try{
 			if (path == null) 
 				throw new Exception("Path non definito");
 			WADLReader reader = getWADLReader(log, verbose, processInclude, processInlineSchema);
+			if(xsdSchemas!=null && xsdSchemas.size()>0) {
+				Enumeration	<String> en = xsdSchemas.keys();
+				while (en.hasMoreElements()) {
+					String name = (String) en.nextElement();
+					byte[] content = xsdSchemas.get(name);
+					reader.addSchema(name, content);
+				}
+			}
 			ApplicationNode appNode = reader.readWADL(path);
 			ApplicationWrapper ap = new ApplicationWrapper(appNode, reader.getResources(), reader.getMappingNamespaceLocations(), this.xmlUtils);
 			return ap;
@@ -246,13 +272,17 @@ public class WADLUtilities {
 		return readWADLFromBytes(log, wadl, false, true, true);
 	}
 	public ApplicationWrapper readWADLFromBytes(Logger log, byte[] wadl,boolean verbose,boolean processInclude, boolean processInlineSchema) throws WADLException{
+		return this.readWADLFromBytes(log, wadl, verbose, processInclude, processInlineSchema, null);
+	}
+	public ApplicationWrapper readWADLFromBytes(Logger log, byte[] wadl,boolean verbose,boolean processInclude, boolean processInlineSchema, 
+			Hashtable<String, byte[]> xsdSchemas) throws WADLException{
 		try{
 			if (wadl == null) 
 				throw new Exception("Bytes non definiti");
 			File tmp = File.createTempFile("wadl", ".tmp");
 			try {
 				FileSystemUtilities.writeFile(tmp, wadl);
-				return this.readWADLFromFile(log, tmp, verbose, processInclude, processInlineSchema);
+				return this.readWADLFromFile(log, tmp, verbose, processInclude, processInlineSchema, xsdSchemas);
 			} catch (WADLException e) {
 				throw e;
 			}finally{
@@ -271,6 +301,10 @@ public class WADLUtilities {
 		return readWADLFromDocument(log, doc, false, true, true);
 	}
 	public ApplicationWrapper readWADLFromDocument(Logger log, Document doc,boolean verbose,boolean processInclude, boolean processInlineSchema) throws WADLException{
+		return this.readWADLFromDocument(log, doc, verbose, processInclude, processInlineSchema, null);
+	}
+	public ApplicationWrapper readWADLFromDocument(Logger log, Document doc,boolean verbose,boolean processInclude, boolean processInlineSchema,
+			Hashtable<String, byte[]> xsdSchemas) throws WADLException{
 		try{
 			if(this.xmlUtils==null){
 				throw new Exception("XMLUtils not initialized in WADLUtilities, use static instance 'getInstance(AbstractXMLUtils xmlUtils)'");
@@ -279,7 +313,7 @@ public class WADLUtilities {
 				throw new Exception("Document non definito");
 			try {
 				byte[]wadl = this.xmlUtils.toByteArray(doc);
-				return this.readWADLFromBytes(log, wadl, verbose, processInclude, processInlineSchema);
+				return this.readWADLFromBytes(log, wadl, verbose, processInclude, processInlineSchema, xsdSchemas);
 			} catch (WADLException e) {
 				throw e;
 			}
@@ -296,6 +330,10 @@ public class WADLUtilities {
 		return readWADLFromDocument(log, elem, false, true, true);
 	}
 	public ApplicationWrapper readWADLFromDocument(Logger log, Element elem,boolean verbose,boolean processInclude, boolean processInlineSchema) throws WADLException{
+		return this.readWADLFromDocument(log, elem, verbose, processInclude, processInlineSchema, null);
+	}
+	public ApplicationWrapper readWADLFromDocument(Logger log, Element elem,boolean verbose,boolean processInclude, boolean processInlineSchema,
+			Hashtable<String, byte[]> xsdSchemas) throws WADLException{
 		try{
 			if(this.xmlUtils==null){
 				throw new Exception("XMLUtils not initialized in WADLUtilities, use static instance 'getInstance(AbstractXMLUtils xmlUtils)'");
@@ -304,7 +342,7 @@ public class WADLUtilities {
 				throw new Exception("Element non definito");
 			try {
 				byte[]wadl = this.xmlUtils.toByteArray(elem);
-				return this.readWADLFromBytes(log, wadl, verbose, processInclude, processInlineSchema);
+				return this.readWADLFromBytes(log, wadl, verbose, processInclude, processInlineSchema, xsdSchemas);
 			} catch (WADLException e) {
 				throw e;
 			}
@@ -321,10 +359,22 @@ public class WADLUtilities {
 		return readWADLFromURI(log, uri, false, true, true);
 	}
 	public ApplicationWrapper readWADLFromURI(Logger log, URI uri, boolean verbose,boolean processInclude, boolean processInlineSchema) throws WADLException{
+		return this.readWADLFromURI(log, uri, verbose, processInclude, processInlineSchema, null);
+	}
+	public ApplicationWrapper readWADLFromURI(Logger log, URI uri, boolean verbose,boolean processInclude, boolean processInlineSchema,
+			Hashtable<String, byte[]> xsdSchemas) throws WADLException{
 		try{
 			if (uri == null) 
 				throw new Exception("URI non definita");
 			WADLReader reader = getWADLReader(log, verbose, processInclude, processInlineSchema);
+			if(xsdSchemas!=null && xsdSchemas.size()>0) {
+				Enumeration	<String> en = xsdSchemas.keys();
+				while (en.hasMoreElements()) {
+					String name = (String) en.nextElement();
+					byte[] content = xsdSchemas.get(name);
+					reader.addSchema(name, content);
+				}
+			}
 			ApplicationNode appNode = reader.readWADL(uri);
 			ApplicationWrapper ap = new ApplicationWrapper(appNode, reader.getResources(), reader.getMappingNamespaceLocations(), this.xmlUtils);
 			return ap;

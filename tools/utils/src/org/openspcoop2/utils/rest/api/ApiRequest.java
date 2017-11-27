@@ -34,7 +34,7 @@ import org.openspcoop2.utils.beans.BaseBean;
  * @version $Rev$, $Date$
  */
 public class ApiRequest extends BaseBean {
-
+	
 	private List<ApiCookieParameter> cookieParameters = new ArrayList<>();
 	private List<ApiHeaderParameter> headerParameters = new ArrayList<>();
 	private List<ApiRequestQueryParameter> queryParameters = new ArrayList<>();

@@ -6,6 +6,8 @@ CREATE TABLE mapping_fruizione_pd
 (
 	id_fruizione BIGINT NOT NULL,
 	id_porta BIGINT NOT NULL,
+	is_default INT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_mapping_fruizione_pd') NOT NULL,
 	-- unique constraints
@@ -25,6 +27,8 @@ CREATE TABLE mapping_erogazione_pa
 (
 	id_erogazione BIGINT NOT NULL,
 	id_porta BIGINT NOT NULL,
+	is_default INT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_mapping_erogazione_pa') NOT NULL,
 	-- unique constraints

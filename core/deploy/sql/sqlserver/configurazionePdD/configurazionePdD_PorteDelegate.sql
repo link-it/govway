@@ -27,8 +27,9 @@ CREATE TABLE porte_delegate
 	nome_azione VARCHAR(255),
 	mode_azione VARCHAR(255),
 	pattern_azione VARCHAR(255),
+	nome_porta_delegante_azione VARCHAR(255),
 	-- abilitato/disabilitato
-	force_wsdl_based_azione VARCHAR(255),
+	force_interface_based_azione VARCHAR(255),
 	-- Controllo Accessi
 	autenticazione VARCHAR(255),
 	-- abilitato/disabilitato
@@ -73,6 +74,8 @@ CREATE TABLE porte_delegate
 	local_forward_pa VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
+	-- abilitato/disabilitato
+	ricerca_porta_azione_delegata VARCHAR(255),
 	-- abilitato/disabilitato
 	stato VARCHAR(255),
 	-- proprietario porta delegata (Soggetto fruitore)
@@ -240,5 +243,23 @@ CREATE TABLE pd_ruoli
 
 -- index
 CREATE UNIQUE INDEX index_pd_ruoli_1 ON pd_ruoli (id_porta,ruolo);
+
+
+
+CREATE TABLE pd_azioni
+(
+	id_porta BIGINT NOT NULL,
+	azione VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_pd_azioni_1 UNIQUE (id_porta,azione),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_azioni_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_azioni PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pd_azioni_1 ON pd_azioni (id_porta,azione);
 
 

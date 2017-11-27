@@ -21,8 +21,9 @@ CREATE TABLE porte_applicative
 	azione VARCHAR2(255),
 	mode_azione VARCHAR2(255),
 	pattern_azione VARCHAR2(255),
+	nome_porta_delegante_azione VARCHAR2(255),
 	-- abilitato/disabilitato
-	force_wsdl_based_azione VARCHAR2(255),
+	force_interface_based_azione VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
 	mtom_request_mode VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
@@ -64,6 +65,8 @@ CREATE TABLE porte_applicative
 	autorizzazione_contenuto VARCHAR2(255),
 	-- all/any
 	ruoli_match VARCHAR2(255),
+	-- abilitato/disabilitato
+	ricerca_porta_azione_delegata VARCHAR2(255),
 	-- abilitato/disabilitato
 	stato VARCHAR2(255),
 	-- proprietario porta applicativa
@@ -372,6 +375,65 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_pa_ruoli.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_soggetti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_soggetti
+(
+	id_porta NUMBER NOT NULL,
+	tipo_soggetto VARCHAR2(255) NOT NULL,
+	nome_soggetto VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_soggetti_1 UNIQUE (id_porta,tipo_soggetto,nome_soggetto),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_soggetti_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_soggetti PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pa_soggetti
+BEFORE
+insert on pa_soggetti
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_soggetti.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_azioni MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_azioni
+(
+	id_porta NUMBER NOT NULL,
+	azione VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_azioni_1 UNIQUE (id_porta,azione),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_azioni_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_azioni PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pa_azioni
+BEFORE
+insert on pa_azioni
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_azioni.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

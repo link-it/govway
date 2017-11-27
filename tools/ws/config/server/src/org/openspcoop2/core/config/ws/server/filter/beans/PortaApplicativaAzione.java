@@ -27,10 +27,11 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="porta-applicativa-azione">
  *     &lt;sequence>
- *         &lt;element name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaApplicativaAzioneIdentificazione" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaApplicativaAzioneIdentificazione" minOccurs="0" maxOccurs="1" default="(PortaApplicativaAzioneIdentificazione) PortaApplicativaAzioneIdentificazione.toEnumConstantFromString("static")" />
  *         &lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="force-wsdl-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="nome-porta-delegante" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="force-interface-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -57,15 +58,16 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "identificazione",
     "pattern",
     "nome",
-    "forceWsdlBased"
+    "nomePortaDelegante",
+    "forceInterfaceBased"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "porta-applicativa-azione")
 public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
 	
-	@XmlElement(name="identificazione",required=false,nillable=false)
-	private PortaApplicativaAzioneIdentificazione identificazione;
+	@XmlElement(name="identificazione",required=false,nillable=false,defaultValue="static")
+	private PortaApplicativaAzioneIdentificazione identificazione = (PortaApplicativaAzioneIdentificazione) PortaApplicativaAzioneIdentificazione.toEnumConstantFromString("static");
 	
 	public void setIdentificazione(PortaApplicativaAzioneIdentificazione identificazione){
 		this.identificazione = identificazione;
@@ -102,15 +104,28 @@ public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean
 	}
 	
 	
-	@XmlElement(name="force-wsdl-based",required=false,nillable=false)
-	private StatoFunzionalita forceWsdlBased;
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="nome-porta-delegante",required=false,nillable=false)
+	private String nomePortaDelegante;
 	
-	public void setForceWsdlBased(StatoFunzionalita forceWsdlBased){
-		this.forceWsdlBased = forceWsdlBased;
+	public void setNomePortaDelegante(String nomePortaDelegante){
+		this.nomePortaDelegante = nomePortaDelegante;
 	}
 	
-	public StatoFunzionalita getForceWsdlBased(){
-		return this.forceWsdlBased;
+	public String getNomePortaDelegante(){
+		return this.nomePortaDelegante;
+	}
+	
+	
+	@XmlElement(name="force-interface-based",required=false,nillable=false)
+	private StatoFunzionalita forceInterfaceBased;
+	
+	public void setForceInterfaceBased(StatoFunzionalita forceInterfaceBased){
+		this.forceInterfaceBased = forceInterfaceBased;
+	}
+	
+	public StatoFunzionalita getForceInterfaceBased(){
+		return this.forceInterfaceBased;
 	}
 	
 	

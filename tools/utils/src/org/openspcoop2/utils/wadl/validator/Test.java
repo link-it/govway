@@ -35,6 +35,8 @@ import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiSchema;
+import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.DocumentHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
@@ -69,15 +71,18 @@ public class Test {
 		
 		//org.openspcoop2.utils.wadl.ApplicationWrapper wr = wadlUtilities.readWADLFromURI(log, uri, true, true, true);
 		//org.openspcoop2.utils.wadl.ApplicationWrapper wr = wadlUtilities.readWADLFromBytes(log, org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(new java.io.File(uri)), true, false, true);
+		
+		ApiSchema apiSchema = new ApiSchema("test2.xsd", Utilities.getAsByteArray(Test.class.getResourceAsStream("/org/openspcoop2/utils/wadl/test2.xsd")), ApiSchemaType.XSD);
+		
 		ApiReaderConfig readerConfig = new ApiReaderConfig();
 		readerConfig.setVerbose(true);
-		readerConfig.setProcessInclude(false);
+		readerConfig.setProcessInclude(true);
 		readerConfig.setProcessInlineSchema(true);
-		reader.init(log, uri, readerConfig);
+		reader.init(log, uri, readerConfig, apiSchema);
 		Api api = reader.read();
 		WADLApi wadlApi = (WADLApi) api;
 		
-		wadlApi.getApplicationWadlWrapper().addResource("test2.xsd", Utilities.getAsByteArray(Test.class.getResourceAsStream("/org/openspcoop2/utils/wadl/test2.xsd")));
+		//wadlApi.getApplicationWadlWrapper().addResource("test2.xsd", Utilities.getAsByteArray(Test.class.getResourceAsStream("/org/openspcoop2/utils/wadl/test2.xsd")));
 		
 		System.out.println("Inizializzazione dell'oggetto ApplicationWrapper completata");
 		

@@ -40,10 +40,12 @@ public class PortaApplicativaAzioneModel extends AbstractModel<PortaApplicativaA
 	
 		super();
 	
+		this.AZIONE_DELEGATA = new Field("azione-delegata",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.IDENTIFICAZIONE = new Field("identificazione",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.PATTERN = new Field("pattern",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
-		this.FORCE_WSDL_BASED = new Field("force-wsdl-based",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.NOME_PORTA_DELEGANTE = new Field("nome-porta-delegante",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.FORCE_INTERFACE_BASED = new Field("force-interface-based",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 	
 	}
 	
@@ -51,22 +53,28 @@ public class PortaApplicativaAzioneModel extends AbstractModel<PortaApplicativaA
 	
 		super(father);
 	
+		this.AZIONE_DELEGATA = new ComplexField(father,"azione-delegata",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.IDENTIFICAZIONE = new ComplexField(father,"identificazione",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.PATTERN = new ComplexField(father,"pattern",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
-		this.FORCE_WSDL_BASED = new ComplexField(father,"force-wsdl-based",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.NOME_PORTA_DELEGANTE = new ComplexField(father,"nome-porta-delegante",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.FORCE_INTERFACE_BASED = new ComplexField(father,"force-interface-based",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 	
 	}
 	
 	
 
+	public IField AZIONE_DELEGATA = null;
+	 
 	public IField IDENTIFICAZIONE = null;
 	 
 	public IField PATTERN = null;
 	 
 	public IField NOME = null;
 	 
-	public IField FORCE_WSDL_BASED = null;
+	public IField NOME_PORTA_DELEGANTE = null;
+	 
+	public IField FORCE_INTERFACE_BASED = null;
 	 
 
 	@Override

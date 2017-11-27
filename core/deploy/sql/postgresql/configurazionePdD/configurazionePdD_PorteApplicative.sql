@@ -21,8 +21,9 @@ CREATE TABLE porte_applicative
 	azione VARCHAR(255),
 	mode_azione VARCHAR(255),
 	pattern_azione VARCHAR(255),
+	nome_porta_delegante_azione VARCHAR(255),
 	-- abilitato/disabilitato
-	force_wsdl_based_azione VARCHAR(255),
+	force_interface_based_azione VARCHAR(255),
 	-- disable/packaging/unpackaging/verify
 	mtom_request_mode VARCHAR(255),
 	-- disable/packaging/unpackaging/verify
@@ -64,6 +65,8 @@ CREATE TABLE porte_applicative
 	autorizzazione_contenuto VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
+	-- abilitato/disabilitato
+	ricerca_porta_azione_delegata VARCHAR(255),
 	-- abilitato/disabilitato
 	stato VARCHAR(255),
 	-- proprietario porta applicativa
@@ -260,6 +263,43 @@ CREATE TABLE pa_ruoli
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_ruoli PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pa_soggetti start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pa_soggetti
+(
+	id_porta BIGINT NOT NULL,
+	tipo_soggetto VARCHAR(255) NOT NULL,
+	nome_soggetto VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pa_soggetti') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_soggetti_1 UNIQUE (id_porta,tipo_soggetto,nome_soggetto),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_soggetti_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_soggetti PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pa_azioni start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pa_azioni
+(
+	id_porta BIGINT NOT NULL,
+	azione VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pa_azioni') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_azioni_1 UNIQUE (id_porta,azione),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_azioni_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_azioni PRIMARY KEY (id)
 );
 
 

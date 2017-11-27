@@ -32,6 +32,7 @@ import org.jvnet.ws.wadl.ast.ResourceTypeNode;
 import org.jvnet.ws.wadl.ast.WadlAstBuilder;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.utils.xml.XMLException;
 import org.w3c.dom.Document;
 
 /**
@@ -66,14 +67,16 @@ public class WADLReader {
 		
 		this.wadlBuilder = new WadlAstBuilder(this.schemaCallback, this.messageListener);
 	}
+	
+	public void addSchema(String name, byte[] content) throws XMLException {
+		this.schemaCallback.addResource(name, content);
+	}
 
-	public ApplicationNode readWADL(String file) throws InvalidWADLException,
-	IOException {
+	public ApplicationNode readWADL(String file) throws InvalidWADLException,IOException {
 		return this.readWADL(new File(file));
 	}
 	
-	public ApplicationNode readWADL(File file) throws InvalidWADLException,
-	IOException {
+	public ApplicationNode readWADL(File file) throws InvalidWADLException,IOException {
 		File fTpm = null;
 		try{
 			if(this.processInclude){
@@ -100,8 +103,7 @@ public class WADLReader {
 		}
 	}
 	
-	public ApplicationNode readWADL(URI uri) throws InvalidWADLException,
-			IOException {
+	public ApplicationNode readWADL(URI uri) throws InvalidWADLException, IOException {
 		if(this.processInclude){
 			return this.wadlBuilder.buildAst(uri);
 		}

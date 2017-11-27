@@ -21,7 +21,9 @@ package org.openspcoop2.core.config.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.Route;
 import org.openspcoop2.core.config.RoutingTableDefault;
 import org.openspcoop2.core.config.Cache;
@@ -163,6 +165,69 @@ public abstract class AbstractDeserializer {
 
 	/*
 	 =================================================================================
+	 Object: porta-applicativa-autorizzazione-soggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetto readPortaApplicativaAutorizzazioneSoggetto(String fileName) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetto) this.xmlToObj(fileName, PortaApplicativaAutorizzazioneSoggetto.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetto readPortaApplicativaAutorizzazioneSoggetto(File file) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetto) this.xmlToObj(file, PortaApplicativaAutorizzazioneSoggetto.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetto readPortaApplicativaAutorizzazioneSoggetto(InputStream in) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetto) this.xmlToObj(in, PortaApplicativaAutorizzazioneSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetto readPortaApplicativaAutorizzazioneSoggetto(byte[] in) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetto) this.xmlToObj(in, PortaApplicativaAutorizzazioneSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetto readPortaApplicativaAutorizzazioneSoggettoFromString(String in) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetto) this.xmlToObj(in.getBytes(), PortaApplicativaAutorizzazioneSoggetto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: ruolo
 	 =================================================================================
 	*/
@@ -220,6 +285,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public Ruolo readRuoloFromString(String in) throws DeserializerException {
 		return (Ruolo) this.xmlToObj(in.getBytes(), Ruolo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: porta-applicativa-autorizzazione-soggetti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetti readPortaApplicativaAutorizzazioneSoggetti(String fileName) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetti) this.xmlToObj(fileName, PortaApplicativaAutorizzazioneSoggetti.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetti readPortaApplicativaAutorizzazioneSoggetti(File file) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetti) this.xmlToObj(file, PortaApplicativaAutorizzazioneSoggetti.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetti readPortaApplicativaAutorizzazioneSoggetti(InputStream in) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetti) this.xmlToObj(in, PortaApplicativaAutorizzazioneSoggetti.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetti readPortaApplicativaAutorizzazioneSoggetti(byte[] in) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetti) this.xmlToObj(in, PortaApplicativaAutorizzazioneSoggetti.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAutorizzazioneSoggetti readPortaApplicativaAutorizzazioneSoggettiFromString(String in) throws DeserializerException {
+		return (PortaApplicativaAutorizzazioneSoggetti) this.xmlToObj(in.getBytes(), PortaApplicativaAutorizzazioneSoggetti.class);
 	}	
 	
 	

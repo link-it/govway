@@ -24,6 +24,7 @@ package org.openspcoop2.utils.wadl;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,6 +48,8 @@ import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.rest.api.ApiSchema;
+import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -63,13 +66,38 @@ import org.w3c.dom.Element;
  */
 public class WADLApiReader implements IApiReader {
 
-	private ApplicationWrapper applicationWadlWrapper; 
+	private ApplicationWrapper applicationWadlWrapper;
+	private ApiSchema[] schemas;
+	
+	private Hashtable<String, byte[]> convert(ApiSchema ... schema) {
+		Hashtable<String, byte[]> map = null;
+		if(schema!=null && schema.length>0) {
+			for (ApiSchema apiSchema : schema) {
+				if(ApiSchemaType.XSD.equals(apiSchema.getType())) {
+					if(map==null) {
+						map = new Hashtable<String, byte[]>();
+					}
+					map.put(apiSchema.getName(), apiSchema.getContent());
+				}
+			}
+		}
+		return map;
+	}
 	
 	@Override
 	public void init(Logger log, File file, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, file, config);
+	}
+	@Override
+	public void init(Logger log, File file, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, file, config, schema);
+	}
+	private void _init(Logger log, File file, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try{
 			this.applicationWadlWrapper = WADLUtilities.getInstance(config.getXmlUtils()).readWADLFromFile(log, file,
-					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema());
+					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema(),
+					this.convert(schema));
+			this.schemas = schema;
 		}catch(Exception e){
 			throw new ProcessingException(e.getMessage(),e);
 		}
@@ -77,9 +105,18 @@ public class WADLApiReader implements IApiReader {
 
 	@Override
 	public void init(Logger log, String content, String charsetName, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, content, charsetName, config);
+	}
+	@Override
+	public void init(Logger log, String content, String charsetName, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, content, charsetName, config, schema);
+	}
+	private void _init(Logger log, String content, String charsetName, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try{
 			this.applicationWadlWrapper = WADLUtilities.getInstance(config.getXmlUtils()).readWADLFromBytes(log, content.getBytes(charsetName),
-					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema());
+					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema(),
+					this.convert(schema));
+			this.schemas = schema;
 		}catch(Exception e){
 			throw new ProcessingException(e.getMessage(),e);
 		}
@@ -87,9 +124,18 @@ public class WADLApiReader implements IApiReader {
 
 	@Override
 	public void init(Logger log, byte[] content, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, content, config);
+	}
+	@Override
+	public void init(Logger log, byte[] content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, content, config, schema);
+	}
+	private void _init(Logger log, byte[] content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try{
 			this.applicationWadlWrapper = WADLUtilities.getInstance(config.getXmlUtils()).readWADLFromBytes(log, content,
-					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema());
+					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema(),
+					this.convert(schema));
+			this.schemas = schema;
 		}catch(Exception e){
 			throw new ProcessingException(e.getMessage(),e);
 		}
@@ -97,9 +143,18 @@ public class WADLApiReader implements IApiReader {
 
 	@Override
 	public void init(Logger log, Document doc, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, doc, config);
+	}
+	@Override
+	public void init(Logger log, Document doc, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, doc, config, schema);
+	}
+	private void _init(Logger log, Document doc, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try{
 			this.applicationWadlWrapper = WADLUtilities.getInstance(config.getXmlUtils()).readWADLFromDocument(log, doc,
-					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema());
+					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema(),
+					this.convert(schema));
+			this.schemas = schema;
 		}catch(Exception e){
 			throw new ProcessingException(e.getMessage(),e);
 		}
@@ -107,9 +162,18 @@ public class WADLApiReader implements IApiReader {
 
 	@Override
 	public void init(Logger log, Element element, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, element, config);
+	}
+	@Override
+	public void init(Logger log, Element element, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, element, config, schema);
+	}
+	private void _init(Logger log, Element element, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try{
 			this.applicationWadlWrapper = WADLUtilities.getInstance(config.getXmlUtils()).readWADLFromDocument(log, element,
-					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema());
+					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema(),
+					this.convert(schema));
+			this.schemas = schema;
 		}catch(Exception e){
 			throw new ProcessingException(e.getMessage(),e);
 		}
@@ -117,9 +181,18 @@ public class WADLApiReader implements IApiReader {
 
 	@Override
 	public void init(Logger log, URI uri, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, uri, config);
+	}
+	@Override
+	public void init(Logger log, URI uri, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, uri, config, schema);
+	}
+	private void _init(Logger log, URI uri, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try{
 			this.applicationWadlWrapper = WADLUtilities.getInstance(config.getXmlUtils()).readWADLFromURI(log, uri,
-					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema());
+					config.isVerbose(),config.isProcessInclude(),config.isProcessInlineSchema(),
+					this.convert(schema));
+			this.schemas = schema;
 		}catch(Exception e){
 			throw new ProcessingException(e.getMessage(),e);
 		}
@@ -130,6 +203,12 @@ public class WADLApiReader implements IApiReader {
 	public Api read() throws ProcessingException {
 		
 		Api api = new WADLApi(this.applicationWadlWrapper);
+		
+		if(this.schemas!=null && this.schemas.length>0) {
+			for (ApiSchema apiSchema : this.schemas) {
+				api.addSchema(apiSchema);
+			}
+		}
 		
 		ApplicationNode an = this.applicationWadlWrapper.getApplicationNode();
 		List<ResourceNode> rs = an.getResources();

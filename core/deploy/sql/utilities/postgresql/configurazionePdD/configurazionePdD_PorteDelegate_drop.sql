@@ -4,6 +4,7 @@
 -- DROP INDEX INDEX_PD_MTOMTRES;
 -- DROP INDEX INDEX_PD_MTOMTREQ;
 -- DROP INDEX INDEX_PD_SA;
+DROP TABLE pd_azioni;
 DROP TABLE pd_ruoli;
 DROP TABLE pd_correlazione_risposta;
 DROP TABLE pd_correlazione;
@@ -13,6 +14,7 @@ DROP TABLE pd_mtom_response;
 DROP TABLE pd_mtom_request;
 DROP TABLE porte_delegate_sa;
 DROP TABLE porte_delegate;
+DROP SEQUENCE seq_pd_azioni;
 DROP SEQUENCE seq_pd_ruoli;
 DROP SEQUENCE seq_pd_correlazione_risposta;
 DROP SEQUENCE seq_pd_correlazione;

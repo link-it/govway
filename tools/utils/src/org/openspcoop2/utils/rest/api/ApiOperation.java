@@ -36,7 +36,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * @version $Rev$, $Date$
  */
 public class ApiOperation extends BaseBean {
-
+	
 	private HttpRequestMethod httpMethod;
 	private String path;
 	private String description;

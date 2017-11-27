@@ -23,21 +23,22 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
-import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
-import org.openspcoop2.protocol.registry.InformationWsdlSource;
+import org.openspcoop2.protocol.registry.InformationApiSource;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.slf4j.Logger;
@@ -86,7 +87,7 @@ public class OperationFinder {
 						}						
 						else if(ModalitaIdentificazioneAzione.HEADER_BASED.equals(modalitaIdentificazione)){
 							// HEADER-BASED
-							azione = transportContext.getParametersTrasporto().getProperty(pattern);
+							azione = transportContext.getParameterTrasporto(pattern);
 						}
 						else if(ModalitaIdentificazioneAzione.CONTENT_BASED.equals(modalitaIdentificazione)){
 							// CONTENT-BASED
@@ -159,14 +160,20 @@ public class OperationFinder {
 								}
 							}
 						}
-						else if(ModalitaIdentificazioneAzione.WSDL_BASED.equals(modalitaIdentificazione)){
-							// WSDL-BASED
+						else if(ModalitaIdentificazioneAzione.INTERFACE_BASED.equals(modalitaIdentificazione)){
+							// INTERFACE-BASED
 							registryBased = true;
 							OperationFinder.checkIDServizioPerRiconoscimentoAzione(idServizio, modalitaIdentificazione);
-							azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, registroServiziManager, idServizio, log);
+							org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = registroServiziManager.getServiceBinding(idServizio);
+							if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBinding)){
+								azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, registroServiziManager, idServizio, log);
+							}
+							else {
+								azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, registroServiziManager, idServizio, log);
+							}
 						}
-						else if(ModalitaIdentificazioneAzione.PLUGIN_BASED.equals(modalitaIdentificazione)){
-							// PLUGIN-BASED
+						else if(ModalitaIdentificazioneAzione.PROTOCOL_BASED.equals(modalitaIdentificazione)){
+							// PROTOCOL-BASED
 							pluginBased = true;
 							if(idServizio.getAzione()!=null){
 								// gia localizzata in precedenza
@@ -188,11 +195,12 @@ public class OperationFinder {
 			if(azione==null && forceRegistryBased && !registryBased ){
 				try{
 					OperationFinder.checkIDServizioPerRiconoscimentoAzione(idServizio, modalitaIdentificazione);
-					if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+					org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = registroServiziManager.getServiceBinding(idServizio);
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBinding)){
 						azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, registroServiziManager, idServizio, log);
 					}
 					else{
-						// TODO per wadl/swagger
+						azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, registroServiziManager, idServizio, log);
 					}
 				}catch(Exception eForceRegistry){
 					log.debug("Riconoscimento forzato dell'azione non riuscito: "+eForceRegistry.getMessage(),eForceRegistry);
@@ -237,13 +245,36 @@ public class OperationFinder {
 	public static String searchOperationByWsdlInRequestMessage(OpenSPCoop2Message msg, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return searchOperationByWsdl(true, msg, registroServiziReader, idServizio, log);
 	}
-	public static String searchOperationByWsdlInResponseMessage(OpenSPCoop2Message msg, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return searchOperationByWsdl(false, msg, registroServiziReader, idServizio, log);
-	}
+//	public static String searchOperationByWsdlInResponseMessage(OpenSPCoop2Message msg, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+//		return searchOperationByWsdl(false, msg, registroServiziReader, idServizio, log);
+//	}
 	private static String searchOperationByWsdl(boolean isRichiesta,OpenSPCoop2Message msg, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		AccordoServizioWrapper wrapper = registroServiziReader.getWsdlAccordoServizio(idServizio,InformationWsdlSource.SAFE_WSDL_REGISTRY,false);
-		AccordoServizioWrapperUtilities wrapperUtilities = new AccordoServizioWrapperUtilities(log,wrapper);
+		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wrapper = registroServiziReader.getWsdlAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false);
+		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities wrapperUtilities = 
+				new org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities(log,wrapper);
 		return wrapperUtilities.searchOperationName(isRichiesta, wrapper.getNomePortType(), msg);
+	}
+	
+	public static String searchOperationByRestInRequestMessage(TransportRequestContext transportContext, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		
+		String path = transportContext.getUrlInvocazione_formBased();
+		HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(transportContext.getRequestType());
+		
+		try {
+			org.openspcoop2.core.registry.rest.AccordoServizioWrapper wrapper = registroServiziReader.getRestAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false);
+			ApiOperation op = wrapper.getApi().findOperation(httpMethod, path);
+			// Il path nella 'ApiOperation è normalizzato come sul registro
+			for (int i = 0; i < wrapper.getAccordoServizio().sizeResourceList(); i++) {
+				Resource r = wrapper.getAccordoServizio().getResource(i);
+				if(r.getMethod().name().equals(op.getHttpMethod().name()) && r.getPath().equals(op.getPath())){
+					return r.getNome();
+				}
+			}
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		
+		return null;
 	}
 	
 	private static void checkIDServizioPerRiconoscimentoAzione(IDServizio idServizio, ModalitaIdentificazioneAzione modalitaIdentificazione) throws Exception{

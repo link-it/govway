@@ -40,8 +40,8 @@ public enum PortaApplicativaAzioneIdentificazione implements IEnumeration , Seri
 	STATIC ("static"),
 	@javax.xml.bind.annotation.XmlEnumValue("headerBased")
 	HEADER_BASED ("headerBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("pluginBased")
-	PLUGIN_BASED ("pluginBased"),
+	@javax.xml.bind.annotation.XmlEnumValue("protocolBased")
+	PROTOCOL_BASED ("protocolBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("urlBased")
 	URL_BASED ("urlBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("contentBased")
@@ -50,8 +50,10 @@ public enum PortaApplicativaAzioneIdentificazione implements IEnumeration , Seri
 	INPUT_BASED ("inputBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("soapActionBased")
 	SOAP_ACTION_BASED ("soapActionBased"),
-	@javax.xml.bind.annotation.XmlEnumValue("wsdlBased")
-	WSDL_BASED ("wsdlBased");
+	@javax.xml.bind.annotation.XmlEnumValue("interfaceBased")
+	INTERFACE_BASED ("interfaceBased"),
+	@javax.xml.bind.annotation.XmlEnumValue("delegatedBy")
+	DELEGATED_BY ("delegatedBy");
 	
 	
 	/** Value */

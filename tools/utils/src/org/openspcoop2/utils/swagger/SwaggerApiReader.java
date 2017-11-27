@@ -43,6 +43,7 @@ import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -83,8 +84,14 @@ public class SwaggerApiReader implements IApiReader {
 	private Swagger swagger;
 	
 	@Override
-	public void init(Logger log, File file, ApiReaderConfig config)
-			throws ProcessingException {
+	public void init(Logger log, File file, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, file, config);
+	}
+	@Override
+	public void init(Logger log, File file, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, file, config, schema);
+	}
+	private void _init(Logger log, File file, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try {
 			this.swagger = new SwaggerParser().read(file.getAbsolutePath());
 		} catch(Exception e) {
@@ -93,8 +100,14 @@ public class SwaggerApiReader implements IApiReader {
 	}
 
 	@Override
-	public void init(Logger log, String content, String charsetName,
-			ApiReaderConfig config) throws ProcessingException {
+	public void init(Logger log, String content, String charsetName, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, content, charsetName, config);
+	}
+	@Override
+	public void init(Logger log, String content, String charsetName, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, content, charsetName, config, schema);
+	}
+	private void _init(Logger log, String content, String charsetName, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		try {
 			this.init(log, content.getBytes(charsetName), config);
 		} catch(UnsupportedEncodingException e) {
@@ -104,8 +117,14 @@ public class SwaggerApiReader implements IApiReader {
 	}
 
 	@Override
-	public void init(Logger log, byte[] content, ApiReaderConfig config)
-			throws ProcessingException {
+	public void init(Logger log, byte[] content, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, content, config);
+	}
+	@Override
+	public void init(Logger log, byte[] content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, content, config, schema);
+	}
+	private void _init(Logger log, byte[] content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		File tempFile = null;
 		try {
 			tempFile = File.createTempFile("swagger", ""+System.currentTimeMillis());
@@ -121,20 +140,38 @@ public class SwaggerApiReader implements IApiReader {
 	}
 
 	@Override
-	public void init(Logger log, Document doc, ApiReaderConfig config)
-			throws ProcessingException {
+	public void init(Logger log, Document doc, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, doc, config);
+	}
+	@Override
+	public void init(Logger log, Document doc, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, doc, config, schema);
+	}
+	private void _init(Logger log, Document doc, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		throw new ProcessingException("Not implemented");
 	}
 
 	@Override
-	public void init(Logger log, Element element, ApiReaderConfig config)
-			throws ProcessingException {
+	public void init(Logger log, Element element, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, element, config);
+	}
+	@Override
+	public void init(Logger log, Element element, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, element, config, schema);
+	}
+	private void _init(Logger log, Element element, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		throw new ProcessingException("Not implemented");
 	}
 
 	@Override
-	public void init(Logger log, URI uri, ApiReaderConfig config)
-			throws ProcessingException {
+	public void init(Logger log, URI uri, ApiReaderConfig config) throws ProcessingException {
+		this._init(log, uri, config);
+	}
+	@Override
+	public void init(Logger log, URI uri, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		this._init(log, uri, config, schema);
+	}
+	private void _init(Logger log, URI uri, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		this.swagger = new SwaggerParser().read(uri.toString());
 
 	}

@@ -70,6 +70,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SCARTA_BODY = new Field("scarta-body",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.GESTIONE_MANIFEST = new Field("gestione-manifest",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATELESS = new Field("stateless",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.RICERCA_PORTA_AZIONE_DELEGATA = new Field("ricerca-porta-azione-delegata",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATO = new Field("stato",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-delegata",PortaDelegata.class);
 	
@@ -109,6 +110,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SCARTA_BODY = new ComplexField(father,"scarta-body",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.GESTIONE_MANIFEST = new ComplexField(father,"gestione-manifest",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATELESS = new ComplexField(father,"stateless",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.RICERCA_PORTA_AZIONE_DELEGATA = new ComplexField(father,"ricerca-porta-azione-delegata",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-delegata",PortaDelegata.class);
 	
@@ -175,6 +177,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public IField GESTIONE_MANIFEST = null;
 	 
 	public IField STATELESS = null;
+	 
+	public IField RICERCA_PORTA_AZIONE_DELEGATA = null;
 	 
 	public IField STATO = null;
 	 

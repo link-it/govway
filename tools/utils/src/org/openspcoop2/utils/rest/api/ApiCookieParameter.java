@@ -29,7 +29,7 @@ package org.openspcoop2.utils.rest.api;
  * @version $Rev$, $Date$
  */
 public class ApiCookieParameter extends AbstractApiParameter {
-
+	
 	private String type;
 
 	public ApiCookieParameter(String name, String type){

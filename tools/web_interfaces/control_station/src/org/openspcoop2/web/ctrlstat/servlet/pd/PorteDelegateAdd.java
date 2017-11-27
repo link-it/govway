@@ -700,12 +700,12 @@ public final class PorteDelegateAdd extends Action {
 						!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
-						pdAzione.setForceWsdlBased(StatoFunzionalita.ABILITATO);
+						pdAzione.setForceInterfaceBased(StatoFunzionalita.ABILITATO);
 					}else {
-						pdAzione.setForceWsdlBased(StatoFunzionalita.DISABILITATO);
+						pdAzione.setForceInterfaceBased(StatoFunzionalita.DISABILITATO);
 					}
 				}else {
-					pdAzione.setForceWsdlBased(null);
+					pdAzione.setForceInterfaceBased(null);
 				}
 
 				portaDelegata.setAzione(pdAzione);

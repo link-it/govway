@@ -485,14 +485,14 @@ public final class PorteDelegateChange extends Action {
 						case SOAP_ACTION_BASED:
 							modeaz = IdentificazioneView.SOAP_ACTION_BASED.toString();
 							break;
-						case WSDL_BASED:
+						case INTERFACE_BASED:
 							useForceWSDLBased = false;
-							modeaz = IdentificazioneView.WSDL_BASED.toString();
+							modeaz = IdentificazioneView.INTERFACE_BASED.toString();
 							break;
 						}
 
 						if(useForceWSDLBased){
-							StatoFunzionalita forceWsdlBased2 = pda.getForceWsdlBased();
+							StatoFunzionalita forceWsdlBased2 = pda.getForceInterfaceBased();
 
 							if(forceWsdlBased2 != null && forceWsdlBased2.equals(StatoFunzionalita.ABILITATO)){
 								forceWsdlBased = "yes";
@@ -1103,12 +1103,12 @@ public final class PorteDelegateChange extends Action {
 						!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
-						pdAzione.setForceWsdlBased(StatoFunzionalita.ABILITATO);
+						pdAzione.setForceInterfaceBased(StatoFunzionalita.ABILITATO);
 					}else {
-						pdAzione.setForceWsdlBased(StatoFunzionalita.DISABILITATO);
+						pdAzione.setForceInterfaceBased(StatoFunzionalita.DISABILITATO);
 					}
 				} else {
-					pdAzione.setForceWsdlBased(null);
+					pdAzione.setForceInterfaceBased(null);
 				}
 
 

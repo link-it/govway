@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-applicativa-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="soggetti" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetti" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="proprieta-integrazione-protocollo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-proprieta-integrazione-protocollo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
@@ -72,6 +73,7 @@ import java.util.List;
  * 		&lt;attribute name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="authenticated"/>
  * 		&lt;attribute name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * &lt;/complexType>
@@ -90,6 +92,7 @@ import java.util.List;
   	"servizio",
   	"azione",
   	"servizioApplicativo",
+  	"soggetti",
   	"ruoli",
   	"proprietaIntegrazioneProtocollo",
   	"mtomProcessor",
@@ -198,6 +201,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public int sizeServizioApplicativoList() {
     return this.servizioApplicativo.size();
+  }
+
+  public PortaApplicativaAutorizzazioneSoggetti getSoggetti() {
+    return this.soggetti;
+  }
+
+  public void setSoggetti(PortaApplicativaAutorizzazioneSoggetti soggetti) {
+    this.soggetti = soggetti;
   }
 
   public AutorizzazioneRuoli getRuoli() {
@@ -516,6 +527,26 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     this.autorizzazioneContenuto = autorizzazioneContenuto;
   }
 
+  public void set_value_ricercaPortaAzioneDelegata(String value) {
+    this.ricercaPortaAzioneDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_ricercaPortaAzioneDelegata() {
+    if(this.ricercaPortaAzioneDelegata == null){
+    	return null;
+    }else{
+    	return this.ricercaPortaAzioneDelegata.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getRicercaPortaAzioneDelegata() {
+    return this.ricercaPortaAzioneDelegata;
+  }
+
+  public void setRicercaPortaAzioneDelegata(org.openspcoop2.core.config.constants.StatoFunzionalita ricercaPortaAzioneDelegata) {
+    this.ricercaPortaAzioneDelegata = ricercaPortaAzioneDelegata;
+  }
+
   public void set_value_stato(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
@@ -634,6 +665,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   public int sizeServizioApplicativo() {
   	return this.servizioApplicativo.size();
   }
+
+  @XmlElement(name="soggetti",required=false,nillable=false)
+  protected PortaApplicativaAutorizzazioneSoggetti soggetti;
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected AutorizzazioneRuoli ruoli;
@@ -773,6 +807,12 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="autorizzazione-contenuto",required=false)
   protected java.lang.String autorizzazioneContenuto;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_ricercaPortaAzioneDelegata;
+
+  @XmlAttribute(name="ricerca-porta-azione-delegata",required=false)
+  protected StatoFunzionalita ricercaPortaAzioneDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;

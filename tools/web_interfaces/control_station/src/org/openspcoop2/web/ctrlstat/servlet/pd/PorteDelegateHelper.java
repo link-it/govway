@@ -675,7 +675,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 						if (!IdentificazioneView.INPUT_BASED.toString().equals(modeaz) && 
 								!IdentificazioneView.SOAP_ACTION_BASED.toString().equals(modeaz) && 
-								!IdentificazioneView.WSDL_BASED.toString().equals(modeaz) ){
+								!IdentificazioneView.INTERFACE_BASED.toString().equals(modeaz) ){
 							de.setType(DataElementType.TEXT_EDIT);
 						}else
 							de.setType(DataElementType.HIDDEN);

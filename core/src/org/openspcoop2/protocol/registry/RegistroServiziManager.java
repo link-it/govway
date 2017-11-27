@@ -56,7 +56,6 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
-import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -192,9 +191,19 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getAllegati(this.getConnection(), idASPS);
 	}
 	
-	public AccordoServizioWrapper getWsdlAccordoServizio(IDServizio idService,InformationWsdlSource infoWsdlSource,boolean buildSchemaXSD)
+	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD);
+	}
+	
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD);
+	}
+	
+	public org.openspcoop2.core.registry.constants.ServiceBinding getServiceBinding(IDServizio idService)
+			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getServiceBinding(this.getConnection(), idService);
 	}
 	
 	public EsitoAutorizzazioneRegistro isFruitoreServizioAutorizzato(String pdd,String servizioApplicativo,IDSoggetto soggetto,IDServizio servizio)

@@ -44,6 +44,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new Field("servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new Field("azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new Field("soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_INTEGRAZIONE_PROTOCOLLO = new org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel(new Field("proprieta-integrazione-protocollo",org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
@@ -71,6 +72,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.AUTENTICAZIONE_OPZIONALE = new Field("autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE = new Field("autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new Field("autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.RICERCA_PORTA_AZIONE_DELEGATA = new Field("ricerca-porta-azione-delegata",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATO = new Field("stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
@@ -84,6 +86,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new ComplexField(father,"soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_INTEGRAZIONE_PROTOCOLLO = new org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel(new ComplexField(father,"proprieta-integrazione-protocollo",org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
@@ -111,6 +114,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.AUTENTICAZIONE_OPZIONALE = new ComplexField(father,"autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE = new ComplexField(father,"autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new ComplexField(father,"autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.RICERCA_PORTA_AZIONE_DELEGATA = new ComplexField(father,"ricerca-porta-azione-delegata",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
@@ -125,6 +129,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public org.openspcoop2.core.config.model.PortaApplicativaAzioneModel AZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
+	 
+	public org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel SOGGETTI = null;
 	 
 	public org.openspcoop2.core.config.model.AutorizzazioneRuoliModel RUOLI = null;
 	 
@@ -179,6 +185,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField AUTORIZZAZIONE = null;
 	 
 	public IField AUTORIZZAZIONE_CONTENUTO = null;
+	 
+	public IField RICERCA_PORTA_AZIONE_DELEGATA = null;
 	 
 	public IField STATO = null;
 	 

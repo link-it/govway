@@ -50,6 +50,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -66,14 +67,14 @@ package org.openspcoop2.core.config.ws.server.filter;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.config.ws.server.filter.beans.MtomProcessor;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaAzione;
+import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaServizio;
+import org.openspcoop2.core.config.ws.server.filter.beans.MtomProcessor;
+import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiApplicativi;
+import java.util.Date;
+import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
-import java.util.Date;
-import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaServizio;
-import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiApplicativi;
 
 /**     
  * SearchFilterPortaApplicativa
@@ -108,6 +109,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiAp
     "autenticazioneOpzionale",
     "autorizzazione",
     "autorizzazioneContenuto",
+    "ricercaPortaAzioneDelegata",
     "stato",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -403,6 +405,18 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	
 	public String getAutorizzazioneContenuto(){
 		return this.autorizzazioneContenuto;
+	}
+	
+	
+	@XmlElement(name="ricerca-porta-azione-delegata",required=false,nillable=false)
+	private StatoFunzionalita ricercaPortaAzioneDelegata;
+	
+	public void setRicercaPortaAzioneDelegata(StatoFunzionalita ricercaPortaAzioneDelegata){
+		this.ricercaPortaAzioneDelegata = ricercaPortaAzioneDelegata;
+	}
+	
+	public StatoFunzionalita getRicercaPortaAzioneDelegata(){
+		return this.ricercaPortaAzioneDelegata;
 	}
 	
 	

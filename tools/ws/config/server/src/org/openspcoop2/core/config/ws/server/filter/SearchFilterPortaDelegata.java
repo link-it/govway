@@ -50,6 +50,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -67,14 +68,14 @@ import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.ws.server.filter.beans.MtomProcessor;
-import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataServizio;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataSoggettoErogatore;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
-import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataLocalForward;
-import java.util.Date;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataAzione;
 import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiApplicativi;
+import java.util.Date;
+import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataServizio;
+import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataLocalForward;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 
 /**     
  * SearchFilterPortaDelegata
@@ -109,6 +110,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiAp
     "scartaBody",
     "gestioneManifest",
     "stateless",
+    "ricercaPortaAzioneDelegata",
     "stato",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -403,6 +405,18 @@ public class SearchFilterPortaDelegata extends org.openspcoop2.utils.beans.BaseB
 	
 	public StatoFunzionalita getStateless(){
 		return this.stateless;
+	}
+	
+	
+	@XmlElement(name="ricerca-porta-azione-delegata",required=false,nillable=false)
+	private StatoFunzionalita ricercaPortaAzioneDelegata;
+	
+	public void setRicercaPortaAzioneDelegata(StatoFunzionalita ricercaPortaAzioneDelegata){
+		this.ricercaPortaAzioneDelegata = ricercaPortaAzioneDelegata;
+	}
+	
+	public StatoFunzionalita getRicercaPortaAzioneDelegata(){
+		return this.ricercaPortaAzioneDelegata;
 	}
 	
 	

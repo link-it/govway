@@ -39,8 +39,8 @@ package org.openspcoop2.core.config.ws.server.wrapped;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.IdServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
 
 /**     
  * UpdateServizioApplicativo

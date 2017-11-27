@@ -77,7 +77,6 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
-import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -1688,10 +1687,36 @@ public class RegistroServiziReader {
 	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper} se la ricerca nel registro ha successo,
 	 *         null altrimenti.
 	 */
-	protected AccordoServizioWrapper getWsdlAccordoServizio(Connection connectionPdD,IDServizio idService,InformationWsdlSource infoWsdlSource,boolean buildSchemaXSD)
+	protected org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		return this.registroServizi.getWsdlAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD);
+	}
+	
+	/**
+	 * Si occupa di ritornare le informazioni REST di un servizio
+	 * 
+	 * @param idService Identificatore del Servizio di tipo {@link org.openspcoop2.core.id.IDServizio}.
+	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper} se la ricerca nel registro ha successo,
+	 *         null altrimenti.
+	 */
+	protected org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		return this.registroServizi.getRestAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD);
+	}
+	
+	/**
+	 * Si occupa di ritornare il tipo di service binding del servizio
+	 * 
+	 * @param idService Identificatore del Servizio di tipo {@link org.openspcoop2.core.id.IDServizio}.
+	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.constants.ServiceBinding} se la ricerca nel registro ha successo,
+	 *         null altrimenti.
+	 */
+	protected org.openspcoop2.core.registry.constants.ServiceBinding getServiceBinding(Connection connectionPdD,IDServizio idService)
+			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		return this.registroServizi.getServiceBinding(connectionPdD, null, idService);
 	}
 
 

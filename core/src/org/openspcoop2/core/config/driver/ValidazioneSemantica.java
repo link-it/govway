@@ -695,14 +695,16 @@ public class ValidazioneSemantica {
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED) &&
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED)){
+					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_DELEGATED_BY)){
 				this.errori.add("La modalita d'identificazione dell'azione della porta delegata "+idPortaDelegata+" deve assumere uno dei seguente valori: "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC+", "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED+", "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED+", "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED+" o "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED+" o "+
-						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED);
+						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED+" o "+
+						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_DELEGATED_BY);
 			}
 			if(identificazione==null){
 				identificazione = CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC;
@@ -717,7 +719,11 @@ public class ValidazioneSemantica {
 					CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED.equals(identificazione)){
 				if (pda.getPattern() == null)
 					this.errori.add("L'azione della porta delegata "+idPortaDelegata+" non contiene la definizione del pattern, nonostante la modalita' di identificazione sia "+identificazione);
-			}			
+			}
+			else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_DELEGATED_BY.equals(identificazione)){
+				if (pda.getNomePortaDelegante() == null)
+					this.errori.add("L'azione della porta delegata "+idPortaDelegata+" non contiene la definizione del nome della porta delegante, nonostante la modalita' di identificazione sia "+identificazione);
+			}
 		}
 		
 	
@@ -1025,17 +1031,19 @@ public class ValidazioneSemantica {
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_URL_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_CONTENT_BASED) &&
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_HEADER_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PLUGIN_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PROTOCOL_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_INPUT_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED)){
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED) &&
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_DELEGATED_BY)){
 				this.errori.add("La modalita d'identificazione dell'azione della porta applicativa "+idPortaApplicativa+" deve assumere uno dei seguente valori: "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_STATIC+", "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_URL_BASED+", "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_CONTENT_BASED+", "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_HEADER_BASED+" o "+
-						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PLUGIN_BASED+" o "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PROTOCOL_BASED+" o "+
 						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_INPUT_BASED+" o "+
-						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED);
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED+" o "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_DELEGATED_BY);
 			}
 			if(identificazione==null){
 				identificazione = CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_STATIC;
@@ -1055,6 +1063,12 @@ public class ValidazioneSemantica {
 					checkIDPA = false;
 				}
 			}	
+			else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_DELEGATED_BY.equals(identificazione)){
+				if (pda.getNomePortaDelegante() == null) {
+					this.errori.add("L'azione della porta delegata "+idPortaApplicativa+" non contiene la definizione del nome della porta delegante, nonostante la modalita' di identificazione sia "+identificazione);
+					checkIDPA = false;
+				}
+			}
 			
 		}
 		

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.io.Serializable;
+
 /**
  * HttpRequestMethod
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.utils.transport.http;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum HttpRequestMethod {
+public enum HttpRequestMethod implements Serializable {
 
 	GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
 	

@@ -297,9 +297,9 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione=?");
 				paramTypes.add(new JDBCObject(filter.getAzione().getNome(),String.class));
 			}
-			if(filter.getAzione().getForceWsdlBased()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".force_wsdl_based_azione=?");
-				paramTypes.add(new JDBCObject(filter.getAzione().getForceWsdlBased().getValue(),String.class));
+			if(filter.getAzione().getForceInterfaceBased()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".force_interface_based_azione=?");
+				paramTypes.add(new JDBCObject(filter.getAzione().getForceInterfaceBased().getValue(),String.class));
 			}
 		}
 		

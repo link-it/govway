@@ -6,6 +6,8 @@ CREATE TABLE mapping_fruizione_pd
 (
 	id_fruizione NUMBER NOT NULL,
 	id_porta NUMBER NOT NULL,
+	is_default NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -36,6 +38,8 @@ CREATE TABLE mapping_erogazione_pa
 (
 	id_erogazione NUMBER NOT NULL,
 	id_porta NUMBER NOT NULL,
+	is_default NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

@@ -40,7 +40,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
  */
 public enum IdentificazioneView {
 
-	USER_INPUT, REGISTER_INPUT, HEADER_BASED, URL_BASED, CONTENT_BASED, INPUT_BASED, SOAP_ACTION_BASED, WSDL_BASED, PLUGIN_BASED;
+	USER_INPUT, REGISTER_INPUT, HEADER_BASED, URL_BASED, CONTENT_BASED, INPUT_BASED, SOAP_ACTION_BASED, INTERFACE_BASED, PROTOCOL_BASED;
 
 	static Hashtable<IdentificazioneView, String> table;
 	static {
@@ -53,7 +53,8 @@ public enum IdentificazioneView {
 		IdentificazioneView.table.put(CONTENT_BASED, CONTENT_BASED.toString());
 		IdentificazioneView.table.put(INPUT_BASED, INPUT_BASED.toString());
 		IdentificazioneView.table.put(SOAP_ACTION_BASED, SOAP_ACTION_BASED.toString());
-		IdentificazioneView.table.put(WSDL_BASED, WSDL_BASED.toString());
+		IdentificazioneView.table.put(INTERFACE_BASED, INTERFACE_BASED.toString());
+		IdentificazioneView.table.put(PROTOCOL_BASED, PROTOCOL_BASED.toString());
 	}
 
 	public static IdentificazioneView getFromString(String val) {
@@ -88,10 +89,11 @@ public enum IdentificazioneView {
 
 		case SOAP_ACTION_BASED:
 			return PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED;
-		case WSDL_BASED:
-			return PortaDelegataAzioneIdentificazione.WSDL_BASED;
 			
-		case PLUGIN_BASED:
+		case INTERFACE_BASED:
+			return PortaDelegataAzioneIdentificazione.INTERFACE_BASED;
+			
+		case PROTOCOL_BASED:
 			throw new RuntimeException("Tipo ["+viewConstat2Convert+"] non supportato nella Porta Delegata");
 		}
 
@@ -120,11 +122,12 @@ public enum IdentificazioneView {
 
 		case SOAP_ACTION_BASED:
 			return PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED;
-		case WSDL_BASED:
-			return PortaApplicativaAzioneIdentificazione.WSDL_BASED;
 			
-		case PLUGIN_BASED:
-			return PortaApplicativaAzioneIdentificazione.PLUGIN_BASED;
+		case INTERFACE_BASED:
+			return PortaApplicativaAzioneIdentificazione.INTERFACE_BASED;
+			
+		case PROTOCOL_BASED:
+			return PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED;
 		}
 
 		return PortaApplicativaAzioneIdentificazione.STATIC;
@@ -156,11 +159,11 @@ public enum IdentificazioneView {
 		case SOAP_ACTION_BASED:
 			res = "soap-action-based";
 			break;
-		case WSDL_BASED:
-			res = "wsdl-based";
+		case INTERFACE_BASED:
+			res = "interface-based";
 			break;
-		case PLUGIN_BASED:
-			res = "plugin-based";
+		case PROTOCOL_BASED:
+			res = "protocol-based";
 			break;
 		}
 

@@ -48,12 +48,14 @@ public class CostantiConfigurazione {
     /** tipo di porta delegata: soapAction-based (solo per azione) */
     public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED = PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED;
     /** tipo di porta delegata: wsdlBased (solo per azione) */
-    public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_WSDL_BASED = PortaDelegataAzioneIdentificazione.WSDL_BASED;
+    public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_WSDL_BASED = PortaDelegataAzioneIdentificazione.INTERFACE_BASED;
+    /** tipo di porta delegata: delegatedBy */
+    public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_DELEGATED_BY = PortaDelegataAzioneIdentificazione.DELEGATED_BY;
     
     /** tipo di porta applicativa: static */
     public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_STATIC = PortaApplicativaAzioneIdentificazione.STATIC;
     /** tipo di porta applicativa: plugin-based */
-    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_PLUGIN_BASED = PortaApplicativaAzioneIdentificazione.PLUGIN_BASED;
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_PROTOCOL_BASED = PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED;
     /** tipo di porta applicativa: header-based */
     public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_HEADER_BASED = PortaApplicativaAzioneIdentificazione.HEADER_BASED;
     /** tipo di porta applicativa: url-based */
@@ -65,7 +67,9 @@ public class CostantiConfigurazione {
     /** tipo di porta applicativa: soapAction-based (solo per azione) */
     public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED = PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED;
     /** tipo di porta applicativa: wsdlBased (solo per azione) */
-    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_WSDL_BASED = PortaApplicativaAzioneIdentificazione.WSDL_BASED;
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_WSDL_BASED = PortaApplicativaAzioneIdentificazione.INTERFACE_BASED;
+    /** tipo di porta applicativa: delegatedBy */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_DELEGATED_BY = PortaApplicativaAzioneIdentificazione.DELEGATED_BY;
     
     /** tipo di porta delegata: static */
     public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO = CorrelazioneApplicativaRichiestaIdentificazione.DISABILITATO;

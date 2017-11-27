@@ -51,10 +51,10 @@ package org.openspcoop2.core.config.ws.server.filter;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.config.ws.server.filter.beans.InvocazionePorta;
 import org.openspcoop2.core.config.ws.server.filter.beans.RispostaAsincrona;
 import org.openspcoop2.core.config.ws.server.filter.beans.InvocazioneServizio;
 import java.util.Date;
+import org.openspcoop2.core.config.ws.server.filter.beans.InvocazionePorta;
 
 /**     
  * SearchFilterServizioApplicativo

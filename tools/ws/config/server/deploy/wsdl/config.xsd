@@ -125,6 +125,9 @@
 		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita"/>
 		<xsd:attribute name="stateless" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="ricerca-porta-azione-delegata" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita">
 			
 		</xsd:attribute>
@@ -145,10 +148,14 @@
 	</xsd:complexType>
 	<!-- PortaDelegata.Azione -->
 	<xsd:complexType name="porta-delegata-azione">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione-delegata" type="xsd:string"/>
+		</xsd:sequence>
 		<xsd:attribute default="static" name="identificazione" type="PortaDelegataAzioneIdentificazione"/>
 		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string"/>
-		<xsd:attribute default="disabilitato" name="force-wsdl-based" type="StatoFunzionalita">
+		<xsd:attribute name="nome-porta-delegante" type="xsd:string"/>
+		<xsd:attribute default="disabilitato" name="force-interface-based" type="StatoFunzionalita">
 			
 		</xsd:attribute>
 	</xsd:complexType>
@@ -175,6 +182,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="azione" type="porta-applicativa-azione"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-applicativa-servizio-applicativo"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="soggetti" type="porta-applicativa-autorizzazione-soggetti"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta-integrazione-protocollo" type="porta-applicativa-proprieta-integrazione-protocollo"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
@@ -231,6 +239,9 @@
 			
 		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
+		<xsd:attribute default="disabilitato" name="ricerca-porta-azione-delegata" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita">
 			
 		</xsd:attribute>
@@ -251,10 +262,14 @@
 	</xsd:complexType>
 	<!-- PortaApplicativa.Azione -->
 	<xsd:complexType name="porta-applicativa-azione">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione-delegata" type="xsd:string"/>
+		</xsd:sequence>
 		<xsd:attribute default="static" name="identificazione" type="PortaApplicativaAzioneIdentificazione"/>
 		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string"/>
-		<xsd:attribute default="disabilitato" name="force-wsdl-based" type="StatoFunzionalita">
+		<xsd:attribute name="nome-porta-delegante" type="xsd:string"/>
+		<xsd:attribute default="disabilitato" name="force-interface-based" type="StatoFunzionalita">
 			
 		</xsd:attribute>
 	</xsd:complexType>
@@ -266,6 +281,16 @@
 	<xsd:complexType name="porta-applicativa-proprieta-integrazione-protocollo">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/> <!-- Non e' possibile altrimenti avere la possibilita' di indicare qualsiasi valore type="ProprietaProtocolloValore" -->
+	</xsd:complexType>
+	<!-- PortaApplicativa Autorizzazione per Soggetti -->
+	<xsd:complexType name="porta-applicativa-autorizzazione-soggetti">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="1" name="soggetto" type="porta-applicativa-autorizzazione-soggetto"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="porta-applicativa-autorizzazione-soggetto">
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 
 
@@ -828,19 +853,21 @@
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
 			<xsd:enumeration value="soapActionBased"/>
-			<xsd:enumeration value="wsdlBased"/>
+			<xsd:enumeration value="interfaceBased"/>
+			<xsd:enumeration value="delegatedBy"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PortaApplicativaAzioneIdentificazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="static"/>
 			<xsd:enumeration value="headerBased"/>
-			<xsd:enumeration value="pluginBased"/>
+			<xsd:enumeration value="protocolBased"/>
 			<xsd:enumeration value="urlBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
 			<xsd:enumeration value="soapActionBased"/>
-			<xsd:enumeration value="wsdlBased"/>
+			<xsd:enumeration value="interfaceBased"/>
+			<xsd:enumeration value="delegatedBy"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="CorrelazioneApplicativaRichiestaIdentificazione">

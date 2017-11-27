@@ -38,12 +38,13 @@ public enum ModalitaIdentificazioneAzione implements IEnumeration , Serializable
 
 	STATIC ("static"),
 	HEADER_BASED ("headerBased"),
-	PLUGIN_BASED ("pluginBased"),
+	PROTOCOL_BASED ("protocolBased"),
 	URL_BASED ("urlBased"),
 	CONTENT_BASED ("contentBased"),
 	INPUT_BASED ("inputBased"),
 	SOAP_ACTION_BASED ("soapActionBased"),
-	WSDL_BASED ("wsdlBased");
+	INTERFACE_BASED ("interfaceBased"),
+	DELEGATED_BY ("delegatedBy");
 	
 	
 	/** Value */
@@ -196,8 +197,10 @@ public enum ModalitaIdentificazioneAzione implements IEnumeration , Serializable
 				return ModalitaIdentificazioneAzione.CONTENT_BASED;
 			case SOAP_ACTION_BASED:
 				return ModalitaIdentificazioneAzione.SOAP_ACTION_BASED;
-			case WSDL_BASED:
-				return ModalitaIdentificazioneAzione.WSDL_BASED;			
+			case INTERFACE_BASED:
+				return ModalitaIdentificazioneAzione.INTERFACE_BASED;			
+			case DELEGATED_BY:
+				return ModalitaIdentificazioneAzione.DELEGATED_BY;			
 		}
 		return ModalitaIdentificazioneAzione.STATIC;
 	}
@@ -209,8 +212,8 @@ public enum ModalitaIdentificazioneAzione implements IEnumeration , Serializable
 		switch (identificazione) {
 			case STATIC:
 				return ModalitaIdentificazioneAzione.STATIC;
-			case PLUGIN_BASED:
-				return ModalitaIdentificazioneAzione.PLUGIN_BASED;
+			case PROTOCOL_BASED:
+				return ModalitaIdentificazioneAzione.PROTOCOL_BASED;
 			case HEADER_BASED:
 				return ModalitaIdentificazioneAzione.HEADER_BASED;
 			case INPUT_BASED:
@@ -221,8 +224,10 @@ public enum ModalitaIdentificazioneAzione implements IEnumeration , Serializable
 				return ModalitaIdentificazioneAzione.CONTENT_BASED;
 			case SOAP_ACTION_BASED:
 				return ModalitaIdentificazioneAzione.SOAP_ACTION_BASED;
-			case WSDL_BASED:
-				return ModalitaIdentificazioneAzione.WSDL_BASED;			
+			case INTERFACE_BASED:
+				return ModalitaIdentificazioneAzione.INTERFACE_BASED;			
+			case DELEGATED_BY:
+				return ModalitaIdentificazioneAzione.DELEGATED_BY;				
 		}
 		return ModalitaIdentificazioneAzione.STATIC;
 	}

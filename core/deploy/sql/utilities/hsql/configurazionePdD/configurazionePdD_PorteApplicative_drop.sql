@@ -1,4 +1,6 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_pa_azioni_1;
+-- DROP INDEX index_pa_soggetti_1;
 -- DROP INDEX index_pa_ruoli_1;
 -- DROP INDEX index_porte_applicative_1;
 -- DROP INDEX INDEX_PA_WSSRES;
@@ -7,6 +9,10 @@
 -- DROP INDEX INDEX_PA_MTOMTREQ;
 -- DROP INDEX INDEX_PA_PROP;
 -- DROP INDEX INDEX_PA_SA;
+DROP TABLE pa_azioni_init_seq;
+DROP TABLE pa_azioni;
+DROP TABLE pa_soggetti_init_seq;
+DROP TABLE pa_soggetti;
 DROP TABLE pa_ruoli_init_seq;
 DROP TABLE pa_ruoli;
 DROP TABLE pa_correlazione_risposta_init_seq;
@@ -27,6 +33,8 @@ DROP TABLE porte_applicative_sa_init_seq;
 DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative_init_seq;
 DROP TABLE porte_applicative;
+DROP SEQUENCE seq_pa_azioni;
+DROP SEQUENCE seq_pa_soggetti;
 DROP SEQUENCE seq_pa_ruoli;
 DROP SEQUENCE seq_pa_correlazione_risposta;
 DROP SEQUENCE seq_pa_correlazione;

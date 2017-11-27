@@ -80,6 +80,8 @@ import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -11148,7 +11150,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("azione");
 			sqlQueryObject.addSelectField("mode_azione");
 			sqlQueryObject.addSelectField("pattern_azione");
-			sqlQueryObject.addSelectField("force_wsdl_based_azione");
+			sqlQueryObject.addSelectField("nome_porta_delegante_azione");
+			sqlQueryObject.addSelectField("force_interface_based_azione");
 			sqlQueryObject.addSelectField("validazione_contenuti_stato");
 			sqlQueryObject.addSelectField("validazione_contenuti_tipo");
 			sqlQueryObject.addSelectField("validazione_contenuti_mtom");
@@ -11167,6 +11170,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
@@ -11253,12 +11257,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				
 				String azione = rs.getString("azione");
 				String modeAzione = rs.getString("mode_azione");
+				PortaApplicativaAzione paAzione=null;
 				if ((azione != null && !"-".equals(azione) && !"".equals(azione)) || (modeAzione!=null && !"".equals(modeAzione)) ) {
-					PortaApplicativaAzione paAzione=new PortaApplicativaAzione();
+					paAzione=new PortaApplicativaAzione();
 					paAzione.setNome(azione);
 					paAzione.setIdentificazione(PortaApplicativaAzioneIdentificazione.toEnumConstant(modeAzione));
 					paAzione.setPattern(rs.getString("pattern_azione"));
-					paAzione.setForceWsdlBased(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("force_wsdl_based_azione")));
+					paAzione.setNomePortaDelegante(rs.getString("nome_porta_delegante_azione"));
+					paAzione.setForceInterfaceBased(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("force_interface_based_azione")));
 					pa.setAzione(paAzione);
 				}
 				
@@ -11356,6 +11362,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				pa.setAutorizzazioneContenuto(rs.getString("autorizzazione_contenuto"));
 
 				
+				// Ricerca Porta Azione Delegata
+				if(rs.getString("ricerca_porta_azione_delegata")!=null){
+					pa.setRicercaPortaAzioneDelegata(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("ricerca_porta_azione_delegata")));
+				}
 				
 				// Stato
 				if(rs.getString("stato")!=null){
@@ -11433,6 +11443,31 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				rs.close();
 				stm.close();
 
+				
+				
+				if(paAzione!=null) {
+					// lista azioni
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_porta=?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, idPortaApplicativa);
+
+					this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPortaApplicativa));
+					rs = stm.executeQuery();
+
+					// Request Flow Parameter
+					while (rs.next()) {
+						paAzione.addAzioneDelegata(rs.getString("azione"));
+					}
+					rs.close();
+					stm.close();
+				}
+				
+				
+				
 				// stato wss
 				if (CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(ws_security)) {
 					pa.setStatoMessageSecurity(CostantiConfigurazione.ABILITATO.toString());
@@ -11667,6 +11702,33 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				
 				
 				
+				// soggetti
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					if(pa.getSoggetti()==null){
+						pa.setSoggetti(new PortaApplicativaAutorizzazioneSoggetti());
+					}
+					
+					PortaApplicativaAutorizzazioneSoggetto soggetto = new PortaApplicativaAutorizzazioneSoggetto();
+					soggetto.setTipo(rs.getString("tipo_soggetto"));
+					soggetto.setNome(rs.getString("nome_soggetto"));
+					pa.getSoggetti().addSoggetto(soggetto);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
 				
 				// *** Aggiungo extInfo ***
 				
@@ -11773,7 +11835,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("nome_azione");
 			sqlQueryObject.addSelectField("mode_azione");
 			sqlQueryObject.addSelectField("pattern_azione");
-			sqlQueryObject.addSelectField("force_wsdl_based_azione");
+			sqlQueryObject.addSelectField("nome_porta_delegante_azione");
+			sqlQueryObject.addSelectField("force_interface_based_azione");
 			sqlQueryObject.addSelectField("ricevuta_asincrona_asim");
 			sqlQueryObject.addSelectField("ricevuta_asincrona_sim");
 			sqlQueryObject.addSelectField("integrazione");
@@ -11794,6 +11857,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("local_forward");
 			sqlQueryObject.addSelectField("local_forward_pa");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
@@ -11892,7 +11956,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					pdAzione.setNome(rs.getString("nome_azione"));
 					pdAzione.setIdentificazione(PortaDelegataAzioneIdentificazione.toEnumConstant(modeAzione));
 					pdAzione.setPattern(rs.getString("pattern_azione"));
-					pdAzione.setForceWsdlBased(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("force_wsdl_based_azione")));
+					pdAzione.setNomePortaDelegante("nome_porta_delegante_azione");
+					pdAzione.setForceInterfaceBased(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("force_interface_based_azione")));
 				}
 				pd.setAzione(pdAzione);
 
@@ -12027,6 +12092,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				pdLocalForward.setPortaApplicativa(rs.getString("local_forward_pa"));
 				pd.setLocalForward(pdLocalForward);
 				
+				// Ricerca Porta Azione Delegata
+				if(rs.getString("ricerca_porta_azione_delegata")!=null){
+					pd.setRicercaPortaAzioneDelegata(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("ricerca_porta_azione_delegata")));
+				}
+				
 				// Stato
 				if(rs.getString("stato")!=null){
 					pd.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stato")));
@@ -12067,6 +12137,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				rs.close();
 				stm.close();
 
+				
+				if(pdAzione!=null) {
+					// lista azioni
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_porta=?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, idPortaDelegata);
+
+					this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPortaDelegata));
+					rs = stm.executeQuery();
+
+					// Request Flow Parameter
+					while (rs.next()) {
+						pdAzione.addAzioneDelegata(rs.getString("azione"));
+					}
+					rs.close();
+					stm.close();
+				}
+				
+				
+				
 				// stato wss
 				if (CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(ws_security)) {
 					pd.setStatoMessageSecurity(CostantiConfigurazione.ABILITATO.toString());
@@ -12518,11 +12612,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		try {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
-			stmt.close();		
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
@@ -12575,6 +12683,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AZIONI);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();

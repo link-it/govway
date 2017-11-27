@@ -72,6 +72,7 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -1296,7 +1297,8 @@ public class DriverConfigurazioneDB_LIB {
 				//Azione
 				String nomeAzione = (azione != null ? azione.getNome() : null);
 				String patternAzione = (azione != null ? azione.getPattern() : null);
-				StatoFunzionalita forceWsdlBased = (azione != null ? azione.getForceWsdlBased() : null);
+				String nomePortaDeleganteAzione = (azione != null ? azione.getNomePortaDelegante() : null);
+				StatoFunzionalita forceInterfaceBased = (azione != null ? azione.getForceInterfaceBased() : null);
 				PortaDelegataAzioneIdentificazione modeAzione = (azione != null ? azione.getIdentificazione() : null);
 				//Se il bean Azione nn e' presente allora non controllo nulla
 				if(azione!=null){
@@ -1309,9 +1311,13 @@ public class DriverConfigurazioneDB_LIB {
 						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
 						nomeAzione=null;
 						break;
+					case DELEGATED_BY:
+						if(nomePortaDeleganteAzione==null || nomePortaDeleganteAzione.equals("")) throw new DriverConfigurazioneException("Nome Porta Delegante Azione non impostata.");
+						nomeAzione=null;
+						break;
 					case INPUT_BASED:
 					case SOAP_ACTION_BASED:
-					case WSDL_BASED:
+					case INTERFACE_BASED:
 						//nessun campo obbligatorio
 						break;
 					case STATIC:
@@ -1342,7 +1348,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("nome_azione", "?");
 				sqlQueryObject.addInsertField("mode_azione", "?");
 				sqlQueryObject.addInsertField("pattern_azione", "?");
-				sqlQueryObject.addInsertField("force_wsdl_based_azione", "?");
+				sqlQueryObject.addInsertField("nome_porta_delegante_azione", "?");
+				sqlQueryObject.addInsertField("force_interface_based_azione", "?");
 				sqlQueryObject.addInsertField("autenticazione", "?");
 				sqlQueryObject.addInsertField("autenticazione_opzionale", "?");
 				sqlQueryObject.addInsertField("autorizzazione", "?");
@@ -1367,6 +1374,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("local_forward", "?");
 				sqlQueryObject.addInsertField("local_forward_pa", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
@@ -1391,7 +1399,8 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setString(index++, null);
 				}
 				stm.setString(index++, patternAzione);
-				stm.setString(index++, getValue(forceWsdlBased));
+				stm.setString(index++, nomePortaDeleganteAzione);
+				stm.setString(index++, getValue(forceInterfaceBased));
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getAutenticazioneOpzionale()) : null);
 				stm.setString(index++, autorizzazione);
@@ -1433,6 +1442,9 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
 				
+				// Ricerca Porta Azione Delegata
+				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
+				
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
 				
@@ -1444,7 +1456,7 @@ public class DriverConfigurazioneDB_LIB {
 						DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
 								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, 
 								idServizioPD, tipoServizio, nomeServizio, 
-								idAzione, nomeAzione, modeAzione, patternAzione, getValue(forceWsdlBased),
+								idAzione, nomeAzione, modeAzione, patternAzione, nomePortaDeleganteAzione, getValue(forceInterfaceBased),
 								autenticazione, autorizzazione, autorizzazioneContenuto,
 								mtomMode_request, mtomMode_response,
 								messageSecurityStatus, messageSecurityApplyMtom_request, messageSecurityApplyMtom_response,
@@ -1457,6 +1469,7 @@ public class DriverConfigurazioneDB_LIB {
 								aPD.getAllegaBody(),aPD.getScartaBody(),aPD.getGestioneManifest(),aPD.getStateless(),aPD.getLocalForward(),
 								(aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 										aPD.getRuoli().getMatch().getValue() : null),
+								aPD.getRicercaPortaAzioneDelegata(),
 								aPD.getStato(),
 								aPD.getIdAccordo(),aPD.getIdPortType()));
 				n = stm.executeUpdate();
@@ -1721,6 +1734,28 @@ public class DriverConfigurazioneDB_LIB {
 				
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli alla PortaDelegata[" + idPortaDelegata + "]");
 				
+				// Azioni
+				n=0;
+				if(aPD.getAzione()!=null && aPD.getAzione().sizeAzioneDelegataList()>0){
+					for (int j = 0; j < aPD.getAzione().sizeAzioneDelegataList(); j++) {
+						String azioneDelegata = aPD.getAzione().getAzioneDelegata(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("azione", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPD.getId());
+						stm.setString(2, azioneDelegata);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
+				
 				
 				// extendedInfo
 				i=0;
@@ -1754,7 +1789,8 @@ public class DriverConfigurazioneDB_LIB {
 				nomeAzione = (azione != null ? azione.getNome() : null);
 				patternAzione = (azione != null ? azione.getPattern() : null);
 				modeAzione = (azione != null ? azione.getIdentificazione() : null);
-				forceWsdlBased = (azione != null ? azione.getForceWsdlBased() : null);
+				nomePortaDeleganteAzione = (azione != null ? azione.getNomePortaDelegante() : null);
+				forceInterfaceBased = (azione != null ? azione.getForceInterfaceBased() : null);
 				//Se il bean Azione nn e' presente allora non controllo nulla
 				if(azione!=null){
 					if(modeAzione==null || modeAzione.equals("")) 
@@ -1766,9 +1802,13 @@ public class DriverConfigurazioneDB_LIB {
 						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
 						nomeAzione=null;
 						break;
+					case DELEGATED_BY:
+						if(nomePortaDeleganteAzione==null || nomePortaDeleganteAzione.equals("")) throw new DriverConfigurazioneException("Nome Porta Delegante Azione non impostata.");
+						nomeAzione=null;
+						break;
 					case INPUT_BASED:
 					case SOAP_ACTION_BASED:
-					case WSDL_BASED:
+					case INTERFACE_BASED:
 						//nessun campo obbligatorio
 						break;
 					case STATIC:
@@ -1824,7 +1864,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("nome_azione", "?");
 				sqlQueryObject.addUpdateField("mode_azione", "?");
 				sqlQueryObject.addUpdateField("pattern_azione", "?");
-				sqlQueryObject.addUpdateField("force_wsdl_based_azione", "?");
+				sqlQueryObject.addUpdateField("nome_porta_delegante_azione", "?");
+				sqlQueryObject.addUpdateField("force_interface_based_azione", "?");
 				sqlQueryObject.addUpdateField("autenticazione", "?");
 				sqlQueryObject.addUpdateField("autenticazione_opzionale", "?");
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
@@ -1849,6 +1890,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("local_forward", "?");
 				sqlQueryObject.addUpdateField("local_forward_pa", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
@@ -1874,7 +1916,8 @@ public class DriverConfigurazioneDB_LIB {
 				else
 					stm.setString(index++, null);
 				stm.setString(index++, patternAzione);
-				stm.setString(index++, getValue(forceWsdlBased));
+				stm.setString(index++, nomePortaDeleganteAzione);
+				stm.setString(index++, getValue(forceInterfaceBased));
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getAutenticazioneOpzionale()) : null);
 				stm.setString(index++, autorizzazione);
@@ -1911,6 +1954,8 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
+				// RicercaPortaAzioneDelegata
+				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
 				//idAccordo
@@ -2259,6 +2304,42 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				
+				// Azioni
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, aPD.getId());
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
+				
+				n=0;
+				if(aPD.getAzione()!=null && aPD.getAzione().sizeAzioneDelegataList()>0){
+					for (int j = 0; j < aPD.getAzione().sizeAzioneDelegataList(); j++) {
+						String azioneDelegata = aPD.getAzione().getAzioneDelegata(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("azione", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPD.getId());
+						stm.setString(2, azioneDelegata);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta azione delegata [" + azioneDelegata + "] alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, CRUDType.UPDATE);
@@ -2283,6 +2364,17 @@ public class DriverConfigurazioneDB_LIB {
 				if (idPortaDelegata <= 0)
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(DELETE)] Non e' stato possibile recuperare l'id della Porta Delegata, necessario per effettuare la DELETE.");
 
+				// azioni delegate
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
+				
 				// ruoli
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RUOLI);
@@ -3226,7 +3318,8 @@ public class DriverConfigurazioneDB_LIB {
 				//Azione
 				String nomeAzione = (azione != null ? azione.getNome() : null);
 				String patternAzione = (azione != null ? azione.getPattern() : null);
-				StatoFunzionalita forceWsdlBased = (azione != null ? azione.getForceWsdlBased() : null);
+				String nomePortaDeleganteAzione = (azione != null ? azione.getNomePortaDelegante() : null);
+				StatoFunzionalita forceInterfaceBased = (azione != null ? azione.getForceInterfaceBased() : null);
 				PortaApplicativaAzioneIdentificazione modeAzione = (azione != null ? azione.getIdentificazione() : null);
 				//Se il bean Azione nn e' presente allora non controllo nulla
 				if(azione!=null){
@@ -3239,10 +3332,14 @@ public class DriverConfigurazioneDB_LIB {
 						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
 						nomeAzione=null;
 						break;
+					case DELEGATED_BY:
+						if(nomePortaDeleganteAzione==null || nomePortaDeleganteAzione.equals("")) throw new DriverConfigurazioneException("Nome Porta Delegante Azione non impostata.");
+						nomeAzione=null;
+						break;
 					case INPUT_BASED:
 					case SOAP_ACTION_BASED:
-					case WSDL_BASED:
-					case PLUGIN_BASED:
+					case INTERFACE_BASED:
+					case PROTOCOL_BASED:
 						//nessun campo obbligatorio
 						break;
 					case STATIC:
@@ -3269,7 +3366,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("azione", "?");
 				sqlQueryObject.addInsertField("mode_azione", "?");
 				sqlQueryObject.addInsertField("pattern_azione", "?");
-				sqlQueryObject.addInsertField("force_wsdl_based_azione", "?");
+				sqlQueryObject.addInsertField("nome_porta_delegante_azione", "?");
+				sqlQueryObject.addInsertField("force_interface_based_azione", "?");
 				sqlQueryObject.addInsertField("mtom_request_mode", "?");
 				sqlQueryObject.addInsertField("mtom_response_mode", "?");
 				sqlQueryObject.addInsertField("ws_security", "?");
@@ -3292,6 +3390,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("autorizzazione", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
@@ -3318,7 +3417,8 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setString(index++, null);
 				}
 				stm.setString(index++, patternAzione);
-				stm.setString(index++, getValue(forceWsdlBased));
+				stm.setString(index++, nomePortaDeleganteAzione);
+				stm.setString(index++, getValue(forceInterfaceBased));
 				// mtom
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_response));
@@ -3356,6 +3456,9 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				
+				// RicercaPortaAzioneDelegata
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
 				
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
@@ -3643,6 +3746,54 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
+				// Soggetti
+				n=0;
+				if(aPA.getSoggetti()!=null && aPA.getSoggetti().sizeSoggettoList()>0){
+					for (int j = 0; j < aPA.getSoggetti().sizeSoggettoList(); j++) {
+						PortaApplicativaAutorizzazioneSoggetto soggetto = aPA.getSoggetti().getSoggetto(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("tipo_soggetto", "?");
+						sqlQueryObject.addInsertField("nome_soggetto", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPA.getId());
+						stm.setString(2, soggetto.getTipo());
+						stm.setString(3, soggetto.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto soggetto [" + soggetto.getTipo() + "/"+soggetto.getNome()+"] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " soggetti alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				// Azioni
+				n=0;
+				if(aPA.getAzione()!=null && aPA.getAzione().sizeAzioneDelegataList()>0){
+					for (int j = 0; j < aPA.getAzione().sizeAzioneDelegataList(); j++) {
+						String azioneDelegata = aPA.getAzione().getAzioneDelegata(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("ruolo", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPA.getId());
+						stm.setString(2, azioneDelegata);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
 				// extendedInfo
 				i=0;
 				if(aPA.sizeExtendedInfoList()>0){
@@ -3681,7 +3832,8 @@ public class DriverConfigurazioneDB_LIB {
 				//Azione
 				nomeAzione = (azione != null ? azione.getNome() : null);
 				patternAzione = (azione != null ? azione.getPattern() : null);
-				forceWsdlBased = (azione != null ? azione.getForceWsdlBased() : null);
+				nomePortaDeleganteAzione = (azione != null ? azione.getNomePortaDelegante() : null);
+				forceInterfaceBased = (azione != null ? azione.getForceInterfaceBased() : null);
 				modeAzione = (azione != null ? azione.getIdentificazione() : null);
 				//Se il bean Azione nn e' presente allora non controllo nulla
 				if(azione!=null){
@@ -3694,10 +3846,14 @@ public class DriverConfigurazioneDB_LIB {
 						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
 						nomeAzione=null;
 						break;
+					case DELEGATED_BY:
+						if(nomePortaDeleganteAzione==null || nomePortaDeleganteAzione.equals("")) throw new DriverConfigurazioneException("Nome Porta Delegante Azione non impostata.");
+						nomeAzione=null;
+						break;
 					case INPUT_BASED:
 					case SOAP_ACTION_BASED:
-					case WSDL_BASED:
-					case PLUGIN_BASED:
+					case INTERFACE_BASED:
+					case PROTOCOL_BASED:
 						//nessun campo obbligatorio
 						break;
 					case STATIC:
@@ -3723,7 +3879,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("azione", "?");
 				sqlQueryObject.addUpdateField("mode_azione", "?");
 				sqlQueryObject.addUpdateField("pattern_azione", "?");
-				sqlQueryObject.addUpdateField("force_wsdl_based_azione", "?");
+				sqlQueryObject.addUpdateField("nome_porta_delegante_azione", "?");
+				sqlQueryObject.addUpdateField("force_interface_based_azione", "?");
 				sqlQueryObject.addUpdateField("mtom_request_mode", "?");
 				sqlQueryObject.addUpdateField("mtom_response_mode", "?");
 				sqlQueryObject.addUpdateField("ws_security", "?");
@@ -3747,6 +3904,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
@@ -3783,7 +3941,8 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setString(index++, null);
 				}
 				stm.setString(index++, patternAzione);
-				stm.setString(index++, getValue(forceWsdlBased));
+				stm.setString(index++, nomePortaDeleganteAzione);
+				stm.setString(index++, getValue(forceInterfaceBased));
 				// mtom
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_response));
@@ -3818,6 +3977,8 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				// RicercaPortaAzioneDelegata
+				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
 				// id
@@ -4192,6 +4353,80 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
+				
+				// Soggetti
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, aPA.getId());
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" soggetti associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				n=0;
+				if(aPA.getSoggetti()!=null && aPA.getSoggetti().sizeSoggettoList()>0){
+					for (int j = 0; j < aPA.getSoggetti().sizeSoggettoList(); j++) {
+						PortaApplicativaAutorizzazioneSoggetto soggetto = aPA.getSoggetti().getSoggetto(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("tipo_soggetto", "?");
+						sqlQueryObject.addInsertField("nome_soggetto", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPA.getId());
+						stm.setString(2, soggetto.getTipo());
+						stm.setString(3, soggetto.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto soggetto [" + soggetto.getTipo() + "/"+soggetto.getNome()+"] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " soggetti alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
+				// Azioni
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, aPA.getId());
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" azioni associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				n=0;
+				if(aPA.getAzione()!=null && aPA.getAzione().sizeAzioneDelegataList()>0){
+					for (int j = 0; j < aPA.getAzione().sizeAzioneDelegataList(); j++) {
+						String azioneDelegata = aPA.getAzione().getAzioneDelegata(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("azione", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPA.getId());
+						stm.setString(2, azioneDelegata);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto azione delegata [" + azioneDelegata + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azione delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
+				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, CRUDType.UPDATE);
@@ -4220,6 +4455,28 @@ public class DriverConfigurazioneDB_LIB {
 				if (idPortaApplicativa <= 0)
 					throw new DriverConfigurazioneException("Non e' stato possibile recuperare l'id della Porta Applicativa.");
 
+				// azioni delegate
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" azioni delegate associate alla Porta Applicativa "+idPortaApplicativa);
+				
+				// soggetti
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" soggetti associati alla Porta Applicativa "+idPortaApplicativa);
+				
 				// ruoli
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);

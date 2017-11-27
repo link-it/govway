@@ -23,16 +23,16 @@ package org.openspcoop2.protocol.registry;
  * InformationWsdlSource
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100 (Wed, 11 Jan 2017) $
  */
-public enum InformationWsdlSource {
+public enum InformationApiSource {
 
-	WSDL, REGISTRY, 
+	SPECIFIC, REGISTRY, 
 	
-	WSDL_REGISTRY, 
-	REGISTRY_WSDL,
+	SPECIFIC_REGISTRY, 
+	REGISTRY_SPECIFIC,
 	
-	SAFE_WSDL_REGISTRY,
-	SAFE_REGISTRY_WSDL
+	SAFE_SPECIFIC_REGISTRY,
+	SAFE_REGISTRY_SPECIFIC
 }

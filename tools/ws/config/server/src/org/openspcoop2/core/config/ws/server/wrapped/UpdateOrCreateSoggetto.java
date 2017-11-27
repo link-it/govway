@@ -39,8 +39,8 @@ package org.openspcoop2.core.config.ws.server.wrapped;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.IdSoggetto;
+import org.openspcoop2.core.config.Soggetto;
 
 /**     
  * UpdateOrCreateSoggetto

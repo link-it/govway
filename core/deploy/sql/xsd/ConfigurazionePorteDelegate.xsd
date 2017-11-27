@@ -28,6 +28,7 @@
                                 <linkit:sql-table object-name="porte-delegate-correlazione" object-type="porte-delegate-correlazione"/>
                                 <linkit:sql-table object-name="porte-delegate-correlazione-risposta" object-type="porte-delegate-correlazione-risposta"/>
                                 <linkit:sql-table object-name="porte-delegate-ruoli" object-type="porte-delegate-ruoli"/>
+                                <linkit:sql-table object-name="porte-delegate-azioni" object-type="porte-delegate-azioni"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -229,7 +230,10 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
 - 'urlBased': l'azione viene identificata attraverso l'estrazione del nome dalla url di richiesta tramite una espressione regolare definita nella colonna 'pattern_azione'
 - 'inputBased': l'azione viene identificata tramite gli header di integrazione standard forniti con la porta
 - 'soapActionBased': l'azione viene identificata tramite la soapAction
-- 'wsdlBased': l'azione viene identificata relazionando il messaggio di richiesta con quelli registrati nel wsdl del servizio]]></linkit:sql-ddl-column-comment>
+- 'headerBased': l'azione viene identificata tramite l'header http indicato nella colonna 'pattern_azione'
+- 'protocolBased': l'azione viene identificata tramite il protocollo del messaggio
+- 'interfaceBased': l'azione viene identificata relazionando il messaggio di richiesta con quelli registrati nella specifica del servizio
+- 'delegatedBy': l'azione viene indicata attraverso l'invocazione delegata da parte della porta delegante indicata nella colonna 'delegante_azione']]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -242,18 +246,31 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                                 <linkit:sql-column-mapping name="pattern_azione"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Lo scopo del valore indicato in questa colonna varia a seconda della modalità impostata nella colonna 'mode_azione':
 - 'contentBased': la colonna 'pattern_azione' definisce una regola xpath
-- 'urlBased': la colonna 'pattern_azione' definisce una espressione regolare]]></linkit:sql-ddl-column-comment>
+- 'urlBased': la colonna 'pattern_azione' definisce una espressione regolare
+- 'headerBased': la colonna 'pattern_azione' definisce un header http
+]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="force_wsdl_based_azione" type="xsd:string" minOccurs="0">
+                <xsd:element name="nome_porta_delegante_azione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="force_wsdl_based_azione"/>
-                                <linkit:sql-ddl-column-comment>Indicazione se attuare un riconoscimento wsdlBased dell'azione, in caso di riconoscimento fallito tramite la modalità indicata nella colonna 'mode_azione' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="nome_porta_delegante_azione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Nome della porta delegante nel caso la modalità di riconoscimento dell'azione indicata nella colonna 'mode_azione' sia 'delegatedBy']]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="force_interface_based_azione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="force_interface_based_azione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se attuare un riconoscimento interfaceBased dell'azione, in caso di riconoscimento fallito tramite la modalità indicata nella colonna 'mode_azione' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -553,6 +570,18 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
 - 'all': tutti i ruoli associati alla porta delegata (tramite tabella pd_ruoli) devono essere posseduti dal chiamante
 - 'any': per essere autorizzati ad invocare il servizio è sufficente per il chiamante possedere uno dei ruoli definiti sulla porta delegata]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ricerca_porta_azione_delegata" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ricerca_porta_azione_delegata"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se identificata l'azione con la modalità configurata tramite la colonna 'mode_azione' deve essere cercata una porta più specifica (contenente tale azione come delega) o deve essere utilizzata quella individuata da questa riga della tabella (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1087,6 +1116,60 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    
+    
+    
+    <xsd:element name="porte-delegate-azioni">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pd_azioni"
+                        comment="Elenco di azioni delegate associate alla porta">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-delegate"
+                            reference-object-type="porte-delegate"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="azione" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="azione" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="azione"/>
+                                <linkit:sql-ddl-column-comment>Azione delegata associata alla porta</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
     
     
     <!-- TABELLA DI SERVIZIO PER POTER COSTRUIRE LA FOREIGN KEY -->

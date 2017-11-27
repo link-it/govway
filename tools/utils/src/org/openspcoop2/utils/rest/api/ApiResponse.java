@@ -34,7 +34,7 @@ import org.openspcoop2.utils.beans.BaseBean;
  * @version $Rev$, $Date$
  */
 public class ApiResponse extends BaseBean {
-
+	
 	private String description;
 	private int httpReturnCode;
 	

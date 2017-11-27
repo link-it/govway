@@ -65,6 +65,7 @@
     <value name="scarta-body" field="scartaBody" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="gestione-manifest" field="gestioneManifest" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="stateless" field="stateless" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="ricerca-porta-azione-delegata" field="ricercaPortaAzioneDelegata" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="stato" field="stato" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
@@ -81,10 +82,14 @@
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.config.PortaDelegataAzione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="azioneDelegata" create-type="java.util.ArrayList">
+      <value name="azione-delegata" type="java.lang.String"/>
+    </collection>
     <value name="identificazione" field="identificazione" default="static" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="pattern" field="pattern" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="optional" style="attribute"/>
-    <value name="force-wsdl-based" field="forceWsdlBased" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="nome-porta-delegante" field="nomePortaDelegante" usage="optional" style="attribute"/>
+    <value name="force-interface-based" field="forceInterfaceBased" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.PortaDelegataServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
@@ -103,6 +108,7 @@
     <collection field="servizioApplicativo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.config.PortaApplicativaServizioApplicativo"/>
     </collection>
+    <structure field="soggetti" usage="optional" map-as="org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti"/>
     <structure name="ruoli" field="ruoli" usage="optional" map-as="_AutorizzazioneRuoli_Type"/>
     <collection field="proprietaIntegrazioneProtocollo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo"/>
@@ -132,6 +138,7 @@
     <value name="autenticazione-opzionale" field="autenticazioneOpzionale" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="autorizzazione" field="autorizzazione" default="authenticated" usage="optional" style="attribute"/>
     <value name="autorizzazione-contenuto" field="autorizzazioneContenuto" usage="optional" style="attribute"/>
+    <value name="ricerca-porta-azione-delegata" field="ricercaPortaAzioneDelegata" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="stato" field="stato" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
@@ -148,10 +155,14 @@
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.config.PortaApplicativaAzione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="azioneDelegata" create-type="java.util.ArrayList">
+      <value name="azione-delegata" type="java.lang.String"/>
+    </collection>
     <value name="identificazione" field="identificazione" default="static" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="pattern" field="pattern" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="optional" style="attribute"/>
-    <value name="force-wsdl-based" field="forceWsdlBased" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="nome-porta-delegante" field="nomePortaDelegante" usage="optional" style="attribute"/>
+    <value name="force-interface-based" field="forceInterfaceBased" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.PortaApplicativaServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
@@ -161,6 +172,17 @@
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="valore" field="valore" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="soggetti" class="org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="soggetto" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto"/>
+    </collection>
+  </mapping>
+  <mapping name="soggetto" class="org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
   <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.ServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
