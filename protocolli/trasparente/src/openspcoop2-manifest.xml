@@ -62,6 +62,7 @@
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">
+    		  <!-- 
     		<integration>
     		    <implementation>
     		    	<default name="{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
@@ -80,6 +81,7 @@
    		    		</resource-identification>
     			</subscrition>
     		</integration>
+    		 -->
     		<integrationError>
     			<internal>
 	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
