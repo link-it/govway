@@ -684,16 +684,9 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="wsdl-implementativo-erogatore" type="xsd:string"/>
 		<xsd:attribute name="wsdl-implementativo-fruitore" type="xsd:string"/>
-		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
-		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
-		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
-		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
-		<xsd:attribute name="scadenza" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
 		</xsd:attribute>
-		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
-		<xsd:attribute name="client-auth" type="StatoFunzionalita"/>
 	</xsd:complexType>
 	
 	

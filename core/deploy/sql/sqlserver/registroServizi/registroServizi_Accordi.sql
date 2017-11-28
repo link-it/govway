@@ -382,9 +382,6 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_erogatore VARCHAR(max),
 	wsdl_implementativo_fruitore VARCHAR(max),
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
-	profilo VARCHAR(255),
-	-- client auth: disabilitato/abilitato
-	client_auth VARCHAR(255),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	-- fk/pk columns
 	id BIGINT IDENTITY,

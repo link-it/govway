@@ -1722,6 +1722,9 @@
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<fruitore tipo="API" nome="EsempioSoggettoTrasparenteBasic"/>
+		    </soggetti>
 		</porta-applicativa>
 
 		<!-- 

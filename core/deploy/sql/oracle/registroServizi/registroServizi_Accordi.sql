@@ -565,9 +565,6 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_erogatore CLOB,
 	wsdl_implementativo_fruitore CLOB,
 	ora_registrazione TIMESTAMP,
-	profilo VARCHAR2(255),
-	-- client auth: disabilitato/abilitato
-	client_auth VARCHAR2(255),
 	stato VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,

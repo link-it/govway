@@ -137,7 +137,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta Selezionati";
 	public final static String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
 	public final static String LABEL_APS_USA_VERSIONE_EROGATORE = "usa versione erogatore";
-	public final static String LABEL_APS_USA_PROFILO_PDD_FRUITORE = "usa profilo della pdd del fruitore";
 	public final static String LABEL_APS_SPECIFICA_PORTI_ACCESSO = "Specifica dei Porti di Accesso";
 	public final static String LABEL_APS_SPECIFICA_PORTA_APPLICATIVA = "Porta Applicativa";
 	public final static String LABEL_APS_SPECIFICA_PORTA_DELEGATA = "Porta Delegata";
@@ -304,7 +303,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_DOCUMENTO_SELEZIONATO_NON_PUO_ESSERE_VUOTO = "Il documento selezionato non puo essere vuoto.";
 	public static final String MESSAGGIO_ERRORE_DOCUMENTO_OBBLIGATORIO = "&Egrave; necessario selezionare un documento.";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_IL_TIPO_DI_DOCUMENTO = "Dati incompleti. &Egrave; necessario indicare il Tipo di documento";
-	public static final String MESSAGGIO_ERRORE_FUNZIONALITÀ_DI_CLIENT_AUTH_NON_ABILITABILE_POICHÈ_NON_È_STATO_SPECIFICATO_UN_SUBJECT_NELLA_PORTA_DI_DOMINIO_0_DEL_SOGGETTO_1 = "Funzionalità di client-auth non abilitabile, poichè non è stato specificato un subject nella Porta di Dominio {0} del soggetto {1}";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO = "Esiste gi&agrave; un fruitore del Servizio con lo stesso Soggetto";
 	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE = "Per poter aggiungere il fruitore deve essere definito il connettore.<br/>In alternativa è possibile configurare un connettore sul servizio o sul soggetto erogatore prima di procedere con la creazione del fruitore.";
 	public static final String MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE = "Per poter aggiungere il fruitore deve prima essere definito un connettore sul servizio o sul soggetto erogatore.";

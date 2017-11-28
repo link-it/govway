@@ -50,7 +50,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -634,13 +633,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String user, String password, String initcont,
 			String urlpgk, String provurl, String connfact,
 			String sendas, BinaryParameter wsdlimpler, BinaryParameter wsdlimplfru,
-			String myId, String profilo,
+			String myId, 
 			String httpsurl, String httpstipologia, boolean httpshostverify,
 			String httpspath, String httpstipo, String httpspwd,
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
-			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String clientAuth,
+			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, 
 			boolean validazioneDocumenti, String backToStato,
 			String autenticazioneHttp,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
@@ -848,19 +847,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					return false;
 				}
 
-			}
-
-			// Client-auth
-			if(CostantiConfigurazione.ABILITATO.equals(clientAuth)){
-				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Long.parseLong(idSoggettoFruitore));
-				IDSoggetto idfru = new IDSoggetto(mySogg.getTipo(),mySogg.getNome());
-				PortaDominio pdd = this.pddCore.getPortaDominio(mySogg.getPortaDominio());
-				if(pdd.getSubject()==null || "".equals(pdd.getSubject())){
-					this.pd.setMessage(MessageFormat.format(
-							AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_FUNZIONALITÀ_DI_CLIENT_AUTH_NON_ABILITABILE_POICHÈ_NON_È_STATO_SPECIFICATO_UN_SUBJECT_NELLA_PORTA_DI_DOMINIO_0_DEL_SOGGETTO_1,
-							pdd.getNome(), idfru.toString()));
-					return false;
-				}
 			}
 
 			return true;
@@ -4151,7 +4137,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 	public Vector<DataElement> addFruitoreToDati(TipoOperazione tipoOp, String[] versioniLabel, String[] versioniValues,
-			String profilo, String clientAuth,
 			Vector<DataElement> dati,
 			String oldStatoPackage, String idServizio, String idServizioFruitore, String idSoggettoErogatoreDelServizio,
 			String nomeservizio, String tiposervizio, Integer versioneservizio, String idSoggettoFruitore,
@@ -4250,121 +4235,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 
-		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROFILO);
-
-		if(isModalitaAvanzata){
-			String tmp = profilo;
-			if(tmp==null){
-				tmp="-";
-			}
-
-			boolean modificaAbilitata = ( (this.apsCore.isShowGestioneWorkflowStatoDocumenti()==false)
-					|| (StatiAccordo.finale.toString().equals(oldStatoPackage)==false) );
-
-			if(modificaAbilitata){
-				de.setLabels(versioniLabel);
-				de.setValues(versioniValues);
-
-				de.setSelected(tmp);
-				de.setType(DataElementType.SELECT);
-			} else {
-				String profiloValue = null;
-				for (int i =0; i < versioniValues.length ; i++) {
-					String v = versioniValues[i];
-					if(v.equals(tmp)){
-						profiloValue = versioniLabel[i];
-						break;
-
-					}
-				}
-
-				if(profiloValue==null){
-					profiloValue="-";
-				}
-
-				de.setType(DataElementType.TEXT);
-				de.setValue(profiloValue);
-			}
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			String tmp = profilo;
-			if(tmp==null){
-				tmp="-";
-			}
-			de.setValue(tmp);
-		}
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
-		de.setSize(getSize());
-		dati.addElement(de);
-		//}
-
-
-
-		String[] tipoCA = { 
-				AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DEFAULT,
-				AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_ABILITATO, 
-				AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-
-		String[] labelTipiCA = new String[3];
-		labelTipiCA[0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_PROFILO_PDD_FRUITORE;
-		labelTipiCA[1] = tipoCA[1];
-		labelTipiCA[2] = tipoCA[2];
-
-
-
-		if(tipoOp.equals(TipoOperazione.ADD)){
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			if ( isModalitaAvanzata) {
-				de.setType(DataElementType.SELECT);
-				de.setLabels(labelTipiCA);
-				de.setValues(tipoCA);
-				de.setSelected( clientAuth);
-			}else{
-				de.setType(DataElementType.HIDDEN);
-				de.setValue( clientAuth);
-			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			dati.addElement(de);
-		}
 
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setValue(idServizioFruitore);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
 			dati.addElement(de);
 
-			boolean modificaAbilitata = ( (this.apsCore.isShowGestioneWorkflowStatoDocumenti()==false)
-					|| (StatiAccordo.finale.toString().equals(oldStatoPackage)==false) );
-
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			if ( isModalitaAvanzata) {
-				de.setType(DataElementType.SELECT);
-				de.setLabels(labelTipiCA);
-				if(!modificaAbilitata && ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(clientAuth)){
-					de.setValues(new String[]{AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_PROFILO_PDD_FRUITORE});
-					de.setSelected(AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_PROFILO_PDD_FRUITORE);
-				}else{
-					de.setValues(tipoCA);
-					de.setSelected(clientAuth);
-				}
-			}else{
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(clientAuth);
-			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			if(clientAuth==null)
-				clientAuth = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-			dati.addElement(de);
-
 		}
 
 		if (!isModalitaAvanzata) {
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			de.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO);
 			de.setType(DataElementType.HIDDEN);
@@ -4375,50 +4257,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 	public Vector<DataElement> addFruitoreToDatiAsHidden(TipoOperazione tipoOp, String[] versioniLabel, String[] versioniValues,
-			String profilo, String clientAuth,
 			Vector<DataElement> dati,
 			String oldStatoPackage, String idServizio, String idServizioFruitore, String idSoggettoErogatoreDelServizio,
 			String nomeservizio, String tiposervizio, String idSoggettoFruitore){
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
-		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROFILO);
-
-		de.setType(DataElementType.HIDDEN);
-		String tmp = profilo;
-		if(tmp==null){
-			tmp="-";
-		}
-		de.setValue(tmp);
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
-		de.setSize(getSize());
-		dati.addElement(de);
-
-		//		String[] tipoCA = { 
-		//				AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DEFAULT,
-		//				AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_ABILITATO, 
-		//				AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO
-		//		};
-
-		//		String[] labelTipiCA = new String[3];
-		//		labelTipiCA[0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_PROFILO_PDD_FRUITORE;
-		//		labelTipiCA[1] = tipoCA[1];
-		//		labelTipiCA[2] = tipoCA[2];
-
-
-
-		if(tipoOp.equals(TipoOperazione.ADD)){
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			de.setType(DataElementType.HIDDEN);
-			de.setValue( clientAuth);
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			dati.addElement(de);
-		}
-
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setValue(idServizioFruitore);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
@@ -4427,32 +4273,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			//			boolean modificaAbilitata = ( (this.apsCore.isShowGestioneWorkflowStatoDocumenti()==false)
 			//					|| (StatiAccordo.finale.toString().equals(oldStatoPackage)==false) );
 
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			//			if ( isModalitaAvanzata) {
-			//				de.setType(DataElementType.SELECT);
-			//				de.setLabels(labelTipiCA);
-			//				if(!modificaAbilitata && ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(clientAuth)){
-			//					de.setValues(new String[]{AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_PROFILO_PDD_FRUITORE});
-			//					de.setSelected(AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_PROFILO_PDD_FRUITORE);
-			//				}else{
-			//					de.setValues(tipoCA);
-			//					de.setSelected(clientAuth);
-			//				}
-			//			}else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(clientAuth);
-			//			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			if(clientAuth==null)
-				clientAuth = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-			dati.addElement(de);
-
 
 		}
 
 		if (!isModalitaAvanzata) {
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			de.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO);
 			de.setType(DataElementType.HIDDEN);

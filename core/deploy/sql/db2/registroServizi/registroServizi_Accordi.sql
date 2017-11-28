@@ -385,9 +385,6 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_erogatore CLOB,
 	wsdl_implementativo_fruitore CLOB,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	profilo VARCHAR(255),
-	-- client auth: disabilitato/abilitato
-	client_auth VARCHAR(255),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),

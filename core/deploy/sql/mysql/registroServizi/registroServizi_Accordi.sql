@@ -387,9 +387,6 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_fruitore MEDIUMTEXT,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
-	profilo VARCHAR(255),
-	-- client auth: disabilitato/abilitato
-	client_auth VARCHAR(255),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,

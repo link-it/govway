@@ -9818,18 +9818,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 					fruitore.setOraRegistrazione(new Date(rs.getTimestamp("ora_registrazione").getTime()));
 				}
 
-				// Profilo 
-				String profilo = rs.getString("profilo");
-				if(profilo!=null){
-					profilo = profilo.trim();
-					fruitore.setVersioneProtocollo(profilo);
-				}
-
 				// Stato Documento
 				fruitore.setStatoPackage(rs.getString("stato"));
-
-				// Client Auth
-				fruitore.setClientAuth(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(rs.getString("client_auth")));
 
 				// recupero informazioni del soggetto fruitore
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -11892,8 +11882,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id_connettore");
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".stato");
-			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".client_auth");
-			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".profilo");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -11920,8 +11908,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				fruitore.setTipo(rs.getString("tipo_soggetto"));
 				fruitore.setNome(rs.getString("nome_soggetto"));
 				fruitore.setStatoPackage(rs.getString("stato"));
-				fruitore.setVersioneProtocollo(rs.getString("profilo"));
-				fruitore.setClientAuth(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(rs.getString("client_auth")));
 				long idConnettore = rs.getLong("id_connettore");
 				fruitore.setConnettore(getConnettore(idConnettore, con));
 			} else {
@@ -12217,8 +12203,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".id_connettore");
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".wsdl_implementativo_erogatore");
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".wsdl_implementativo_fruitore");
-			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".profilo");
-			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".client_auth");
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI+".stato");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
@@ -12244,8 +12228,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				f.setConnettore(getConnettore(idConnettore, con));
 				f.setByteWsdlImplementativoErogatore(risultato.getString("wsdl_implementativo_erogatore")!=null && !risultato.getString("wsdl_implementativo_erogatore").trim().equals("") ? risultato.getString("wsdl_implementativo_erogatore").trim().getBytes() : null);
 				f.setByteWsdlImplementativoFruitore(risultato.getString("wsdl_implementativo_fruitore")!=null && !risultato.getString("wsdl_implementativo_fruitore").trim().equals("") ? risultato.getString("wsdl_implementativo_fruitore").trim().getBytes() : null);
-				f.setVersioneProtocollo(risultato.getString("profilo"));
-				f.setClientAuth(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("client_auth")));
 				f.setStatoPackage(risultato.getString("stato"));
 				
 				// Protocol Properties

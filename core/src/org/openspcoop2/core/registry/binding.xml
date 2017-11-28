@@ -461,14 +461,7 @@
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="wsdl-implementativo-erogatore" field="wsdlImplementativoErogatore" usage="optional" style="attribute"/>
     <value name="wsdl-implementativo-fruitore" field="wsdlImplementativoFruitore" usage="optional" style="attribute"/>
-    <value name="filtro-duplicati" field="filtroDuplicati" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="conferma-ricezione" field="confermaRicezione" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="id-collaborazione" field="idCollaborazione" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="consegna-in-ordine" field="consegnaInOrdine" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
-    <value name="versione-protocollo" field="versioneProtocollo" usage="optional" style="attribute"/>
-    <value name="client-auth" field="clientAuth" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="allegato" class="org.openspcoop2.core.registry.Documento" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>

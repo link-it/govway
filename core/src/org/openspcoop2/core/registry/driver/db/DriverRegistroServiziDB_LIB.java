@@ -2299,8 +2299,7 @@ public class DriverRegistroServiziDB_LIB {
 		wsdlImplementativoErogatore = wsdlImplementativoErogatore!=null && !"".equals(wsdlImplementativoErogatore.trim().replaceAll("\n", "")) ? wsdlImplementativoErogatore : null;
 		String wsdlImplementativoFruitore =  (fruitore.getByteWsdlImplementativoFruitore()!=null ? new String(fruitore.getByteWsdlImplementativoFruitore()) : null );
 		wsdlImplementativoFruitore = wsdlImplementativoFruitore!=null && !"".equals(wsdlImplementativoFruitore.trim().replaceAll("\n", "")) ? wsdlImplementativoFruitore : null;
-		StatoFunzionalita clientAuth = fruitore.getClientAuth();
-
+		
 		long idFruizione = 0;
 		if (CostantiDB.CREATE != type) {
 			idFruizione = DriverRegistroServiziDB_LIB.getIdFruizione(idServizio, nomeSoggetto, tipoSoggetto, con);
@@ -2331,8 +2330,6 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("id_connettore", "?");
 				sqlQueryObject.addInsertField("wsdl_implementativo_erogatore", "?");
 				sqlQueryObject.addInsertField("wsdl_implementativo_fruitore", "?");
-				sqlQueryObject.addInsertField("profilo", "?");
-				sqlQueryObject.addInsertField("client_auth", "?");
 				if(stato!=null)
 					sqlQueryObject.addInsertField("stato", "?");
 				if(fruitore.getOraRegistrazione()!=null)
@@ -2345,10 +2342,8 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setLong(3, idConnettore);
 				updateStmt.setString(4, wsdlImplementativoErogatore);
 				updateStmt.setString(5, wsdlImplementativoFruitore);
-				updateStmt.setString(6, fruitore.getVersioneProtocollo());
-				updateStmt.setString(7, getValue(clientAuth));
 				
-				int index = 8;
+				int index = 6;
 				
 				if(stato!=null){
 					updateStmt.setString(index, stato);
@@ -2396,8 +2391,6 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateTable(CostantiDB.SERVIZI_FRUITORI);
 				sqlQueryObject.addUpdateField("wsdl_implementativo_erogatore", "?");
 				sqlQueryObject.addUpdateField("wsdl_implementativo_fruitore", "?");
-				sqlQueryObject.addUpdateField("profilo", "?");
-				sqlQueryObject.addUpdateField("client_auth", "?");
 				if(stato!=null)
 					sqlQueryObject.addUpdateField("stato", "?");
 				if(fruitore.getOraRegistrazione()!=null)
@@ -2412,11 +2405,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(1, wsdlImplementativoErogatore);
 				updateStmt.setString(2, wsdlImplementativoFruitore);
 
-				updateStmt.setString(3, fruitore.getVersioneProtocollo());
-
-				updateStmt.setString(4, getValue(clientAuth));
-
-				index = 5;
+				index = 3;
 				
 				if(stato!=null){
 					updateStmt.setString(index, stato);

@@ -392,9 +392,6 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_erogatore TEXT,
 	wsdl_implementativo_fruitore TEXT,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	profilo VARCHAR(255),
-	-- client auth: disabilitato/abilitato
-	client_auth VARCHAR(255),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_servizi_fruitori') NOT NULL,

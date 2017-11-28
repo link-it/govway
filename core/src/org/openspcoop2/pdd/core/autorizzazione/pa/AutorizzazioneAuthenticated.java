@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.autorizzazione.pa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziServizioNotFound;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.protocol.registry.EsitoAutorizzazioneRegistro;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -48,6 +49,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     	
     	try{
     		RegistroServiziManager reg = RegistroServiziManager.getInstance(datiInvocazione.getState());
+    		ConfigurazionePdDManager config = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
     		
     		Credenziali credenzialiPdDMittente = datiInvocazione.getCredenzialiPdDMittente();
     		String pdd = null;
@@ -65,19 +67,31 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
     		IDServizio idServizio = datiInvocazione.getIdServizio();
     		
-    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
-    		if(esitoAutorizzazione.isServizioAutorizzato()==false){
+    		
+    		if(config.autorizzazione(datiInvocazione.getPa(), idSoggetto)==false) {
     			String errore = this.getErrorString(idSoggetto, idServizio);
-    			if(esitoAutorizzazione.getDetails()!=null){
-    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
-    			}
     			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
-    		}else{
-    			esito.setAutorizzato(true);
-    			if(esitoAutorizzazione.getDetails()!=null){
-    				esito.setDetails(esitoAutorizzazione.getDetails());
-    			}
+    		}
+    		else {
+    		
+    			// VERIFICARE ANTI-SPOOFING (Tramite PDD)
+    			
+	    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
+	    		if(esitoAutorizzazione.isServizioAutorizzato()==false){
+	    			String errore = this.getErrorString(idSoggetto, idServizio);
+	    			if(esitoAutorizzazione.getDetails()!=null){
+	    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
+	    			}
+	    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+	    			esito.setAutorizzato(false);
+	    		}else{
+	    			esito.setAutorizzato(true);
+	    			if(esitoAutorizzazione.getDetails()!=null){
+	    				esito.setDetails(esitoAutorizzazione.getDetails());
+	    			}
+	    		}
+	    		
     		}
     	}catch(DriverRegistroServiziServizioNotFound e){
     		esito.setErroreCooperazione(ErroriCooperazione.SERVIZIO_SCONOSCIUTO.

@@ -1217,35 +1217,6 @@ public class ValidazioneSemantica {
 				}
 			}
 			
-			// XSD: filtro-duplicati: abilitato, disabilitato
-			StatoFunzionalita filtroDup = fru.getFiltroDuplicati();
-			if ( filtroDup != null && !filtroDup.equals(CostantiRegistroServizi.ABILITATO) && !filtroDup.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("Il filtro duplicati del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
-			// XSD: conferma-ricezione: abilitato, disabilitato
-			StatoFunzionalita confRic = fru.getConfermaRicezione();
-			if ( confRic != null && !confRic.equals(CostantiRegistroServizi.ABILITATO) && !confRic.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("La conferma ricezione del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
-			// XSD: id-collaborazione: abilitato, disabilitato
-			StatoFunzionalita idColl = fru.getIdCollaborazione();
-			if (idColl != null && !idColl.equals(CostantiRegistroServizi.ABILITATO) && !idColl.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("L'id collaborazione del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
-			// XSD: consegna-in-ordine: abilitato, disabilitato
-			StatoFunzionalita consOrd = fru.getConsegnaInOrdine();
-			if (consOrd != null && !consOrd.equals(CostantiRegistroServizi.ABILITATO) && !consOrd.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("La consegna in ordine del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
-			// Scadenza
-			if(fru.getScadenza()!=null){
-				try{
-					Integer.parseInt(fru.getScadenza());
-				}catch(Exception e){
-					this.errori.add("Il valore associato alla scadenza del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" dev'essere un numero intero");
-				}
-			}
-
-			// XSD: client-auth: abilitato, disabilitato, default
-			StatoFunzionalita clA = fru.getClientAuth();
-			if (clA != null && !clA.equals(CostantiRegistroServizi.ABILITATO) && !clA.equals(CostantiRegistroServizi.DISABILITATO) && !clA.equals("default"))
-				this.errori.add("Il client-auth del fruitore "+fru.getTipo()+"/"+fru.getNome()+" nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+","+CostantiRegistroServizi.DISABILITATO+" o default");
 		}
 
 		

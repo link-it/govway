@@ -2148,6 +2148,22 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected boolean autorizzazione(PortaApplicativa pa, IDSoggetto soggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		if( (pa == null) || (pa.getSoggetti()==null) )
+			return false;
+		if( (soggetto == null) || (soggetto.getTipo()==null) || (soggetto.getNome()==null) )
+			return false;
+
+		for(int j=0; j<pa.getSoggetti().sizeSoggettoList(); j++){
+			if(soggetto.getTipo().equals(pa.getSoggetti().getSoggetto(j).getTipo()) &&
+					soggetto.getNome().equals(pa.getSoggetti().getSoggetto(j).getNome())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	protected boolean autorizzazioneRoles(PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 

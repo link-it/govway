@@ -75,7 +75,6 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
-import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
@@ -133,7 +132,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 	private String connettoreDebug;
 	private String    id, idSoggettoFruitore, endpointtype, endpointtype_check, endpointtype_ssl, tipoconn, url, nome, tipo, user,
-	password, initcont, urlpgk, provurl, connfact, sendas, profilo,clientAuth,
+	password, initcont, urlpgk, provurl, connfact, sendas, 
 	httpsurl, httpstipologia, httpspath,
 	httpstipo, httpspwd, httpsalgoritmo,
 	httpskeystore, httpspwdprivatekeytrust, httpspathkey,
@@ -300,9 +299,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
 
-			this.profilo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
-
-			this.clientAuth = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
 			this.statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 
 			this.wsdlimpler = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
@@ -614,8 +610,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.provurl = "";
 						this.connfact = "";
 						this.sendas = ConnettoriCostanti.TIPO_SEND_AS[0];
-						this.profilo = "-";
-						this.clientAuth= ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
 						this.httpsurl = "";
 						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 						this.httpshostverify = true;
@@ -694,7 +688,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 	
-					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
+					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
 
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
@@ -740,14 +734,14 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.endpointtype, this.url, this.nome, this.tipo,
 					this.user, this.password, this.initcont, this.urlpgk,
 					this.provurl, this.connfact, this.sendas,
-					this.wsdlimpler, this.wsdlimplfru, "0", this.profilo,
+					this.wsdlimpler, this.wsdlimplfru, "0",
 					this.httpsurl, this.httpstipologia,
 					this.httpshostverify, this.httpspath, this.httpstipo,
 					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey, this.tipoconn,this.clientAuth,this.validazioneDocumenti,null,this.autenticazioneHttp,
+					this.httpsalgoritmokey, this.tipoconn,this.validazioneDocumenti,null,this.autenticazioneHttp,
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
@@ -814,7 +808,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saList,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
-				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, this.profilo, this.clientAuth,
+				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, 
 						dati,null
 						,null,null,null,null,null,null,null,null,null);
 
@@ -893,20 +887,12 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			fruitore.setTipo(tipoFruitore);
 			fruitore.setNome(nomeFruitore);
 			fruitore.setConnettore(connettore);
-			if ("-".equals(this.profilo) == false)
-				fruitore.setVersioneProtocollo(this.profilo);
-			else
-				fruitore.setVersioneProtocollo(null);
 
 			String wsdlimplerS = this.wsdlimpler.getValue() != null ? new String(this.wsdlimpler.getValue()) : null; 
 			fruitore.setByteWsdlImplementativoErogatore(((wsdlimplerS != null) && !wsdlimplerS.trim().replaceAll("\n", "").equals("")) ? wsdlimplerS.trim().getBytes() : null);
 			String wsdlimplfruS = this.wsdlimplfru.getValue() != null ? new String(this.wsdlimplfru.getValue()) : null; 
 			fruitore.setByteWsdlImplementativoFruitore(((wsdlimplfruS != null) && !wsdlimplfruS.trim().replaceAll("\n", "").equals("")) ? wsdlimplfruS.trim().getBytes() : null);
 
-			if(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(this.clientAuth))
-				fruitore.setClientAuth(null);
-			else
-				fruitore.setClientAuth(StatoFunzionalita.toEnumConstant(this.clientAuth));
 			AccordoServizioParteSpecifica servsp = apsCore.getAccordoServizioParteSpecifica(idInt);
 
 			// stato
@@ -961,7 +947,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
-					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
+					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
@@ -1421,14 +1407,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				//						line = dis.readLine();
 				//					}
 				//				}
-				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO+"\"") != -1) {
-					line = dis.readLine();
-					this.profilo = dis.readLine();
-				}
-				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH+"\"") != -1) {
-					line = dis.readLine();
-					this.clientAuth = dis.readLine();
-				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE+"\"") != -1) {
 					line = dis.readLine();
 					this.statoPackage = dis.readLine();

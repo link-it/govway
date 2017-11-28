@@ -2167,28 +2167,6 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="profilo" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="profilo"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="client_auth" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="client_auth"/>
-                                <linkit:sql-ddl-column-comment>Indicazione se è abilitato il controllo sul certificato client utilizzato dalla Porta (abilitato/disabilitato) quando il soggetto mittente è il fruitore definito in questa riga</linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[client auth: disabilitato/abilitato]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
                 <xsd:element name="stato" type="TipoStato" default="finale">
                     <xsd:annotation>
                         <xsd:appinfo>

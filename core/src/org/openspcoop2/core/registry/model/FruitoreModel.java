@@ -52,14 +52,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 		this.NOME = new Field("nome",java.lang.String.class,"fruitore",Fruitore.class);
 		this.WSDL_IMPLEMENTATIVO_EROGATORE = new Field("wsdl-implementativo-erogatore",java.lang.String.class,"fruitore",Fruitore.class);
 		this.WSDL_IMPLEMENTATIVO_FRUITORE = new Field("wsdl-implementativo-fruitore",java.lang.String.class,"fruitore",Fruitore.class);
-		this.FILTRO_DUPLICATI = new Field("filtro-duplicati",java.lang.String.class,"fruitore",Fruitore.class);
-		this.CONFERMA_RICEZIONE = new Field("conferma-ricezione",java.lang.String.class,"fruitore",Fruitore.class);
-		this.ID_COLLABORAZIONE = new Field("id-collaborazione",java.lang.String.class,"fruitore",Fruitore.class);
-		this.CONSEGNA_IN_ORDINE = new Field("consegna-in-ordine",java.lang.String.class,"fruitore",Fruitore.class);
-		this.SCADENZA = new Field("scadenza",java.lang.String.class,"fruitore",Fruitore.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"fruitore",Fruitore.class);
-		this.VERSIONE_PROTOCOLLO = new Field("versione-protocollo",java.lang.String.class,"fruitore",Fruitore.class);
-		this.CLIENT_AUTH = new Field("client-auth",java.lang.String.class,"fruitore",Fruitore.class);
 	
 	}
 	
@@ -79,14 +72,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"fruitore",Fruitore.class);
 		this.WSDL_IMPLEMENTATIVO_EROGATORE = new ComplexField(father,"wsdl-implementativo-erogatore",java.lang.String.class,"fruitore",Fruitore.class);
 		this.WSDL_IMPLEMENTATIVO_FRUITORE = new ComplexField(father,"wsdl-implementativo-fruitore",java.lang.String.class,"fruitore",Fruitore.class);
-		this.FILTRO_DUPLICATI = new ComplexField(father,"filtro-duplicati",java.lang.String.class,"fruitore",Fruitore.class);
-		this.CONFERMA_RICEZIONE = new ComplexField(father,"conferma-ricezione",java.lang.String.class,"fruitore",Fruitore.class);
-		this.ID_COLLABORAZIONE = new ComplexField(father,"id-collaborazione",java.lang.String.class,"fruitore",Fruitore.class);
-		this.CONSEGNA_IN_ORDINE = new ComplexField(father,"consegna-in-ordine",java.lang.String.class,"fruitore",Fruitore.class);
-		this.SCADENZA = new ComplexField(father,"scadenza",java.lang.String.class,"fruitore",Fruitore.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"fruitore",Fruitore.class);
-		this.VERSIONE_PROTOCOLLO = new ComplexField(father,"versione-protocollo",java.lang.String.class,"fruitore",Fruitore.class);
-		this.CLIENT_AUTH = new ComplexField(father,"client-auth",java.lang.String.class,"fruitore",Fruitore.class);
 	
 	}
 	
@@ -116,21 +102,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	 
 	public IField WSDL_IMPLEMENTATIVO_FRUITORE = null;
 	 
-	public IField FILTRO_DUPLICATI = null;
-	 
-	public IField CONFERMA_RICEZIONE = null;
-	 
-	public IField ID_COLLABORAZIONE = null;
-	 
-	public IField CONSEGNA_IN_ORDINE = null;
-	 
-	public IField SCADENZA = null;
-	 
 	public IField ORA_REGISTRAZIONE = null;
-	 
-	public IField VERSIONE_PROTOCOLLO = null;
-	 
-	public IField CLIENT_AUTH = null;
 	 
 
 	@Override

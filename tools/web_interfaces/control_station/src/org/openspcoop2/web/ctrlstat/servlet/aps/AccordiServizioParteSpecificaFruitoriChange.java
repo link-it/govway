@@ -55,7 +55,6 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
-import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
@@ -244,8 +243,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
 
-			String profilo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
-			String clientAuth = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
 			String statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 
 			String backToStato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
@@ -330,25 +327,16 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
-			String profiloSoggettoFruitore = null;
 			Soggetto soggettoFruitore = null;
 			if ((idSoggettoFruitore != null) && !idSoggettoFruitore.equals("")) {
 				long idSoggettoFruitoreAsInt = Long.parseLong(idSoggettoFruitore);
 				soggettoFruitore = soggettiCore.getSoggettoRegistro(idSoggettoFruitoreAsInt);
-				profiloSoggettoFruitore = soggettoFruitore.getVersioneProtocollo();
 			} 
 			else {
-				profiloSoggettoFruitore = servFru.getVersioneProtocollo();
 				//				Soggetto soggetto = soggettiCore.getSoggettoRegistro(new IDSoggetto(servFru.getTipo(),servFru.getNome()));
 				//				profiloSoggettoFruitore = soggetto.getVersioneProtocollo();
 			}
 
-
-
-			String profiloValue = profiloSoggettoFruitore;
-			if(profilo!=null && !"".equals(profilo) && !"-".equals(profilo)){
-				profiloValue = profilo;
-			}
 
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(tiposervizio);
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
@@ -458,19 +446,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 
 				Map<String, String> props = connettore.getProperties();
-
-				// Profilo
-				if ((profilo==null || "".equals(profilo)) &&  servFru.getVersioneProtocollo() != null)
-					profilo = servFru.getVersioneProtocollo();
-
-				if ((clientAuth==null || "".equals(clientAuth))){
-					if(servFru.getClientAuth() != null){
-						if(servFru.getClientAuth()!=null){
-							clientAuth = servFru.getClientAuth().toString();
-						}
-					}else
-						clientAuth = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
-				}
 
 				if (endpointtype == null) {
 					if ((connettore.getCustom()!=null && connettore.getCustom()) && 
@@ -692,7 +667,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
-					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profilo, clientAuth, dati, 
+					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
 							nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
@@ -740,12 +715,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					soggettiList, idServizio, "", "", null, "", "", idSoggettoFruitore,
 					endpointtype, url, nome, tipo, user, password, initcont,
 					urlpgk, provurl, connfact, sendas, this.wsdlimpler, this.wsdlimplfru,
-					idServizioFruitore, profilo, httpsurl,
+					idServizioFruitore, httpsurl,
 					httpstipologia, httpshostverify, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
-					tipoconn,clientAuth,validazioneDocumenti,backToStato,autenticazioneHttp,
+					tipoconn,validazioneDocumenti,backToStato,autenticazioneHttp,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
@@ -806,7 +781,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 						null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
-				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
+				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 						asps, servFru);
 
@@ -874,7 +849,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, idSoggettoFruitore, "", "", soggettiList, soggettiListLabel, idServizio,
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio,  correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti);
 
-					dati = apsHelper.addFruitoreToDatiAsHidden(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
+					dati = apsHelper.addFruitoreToDatiAsHidden(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, idSoggettoFruitore);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
@@ -967,14 +942,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			fruitore.setNome(nomefru);
 			fruitore.setByteWsdlImplementativoErogatore(servFru.getByteWsdlImplementativoErogatore());
 			fruitore.setByteWsdlImplementativoFruitore(servFru.getByteWsdlImplementativoFruitore());
-			if ("-".equals(profilo) == false)
-				fruitore.setVersioneProtocollo(profilo);
-			else
-				fruitore.setVersioneProtocollo(null);
-			if(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(clientAuth))
-				fruitore.setClientAuth(null);
-			else
-				fruitore.setClientAuth(StatoFunzionalita.toEnumConstant(clientAuth));
+			
 			// Prendo i dati del soggetto erogatore del servizio
 			Soggetto SE = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
 			tipoSoggettoErogatore = SE.getTipo();
@@ -1034,7 +1002,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 
-					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
+					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
 
