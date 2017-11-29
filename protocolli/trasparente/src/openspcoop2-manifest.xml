@@ -110,6 +110,12 @@
     			<mediaType messageType="json">application/x-json</mediaType>
     			<mediaType messageType="json" regExpr="true">.*\+json</mediaType>
     			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/related*</mediaType>
+    			<!-- rfc1341: mixed|alternative|digest|parallel -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(related|mixed|alternative|digest|parallel)+</mediaType>
+    			<!-- rfc2616: byteranges -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/byteranges*</mediaType>
+    			<!-- rfc1847: encrypted|signed -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(encrypted|signed)+</mediaType>
     			<default messageType="binary"/>
     			<undefined messageType="binary"/>
     		</mediaTypeCollection>
