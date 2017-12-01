@@ -47,7 +47,8 @@ public class MappingFruizionePortaDelegata implements Serializable {
 	private IDServizio idServizio;
 	private IDSoggetto idFruitore;
 	private IDPortaDelegata idPortaDelegata;
-
+	private String nome;
+	private boolean isDefault;
 	
 	public long getTableId() {
 		return this.tableId;
@@ -73,5 +74,17 @@ public class MappingFruizionePortaDelegata implements Serializable {
 	}
 	public void setIdPortaDelegata(IDPortaDelegata idPortaDelegata) {
 		this.idPortaDelegata = idPortaDelegata;
+	}
+	public String getNome() {
+		return this.nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public boolean isDefault() {
+		return this.isDefault;
+	}
+	public void setDefault(boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 }

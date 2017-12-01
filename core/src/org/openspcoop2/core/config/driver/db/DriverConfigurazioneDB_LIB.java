@@ -3779,7 +3779,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
 						sqlQueryObject.addInsertField("id_porta", "?");
-						sqlQueryObject.addInsertField("ruolo", "?");
+						sqlQueryObject.addInsertField("azione", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
 						stm.setLong(1, aPA.getId());

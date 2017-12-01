@@ -45,6 +45,8 @@ public class MappingErogazionePortaApplicativa implements Serializable {
 	
 	private IDServizio idServizio;
 	private IDPortaApplicativa idPortaApplicativa;
+	private String nome;
+	private boolean isDefault;
 
 
 	public long getTableId() {
@@ -66,5 +68,16 @@ public class MappingErogazionePortaApplicativa implements Serializable {
 	public void setIdServizio(IDServizio idServizio) {
 		this.idServizio = idServizio;
 	}
-
+	public String getNome() {
+		return this.nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public boolean isDefault() {
+		return this.isDefault;
+	}
+	public void setDefault(boolean isDefault) {
+		this.isDefault = isDefault;
+	}
 }

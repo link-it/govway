@@ -99,4 +99,7 @@ public class Costanti {
 	}
 	
 	public final static String WEB_NEW_LINE = "<br/>";
+	
+	public static final String MAPPING_EROGAZIONE_PA_NOME_DEFAULT = "__qualsiasi__";
+	public static final String MAPPING_FRUIZIONE_PD_NOME_DEFAULT = "__qualsiasi__";
 }

@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -166,6 +167,8 @@ public class UtilitiesMappingFruizioneErogazione  {
 											this.log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
 													idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") trovate: "+listPA.size());
 											
+											String nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+											boolean isDefault = true;
 											if(listPA.size()==1){
 												IDPortaApplicativa idPA = listPA.get(0);
 												this.log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
@@ -173,7 +176,8 @@ public class UtilitiesMappingFruizioneErogazione  {
 												con = null;
 												try{
 													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione");
-													DBMappingUtils.createMappingErogazione(idServizio, idPA, con, this.driverRegistroServizi.getTipoDB());
+													
+													DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, this.driverRegistroServizi.getTipoDB());
 												}finally{
 													try{
 														this.driverRegistroServizi.releaseConnection(con);
@@ -202,7 +206,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 													con = null;
 													try{
 														con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione.sizeMoreThenOne");
-														DBMappingUtils.createMappingErogazione(idServizio, idPA, con, this.driverRegistroServizi.getTipoDB());
+														DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, this.driverRegistroServizi.getTipoDB());
 													}finally{
 														try{
 															this.driverRegistroServizi.releaseConnection(con);
@@ -274,6 +278,8 @@ public class UtilitiesMappingFruizioneErogazione  {
 														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
 														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") trovate: "+listPD.size());
 											
+											String nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+											boolean isDefault = true;
 											if(listPD.size()==1){
 												IDPortaDelegata idPD = listPD.get(0);
 												this.log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
@@ -282,7 +288,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 												con = null;
 												try{
 													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione");		
-													DBMappingUtils.createMappingFruizione(idServizio, idSoggetto, idPD, con, this.driverRegistroServizi.getTipoDB());
+													DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idSoggetto, idPD, con, this.driverRegistroServizi.getTipoDB());
 												}finally{
 													try{
 														this.driverRegistroServizi.releaseConnection(con);
@@ -315,7 +321,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 													con = null;
 													try{
 														con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione.sizeMoreThenOne");		
-														DBMappingUtils.createMappingFruizione(idServizio, idSoggetto, idPD, con, this.driverRegistroServizi.getTipoDB());
+														DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idSoggetto, idPD, con, this.driverRegistroServizi.getTipoDB());
 													}finally{
 														try{
 															this.driverRegistroServizi.releaseConnection(con);

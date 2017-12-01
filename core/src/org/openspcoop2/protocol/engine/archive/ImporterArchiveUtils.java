@@ -373,9 +373,9 @@ public class ImporterArchiveUtils {
 				for (int i = 0; i < listMappingErogazionePA.size(); i++) {
 					MappingErogazionePortaApplicativa mapping = listMappingErogazionePA.get(i);
 					try{
-						this.importerEngine.createMappingErogazione(mapping.getIdServizio(), mapping.getIdPortaApplicativa());
+						this.importerEngine.createMappingErogazione(mapping.getNome(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdPortaApplicativa());
 					}catch(Exception e){
-						this.log.error("Errore durante la creazione del mapping di erogazione del servizio ["+mapping.getIdServizio()+
+						this.log.error("Errore durante la creazione del mapping di erogazione nome ["+mapping.getNome()+"] deafult ["+mapping.isDefault()+"] del servizio ["+mapping.getIdServizio()+
 								"] verso la porta applicativa ["+mapping.getIdPortaApplicativa().getNome()+"]: "+e.getMessage(),e);
 					}
 				}
@@ -386,9 +386,9 @@ public class ImporterArchiveUtils {
 				for (int i = 0; i < listMappingFruizionePD.size(); i++) {
 					MappingFruizionePortaDelegata mapping = listMappingFruizionePD.get(i);
 					try{
-						this.importerEngine.createMappingFruizione(mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());					
+						this.importerEngine.createMappingFruizione(mapping.getNome(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());					
 					}catch(Exception e){
-						this.log.error("Errore durante la creazione del mapping di fruizione del servizio ["+mapping.getIdServizio()+
+						this.log.error("Errore durante la creazione del mapping di fruizione nome ["+mapping.getNome()+"] deafult ["+mapping.isDefault()+"] del servizio ["+mapping.getIdServizio()+
 								"] verso la porta delegata ["+mapping.getIdPortaDelegata().getNome()+"] da parte del soggetto ["+mapping.getIdFruitore()+"]: "+e.getMessage(),e);
 					}
 				}

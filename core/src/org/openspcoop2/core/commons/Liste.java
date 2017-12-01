@@ -33,103 +33,179 @@ package org.openspcoop2.core.commons;
 
 public final class Liste
 {
-	public final static int PDD = 0;
-	public final static int PDD_SOGGETTI = 1;
+	public final static int PDD;
+	public final static int PDD_SOGGETTI;
 	
-	public final static int SOGGETTI = 2;
-	public final static int SOGGETTI_RUOLI = 3;
+	public final static int SOGGETTI;
+	public final static int SOGGETTI_RUOLI;
 	
-	public final static int PORTE_APPLICATIVE= 4;
-	public final static int PORTE_APPLICATIVE_BY_SOGGETTO= 5;
-	public final static int PORTE_APPLICATIVE_PROP = 6;
-	public final static int PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = 7;
-	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = 8;
-	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = 9;
-	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = 10;
-	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA = 11;
-	public final static int PORTE_APPLICATIVE_MTOM_REQUEST = 12;
-	public final static int PORTE_APPLICATIVE_MTOM_RESPONSE = 13;
-	public final static int PORTE_APPLICATIVE_RUOLI = 14;
-	public final static int PORTE_APPLICATIVE_EXTENDED = 15;
+	public final static int PORTE_APPLICATIVE;
+	public final static int PORTE_APPLICATIVE_BY_SOGGETTO;
+	public final static int PORTE_APPLICATIVE_PROP;
+	public final static int PORTE_APPLICATIVE_AZIONI;
+	public final static int PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO;
+	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST;
+	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE;
+	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA;
+	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
+	public final static int PORTE_APPLICATIVE_MTOM_REQUEST;
+	public final static int PORTE_APPLICATIVE_MTOM_RESPONSE;
+	public final static int PORTE_APPLICATIVE_RUOLI;
+	public final static int PORTE_APPLICATIVE_EXTENDED;
 	
-	public final static int PORTE_DELEGATE = 16;
-	public final static int PORTE_DELEGATE_BY_SOGGETTO= 17;
-	public final static int PORTE_DELEGATE_SERVIZIO_APPLICATIVO = 18;
-	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = 19;
-	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = 20;
-	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = 21;
-	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA = 22;
-	public final static int PORTE_DELEGATE_MTOM_REQUEST = 23;
-	public final static int PORTE_DELEGATE_MTOM_RESPONSE = 24;
-	public final static int PORTE_DELEGATE_RUOLI = 25;
-	public final static int PORTE_DELEGATE_EXTENDED = 26;
+	public final static int PORTE_DELEGATE;
+	public final static int PORTE_DELEGATE_BY_SOGGETTO;
+	public final static int PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
+	public final static int PORTE_DELEGATE_AZIONI;
+	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST;
+	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE;
+	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA;
+	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
+	public final static int PORTE_DELEGATE_MTOM_REQUEST;
+	public final static int PORTE_DELEGATE_MTOM_RESPONSE;
+	public final static int PORTE_DELEGATE_RUOLI;
+	public final static int PORTE_DELEGATE_EXTENDED;
 	
-	public final static int SERVIZIO_APPLICATIVO = 27;
-	public final static int SERVIZI_APPLICATIVI_BY_SOGGETTO= 28;
-	public final static int SERVIZIO_APPLICATIVO_RUOLI = 29;
+	public final static int SERVIZIO_APPLICATIVO;
+	public final static int SERVIZI_APPLICATIVI_BY_SOGGETTO;
+	public final static int SERVIZIO_APPLICATIVO_RUOLI;
 	
-	public final static int ACCORDI = 30;
-	public final static int ACCORDI_AZIONI = 31;
-	public final static int ACCORDI_EROGATORI = 32;
-	public final static int ACCORDI_PORTTYPE = 33;
-	public final static int ACCORDI_PORTTYPE_AZIONI = 34;
-	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT = 35;
-	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT = 36;
-	public final static int ACCORDI_ALLEGATI = 37;
-	public final static int ACCORDI_API_RESOURCES = 38;
-	public final static int ACCORDI_API_RESOURCES_RESPONSE = 39;
-	public final static int ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST = 40;
-	public final static int ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE = 41;
-	public final static int ACCORDI_API_RESOURCES_PARAMETERS_REQUEST = 42;
-	public final static int ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE = 43;
+	public final static int ACCORDI;
+	public final static int ACCORDI_AZIONI;
+	public final static int ACCORDI_EROGATORI;
+	public final static int ACCORDI_PORTTYPE;
+	public final static int ACCORDI_PORTTYPE_AZIONI;
+	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT;
+	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT;
+	public final static int ACCORDI_ALLEGATI;
+	public final static int ACCORDI_API_RESOURCES;
+	public final static int ACCORDI_API_RESOURCES_RESPONSE;
+	public final static int ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST;
+	public final static int ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE;
+	public final static int ACCORDI_API_RESOURCES_PARAMETERS_REQUEST;
+	public final static int ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE;
 	
-	public final static int ACCORDI_COOPERAZIONE = 44;
-	public final static int ACCORDI_COOP_PARTECIPANTI= 45;
-	public final static int ACCORDI_COOP_ALLEGATI= 46;
-	public final static int ACCORDI_COMPONENTI = 47;
+	public final static int ACCORDI_COOPERAZIONE;
+	public final static int ACCORDI_COOP_PARTECIPANTI;
+	public final static int ACCORDI_COOP_ALLEGATI;
+	public final static int ACCORDI_COMPONENTI;
 	
-	public final static int SERVIZI = 48;	
-	public final static int SERVIZI_FRUITORI= 49;
-	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE = 50;
-	public final static int SERVIZI_ALLEGATI= 51;
-	public final static int SERVIZI_PORTE_APPLICATIVE = 52;
+	public final static int SERVIZI;	
+	public final static int SERVIZI_FRUITORI;
+	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE;
+	public final static int SERVIZI_ALLEGATI;
+	public final static int CONFIGURAZIONE_EROGAZIONE;
 	
-	public final static int	RUOLI = 53;	
-	public final static int	REGISTRI = 54;
-	public final static int	ROUTING = 55;
-	public final static int SYSTEM_PROPERTIES = 56;
+	public final static int	RUOLI;	
+	public final static int	REGISTRI;
+	public final static int	ROUTING;
+	public final static int SYSTEM_PROPERTIES;
 	
-	public final static int	TRACCE = 57;
+	public final static int	TRACCE;
 	
-	public final static int MESSAGGI_DIAGNOSTICI = 58;
+	public final static int MESSAGGI_DIAGNOSTICI;
 	
-	public final static int STATISTICHE_STATO = 59;
+	public final static int STATISTICHE_STATO;
 	
-	public final static int SU = 60;
+	public final static int SU;
 
-	public final static int MONITOR_MSG = 61;
+	public final static int MONITOR_MSG;
 	
-	public final static int FILTRI = 62;
+	public final static int FILTRI;
 
-	public final static int AUDIT_REPORT = 63;
+	public final static int AUDIT_REPORT;
 	
-	public final static int OPERATIONS_CODA = 64;
-    public final static int OPERATIONS_ESEGUITE = 65;
-    public final static int OPERATIONS_FALLITE = 66;
-    public final static int OPERATIONS_INVALIDE = 67;
-    public final static int OPERATIONS_RICERCA = 68;
-    public final static int OPERATIONS_WAITING = 69;
+	public final static int OPERATIONS_CODA;
+    public final static int OPERATIONS_ESEGUITE;
+    public final static int OPERATIONS_FALLITE;
+    public final static int OPERATIONS_INVALIDE;
+    public final static int OPERATIONS_RICERCA;
+    public final static int OPERATIONS_WAITING;
     
-    public final static int CONFIGURAZIONE_EXTENDED = 70;	
+    public final static int CONFIGURAZIONE_EXTENDED;	
 	
 
-    
+    private static int numeroListe = 0;
+    static {
+    	PDD = numeroListe ++;
+    	PDD_SOGGETTI = numeroListe ++;
+    	SOGGETTI = numeroListe ++;
+    	SOGGETTI_RUOLI = numeroListe ++;
+    	PORTE_APPLICATIVE= numeroListe ++;
+    	PORTE_APPLICATIVE_BY_SOGGETTO= numeroListe ++;
+    	PORTE_APPLICATIVE_PROP = numeroListe ++;
+    	PORTE_APPLICATIVE_AZIONI = numeroListe ++;
+    	PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = numeroListe ++;
+    	PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = numeroListe ++;
+    	PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = numeroListe ++;
+    	PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = numeroListe ++;
+    	PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA = numeroListe ++;
+    	PORTE_APPLICATIVE_MTOM_REQUEST = numeroListe ++;
+    	PORTE_APPLICATIVE_MTOM_RESPONSE = numeroListe ++;
+    	PORTE_APPLICATIVE_RUOLI = numeroListe ++;
+    	PORTE_APPLICATIVE_EXTENDED = numeroListe ++;
+    	PORTE_DELEGATE = numeroListe ++;
+    	PORTE_DELEGATE_BY_SOGGETTO= numeroListe ++;
+    	PORTE_DELEGATE_SERVIZIO_APPLICATIVO = numeroListe ++;
+    	PORTE_DELEGATE_AZIONI = numeroListe ++;
+    	PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = numeroListe ++;
+    	PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = numeroListe ++;
+    	PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = numeroListe ++;
+    	PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA = numeroListe ++;
+    	PORTE_DELEGATE_MTOM_REQUEST = numeroListe ++;
+    	PORTE_DELEGATE_MTOM_RESPONSE = numeroListe ++;
+    	PORTE_DELEGATE_RUOLI = numeroListe ++;
+    	PORTE_DELEGATE_EXTENDED = numeroListe ++;
+    	SERVIZIO_APPLICATIVO = numeroListe ++;
+    	SERVIZI_APPLICATIVI_BY_SOGGETTO = numeroListe ++;
+    	SERVIZIO_APPLICATIVO_RUOLI = numeroListe ++;
+    	ACCORDI = numeroListe ++;
+    	ACCORDI_AZIONI = numeroListe ++;
+    	ACCORDI_EROGATORI = numeroListe ++;
+    	ACCORDI_PORTTYPE = numeroListe ++;
+    	ACCORDI_PORTTYPE_AZIONI = numeroListe ++;
+    	ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT = numeroListe ++;
+    	ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT = numeroListe ++;
+    	ACCORDI_ALLEGATI = numeroListe ++;
+    	ACCORDI_API_RESOURCES = numeroListe ++;
+    	ACCORDI_API_RESOURCES_RESPONSE = numeroListe ++;
+    	ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST = numeroListe ++;
+    	ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE = numeroListe ++;
+    	ACCORDI_API_RESOURCES_PARAMETERS_REQUEST = numeroListe ++;
+    	ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE = numeroListe ++;
+    	ACCORDI_COOPERAZIONE = numeroListe ++;
+    	ACCORDI_COOP_PARTECIPANTI = numeroListe ++;
+    	ACCORDI_COOP_ALLEGATI = numeroListe ++;
+    	ACCORDI_COMPONENTI = numeroListe ++;
+    	SERVIZI = numeroListe ++;	
+    	SERVIZI_FRUITORI= numeroListe ++;
+    	SERVIZI_FRUITORI_PORTE_DELEGATE = numeroListe ++;
+    	SERVIZI_ALLEGATI= numeroListe ++;
+    	CONFIGURAZIONE_EROGAZIONE = numeroListe ++;
+    	RUOLI = numeroListe ++;	
+    	REGISTRI = numeroListe ++;
+    	ROUTING = numeroListe ++;
+    	SYSTEM_PROPERTIES = numeroListe ++;
+    	TRACCE = numeroListe ++;
+    	MESSAGGI_DIAGNOSTICI = numeroListe ++;
+    	STATISTICHE_STATO = numeroListe ++;
+    	SU = numeroListe ++;
+    	MONITOR_MSG = numeroListe ++;
+    	FILTRI = numeroListe ++;
+    	AUDIT_REPORT = numeroListe ++;
+    	OPERATIONS_CODA = numeroListe ++;
+        OPERATIONS_ESEGUITE = numeroListe ++;
+        OPERATIONS_FALLITE = numeroListe ++;
+        OPERATIONS_INVALIDE = numeroListe ++;
+        OPERATIONS_RICERCA = numeroListe ++;
+        OPERATIONS_WAITING = numeroListe ++;
+        CONFIGURAZIONE_EXTENDED = numeroListe ++;	
+    	
+    }
     
 	
 	public static int getTotaleListe()
 	{
-		return 71;
+		return numeroListe;
 	}
-	
-	
 }

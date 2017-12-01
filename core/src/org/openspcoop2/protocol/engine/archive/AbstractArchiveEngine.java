@@ -497,11 +497,11 @@ public abstract class AbstractArchiveEngine {
 	
 	// --- Mapping Erogazione ---
 	
-	public void createMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativaByNome) throws DriverRegistroServiziException {
+	public void createMappingErogazione(String nome, boolean isDefault, IDServizio idServizio, IDPortaApplicativa idPortaApplicativaByNome) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
 			con = this.driverRegistroServizi.getConnection("createMappingErogazione");
-			DBMappingUtils.createMappingErogazione(idServizio, idPortaApplicativaByNome, con, this.driverRegistroServizi.getTipoDB());
+			DBMappingUtils.createMappingErogazione(nome, isDefault, idServizio, idPortaApplicativaByNome, con, this.driverRegistroServizi.getTipoDB());
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -593,11 +593,11 @@ public abstract class AbstractArchiveEngine {
 	
 	// --- Mapping Fruizione ---
 	
-	public void createMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+	public void createMappingFruizione(String nome, boolean isDefault, IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
 			con = this.driverRegistroServizi.getConnection("createMappingFruizione");
-			DBMappingUtils.createMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
+			DBMappingUtils.createMappingFruizione(nome, isDefault, idServizio, idFruitore, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);

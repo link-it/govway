@@ -7397,6 +7397,142 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
+	/**
+	 * Ritorna la lista di Azioni di una  Porta Applicativa
+	 */
+	public List<PortaApplicativaAzione> porteAppAzioneList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+		int offset;
+		int limit;
+		int idLista = Liste.PORTE_APPLICATIVE_AZIONI;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));		
+
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<PortaApplicativaAzione> lista = new ArrayList<PortaApplicativaAzione>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("porteAppPropList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("azione", search, true, true);
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			stmt.setInt(1, idPortaApplicativa);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+			sqlQueryObject.addSelectField("id_porta");
+			sqlQueryObject.addSelectField("azione");
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			
+			// [TODO] Parametri da definire con Andrea
+			
+			if (!search.equals("")) { // con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("azione");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPortaApplicativa);
+			risultato = stmt.executeQuery();
+
+			PortaApplicativaAzione azione = null;
+			while (risultato.next()) {
+
+				azione = new PortaApplicativaAzione();
+				
+				azione.setId(risultato.getLong("id"));
+				azione.setNome(risultato.getString("azione")) ;
+				
+				// [TODO] Parametri da definire con Andrea
+				String nomePortaDelegante = null;
+				azione.setNomePortaDelegante(nomePortaDelegante);
+				PortaApplicativaAzioneIdentificazione identificazione = null;
+				azione.setIdentificazione(identificazione);
+				StatoFunzionalita forceInterfaceBased = StatoFunzionalita.ABILITATO; 
+				azione.setForceInterfaceBased(forceInterfaceBased);
+
+				lista.add(azione);
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 
 	@Override
 	public List<ServizioApplicativo> porteAppServizioApplicativoList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
@@ -14227,7 +14363,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	public List<PortaApplicativa> serviziPorteAppList(String tipoServizio,String nomeServizio, Integer versioneServizio,
 			long idServizio, long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "serviziPorteAppList";
-		int idLista = Liste.SERVIZI_PORTE_APPLICATIVE;
+		int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 		int offset;
 		int limit;
 		String search;
