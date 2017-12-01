@@ -1910,7 +1910,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			throws Exception {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO, this.session);
 
@@ -2212,20 +2211,15 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 
 			this.pd.setDati(dati);
+			// le porte delegate non si possono piu' creare dalle liste PD e PD di un soggetto
+			this.pd.setAddButton(false);
+			
 			if (useIdSogg){ 
-				if(isModalitaAvanzata){
-					this.pd.setAddButton(true);
-				}
-				else{
-					this.pd.setAddButton(false);
+				if(!this.isModalitaAvanzata()){
 					this.pd.setRemoveButton(false);
 					this.pd.setSelect(false);
 				}
-			} else {
-				this.pd.setAddButton(false);
-			}
-
-
+			} 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

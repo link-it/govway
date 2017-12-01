@@ -236,6 +236,21 @@ public class ConsoleHelper {
 	
 	/** Lunghezza label */
 	protected int size = 50;
+	
+	
+	/** Modalita Interfaccia */
+	protected InterfaceType tipoInterfaccia = InterfaceType.STANDARD;
+	
+	public InterfaceType getTipoInterfaccia() {
+		return this.tipoInterfaccia;
+	}
+	protected boolean modalitaAvanzata = false;
+	public boolean isModalitaAvanzata() {
+		return this.modalitaAvanzata;
+	}
+	public boolean isModalitaStandard() {
+		return !this.isModalitaAvanzata();
+	}
 
 	public ConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
@@ -244,6 +259,12 @@ public class ConsoleHelper {
 		this.passwordManager = new Password();
 		this.log = ControlStationLogger.getPddConsoleCoreLogger();
 		try {
+			User user = ServletUtils.getUserFromSession(this.session);
+			if(user != null) {
+				this.tipoInterfaccia = user.getInterfaceType();
+				this.modalitaAvanzata = InterfaceType.AVANZATA.equals(user.getInterfaceType());
+			}
+			
 			this.core = new ControlStationCore();
 			this.pddCore = new PddCore(this.core);
 			this.utentiCore = new UtentiCore(this.core);
@@ -1811,7 +1832,19 @@ public class ConsoleHelper {
 		return dati;
 	}
 
+	public Vector<DataElement> addHiddenIdAspsToDati(TipoOperazione tipoOp, String name, String value,
+			Vector<DataElement> dati) {
+		DataElement de = new DataElement();
+		if(value != null){
+			de.setLabel(name);
+			de.setValue(value);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(name);
+			dati.addElement(de);
+		}
 
+		return dati;
+	}
 
 
 
@@ -2093,8 +2126,6 @@ public class ConsoleHelper {
 
 		DataElement de = new DataElement();
 		
-		User user = ServletUtils.getUserFromSession(this.session);
-		
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
@@ -2102,7 +2133,7 @@ public class ConsoleHelper {
 		dati.addElement(de);
 		
 		if(portaDelegata){		
-			if (riusoID && numCorrelazioneReq > 0 && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+			if (riusoID && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
 				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
@@ -2115,7 +2146,7 @@ public class ConsoleHelper {
 			}
 		} else {
 			boolean riuso = false; // riuso non abilitato nella porta applicativa
-			if (riuso && numCorrelazioneReq > 0 && InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+			if (riuso && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
 				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
@@ -3059,7 +3090,7 @@ public class ConsoleHelper {
 	
 	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, String autorizzazioneContenuti){
 		
-		if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 			DataElement de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
@@ -3204,6 +3235,22 @@ public class ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public String getLabelStatoControlloAccessi(String autenticazione, String autenticazioneOpzionale, String autenticazioneCustom,
+			String autorizzazione, String autorizzazioneContenuti,String autorizzazioneCustom) {
+		String label = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		
+		if(autenticazione != null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+			
+		if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
+		if(StringUtils.isNotEmpty(autorizzazioneContenuti))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
+		return label;
 	}
 	
 	

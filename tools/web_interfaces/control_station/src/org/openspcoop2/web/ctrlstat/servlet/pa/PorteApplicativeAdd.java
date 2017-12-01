@@ -642,7 +642,7 @@ public final class PorteApplicativeAdd extends Action {
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 			List<PortaApplicativa> lista = porteApplicativeCore.porteAppList(soggInt, ricerca);
 
-			porteApplicativeHelper.preparePorteAppList(ricerca, lista);
+			porteApplicativeHelper.preparePorteAppList(ricerca, lista, idLista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

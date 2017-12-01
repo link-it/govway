@@ -92,13 +92,15 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_LIST);
 		SERVLET_APS_ALLEGATI.add(SERVLET_NAME_APS_ALLEGATI_VIEW);
 	}
-	
+
+	public final static String SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD = OBJECT_NAME_APS_PORTE_APPLICATIVE+"Add.do";
 	public final static String SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE = OBJECT_NAME_APS_PORTE_APPLICATIVE+"Del.do";
 	public final static String SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST = OBJECT_NAME_APS_PORTE_APPLICATIVE+"List.do";
 	public final static Vector<String> SERVLET_APS_PORTE_APPLICATIVE = new Vector<String>();
 	static{
-		SERVLET_APS.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE);
-		SERVLET_APS.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST);
+		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_ADD);
+		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_DELETE);
+		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST);
 	}
 	
 	public final static String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"Del.do";
@@ -119,11 +121,11 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE = "API";
 	public final static String LABEL_APC_COMPOSTO_SOLO_COMPOSTO = "API (Servizio Composto)";
 	public final static String LABEL_APS_SERVIZI = "Servizi";
-	public final static String LABEL_APS_FRUITORI = "Fruitori";
-	public final static String LABEL_APS_FRUITORE = "Fruitore";
+	public final static String LABEL_APS_FRUITORI = "Fruizioni";
+	public final static String LABEL_APS_FRUITORE = "Fruizione";
 	public final static String LABEL_PARAMETRO_VISUALIZZA_DATI_FRUITORE = "Visualizza Dati Soggetto";
 	public final static String LABEL_APS_CORRELATO = "Correlato";
-	public final static String LABEL_APS_FUITORI_DI = "Fruitori di ";
+	public final static String LABEL_APS_FUITORI_DI = "Fruizioni di ";
 	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_EROGATORE_DI = "WSDL Implementativo Erogatore di "; 
 	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_FRUITORE_DI = "WSDL Implementativo Fruitore di ";
 	public final static String LABEL_APS_ALLEGATI_DI = "Allegati di ";
@@ -131,14 +133,14 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_SERVIZIO = "Servizio";
 	public final static String LABEL_APS_ALLEGATI = "Allegati";
 	public final static String LABEL_APS_ALLEGATO = "Allegato";
-	public final static String LABEL_APS_PORTE_APPLICATIVE = "Porte Applicative";
+	public final static String LABEL_APS_PORTE_APPLICATIVE = "Configurazione";
 	public final static String LABEL_APS_PORTE_DELEGATE = "Porte Delegate";
 	public final static String LABEL_APS_STATO = "Stato";
 	public final static String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta Selezionati";
 	public final static String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
 	public final static String LABEL_APS_USA_VERSIONE_EROGATORE = "usa versione erogatore";
 	public final static String LABEL_APS_SPECIFICA_PORTI_ACCESSO = "Specifica dei Porti di Accesso";
-	public final static String LABEL_APS_SPECIFICA_PORTA_APPLICATIVA = "Porta Applicativa";
+	public final static String LABEL_APS_SPECIFICA_PORTA_APPLICATIVA = "Configurazione";
 	public final static String LABEL_APS_SPECIFICA_PORTA_DELEGATA = "Porta Delegata";
 	public final static String LABEL_APS_ALTRE_INFORMAZIONI = "Altre informazioni";
 	public final static String LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE = "Servizio Applicativo Erogatore";

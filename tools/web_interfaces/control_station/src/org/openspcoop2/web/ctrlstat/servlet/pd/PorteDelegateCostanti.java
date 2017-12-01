@@ -24,6 +24,7 @@ import java.util.Vector;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -387,5 +388,5 @@ public class PorteDelegateCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED;
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO;
 
-
+	public static final String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
 }

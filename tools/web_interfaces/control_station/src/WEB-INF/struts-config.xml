@@ -725,7 +725,14 @@
         </action>
 
 		<!--  Accordi di Servizio Parte Specifica (PorteApplicative) -->
-
+		
+		<action path="/accordiServizioParteSpecificaPorteApplicativeAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeAdd" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaPorteApplicativeAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaPorteApplicativeAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaPorteApplicativeAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaPorteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
         <action path="/accordiServizioParteSpecificaPorteApplicativeList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeList" 
         	scope="request" validate="true">
             <forward name="accordiServizioParteSpecificaPorteApplicativeList" path="/jsplib/listElement.jsp"/>
@@ -1552,6 +1559,36 @@
             <forward name="porteApplicativeExtendedError" path="/jsplib/info.jsp"/>
         </action>   
     
+    
+     	<!--  Porte Applicative Azione -->
+    
+     	<action path="/porteApplicativeAzioneAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeAzioneAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAzioneAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeAzioneAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAzioneAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeAzioneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeAzioneList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeAzioneList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAzioneList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAzioneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeAzioneDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeAzioneDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAzioneDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAzioneError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Applicative (Controllo Accessi) -->
+
+        <action path="/porteApplicativeControlloAccessi" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeControlloAccessi"
+            scope="request" validate="true">
+            <forward name="porteApplicativeControlloAccessiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeControlloAccessiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeControlloAccessiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeControlloAccessiError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

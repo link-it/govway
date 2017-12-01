@@ -28,16 +28,17 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaApplicativaServizio;
-import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
@@ -61,7 +62,9 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -1034,8 +1037,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-			boolean isModalitaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
-			
 			User user = ServletUtils.getUserFromSession(this.session);
 
 			Boolean isAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
@@ -1116,14 +1117,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
 			listaLabelTabella.add(asLabel);
+			if(this.isModalitaAvanzata()){
+				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
+			}
 			if(showRuoli)
 				listaLabelTabella.add(correlatoLabel);
 			if(this.core.isShowGestioneWorkflowStatoDocumenti())
 				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO);
 			listaLabelTabella.add(fruitoriLabel);
-			if(isModalitaAvanzata){
-				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
-			}
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI);
 
 			labels = listaLabelTabella.toArray(new String[listaLabelTabella.size()]);
@@ -1167,16 +1168,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				boolean isPddEsterna = 
 						this.pddCore.isPddEsterna(sog.getPortaDominio());
 				
-//				DataElement de = new DataElement();
-//				de.setUrl(
-//						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
-//						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, servizio.getId() + ""),
-//						pNomeServizio, pTipoServizio, pIdsoggErogatore);
-//				de.setValue(uriASPS);
-//				de.setIdToRemove(servizio.getTipo() + "/" + servizio.getNome() + "/" + servizio.getTipoSoggettoErogatore() + "/" + servizio.getNomeSoggettoErogatore());
-//				de.setToolTip(asps.getDescrizione());
-//				e.addElement(de);
-
 				DataElement de = new DataElement();
 				de.setUrl(
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
@@ -1198,12 +1189,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setValue(asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore());
 				e.addElement(de);
 				
-
-				
 				de = new DataElement();
-				//if (idsAcc.contains(servizio.getIdAccordo()))
-				// accordiChange.do
-
 				AccordoServizioParteComune apc = listApc.get(i);
 				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
@@ -1215,6 +1201,35 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME, apc.getNome()), pTipoAccordo);
 				de.setValue(asps.getAccordoServizioParteComune());
 				e.addElement(de);
+				
+				// colonna configurazioni
+				if(this.isModalitaAvanzata()){
+					de = new DataElement();
+					if(isPddEsterna){
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					}
+					else{
+						de.setUrl(
+								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
+								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
+								pNomeServizio, pTipoServizio, pIdsoggErogatore );
+						// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
+						if (contaListe) {
+							// BugFix OP-674
+							//List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),asps.getVersione(),
+							//		asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
+							Search searchForCount = new Search(true,1);
+							IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps); 
+							this.apsCore.mappingServiziPorteAppList(idServizio, asps.getId().intValue(), asps.getIdSoggetto().intValue(), searchForCount);
+							//int numPA = lista1.size();
+							int numPA = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
+							ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+					}
+					e.addElement(de);
+				}
 				
 				// Colonna ruoli
 				String protocollo = protocolli.get(i);
@@ -1254,34 +1269,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 				e.addElement(de);
-
-				if(isModalitaAvanzata){
-					de = new DataElement();
-					if(isPddEsterna){
-						de.setType(DataElementType.TEXT);
-						de.setValue("-");
-					}
-					else{
-						de.setUrl(
-								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
-								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
-								pNomeServizio, pTipoServizio, pIdsoggErogatore );
-						// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
-						if (contaListe) {
-							// BugFix OP-674
-							//List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),asps.getVersione(),
-							//		asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
-							Search searchForCount = new Search(true,1);
-							this.apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
-									asps.getId().intValue(), asps.getIdSoggetto(), searchForCount);
-							//int numPA = lista1.size();
-							int numPA = searchForCount.getNumEntries(Liste.SERVIZI_PORTE_APPLICATIVE);
-							ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					e.addElement(de);
-				}
 
 				// de = new DataElement();
 				// de.setUrl("serviziRuoli.do?id="+servizio.getId());
@@ -1579,7 +1566,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 
-	public void prepareServiziPorteAppList(List<PortaApplicativa> lista, String id, ISearch ricerca)
+	public void prepareServiziConfigurazioneList(List<MappingErogazionePortaApplicativa> lista, String id, String idSoggettoErogatoreDelServizio, ISearch ricerca)
 			throws Exception {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -1587,11 +1574,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaApplicativa();
 			
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio));
 
-			boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
-
-			int idLista = Liste.SERVIZI_PORTE_APPLICATIVE;
+			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
@@ -1600,11 +1586,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			// Deve essere usato il soggetto per visualizzare i servizi applicativi
-			ServletUtils.setObjectIntoSession(this.session, true, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO);
+			// Utilizza la configurazione come parent
+			ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 			
 			//questo e' il soggetto virtuale
-			String idSoggettoErogatoreDelServizio = this.request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
+				idSoggettoErogatoreDelServizio = this.request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+			}
+			
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
 				PageData oldPD = ServletUtils.getPageDataFromSession(this.session);
 
@@ -1616,6 +1605,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
+			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
 
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
 			Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
@@ -1624,7 +1614,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
 			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-			Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 			
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -1654,163 +1643,185 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 			// setto le label delle colonne
-			String labelServizio = AccordiServizioParteSpecificaCostanti.LABEL_APS;
-
-
-			//			
-			//			String[] labels = { 
-			//					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME,
-			//					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO,
-			//					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE, 
-			//					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI,
-			//					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_WS_SECURITY, 
-			//					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES, 
-			//					labelServizio };
-			//			this.pd.setLabels(labels);
-
 			List<String> listaLabel = new ArrayList<String>();
 
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
-			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
-			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI); 
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+			if(this.isModalitaAvanzata())
+				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
-			//}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
-			if(isModalitaAvanzata)
+			if(this.isModalitaAvanzata())
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
-			listaLabel.add(labelServizio);
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				listaLabel.add(extendedServletList.getListTitle(this));
 			}
-
+			listaLabel.add(PorteApplicativeCostanti.LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA); 
 			String[] labels = listaLabel.toArray(new String[listaLabel.size()]);
 			this.pd.setLabels(labels);
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
-			Iterator<PortaApplicativa> it = lista.iterator();
-			PortaApplicativa pa = null;
+			Iterator<MappingErogazionePortaApplicativa> it = lista.iterator();
+			MappingErogazionePortaApplicativa mapping= null;
 			while (it.hasNext()) {
-				pa = it.next();
+				mapping = it.next();
+				PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mapping.getIdPortaApplicativa());
+				
 				Vector<DataElement> e = new Vector<DataElement>();
 
-				Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, pa.getNome());
-				Parameter pIdNome = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, ""+pa.getNome());
-				
-				Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, pa.getIdSoggetto() + "");
-				//pIdSogg = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoErogatoreDelServizio);
-				
-				Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+pa.getId());
-				
+				Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, paAssociata.getNome());
+				Parameter pIdNome = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, paAssociata.getNome());
+				Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, paAssociata.getIdSoggetto() + "");
+				Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+paAssociata.getId());
+				Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
 
+				// nome mapping
 				DataElement de = new DataElement();
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-				de.setUrl(
-						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE, 
-						pIdSogg, pNomePorta, pIdPorta);
-				de.setValue(pa.getNome());
-				de.setIdToRemove(pa.getId().toString());
-				de.setToolTip(pa.getDescrizione());
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps);
+				de.setValue(mapping.isDefault() ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT : mapping.getNome());
+				if(!mapping.isDefault())
+					de.setIdToRemove(mapping.getNome());
+				de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
 				e.addElement(de);
 
-				// NON SERVE: sono già dentro un soggetto erogatore del servizio
-//				de = new DataElement();
-//				de.setValue(pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario());
-//				e.addElement(de);
-
-//				de = new DataElement();
-//				de.setValue(pa.getDescrizione());
-//				e.addElement(de);
-
+				// azioni
 				de = new DataElement();
-				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-				de.setUrl(
-						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,
-						pIdSogg, pIdPorta);
-				if (contaListe) {
-					int numSA = pa.sizeServizioApplicativoList();
-					ServletUtils.setDataElementVisualizzaLabel(de, (long) numSA );
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
-				
-				de = new DataElement();
-				if(TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) 
-						|| 
-						!TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione()) // custom 
-						){
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST,
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, "" + pa.getIdSoggetto()),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+pa.getId())
-							);
+				if(!mapping.isDefault()) {
+					List<String> listaAzioni = paAssociata.getAzione().getAzioneDelegataList();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_LIST,pIdSogg, pIdPorta, pIdAsps);
 					if (contaListe) {
-						int numRuoli = 0;
-						if(pa.getRuoli()!=null){
-							numRuoli= pa.getRuoli().sizeRuoloList();
-						}
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numRuoli));
+						int numAzioni = listaAzioni.size();
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) numAzioni );
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
-				}
-				else{
-					de.setValue("-");
+					if(listaAzioni.size() > 0) {
+						StringBuffer sb = new StringBuffer();
+						for (String string : listaAzioni) {
+							if(sb.length() >0)
+								sb.append(", ");
+							
+							sb.append(string);
+						}
+						de.setToolTip(sb.toString());
+					}
+				} else {
+					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_DEFAULT);
 				}
 				e.addElement(de);
-
+				
+				// servizi applicativi (solo avanzata)
+				if(this.isModalitaAvanzata()) {
+					de = new DataElement();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST, pIdSogg, pIdPorta, pIdAsps);
+					if (contaListe) {
+						int numSA = paAssociata.sizeServizioApplicativoList();
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) numSA );
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+				}
+				
+				// controllo accessi
+				de = new DataElement();
+				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
+				String autenticazione = paAssociata.getAutenticazione();
+				String autenticazioneCustom = null;
+				if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
+					autenticazioneCustom = autenticazione;
+					autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+				}
+				String autenticazioneOpzionale = "";
+				if(paAssociata.getAutenticazioneOpzionale()!=null){
+					if (paAssociata.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+						autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+					}
+				}
+				String autorizzazioneContenuti = paAssociata.getAutorizzazioneContenuto();
+				
+				String autorizzazione= null, autorizzazioneCustom = null;
+				if (paAssociata.getAutorizzazione() != null &&
+						!TipoAutorizzazione.getAllValues().contains(paAssociata.getAutorizzazione())) {
+					autorizzazioneCustom = paAssociata.getAutorizzazione();
+					autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+				}
+				else{
+					autorizzazione = AutorizzazioneUtilities.convertToStato(paAssociata.getAutorizzazione());
+				}
+				
+				String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
+				de.setValue(statoControlloAccessi);
+				e.addElement(de);
+				
+				// message security
 				de = new DataElement();
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 				de.setUrl(
 						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY,
-						pIdSogg, pIdPorta);
-				de.setValue(pa.getStatoMessageSecurity());
+						pIdSogg, pIdPorta, pIdAsps);
+				de.setValue(paAssociata.getStatoMessageSecurity());
 				e.addElement(de);
 				
-				//if(isModalitaAvanzata){
+				//mtom
 				de = new DataElement();
-				de.setUrl( 
-						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM,pIdPorta, pIdSogg);
+				org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
+				
+				switch (serviceBinding) {
+				case REST:
+					de.setValue("-");
+					break;
+				case SOAP:
+				default:
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM,pIdPorta, pIdSogg, pIdAsps);
 
-				boolean isMTOMAbilitatoReq = false;
-				boolean isMTOMAbilitatoRes= false;
-				if(pa.getMtomProcessor()!= null){
-					if(pa.getMtomProcessor().getRequestFlow() != null){
-						if(pa.getMtomProcessor().getRequestFlow().getMode() != null){
-							MTOMProcessorType mode = pa.getMtomProcessor().getRequestFlow().getMode();
-							if(!mode.equals(MTOMProcessorType.DISABLE))
-								isMTOMAbilitatoReq = true;
+					boolean isMTOMAbilitatoReq = false;
+					boolean isMTOMAbilitatoRes= false;
+					if(paAssociata.getMtomProcessor()!= null){
+						if(paAssociata.getMtomProcessor().getRequestFlow() != null){
+							if(paAssociata.getMtomProcessor().getRequestFlow().getMode() != null){
+								MTOMProcessorType mode = paAssociata.getMtomProcessor().getRequestFlow().getMode();
+								if(!mode.equals(MTOMProcessorType.DISABLE))
+									isMTOMAbilitatoReq = true;
+							}
+						}
+
+						if(paAssociata.getMtomProcessor().getResponseFlow() != null){
+							if(paAssociata.getMtomProcessor().getResponseFlow().getMode() != null){
+								MTOMProcessorType mode = paAssociata.getMtomProcessor().getResponseFlow().getMode();
+								if(!mode.equals(MTOMProcessorType.DISABLE))
+									isMTOMAbilitatoRes = true;
+							}
 						}
 					}
 
-					if(pa.getMtomProcessor().getResponseFlow() != null){
-						if(pa.getMtomProcessor().getResponseFlow().getMode() != null){
-							MTOMProcessorType mode = pa.getMtomProcessor().getResponseFlow().getMode();
-							if(!mode.equals(MTOMProcessorType.DISABLE))
-								isMTOMAbilitatoRes = true;
-						}
-					}
+					if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
+					else 
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);
+					break;
 				}
-
-				if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
-					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
-				else 
-					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);
+				
 				e.addElement(de);
 				
+				// correlazione applicativa
 				de = new DataElement();
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome);
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome,pIdAsps);
 				
 				boolean isCorrelazioneApplicativaAbilitataReq = false;
 				boolean isCorrelazioneApplicativaAbilitataRes = false;
 				
-				if (pa.getCorrelazioneApplicativa() != null)
-					isCorrelazioneApplicativaAbilitataReq = pa.getCorrelazioneApplicativa().sizeElementoList() > 0;
+				if (paAssociata.getCorrelazioneApplicativa() != null)
+					isCorrelazioneApplicativaAbilitataReq = paAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
 
-				if (pa.getCorrelazioneApplicativaRisposta() != null)
-					isCorrelazioneApplicativaAbilitataRes = pa.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+				if (paAssociata.getCorrelazioneApplicativaRisposta() != null)
+					isCorrelazioneApplicativaAbilitataRes = paAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
 				
 				if(isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
 					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA);
@@ -1818,69 +1829,45 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 				e.addElement(de);
 				
-				if(isModalitaAvanzata){
+				// Protocol Properties
+				if(this.isModalitaAvanzata()){
 					de = new DataElement();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-					de.setUrl(
-							PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,
-							pIdSogg, pIdPorta);
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pIdPorta,pIdAsps);
 					if (contaListe) {
-						int numProp = pa.sizeProprietaIntegrazioneProtocolloList();
+						int numProp = paAssociata.sizeProprietaIntegrazioneProtocolloList();
 						ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
 				}
 
-				/*
-				 * Visualizzo SoggettoErogatore/Servizio I soggetti erogatori
-				 * possono essere identificati con due casi 1. PA che hanno
-				 * soggetto proprietario, servizio e non hanno definito il
-				 * soggetto virtuale. In questo caso il soggetto erogatore e' il
-				 * soggetto proprietario. 2. PA che hanno un soggetto virtuale.
-				 * In questo caso il soggetto erogatore e' il soggetto virtuale
-				 */
-				@SuppressWarnings("unused")
-				int idSoggEr = 0;
-				PortaApplicativaSoggettoVirtuale pasv = pa.getSoggettoVirtuale();
-				if (pasv != null)
-					idSoggEr = pasv.getId().intValue();
-				else
-					idSoggEr = pa.getIdSoggetto().intValue();
-				PortaApplicativaServizio pas = pa.getServizio();
-				int idServ = pas.getId().intValue();
-				String tmpAz = "";
-				PortaApplicativaAzione paa = pa.getAzione();
-				if (paa != null)
-					tmpAz = "-" + paa.getNome();
-				de = new DataElement();
-
-				pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServ+ "");
-
-				de.setUrl(
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
-						pIdServizio,pNomeServizio, pTipoServizio, pVersioneServizio);
-				de.setValue(asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + "-" + asps.getTipo() + "/" + asps.getNome() + tmpAz);
-				e.addElement(de);
-
+				// Extended Servlet List
 				if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 					de = new DataElement();
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST,
-							pIdPorta,pIdNome,pIdPorta, pIdSogg
-							);
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST, pIdPorta,pIdNome,pIdPorta, pIdSogg);
 					if (contaListe) {
-						int numExtended = extendedServletList.sizeList(pa);
+						int numExtended = extendedServletList.sizeList(paAssociata);
 						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
 				}
 				
+				// Abilitato
+				de = new DataElement();
+				de.setType(DataElementType.CHECKBOX);
+				boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
+				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO;
+				de.setToolTip(statoMapping);
+				de.setSelected(statoPA);
+				e.addElement(de);
+				
 				dati.addElement(e);
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(false);
+			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -1914,9 +1901,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			// Deve essere usato il soggetto per visualizzare i servizi applicativi
-			ServletUtils.setObjectIntoSession(this.session, true, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO);
-			
+			// Utilizza la configurazione come parent
+			ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idServizio));
@@ -2907,7 +2893,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			IDPortaApplicativa idPA = null;
 			String [] tmp = provString.split("/");
 			Integer versioneInt = Integer.parseInt(versione);
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizioEffettivo, nomeServizioEffettivo, 
+			IDServizio idServizio = this.idServizioFactory.getIDServizioFromValues(tipoServizioEffettivo, nomeServizioEffettivo, 
 					tmp[0], tmp[1], versioneInt); 
 			if(isModalitaAvanzata==false){
 				idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociata(idServizio);
@@ -2939,8 +2925,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						// BugFix OP-674
 						//int num = this.apsCore.serviziPorteAppList(tipoServizioEffettivo,nomeServizioEffettivo,Long.parseLong(id),idSoggettoErogatore, new Search(true)).size();
 						Search searchForCount = new Search(true,1);
-						this.apsCore.serviziPorteAppList(tipoServizioEffettivo,nomeServizioEffettivo,versioneInt,Long.parseLong(id),idSoggettoErogatore, searchForCount);
-						int num = searchForCount.getNumEntries(Liste.SERVIZI_PORTE_APPLICATIVE);
+						this.apsCore.mappingServiziPorteAppList(idServizio, Integer.parseInt(id), (int) idSoggettoErogatore, searchForCount);
+						int num = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
 						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, (long) num);
 					}catch(Exception e){
 						this.log.error("Calcolo numero pa non riuscito",e);
@@ -2951,8 +2937,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			else{
-				// Deve essere usato il soggetto 
-				ServletUtils.setObjectIntoSession(this.session, true, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO);
+				// Utilizza la configurazione come parent
+				ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 				
 				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,
@@ -4209,8 +4195,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					
 				}
 				else{
-					// Deve essere usato il soggetto 
-					ServletUtils.setObjectIntoSession(this.session, true, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO);
+					// Utilizza la configurazione come parent
+					ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 					
 					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,
@@ -4451,5 +4437,125 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		dati.add(saveAs);
 
 		return dati;
+	}
+	
+	public Vector<DataElement> addConfigurazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome,
+			String azione, String[] azionis, String[] azioniDisponibiliList, 
+			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
+			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String nomeSA, String [] saSoggetti, 
+			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
+			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli,
+			String erogazioneRuolo, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch) throws Exception {
+		
+		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+		
+		DataElement de = new DataElement();
+		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		// idSoggetto erogatore
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+		de.setValue(idSoggettoErogatoreDelServizio); 
+		dati.addElement(de);
+		
+		
+		// Azione
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+		de.setValues(azioniDisponibiliList);
+		de.setSelected(azione);
+		de.setType(DataElementType.SELECT);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+		de.setPostBack(true, true);
+		de.setRequired(true); 
+		dati.addElement(de);
+		
+		
+		// Nome
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+		if (nome == null) {
+			de.setValue("");
+		} else {
+			de.setValue(nome);
+		}
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
+		dati.addElement(de);
+		
+		// mode
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE);
+		String[] modeLabels = {PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA};
+		String[] modeValues = {PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA, PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA};
+		de.setLabels(modeLabels); 
+		de.setValues(modeValues);
+		de.setSelected(modeCreazione);
+		de.setType(DataElementType.SELECT);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE);
+		de.setPostBack(true, true);
+		dati.addElement(de);
+		
+		// 	modo creazione: se erediti la configurazione da una precedente allora devi solo sezionarla, altrimenti devi compilare le sezioni SA e controllo accessi
+		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
+			// mapping
+			de = new DataElement();
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING);
+			de.setLabels(listaMappingLabels); 
+			de.setValues(listaMappingValues);
+			de.setSelected(mapping);
+			de.setType(DataElementType.SELECT);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
+			dati.addElement(de);
+		} else {
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE );
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
+			de.setSelected(nomeSA);
+			de.setValues(saSoggetti);
+			de.setType(DataElementType.SELECT);
+			dati.addElement(de);
+			
+			// Controllo Accesso
+			
+			this.controlloAccessi(dati);
+			
+			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
+			
+			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, 
+					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
+					erogazioneAutorizzazioneAutenticati, null, 0, null, null,
+					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
+					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
+					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
+		}
+		
+		
+		return dati;
+	}
+
+	public boolean configurazioneCheckData(TipoOperazione add, String nome, String azione, String[] azionis, AccordoServizioParteSpecifica asps, List<String> azioniOccupate) {
+		if(azione == null || azione.equals("")) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_NON_PUO_ESSERE_VUOTA);
+			return false;
+		}
+		
+		if(azioniOccupate.contains(azione)) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_GIA_PRESENTE);
+			return false;			
+		}
+		
+		return true;
 	}
 }

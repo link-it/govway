@@ -32,11 +32,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -91,16 +93,16 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 	
-			int idLista = Liste.SERVIZI_PORTE_APPLICATIVE;
+			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 	
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 	
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			
-			List<PortaApplicativa> lista = apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
-					Integer.parseInt(id), Integer.parseInt(idSoggettoErogatoreDelServizio), ricerca);
-	
-			apsHelper.prepareServiziPorteAppList(lista, id, ricerca);
+			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,Integer.parseInt(id), Integer.parseInt(idSoggettoErogatoreDelServizio), ricerca);
+			
+			apsHelper.prepareServiziConfigurazioneList(lista, id, idSoggettoErogatoreDelServizio, ricerca);
 	
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

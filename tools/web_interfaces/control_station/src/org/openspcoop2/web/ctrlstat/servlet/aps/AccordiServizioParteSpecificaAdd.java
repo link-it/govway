@@ -1329,6 +1329,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.tiposervizio, this.nomeservizio, soggettoErogatore, Integer.parseInt(this.versione));
 					mappingErogazione.setIdServizio(idServizio);
+					mappingErogazione.setDefault(true);
+					mappingErogazione.setNome(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME); 					
+					
 					listaOggettiDaCreare.add(mappingErogazione);
 
 				}
@@ -1344,13 +1347,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
-			//			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
-
-			//			boolean [] permessi = new boolean[2];
-			//			permessi[0] = pu.isServizi();
-			//			permessi[1] = pu.isAccordiCooperazione();
-
 			List<AccordoServizioParteSpecifica> listaAccordi = null;
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
 				listaAccordi = apsCore.soggettiServizioList(null, ricerca,permessi);

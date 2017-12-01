@@ -67,7 +67,6 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -102,8 +101,8 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO, session);
-
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
@@ -112,6 +111,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String servizioApplicativo = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO);
+			String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null) 
+				idAsps = "";
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
@@ -183,38 +185,22 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nome_servizio, tipo_servizio, versione_servizio, soggServ.getNome(), soggServ.getTipo()); 
 				}
 			}
-
+			
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI + nomePorta,
+					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
+					));
+			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			
 			// Se servizioApplicativohid = null, devo visualizzare la pagina per
 			// l'inserimento dati
 			if (ServletUtils.isEditModeInProgress(request)) {
-
-				if(useIdSogg){
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-									new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI + nomePorta,
-											PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,
-											new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-											new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-											),
-											new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-							);
-				}else {
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI + nomePorta,
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-									),
-									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-							);
-				}
+				
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -346,7 +332,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 							ForwardParams.ADD());
 				}
 
-				String [] servizioApplicativoList = loadSAErogatori(pa, saCore, soggInt, true);
+				String [] servizioApplicativoList = PorteApplicativeServizioApplicativoAdd.loadSAErogatori(pa, saCore, soggInt, true);
 				
 				dati = porteApplicativeHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList, pa.sizeServizioApplicativoList(),true);
 
@@ -363,33 +349,8 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.porteAppServizioApplicativoCheckData(TipoOperazione.ADD);
 			if (!isOk) {
-				if(useIdSogg){
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-									new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI + nomePorta,
-											PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,
-											new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-											new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-											),
-											new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-							);
-				}else {
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI + nomePorta,
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-									),
-									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-							);
-				}
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -497,7 +458,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				//							ForwardParams.ADD());
 				//				}
 
-				String[] servizioApplicativoList = loadSAErogatori(pa, saCore, soggInt, true);
+				String[] servizioApplicativoList = PorteApplicativeServizioApplicativoAdd.loadSAErogatori(pa, saCore, soggInt, true);
 
 				dati = porteApplicativeHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList, pa.sizeServizioApplicativoList(),true);
 

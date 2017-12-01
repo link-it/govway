@@ -414,14 +414,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOp) && !this.pddCore.isPddEsterna(pdd)){
 			
-			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_CLIENT);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			if (this.isModalitaAvanzata()) {	
+				de = new DataElement();
+				de.setLabel(SoggettiCostanti.LABEL_CLIENT);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
 
 			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) == false) {	
+			if (this.isModalitaAvanzata()) {	
 				de.setType(DataElementType.TEXT_EDIT);
 			}else{
 				de.setType(DataElementType.HIDDEN);
@@ -431,26 +433,30 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,id+""),
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,oldnomeprov),
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,oldtipoprov));
-			if (contaListe) {
-				ServletUtils.setDataElementVisualizzaLabel(de,numPD);
-			} else
-				ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
+			if (this.isModalitaAvanzata()) {	
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,id+""),
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,oldnomeprov),
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,oldtipoprov));
+				if (contaListe) {
+					ServletUtils.setDataElementVisualizzaLabel(de,numPD);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+				dati.addElement(de);
+			}
 
-			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_SERVER);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
+			if (this.isModalitaAvanzata()) {	
+				de = new DataElement();
+				de.setLabel(SoggettiCostanti.LABEL_SERVER);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
 
 			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
-			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) == false) {	
+			if (this.isModalitaAvanzata()) {	
 				de.setType(DataElementType.TEXT_EDIT);
 			}else{
 				de.setType(DataElementType.HIDDEN);
@@ -460,18 +466,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,id+""),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,oldnomeprov),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,oldtipoprov));
-			if (contaListe) {
-				ServletUtils.setDataElementVisualizzaLabel(de,numPA);
-			} else
-				ServletUtils.setDataElementVisualizzaLabel(de);
-			dati.addElement(de);
-
+			if (this.isModalitaAvanzata()) {	
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,id+""),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,oldnomeprov),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,oldtipoprov));
+				if (contaListe) {
+					ServletUtils.setDataElementVisualizzaLabel(de,numPA);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+				dati.addElement(de);
+			}
 		}
 
 		return dati;
@@ -677,7 +684,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			
 			int idLista = Liste.SOGGETTI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -703,15 +709,18 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 
 			// setto le label delle colonne
-			int totEl = 7;
+			int totEl = this.isModalitaAvanzata() ? 7 : 5;
 			String[] labels = new String[totEl];
-			labels[0] = SoggettiCostanti.LABEL_SOGGETTO;
-			labels[1] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
-			labels[2] = ConnettoriCostanti.LABEL_CONNETTORE;
-			labels[3] = RuoliCostanti.LABEL_RUOLI;
-			labels[4] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
-			labels[5] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
-			labels[6] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
+			int i = 0;
+			labels[i++] = SoggettiCostanti.LABEL_SOGGETTO;
+			labels[i++] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
+			labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
+			labels[i++] = RuoliCostanti.LABEL_RUOLI;
+			labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			if(this.isModalitaAvanzata()) {
+				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
+				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
+			}
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -831,56 +840,56 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 				e.addElement(de);
 				
-				
-				de = new DataElement();
-				if (pddEsterna) {
-					// se la pdd e' esterna non e' possibile
-					// inseririre porte applicative
-					de.setType(DataElementType.TEXT);
-					de.setValue("-");
-				} else {
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
-							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
-					if (contaListe) {
-						// BugFix OP-674
-						//List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
-						this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
-						//int numPA = lista1.size();
-						int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-
+				if(this.isModalitaAvanzata()) {
+					de = new DataElement();
+					if (pddEsterna) {
+						// se la pdd e' esterna non e' possibile
+						// inseririre porte applicative
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					} else {
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
+								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
+								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
+								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
+						if (contaListe) {
+							// BugFix OP-674
+							//List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
+							Search searchForCount = new Search(true,1);
+							this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
+							//int numPA = lista1.size();
+							int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+	
+					}
+					e.addElement(de);
+	
+					de = new DataElement();
+					if (pddEsterna) {
+						// se la pdd e' esterna non e' possibile
+						// inseririre porte delegate
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					} else {
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
+						if (contaListe) {
+							// BugFix OP-674
+							//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
+							Search searchForCount = new Search(true,1);
+							this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
+							//int numPD = lista1.size();
+							int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+					}
+					e.addElement(de);
 				}
-				e.addElement(de);
-
-				de = new DataElement();
-				if (pddEsterna) {
-					// se la pdd e' esterna non e' possibile
-					// inseririre porte delegate
-					de.setType(DataElementType.TEXT);
-					de.setValue("-");
-				} else {
-					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
-					if (contaListe) {
-						// BugFix OP-674
-						//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
-						this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
-						//int numPD = lista1.size();
-						int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-				}
-				e.addElement(de);
-
 
 				dati.addElement(e);
 			}
@@ -949,12 +958,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 			// setto le label delle colonne
-			int totEl = 4;
+			int totEl = this.isModalitaAvanzata() ? 4 : 2;
 			String[] labels = new String[totEl];
-			labels[0] = SoggettiCostanti.LABEL_SOGGETTO;
-			labels[1] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
-			labels[2] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
-			labels[3] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			int i = 0;
+			labels[i++] = SoggettiCostanti.LABEL_SOGGETTO;
+			if(this.isModalitaAvanzata()) {
+				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
+				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
+			}
+			labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -981,42 +994,43 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setIdToRemove(elem.getId().toString());
 				e.addElement(de);
 
-				//Porte Applicative
-				de = new DataElement();
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
-				if (contaListe) {
-					// BugFix OP-674
-					// List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
-					Search searchForCount = new Search(true,1);
-					this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
-					//int numPA = lista1.size();
-					int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
-					ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
-
-				//Porte Delegate
-				de = new DataElement();
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
-						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
-				if (contaListe) {
-					// BugFix OP-674
-					//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
-					Search searchForCount = new Search(true,1);
-					this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
-					//int numPD = lista1.size();
-					int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
-					ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
-
+				if(this.isModalitaAvanzata()) {
+					//Porte Applicative
+					de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,elem.getId()+""),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO,elem.getNome()),
+							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO,elem.getTipo()));
+					if (contaListe) {
+						// BugFix OP-674
+						// List<PortaApplicativa> lista1 = this.porteApplicativeCore.porteAppList(elem.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.porteApplicativeCore.porteAppList(elem.getId().intValue(), searchForCount);
+						//int numPA = lista1.size();
+						int numPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_BY_SOGGETTO);
+						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPA);
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+	
+					//Porte Delegate
+					de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,elem.getId()+""),
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO,elem.getNome()),
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO,elem.getTipo()));
+					if (contaListe) {
+						// BugFix OP-674
+						//List<PortaDelegata> lista1 = this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.porteDelegateCore.porteDelegateList(elem.getId().intValue(), searchForCount);
+						//int numPD = lista1.size();
+						int numPD = searchForCount.getNumEntries(Liste.PORTE_DELEGATE_BY_SOGGETTO);
+						ServletUtils.setDataElementVisualizzaLabel(de,(long)numPD);
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+				}
 
 				//Servizi Appicativi
 				de = new DataElement();

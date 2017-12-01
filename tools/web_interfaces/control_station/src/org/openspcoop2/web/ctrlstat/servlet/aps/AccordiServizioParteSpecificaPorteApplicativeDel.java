@@ -33,8 +33,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -131,14 +134,13 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.SERVIZI_PORTE_APPLICATIVE;
+			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
-			List<PortaApplicativa> lista = apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
-					new Long(id), new Long(idSoggettoErogatoreDelServizio), ricerca);
-
-			apsHelper.prepareServiziPorteAppList(lista, id, ricerca);
+			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,Integer.parseInt(id), idSoggettoErogatoreDelServizio, ricerca);
+			apsHelper.prepareServiziConfigurazioneList(lista, id, null, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

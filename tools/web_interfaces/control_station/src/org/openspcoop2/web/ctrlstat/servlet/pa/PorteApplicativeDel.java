@@ -81,8 +81,9 @@ public final class PorteApplicativeDel extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO , session);
-
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
+		Boolean useIdSogg = parentPA == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO;
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
@@ -160,18 +161,18 @@ public final class PorteApplicativeDel extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			List<PortaApplicativa> lista = null; 
-			
+			int idLista = -1;
 			if(useIdSogg){
-				int idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
+				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
 				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteApplicativeCore.porteAppList(soggInt, ricerca);
 			}else{ 
-				int idLista = Liste.PORTE_APPLICATIVE;
+				idLista = Liste.PORTE_APPLICATIVE;
 				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteApplicativeCore.porteAppList(null, ricerca);
 			}
 
-			porteApplicativeHelper.preparePorteAppList(ricerca, lista);
+			porteApplicativeHelper.preparePorteAppList(ricerca, lista, idLista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

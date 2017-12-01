@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -72,9 +73,9 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -109,10 +110,9 @@ public final class PorteApplicativeChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO , session);
-
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
@@ -153,6 +153,9 @@ public final class PorteApplicativeChange extends Action {
 			String autorizzazioneRuoli = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
 			String autorizzazioneRuoliTipologia = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+			String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
 			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
@@ -266,29 +269,17 @@ public final class PorteApplicativeChange extends Action {
 			if (ca != null) {
 				numCorrApp = ca.sizeElementoList();
 			}
+			
+			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tipoNomeSoggettoProprietario);
+			
+			lstParm.add(new Parameter(oldNomePA , null));
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
 			if (ServletUtils.isEditModeInProgress(request)) {
 
 				// setto la barra del titolo
-				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tipoNomeSoggettoProprietario, 
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-									new Parameter(oldNomePA , null)
-							);
-				} else {
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(oldNomePA, null)
-							);
-				}
-
+				ServletUtils.setPageDataTitle(pd, lstParm);
 
 				if (descr == null) {
 					descr = pa.getDescrizione();
@@ -693,23 +684,7 @@ public final class PorteApplicativeChange extends Action {
 			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, isSupportatoAutenticazioneSoggetti);
 			if (!isOk) {
 				// setto la barra del titolo
-				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tipoNomeSoggettoProprietario, 
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-									new Parameter(oldNomePA , null)
-							);
-				} else {
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(oldNomePA, null)
-							);
-				}
-
+				ServletUtils.setPageDataTitle(pd,lstParm);
 
 				// Prendo la lista di soggetti (tranne il mio) e li metto in un
 				// array per la funzione SoggettoVirtuale
@@ -1026,18 +1001,35 @@ public final class PorteApplicativeChange extends Action {
 
 
 			List<PortaApplicativa> lista = null;
-
-			if(useIdSogg){
-				int idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
+			int idLista = -1;
+			
+		
+			switch (parentPA) {
+			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
+				idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
+				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+				int idServizio = Integer.parseInt(idAsps);
+				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
+				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+				Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
+				List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, idSoggetto.intValue(), ricerca);
+				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+				apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, null, ricerca);
+				break;
+			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
+				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
 				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteApplicativeCore.porteAppList(soggInt, ricerca);
-			}else{ 
-				int idLista = Liste.PORTE_APPLICATIVE;
+				porteApplicativeHelper.preparePorteAppList(ricerca, lista,idLista);
+				break;
+			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE:
+			default:
+				idLista = Liste.PORTE_APPLICATIVE;
 				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteApplicativeCore.porteAppList(null, ricerca);
+				porteApplicativeHelper.preparePorteAppList(ricerca, lista,idLista);
+				break;
 			}
-
-			porteApplicativeHelper.preparePorteAppList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

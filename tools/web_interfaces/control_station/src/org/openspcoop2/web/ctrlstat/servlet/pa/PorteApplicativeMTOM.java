@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -71,8 +71,8 @@ public class PorteApplicativeMTOM extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO, session);
-
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
@@ -86,6 +86,9 @@ public class PorteApplicativeMTOM extends Action {
 			String mtomRisposta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MTOM_RISPOSTA);
 			String applicaModificaS = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
+			String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null) 
+				idAsps = "";
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -178,28 +181,18 @@ public class PorteApplicativeMTOM extends Action {
 
 			if(!mtomRisposta.equals(MTOMProcessorType.DISABLE.getValue()) && !mtomRisposta.equals(MTOMProcessorType.UNPACKAGING.getValue()))
 				isMTOMAbilitatoRes = true;
-
-			if(useIdSogg){
-				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg)),
-								new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta,  null)
-						);
-			}else {
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta,  null)
-						);
-			}
+			
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta,  null));
+			
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			Parameter[] urlParms = { 
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg) };
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
 			Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST , urlParms);
 			Parameter url2 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_LIST , urlParms);
 

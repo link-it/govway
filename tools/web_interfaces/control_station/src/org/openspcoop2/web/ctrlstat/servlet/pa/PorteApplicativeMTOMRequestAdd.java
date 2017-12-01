@@ -40,7 +40,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -74,10 +73,11 @@ public class PorteApplicativeMTOMRequestAdd extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO, session);
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 
 		try {
-			PorteApplicativeHelper porteDelegateHelper = new PorteApplicativeHelper(request, pd, session);
+			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			String id = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
@@ -86,9 +86,12 @@ public class PorteApplicativeMTOMRequestAdd extends Action {
 			String contentType = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONTENT_TYPE);
 			String obbligatorio = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OBBLIGATORIO);
 			String pattern = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
-
+			String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null) 
+				idAsps = "";
+			
 			// Preparo il menu
-			porteDelegateHelper.makeMenu();
+			porteApplicativeHelper.makeMenu();
 
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
@@ -112,46 +115,31 @@ public class PorteApplicativeMTOMRequestAdd extends Action {
 			Parameter[] urlParms = { 
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg) };
+			
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta, 
+					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, urlParms));
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI, // + idporta,
+					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST, urlParms  
+			));
+			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati
 //			if (nome == null) {
 				if(	ServletUtils.isEditModeInProgress(request)){
-				// setto la barra del titolo
-					if(useIdSogg){
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg) 
-								),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta, 
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, urlParms),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI, // + idporta,
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST, urlParms  
-						),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-						);
-					}else {
-						ServletUtils.setPageDataTitle(pd, 
-								new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-								new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta, 
-										PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, urlParms),
-										new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI, // + idporta,
-												PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST, urlParms  
-										),
-										new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-										);
-					}
+					
+					// setto la barra del titolo
+					ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio);
+				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio);
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg,null, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg,null, dati);
 
 				pd.setDati(dati);
 
@@ -162,45 +150,19 @@ public class PorteApplicativeMTOMRequestAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.MTOMParameterCheckData(TipoOperazione.ADD,false,false);
+			boolean isOk = porteApplicativeHelper.MTOMParameterCheckData(TipoOperazione.ADD,false,false);
 			if (!isOk) {
 				// setto la barra del titolo
-				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
-									new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg) 
-									),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta, 
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, urlParms),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI, // + idporta,
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST, urlParms  
-							),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-							);
-						}else {
-							ServletUtils.setPageDataTitle(pd, 
-									new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-									new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta, 
-											PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, urlParms),
-											new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI, // + idporta,
-													PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST, urlParms  
-											),
-											new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-											);
-						}
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio);
+				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.ADD, dati, true, nome, pattern, contentType, obbligatorio);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg, null, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg, null, dati);
 
 				pd.setDati(dati);
 
@@ -233,18 +195,18 @@ public class PorteApplicativeMTOMRequestAdd extends Action {
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-			porteApplicativeCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pa);
+			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_MTOM_REQUEST;
 
-			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
 			List<MtomProcessorFlowParameter> lista = porteApplicativeCore.porteApplicativeMTOMRequestList(Integer.parseInt(id), ricerca);
 
-			porteDelegateHelper.preparePorteApplicativeMTOMRequestList(idporta, ricerca, lista);
+			porteApplicativeHelper.preparePorteApplicativeMTOMRequestList(idporta, ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

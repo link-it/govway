@@ -27,10 +27,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.DBMappingUtils;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -1131,6 +1133,23 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 			return driver.getDriverConfigurazioneDB().serviziPorteAppList(tipoServizio,nomeServizio,versioneServizio,idServizio, idSoggettoErogatore, ricerca);
 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList(IDServizio idAccordoServizioParteSpecifica, Integer idServizio, Integer idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		Connection con = null;
+		String nomeMetodo = "mappingServiziPorteAppList";
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			return DBMappingUtils.mappingErogazionePortaApplicativaList(con,this.tipoDB,idAccordoServizioParteSpecifica,idServizio, idSoggettoErogatore, ricerca);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

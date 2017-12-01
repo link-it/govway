@@ -39,7 +39,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -74,8 +73,8 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
  
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO, session);
-
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
@@ -85,7 +84,10 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 			int soggInt = Integer.parseInt(idsogg);
 			String nome = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
 			String valore = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
-
+			String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null) 
+				idAsps = "";
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -106,37 +108,21 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
+			
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI + idporta,
+					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
+					 ));
+			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (ServletUtils.isEditModeInProgress(request)) {
 				// setto la barra del titolo
-				if(useIdSogg){
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI + idporta,
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,
-								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-								 ),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-						);
-				}else{
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI + idporta,
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-									 ),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-							);
-				}
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -158,33 +144,8 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.porteAppPropCheckData(TipoOperazione.ADD);
 			if (!isOk) {
-				// setto la barra del titolo.
-				if(useIdSogg){
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI + idporta,
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,
-								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-								 ),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-						);
-				}else{
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-							new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI + idporta,
-									PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-									new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
-									 ),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-							);
-				}
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

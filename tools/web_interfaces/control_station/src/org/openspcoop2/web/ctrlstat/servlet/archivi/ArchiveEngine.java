@@ -337,11 +337,13 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	// --- Mapping Erogazione ---
 	
 	@Override	
-	public void createMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) throws DriverRegistroServiziException {
+	public void createMappingErogazione(String nome, boolean isDefault, IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) throws DriverRegistroServiziException {
 		try{
 			MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
 			mapping.setIdServizio(idServizio);
 			mapping.setIdPortaApplicativa(idPortaApplicativa);
+			mapping.setNome(nome);
+			mapping.setDefault(isDefault); 
 			
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, mapping);
 		}
@@ -371,12 +373,14 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	// --- Mapping Fruizione ---
 	
 	@Override
-	public void createMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+	public void createMappingFruizione(String nome, boolean isDefault, IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
 		try{
 			MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
 			mapping.setIdFruitore(idFruitore);
 			mapping.setIdServizio(idServizio);
 			mapping.setIdPortaDelegata(idPortaDelegata);
+			mapping.setNome(nome);
+			mapping.setDefault(isDefault); 
 			
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, mapping);
 		}

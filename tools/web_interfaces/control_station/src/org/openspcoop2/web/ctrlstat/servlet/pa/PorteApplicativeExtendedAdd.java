@@ -81,7 +81,7 @@ public final class PorteApplicativeExtendedAdd extends AbstractServletListExtend
 
 	@Override
 	protected List<Parameter> getTitle(Object object, HttpServletRequest request, HttpSession session) throws Exception {
-		return PorteApplicativeExtendedUtilities.getTitle(object, request, session);
+		return PorteApplicativeExtendedUtilities.getTitle(object, request, session,this.getConsoleCore());
 	}
 
 	@Override

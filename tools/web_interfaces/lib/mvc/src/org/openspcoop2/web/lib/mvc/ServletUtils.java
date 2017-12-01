@@ -415,6 +415,14 @@ public class ServletUtils {
 
 		return objectClass.cast(obj);
 	}
+	
+	public static String getStringAttributeFromSession(String attributeName, HttpSession session) {
+		return getObjectFromSession(session, String.class, attributeName);
+	}
+	
+	public static Integer getIntegerAttributeFromSession(String attributeName, HttpSession session) {
+		return getObjectFromSession(session, Integer.class, attributeName);
+	}
 
 	public static String getParametersAsString(boolean createFirstParameter, Parameter ... parameter ) {
 		StringBuilder sb = new StringBuilder();

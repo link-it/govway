@@ -300,5 +300,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_STATO_DELLA_RICHIESTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY = "Stato della Richiesta dev'essere disabled, packaging, unpackaging o verify.";
 	public static final String MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_PER_LA_RISPOSTA_CON_ELEMENTO_DEFINITA_GIA_ESISTENTE = "Esiste gi&agrave; una correlazione applicativa per la risposta con elemento xml [{0}] definita nella {1}";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
+	public static final String MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_NON_PUO_ESSERE_VUOTA = "Azione non pu&ograve; essere vuota";
+	public static final String MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_GIA_PRESENTE = "L'azione scelta &egrave; gi&agrave; presente";
 	
 }

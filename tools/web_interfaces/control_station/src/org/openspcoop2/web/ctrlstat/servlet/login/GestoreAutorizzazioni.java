@@ -244,6 +244,8 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_REQUEST);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MTOM_RESPONSE);
+		this.servletPorteDelegate.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
+		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AZIONE);
 		/** Permessi associati alla gestione delle porte applicative */
 		this.permessiPorteApplicative = new PermessiUtente();
 		this.permessiPorteApplicative.setServizi(true);

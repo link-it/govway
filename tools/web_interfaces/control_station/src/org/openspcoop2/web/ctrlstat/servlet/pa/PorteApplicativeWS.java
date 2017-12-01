@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +41,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -76,8 +76,8 @@ public final class PorteApplicativeWS extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_USA_ID_SOGGETTO, session);
-
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session); 
@@ -92,7 +92,9 @@ public final class PorteApplicativeWS extends Action {
 			String applicaMTOMRisposta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RISPOSTA);
 			String applicaModificaS = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
-			
+			String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null) 
+				idAsps = "";
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -157,25 +159,12 @@ public final class PorteApplicativeWS extends Action {
 			if(statoMessageSecurity == null)
 				statoMessageSecurity = pa.getStatoMessageSecurity();
 
-
-
-			if(useIdSogg){
-				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
-								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
-								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-								new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_DI  + idporta, null)
-						);
-			}else {
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_DI  + idporta, null)
-						);	
-			}
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			
+			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_DI + idporta,  null));
+			
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -190,12 +179,14 @@ public final class PorteApplicativeWS extends Action {
 
 				Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST,
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg)
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
 						);
 
 				Parameter url2 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST,
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg)
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
 						);
 
 				
