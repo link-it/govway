@@ -48,9 +48,9 @@
                             <linkit:sql-table-fk-field name="id_porta"/>
                             <linkit:sql-table-fk-reference-column name="id"/>
                         </linkit:sql-table-foreign-key>
-                        <linkit:sql-table-unique create-index="true">
-                            <linkit:sql-table-unique-field name="id_fruizione"/>
-                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_fruizione"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -123,9 +123,9 @@
                             <linkit:sql-table-fk-field name="id_porta"/>
                             <linkit:sql-table-fk-reference-column name="id"/>
                         </linkit:sql-table-foreign-key>
-                        <linkit:sql-table-unique create-index="true">
-                            <linkit:sql-table-unique-field name="id_erogazione"/>
-                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_erogazione"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
