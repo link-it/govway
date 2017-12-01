@@ -749,10 +749,13 @@ public class RiconoscimentoProfiloGestione {
 				Reporter.log("Controllo valore Profilo di Trasmissione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedProfiloTrasmissione(id, this.busteEGov.getProfiloTrasmissioneConfermaRicezione(index),
 						this.busteEGov.getProfiloTrasmissioneInoltro(index), this.busteEGov.getProfiloTrasmissioneInoltroSdk(index)));
+				/*
+				 * Controllo nono più supportato: la ridefinizione del profilo sulla fruizione non e' presenta nella versione 3.0
 				String tipoServizioCorrelato = null;
 				String servizioCorrelato = null;
 				Reporter.log("Controllo valore tipo["+tipoServizioCorrelato+"] e servizio correlato["+servizioCorrelato+"]");
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizioCorrelato(id, null));
+				*/
 				
 				Reporter.log("Controllo che la busta non abbia generato eccezioni, id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().existsListaEccezioni(id)==false);

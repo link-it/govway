@@ -1550,7 +1550,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
 	Repository repositorySincronoTESTCollaborazioneDeprecata=new Repository();
-	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,"CollaborazioneDeprecata"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".CollaborazioneDeprecata"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void sincronoTESTCollaborazioneDeprecata() throws TestSuiteException, IOException, SOAPException{
 		this.collaborazioneSPCoopBaseTESTCollaborazioneDeprecata.sincrono(this.repositorySincronoTESTCollaborazioneDeprecata,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_COLLABORAZIONE_LINEE_GUIDA,addIDUnivoco);
@@ -1563,7 +1563,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
 		};
 	}
-	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,"CollaborazioneDeprecata"},dataProvider="SincronoTESTCollaborazioneDeprecata",dependsOnMethods={"sincronoTESTCollaborazioneDeprecata"})
+	@Test(groups={ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO,ProfiliDiCollaborazioneLineeGuida11.ID_GRUPPO+".CollaborazioneDeprecata"},dataProvider="SincronoTESTCollaborazioneDeprecata",dependsOnMethods={"sincronoTESTCollaborazioneDeprecata"})
 	public void testSincronoTESTCollaborazioneDeprecata(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
 			this.collaborazioneSPCoopBaseTESTCollaborazioneDeprecata.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,

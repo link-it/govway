@@ -4065,12 +4065,18 @@
         </porta-delegata>
         <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneLoopback">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="onewayLoopbackPortType">
             <servizio tipo="SPC" nome="PortTypeOneWay" />
             <azione nome="testOneWay" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         
@@ -4465,6 +4471,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo OneWay stateless -->
@@ -4472,22 +4481,34 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="stateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="OnewayCompletamenteNullRisposta" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="OnewayCompletamenteNullRisposta" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_StatelessAffidabile" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="statelessConRiscontri" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
         <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioSincrono" >
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono stateful -->
@@ -4495,6 +4516,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="stateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -4505,7 +4529,10 @@
             stateless="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaAsincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Asincrono" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Asincrono" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -4517,6 +4544,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaAsincronaStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Asincrono" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -4526,7 +4556,10 @@
             stateless="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -4537,6 +4570,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincronaStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4548,6 +4584,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaAsincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4559,6 +4598,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaAsincronaStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4569,6 +4611,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4579,6 +4624,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincronaStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4589,7 +4637,10 @@
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaAsincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4600,6 +4651,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaSincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -4623,7 +4677,10 @@
         <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeOneWay">
             <servizio tipo="SPC" nome="PortTypeOneWay" />
             <azione nome="testOneWay" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
@@ -4631,6 +4688,9 @@
             <servizio tipo="SPC" nome="PortTypeSincrono" />
             <azione nome="testSincrono" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -4640,7 +4700,10 @@
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="PortTypeAsincronoSimmetricoRichiesta" />
             <azione nome="testAsincronoSimmetrico_richiestaAsincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Asincrono" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Asincrono" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -4649,7 +4712,10 @@
         <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeAsincronoSimmetricoRichiesta_richiestaSincrona">
             <servizio tipo="SPC" nome="PortTypeAsincronoSimmetricoRichiesta" />
             <azione nome="testAsincronoSimmetrico_richiestaSincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4659,7 +4725,10 @@
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="PortTypeAsincronoAsimmetricoRichiesta" />
             <azione nome="testAsincronoAsimmetrico_richiestaAsincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4669,6 +4738,9 @@
             <servizio tipo="SPC" nome="PortTypeAsincronoAsimmetricoRichiesta" />
             <azione nome="testAsincronoAsimmetrico_richiestaSincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4679,7 +4751,10 @@
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="PortTypeAsincronoAsimmetrico" />
             <azione nome="testAsincronoAsimmetrico_richiestaAsincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -4690,6 +4765,9 @@
             <servizio tipo="SPC" nome="PortTypeAsincronoAsimmetrico" />
             <azione nome="testAsincronoAsimmetrico_richiestaSincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -4716,7 +4794,10 @@
         <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabile">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="Affidabile" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Filtro Duplicati -->
@@ -4724,6 +4805,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicati" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- ConsegnaAffidabile + FiltroDuplicati per consegna ESATTAMENTE UNA VOLTA -->
@@ -4731,6 +4815,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="AffidabileConFiltroDuplicati" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Consegna in ordine, funzionalita' utilizzabile solo con il profilo di collaborazione OneWay -->
@@ -4738,6 +4825,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="ConsegnaInOrdine" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Scadenza Busta -->
@@ -4745,6 +4835,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="AffidabileConScadenza" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- IDCollaborazione -->
@@ -4752,6 +4845,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="Collaborazione" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -6941,7 +7037,12 @@
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroErogatore">
             <servizio tipo="SPC" nome="TestProfiloLineeGuida" />
             <azione nome="test" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+		<soggetto tipo="SPC" nome="MinisteroTmp"/>
+	    </soggetti> 
         </porta-applicativa>
         
         
@@ -7445,33 +7546,51 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <!-- Oneway senza riscontro -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateless" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateful" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <!-- Sincrono -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateless" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoSimmetrico -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
@@ -7479,24 +7598,36 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoAsimmetrico -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
@@ -7504,24 +7635,36 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         
@@ -9979,7 +10122,10 @@
         </porta-delegata>
         <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneLoopback_SPCMinisteroFruitoreLineeGuida">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         
@@ -10104,7 +10250,10 @@
         <!-- Profilo OneWay -->
         <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo OneWay (Stateless) -->
@@ -10113,12 +10262,19 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="stateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
         <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioSincrono_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
@@ -10127,6 +10283,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="stateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -10137,6 +10296,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaAsincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Asincrono" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -10148,6 +10310,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaAsincronaStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Asincrono" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -10157,6 +10322,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Simmetrico, richiesta. 
@@ -10166,7 +10334,10 @@
             stateless="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincronaStateful" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -10176,7 +10347,10 @@
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaAsincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -10187,7 +10361,10 @@
             stateless="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaAsincronaStateful" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -10197,6 +10374,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincrona" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -10206,7 +10386,10 @@
             stateless="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincronaStateful" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -10217,7 +10400,10 @@
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaAsincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
@@ -10227,7 +10413,10 @@
         <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaSincrona_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaSincrona" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         
@@ -10241,6 +10430,9 @@
             <servizio tipo="SPC" nome="TestProfiloLineeGuida" />
             <azione nome="test" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -10253,34 +10445,52 @@
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateless" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <!-- Oneway senza riscontro -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateful" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         <!-- Sincrono -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoSimmetrico -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
@@ -10288,24 +10498,36 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoAsimmetrico -->
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
@@ -10313,24 +10535,36 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -10454,7 +10688,10 @@
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroTmp">
             <servizio tipo="SPC" nome="TestProfiloLineeGuida" />
             <azione nome="test" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Servizio Applicativo -->
@@ -10479,6 +10716,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_TESTSoggettoTestConsegnaInOrdine">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestSuite Server -->
