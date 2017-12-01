@@ -207,7 +207,6 @@
 		                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>
 		                </connettore>
 		        </configurazione-servizio>
-		        <fruitore tipo="API" nome="applicativoComunePisa"/>
                 </accordo-servizio-parte-specifica>
 
 
@@ -220,7 +219,6 @@
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
 			        </connettore>
 			</configurazione-servizio>
-			<fruitore tipo="API" nome="applicativoComunePisa"/>
 		</accordo-servizio-parte-specifica>
 
                 <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" 
@@ -230,10 +228,6 @@
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
-                        <fruitore tipo="API" nome="applicativoComunePisa"/>
-			<fruitore tipo="API" nome="EsempioSoggettoTrasparenteBasic"/>
-			<fruitore tipo="API" nome="EsempioSoggettoTrasparenteBasic2"/>
-			<fruitore tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
 			<specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/testfiles/OpenSPCoop2TestSuitePolicy.xml"/>
 		</accordo-servizio-parte-specifica>
 
@@ -254,7 +248,6 @@
 				    </connettore>
 			     </configurazione-azione>
 			</configurazione-servizio> 
-			<fruitore tipo="API" nome="MinisteroFruitore" />
 		</accordo-servizio-parte-specifica>
 
 		<accordo-servizio-parte-specifica tipo="SOAP" nome="MTOMServiceExampleSOAP12" versione="1" 
@@ -274,7 +267,6 @@
 				    </connettore>
 			     </configurazione-azione>
 			</configurazione-servizio>
-			<fruitore tipo="API" nome="MinisteroFruitore" />
 		</accordo-servizio-parte-specifica>
 
 	</soggetto>
@@ -293,7 +285,6 @@
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
-                        <fruitore tipo="API" nome="MinisteroFruitore" />
 			<fruitore tipo="API" nome="ClientSoapFault11">
 			    <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
 			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;traceIsArrived=mittente"/>
@@ -323,7 +314,6 @@
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
-                        <fruitore tipo="API" nome="MinisteroFruitore" />
                         <fruitore tipo="API" nome="ClientSoapFault11">
                             <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
                                 <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;traceIsArrived=mittente"/>

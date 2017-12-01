@@ -52,6 +52,15 @@ public class MimeMultipart {
 		}
 	}
 	
+	public MimeMultipart(String subType) throws UtilsException{
+		try{
+			// multipart/<subType>
+			this.mimeMultipart = new javax.mail.internet.MimeMultipart(subType);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 	public MimeMultipart(InputStream is, String contentType) throws UtilsException{
 		try{
 			javax.activation.DataSource ds = new ByteArrayDataSource(is, contentType);
@@ -146,6 +155,14 @@ public class MimeMultipart {
 	public void writeTo(OutputStream os) throws UtilsException{
 		try{
 			this.mimeMultipart.writeTo(os);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public String getContentType() throws UtilsException{
+		try{
+			return this.mimeMultipart.getContentType();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

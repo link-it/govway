@@ -69,6 +69,13 @@ public class FileCache {
 			xmlFileEntry.setExtRispostaKo("xml");
 			xmlFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getXMLFileNameRispostaKo());
 			cache.put("xml", xmlFileEntry);
+
+			TestFileEntry pngFileEntry = new TestFileEntry();
+			pngFileEntry.setExtRichiesta("png");
+			pngFileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getPngFileName());
+			pngFileEntry.setExtRispostaKo("json");
+			pngFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONFileNameRispostaKo());
+			cache.put("png", pngFileEntry);
 			
 			TestFileEntry zipFileEntry = new TestFileEntry();
 			zipFileEntry.setExtRichiesta("zip");
@@ -84,59 +91,66 @@ public class FileCache {
 			docFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONFileNameRispostaKo());
 			cache.put("doc", docFileEntry);
 
-			TestFileEntry multiFileEntry = new TestFileEntry();
-			MimeMultipart mm = new MimeMultipart();
-			BodyPart bodyXml = new MimeBodyPart();
-			bodyXml.setDataHandler(new DataHandler(new ByteArrayDataSource(xmlFileEntry.getBytesRichiesta(), xmlFileEntry.getExtRichiesta())));
-			bodyXml.addHeader("Content-Type", xmlFileEntry.getExtRichiesta());
-			bodyXml.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
-			mm.addBodyPart(bodyXml);
-
-			BodyPart bodyPdf = new MimeBodyPart();
-			bodyPdf.setDataHandler(new DataHandler(new ByteArrayDataSource(pdfFileEntry.getBytesRichiesta(), pdfFileEntry.getExtRichiesta())));
-			bodyPdf.addHeader("Content-Type", pdfFileEntry.getExtRichiesta());
-			bodyPdf.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
-			mm.addBodyPart(bodyPdf);
-
-			BodyPart bodyTxt = new MimeBodyPart();
-			bodyTxt.setDataHandler(new DataHandler(new ByteArrayDataSource("Hello world".getBytes(), "text/plain")));
-			bodyTxt.addHeader("Content-Type", "text/plain");
-			bodyTxt.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
-			mm.addBodyPart(bodyTxt);
-
-			TestFileEntry pngFileEntry = new TestFileEntry();
-			pngFileEntry.setExtRichiesta("png");
-			pngFileEntry.setFilenameRichiesta(Utilities.testSuiteProperties.getPngFileName());
-			pngFileEntry.setExtRispostaKo("json");
-			pngFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONFileNameRispostaKo());
-			cache.put("png", pngFileEntry);
-
-			BodyPart bodyPng = new MimeBodyPart();
-			bodyPng.setDataHandler(new DataHandler(new ByteArrayDataSource(pngFileEntry.getBytesRichiesta(), pngFileEntry.getExtRichiesta())));
-			bodyPng.addHeader("Content-Type", pngFileEntry.getExtRichiesta());
-			bodyPng.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
-			mm.addBodyPart(bodyPng);
-
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			createFileMulti("related", "multi", xmlFileEntry, pdfFileEntry, pngFileEntry);
 			
-			mm.writeTo(os);
+			createFileMulti("mixed", "multi-mixed", xmlFileEntry, pdfFileEntry, pngFileEntry);
 			
-			multiFileEntry.setFilename(Utilities.testSuiteProperties.getMultipartFileName(), os.toByteArray());
-			String boundary = org.openspcoop2.utils.mime.MultipartUtils.findBoundary(multiFileEntry.getBytesRichiesta()).substring(2);
-			String firstCid = org.openspcoop2.utils.mime.MultipartUtils.firstContentID(multiFileEntry.getBytesRichiesta());
-			String ctDefault = mm.getBodyPart(0).getContentType();
-			String contentTypeSwA_Default = "multipart/related; type=\""+ctDefault+"\"; boundary=\""+boundary+"\"; start=\""+firstCid+"\"";
-			String contentTypeSwARisp = "multipart/related; type=\"text/xml\"; boundary=\"----=_Part_0_324745530.1482245107305\"; start=\"50AC46723310A39E4414822451073271\"";
-			
-			multiFileEntry.setMimeTypeRichiesta(contentTypeSwA_Default);
-			multiFileEntry.setMimeTypeRisposta(contentTypeSwARisp);
-			multiFileEntry.setExtRispostaKo("json");
-			multiFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONFileNameRispostaKo());
-			
-			cache.put("multi", multiFileEntry);
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	private static void createFileMulti(String subType,String alias,
+			TestFileEntry xmlFileEntry, TestFileEntry pdfFileEntry, TestFileEntry pngFileEntry) throws Exception {
+		
+		TestFileEntry multiFileEntry = new TestFileEntry();
+		MimeMultipart mm = new MimeMultipart(subType);
+		BodyPart bodyXml = new MimeBodyPart();
+		bodyXml.setDataHandler(new DataHandler(new ByteArrayDataSource(xmlFileEntry.getBytesRichiesta(), xmlFileEntry.getExtRichiesta())));
+		bodyXml.addHeader("Content-Type", xmlFileEntry.getExtRichiesta());
+		bodyXml.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
+		mm.addBodyPart(bodyXml);
+
+		BodyPart bodyPdf = new MimeBodyPart();
+		bodyPdf.setDataHandler(new DataHandler(new ByteArrayDataSource(pdfFileEntry.getBytesRichiesta(), pdfFileEntry.getExtRichiesta())));
+		bodyPdf.addHeader("Content-Type", pdfFileEntry.getExtRichiesta());
+		bodyPdf.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
+		mm.addBodyPart(bodyPdf);
+
+		BodyPart bodyTxt = new MimeBodyPart();
+		bodyTxt.setDataHandler(new DataHandler(new ByteArrayDataSource("Hello world".getBytes(), "text/plain")));
+		bodyTxt.addHeader("Content-Type", "text/plain");
+		bodyTxt.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
+		mm.addBodyPart(bodyTxt);
+
+		BodyPart bodyPng = new MimeBodyPart();
+		bodyPng.setDataHandler(new DataHandler(new ByteArrayDataSource(pngFileEntry.getBytesRichiesta(), pngFileEntry.getExtRichiesta())));
+		bodyPng.addHeader("Content-Type", pngFileEntry.getExtRichiesta());
+		bodyPng.addHeader("Content-Id", UUIDGenerator.getUUID().replace("-", ""));
+		mm.addBodyPart(bodyPng);
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		
+		mm.writeTo(os);
+		
+		multiFileEntry.setFilename(Utilities.testSuiteProperties.getMultipartFileName(), os.toByteArray());
+//		String boundary = org.openspcoop2.utils.mime.MultipartUtils.findBoundary(multiFileEntry.getBytesRichiesta()).substring(2);
+//		String firstCid = org.openspcoop2.utils.mime.MultipartUtils.firstContentID(multiFileEntry.getBytesRichiesta());
+		String ctDefault = mm.getBodyPart(0).getContentType();
+		
+		String contentTypeSwA_Default = mm.getContentType();
+		//String contentTypeSwA_Default = "multipart/related; type=\""+ctDefault+"\"; boundary=\""+boundary+"\"; start=\""+firstCid+"\"";
+		//String contentTypeSwARisp = "multipart/related; type=\"text/xml\"; boundary=\"----=_Part_0_324745530.1482245107305\"; start=\"50AC46723310A39E4414822451073271\"";
+		if(contentTypeSwA_Default.contains("type=")==false) {
+			contentTypeSwA_Default = contentTypeSwA_Default + "; type=\""+ctDefault+"\"";
+		}
+		
+		multiFileEntry.setMimeTypeRichiesta(contentTypeSwA_Default);
+		multiFileEntry.setMimeTypeRisposta(contentTypeSwA_Default);
+		multiFileEntry.setExtRispostaKo("json");
+		multiFileEntry.setFilenameRispostaKo(Utilities.testSuiteProperties.getJSONFileNameRispostaKo());
+		
+		cache.put(alias, multiFileEntry);
 	}
 	
 	public static TestFileEntry get(String ext) throws Exception {

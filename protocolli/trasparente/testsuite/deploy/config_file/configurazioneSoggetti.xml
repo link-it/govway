@@ -1034,6 +1034,9 @@
                     <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="applicativoComunePisa"/>
+		    </soggetti>
                 </porta-applicativa>
 
                 <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPOnewayStateless" 
@@ -1042,6 +1045,9 @@
                     <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="applicativoComunePisa"/>
+		    </soggetti>
                 </porta-applicativa>
 
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
@@ -1146,6 +1152,9 @@
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="applicativoComunePisa"/>
+		    </soggetti>
                 </porta-applicativa>
 
                 <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPSincronoStateless" 
@@ -1154,6 +1163,9 @@
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="applicativoComunePisa"/>
+		    </soggetti>
                 </porta-applicativa>
 
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
@@ -1241,6 +1253,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 		</porta-applicativa>
 
 		<porta-applicativa nome="MTOMServiceExampleSOAP12" 
@@ -1249,6 +1264,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 		</porta-applicativa>
 
 		<porta-applicativa nome="MTOMServiceExampleSOAP11/validazione" 
@@ -1257,6 +1275,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
 		</porta-applicativa>
 
@@ -1266,6 +1287,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
 		</porta-applicativa>
 
@@ -1275,6 +1299,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="packageUnpackage" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="packaging">
 					<parameter nome="ImageData" 
@@ -1313,6 +1340,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="packageUnpackage" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="packaging">
 					<parameter nome="ImageData" 
@@ -1351,6 +1381,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="unpackagePackage" />
 			<servizio-applicativo nome="MTOMecho" /> 
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="unpackaging">
 					<parameter nome="ImageData" 
@@ -1389,6 +1422,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="unpackagePackage" />
 			<servizio-applicativo nome="MTOMecho" />
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="unpackaging">
 					<parameter nome="ImageData" 
@@ -1427,7 +1463,10 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
-		      <mtom-processor>
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
+		        <mtom-processor>
 				<request-flow mode="verify">
 					<parameter nome="ImageData" 
 						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
@@ -1465,7 +1504,10 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
-		      <mtom-processor>
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
+		        <mtom-processor>
 				<request-flow mode="verify">
 					<parameter nome="ImageData" 
 						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
@@ -1503,7 +1545,10 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
-		      <mtom-processor>
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
+		        <mtom-processor>
 				<request-flow mode="verify">
 					<parameter nome="richiesta" 
 						   pattern="//{http://www.openspcoop2.org/example/server/mtom}richiesta"
@@ -1545,7 +1590,10 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
-		      <mtom-processor>
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
+		        <mtom-processor>
 				<request-flow mode="verify">
 					<parameter nome="richiesta" 
 						   pattern="//{http://www.openspcoop2.org/example/server/mtom}richiesta"
@@ -1586,7 +1634,10 @@
 			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
-			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" />
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti> 
 			<mtom-processor>
 				<request-flow mode="verify">
 					<parameter nome="ImageData" 
@@ -1625,6 +1676,9 @@
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		        <soggetti>
+				<soggetto tipo="API" nome="MinisteroFruitore"/>
+		        </soggetti>
 			<mtom-processor>
 				<request-flow mode="verify">
 					<parameter nome="ImageData" 
@@ -1723,7 +1777,7 @@
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<fruitore tipo="API" nome="EsempioSoggettoTrasparenteBasic"/>
+			<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic"/>
 		    </soggetti>
 		</porta-applicativa>
 
@@ -1876,6 +1930,9 @@
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+		    </soggetti>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
@@ -1895,6 +1952,9 @@
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+		    </soggetti>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
@@ -1916,6 +1976,9 @@
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic2"/>
+		    </soggetti>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
@@ -1935,6 +1998,9 @@
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic2"/>
+		    </soggetti>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
@@ -1955,6 +2021,9 @@
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+		    </soggetti>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
@@ -1974,6 +2043,9 @@
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
+		    <soggetti>
+			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+		    </soggetti>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
 			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 

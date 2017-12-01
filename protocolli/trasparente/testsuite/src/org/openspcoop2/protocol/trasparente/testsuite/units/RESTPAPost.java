@@ -254,6 +254,13 @@ public class RESTPAPost {
 		this.restCore.invoke("multi", responseCodeAtteso, repository, false, true, null);
 		this.restCore.postInvoke(repository);
 	}
+	
+	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAPost.ID_GRUPPO,RESTPAPost.ID_GRUPPO+".ConContenutoRichiesta_ConContenutoRispostaMultiMixed"},dataProvider="responseCodeConCon")
+	public void test_ConContenutoRichiesta_ConContenutoRispostaMultiMixed(int responseCodeAtteso) throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		this.restCore.invoke("multi-mixed", responseCodeAtteso, repository, true, true, null);
+		this.restCore.postInvoke(repository);
+	}
 
 	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAPost.ID_GRUPPO,RESTPAPost.ID_GRUPPO+".REDIRECT"},dataProvider="redirect")
 	public void test_Redirect(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{

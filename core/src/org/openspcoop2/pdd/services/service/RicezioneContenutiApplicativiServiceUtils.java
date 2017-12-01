@@ -61,7 +61,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 		IProtocolFactory<?> pf = requestInfo.getProtocolFactory();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 		ServiceBinding integrationServiceBinding = requestInfo.getIntegrationServiceBinding();
-		MessageType requestMessageType = requestInfo.getIntegrationRequestMessageType();
+		ServiceBinding protocolServiceBinding = requestInfo.getProtocolServiceBinding();
 				
 		IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
 		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
@@ -126,8 +126,13 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				
 				// Aggiorno service binding rispetto al servizio localizzato
 				try{
+					
 					integrationServiceBinding = pf.createProtocolConfiguration().getIntegrationServiceBinding(idServizio, registryReader);
 					requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
+					
+					protocolServiceBinding = pf.createProtocolConfiguration().getProtocolServiceBinding(integrationServiceBinding, protocolContext);
+					requestInfo.setProtocolServiceBinding(protocolServiceBinding);
+					
 					generatoreErrore.updateServiceBinding(integrationServiceBinding);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
@@ -171,10 +176,15 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				
 				// Aggiorno message type
 				try{
-					requestMessageType = bindingConfig.getRequestMessageType(integrationServiceBinding, 
+					MessageType requestMessageTypeIntegration = bindingConfig.getRequestMessageType(integrationServiceBinding, 
 							protocolContext, protocolContext.getContentType());
-					requestInfo.setIntegrationRequestMessageType(requestMessageType);
-					generatoreErrore.updateRequestMessageType(requestMessageType);
+					requestInfo.setIntegrationRequestMessageType(requestMessageTypeIntegration);
+					
+					MessageType requestMessageTypeProtocol = bindingConfig.getRequestMessageType(protocolServiceBinding, 
+							protocolContext, protocolContext.getContentType());
+					requestInfo.setProtocolRequestMessageType(requestMessageTypeProtocol);
+					
+					generatoreErrore.updateRequestMessageType(requestMessageTypeIntegration);
 				}catch(Exception error){
 					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeywordErroreProcessamento(error);

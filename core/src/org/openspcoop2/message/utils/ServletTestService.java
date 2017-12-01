@@ -620,18 +620,30 @@ public class ServletTestService extends HttpServlet {
 							contentTypeRisposta = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta); // uso lo stesso contentType della richiesta.
 						}else
 							contentTypeRisposta = "text/xml"; // default soap 1.1
-						
+												
 						byte[] a = boutStaticFile.toByteArray();
 						if(MultipartUtils.messageWithAttachment(a)){
+							
+							String fileDestinazioneMultipartParameterType = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFileContentTypeMultipartParameterType");
+							if(fileDestinazioneMultipartParameterType!=null) {
+								contentTypeRisposta = fileDestinazioneMultipartParameterType.trim();
+							}
+							
+							String subType = "related";
+							String fileDestinazioneMultipartSubType = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFileContentTypeMultipartSubType");
+							if(fileDestinazioneMultipartSubType!=null) {
+								subType = fileDestinazioneMultipartSubType;
+							}
+							
 							String IDfirst  = MultipartUtils.firstContentID(a);
 							String boundary = MultipartUtils.findBoundary(a);
 							if(boundary==null){
 								throw new Exception("Errore avvenuto durante la lettura del boundary associato al multipart message.");
 							}
 							if(IDfirst==null)
-								contentTypeRisposta = "multipart/related; type=\""+contentTypeRisposta+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+								contentTypeRisposta = "multipart/"+subType+"; type=\""+contentTypeRisposta+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 							else
-								contentTypeRisposta = "multipart/related; type=\""+contentTypeRisposta+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+								contentTypeRisposta = "multipart/"+subType+"; type=\""+contentTypeRisposta+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 						}
 						
 					}

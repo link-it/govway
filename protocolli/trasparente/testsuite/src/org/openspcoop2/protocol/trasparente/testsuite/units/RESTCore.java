@@ -313,9 +313,22 @@ public class RESTCore {
 			
 			if(!redirect && contenutoRisposta) {
 				if(rispostaOk) {
-					if(!tipoTest.equals("multi") || !isRichiesta) {
+					if( (!tipoTest.equals("multi") && !tipoTest.equals("multi-mixed"))) {
 						propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRisposta());
 						propertiesURLBased.put("destFile", fileEntry.getFilenameRichiesta());
+					}
+					else {
+						if(!isRichiesta) {
+							// Altrimenti indietro non saprei cosa tornare
+							propertiesURLBased.put("destFile", fileEntry.getFilenameRichiesta());
+							if(tipoTest.equals("multi")) {
+								propertiesURLBased.put("destFileContentTypeMultipartSubType", "related");
+							}
+							else {
+								propertiesURLBased.put("destFileContentTypeMultipartSubType", "mixed");
+							}
+							propertiesURLBased.put("destFileContentTypeMultipartParameterType", "text/xml");
+						}
 					}
 				} else {
 					propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRispostaKo());
@@ -391,7 +404,7 @@ public class RESTCore {
 				String contentTypeRisposta = httpResponse.getContentType();
 
 				
-				if(tipoTest.equals("multi") && rispostaOk) {
+				if((tipoTest.equals("multi") || tipoTest.equals("multi-mixed")) && rispostaOk) {
 					ContentType ctRisp = new ContentType(contentTypeRisposta);
 					ContentType ctAttesoRisp = new ContentType(contentTypeAttesoRisposta);
 					Assert.assertEquals(ctRisp.getBaseType(), ctAttesoRisp.getBaseType(), "Content-Type del file di risposta ["+ctRisp.getBaseType()+"] diverso da quello atteso ["+ctAttesoRisp.getBaseType()+"]");
@@ -409,10 +422,13 @@ public class RESTCore {
 					xmlDiffEngine.initialize(XMLDiffImplType.XML_UNIT, xmlDiffOptions);
 					Assert.assertTrue(xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(contentRisposta),xmlDiffEngine.getXMLUtils().newDocument(contentAttesoRisposta))
 							, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]: " + xmlDiffEngine.getDifferenceDetails());
-				} else if(tipoTest.equals("multi")) {
+				} else if(tipoTest.equals("multi") || tipoTest.equals("multi-mixed")) {
 					if(!isRichiesta && rispostaOk) {
 						MimeMultipart mm = new MimeMultipart(new ByteArrayInputStream(contentRisposta), contentTypeRisposta);
-						MimeMultipart mmAtteso = new MimeMultipart(new ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getMultipartFileName())), contentTypeAttesoRisposta);
+						MimeMultipart mmAtteso = 
+								new MimeMultipart(new ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getMultipartFileName())),
+										contentTypeRisposta);
+									// questo e' prodotto male	contentTypeAttesoRisposta);
 						Reporter.log("BodyParts ["+mm.countBodyParts()+"] == ["+mmAtteso.countBodyParts()+"]");
 						Assert.assertEquals(mm.countBodyParts(),mmAtteso.countBodyParts());
 

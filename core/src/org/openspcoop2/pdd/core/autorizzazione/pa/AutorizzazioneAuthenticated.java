@@ -75,22 +75,30 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     		}
     		else {
     		
-    			// VERIFICARE ANTI-SPOOFING (Tramite PDD)
+    			if(this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneSoggetti()) {
+    				
+    				esito.setAutorizzato(true);
     			
-	    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
-	    		if(esitoAutorizzazione.isServizioAutorizzato()==false){
-	    			String errore = this.getErrorString(idSoggetto, idServizio);
-	    			if(esitoAutorizzazione.getDetails()!=null){
-	    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
-	    			}
-	    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
-	    			esito.setAutorizzato(false);
-	    		}else{
-	    			esito.setAutorizzato(true);
-	    			if(esitoAutorizzazione.getDetails()!=null){
-	    				esito.setDetails(esitoAutorizzazione.getDetails());
-	    			}
-	    		}
+    			}
+    			else {
+    				
+    				// VERIFICARE ANTI-SPOOFING (Tramite PDD)
+    				
+		    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
+		    		if(esitoAutorizzazione.isServizioAutorizzato()==false){
+		    			String errore = this.getErrorString(idSoggetto, idServizio);
+		    			if(esitoAutorizzazione.getDetails()!=null){
+		    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
+		    			}
+		    			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+		    			esito.setAutorizzato(false);
+		    		}else{
+		    			esito.setAutorizzato(true);
+		    			if(esitoAutorizzazione.getDetails()!=null){
+		    				esito.setDetails(esitoAutorizzazione.getDetails());
+		    			}
+		    		}
+    			}
 	    		
     		}
     	}catch(DriverRegistroServiziServizioNotFound e){

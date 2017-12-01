@@ -132,6 +132,26 @@
 	</target>		
 		
 	
+
+	<!-- Compilazione dei JAR dei progetto di utilità di OpenSPCoop 2 -->
+	<target name="build_openspcoop2_utils_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_utils_*.jar"/>
+			<fileset dir="${dist}" includes="utils/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_utils">
+			<param name="buildUtils" value="true"/>
+		</antcall>
+	</target>
+	<target name="build_openspcoop2_genericProject_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_generic-project_*.jar"/>
+			<fileset dir="${dist}" includes="generic-project/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_genericProject">
+			<param name="buildOpenSPCoop2GenericProject" value="true"/>
+		</antcall>
+	</target>
 	
 	<!-- Compilazione dei JAR del progetto OpenSPCoop 2 -->
 	<target name="build_openspcoop2_schemi_jar">

@@ -45,7 +45,6 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
-import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
@@ -1646,15 +1645,6 @@ public class RegistroServiziReader {
 
 			EsitoAutorizzazioneRegistro esitoAutorizzazione = new EsitoAutorizzazioneRegistro();
 			
-			//  ricerca servizio richiesto
-			org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizioRicercato = null;
-			try{
-				servizioRicercato = this.registroServizi.getAccordoServizioParteSpecifica(connectionPdD,null,servizio);
-			}catch(DriverRegistroServiziNotFound e){}
-			if(servizioRicercato == null){
-				throw new DriverRegistroServiziServizioNotFound("isFruitoreServizioAutorizzato, servizio ["+servizio.toString()+"] non trovato nel registro dei servizi");
-			}
-
 			if(soggetto==null){
 				String error = "identita del chiamante non fornita (autenticazione non attiva?)";
 				this.log.error("Identita del chiamante non fornita");
@@ -1663,60 +1653,49 @@ public class RegistroServiziReader {
 				return esitoAutorizzazione;
 			}
 			
-			// check fruizione
-			for(int i=0; i<servizioRicercato.sizeFruitoreList(); i++){
-				Fruitore fruitore = servizioRicercato.getFruitore(i);
-				if(fruitore.getTipo().equals(soggetto.getTipo()) &&
-						fruitore.getNome().equals(soggetto.getNome())	){
-					
-					// client-auth soggetto
-					Soggetto fruitoreSoggetto = this.registroServizi.getSoggetto(connectionPdD,null, soggetto);
-					if(fruitoreSoggetto.getPortaDominio()!=null){
-						PortaDominio portaDominio = this.registroServizi.getPortaDominio(connectionPdD,null, fruitoreSoggetto.getPortaDominio());
-						StatoFunzionalita authMode = portaDominio.getClientAuth();
-						if(authMode==null)
-							authMode = CostantiRegistroServizi.DISABILITATO;
-						if(CostantiRegistroServizi.ABILITATO.equals(authMode)){
-							if(pdd==null){
-								String error = "subject della porta di dominio che ha inviato la busta non presente (https attivo?, client-auth attivo?)";
-								this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita: "+error);
-								esitoAutorizzazione.setServizioAutorizzato(false);
-								esitoAutorizzazione.setDetails(error);
-								return esitoAutorizzazione;
-							}
-							if(Utilities.sslVerify(portaDominio.getSubject(), pdd, this.log)==false){
-							//if(pdd.equals(portaDominio.getSubject())==false){
-								String error = "subject estratto dal certificato client ["+pdd+"] diverso da quello registrato per la porta di dominio "+portaDominio.getNome()+" del mittente ["+portaDominio.getSubject()+"]";
-								this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita: "+error);
-								esitoAutorizzazione.setServizioAutorizzato(false);
-								esitoAutorizzazione.setDetails(error);
-								return esitoAutorizzazione;
-							}else{
-								this.log.info("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") effettuata: subject corrispondono");
-								esitoAutorizzazione.setServizioAutorizzato(true);
-								return esitoAutorizzazione;
-							}
-						}else if(CostantiRegistroServizi.DISABILITATO.equals(authMode)){
-							// filtro anti spam per default disabilitato
-							this.log.debug("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") effettuata: client-auth disabilitato nella porta di dominio "+portaDominio.getNome());
-							esitoAutorizzazione.setServizioAutorizzato(true);
-							esitoAutorizzazione.setDetails("client-auth disabilitato nella porta di dominio "+portaDominio.getNome());
-							return esitoAutorizzazione;
-						}else{
-							throw new Exception("Valore di client-auth presente nella porta di dominio "+portaDominio.getNome()+" non valido: "+authMode);
-						}
-					}else{
-						// filtro anti spam per default disabilitato
-						this.log.debug("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") effettuata: client-auth non effettuata; il soggetto fruitore non è associato ad una porta di dominio");
-						esitoAutorizzazione.setServizioAutorizzato(true);
-						esitoAutorizzazione.setDetails("client-auth disabilitato");
+			// client-auth soggetto
+			Soggetto fruitoreSoggetto = this.registroServizi.getSoggetto(connectionPdD,null, soggetto);
+			if(fruitoreSoggetto.getPortaDominio()!=null){
+				PortaDominio portaDominio = this.registroServizi.getPortaDominio(connectionPdD,null, fruitoreSoggetto.getPortaDominio());
+				StatoFunzionalita authMode = portaDominio.getClientAuth();
+				if(authMode==null)
+					authMode = CostantiRegistroServizi.DISABILITATO;
+				if(CostantiRegistroServizi.ABILITATO.equals(authMode)){
+					if(pdd==null){
+						String error = "subject della porta di dominio che ha inviato la busta non presente (https attivo?, client-auth attivo?)";
+						this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita: "+error);
+						esitoAutorizzazione.setServizioAutorizzato(false);
+						esitoAutorizzazione.setDetails(error);
 						return esitoAutorizzazione;
 					}
-					
+					if(Utilities.sslVerify(portaDominio.getSubject(), pdd, this.log)==false){
+					//if(pdd.equals(portaDominio.getSubject())==false){
+						String error = "subject estratto dal certificato client ["+pdd+"] diverso da quello registrato per la porta di dominio "+portaDominio.getNome()+" del mittente ["+portaDominio.getSubject()+"]";
+						this.log.error("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") fallita: "+error);
+						esitoAutorizzazione.setServizioAutorizzato(false);
+						esitoAutorizzazione.setDetails(error);
+						return esitoAutorizzazione;
+					}else{
+						this.log.info("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") effettuata: subject corrispondono");
+						esitoAutorizzazione.setServizioAutorizzato(true);
+						return esitoAutorizzazione;
+					}
+				}else if(CostantiRegistroServizi.DISABILITATO.equals(authMode)){
+					// filtro anti spam per default disabilitato
+					this.log.debug("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") effettuata: client-auth disabilitato nella porta di dominio "+portaDominio.getNome());
+					esitoAutorizzazione.setServizioAutorizzato(true);
+					esitoAutorizzazione.setDetails("client-auth disabilitato nella porta di dominio "+portaDominio.getNome());
+					return esitoAutorizzazione;
+				}else{
+					throw new Exception("Valore di client-auth presente nella porta di dominio "+portaDominio.getNome()+" non valido: "+authMode);
 				}
+			}else{
+				// filtro anti spam per default disabilitato
+				this.log.debug("Autorizzazione ("+soggetto.toString()+" -> "+servizio.toString()+") effettuata: client-auth non effettuata; il soggetto fruitore non è associato ad una porta di dominio");
+				esitoAutorizzazione.setServizioAutorizzato(true);
+				esitoAutorizzazione.setDetails("client-auth disabilitato");
+				return esitoAutorizzazione;
 			}
-			esitoAutorizzazione.setServizioAutorizzato(false);
-			return esitoAutorizzazione;
 
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
