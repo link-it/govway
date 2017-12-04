@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.core;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -58,6 +59,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -4696,6 +4698,93 @@ public class ControlStationCore {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
+	}
+	
+	public List<String> getAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc, 
+			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws DriverConfigurazioneException{
+		String nomeMetodo = "getAzioni";
+		try {
+			// Prendo le azioni associate al servizio
+			List<String> azioniList = null;
+			try {
+				if(aspc!=null) {
+					org.openspcoop2.core.registry.constants.ServiceBinding sb = aspc.getServiceBinding();
+					switch (sb) {
+					case SOAP:
+						if (asps != null) {
+							
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+							
+							if(asps.getPortType()!=null){
+								// Bisogna prendere le operations del port type
+								PortType pt = null;
+								for (int i = 0; i < aspc.sizePortTypeList(); i++) {
+									if(aspc.getPortType(i).getNome().equals(asps.getPortType())){
+										pt = aspc.getPortType(i);
+										break;
+									}
+								}
+								if(pt==null){
+									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
+								}
+								if(pt.sizeAzioneList()>0){
+									azioniList = new ArrayList<String>();
+									for (int i = 0; i < pt.sizeAzioneList(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione(i).getNome())) {
+											azioniList.add(pt.getAzione(i).getNome());
+										}
+									}
+								}
+							}else{
+								if(aspc.sizeAzioneList()>0){
+									azioniList = new ArrayList<String>();
+									for (int i = 0; i < aspc.sizeAzioneList(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione(i).getNome())) {
+											azioniList.add(aspc.getAzione(i).getNome());
+										}
+									}
+								}
+							}				
+						}
+						break;
+
+					case REST:
+						if(aspc.sizeResourceList()>0){
+							azioniList = new ArrayList<String>();
+							for (int i = 0; i < aspc.sizeResourceList(); i++) {
+								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource(i).getNome())) {
+									azioniList.add(aspc.getResource(i).getNome());
+								}
+							}
+						}
+						break;
+					}
+					
+				}
+			} catch (Exception e) {
+				if(throwException) {
+					throw e;
+				}
+			}
+			
+			List<String> azioniListReturn = null;
+			if(azioniList!=null && azioniList.size()>0) {
+				Collections.sort(azioniList);
+				
+				azioniListReturn = new ArrayList<String>();
+				if(addTrattinoSelezioneNonEffettuata) {
+					azioniListReturn.add("-");
+				}
+				azioniListReturn.addAll(azioniList);
+			}
+				
+			return azioniListReturn;
+			
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+		
 	}
 	
 	public ServiceBinding toMessageServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {

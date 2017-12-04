@@ -50,10 +50,13 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -105,6 +108,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 			String azione = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
 			
 			// Preparo il menu
@@ -171,6 +175,8 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			}
 			
+			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, soggInt, null);
 			List<String> azioniOccupate = new ArrayList<>();
@@ -186,16 +192,15 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			}
 			
 			// Prendo le azioni  disponibili
-			// [TODO] Poli
+			List<String> azioni = porteApplicativeCore.getAzioni(asps, aspc, false, true, null);
 			String[] azioniDisponibiliList = null;
-			List<String> azioniTmp = new ArrayList<>();
-			String azionePrefix = "azione_";
-			for (int i = 0; i < 10; i++) {
-				String azioneTmp = azionePrefix+i;
-				if(!azioniOccupate.contains(azioneTmp))
-					azioniTmp.add(azioneTmp);	
+			if(azioni!=null && azioni.size()>0) {
+				azioniDisponibiliList = new String[azioni.size()];
+				for (int i = 0; i < azioni.size(); i++) {
+					azioniDisponibiliList[i] = "" + azioni.get(i);
+				}
 			}
-			azioniDisponibiliList = azioniTmp.toArray(new String[azioniTmp.size()]);
+
  
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
 			

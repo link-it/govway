@@ -54,7 +54,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
@@ -338,57 +337,21 @@ public final class PorteApplicativeAdd extends Action {
 			
 			// Prendo le azioni associate al servizio
 			String[] azioniList = null;
+			List<String> azioni = null;
 			try {
-				if (servS != null) {
-						
-					if(servS.getPortType()!=null){
-						// Bisogna prendere le operations del port type
-						PortType pt = null;
-						for (int i = 0; i < as.sizePortTypeList(); i++) {
-							if(as.getPortType(i).getNome().equals(servS.getPortType())){
-								pt = as.getPortType(i);
-								break;
-							}
-						}
-						if(pt==null){
-							throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+servS.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+servS.getAccordoServizioParteComune()+"]");
-						}
-						if(pt.sizeAzioneList()>0){
-							azioniList = new String[pt.sizeAzioneList()+1];
-							azioniList[0] = "-";
-							List<String> azioni = new ArrayList<String>();
-							for (int i = 0; i < pt.sizeAzioneList(); i++) {
-								if (azione == null) {
-									azione = "-";
-								}
-								azioni.add(pt.getAzione(i).getNome());
-							}
-							Collections.sort(azioni);
-							for (int i = 0; i < azioni.size(); i++) {
-								azioniList[i+1] = "" + azioni.get(i);
-							}
-						}
-					}else{
-						if(as.sizeAzioneList()>0){
-							azioniList = new String[as.sizeAzioneList()+1];
-							azioniList[0] = "-";
-							List<String> azioni = new ArrayList<String>();
-							for (int i = 0; i < as.sizeAzioneList(); i++) {
-								if (azione == null) {
-									azione = "-";
-								}
-								azioni.add("" + as.getAzione(i).getNome());
-							}
-							Collections.sort(azioni);
-							for (int i = 0; i < azioni.size(); i++) {
-								azioniList[i+1] = "" + azioni.get(i);
-							}
-						}
-					}				
-				}
+				azioni = apcCore.getAzioni(servS, as, true, false, null);
 			} catch (Exception e) {
 				// Il refresh, in seguito al cambio della validazione puo'
 				// avvenire anche se il servizio non e' selezionato
+			}
+			if(azioni!=null && azioni.size()>0) {
+				if (azione == null) {
+					azione = "-";
+				}
+				azioniList = new String[azioni.size()];
+				for (int i = 0; i < azioni.size(); i++) {
+					azioniList[i] = "" + azioni.get(i);
+				}
 			}
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento

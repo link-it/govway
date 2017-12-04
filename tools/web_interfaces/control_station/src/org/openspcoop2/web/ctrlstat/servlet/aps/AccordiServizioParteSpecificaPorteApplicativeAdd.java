@@ -215,16 +215,14 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			}
 
 			// Prendo le azioni  disponibili
-			// [TODO] Poli
+			List<String> azioni = porteApplicativeCore.getAzioni(asps, as, true, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
-			List<String> azioniTmp = new ArrayList<>();
-			String azionePrefix = "azione_";
-			for (int i = 0; i < 10; i++) {
-				String azioneTmp = azionePrefix+i;
-				if(!azioniOccupate.contains(azioneTmp))
-					azioniTmp.add(azioneTmp);	
+			if(azioni!=null && azioni.size()>0) {
+				azioniDisponibiliList = new String[azioni.size()];
+				for (int i = 0; i < azioni.size(); i++) {
+					azioniDisponibiliList[i] = "" + azioni.get(i);
+				}
 			}
-			azioniDisponibiliList = azioniTmp.toArray(new String[azioniTmp.size()]);
 			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
 			boolean erogazioneIsSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
@@ -294,47 +292,58 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				if(azione == null) {
-					azione = "-";
+				if(azioniDisponibiliList==null || azioniDisponibiliList.length<=1) {
+					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
+					
+					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
+
+					pd.disableEditMode();
+					
 				}
-
-				if(nome == null) {
-					if(azione.equals("-")) {
-						nome = "";
-					} else {
-						// nome mapping suggerito coincide con l'azione scelta
-						nome =  azione;
-					}
-
-
-					if(identificazione == null)
-						identificazione = PortaApplicativaAzioneIdentificazione.DELEGATED_BY.toString();
-				}
+				else {
 				
-				if(modeCreazione == null)
-					modeCreazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA;
-
-				if(erogazioneRuolo==null || "".equals(erogazioneRuolo))
-					erogazioneRuolo = "-";
-				if(erogazioneAutenticazione==null || "".equals(erogazioneAutenticazione))
-					erogazioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
-				if(erogazioneAutorizzazione==null || "".equals(erogazioneAutorizzazione)){
-					String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteApplicative();
-					erogazioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
-					if(TipoAutorizzazione.isAuthenticationRequired(tipoAutorizzazione))
-						erogazioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
-					if(TipoAutorizzazione.isRolesRequired(tipoAutorizzazione))
-						erogazioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
-					erogazioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
-				} 
-
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
-				dati = apsHelper.addConfigurazioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
-						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
-						mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
-						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
-						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch);
-
+					if(azione == null) {
+						azione = "-";
+					}
+	
+					if(nome == null) {
+						if(azione.equals("-")) {
+							nome = "";
+						} else {
+							// nome mapping suggerito coincide con l'azione scelta
+							nome =  azione;
+						}
+	
+	
+						if(identificazione == null)
+							identificazione = PortaApplicativaAzioneIdentificazione.DELEGATED_BY.toString();
+					}
+					
+					if(modeCreazione == null)
+						modeCreazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA;
+	
+					if(erogazioneRuolo==null || "".equals(erogazioneRuolo))
+						erogazioneRuolo = "-";
+					if(erogazioneAutenticazione==null || "".equals(erogazioneAutenticazione))
+						erogazioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
+					if(erogazioneAutorizzazione==null || "".equals(erogazioneAutorizzazione)){
+						String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteApplicative();
+						erogazioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
+						if(TipoAutorizzazione.isAuthenticationRequired(tipoAutorizzazione))
+							erogazioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+						if(TipoAutorizzazione.isRolesRequired(tipoAutorizzazione))
+							erogazioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+						erogazioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
+					} 
+	
+					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
+					dati = apsHelper.addConfigurazioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
+							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
+							mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
+							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
+							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch);
+				}
+					
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

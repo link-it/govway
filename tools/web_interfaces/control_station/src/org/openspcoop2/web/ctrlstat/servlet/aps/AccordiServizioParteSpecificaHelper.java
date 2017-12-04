@@ -4546,7 +4546,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 	public boolean configurazioneCheckData(TipoOperazione add, String nome, String azione, String[] azionis, AccordoServizioParteSpecifica asps, List<String> azioniOccupate) {
-		if(azione == null || azione.equals("")) {
+		if(azione == null || azione.equals("") || azione.equals("-")) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_NON_PUO_ESSERE_VUOTA);
 			return false;
 		}
