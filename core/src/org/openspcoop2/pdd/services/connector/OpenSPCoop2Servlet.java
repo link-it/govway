@@ -185,6 +185,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				// Dispatching al servizio di IntegrationManager implementato tramite CXF
 				String forwardUrl = "/"+URLProtocolContext.IntegrationManager_ENGINE+"/"+protocolContext.getFunctionParameters();
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolContext.getProtocolName());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT, protocolContext.getProtocolWebContext());
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED, true);
 				RequestDispatcher dispatcher = req.getRequestDispatcher(forwardUrl);
 				dispatcher.forward(req, res);

@@ -105,16 +105,36 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				logCore.debug("PROTOCOLLO["+protocollo+"] FUNCTION["+function+"]");
 			
 			// Vedo se ho un protocollo prima della funzione o direttamente il protocollo
+			boolean IMengine = false;
 			if(integrationManagerEngine && protocollo.equals(URLProtocolContext.IntegrationManager_ENGINE)) {
 				if(logCore!=null)
 					logCore.debug("SERVLET INTEGRATION MANAGER SERVICE");
 				function = protocollo;
 				
+				IMengine = true;
+				
 				Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
 				if(o == null || !(o instanceof String)){
 					throw new Exception("Indicazione del protocollo non presente");
 				}
-				protocollo = (String) o;
+				this.protocolName = (String) o;
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocolName);
+				if(pf==null){
+					throw new Exception("Non risulta registrato un protocollo con nome ["+this.protocolName+"]");
+				}
+				
+				o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT);
+				if(o == null || !(o instanceof String)){
+					throw new Exception("Indicazione del web context del protocollo non presente");
+				}
+				this.protocolWebContext = (String) o;
+				pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(this.protocolWebContext);
+				if(pf==null){
+					if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
+						throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
+					else
+						throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+				}
 				
 				int sizePrefix = (req.getContextPath() + "/" + function + "/").length();
 				if(req.getRequestURI().length()>sizePrefix){
@@ -179,16 +199,17 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 			if(logCore!=null)
 				logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
 			
-			this.protocolWebContext = protocollo;
-			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(this.protocolWebContext);
-			if(pf==null){
-				if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
-					throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
-				else
-					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+			if(!IMengine) {
+				this.protocolWebContext = protocollo;
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(this.protocolWebContext);
+				if(pf==null){
+					if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
+						throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
+					else
+						throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+				}
+				this.protocolName = pf.getProtocol();
 			}
-			this.protocolName = pf.getProtocol();
-			
 			this.function = function;
 			this.functionParameters = functionParameters;		
 			

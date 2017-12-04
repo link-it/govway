@@ -190,7 +190,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Raccolta oggetti da contesto
 		Credenziali credenziali = null;
 		javax.servlet.http.HttpServletRequest req = getHttpServletRequest();
-		URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true);
+		URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true);
 		try {
 			credenziali = new Credenziali(urlProtocolContext.getCredential());
 		}catch(Exception e){
@@ -528,9 +528,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		
 		IDServizio idServizio = null;
 		try {
-			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio,servizio, 
-				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()), 
-				versioneServizio);
+			int ver = -1;
+			if(versioneServizio!=null) {
+				ver = versioneServizio;
+			}
+			idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(tipoServizio,servizio, 
+				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()).getTipo(), 
+				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()).getNome(), 
+				ver);
 		} catch(Exception e) {
 			msgDiag.logErroreGenerico(e, "IDServizioFactory.getIDServizioFromValues");
 			ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
