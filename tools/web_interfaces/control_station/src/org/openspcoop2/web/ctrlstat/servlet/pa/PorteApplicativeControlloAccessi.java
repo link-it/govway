@@ -253,9 +253,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
-				
-				dati = porteApplicativeHelper.addHiddenIdAspsToDati(TipoOperazione.OTHER, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps,dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -287,9 +285,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
-				
-				dati = porteApplicativeHelper.addHiddenIdAspsToDati(TipoOperazione.OTHER, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps,dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -405,9 +401,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 			
-			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
-			
-			dati = porteApplicativeHelper.addHiddenIdAspsToDati(TipoOperazione.OTHER, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps,dati);
+			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 			
 			pd.setDati(dati);
 			

@@ -237,7 +237,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_STATO_PORTA = "statoPorta";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA = "nomePorta";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO = CostantiControlStation.PARAMETRO_ID_SOGGETTO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_ASPS = "idAsps";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_ASPS = CostantiControlStation.PARAMETRO_ID_ASPS;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_PROVIDER = "provider";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA =  CostantiControlStation.PARAMETRO_ID_CORRELAZIONE;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO = "tipoprov";

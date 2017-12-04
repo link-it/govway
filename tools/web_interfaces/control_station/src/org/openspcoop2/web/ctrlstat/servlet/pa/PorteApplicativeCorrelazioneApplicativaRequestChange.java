@@ -183,7 +183,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione.CHANGE, elemxml, mode,
 						pattern, gif, riusoIdMessaggio, dati);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -209,7 +209,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione.CHANGE, elemxml, mode,
 						pattern, gif, riusoIdMessaggio, dati);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 
 				pd.setDati(dati);
 

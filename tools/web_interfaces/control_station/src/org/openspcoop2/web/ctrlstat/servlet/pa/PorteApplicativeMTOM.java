@@ -208,8 +208,8 @@ public class PorteApplicativeMTOM extends Action {
 						isMTOMAbilitatoReq ? url1.getValue() : null,
 								isMTOMAbilitatoRes ? url2.getValue() : null,
 										contaListe, numMTOMreq, numMTOMres);
-
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
+				
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -232,8 +232,7 @@ public class PorteApplicativeMTOM extends Action {
 						isMTOMAbilitatoReq ? url1.getValue() : null,
 								isMTOMAbilitatoRes ? url2.getValue() : null,
 										contaListe, numMTOMreq, numMTOMres);
-
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -317,8 +316,7 @@ public class PorteApplicativeMTOM extends Action {
 					isMTOMAbilitatoReq ? url1.getValue() : null,
 							isMTOMAbilitatoRes ? url2.getValue() : null,
 									contaListe, numMTOMreq, numMTOMres);
-
-			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, dati);
+			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
 			pd.setDati(dati);
 			

@@ -136,7 +136,7 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 
 				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD, dati, "", "",false);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -159,7 +159,7 @@ public final class PorteApplicativeWSResponseAdd extends Action {
 				
 				dati = porteApplicativeHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, nome, valore,false);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg,idPorta, idAsps, dati);
 
 				pd.setDati(dati);
 

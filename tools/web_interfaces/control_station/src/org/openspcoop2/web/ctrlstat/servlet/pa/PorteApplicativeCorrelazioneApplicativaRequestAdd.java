@@ -140,7 +140,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestAdd extends Act
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione.ADD, elemxml, mode,
 						pattern, gif, riusoIdMessaggio, dati);
 				
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -163,7 +163,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestAdd extends Act
 				
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione.ADD, elemxml, mode, pattern, gif, riusoIdMessaggio, dati);
 				
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				
 				pd.setDati(dati);
 

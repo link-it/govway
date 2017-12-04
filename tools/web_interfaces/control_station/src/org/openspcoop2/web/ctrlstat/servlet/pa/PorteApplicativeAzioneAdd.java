@@ -22,7 +22,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -35,19 +34,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -58,7 +48,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -192,7 +182,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			}
 			
 			// Prendo le azioni  disponibili
-			List<String> azioni = porteApplicativeCore.getAzioni(asps, aspc, false, true, null);
+			List<String> azioni = porteApplicativeCore.getAzioni(asps, aspc, false, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
 			if(azioni!=null && azioni.size()>0) {
 				azioniDisponibiliList = new String[azioni.size()];
@@ -222,11 +212,16 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-				dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azione);
-				dati = porteApplicativeHelper.addHiddenIdAspsToDati(TipoOperazione.ADD, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps, dati);
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
-
+				
+				if(azioniDisponibiliList==null || azioniDisponibiliList.length<=1) {
+					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
+					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
+					pd.disableEditMode();
+				}
+				else {
+					dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azione);
+					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
+				}
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -247,8 +242,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azione);
-				dati = porteApplicativeHelper.addHiddenIdAspsToDati(TipoOperazione.ADD, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps, dati);
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps,  dati);
 
 				pd.setDati(dati);
 
@@ -282,50 +276,5 @@ public final class PorteApplicativeAzioneAdd extends Action {
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE,
 					ForwardParams.ADD());
 		} 
-	}
-	
-	
-	public static String[] loadSAErogatori(PortaApplicativa pa, ServiziApplicativiCore saCore, int soggInt, boolean addSAEsistenti) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		// recupero nome dei servizi applicativi gia associati alla
-		// porta applicativa
-		HashSet<String> saEsistenti = new HashSet<String>();
-		if(addSAEsistenti){
-			for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
-				PortaApplicativaServizioApplicativo tmpSA = pa.getServizioApplicativo(i);
-				saEsistenti.add(tmpSA.getNome());
-			}
-		}
-
-		List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(new Long(soggInt));
-
-		// rif bug #45
-		// I servizi applicativi da visualizzare sono quelli che hanno
-		// -Integration Manager (getMessage abilitato)
-		// -connettore != disabilitato
-		ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-		for (ServizioApplicativo sa : listaSA) {
-			InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-			Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-			StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
-
-			if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-				// il connettore non e' disabilitato oppure il get
-				// message e' abilitato
-				// Lo aggiungo solo se gia' non esiste tra quelli
-				// aggiunti
-				if (saEsistenti.contains(sa.getNome()) == false)
-					validSA.add(sa);
-			}
-		}
-
-		// Prendo la lista di servizioApplicativo associati al soggetto
-		// e la metto in un array
-		String[] servizioApplicativoList = new String[validSA.size()];
-		for (int i = 0; i < validSA.size(); i++) {
-			ServizioApplicativo sa = validSA.get(i);
-			servizioApplicativoList[i] = sa.getNome();
-		}
-		return servizioApplicativoList;
-
 	}
 }

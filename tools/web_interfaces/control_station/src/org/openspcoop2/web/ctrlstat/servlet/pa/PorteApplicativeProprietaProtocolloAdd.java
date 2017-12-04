@@ -131,7 +131,7 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.ADD, porteApplicativeHelper.getSize(),
 						porteApplicativeCore.isShowSelectList_PA_ProtocolProperties(),  nome, valore, dati);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -155,7 +155,7 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.ADD, porteApplicativeHelper.getSize(),
 						porteApplicativeCore.isShowSelectList_PA_ProtocolProperties(),  nome, valore, dati);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 
 				pd.setDati(dati);
 

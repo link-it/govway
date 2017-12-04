@@ -1047,7 +1047,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		de.setType(DataElementType.LINK);
 		de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
 		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazioneCustom, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
-		ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, statoControlloAccessi);
+		ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, statoControlloAccessi);
 		dati.addElement(de);
 		
 		

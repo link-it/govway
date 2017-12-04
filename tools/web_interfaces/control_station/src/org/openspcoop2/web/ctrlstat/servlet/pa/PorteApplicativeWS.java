@@ -175,7 +175,7 @@ public final class PorteApplicativeWS extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,  idAsps, dati);
 
 				Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST,
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
@@ -239,7 +239,7 @@ public final class PorteApplicativeWS extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, null, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, null, idAsps, dati);
 
 				Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST,
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),

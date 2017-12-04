@@ -329,6 +329,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO = "&Egrave; necessario indicare un Servizio.";
 	public static final String MESSAGGIO_ERRORE_SERVIZIO_OBBLIGATORIO_PORT_TYPE_NON_PRESENTI = "&Egrave; necessario indicare un Servizio, definire almeno un Port-Type per completare l'operazione.";
 	public static final String MESSAGGIO_ERRORE_USO_ACCORDO_SERVIZIO_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA = "Non &egrave; possibile utilizzare un accordo di servizio con visibilit&agrave; privata, in un servizio con visibilit&agrave; pubblica.";
+	public static final String MESSAGGIO_ERRORE_PRIMA_DI_POTER_DEFINIRE_UN_ACCORDO_PARTE_SPECIFICA_DEVE_ESSERE_CREATO_UN_SERVIZIO_APPLICATIVO_EROGATO_DAL_SOGGETTO_X_Y = "Prima di poter definire un accordo parte specifica deve essere creato un servizio applicativo erogato dal soggetto {0}/{1}";
+	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_CREARE_L_ACCORDO_PARTE_SPECIFICA_SENZA_SELEZIONARE_UN_SERVIZIO_APPLICATIVO_EROGATORE = "Non &egrave; possibile creare l'accordo parte specifica senza selezionare un servizio applicativo erogatore";
 
-	
 }

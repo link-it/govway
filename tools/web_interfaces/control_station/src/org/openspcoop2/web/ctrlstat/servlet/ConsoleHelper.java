@@ -1800,8 +1800,13 @@ public class ConsoleHelper {
 
 		return dati;
 	}
-
+	
 	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta,
+			Vector<DataElement> dati) {
+		return addHiddenFieldsToDati(tipoOp, idPorta, idsogg, idPorta, null, dati);
+	}
+
+	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps,
 			Vector<DataElement> dati) {
 
 		DataElement de = new DataElement();
@@ -1828,28 +1833,19 @@ public class ConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_ID_PORTA);
 			dati.addElement(de);
 		}
-
-		return dati;
-	}
-
-	public Vector<DataElement> addHiddenIdAspsToDati(TipoOperazione tipoOp, String name, String value,
-			Vector<DataElement> dati) {
-		DataElement de = new DataElement();
-		if(value != null){
-			de.setLabel(name);
-			de.setValue(value);
+		
+		if(idAsps != null){
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_ASPS);
+			de.setValue(idAsps);
 			de.setType(DataElementType.HIDDEN);
-			de.setName(name);
+			de.setName(CostantiControlStation.PARAMETRO_ID_ASPS);
 			dati.addElement(de);
 		}
 
 		return dati;
 	}
 
-
-
-
-	
 	// *** Utilities per i nomi ***
 	
 	// In effetti iniziare con un '.' o un '-' e' brutto, per adesso si elimina questa possibilita

@@ -182,7 +182,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String versione,
-			boolean validazioneDocumenti,String nomePA, String backToStato,
+			boolean validazioneDocumenti,  String backToStato,
 			String autenticazioneHttp,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
@@ -537,21 +537,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 				}catch(DriverRegistroServiziNotFound dNotFound){}
 			}
-
-
-			// Controllo che non esista un'altra Porta Applicativa con stesso nome
-			if(this.core.isGenerazioneAutomaticaPorteApplicative()){
-				if(nomePA!=null && !"".equals(nomePA)){
-
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(nomePA);
-					if(this.porteApplicativeCore.existsPortaApplicativa(idPA)){
-						this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_CON_PARAMETRO, nomePA));
-						return false;
-					}
-				}
-			}
-
 
 			// Lettura accordo di servizio
 			AccordoServizioParteComune as = null;
@@ -1117,9 +1102,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
 			listaLabelTabella.add(asLabel);
-			if(this.isModalitaAvanzata()){
-				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
-			}
+			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
+			
 			if(showRuoli)
 				listaLabelTabella.add(correlatoLabel);
 			if(this.core.isShowGestioneWorkflowStatoDocumenti())
@@ -1155,13 +1139,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				@SuppressWarnings("unused")
 				Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 
-				Integer versione = asps.getVersione();
-				if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
-					versione = null;
-				}
+//				Integer versione = asps.getVersione();
+//				if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
+//					versione = null;
+//				}
 				String uriASPS = this.idAccordoFactory.getUriFromValues(asps.getNome(), 
 						asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
-						versione);
+						asps.getVersione());
 				
 
 				Soggetto sog = this.soggettiCore.getSoggettoRegistro(asps.getIdSoggetto());
@@ -1174,7 +1158,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
 					pNomeServizio, pTipoServizio, pIdsoggErogatore);
 				de.setValue(asps.getTipo()+"/"+asps.getNome());
-				de.setIdToRemove(asps.getTipo() + "/" + asps.getNome() + "/" + asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore());
+				de.setIdToRemove(asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + ":" + asps.getTipo() + "/" + asps.getNome()+ ":" + asps.getVersione());
 				de.setToolTip(uriASPS);
 				e.addElement(de);
 
@@ -1203,33 +1187,31 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				e.addElement(de);
 				
 				// colonna configurazioni
-				if(this.isModalitaAvanzata()){
-					de = new DataElement();
-					if(isPddEsterna){
-						de.setType(DataElementType.TEXT);
-						de.setValue("-");
-					}
-					else{
-						de.setUrl(
-								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
-								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
-								pNomeServizio, pTipoServizio, pIdsoggErogatore );
-						// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
-						if (contaListe) {
-							// BugFix OP-674
-							//List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),asps.getVersione(),
-							//		asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
-							Search searchForCount = new Search(true,1);
-							IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps); 
-							this.apsCore.mappingServiziPorteAppList(idServizio, asps.getId().intValue(), asps.getIdSoggetto().intValue(), searchForCount);
-							//int numPA = lista1.size();
-							int numPA = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
-							ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					e.addElement(de);
+				de = new DataElement();
+				if(isPddEsterna){
+					de.setType(DataElementType.TEXT);
+					de.setValue("-");
 				}
+				else{
+					de.setUrl(
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
+							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
+							pNomeServizio, pTipoServizio, pIdsoggErogatore );
+					// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
+					if (contaListe) {
+						// BugFix OP-674
+						//List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),asps.getVersione(),
+						//		asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps); 
+						this.apsCore.mappingServiziPorteAppList(idServizio, asps.getId().intValue(), asps.getIdSoggetto().intValue(), searchForCount);
+						//int numPA = lista1.size();
+						int numPA = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+				}
+				e.addElement(de);
 				
 				// Colonna ruoli
 				String protocollo = protocolli.get(i);
@@ -2153,7 +2135,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			BinaryParameter wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
 			String statoPackage,String oldStato,String versione,
-			List<String> versioni,boolean validazioneDocumenti,String nomePA,
+			List<String> versioni,boolean validazioneDocumenti, 
 			String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto,
 			List<AccordoServizioParteComune> asCompatibili,
 			String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale,String erogazioneAutorizzazione, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
@@ -2705,29 +2687,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		// Porta Applicativa e Servizio Applicativo Erogatore
 		if (tipoOp.equals(TipoOperazione.ADD) && this.core.isGenerazioneAutomaticaPorteApplicative() && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
 
-			if(isModalitaAvanzata){
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SPECIFICA_PORTA_APPLICATIVA);
-				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
-
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_PA);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_PA);
-				de.setValue(nomePA);
-				de.setSize(this.getSize());
-				de.setType(DataElementType.TEXT_EDIT);
-				dati.addElement(de);
-			}else {
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_PA);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_PA);
-				de.setValue(nomePA);
-				de.setSize(this.getSize());
-				de.setType(DataElementType.HIDDEN);
-				dati.addElement(de);
-			}
-
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE );
 			de.setType(DataElementType.TITLE);
@@ -3016,7 +2975,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
 			String statoPackage,String oldStato,String versione,
-			List<String> versioni,boolean validazioneDocumenti,String nomePA,String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto) throws Exception{
+			List<String> versioni,boolean validazioneDocumenti,String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto) throws Exception{
 
 		String[] tipiLabel = new String[tipi.size()];
 		for (int i = 0; i < tipi.size(); i++) {
@@ -3220,14 +3179,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		// Porta Applicativa e Servizio Applicativo Erogatore
 		if (tipoOp.equals(TipoOperazione.ADD) && this.core.isGenerazioneAutomaticaPorteApplicative() && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_PA);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_PA);
-			de.setValue(nomePA);
-			de.setSize(this.getSize());
-			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
 
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE);
@@ -4545,7 +4496,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return dati;
 	}
 
-	public boolean configurazioneCheckData(TipoOperazione add, String nome, String azione, String[] azionis, AccordoServizioParteSpecifica asps, List<String> azioniOccupate) {
+	public boolean configurazioneCheckData(TipoOperazione tipoOp, String nome, String azione,
+			String[] azionis, AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
+			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
 		if(azione == null || azione.equals("") || azione.equals("-")) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_NON_PUO_ESSERE_VUOTA);
 			return false;
@@ -4554,6 +4507,53 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		if(azioniOccupate.contains(azione)) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_GIA_PRESENTE);
 			return false;			
+		}
+		
+		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
+			
+		} else {
+			String autenticazione = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
+			String autenticazioneCustom = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
+			String autenticazioneOpzionale = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+			String autorizzazione = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
+			String autorizzazioneCustom = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
+			String autorizzazioneAutenticati = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
+			String autorizzazioneRuoli = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
+			String autorizzazioneRuoliTipologia = this.request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
+			String ruoloMatch = this.request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+			
+			// Se autenticazione = custom, nomeauth dev'essere specificato
+			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
+					(autenticazioneCustom == null || autenticazioneCustom.equals(""))) {
+				this.pd.setMessage("Indicare un nome per l'autenticazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM+"'");
+				return false;
+			}
+
+			// Se autorizzazione = custom, nomeautor dev'essere specificato
+			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione) && 
+					(autorizzazioneCustom == null || autorizzazioneCustom.equals(""))) {
+				this.pd.setMessage("Indicare un nome per l'autorizzazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+"'");
+				return false;
+			}
+			
+			PortaApplicativa pa = null;
+			if (TipoOperazione.CHANGE == tipoOp){
+				pa = this.porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+			}
+			
+			List<String> ruoli = new ArrayList<>();
+			if(pa!=null && pa.getRuoli()!=null && pa.getRuoli().sizeRuoloList()>0){
+				for (int i = 0; i < pa.getRuoli().sizeRuoloList(); i++) {
+					ruoli.add(pa.getRuoli().getRuolo(i).getNome());
+				}
+			}
+			
+			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+					autorizzazioneRuoliTipologia, ruoloMatch, 
+					isSupportatoAutenticazione, false, ruoli)==false){
+				return false;
+			}
 		}
 		
 		return true;

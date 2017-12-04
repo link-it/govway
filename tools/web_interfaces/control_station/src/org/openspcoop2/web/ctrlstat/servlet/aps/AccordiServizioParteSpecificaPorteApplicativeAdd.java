@@ -148,13 +148,21 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
 			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, soggInt, null);
-			MappingErogazionePortaApplicativa mappingSelezionato = null;
+			MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
 
 			String[] listaMappingLabels = null;
 			String[] listaMappingValues = null;
 			List<String> azioniOccupate = new ArrayList<>();
 			int listaMappingErogazioneSize = listaMappingErogazione != null ? listaMappingErogazione.size() : 0;
 			if(listaMappingErogazioneSize > 0) {
+				for (int i = 0; i < listaMappingErogazione.size(); i++) {
+					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
+					if(mappingErogazionePortaApplicativa.isDefault()) {
+						mappingDefault = mappingErogazionePortaApplicativa;
+						break;
+					}
+				}
+				
 				if(mappingPA != null) {
 					for (int i = 0; i < listaMappingErogazione.size(); i++) {
 						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
@@ -166,15 +174,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				}
 
 				if(mappingSelezionato == null) {
-					for (int i = 0; i < listaMappingErogazione.size(); i++) {
-						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-						if(mappingErogazionePortaApplicativa.isDefault()) {
-							mappingSelezionato = mappingErogazionePortaApplicativa;
-							break;
-						}
-					}
+					mappingSelezionato = mappingDefault;
 				}
-
 
 				listaMappingLabels = new String[listaMappingErogazioneSize];
 				listaMappingValues = new String[listaMappingErogazioneSize];
@@ -354,7 +355,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneCheckData(TipoOperazione.ADD, nome, azione, azionis, asps, azioniOccupate);
+			boolean isOk = apsHelper.configurazioneCheckData(TipoOperazione.ADD, nome, azione, azionis, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,lstParm); 
@@ -383,22 +384,25 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 
 			PortaApplicativa pa = null;
-			String nomePortaDelegante = null;
+			// porta delegante e' quella di default
+			PortaApplicativa paDefault = porteApplicativeCore.getPortaApplicativa(mappingDefault.getIdPortaApplicativa());
+			String nomePortaDelegante = paDefault.getNome();
+			String nomeNuovaPortaApplicativa = paDefault.getNome() + "/" + nome;
+						
 			// creo una nuova porta applicativa clonando quella selezionata 
 			if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 				PortaApplicativa paSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
 				pa = (PortaApplicativa) paSelezionata.clone();
 				// annullo il table id
 				pa.setId(null);
-				pa.setNome(pa.getNome()+ "/" + azione);
-				nomePortaDelegante = pa.getNome();
+				pa.setNome(nomeNuovaPortaApplicativa);
+			
 			} else {
 				pa = new PortaApplicativa();
 				pa.setNomeSoggettoProprietario(nomeSoggettoProprietario);
 				pa.setTipoSoggettoProprietario(tipoSoggettoProprietario);
 				pa.setDescrizione("Servizio "+asps.getTipo()+asps.getNome()+" erogato da "+tipoSoggettoProprietario+nomeSoggettoProprietario);
-				// creo una nuova porta applicativa partendo da zero
-				pa.setNome(nome);
+				pa.setNome(nomeNuovaPortaApplicativa);
 
 				pa.setAutenticazione(erogazioneAutenticazione);
 				if(erogazioneAutenticazioneOpzionale != null){
@@ -451,16 +455,12 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					ruolo.setNome(erogazioneRuolo);
 					pa.getRuoli().addRuolo(ruolo);
 				}
-
-				// porta delegante e' quella di default
-				PortaApplicativa paDefault = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-				nomePortaDelegante = paDefault.getNome();
 			}
 
 			if ((azione != null) && !azione.equals("") && !azione.equals("-")) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
 
-				paa.setNome(azione);
+				//paa.setNome(azione);
 
 				paa.setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
 				paa.setNomePortaDelegante(nomePortaDelegante);

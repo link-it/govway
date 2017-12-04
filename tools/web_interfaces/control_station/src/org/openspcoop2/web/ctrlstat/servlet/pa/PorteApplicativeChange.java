@@ -619,7 +619,7 @@ public final class PorteApplicativeChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.CHANGE,dati, 
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio,
@@ -810,7 +810,7 @@ public final class PorteApplicativeChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.CHANGE,dati,
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio, 

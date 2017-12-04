@@ -114,6 +114,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_ID = "Id";
 	public final static String LABEL_PARAMETRO_ID_SOGGETTO = "IdSogg";
 	public final static String LABEL_PARAMETRO_ID_PORTA = "IdPorta";
+	public final static String LABEL_PARAMETRO_ID_ASPS = "IdAsps";
 	public final static String LABEL_PARAMETRO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
@@ -176,6 +177,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_ID = "id";
 	public final static String PARAMETRO_ID_SOGGETTO = "idsogg";
 	public final static String PARAMETRO_ID_PORTA = "idPorta";
+	public final static String PARAMETRO_ID_ASPS = "idAsps";
 	public final static String PARAMETRO_NOME = "nome";
 	public final static String PARAMETRO_SERVIZIO_APPLICATIVO = "servizioApplicativo";
 	public final static String PARAMETRO_VALORE = "valore";

@@ -662,7 +662,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,
 					versioneservizio.intValue()+"", versioniProtocollo,this.validazioneDocumenti,
-					null,null,null,protocollo,true,null,
+					null,null,protocollo,true,null,
 					null,null,null,null,false,
 					null,null,null,null);
 

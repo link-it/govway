@@ -987,7 +987,7 @@
             <forward name="porteDelegateWSForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateWSOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateWSCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="Error" path="/jsplib/info.jsp"/>
+            <forward name="porteDelegateWSError" path="/jsplib/info.jsp"/>
         </action>
 
 		<!--  Porte Delegate (MessageSecurity Request Flow) -->
@@ -1155,7 +1155,7 @@
             <forward name="porteDelegateMTOMForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateMTOMOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateMTOMCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="Error" path="/jsplib/info.jsp"/>
+            <forward name="porteDelegateMTOMError" path="/jsplib/info.jsp"/>
         </action>
 
 		<!--  Porte Delegate (MTOM Request Flow) -->
@@ -1475,7 +1475,7 @@
             <forward name="porteApplicativeMTOMForm" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeMTOMOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeMTOMCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="Error" path="/jsplib/info.jsp"/>
+            <forward name="porteApplicativeMTOMError" path="/jsplib/info.jsp"/>
         </action>
 
 		<!--  Porte Applicative (MTOM Request Flow) -->

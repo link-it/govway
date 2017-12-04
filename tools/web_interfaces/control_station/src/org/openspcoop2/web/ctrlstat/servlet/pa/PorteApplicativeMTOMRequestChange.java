@@ -178,7 +178,7 @@ public class PorteApplicativeMTOMRequestChange extends Action {
 
 				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE,id, idsogg, null, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE,id, idsogg, null, idAsps, dati);
 
 				pd.setDati(dati);
 
@@ -201,7 +201,7 @@ public class PorteApplicativeMTOMRequestChange extends Action {
 
 				dati = porteApplicativeHelper.addMTOMParameterToDati(TipoOperazione.CHANGE, dati, false, nome, pattern, contentType, obbligatorio);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE,id, idsogg, null, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE,id, idsogg, null, idAsps, dati);
 
 				pd.setDati(dati);
 

@@ -821,7 +821,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+							null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
 							null,null,null,null);
 
@@ -877,7 +877,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,versione,validazioneDocumenti,null,backToStato,autenticazioneHttp,
+					httpsalgoritmokey, tipoconn,versione,validazioneDocumenti,backToStato,autenticazioneHttp,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
@@ -937,7 +937,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-						null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+						null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
 						null,null,null,null,false,
 						null,null,null,null);
 
@@ -1001,7 +1001,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,null,protocollo,generaPACheckSoggetto);
+							null,null,protocollo,generaPACheckSoggetto);
 
 					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
@@ -1173,7 +1173,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+							null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
 							null,null,null,null);
 

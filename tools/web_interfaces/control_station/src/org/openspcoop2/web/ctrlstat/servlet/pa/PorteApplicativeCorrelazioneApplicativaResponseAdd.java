@@ -143,7 +143,7 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseAdd extends Ac
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione.ADD,
 						elemxml, mode, pattern, gif, dati);
 				
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				
 				pd.setDati(dati);
 
@@ -167,7 +167,7 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseAdd extends Ac
 				dati = porteApplicativeHelper.addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione.ADD,
 						elemxml, mode, pattern, gif, dati);
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				
 				pd.setDati(dati);
 
