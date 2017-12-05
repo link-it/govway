@@ -123,8 +123,8 @@ public class IntegrazioneCorrelazioneApplicativa {
 		Integrazione.checkMessaggioRisposta(this.collaborazioneSPCoopBase,risposta, tipoServizio, servizio, azione, idEGov);
 	}
 	
-	private void checkMessaggioRispostaWSAddressing(Message risposta,String tipoServizio,String nomeServizio,String azione,String idEGov)throws Exception{
-		Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,risposta, tipoServizio, nomeServizio, azione, idEGov);
+	private void checkMessaggioRispostaWSAddressing(Message risposta,String tipoServizio,String nomeServizio,Integer versione, String azione,String idEGov)throws Exception{
+		Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,risposta, tipoServizio, nomeServizio, versione, azione, idEGov);
 	}
 	
 	
@@ -2848,7 +2848,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 			
 			// Controllo header WSAddressing
 			checkMessaggioRispostaWSAddressing(client.getResponseMessage(),
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 1,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
 			return client.getIdMessaggio();
@@ -5872,7 +5872,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_TEST_CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED_WSA,client.getIdMessaggio());
 			
 			checkMessaggioRispostaWSAddressing(client.getResponseMessage(),
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 1,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_TEST_CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED_WSA,client.getIdMessaggio());
 			
 			return client.getIdMessaggio();

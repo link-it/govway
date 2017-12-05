@@ -293,7 +293,7 @@ public class IntegrazioneConnettoreSAAJ {
 			
 			// Check header WSAddressing
 		    Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 1, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -503,7 +503,7 @@ public class IntegrazioneConnettoreSAAJ {
 			
 			// Check header WSAddressing
 			Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 1, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -608,7 +608,7 @@ public class IntegrazioneConnettoreSAAJ {
 			
 			// Check header WSAddressing
 			Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 1, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -866,7 +866,7 @@ public class IntegrazioneConnettoreSAAJ {
 			
 			// Check header WSAddressing
 		    Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 1, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1064,7 +1064,7 @@ public class IntegrazioneConnettoreSAAJ {
 			
 			// Check header WSAddressing
 			Integrazione.checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 1, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_SAAJ,client.getIdMessaggio());		
 			
 			

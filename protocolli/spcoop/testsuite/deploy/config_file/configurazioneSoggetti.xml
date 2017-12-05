@@ -7250,6 +7250,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazione" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazione" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
@@ -7257,6 +7260,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazione" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazione" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo OneWay (WSAddressing) -->
@@ -7264,6 +7270,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneWithWSAddressing" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressing" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono  (WSAddressing) -->
@@ -7271,6 +7280,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressing" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressing" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo OneWay -->
@@ -7278,6 +7290,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneSAAJ" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneSAAJ" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
@@ -7285,6 +7300,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneSAAJ" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneSAAJ" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo OneWay (WSAddressing) -->
@@ -7292,6 +7310,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneWithWSAddressingSAAJ" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingSAAJ" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono  (WSAddressing) -->
@@ -7299,6 +7320,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressingSAAJ" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingSAAJ" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
 	<!-- Profilo OneWay -->
@@ -7306,13 +7330,19 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneHTTPCORE" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneHTTPCORE" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
         <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaHTTPCORE" integrazione="trasporto,urlBased,soap">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneHTTPCORE" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneHTTPCORE" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneHTTPCORE" />
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Profilo OneWay (WSAddressing) -->
@@ -7320,6 +7350,9 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono  (WSAddressing) -->
@@ -7327,6 +7360,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Test Integrazione PA -->
@@ -7334,6 +7370,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazionePA" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazione" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
             <correlazione-applicativa>
                 <elemento nome="name(//test:accettaSenzaIdentificazione)"
                     identificazione="contentBased" pattern="//test:idApplicativoLatoPA/text()" identificazione-fallita="accetta" />
@@ -7347,6 +7386,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazione" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
             <correlazione-applicativa>
                 <elemento 
                     identificazione="contentBased" pattern="//test:idApplicativo/text()" identificazione-fallita="blocca" />
@@ -7360,6 +7402,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazione" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
             <correlazione-applicativa>
                 <elemento 
                     identificazione="contentBased" pattern="//test:idApplicativo/text()" identificazione-fallita="blocca" />
@@ -7374,6 +7419,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_InputBased_TRASPORTO" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteGenerazioneHeaderIntegrazioneTRASPORTO" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
             <correlazione-applicativa>
                 <elemento 
                     identificazione="inputBased" identificazione-fallita="accetta" />
@@ -7387,6 +7435,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_InputBased_SOAP" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteGenerazioneHeaderIntegrazioneSOAP" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
             <correlazione-applicativa>
                 <elemento 
                     identificazione="inputBased" identificazione-fallita="accetta" />
@@ -7400,6 +7451,9 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_InputBased_WSA" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteGenerazioneHeaderIntegrazioneWSA" /> 
+	    <soggetti>
+		<soggetto tipo="SPC" nome="MinisteroFruitore"/>
+	    </soggetti>
             <correlazione-applicativa>
                 <elemento 
                     identificazione="inputBased" identificazione-fallita="accetta" />

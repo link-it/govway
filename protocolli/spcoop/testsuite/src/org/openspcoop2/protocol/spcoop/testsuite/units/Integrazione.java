@@ -501,7 +501,7 @@ public class Integrazione {
 		}
 	}
 	
-	public static void checkMessaggioRispostaWSAddressing(CooperazioneBase collaborazioneSPCoopBase,Message risposta,String tipoServizio,String nomeServizio,String azione,String idEGov)throws Exception{
+	public static void checkMessaggioRispostaWSAddressing(CooperazioneBase collaborazioneSPCoopBase,Message risposta,String tipoServizio,String nomeServizio,Integer versione, String azione,String idEGov)throws Exception{
 		if(risposta==null){
 			throw new Exception("Risposta is null");
 		}
@@ -528,7 +528,7 @@ public class Integrazione {
 					throw new Exception("Valore dell'elemento WSA-To non definito");
 				}else{
 					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+"" +
-							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio;
+							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versione;
 					if(test.equals(v)==false){
 						throw new Exception("WSATo con valore ["+v+"] diverso da quello atteso ["+test+"]");
 					}
@@ -568,7 +568,7 @@ public class Integrazione {
 					throw new Exception("Valore dell'elemento WSA-Action non definito");
 				}else{
 					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+
-							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+azione;
+							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versione+"/"+azione;
 					if(test.equals(v)==false){
 						throw new Exception("WSAAction con valore ["+v+"] diverso da quello atteso ["+test+"]");
 					}
@@ -920,7 +920,7 @@ public class Integrazione {
 			
 			// Check header WSAddressing
 			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 1,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1130,7 +1130,7 @@ public class Integrazione {
 			
 			// Check header WSAddressing
 			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,  1,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1235,7 +1235,7 @@ public class Integrazione {
 			
 			// Check header WSAddressing
 			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,  1,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1490,7 +1490,7 @@ public class Integrazione {
 			
 			// Check header WSAddressing
 			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,   CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,   CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,  1,
 					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());
 			
 		}catch(Exception e){
@@ -1688,7 +1688,7 @@ public class Integrazione {
 			
 			// Check header WSAddressing
 			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,  CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 1, 
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING,client.getIdMessaggio());		
 			
 			
@@ -3010,7 +3010,7 @@ public class Integrazione {
 			
 			// Check header proprietario WSAddressing
 			checkMessaggioRispostaWSAddressing(this.collaborazioneSPCoopBase,
-		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+		    		client.getResponseMessage(), CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO, CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 1,
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE,client.getIdMessaggio());
 			
 		}catch(Exception e){
