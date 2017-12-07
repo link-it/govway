@@ -286,6 +286,11 @@ public class ServletUtils {
 
 
 	/* ------ SESION ---- */
+	
+	public static void addListElementIntoSession(HttpSession session,String objectName, List<Parameter> parameters){
+		Parameter[] parameter = parameters != null ? parameters.toArray(new Parameter[parameters.size()]) : null;
+		addListElementIntoSession(session, objectName, parameter);
+	}
 
 	public static void addListElementIntoSession(HttpSession session,String objectName, Parameter ... parameter){
 		ListElement listElement = new ListElement();

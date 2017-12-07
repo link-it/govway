@@ -265,7 +265,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "descr";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE = "soggvirt";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "servizio";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE = "azione";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.PARAMETRO_AZIONE;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA = "oldNomePA";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = "integrazione";
@@ -275,10 +275,10 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE = "modeCreazione";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
 	
-	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = "paPar";
-	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = 0;
-	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO = 1;
-	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE = 2;
+	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
+	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
+	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO;
+	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_MTOM_RISPOSTA;
@@ -300,9 +300,9 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA = "idCorr";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "Servizio";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE = "Azione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI = "Azioni";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_DI = "Azioni di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.LABEL_PARAMETRO_AZIONI;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_DI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";

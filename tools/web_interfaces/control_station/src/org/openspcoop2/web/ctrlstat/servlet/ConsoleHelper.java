@@ -32,6 +32,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -143,6 +144,7 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.MenuEntry;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
@@ -1805,8 +1807,13 @@ public class ConsoleHelper {
 			Vector<DataElement> dati) {
 		return addHiddenFieldsToDati(tipoOp, idPorta, idsogg, idPorta, null, dati);
 	}
-
+	
 	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps,
+			Vector<DataElement> dati) {
+		return addHiddenFieldsToDati(tipoOp, idPorta, idsogg, idPorta, idAsps, null, dati);
+	}
+
+	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps, String idFruizione,
 			Vector<DataElement> dati) {
 
 		DataElement de = new DataElement();
@@ -1840,6 +1847,15 @@ public class ConsoleHelper {
 			de.setValue(idAsps);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_ASPS);
+			dati.addElement(de);
+		}
+		
+		if(idFruizione != null){
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_FRUIZIONE);
+			de.setValue(idFruizione);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(CostantiControlStation.PARAMETRO_ID_FRUIZIONE);
 			dati.addElement(de);
 		}
 
@@ -3432,5 +3448,88 @@ public class ConsoleHelper {
 			throw new Exception(e);
 		}
 		return de;
+	}
+	
+	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate) {
+		String azione = this.request.getParameter(CostantiControlStation.PARAMETRO_AZIONE);
+		
+		if(azione == null || azione.equals("")) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
+			return false;
+		}
+		
+		if(azioniOccupate.contains(azione)) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+			return false;			
+		}
+		
+		return true;
+	}
+
+	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,String[] azioniDisponibiliList, String azione) {
+		
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		// Azione
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+		de.setValues(azioniDisponibiliList);
+		de.setSelected(azione);
+		de.setType(DataElementType.SELECT);
+		de.setName(CostantiControlStation.PARAMETRO_AZIONE);
+		de.setRequired(true); 
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	// Prepara la lista di azioni delle porte
+	public void preparePorteAzioneList(List<String> listaAzioni, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, String nomePorta, String objectName, List<Parameter> listaParametriSessione) throws Exception {
+		try {
+			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
+
+			// setto la barra del titolo
+
+			this.pd.setSearchDescription("");
+			lstParametriBreadcrumbs.add(new Parameter(CostantiControlStation.LABEL_PARAMETRO_AZIONI_DI + nomePorta,null));
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParametriBreadcrumbs.toArray(new Parameter[lstParametriBreadcrumbs.size()]));
+
+			// setto le label delle colonne
+			String[] labels = { CostantiControlStation.LABEL_PARAMETRO_AZIONE};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (listaAzioni != null) {
+				Iterator<String> it = listaAzioni.iterator();
+				while (it.hasNext()) {
+					String nomeAzione = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					DataElement de = new DataElement();
+					de.setValue(nomeAzione);
+					de.setIdToRemove(nomeAzione);
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+				this.pd.setNumEntries(listaAzioni.size());
+			}
+
+			
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
 	}
 }

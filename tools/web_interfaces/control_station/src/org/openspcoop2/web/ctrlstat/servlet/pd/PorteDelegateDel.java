@@ -81,9 +81,10 @@ public final class PorteDelegateDel extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO, session);
-
-
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+		Boolean useIdSogg = parentPD == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
+		
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			int soggInt = -1;
@@ -165,17 +166,18 @@ public final class PorteDelegateDel extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			List<PortaDelegata> lista = null;
+			int idLista = -1;
 			if(useIdSogg){
-				int idLista = Liste.PORTE_DELEGATE_BY_SOGGETTO;
+				idLista = Liste.PORTE_DELEGATE_BY_SOGGETTO;
 				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteDelegateCore.porteDelegateList(soggInt, ricerca);
 			}else{ 
-				int idLista = Liste.PORTE_DELEGATE;
+				idLista = Liste.PORTE_DELEGATE;
 				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteDelegateCore.porteDelegateList(null, ricerca);
 			}
 
-			porteDelegateHelper.preparePorteDelegateList(ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateList(ricerca, lista,idLista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

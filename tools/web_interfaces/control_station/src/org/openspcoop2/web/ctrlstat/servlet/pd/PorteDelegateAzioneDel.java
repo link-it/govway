@@ -19,7 +19,7 @@
  */
 
 
-package org.openspcoop2.web.ctrlstat.servlet.pa;
+package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -44,7 +44,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * PorteApplicativeAzioneDel
+ * PorteDelegateAzioneDel
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
@@ -52,7 +52,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100(mer, 11 gen 2017) $
  * 
  */
-public final class PorteApplicativeAzioneDel extends Action {
+public final class PorteDelegateAzioneDel extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -70,18 +70,18 @@ public final class PorteApplicativeAzioneDel extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
-		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 		try {
-			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
-			String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			String idPorta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			int idInt = Integer.parseInt(idPorta);
+			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
-			String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			int idInt = Integer.parseInt(idPorta);
+			String idFruizione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Elimino il servizioApplicativo della porta applicativa dal db
@@ -96,8 +96,9 @@ public final class PorteApplicativeAzioneDel extends Action {
 			String azione = "";
 
 			// Prendo la porta applicativa
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
+			String nomePorta = portaDelegata.getNome();
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
@@ -105,10 +106,10 @@ public final class PorteApplicativeAzioneDel extends Action {
 				// .elementAt(idToRemove[i])).elementAt(0);
 				// servizioApplicativo = de.getValue();
 				azione = idsToRemove.get(i);
-				for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
-					String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
+				for (int j = 0; j < portaDelegata.getAzione().sizeAzioneDelegataList(); j++) {
+					String azioneDelegata = portaDelegata.getAzione().getAzioneDelegata(j);
 					if (azione.equals(azioneDelegata)) {
-						pa.getAzione().removeAzioneDelegata(j);
+						portaDelegata.getAzione().removeAzioneDelegata(j);
 						break;
 					}
 				}
@@ -116,28 +117,29 @@ public final class PorteApplicativeAzioneDel extends Action {
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
 
 			// Preparo il menu
-			porteApplicativeHelper.makeMenu();
-			// Prendo nome della porta applicativa
-			String nomePorta = pa.getNome();
+			porteDelegateHelper.makeMenu();
 			
-			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
-			List<String> listaAzioni = pa.getAzione().getAzioneDelegataList();
+			List<String> listaAzioni = portaDelegata.getAzione().getAzioneDelegataList();
 			List<Parameter> listaParametriSessione = new ArrayList<>();
-			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
-			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
-			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
-			porteApplicativeHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, listaParametriSessione);
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta));
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg));
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps));
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione));
+			
+			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, listaParametriSessione);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForward (mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
+			return ServletUtils.getStrutsForward (mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
 					ForwardParams.DEL());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE,
+					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE,
 					ForwardParams.DEL());
 		}  
 	}

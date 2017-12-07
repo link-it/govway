@@ -103,12 +103,14 @@ public class AccordiServizioParteSpecificaCostanti {
 		SERVLET_APS_PORTE_APPLICATIVE.add(SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST);
 	}
 	
+	public final static String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"Add.do";
 	public final static String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"Del.do";
 	public final static String SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST = OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE+"List.do";
 	public final static Vector<String> SERVLET_APS_FRUITORI_PORTE_DELEGATE = new Vector<String>();
 	static{
-		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE);
-		SERVLET_APS.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST);
+		SERVLET_APS_FRUITORI_PORTE_DELEGATE.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_ADD);
+		SERVLET_APS_FRUITORI_PORTE_DELEGATE.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_DELETE);
+		SERVLET_APS_FRUITORI_PORTE_DELEGATE.add(SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST);
 	}
 	
 	
@@ -134,7 +136,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_ALLEGATI = "Allegati";
 	public final static String LABEL_APS_ALLEGATO = "Allegato";
 	public final static String LABEL_APS_PORTE_APPLICATIVE = "Configurazione";
-	public final static String LABEL_APS_PORTE_DELEGATE = "Porte Delegate";
+	public final static String LABEL_APS_PORTE_DELEGATE = "Configurazione";
 	public final static String LABEL_APS_STATO = "Stato";
 	public final static String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta Selezionati";
 	public final static String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
@@ -164,11 +166,11 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	/* PARAMETRI */
 	
-	public final static String PARAMETRO_APS_ID = "id";
-	public final static String PARAMETRO_APS_MY_ID = "myId";
+	public final static String PARAMETRO_APS_ID = CostantiControlStation.PARAMETRO_ID;
+	public final static String PARAMETRO_APS_MY_ID = CostantiControlStation.PARAMETRO_ID_FRUIZIONE;
 	public final static String PARAMETRO_APS_MY_TIPO = "myTipo";
 	public final static String PARAMETRO_APS_MY_NOME = "myNome";
-	public final static String PARAMETRO_APS_ID_SOGGETTO = "idsogg";
+	public final static String PARAMETRO_APS_ID_SOGGETTO = CostantiControlStation.PARAMETRO_ID_SOGGETTO;
 	public final static String PARAMETRO_APS_ID_SOGGETTO_EROGATORE = "idSoggErogatore";
 	public final static String PARAMETRO_APS_SERVIZIO_APPLICATIVO = "servizioApplicativo";
 	public final static String PARAMETRO_APS_WSDL_EROGATORE = "wsdlimpler";

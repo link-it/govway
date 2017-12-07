@@ -33,6 +33,7 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -1389,6 +1390,29 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 			return driver.getDriverConfigurazioneDB().serviziFruitoriPorteDelegateList(idSoggetto, 
 					tipoServizio, nomeServizio, idServizio, 
+					tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, 
+					ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<MappingFruizionePortaDelegata> serviziFruitoriMappingList(Long idFru, IDSoggetto idSoggettoFruitore, Long idSoggetto, 
+			String tipoServizio, String nomeServizio, IDServizio idAccordoServizio, Long idServizio, 
+			String tipoSoggettoErogatore, String nomeSoggettoErogatore, Long idSoggettoErogatore, 
+			ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		Connection con = null;
+		String nomeMetodo = "serviziFruitoriMappingList";
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idFru,idSoggettoFruitore, idSoggetto, 
+					tipoServizio, nomeServizio, idAccordoServizio, idServizio, 
 					tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, 
 					ricerca);
 

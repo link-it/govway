@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -75,8 +76,8 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -112,7 +113,8 @@ public final class PorteDelegateChange extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO, session);
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 		try {
 
@@ -160,6 +162,14 @@ public final class PorteDelegateChange extends Action {
 			String autorizzazioneRuoliTipologia = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+			String idAsps = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
 			String oldNomePD = pdOld.getHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD);
@@ -174,15 +184,12 @@ public final class PorteDelegateChange extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 
 			
-			String tmpTitle = null;
 			IDSoggetto ids = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
 				ids = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 			}else{
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
 				ids = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 			}
 
@@ -258,29 +265,15 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 			}
+			
+			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			lstParam.add(new Parameter(oldNomePD , null));
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
 			if (ServletUtils.isEditModeInProgress(request)) {
-				if(useIdSogg){
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle,
-									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
-									),
-									new Parameter(oldNomePD, null)
-							);
-				}else {
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST),
-							new Parameter(oldNomePD, null)
-							);
-				}
-
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				String patternErogatore = nomeSoggettoErogatore;
 				String patternServizio = servizio;
@@ -716,6 +709,8 @@ public final class PorteDelegateChange extends Action {
 						servS, as,serviceBinding,
 						statoPorta);
 
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
+				
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -729,22 +724,7 @@ public final class PorteDelegateChange extends Action {
 
 			if (!isOk) {
 				// setto la barra del titolo
-				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle,
-									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)),								
-									new Parameter(oldNomePD, null)
-							);
-				}else {
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST),
-							new Parameter(oldNomePD, null)
-							);
-				}
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				if (!modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
 						modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
@@ -910,6 +890,8 @@ public final class PorteDelegateChange extends Action {
 						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,
 						servS, as,serviceBinding,
 						statoPorta);
+				
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 
 				pd.setDati(dati);
 
@@ -1159,19 +1141,37 @@ public final class PorteDelegateChange extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 
-
+			int idLista = -1;
 			List<PortaDelegata> lista = null;
-			if(useIdSogg){
-				int idLista = Liste.PORTE_DELEGATE_BY_SOGGETTO;
+			
+			switch (parentPD) {
+			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE:
+				idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
+				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+				int idAspsInt = Integer.parseInt(idAsps);
+				asps = apsCore.getAccordoServizioParteSpecifica(idAspsInt);
+				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+				
+				List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), ids, (long) soggInt, asps.getTipo(), asps.getNome(), idServizio2, 
+						(long) idAspsInt, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), ricerca);
+				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+				apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
+				
+				break;
+			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO:
+				idLista = Liste.PORTE_DELEGATE_BY_SOGGETTO;
 				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteDelegateCore.porteDelegateList(soggInt, ricerca);
-			}else{ 
-				int idLista = Liste.PORTE_DELEGATE;
+				porteDelegateHelper.preparePorteDelegateList(ricerca, lista,idLista);
+				break;
+			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE:
+			default:
+				idLista = Liste.PORTE_DELEGATE;
 				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 				lista = porteDelegateCore.porteDelegateList(null, ricerca);
+				porteDelegateHelper.preparePorteDelegateList(ricerca, lista,idLista);
+				break;
 			}
-
-			porteDelegateHelper.preparePorteDelegateList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

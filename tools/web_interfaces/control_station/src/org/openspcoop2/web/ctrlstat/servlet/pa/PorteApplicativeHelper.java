@@ -78,7 +78,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**
  * PorteApplicativeHelper
@@ -1457,7 +1456,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			throws Exception {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
@@ -1507,7 +1505,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 //					lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
 //				}
 				
-				idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 				break;
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
 				ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE,
@@ -1533,7 +1530,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 							new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, id)));
 					lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
 				}
-				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
 				useIdSogg = true;
 				break;
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE:
@@ -1549,7 +1545,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST));
 					lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
 				}
-				idLista = Liste.PORTE_APPLICATIVE;
 				break;
 			}
 			
@@ -1572,7 +1567,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 
 			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
-			if(isModalitaAvanzata){
+			if(this.isModalitaAvanzata()){
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
 			}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI); 
@@ -1581,7 +1576,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 			//}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
-			if(isModalitaAvanzata)
+			if(this.isModalitaAvanzata())
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 			if(this.core.isRegistroServiziLocale()){
 				//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
@@ -1634,7 +1629,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 //					de.setValue(pa.getDescrizione());
 //					e.addElement(de);
 
-					if(isModalitaAvanzata){
+					if(this.isModalitaAvanzata()){
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST, pIdSogg, pIdPorta, pIdAsps);
 						if (contaListe) {
@@ -1724,7 +1719,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.addElement(de);
 
-					if(isModalitaAvanzata){
+					if(this.isModalitaAvanzata()){
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pIdPorta, pIdAsps);
 						if (contaListe) {
@@ -1814,7 +1809,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setAddButton(false);
 			
 			if (useIdSogg){ 
-				if(!isModalitaAvanzata){
+				if(this.isModalitaStandard()){
 					this.pd.setRemoveButton(false);
 					this.pd.setSelect(false);
 				}
@@ -2066,20 +2061,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_DI + idporta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, 
@@ -3131,6 +3117,19 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			throw new Exception(e);
 		}
 	}
+	
+	public List<Parameter> getTitoloPA(Integer parentPA, String idsogg, String idAsps)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String soggettoTitle = null;
+		if(this.core.isRegistroServiziLocale()){
+			Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
+			soggettoTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+		}
+		else{
+			org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
+			soggettoTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+		}
+		return getTitoloPA(parentPA, idsogg, idAsps, soggettoTitle);
+	}
 
 	public List<Parameter> getTitoloPA(Integer parentPA, String idsogg, String idAsps, String soggettoTitle)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		List<Parameter> lstParam = new ArrayList<>();
@@ -3165,42 +3164,4 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		}
 		return lstParam;
 	}
-
-	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate) {
-		String azione = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-		
-		if(azione == null || azione.equals("")) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_NON_PUO_ESSERE_VUOTA);
-			return false;
-		}
-		
-		if(azioniOccupate.contains(azione)) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_GIA_PRESENTE);
-			return false;			
-		}
-		
-		return true;
-	}
-
-	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,String[] azioniDisponibiliList, String azione) {
-		
-		DataElement de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-		
-		// Azione
-		de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-		de.setValues(azioniDisponibiliList);
-		de.setSelected(azione);
-		de.setType(DataElementType.SELECT);
-		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-		de.setRequired(true); 
-		dati.addElement(de);
-		
-		return dati;
-	}
-	
-	
 }

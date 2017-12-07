@@ -746,6 +746,13 @@
         
         <!--  Accordi di Servizio Parte Specifica (Fruitori PorteDelegate) -->
 
+		<action path="/accordiServizioParteSpecificaFruitoriPorteDelegateAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriPorteDelegateAdd" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
+        </action>
         <action path="/accordiServizioParteSpecificaFruitoriPorteDelegateList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriPorteDelegateList" 
         	scope="request" validate="true">
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateList" path="/jsplib/listElement.jsp"/>
@@ -756,12 +763,6 @@
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateDel" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
         </action>
-
-
-		
-		
-		
-		
 		
 		
 		<!--  Accordi di Cooperazione -->
@@ -1239,7 +1240,35 @@
             <forward name="porteDelegateExtendedError" path="/jsplib/info.jsp"/>
         </action>
 
+    <!--  Porte Delegate Azione -->
     
+     	<action path="/porteDelegateAzioneAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateAzioneAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateAzioneAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateAzioneAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAzioneAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateAzioneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateAzioneList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateAzioneList"
+            scope="request" validate="true">
+            <forward name="porteDelegateAzioneList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAzioneError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateAzioneDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateAzioneDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateAzioneDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAzioneError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Porte Delegate (Controllo Accessi) -->
+
+        <action path="/porteDelegateControlloAccessi" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateControlloAccessi"
+            scope="request" validate="true">
+            <forward name="porteDelegateControlloAccessiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateControlloAccessiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateControlloAccessiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateControlloAccessiError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

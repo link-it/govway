@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,27 +32,25 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * porteDelegateList
+ * PorteDelegateAzioneList
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author Stefano Corallo (corallo@link.it)
- * @author Sandra Giangrandi (sandra@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Giuliano Pintori (pintori@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100(mer, 11 gen 2017) $
  * 
  */
-public final class PorteDelegateList extends Action {
+public final class PorteDelegateAzioneList extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -65,63 +64,47 @@ public final class PorteDelegateList extends Action {
 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
-		
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+ 
 		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-		Boolean useIdSogg = parentPD == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
-		
+
 		try {
-			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
-			int soggInt = -1;
-			// Posso arrivare a questa pagina anche dal menu' senza specificare il soggetto
-			if(idsogg != null){
-				soggInt = Integer.parseInt(idsogg);
-				useIdSogg = true;
-			} else {
-				useIdSogg = false;
-			}
-			
-			parentPD = useIdSogg ? PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO : PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-
-			// salvo il punto di ingresso
-			ServletUtils.setObjectIntoSession(session, parentPD, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
-
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-
+			String idPorta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			int idInt = Integer.parseInt(idPorta);
+			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null) 
+				idAsps = "";
+			String idFruizione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
-
-			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
+			
+			// Prendo la porta applicativa
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
+			String nomePorta = portaDelegata.getNome();
+	
+			List<String> listaAzioni = portaDelegata.getAzione().getAzioneDelegataList();
+			List<Parameter> listaParametriSessione = new ArrayList<>();
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta));
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg));
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps));
+			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione));
 			
-			List<PortaDelegata> lista = null;
-			int idLista = -1;
-			if(useIdSogg){
-				idLista = Liste.PORTE_DELEGATE_BY_SOGGETTO;
-				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
-				lista = porteDelegateCore.porteDelegateList(soggInt, ricerca);
-			}else{ 
-				idLista = Liste.PORTE_DELEGATE;
-				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
-				lista = porteDelegateCore.porteDelegateList(null, ricerca);
-			}
+			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
-
-			porteDelegateHelper.preparePorteDelegateList(ricerca, lista,idLista);
-
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, listaParametriSessione);
+	
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
+			
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForward(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.LIST());
+			return ServletUtils.getStrutsForward (mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
+					ForwardParams.LIST());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, 
+					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE,
 					ForwardParams.LIST());
-		} 
-
+		}  
 	}
 }

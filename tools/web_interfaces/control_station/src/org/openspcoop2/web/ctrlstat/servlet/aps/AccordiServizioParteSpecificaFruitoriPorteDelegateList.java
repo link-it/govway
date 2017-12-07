@@ -32,8 +32,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -74,7 +77,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 			Long idS = Long.parseLong(idServizio);
 			
 			String idFruizione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
-			//Long idFru = Long.parseLong(idFruizione);
+			Long idFru = Long.parseLong(idFruizione);
 			
 			String idSoggFruitoreDelServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
@@ -87,18 +90,19 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 	
-			int idLista = Liste.SERVIZI_FRUITORI_PORTE_DELEGATE;
+			int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 	
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 	
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idS);
+			IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			IDSoggetto idSoggettoFruitore = new IDSoggetto();
 			
-			List<PortaDelegata> lista = apsCore.serviziFruitoriPorteDelegateList(idSoggFru, 
-					asps.getTipo(), asps.getNome(), idS, 
-					asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
-					ricerca);
+			
+			List<MappingFruizionePortaDelegata> lista = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore , idSoggFru, asps.getTipo(), asps.getNome(), idServizioFromAccordo, idS, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
+					asps.getIdSoggetto(), ricerca);
 	
-			apsHelper.serviziFruitoriPorteDelegateList(lista, idServizio, idSoggFruitoreDelServizio, idFruizione, ricerca);
+			apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggFruitoreDelServizio, idFruizione, ricerca);
 	
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

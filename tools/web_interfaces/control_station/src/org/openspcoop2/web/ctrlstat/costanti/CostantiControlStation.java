@@ -115,6 +115,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_ID_SOGGETTO = "IdSogg";
 	public final static String LABEL_PARAMETRO_ID_PORTA = "IdPorta";
 	public final static String LABEL_PARAMETRO_ID_ASPS = "IdAsps";
+	public final static String LABEL_PARAMETRO_ID_FRUIZIONE = "IdFruizione";
 	public final static String LABEL_PARAMETRO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
@@ -171,6 +172,9 @@ public class CostantiControlStation {
 	public static final String LABEL_PORTA_APPLICATIVA_CON_PARAMETRI = "Porta Applicativa {0}";
 	public static final String LABEL_PORTA_DELEGATA_CON_PARAMETRI = "Porta Delegata {0}";
 	public static final String LABEL_NON_DEFINITO = "Non definito";
+	public static final String LABEL_PARAMETRO_AZIONE = "Azione";
+	public final static String LABEL_PARAMETRO_AZIONI = "Azioni";
+	public final static String LABEL_PARAMETRO_AZIONI_DI = "Azioni di ";
 	
 	/** PARAMETERS **/
 	
@@ -178,6 +182,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_ID_SOGGETTO = "idsogg";
 	public final static String PARAMETRO_ID_PORTA = "idPorta";
 	public final static String PARAMETRO_ID_ASPS = "idAsps";
+	public final static String PARAMETRO_ID_FRUIZIONE = "myId";
 	public final static String PARAMETRO_NOME = "nome";
 	public final static String PARAMETRO_SERVIZIO_APPLICATIVO = "servizioApplicativo";
 	public final static String PARAMETRO_VALORE = "valore";
@@ -220,6 +225,13 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_ID_CORRELAZIONE= "idcorr";
 	
 	public final static String PARAMETRO_FILTER = "filter";
+	
+	public final static String ATTRIBUTO_CONFIGURAZIONE_PARENT = "portaPar";
+	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE = 0;
+	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO = 1;
+	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE = 2;
+	
+	public final static String PARAMETRO_AZIONE = "azione";
 	
 	/** DEFAULT VALUES **/
 	
@@ -302,7 +314,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_STATO_DELLA_RICHIESTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY = "Stato della Richiesta dev'essere disabled, packaging, unpackaging o verify.";
 	public static final String MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_PER_LA_RISPOSTA_CON_ELEMENTO_DEFINITA_GIA_ESISTENTE = "Esiste gi&agrave; una correlazione applicativa per la risposta con elemento xml [{0}] definita nella {1}";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
-	public static final String MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_NON_PUO_ESSERE_VUOTA = "Deve essere selezionata una Azione";
-	public static final String MESSAGGIO_ERRORE_PORTE_APPLICATIVE_AZIONE_GIA_PRESENTE = "L'azione scelta &egrave; gi&agrave; presente";
+	public static final String MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA = "Deve essere selezionata una Azione";
+	public static final String MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE = "L'azione scelta &egrave; gi&agrave; presente";
 	
 }

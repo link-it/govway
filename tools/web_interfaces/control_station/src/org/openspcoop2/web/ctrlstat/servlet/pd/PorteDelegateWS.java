@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,8 +40,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -77,9 +76,9 @@ public final class PorteDelegateWS extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO, session);
-
-
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+		
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 
@@ -87,12 +86,18 @@ public final class PorteDelegateWS extends Action {
 			String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
 			String statoMessageSecurity = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY);
 			String applicaMTOMRichiesta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM_RICHIESTA);
 			String applicaMTOMRisposta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM_RISPOSTA);
 			String applicaModificaS = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
+			String idAsps = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -102,24 +107,9 @@ public final class PorteDelegateWS extends Action {
 
 			// Prendo il nome della porta
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
-			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = pde.getNome();
-
-			// Prendo nome, tipo e pdd del soggetto
-			String tmpTitle = null;
-			if(porteDelegateCore.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-			// String pdd = soggetto.getServer();
-
-
 
 			// Calcolo lo stato MTOM
 			boolean isMTOMAbilitatoReq = false;
@@ -160,28 +150,19 @@ public final class PorteDelegateWS extends Action {
 
 			if(statoMessageSecurity == null)
 				statoMessageSecurity = pde.getStatoMessageSecurity();
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			
+			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_DI + idporta,  null));
 
-			if(useIdSogg){
-				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
-								PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)),
-								new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_DI + idporta,  null)
-						);
-			}else {
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_DI + idporta,  null)
-						);
-			}
+			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione };
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(pd, lstParam);
 
-			Parameter[] urlParms = { 
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id)	,
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg) };
 			Parameter url1 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_LIST , urlParms);
 			Parameter url2 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_LIST , urlParms);
 
@@ -223,7 +204,7 @@ public final class PorteDelegateWS extends Action {
 				dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, url1.getValue(), url2.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
 						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
 
 				pd.setDati(dati);
 
@@ -244,7 +225,7 @@ public final class PorteDelegateWS extends Action {
 				dati = porteDelegateHelper.addMessageSecurityToDati(dati, statoMessageSecurity, url1.getValue(), url2.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
 						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
 
 				pd.setDati(dati);
 
@@ -334,7 +315,7 @@ public final class PorteDelegateWS extends Action {
 			dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, url1.getValue(), url2.getValue() , 
 					contaListe, numMessageSecurityReq, numMessageSecurityRes,isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
 
-			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, dati);
+			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
 
 			pd.setDati(dati);
 			

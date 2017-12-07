@@ -260,12 +260,15 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
 			// ricarico la pa
-			
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(nomePorta);
 			pa = porteApplicativeCore.getPortaApplicativa(idPA );
-			
-			porteApplicativeHelper.preparePorteAppAzioneList(pa.getId()+"");
+			List<String> listaAzioni = pa.getAzione().getAzioneDelegataList();
+			List<Parameter> listaParametriSessione = new ArrayList<>();
+			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
+			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
+			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			porteApplicativeHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, listaParametriSessione);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

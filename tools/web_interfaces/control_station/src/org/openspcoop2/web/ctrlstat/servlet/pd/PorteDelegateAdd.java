@@ -743,7 +743,7 @@ public final class PorteDelegateAdd extends Action {
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 			List<PortaDelegata> lista = porteDelegateCore.porteDelegateList(soggInt, ricerca);
 
-			porteDelegateHelper.preparePorteDelegateList(ricerca, lista);
+			porteDelegateHelper.preparePorteDelegateList(ricerca, lista,idLista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

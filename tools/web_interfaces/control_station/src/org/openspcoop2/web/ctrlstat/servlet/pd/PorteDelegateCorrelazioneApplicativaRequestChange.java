@@ -40,11 +40,8 @@ import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIden
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
-import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -79,8 +76,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO, session);
-
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
@@ -88,7 +85,6 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
 			
 			String elemxml = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 			if(elemxml!=null)
@@ -104,22 +100,19 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			int idcorr = Integer.parseInt(idcorrString);
 			String gif = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA);
 			String riusoIdMessaggio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO);
+			
+			String idAsps = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
-			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
-
-			// Prendo nome e tipo del soggetto
-			String tmpTitle = null;
-			if(porteDelegateCore.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
 
 			// Prendo il nome della porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
@@ -129,6 +122,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			String elemxmlOrig = "";
 			CorrelazioneApplicativa ca = pde.getCorrelazioneApplicativa();
 			CorrelazioneApplicativaElemento cae = null;
+			// Quando esco dal ciclo, cae è il mio elemento
 			for (int i = 0; i < ca.sizeElementoList(); i++) {
 				cae = ca.getElemento(i);
 				if (idcorr == cae.getId().intValue()) {
@@ -138,53 +132,27 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			}
 			if (elemxmlOrig == null)
 				elemxmlOrig = "";
-			// Quando esco dal ciclo, cae è il mio elemento
 
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nomePorta);
+			
+			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nomePorta,
+					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pId,pIdSoggetto,pIdAsps,pIdFrizione, pNomePorta));
+			
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, // + nome,
+					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,pId,pIdSoggetto,pIdAsps,pIdFrizione, pNomePorta));
+			
+			lstParam.add(new Parameter(elemxmlOrig , null));
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
 			if (ServletUtils.isEditModeInProgress(request)) {
-				
-				if(useIdSogg){
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
-								PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
-								),
-						 new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nomePorta,
-									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nomePorta)),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, // + nomePorta,
-										PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
-										new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
-										new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
-										new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,nomePorta)
-										),
-								new Parameter(elemxmlOrig, null)
-						);
-				} else {
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST),
-							 new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nomePorta,
-										PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nomePorta)),
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, // + nomePorta,
-											PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
-											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
-											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
-											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,nomePorta)
-											),
-									new Parameter(elemxmlOrig, null)
-							);
-				}
+				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				if (elemxml == null) {
 					elemxml = StringEscapeUtils.escapeHtml(cae.getNome());
@@ -211,7 +179,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
 				
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd,   elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString);
 
@@ -227,55 +195,15 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			// Controlli sui campi immessi
 			boolean isOk = porteDelegateHelper.correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE,true);
 			if (!isOk) {
-				if(useIdSogg){
-					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
-									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
-									),
-							 new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nomePorta,
-										PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nomePorta)),
-							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, // + nomePorta,
-											PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
-											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
-											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
-											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,nomePorta)
-											),
-									new Parameter(elemxmlOrig, null)
-							);
-					} else {
-						// setto la barra del titolo
-						ServletUtils.setPageDataTitle(pd, 
-								new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST),
-								 new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_DI + nomePorta,
-											PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
-									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg),
-									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id),
-									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, nomePorta)),
-								new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, // + nomePorta,
-												PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,
-												new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
-												new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg),
-												new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,nomePorta)
-												),
-										new Parameter(elemxmlOrig, null)
-								);
-					}
- 
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
 				
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd, elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString);
 
