@@ -629,6 +629,146 @@ public class DBMappingUtils {
 
 		}
 	}
+	
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, Long idFru, IDSoggetto idSoggettoFruitore, Long idSoggetto, String tipoServizio, String nomeServizio, IDServizio idAccordoServizio, Long idServizio, String tipoSoggettoErogatore,
+			String nomeSoggettoErogatore, Long idSoggettoErogatore, ISearch ricerca) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, idFru, idSoggettoFruitore, idSoggetto, tipoServizio, nomeServizio,  idAccordoServizio, idServizio, tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, ricerca, CostantiDB.SOGGETTI); 
+	}
+	
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, Long idFru, IDSoggetto idSoggettoFruitore, Long idSoggetto, String tipoServizio, String nomeServizio,  IDServizio idAccordoServizio, Long idServizio, String tipoSoggettoErogatore,
+			String nomeSoggettoErogatore, Long idSoggettoErogatore, ISearch ricerca,String tabellaSoggetti) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, idFru, idSoggettoFruitore, idSoggetto, tipoServizio, nomeServizio, idAccordoServizio, idServizio, tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, ricerca, tabellaSoggetti); 
+	}
+	
+	private static List<MappingFruizionePortaDelegata> _mappingFruizionePortaDelegataList(Connection con, String tipoDB, Long idFru,IDSoggetto idSoggettoFruitore,  Long idSoggetto, String tipoServizio, String nomeServizio, IDServizio idAccordoServizio, Long idServizio, String tipoSoggettoErogatore,
+			String nomeSoggettoErogatore, Long idSoggettoErogatore, ISearch ricerca,String tabellaSoggetti) throws CoreException {
+		int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
+		int offset = 0;
+		int limit = 0;
+		String search = "";
+		String queryString;
+
+		if(ricerca != null) {
+			limit = ricerca.getPageSize(idLista);
+			offset = ricerca.getIndexIniziale(idLista);
+			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		}
+		
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		
+		List<MappingFruizionePortaDelegata> lista = new ArrayList<MappingFruizionePortaDelegata>();
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true),
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
+			} 
+			
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			stmt.setLong(index++, idServizio);
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next() && ricerca != null)
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+			
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione");
+			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
+			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default");
+			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
+			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
+			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
+			
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true),
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
+			} 
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default",false);
+			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			
+			index = 1;
+			stmt.setLong(index++, idServizio);
+			
+			risultato = stmt.executeQuery();
+			
+			MappingFruizionePortaDelegata mapping = null;
+
+			while (risultato.next()) {
+
+				mapping = new MappingFruizionePortaDelegata();
+				
+				Long id = risultato.getLong("id");
+//				Long idPorta = risultato.getLong("id_porta");
+//				Long idFruizione = risultato.getLong("id_fruizione");
+				String nome = risultato.getString("nome");
+				Integer isDefaultInt = risultato.getInt("is_default");
+				boolean isDefault = isDefaultInt > 0 ;
+				
+				mapping.setNome(nome);
+				mapping.setTableId(id);
+				mapping.setDefault(isDefault);
+				// evitiamo una join utilizzo l'id che mi sono passato come parametro
+				mapping.setIdServizio(idAccordoServizio);
+				mapping.setIdFruitore(idSoggettoFruitore); 
+				
+				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
+				String nomePorta = risultato.getString("nome_porta");
+				idPortaDelegata.setNome(nomePorta);
+				mapping.setIdPortaDelegata(idPortaDelegata);
+				
+				lista.add(mapping);
+
+			}
+			
+		
+		}catch(Exception e){
+			throw new CoreException("mappingFruizionePortaDelegataList error",e);
+		} finally {
+		
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+		
+		}
+		
+		return lista;
+	}
 
 	public static void createMappingFruizione(String nome, boolean isDefault, IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
 			Connection con, String tipoDB) throws CoreException{
@@ -988,6 +1128,5 @@ public class DBMappingUtils {
 			}
 
 		}
-	}
-	
+	} 
 }

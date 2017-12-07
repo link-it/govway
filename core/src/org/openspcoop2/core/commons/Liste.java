@@ -95,6 +95,7 @@ public final class Liste
 	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE;
 	public final static int SERVIZI_ALLEGATI;
 	public final static int CONFIGURAZIONE_EROGAZIONE;
+	public final static int CONFIGURAZIONE_FRUIZIONE;
 	
 	public final static int	RUOLI;	
 	public final static int	REGISTRI;
@@ -182,6 +183,7 @@ public final class Liste
     	SERVIZI_FRUITORI_PORTE_DELEGATE = numeroListe ++;
     	SERVIZI_ALLEGATI= numeroListe ++;
     	CONFIGURAZIONE_EROGAZIONE = numeroListe ++;
+    	CONFIGURAZIONE_FRUIZIONE = numeroListe ++;
     	RUOLI = numeroListe ++;	
     	REGISTRI = numeroListe ++;
     	ROUTING = numeroListe ++;
