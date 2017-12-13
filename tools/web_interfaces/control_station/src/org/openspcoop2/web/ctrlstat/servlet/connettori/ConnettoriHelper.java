@@ -951,7 +951,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		// se standard allora la tipologia connettori e' sempre http
 		// indipendentemente
 		// dalla proprieta settata
-		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 			tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP;
 		}
 

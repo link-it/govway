@@ -40,6 +40,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -86,6 +87,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 			apsHelper.makeMenu();
 	
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
+			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 	
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -97,7 +99,20 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idS);
 			IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 			IDSoggetto idSoggettoFruitore = new IDSoggetto();
-			
+			String tipoSoggettoFruitore = null;
+			String nomeSoggettoFruitore = null;
+			if(apsCore.isRegistroServiziLocale()){
+				org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitoreDelServizio));
+				tipoSoggettoFruitore = soggettoFruitore.getTipo();
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}else{
+				org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(Integer.parseInt(idSoggFruitoreDelServizio));
+				tipoSoggettoFruitore = soggettoFruitore.getTipo();
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}
+			idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
+			idSoggettoFruitore.setNome(nomeSoggettoFruitore);
+			 
 			
 			List<MappingFruizionePortaDelegata> lista = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore , idSoggFru, asps.getTipo(), asps.getNome(), idServizioFromAccordo, idS, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
 					asps.getIdSoggetto(), ricerca);

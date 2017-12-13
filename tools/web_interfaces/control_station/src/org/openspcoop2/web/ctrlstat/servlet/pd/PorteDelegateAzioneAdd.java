@@ -157,7 +157,8 @@ public final class PorteDelegateAzioneAdd extends Action {
 			}
 			
 			// Prendo le azioni  disponibili
-			List<String> azioni = porteDelegateCore.getAzioni(asps, aspc, false, true, azioniOccupate);
+			boolean addTrattinoSelezioneNonEffettuata = true;
+			List<String> azioni = porteDelegateCore.getAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
 			if(azioni!=null && azioni.size()>0) {
 				azioniDisponibiliList = new String[azioni.size()];
@@ -246,6 +247,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps));
 			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione));
 			
+			lstParam =  porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, listaParametriSessione);
 			
 

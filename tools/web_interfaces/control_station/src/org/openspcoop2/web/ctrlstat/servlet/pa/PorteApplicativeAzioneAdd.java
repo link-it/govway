@@ -182,7 +182,8 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			}
 			
 			// Prendo le azioni  disponibili
-			List<String> azioni = porteApplicativeCore.getAzioni(asps, aspc, false, true, azioniOccupate);
+			boolean addTrattinoSelezioneNonEffettuata = true;
+			List<String> azioni = porteApplicativeCore.getAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
 			if(azioni!=null && azioni.size()>0) {
 				azioniDisponibiliList = new String[azioni.size()];
@@ -268,6 +269,8 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			
+			lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
 			porteApplicativeHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, listaParametriSessione);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

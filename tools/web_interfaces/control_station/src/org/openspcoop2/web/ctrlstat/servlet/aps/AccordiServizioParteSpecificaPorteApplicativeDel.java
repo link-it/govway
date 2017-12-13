@@ -35,13 +35,14 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -110,26 +111,46 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 
-			String idporta = "";
-
 			// Prendo l'id del soggetto erogatore del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
+			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			int idSoggettoErogatoreDelServizio = asps.getIdSoggetto().intValue();
 
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 
+			String errMsg = null;
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// idporta = de.getValue();
-				idporta = idsToRemove.get(i);
-				// Prendo la porta applicativa
-				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idporta));
-
-				// Elimino la porta applicativa
-				apsCore.performDeleteOperation(superUser, apsHelper.smista(), tmpPA);
+				List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+				// ricevo come parametro l'id della pa associata al mapping da cancellare
+				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+				idPortaApplicativa.setNome(idsToRemove.get(i)); 
+				
+				// leggo la pa
+				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
+				// controllo se il mapping e' di default, se lo e' salto questo elemento
+				
+				boolean isDefault = apsCore.isDefaultMappingErogazione(idServizio2, idPortaApplicativa );
+				
+				if(!isDefault) {
+					//cancello il mapping
+					MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
+					mappingErogazione.setIdServizio(idServizio2);
+					mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
+					listaOggettiDaEliminare.add(mappingErogazione);
+					
+					// cancello la porta associata
+					listaOggettiDaEliminare.add(tmpPA);
+					
+					// Elimino entrambi gli oggetti
+					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
+				} else {
+					errMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT;
+				}
 			}// for
+			
+			if(errMsg != null)
+				pd.setMessage(errMsg);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -138,7 +159,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
-			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+			
 			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,Integer.parseInt(id), idSoggettoErogatoreDelServizio, ricerca);
 			apsHelper.prepareServiziConfigurazioneList(lista, id, null, ricerca);
 

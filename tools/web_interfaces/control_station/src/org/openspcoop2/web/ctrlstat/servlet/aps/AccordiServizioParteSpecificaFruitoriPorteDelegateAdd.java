@@ -34,24 +34,25 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
-import org.openspcoop2.core.config.InvocazioneServizio;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaApplicativaServizio;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -63,10 +64,9 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -79,7 +79,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
- * AccordiServizioParteSpecificaPorteApplicativeAdd
+ * AccordiServizioParteSpecificaPorteDelegateAdd
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
@@ -101,74 +101,93 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
+		
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPA == null) parentPA = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			String idAsps = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			String idSoggettoErogatoreDelServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
-			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(session);
-
-				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
-			}
-			String azione = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-			String nome = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
+			String idFruizione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
+			Long idFru = Long.parseLong(idFruizione);
+			
+			String idSoggFruitoreDelServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
+			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
+			
+			String azione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			String nome = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 			// multiselect
-			String[] azionis = request.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-			String modeCreazione = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE);
-			String identificazione = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE);
-			String mappingPA = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
+			String[] azionis = request.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			String modeCreazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE);
+			String identificazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE);
+			String mappingPD = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MAPPING);
 
-			String erogazioneRuolo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
-			String erogazioneAutenticazione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
-			String erogazioneAutenticazioneOpzionale = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
-			String erogazioneAutorizzazione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
-			String erogazioneAutorizzazioneAutenticati = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
-			String erogazioneAutorizzazioneRuoli = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
-			String erogazioneAutorizzazioneRuoliTipologia = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
-			String erogazioneAutorizzazioneRuoliMatch = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
+			String fruizioneServizioApplicativo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUIZIONE_NOME_SA);
+			String fruizioneRuolo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
+			String fruizioneAutenticazione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
+			String fruizioneAutenticazioneOpzionale = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			String fruizioneAutorizzazione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
+			String fruizioneAutorizzazioneAutenticati = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
+			String fruizioneAutorizzazioneRuoli = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
+			String fruizioneAutorizzazioneRuoliTipologia = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
+			String fruizioneAutorizzazioneRuoliMatch = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
 
 			String nomeSA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
 
-			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 
 			// Preparo il menu
 			apsHelper.makeMenu();
 
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
-			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteDelegateCore);
 			int idServizio = Integer.parseInt(idAsps);
 			AccordoServizioParteSpecifica asps  =apsCore.getAccordoServizioParteSpecifica(idServizio);
-			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
-			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, soggInt, null);
-			MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
+			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			IDSoggetto idSoggettoFruitore = new IDSoggetto();
+			String tipoSoggettoFruitore = null;
+			String nomeSoggettoFruitore = null;
+			if(apsCore.isRegistroServiziLocale()){
+				org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitoreDelServizio));
+				tipoSoggettoFruitore = soggettoFruitore.getTipo();
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}else{
+				org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(Integer.parseInt(idSoggFruitoreDelServizio));
+				tipoSoggettoFruitore = soggettoFruitore.getTipo();
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}
+			idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
+			idSoggettoFruitore.setNome(nomeSoggettoFruitore);
+			List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore ,
+					idSoggFru, asps.getTipo(), asps.getNome(), idServizio2, (long) idServizio, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
+					asps.getIdSoggetto(), null);
+			
+			MappingFruizionePortaDelegata mappingSelezionato = null, mappingDefault = null;
 
 			String[] listaMappingLabels = null;
 			String[] listaMappingValues = null;
 			List<String> azioniOccupate = new ArrayList<>();
-			int listaMappingErogazioneSize = listaMappingErogazione != null ? listaMappingErogazione.size() : 0;
-			if(listaMappingErogazioneSize > 0) {
-				for (int i = 0; i < listaMappingErogazione.size(); i++) {
-					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-					if(mappingErogazionePortaApplicativa.isDefault()) {
-						mappingDefault = mappingErogazionePortaApplicativa;
+			int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
+			if(listaMappingFruizioneSize > 0) {
+				for (int i = 0; i < listaMappingFruizione.size(); i++) {
+					MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
+					if(mappingFruizionePortaDelegata.isDefault()) {
+						mappingDefault = mappingFruizionePortaDelegata;
 						break;
 					}
 				}
 				
-				if(mappingPA != null) {
-					for (int i = 0; i < listaMappingErogazione.size(); i++) {
-						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-						if(mappingErogazionePortaApplicativa.getNome().equals(mappingPA)) {
-							mappingSelezionato = mappingErogazionePortaApplicativa;
+				if(mappingPD != null) {
+					for (int i = 0; i < listaMappingFruizione.size(); i++) {
+						MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
+						if(mappingFruizionePortaDelegata.getNome().equals(mappingPD)) {
+							mappingSelezionato = mappingFruizionePortaDelegata;
 							break;
 						}
 					}
@@ -178,34 +197,18 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					mappingSelezionato = mappingDefault;
 				}
 
-				listaMappingLabels = new String[listaMappingErogazioneSize];
-				listaMappingValues = new String[listaMappingErogazioneSize];
-				for (int i = 0; i < listaMappingErogazione.size(); i++) {
-					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-					listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: mappingErogazionePortaApplicativa.getNome();
-					listaMappingValues[i] = mappingErogazionePortaApplicativa.getNome();
+				listaMappingLabels = new String[listaMappingFruizioneSize];
+				listaMappingValues = new String[listaMappingFruizioneSize];
+				for (int i = 0; i < listaMappingFruizione.size(); i++) {
+					MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
+					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: mappingFruizionePortaDelegata.getNome();
+					listaMappingValues[i] = mappingFruizionePortaDelegata.getNome();
 					
 					// colleziono le azioni gia' configurate
-					PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-					if(portaApplicativa.getAzione() != null && portaApplicativa.getAzione().getAzioneDelegataList() != null)
-						azioniOccupate.addAll(portaApplicativa.getAzione().getAzioneDelegataList());
+					PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+					if(portaDelegata.getAzione() != null && portaDelegata.getAzione().getAzioneDelegataList() != null)
+						azioniOccupate.addAll(portaDelegata.getAzione().getAzioneDelegataList());
 				}
-			}
-
-			// Prendo nome, tipo e pdd del soggetto
-			String tipoNomeSoggettoProprietario = null;
-			String tipoSoggettoProprietario = null;
-			String nomeSoggettoProprietario = null;
-			if(porteApplicativeCore.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tipoNomeSoggettoProprietario = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tipoNomeSoggettoProprietario = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
 			}
 
 			AccordoServizioParteComune as = null;
@@ -217,7 +220,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 
 			// Prendo le azioni  disponibili
-			List<String> azioni = porteApplicativeCore.getAzioni(asps, as, true, true, azioniOccupate);
+			boolean addTrattinoSelezioneNonEffettuata = true;
+			List<String> azioni = porteDelegateCore.getAzioni(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
 			if(azioni!=null && azioni.size()>0) {
 				azioniDisponibiliList = new String[azioni.size()];
@@ -226,61 +230,47 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				}
 			}
 			
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
-			boolean erogazioneIsSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
-
 			String postBackElementName = ServletUtils.getPostBackElementName(request);
 
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE)){
+				if(postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE)){
 					nome = null;
 				}
 
-				if(postBackElementName.equalsIgnoreCase(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE)){
+				if(postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE)){
 					// 
 				}
 			}
-
-
-
-
-			String [] saSoggetti = null;
-			if ((idSoggettoErogatoreDelServizio != null) && !idSoggettoErogatoreDelServizio.equals("")) {
-				int idErogatore = Integer.parseInt(idSoggettoErogatoreDelServizio);
-
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(new Long(idErogatore));
-
-				// rif bug #45
-				// I servizi applicativi da visualizzare sono quelli che hanno
-				// -Integration Manager (getMessage abilitato)
-				// -connettore != disabilitato
-				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-				for (ServizioApplicativo sa : listaSA) {
-					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
-
-					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-						// il connettore non e' disabilitato oppure il get
-						// message e' abilitato
-						// Lo aggiungo solo se gia' non esiste tra quelli
-						// aggiunti
-						validSA.add(sa);
+			
+			// ServiziApplicativi
+			List<String> saList = new ArrayList<String>();
+			saList.add("-");
+			if(apsCore.isGenerazioneAutomaticaPorteDelegate() && idSoggettoFruitore!=null){
+				try{
+					String auth = fruizioneAutenticazione;
+					if(auth==null || "".equals(auth)){
+						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					}
-				}
+					List<ServizioApplicativo> oldSilList = null;
+					if(apsCore.isVisioneOggettiGlobale(userLogin)){
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,null,
+								CredenzialeTipo.toEnumConstant(auth));
+					}
+					else {
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitore,userLogin,
+								CredenzialeTipo.toEnumConstant(auth));
+					}
+					if(oldSilList!=null && oldSilList.size()>0){
+						for (int i = 0; i < oldSilList.size(); i++) {
+							saList.add(oldSilList.get(i).getNome());		
+						}
+					}
+				}catch(DriverConfigurazioneNotFound dNotFound){}
 
-				// Prendo la lista di servizioApplicativo associati al soggetto
-				// e la metto in un array
-				saSoggetti = new String[validSA.size()+1];
-				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i+1] = sa.getNome();
-				}
 			}
 
-			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idSoggettoErogatoreDelServizio, idAsps, tipoNomeSoggettoProprietario);
+			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggFruitoreDelServizio, idAsps, idFruizione);
 
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 
@@ -322,41 +312,44 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					}
 					
 					if(modeCreazione == null)
-						modeCreazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA;
+						modeCreazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA;
 	
-					if(erogazioneRuolo==null || "".equals(erogazioneRuolo))
-						erogazioneRuolo = "-";
-					if(erogazioneAutenticazione==null || "".equals(erogazioneAutenticazione))
-						erogazioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
-					if(erogazioneAutorizzazione==null || "".equals(erogazioneAutorizzazione)){
-						String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteApplicative();
-						erogazioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
+					if(fruizioneServizioApplicativo==null || "".equals(fruizioneServizioApplicativo))
+						fruizioneServizioApplicativo = "-";
+					if(fruizioneRuolo==null || "".equals(fruizioneRuolo))
+						fruizioneRuolo = "-";
+					if(fruizioneAutenticazione==null || "".equals(fruizioneAutenticazione))
+						fruizioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					if(fruizioneAutorizzazione==null || "".equals(fruizioneAutorizzazione)){
+						String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteDelegate();
+						fruizioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
 						if(TipoAutorizzazione.isAuthenticationRequired(tipoAutorizzazione))
-							erogazioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+							fruizioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
 						if(TipoAutorizzazione.isRolesRequired(tipoAutorizzazione))
-							erogazioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
-						erogazioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
-					} 
+							fruizioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+						fruizioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
+					}
+					
 	
-					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
-					dati = apsHelper.addConfigurazioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
+					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
+					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
-							mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
-							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
-							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch);
+							mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
+							fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 				}
 					
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 						ForwardParams.ADD());
 
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneCheckData(TipoOperazione.ADD, nome, azione, azionis, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti);
+			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azione, azionis, asps, azioniOccupate,modeCreazione,null,true);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,lstParm); 
@@ -366,145 +359,143 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 
-				dati = apsHelper.addConfigurazioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
+				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
-						mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
-						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
-						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch);
+						mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
+						fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE, 
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE, 
 						ForwardParams.ADD());
 			}
 
 			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 
-			PortaApplicativa pa = null;
+			PortaDelegata pde = null;
 			// porta delegante e' quella di default
-			PortaApplicativa paDefault = porteApplicativeCore.getPortaApplicativa(mappingDefault.getIdPortaApplicativa());
-			String nomePortaDelegante = paDefault.getNome();
-			String nomeNuovaPortaApplicativa = paDefault.getNome() + "/" + nome;
+			PortaDelegata pdDefault = porteDelegateCore.getPortaDelegata(mappingDefault.getIdPortaDelegata());
+			String nomePortaDelegante = pdDefault.getNome();
+			String nomeNuovaPortaDelegata = pdDefault.getNome() + "/" + nome;
 						
 			// creo una nuova porta applicativa clonando quella selezionata 
-			if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
-				PortaApplicativa paSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-				pa = (PortaApplicativa) paSelezionata.clone();
+			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
+				PortaDelegata pdSelezionata = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
+				pde = (PortaDelegata) pdSelezionata.clone();
 				// annullo il table id
-				pa.setId(null);
-				pa.setNome(nomeNuovaPortaApplicativa);
+				pde.setId(null);
+				pde.setNome(nomeNuovaPortaDelegata);
 			
 			} else {
-				pa = new PortaApplicativa();
-				pa.setNomeSoggettoProprietario(nomeSoggettoProprietario);
-				pa.setTipoSoggettoProprietario(tipoSoggettoProprietario);
-				pa.setDescrizione("Servizio "+asps.getTipo()+asps.getNome()+" erogato da "+tipoSoggettoProprietario+nomeSoggettoProprietario);
-				pa.setNome(nomeNuovaPortaApplicativa);
-
-				pa.setAutenticazione(erogazioneAutenticazione);
-				if(erogazioneAutenticazioneOpzionale != null){
-					if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
-						pa.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
-					else 
-						pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
-				} else 
-					pa.setAutenticazioneOpzionale(null);
-				pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(erogazioneAutorizzazione, 
-						ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneRuoli), 
-						RuoloTipologia.toEnumConstant(erogazioneAutorizzazioneRuoliTipologia)));
+				pde = new PortaDelegata();
+				pde.setIdSoggetto(idSoggFru);
+				pde.setNomeSoggettoProprietario(nomeSoggettoFruitore);
+				pde.setTipoSoggettoProprietario(tipoSoggettoFruitore);
 				
-				if(erogazioneAutorizzazioneRuoliMatch!=null && !"".equals(erogazioneAutorizzazioneRuoliMatch)){
-					RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(erogazioneAutorizzazioneRuoliMatch);
+				pde.setNome(nomeNuovaPortaDelegata);
+				String descr = "Invocazione servizio " + asps.getTipo()	+ asps.getNome() + ":"+asps.getVersione() +" erogato da " + asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore();
+				pde.setDescrizione(descr);
+
+				pde.setAutenticazione(fruizioneAutenticazione);
+				if(fruizioneAutenticazioneOpzionale != null){
+					if(ServletUtils.isCheckBoxEnabled(fruizioneAutenticazioneOpzionale))
+						pde.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+					else 
+						pde.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
+				} else 
+					pde.setAutenticazioneOpzionale(null);
+				pde.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(fruizioneAutorizzazione, 
+						ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneRuoli), 
+						RuoloTipologia.toEnumConstant(fruizioneAutorizzazioneRuoliTipologia)));
+				
+				if(fruizioneAutorizzazioneRuoliMatch!=null && !"".equals(fruizioneAutorizzazioneRuoliMatch)){
+					RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(fruizioneAutorizzazioneRuoliMatch);
 					if(tipoRuoloMatch!=null){
-						if(pa.getRuoli()==null){
-							pa.setRuoli(new AutorizzazioneRuoli());
+						if(pde.getRuoli()==null){
+							pde.setRuoli(new AutorizzazioneRuoli());
 						}
-						pa.getRuoli().setMatch(tipoRuoloMatch);
+						pde.getRuoli().setMatch(tipoRuoloMatch);
 					}
 				}
+
+				PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
+				pdSogg.setNome(asps.getNomeSoggettoErogatore());
+				pdSogg.setTipo(asps.getTipoSoggettoErogatore());
+				pde.setSoggettoErogatore(pdSogg);
+
+				PortaDelegataServizio pds = new PortaDelegataServizio();
+				pds.setTipo(asps.getTipo());
+				pds.setNome(asps.getNome());
+				pds.setVersione(asps.getVersione());
+				pde.setServizio(pds);
 				
-				pa.setAllegaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-				pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-				// Devo lasciare a null !! pa.setGestioneManifest(CostantiConfigurazione.ABILITATO);
-				pa.setRicevutaAsincronaSimmetrica(CostantiConfigurazione.ABILITATO);
-				pa.setRicevutaAsincronaAsimmetrica(CostantiConfigurazione.ABILITATO);
-
-				PortaApplicativaServizio pas = new PortaApplicativaServizio();
-				pas.setTipo(asps.getTipo());
-				pas.setNome(asps.getNome());
-				pa.setServizio(pas);
-
-				pa.setStatoMessageSecurity(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO);
-				pa.setIdSoggetto((long) soggInt);
-
-				if(nomeSA!=null && !"".equals(nomeSA) && !"-".equals(nomeSA)){
-					PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
-					sa.setNome(nomeSA);
-					pa.addServizioApplicativo(sa);
+				// servizioApplicativo
+				if(fruizioneServizioApplicativo!=null && !"".equals(fruizioneServizioApplicativo) && !"-".equals(fruizioneServizioApplicativo)){
+					PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
+					sa.setNome(fruizioneServizioApplicativo);
+					pde.addServizioApplicativo(sa);
 				}
 
 				// ruolo
-				if(erogazioneRuolo!=null && !"".equals(erogazioneRuolo) && !"-".equals(erogazioneRuolo)){
-					if(pa.getRuoli()==null){
-						pa.setRuoli(new AutorizzazioneRuoli());
+				if(fruizioneRuolo!=null && !"".equals(fruizioneRuolo) && !"-".equals(fruizioneRuolo)){
+					if(pde.getRuoli()==null){
+						pde.setRuoli(new AutorizzazioneRuoli());
 					}
 					Ruolo ruolo = new Ruolo();
-					ruolo.setNome(erogazioneRuolo);
-					pa.getRuoli().addRuolo(ruolo);
+					ruolo.setNome(fruizioneRuolo);
+					pde.getRuoli().addRuolo(ruolo);
 				}
+
 			}
 
 			if ((azione != null) && !azione.equals("") && !azione.equals("-")) {
-				PortaApplicativaAzione paa = new PortaApplicativaAzione();
-
-				//paa.setNome(azione);
-
-				paa.setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
-				paa.setNomePortaDelegante(nomePortaDelegante);
-				paa.addAzioneDelegata(azione); 
-				pa.setAzione(paa);
+				PortaDelegataAzione pda = new PortaDelegataAzione();
+				pda.setIdentificazione(PortaDelegataAzioneIdentificazione.DELEGATED_BY); 
+				pda.setNomePortaDelegante(nomePortaDelegante);
+				pda.addAzioneDelegata(azione); 
+				pde.setAzione(pda);
 			}
+			
+			listaOggettiDaCreare.add(pde);
 
-			listaOggettiDaCreare.add(pa);
+			MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+			IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
+			idPortaDelegata.setNome(pde.getNome());
+			mappingFruizione.setIdFruitore(idSoggettoFruitore);
+			mappingFruizione.setIdServizio(idServizio2);
+			mappingFruizione.setIdPortaDelegata(idPortaDelegata);
+			mappingFruizione.setDefault(false);
+			mappingFruizione.setNome(nome); 
+			listaOggettiDaCreare.add(mappingFruizione);
 
-
-			MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
-			IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
-			idPortaApplicativa.setNome(pa.getNome());
-			mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
-			mappingErogazione.setIdServizio(idServizio2);
-			mappingErogazione.setDefault(false);
-			mappingErogazione.setNome(nome); 					
-
-			listaOggettiDaCreare.add(mappingErogazione);
-
-			String userLogin = ServletUtils.getUserLoginFromSession(session);		
-
-			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaCreare.toArray());
+			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
+			int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 
-			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 
-			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, Integer.parseInt(idSoggettoErogatoreDelServizio), ricerca);
-
-			apsHelper.prepareServiziConfigurazioneList(lista, idAsps, null, ricerca);
+			List<MappingFruizionePortaDelegata> lista = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore ,
+					idSoggFru, asps.getTipo(), asps.getNome(), idServizio2, (long) idServizio, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
+					asps.getIdSoggetto(), ricerca);
+			
+			apsHelper.serviziFruitoriMappingList(lista, idAsps, idSoggFruitoreDelServizio, idFruizione, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE, 
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE, 
 					ForwardParams.ADD());
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,
+					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					ForwardParams.ADD());
 		}  
 	}

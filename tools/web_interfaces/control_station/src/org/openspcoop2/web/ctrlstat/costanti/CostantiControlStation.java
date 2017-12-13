@@ -272,6 +272,7 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO.toString();
 	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
+	public static final String DEFAULT_VALUE_AZIONE_NON_SELEZIONATA = "-";
 	
 	/** OTHER */
 	public final static String IMAGES_DIR = "images";

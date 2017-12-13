@@ -1039,6 +1039,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			
 		}
 		
+		// *************** Controllo degli Accessi *********************
+	
 		this.controlloAccessi(dati);
 		
 		// controllo accessi
@@ -1050,7 +1052,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		
-		// *************** Controllo degli Accessi *********************
+		
 		// Pintori 29/11/2017 Gestione Accessi spostata nella servlet PorteApplicativeControlloAccessi, lascio questo codice per eventuali ripensamenti.
 	/*	
 		this.controlloAccessi(dati);

@@ -33,13 +33,19 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -85,7 +91,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			Long idS = Long.parseLong(idServizio);
 			
 			String idFruizione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
-			//Long idFru = Long.parseLong(idFruizione);
+			Long idFru = Long.parseLong(idFruizione);
 			
 			String idSoggFruitoreDelServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
@@ -104,6 +110,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 
 			// Elimino le porte applicative del servizio dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
@@ -114,38 +121,73 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 
-			String idporta = "";
-
 			// Prendo l'id del soggetto erogatore del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idS);
-
+			IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			IDSoggetto idSoggettoFruitore = new IDSoggetto();
+			String tipoSoggettoFruitore = null;
+			String nomeSoggettoFruitore = null;
+			if(apsCore.isRegistroServiziLocale()){
+				org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitoreDelServizio));
+				tipoSoggettoFruitore = soggettoFruitore.getTipo();
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}else{
+				org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(Integer.parseInt(idSoggFruitoreDelServizio));
+				tipoSoggettoFruitore = soggettoFruitore.getTipo();
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}
+			idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
+			idSoggettoFruitore.setNome(nomeSoggettoFruitore);
+			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
-
+			String errMsg = null;
 			for (int i = 0; i < idsToRemove.size(); i++) {
-
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// idporta = de.getValue();	
-				idporta = idsToRemove.get(i);
+				
+				List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+				
+				// ricevo come parametro l'id della pd associata al mapping da cancellare
+				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
+				idPortaDelegata.setNome(idsToRemove.get(i));
 				// Prendo la porta delegata
-				PortaDelegata tmpPD = porteDelegateCore.getPortaDelegata(Long.parseLong(idporta));
-				// Elimino la porta delegata
-				apsCore.performDeleteOperation(superUser, apsHelper.smista(), tmpPD);
+				PortaDelegata tmpPD = porteDelegateCore.getPortaDelegata(idPortaDelegata);
+				
+				// controllo se il mapping e' di default, se lo e' salto questo elemento
+				boolean isDefault = apsCore.isDefaultMappingFruizione(idServizioFromAccordo, idSoggettoFruitore, idPortaDelegata );
+				
+				if(!isDefault) {
+					//cancello il mapping
+					MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+					mappingFruizione.setIdFruitore(idSoggettoFruitore);
+					mappingFruizione.setIdPortaDelegata(idPortaDelegata);
+					mappingFruizione.setIdServizio(idServizioFromAccordo);
+					listaOggettiDaEliminare.add(mappingFruizione);
+				
+					// cancello la porta associata
+					listaOggettiDaEliminare.add(tmpPD);
+					
+					// Elimino entrambi gli oggetti
+					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
+				}else {
+					errMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT;
+				}
 			}// for
+			
+			if(errMsg != null)
+				pd.setMessage(errMsg);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.SERVIZI_FRUITORI_PORTE_DELEGATE;
+			int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
-			List<PortaDelegata> lista = apsCore.serviziFruitoriPorteDelegateList(idSoggFru, 
-					asps.getTipo(), asps.getNome(), idS, 
-					asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
-					ricerca);
-			
-			apsHelper.serviziFruitoriPorteDelegateList(lista, idServizio, idSoggFruitoreDelServizio, idFruizione, ricerca);
+			List<MappingFruizionePortaDelegata> lista =
+					apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore ,
+							idSoggFru, asps.getTipo(), asps.getNome(), idServizioFromAccordo, idS, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
+					asps.getIdSoggetto(), ricerca);
+	
+			apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggFruitoreDelServizio, idFruizione, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

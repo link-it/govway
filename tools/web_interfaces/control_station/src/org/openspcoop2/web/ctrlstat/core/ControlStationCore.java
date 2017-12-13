@@ -235,7 +235,7 @@ public class ControlStationCore {
 	public String getProductVersion(){
 		String pVersion = null;
 		if(this.consoleNomeEstesoSuffix!=null){
-			if(this.consoleNomeEstesoSuffix.trim().startsWith("-")){
+			if(this.consoleNomeEstesoSuffix.trim().startsWith(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)){
 				pVersion = "PdDOpenSPCoopEnterprise "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
 			}
 			else{
@@ -1761,7 +1761,7 @@ public class ControlStationCore {
 	private synchronized void initDriverTracciamento(String nomeDs, boolean forceChange) throws Exception {
 		if (this.driverTracciamento == null || forceChange) {
 			try {
-				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals("-")) {
+				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
 					if(this.tracce_sameDBWebUI){
 						this.driverTracciamento = new DriverTracciamento(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log);
 					}
@@ -1813,7 +1813,7 @@ public class ControlStationCore {
 	private synchronized void initDriverMSGDiagnostici(String nomeDs, boolean forceChange) throws Exception {
 		if (this.driverMSGDiagnostici == null || forceChange) {
 			try {
-				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals("-")) {
+				if (nomeDs == null || nomeDs.equals("") || nomeDs.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
 					if(this.msgDiagnostici_sameDBWebUI){
 						this.driverMSGDiagnostici = new DriverMsgDiagnostici(ControlStationCore.dbM.getDataSourceName(),this.tipoDB,ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log); 
 					}
@@ -4773,7 +4773,7 @@ public class ControlStationCore {
 				
 				azioniListReturn = new ArrayList<String>();
 				if(addTrattinoSelezioneNonEffettuata) {
-					azioniListReturn.add("-");
+					azioniListReturn.add(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA);
 				}
 				azioniListReturn.addAll(azioniList);
 			}

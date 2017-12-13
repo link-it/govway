@@ -324,6 +324,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					pa.getRuoli().setMatch(tipoRuoloMatch);
 				}
 			}
+			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 

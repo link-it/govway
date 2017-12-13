@@ -939,6 +939,7 @@ public final class PorteDelegateChange extends Action {
 			else{
 				portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
 			}
+			
 			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
 			else
@@ -966,6 +967,7 @@ public final class PorteDelegateChange extends Action {
 					portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
 				}
 			}
+			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			
 			if (stateless!=null && stateless.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT))
 				portaDelegata.setStateless(null);

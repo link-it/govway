@@ -44,8 +44,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -78,7 +76,7 @@ public class PorteDelegateControlloAccessi extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
-		boolean isPortaDelegata = false;
+		boolean isPortaDelegata = true;
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
@@ -92,7 +90,6 @@ public class PorteDelegateControlloAccessi extends Action {
 			String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String idSoggFruitore = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idSoggFruitore);
 			String idAsps = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
@@ -122,7 +119,6 @@ public class PorteDelegateControlloAccessi extends Action {
 
 			// Prendo il nome della porta
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
-			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = portaDelegata.getNome();
@@ -145,7 +141,7 @@ public class PorteDelegateControlloAccessi extends Action {
 			if(!idAsps.isEmpty())
 				asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			else {
-				// [TODO] calcola l'accordo dalla PA
+				// [TODO] calcola l'accordo dalla PD
 			}
 			
 			int sizeFruitori = 0;
@@ -153,21 +149,7 @@ public class PorteDelegateControlloAccessi extends Action {
 				sizeFruitori = asps.sizeFruitoreList();
 			}
 
-			// Prendo nome, tipo e pdd del soggetto
-			String tipoSoggettoProprietario = null;
-			if(porteDelegateCore.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-//				soggettoTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-//				soggettoTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-			}
-			
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
-			boolean isSupportatoAutenticazione = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
+			boolean isSupportatoAutenticazione = true; // sempre nelle porte delegate
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idSoggFruitore, idAsps, idFruizione);
 			
@@ -176,20 +158,16 @@ public class PorteDelegateControlloAccessi extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
-			Parameter[] urlParmsAutorizzazioneAutenticati = { 
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID,asps.getId()+"")	,
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE,asps.getIdSoggetto()+""),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO,asps.getTipo()),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO,asps.getNome())};
-			Parameter urlAutorizzazioneAutenticatiParam= new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST , urlParmsAutorizzazioneAutenticati);
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idSoggFruitore);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+
+			Parameter[] urlParmsAutorizzazioneAutenticati = {  pId,pIdSoggetto,pIdAsps,pIdFrizione  };
+			Parameter urlAutorizzazioneAutenticatiParam= new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST , urlParmsAutorizzazioneAutenticati);
 			String urlAutorizzazioneAutenticati = urlAutorizzazioneAutenticatiParam.getValue();
 			
-			
-
-			Parameter[] urlParmsAutorizzazioneRuoli = { 
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id)	,
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idSoggFruitore),
-					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS,idAsps) };
+			Parameter[] urlParmsAutorizzazioneRuoli = {  pId,pIdSoggetto,pIdAsps,pIdFrizione };
 			Parameter urlAutorizzazioneRuoliParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST , urlParmsAutorizzazioneRuoli);
 			String urlAutorizzazioneRuoli = urlAutorizzazioneRuoliParam.getValue();
 			
@@ -251,7 +229,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
-						confPers, isSupportatoAutenticazione, contaListe, false, false);
+						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -283,11 +261,11 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
-						confPers, isSupportatoAutenticazione, contaListe, false, false);
+						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, idFruizione, dati);
 
 				pd.setDati(dati);
 
@@ -326,6 +304,7 @@ public class PorteDelegateControlloAccessi extends Action {
 					portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
 				}
 			}
+			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
@@ -399,11 +378,11 @@ public class PorteDelegateControlloAccessi extends Action {
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
-					confPers, isSupportatoAutenticazione, contaListe, false, false);
+					confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false);
 			
 			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 			
-			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null, idAsps, dati);
+			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, idFruizione, dati);
 			
 			pd.setDati(dati);
 			

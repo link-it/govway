@@ -41,6 +41,8 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -1158,6 +1160,34 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public void deleteMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativaByNome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "deleteMappingErogazione";
+		try{
+			con = ControlStationCore.dbM.getConnection();
+			DBMappingUtils.deleteMappingErogazione(idServizio, idPortaApplicativaByNome, con, this.tipoDB);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean isDefaultMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativaByNome) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "isDefaultMappingErogazione";
+		try{
+			con = ControlStationCore.dbM.getConnection();
+			return DBMappingUtils.checkMappingErogazione(idServizio, idPortaApplicativaByNome, true, con, this.tipoDB);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(long idServizio,boolean readContenutoAllegati) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
@@ -1416,6 +1446,34 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 					tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, 
 					ricerca);
 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "deleteMappingFruizione";
+		try{
+			con = ControlStationCore.dbM.getConnection();
+			DBMappingUtils.deleteMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, this.tipoDB);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean isDefaultMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "isDefaultMappingFruizione";
+		try{
+			con = ControlStationCore.dbM.getConnection();
+			return DBMappingUtils.checkMappingFruizione(idServizio, idFruitore, idPortaDelegata, true, con, this.tipoDB);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

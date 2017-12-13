@@ -72,7 +72,6 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * PorteDelegateHelper
@@ -111,14 +110,21 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 
 
-		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+//		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 		boolean configurazioneStandardNonApplicabile = false;
 		
-		User user = ServletUtils.getUserFromSession(this.session);
-		
 		int alternativeSize = 80;
+		
+		Parameter pIdSogg = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+		Parameter pIdPorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta);
+		String idAsps = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+		if(idAsps == null) idAsps = "";
+		Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+		String idFruizione = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+		if(idFruizione == null) idFruizione = "";
+		Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 		
 		DataElement de = null;
 		
@@ -150,7 +156,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 		de.setValue(nomePorta);
-		if( InterfaceType.STANDARD.equals(user.getInterfaceType()) && TipoOperazione.CHANGE.equals(tipoOp) ){
+		if(this.isModalitaStandard() && TipoOperazione.CHANGE.equals(tipoOp) ){
 			de.setType(DataElementType.TEXT);
 		}
 		else{
@@ -724,35 +730,46 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		this.controlloAccessi(dati);
 		
-		boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
+		// controllo accessi
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazioneCustom, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+		ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
+		dati.addElement(de);
 		
-		this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, true);
-		
-		String urlAutorizzazioneAutenticati = null;
-		String urlAutorizzazioneRuoli = null;
-		if(TipoOperazione.CHANGE.equals(tipoOp)){
-			urlAutorizzazioneAutenticati = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST +"?" + 
-					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&" +
-					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta;
-			
-			urlAutorizzazioneRuoli = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST +"?" + 
-					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&" +
-					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta;
-		}
-		
-		String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
-		if (tipoOp == TipoOperazione.CHANGE) {
-			servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE;
-		}
-		
-		this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,
-				autenticazione, autorizzazione, autorizzazioneCustom, 
-				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
-				autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
-				autorizzazioneRuoliTipologia, ruoloMatch,
-				confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false);
-		
-		this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
+		// Pintori 11/12/2017 Gestione Accessi spostata nella servlet PorteDelegateControlloAccessi, lascio questo codice per eventuali ripensamenti.
+//		this.controlloAccessi(dati);
+//		
+//		boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
+//		
+//		this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti);
+//		
+//		String urlAutorizzazioneAutenticati = null;
+//		String urlAutorizzazioneRuoli = null;
+//		if(TipoOperazione.CHANGE.equals(tipoOp)){
+//			urlAutorizzazioneAutenticati = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST +"?" + 
+//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&" +
+//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta;
+//			
+//			urlAutorizzazioneRuoli = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST +"?" + 
+//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&" +
+//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta;
+//		}
+//		
+//		String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
+//		if (tipoOp == TipoOperazione.CHANGE) {
+//			servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE;
+//		}
+//		
+//		this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,
+//				autenticazione, autorizzazione, autorizzazioneCustom, 
+//				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
+//				autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
+//				autorizzazioneRuoliTipologia, ruoloMatch,
+//				confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false);
+//		
+//		this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		
 		
 		

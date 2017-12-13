@@ -1805,12 +1805,12 @@ public class ConsoleHelper {
 	
 	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta,
 			Vector<DataElement> dati) {
-		return addHiddenFieldsToDati(tipoOp, idPorta, idsogg, idPorta, null, dati);
+		return addHiddenFieldsToDati(tipoOp, id, idsogg, idPorta, null, dati);
 	}
 	
 	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps,
 			Vector<DataElement> dati) {
-		return addHiddenFieldsToDati(tipoOp, idPorta, idsogg, idPorta, idAsps, null, dati);
+		return addHiddenFieldsToDati(tipoOp, id, idsogg, idPorta, idAsps, null, dati);
 	}
 
 	public Vector<DataElement> addHiddenFieldsToDati(TipoOperazione tipoOp, String id, String idsogg, String idPorta, String idAsps, String idFruizione,
@@ -1940,10 +1940,10 @@ public class ConsoleHelper {
 		}else{
 			if(addMsgServiziApplicativoNonDisponibili){
 				if(sizeAttuale>0){
-					this.pd.setMessage("Non ulteriori esistono servizi applicativi associabili alla porta");
+					this.pd.setMessage("Non ulteriori esistono servizi applicativi associabili alla porta",org.openspcoop2.web.lib.mvc.MessageType.INFO);
 				}
 				else{
-					this.pd.setMessage("Non esistono servizi applicativi associabili alla porta");
+					this.pd.setMessage("Non esistono servizi applicativi associabili alla porta",org.openspcoop2.web.lib.mvc.MessageType.INFO);
 				}
 				this.pd.disableEditMode();
 			}
@@ -3255,7 +3255,10 @@ public class ConsoleHelper {
 		
 		if(autenticazione != null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))
 			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
-			
+		
+		if(autenticazioneOpzionale != null && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
 		if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione))
 			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
 		
@@ -3453,7 +3456,7 @@ public class ConsoleHelper {
 	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate) {
 		String azione = this.request.getParameter(CostantiControlStation.PARAMETRO_AZIONE);
 		
-		if(azione == null || azione.equals("")) {
+		if(azione == null || azione.equals("") || azione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
 			return false;
 		}
