@@ -22,18 +22,17 @@
 public String[] getBrowserInfo(String Information) {
 	String info[] = null;
 	
-       String browsername = "";
-       String browserversion = "";
-       String browser = Information  ;
-       if(browser.contains("MSIE")){ //IE <= 10
+	try{
+		String browsername = "";
+     	String browserversion = "";
+       	String browser = Information  ;
+		if(browser.contains("MSIE")){ //IE <= 10
            String subsString = browser.substring( browser.indexOf("MSIE"));
            info = (subsString.split(";")[0]).split(" ");
-        }
-      else if(browser.contains("msie")){ //IE <= 10
+       	} else if(browser.contains("msie")){ //IE <= 10
            String subsString = browser.substring( browser.indexOf("msie"));
            info = (subsString.split(";")[0]).split(" ");
-        }
-      else if(browser.contains("Trident")){ //IE 11
+       	} else if(browser.contains("Trident")){ //IE 11
 			String subsString = browser.substring( browser.indexOf("Trident"));
 			info = new String[2];
 			
@@ -45,24 +44,36 @@ public String[] getBrowserInfo(String Information) {
 			else
 			info[1] = "";
 			
-		}
-      else if(browser.contains("Firefox")){
+		} else if(browser.contains("Firefox")){
            String subsString = browser.substring( browser.indexOf("Firefox"));
            info = (subsString.split(" ")[0]).split("/");
-      }
-      else if(browser.contains("Chrome")){
+      	} else if(browser.contains("Chrome")){
            String subsString = browser.substring( browser.indexOf("Chrome"));
            info = (subsString.split(" ")[0]).split("/");
-      }
-      else if(browser.contains("Opera")){
+      	} else if(browser.contains("Opera")){
            String subsString = browser.substring( browser.indexOf("Opera"));
            info = (subsString.split(" ")[0]).split("/");
-      }
-      else if(browser.contains("Safari")){
+      	} else if(browser.contains("Safari")){
            String subsString = browser.substring( browser.indexOf("Safari"));
            info = (subsString.split(" ")[0]).split("/");
-      }         
+      	}  
+	}catch(Throwable t){}
+	
  return info;
+}
+
+public String getBrowserName(String []info){
+	if(info != null && info.length > 0)
+		return info[0];
+	
+	return null;
+}
+
+public String getBrowserVersion(String []info){
+	if(info != null && info.length > 1)
+		return info[1];
+	
+	return null;
 }
 %>
 
@@ -70,25 +81,39 @@ public String[] getBrowserInfo(String Information) {
 boolean debug = false;
 String userAgent = request.getHeader("user-agent");
 String info[] = getBrowserInfo(userAgent);
-String browsername = info[0];
-String browserversion = info[1];
+String browsername = getBrowserName(info);
+String browserversion = getBrowserVersion(info);
 
-// Microsoft IE (Trident e' il browsername che viene impostato da IE11)
-// <meta http-equiv="X-UA-Compatible" content="IE=8">
-if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident")){
-	// fix ie10
-	%>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<script type="text/javascript">
-		window.location.hash="no-back-button";
-		window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
-		window.onhashchange=function(){window.location.hash="no-back-button";}
-	</script> 
-	<%
-
-} else
-	// Firefox
-	if(browsername.equalsIgnoreCase("Firefox")){
+if(browsername != null){
+	// Microsoft IE (Trident e' il browsername che viene impostato da IE11)
+	// <meta http-equiv="X-UA-Compatible" content="IE=8">
+	if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Trident")){
+		// fix ie10
+		%>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script type="text/javascript">
+			window.location.hash="no-back-button";
+			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+			window.onhashchange=function(){window.location.hash="no-back-button";}
+		</script> 
+		<%
+	
+	} else if(browsername.equalsIgnoreCase("Firefox")){ // Firefox
+			%>
+			<script type="text/javascript">
+				window.location.hash="no-back-button";
+				window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+				window.onhashchange=function(){window.location.hash="no-back-button";}
+			</script> 
+			<%
+	} else if(browsername.equalsIgnoreCase("Chrome")){ // Chrome
+		%>
+		<script type="text/javascript">
+	  	  window.history.forward();
+	   	 function noBack() { window.history.forward(); }
+		</script>
+		<%
+	} else{
 		%>
 		<script type="text/javascript">
 			window.location.hash="no-back-button";
@@ -96,25 +121,8 @@ if(browsername.equalsIgnoreCase("MSIE") ||  browsername.equalsIgnoreCase("Triden
 			window.onhashchange=function(){window.location.hash="no-back-button";}
 		</script> 
 		<%
-} else 
-	// Chrome
-	if(browsername.equalsIgnoreCase("Chrome")){
-	%>
-	<script type="text/javascript">
-  	  window.history.forward();
-   	 function noBack() { window.history.forward(); }
-	</script>
-	<%
-} else{
-	%>
-	<script type="text/javascript">
-		window.location.hash="no-back-button";
-		window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
-		window.onhashchange=function(){window.location.hash="no-back-button";}
-	</script> 
-	<%
+	}
 }
-
 %>
 
 <% if(debug){ %>
