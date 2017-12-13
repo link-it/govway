@@ -5,6 +5,7 @@ CREATE TABLE ruoli
 	nome VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	tipologia VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',
+	nome_esterno VARCHAR(255),
 	contesto_utilizzo VARCHAR(255) NOT NULL DEFAULT 'qualsiasi',
 	superuser VARCHAR(255),
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'

@@ -7,6 +7,7 @@ CREATE TABLE ruoli
 	nome VARCHAR2(255) NOT NULL,
 	descrizione VARCHAR2(255),
 	tipologia VARCHAR2(255) NOT NULL,
+	nome_esterno VARCHAR2(255),
 	contesto_utilizzo VARCHAR2(255) NOT NULL,
 	superuser VARCHAR2(255),
 	ora_registrazione TIMESTAMP,

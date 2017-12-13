@@ -40,6 +40,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="tipologia" type="{http://www.openspcoop2.org/core/registry}RuoloTipologia" use="optional" default="qualsiasi"/>
+ * 		&lt;attribute name="nome-esterno" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="contesto-utilizzo" type="{http://www.openspcoop2.org/core/registry}RuoloContesto" use="optional" default="qualsiasi"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -120,6 +121,14 @@ public class Ruolo extends org.openspcoop2.utils.beans.BaseBean implements Seria
     this.tipologia = tipologia;
   }
 
+  public java.lang.String getNomeEsterno() {
+    return this.nomeEsterno;
+  }
+
+  public void setNomeEsterno(java.lang.String nomeEsterno) {
+    this.nomeEsterno = nomeEsterno;
+  }
+
   public void set_value_contestoUtilizzo(String value) {
     this.contestoUtilizzo = (RuoloContesto) RuoloContesto.toEnumConstantFromString(value);
   }
@@ -191,6 +200,10 @@ public class Ruolo extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   @XmlAttribute(name="tipologia",required=false)
   protected RuoloTipologia tipologia = (RuoloTipologia) RuoloTipologia.toEnumConstantFromString("qualsiasi");
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="nome-esterno",required=false)
+  protected java.lang.String nomeEsterno;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_contestoUtilizzo;

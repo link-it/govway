@@ -55,7 +55,7 @@ public class RuoliHelper extends ConsoleHelper{
 	}
 
 	public Vector<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,
-			String contesto, Vector<DataElement> dati) {
+			String nomeEsterno, String contesto, Vector<DataElement> dati) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(RuoliCostanti.LABEL_RUOLO);
@@ -102,6 +102,26 @@ public class RuoliHelper extends ConsoleHelper{
 		de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
 		de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
 		de.setSelected(tipologia);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+		RuoloTipologia ruoloTipologia = null;
+		if(tipologia!=null) {
+			try {
+				ruoloTipologia = RuoloTipologia.toEnumConstant(tipologia,false);
+			}catch(Exception e) {}
+		}
+		de = new DataElement();
+		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO);
+		de.setValue(nomeEsterno);
+		if(ruoloTipologia!=null && (RuoloTipologia.QUALSIASI.equals(ruoloTipologia) || RuoloTipologia.ESTERNO.equals(ruoloTipologia))) {
+			de.setType(DataElementType.TEXT_EDIT);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setName(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
+		de.setSize( getSize());
 		dati.addElement(de);
 
 		de = new DataElement();

@@ -42,38 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link WrapperIdAccordoCooperazione }
+     * Create an instance of {@link WrapperIdPortaDominio }
      */
-    public WrapperIdAccordoCooperazione createWrapperIdAccordoCooperazione() {
-        return new WrapperIdAccordoCooperazione();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdAccordoServizioParteSpecifica }
-     */
-    public WrapperIdAccordoServizioParteSpecifica createWrapperIdAccordoServizioParteSpecifica() {
-        return new WrapperIdAccordoServizioParteSpecifica();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdRuolo }
-     */
-    public WrapperIdRuolo createWrapperIdRuolo() {
-        return new WrapperIdRuolo();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdAccordoServizioParteComune }
-     */
-    public WrapperIdAccordoServizioParteComune createWrapperIdAccordoServizioParteComune() {
-        return new WrapperIdAccordoServizioParteComune();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdSoggetto }
-     */
-    public WrapperIdSoggetto createWrapperIdSoggetto() {
-        return new WrapperIdSoggetto();
+    public WrapperIdPortaDominio createWrapperIdPortaDominio() {
+        return new WrapperIdPortaDominio();
     }
     
     /**
@@ -91,6 +63,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link WrapperIdAccordoServizioParteSpecifica }
+     */
+    public WrapperIdAccordoServizioParteSpecifica createWrapperIdAccordoServizioParteSpecifica() {
+        return new WrapperIdAccordoServizioParteSpecifica();
+    }
+    
+    /**
      * Create an instance of {@link UseInfo }
      */
     public UseInfo createUseInfo() {
@@ -98,10 +77,31 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link WrapperIdPortaDominio }
+     * Create an instance of {@link WrapperIdRuolo }
      */
-    public WrapperIdPortaDominio createWrapperIdPortaDominio() {
-        return new WrapperIdPortaDominio();
+    public WrapperIdRuolo createWrapperIdRuolo() {
+        return new WrapperIdRuolo();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdSoggetto }
+     */
+    public WrapperIdSoggetto createWrapperIdSoggetto() {
+        return new WrapperIdSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdAccordoCooperazione }
+     */
+    public WrapperIdAccordoCooperazione createWrapperIdAccordoCooperazione() {
+        return new WrapperIdAccordoCooperazione();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdAccordoServizioParteComune }
+     */
+    public WrapperIdAccordoServizioParteComune createWrapperIdAccordoServizioParteComune() {
+        return new WrapperIdAccordoServizioParteComune();
     }
     
 

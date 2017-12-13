@@ -21,10 +21,15 @@
 package org.openspcoop2.protocol.engine.mapping;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.openspcoop2.protocol.engine.FunctionContextCustom;
+import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
@@ -58,14 +63,36 @@ public class MappingProperties {
 		}	
 	}
 	
-	public String getUrlWithoutContext(String protocol,String urlWithContext,IDService idService) throws ProtocolException{
+	public String getUrlWithoutContext(String protocol,String urlWithContext,IDService idService, FunctionContextsCustom customContexts) throws ProtocolException{
 		IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 		Openspcoop2 manifestProtocol = pf.getManifest();
 		String urlWithoutContext = null;
 		
-		String paContext = null;
+		List<String> paContexts = new ArrayList<String>();
 		if(IDService.PORTA_APPLICATIVA.equals(idService)){
-			paContext = "/PA";
+			paContexts.add("/PA");
+			if(customContexts!=null) {
+				List<FunctionContextCustom> list = customContexts.getContexts();
+				if(list!=null && list.size()>0) {
+					for (FunctionContextCustom functionContextCustom : list) {
+						if(functionContextCustom.getIdService()!=null) {
+							if(idService.equals(functionContextCustom.getIdService())){
+								paContexts.add("/"+functionContextCustom.getContext());
+							}
+						}
+						else if(functionContextCustom.getSubcontext()!=null && functionContextCustom.getSubcontext().size()>0){
+							Iterator<String> it = functionContextCustom.getSubcontext().keySet().iterator();
+							while (it.hasNext()) {
+								String subcontext = (String) it.next();
+								IDService idServiceSubContext = functionContextCustom.getSubcontext().get(subcontext);
+								if(idService.equals(idServiceSubContext)){
+									paContexts.add("/"+functionContextCustom.getContext()+"/"+subcontext);
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		else{
 			throw new ProtocolException("Service ["+idService+"] non gestito tramite UrlMapping");
@@ -74,22 +101,9 @@ public class MappingProperties {
 		// context con un nome
 		for (int i = 0; i < manifestProtocol.getWeb().sizeContextList(); i++) {
 			String context = manifestProtocol.getWeb().getContext(i).getName();
-			String prefixProtocol = context + paContext;
-			if(urlWithContext.contains(prefixProtocol)){
-				if(urlWithContext.endsWith(prefixProtocol)){
-					urlWithoutContext = "";
-				}
-				else{
-					int offset = urlWithContext.indexOf(prefixProtocol);
-					urlWithoutContext = urlWithContext.substring(offset+prefixProtocol.length(), urlWithContext.length());
-				}
-				break;
-			}
-		}
-		// empty context
-		if(urlWithoutContext==null){
-			if(manifestProtocol.getWeb().getEmptyContext()!=null && manifestProtocol.getWeb().getEmptyContext().getEnabled() ){
-				String prefixProtocol = paContext;
+			boolean found = false;
+			for (int j = 0; j < paContexts.size(); j++) {
+				String prefixProtocol = context + paContexts.get(j);
 				if(urlWithContext.contains(prefixProtocol)){
 					if(urlWithContext.endsWith(prefixProtocol)){
 						urlWithoutContext = "";
@@ -97,6 +111,29 @@ public class MappingProperties {
 					else{
 						int offset = urlWithContext.indexOf(prefixProtocol);
 						urlWithoutContext = urlWithContext.substring(offset+prefixProtocol.length(), urlWithContext.length());
+					}
+					found = true;
+					break;
+				}
+			}
+			if(found){
+				break;
+			}
+		}
+		// empty context
+		if(urlWithoutContext==null){
+			if(manifestProtocol.getWeb().getEmptyContext()!=null && manifestProtocol.getWeb().getEmptyContext().getEnabled() ){
+				for (int j = 0; j < paContexts.size(); j++) {
+					String prefixProtocol = paContexts.get(j);
+					if(urlWithContext.contains(prefixProtocol)){
+						if(urlWithContext.endsWith(prefixProtocol)){
+							urlWithoutContext = "";
+						}
+						else{
+							int offset = urlWithContext.indexOf(prefixProtocol);
+							urlWithoutContext = urlWithContext.substring(offset+prefixProtocol.length(), urlWithContext.length());
+						}
+						break;
 					}
 				}
 			}
@@ -108,7 +145,7 @@ public class MappingProperties {
 		return urlWithoutContext;
 	}
 	
-	protected String getMappingName(String protocol, String urlWithContext,IDService idService) throws ProtocolException{
+	protected String getMappingName(String protocol, String urlWithContext,IDService idService, FunctionContextsCustom customContexts) throws ProtocolException{
 		
 		//devo recuperare tutte le url configurate e vedere se una matcha
 		//le proprieta' che mi interessano sono nella forma:
@@ -116,7 +153,7 @@ public class MappingProperties {
 		String prefix = protocol + ".pa.";
 		String suffix = ".url";		
 				
-		String urlWithoutContext = this.getUrlWithoutContext(protocol,urlWithContext, idService);
+		String urlWithoutContext = this.getUrlWithoutContext(protocol,urlWithContext, idService, customContexts);
 		
 		Enumeration<?> keys = this.propertiesReader.keys();
 		

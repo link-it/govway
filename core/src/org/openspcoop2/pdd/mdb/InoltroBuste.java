@@ -3922,7 +3922,8 @@ public class InoltroBuste extends GenericLib{
 											CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 									){
 										msgDiag.mediumDebug("Validazione wsdl della risposta ...");
-										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false);
+										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false,
+												this.propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
 									}
 									
 									// Validazione XSD

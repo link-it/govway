@@ -2675,6 +2675,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
 			de.setSize(this.getSize());
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				de.setPostBack(true);
+			}
 			dati.addElement(de);
 		}else{
 			de = new DataElement();

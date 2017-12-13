@@ -32,7 +32,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
-
+import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
@@ -156,7 +156,8 @@ public class InformazioniServizioURLMapping {
 		
 
 	public InformazioniServizioURLMapping(OpenSPCoop2Message msg,IProtocolFactory<?> protocolFactory,
-			URLProtocolContext urlProtocolContext, Logger log, IDService idService) throws ProtocolException{
+			URLProtocolContext urlProtocolContext, Logger log, IDService idService, 
+			FunctionContextsCustom customContexts) throws ProtocolException{
 				
 		this.mp = InformazioniServizioURLMapping.getMappingProperties(protocolFactory);
 				
@@ -165,7 +166,7 @@ public class InformazioniServizioURLMapping {
 		this.log = log;
 		
 		// Id Mapping
-		this.idMapping = resolveMappingName(urlProtocolContext, idService);
+		this.idMapping = resolveMappingName(urlProtocolContext, idService, customContexts);
 
 		// Mittente
 		this.tipoMittente = this.getMappingInfo(TIPO_MITTENTE);
@@ -176,7 +177,7 @@ public class InformazioniServizioURLMapping {
 		
 		// ID di protocollo
 		this.idProtocollo = this.getMappingInfo(ID_PROTOCOLLO);
-				
+
 		// ListaTrasmissione
 		String generazioneListaTrasmissioniTmp = this.mp.getValue(this.msg.getProtocolName(), this.idMapping, GENERAZIONE_LISTA_TRASMISSIONI);
 		if(generazioneListaTrasmissioniTmp!=null){
@@ -243,10 +244,10 @@ public class InformazioniServizioURLMapping {
 	 * @throws ProtocolException Se la configurazione non e' corretta.
 	 */
 	
-	private String resolveMappingName(URLProtocolContext urlProtocolContext, IDService idService) throws ProtocolException {
+	private String resolveMappingName(URLProtocolContext urlProtocolContext, IDService idService, FunctionContextsCustom customContexts) throws ProtocolException {
 			
 		// Recupero il nome del mapping per la url invocata
-		String mappingName = this.mp.getMappingName(this.msg.getProtocolName(), urlProtocolContext.getRequestURI(), idService);
+		String mappingName = this.mp.getMappingName(this.msg.getProtocolName(), urlProtocolContext.getRequestURI(), idService, customContexts);
 
 		return mappingName;
 	}

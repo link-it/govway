@@ -436,6 +436,7 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 		<xsd:attribute default="qualsiasi" name="tipologia" type="RuoloTipologia" use="optional"/>
+		<xsd:attribute name="nome-esterno" type="xsd:string" use="optional"/>
 		<xsd:attribute default="qualsiasi" name="contesto-utilizzo" type="RuoloContesto" use="optional"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			

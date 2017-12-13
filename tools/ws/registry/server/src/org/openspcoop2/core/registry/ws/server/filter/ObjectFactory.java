@@ -42,27 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SearchFilterAccordoServizioParteComune }
-     */
-    public SearchFilterAccordoServizioParteComune createSearchFilterAccordoServizioParteComune() {
-        return new SearchFilterAccordoServizioParteComune();
-    }
-    
-    /**
-     * Create an instance of {@link SearchFilterRuolo }
-     */
-    public SearchFilterRuolo createSearchFilterRuolo() {
-        return new SearchFilterRuolo();
-    }
-    
-    /**
-     * Create an instance of {@link SearchFilterAccordoServizioParteSpecifica }
-     */
-    public SearchFilterAccordoServizioParteSpecifica createSearchFilterAccordoServizioParteSpecifica() {
-        return new SearchFilterAccordoServizioParteSpecifica();
-    }
-    
-    /**
      * Create an instance of {@link SearchFilterAccordoCooperazione }
      */
     public SearchFilterAccordoCooperazione createSearchFilterAccordoCooperazione() {
@@ -77,10 +56,31 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link SearchFilterAccordoServizioParteSpecifica }
+     */
+    public SearchFilterAccordoServizioParteSpecifica createSearchFilterAccordoServizioParteSpecifica() {
+        return new SearchFilterAccordoServizioParteSpecifica();
+    }
+    
+    /**
      * Create an instance of {@link SearchFilterPortaDominio }
      */
     public SearchFilterPortaDominio createSearchFilterPortaDominio() {
         return new SearchFilterPortaDominio();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterAccordoServizioParteComune }
+     */
+    public SearchFilterAccordoServizioParteComune createSearchFilterAccordoServizioParteComune() {
+        return new SearchFilterAccordoServizioParteComune();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterRuolo }
+     */
+    public SearchFilterRuolo createSearchFilterRuolo() {
+        return new SearchFilterRuolo();
     }
     
 

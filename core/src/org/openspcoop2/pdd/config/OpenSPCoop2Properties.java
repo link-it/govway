@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +48,7 @@ import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.ForwardConfig;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
@@ -84,8 +86,11 @@ import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
+import org.openspcoop2.protocol.engine.FunctionContextCustom;
+import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.driver.IFiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.repository.GestoreRepositoryFactory;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
@@ -103,6 +108,7 @@ import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
@@ -1562,6 +1568,29 @@ public class OpenSPCoop2Properties {
 			// JminixConsole
 			this.getPortJminixConsole();
 			
+			// Custom Contexts
+			this.getCustomContexts();
+			
+			// Custom Container
+			if ( this.getRealContainerCustom() != null ){
+				String tipo = this.getRealContainerCustom();
+				// Check tipi registrati
+				String tipoClass = className.getRealmContainerCustom(tipo);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipo+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					IAutorizzazioneSecurityContainer test = (IAutorizzazioneSecurityContainer) loaderOpenSPCoop.newInstance(tipoClass);
+					test.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipoClass+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				} 
+			}
+			
 			// NotifierInputStreamCallback
 			String notifierClass = null;
 			try{
@@ -1637,6 +1666,11 @@ public class OpenSPCoop2Properties {
 				} 
 			}
 			
+			// ValidazioneContenutiApplicativi
+			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione();
+			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione();
+			this.isValidazioneContenutiApplicativi_checkSoapAction();
+			
 			// Trasporto REST / SOAP
 			
 			this.getSOAPServicesUrlParametersForwardConfig();
@@ -1648,7 +1682,7 @@ public class OpenSPCoop2Properties {
 			this.getRESTServicesHeadersForwardConfig(false);
 			this.isRESTServices_inoltroBuste_proxyPassReverse();
 			this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
-			
+						
 			return true;
 
 		}catch(java.lang.Exception e) {
@@ -10628,6 +10662,127 @@ public class OpenSPCoop2Properties {
 	
 	
 
+	/* ------------- Custom Function ---------------------*/
+	
+	private static FunctionContextsCustom customContexts = null;
+	public FunctionContextsCustom getCustomContexts() throws UtilsException {	
+		if(OpenSPCoop2Properties.customContexts==null){
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.function.custom.");
+				if(p!=null && p.size()>0) {
+					Enumeration<Object> en = p.keys();
+					while (en.hasMoreElements()) {
+						Object object = (Object) en.nextElement();
+						if(object instanceof String) {
+							String s = (String) object;
+							if(s.endsWith(".context")) {
+								String alias = s.substring(0,s.indexOf(".context"));
+								
+								String context = p.getProperty(s);
+								if(context==null || "".equals(context.trim())) {
+									throw new Exception("Context not defined for alias '"+alias+"'");
+								}
+								context = context.trim();
+								
+								String service = p.getProperty(alias+".service");
+								if(service!=null && !"".equals(service.trim())) {
+									IDService idService = IDService.toEnumConstant(service);
+									if(idService==null) {
+										throw new Exception("Value '"+service+"' unsupported for service in alias '"+alias+"'");
+									}
+									FunctionContextCustom custom = new FunctionContextCustom(context, idService);
+									if(OpenSPCoop2Properties.customContexts==null) {
+										OpenSPCoop2Properties.customContexts = new FunctionContextsCustom();
+									}
+									OpenSPCoop2Properties.customContexts.getContexts().add(custom);
+									this.log.info("Registrato context '"+context+"' per service '"+idService+"'");
+								}
+								else {
+									Properties pSubContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.function.custom."+alias+".subcontext.");
+									if(pSubContext==null || pSubContext.size()<=0) {
+										throw new Exception("Service and SubContext undefined for alias '"+alias+"'");
+									}
+									HashMap<String,IDService> subcontextMap = new HashMap<String,IDService>();
+									Enumeration<Object> enSubContext = pSubContext.keys();
+									while (enSubContext.hasMoreElements()) {
+										Object objectSubContext = (Object) enSubContext.nextElement();
+										if(objectSubContext instanceof String) {
+											String subContextKey = (String) objectSubContext;
+											if(subContextKey.endsWith(".url")) {
+												String aliasSubContext = subContextKey.substring(0,subContextKey.indexOf(".url"));
+												
+												String subContext = pSubContext.getProperty(subContextKey);
+												if(subContext==null || "".equals(subContext.trim())) {
+													throw new Exception("Url not defined for alias '"+alias+"', subcontext '"+aliasSubContext+"'");
+												}
+												subContext = subContext.trim();
+												
+												String serviceSubContext = pSubContext.getProperty(aliasSubContext+".service");
+												if(serviceSubContext!=null && !"".equals(serviceSubContext.trim())) {
+													IDService idService = IDService.toEnumConstant(serviceSubContext);
+													if(idService==null) {
+														throw new Exception("Value '"+serviceSubContext+"' unsupported for service in alias '"+alias+"', subcontext '"+aliasSubContext+"'");
+													}
+													subcontextMap.put(subContext, idService);	
+												}
+												else {
+													throw new Exception("Service not defined for alias '"+alias+"', subcontext '"+aliasSubContext+"'");
+												}
+											}
+										}
+									}
+									if(subcontextMap.size()<=0) {
+										throw new Exception("SubContext undefined (wrong configuration) for alias '"+alias+"'");
+									}
+									FunctionContextCustom custom = new FunctionContextCustom(context, subcontextMap);
+									if(OpenSPCoop2Properties.customContexts==null) {
+										OpenSPCoop2Properties.customContexts = new FunctionContextsCustom();
+									}
+									OpenSPCoop2Properties.customContexts.getContexts().add(custom);
+									Iterator<String> itS = subcontextMap.keySet().iterator();
+									while (itS.hasNext()) {
+										String subContext = (String) itS.next();
+										this.log.info("Registrato context '"+context+"', subcontext '"+subContext+"',  per service '"+subcontextMap.get(subContext)+"'");		
+									}
+								}
+								
+							}
+						}
+					}
+				}
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei custom contexts: "+e.getMessage());
+				throw new UtilsException("Riscontrato errore durante la lettura dei custom contexts: "+e.getMessage(),e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.customContexts;
+	}
+	
+	
+	
+	
+	/* ------------- Custom Container ---------------------*/
+	
+	private static Boolean realContainerCustomRead = null;
+	private static String realContainerCustom = null;
+	public String getRealContainerCustom() {	
+		if(OpenSPCoop2Properties.realContainerCustomRead==null){
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.realmContainer.custom");
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.realContainerCustom = v;
+				} 
+			} catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.realmContainer.custom' non impostata correttamente,  errore:"+e.getMessage());
+			} 
+		}
+		OpenSPCoop2Properties.realContainerCustomRead = true;
+		return OpenSPCoop2Properties.realContainerCustom;
+	}
 	
 	
 
@@ -10770,6 +10925,31 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione;
 	}
+	
+	private static Boolean isValidazioneContenutiApplicativi_checkSoapAction = null;
+	public boolean isValidazioneContenutiApplicativi_checkSoapAction(){
+
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction;
+	}
+
 	
 	
 	
@@ -11712,5 +11892,6 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse;
 	}
+
 }
 

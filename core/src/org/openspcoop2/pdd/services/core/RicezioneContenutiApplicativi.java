@@ -80,6 +80,8 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.pd.EsitoAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
+import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata;
@@ -347,9 +349,30 @@ public class RicezioneContenutiApplicativi {
 		// Informazioni connettore ingresso
 		InfoConnettoreIngresso connettore = new InfoConnettoreIngresso();
 		connettore.setCredenziali(this.msgContext.getCredenziali());
-		if(this.msgContext.getUrlProtocolContext()!=null){
-			connettore.setUrlProtocolContext(this.msgContext.getUrlProtocolContext());
+		if(this.msgContext.getUrlProtocolContext()!=null && 
+				this.msgContext.getUrlProtocolContext().getHttpServletRequest()!=null){
+			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance(); // Puo' non essere inizializzato
+			if(properties!=null){
+				String tipo = properties.getRealContainerCustom();
+				if(tipo!=null) {
+					try {
+						ClassNameProperties className = ClassNameProperties.getInstance();
+						Loader loader = Loader.getInstance();
+						// Check tipi registrati
+						String tipoClass = className.getRealmContainerCustom(tipo);
+						IAutorizzazioneSecurityContainer authEngine = (IAutorizzazioneSecurityContainer) loader.newInstance(tipoClass);
+						authEngine.init(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), 
+								this.msgContext.getPddContext(), protocolFactory);
+						AutorizzazioneHttpServletRequest httpServletRequestAuth = new AutorizzazioneHttpServletRequest(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), authEngine);
+						this.msgContext.getUrlProtocolContext().updateHttpServletRequest(httpServletRequestAuth);					
+					}catch(Exception e){
+						setSOAPFault(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, e, "AutorizzazioneSecurityContainerInstance");
+						return;
+					}
+				}
+			}
 		}
+		connettore.setUrlProtocolContext(this.msgContext.getUrlProtocolContext());
 		if(ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())){
 			try{
 				connettore.setSoapAction(requestMessage.castAsSoap().getSoapAction());
@@ -2270,7 +2293,8 @@ public class RicezioneContenutiApplicativi {
 				if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 					|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
 					msgDiag.mediumDebug("Validazione wsdl della richiesta ...");
-					validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true);
+					validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true,
+							propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
 				}
 				
 				// Validazione XSD

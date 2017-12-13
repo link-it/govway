@@ -564,6 +564,7 @@ public class DriverRegistroServiziDB_LIB {
 		String nome = ruolo.getNome();
 		String descrizione = ruolo.getDescrizione();
 		RuoloTipologia ruoloTipologia = ruolo.getTipologia();
+		String nomeEsterno = ruolo.getNomeEsterno();
 		RuoloContesto ruoloContesto = ruolo.getContestoUtilizzo();
 
 		String superuser = ruolo.getSuperUser();
@@ -586,6 +587,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("descrizione", "?");
 				sqlQueryObject.addInsertField("tipologia", "?");
+				sqlQueryObject.addInsertField("nome_esterno", "?");
 				sqlQueryObject.addInsertField("contesto_utilizzo", "?");
 				sqlQueryObject.addInsertField("superuser", "?");
 				if(ruolo.getOraRegistrazione()!=null)
@@ -598,6 +600,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, nome);
 				updateStmt.setString(index++, descrizione);
 				updateStmt.setString(index++, ruoloTipologia!=null? ruoloTipologia.getValue() : null);
+				updateStmt.setString(index++, nomeEsterno);
 				updateStmt.setString(index++, ruoloContesto!=null? ruoloContesto.getValue() : null);
 				updateStmt.setString(index++, superuser);
 				if(ruolo.getOraRegistrazione()!=null)
@@ -633,7 +636,7 @@ public class DriverRegistroServiziDB_LIB {
 				break;
 
 			case UPDATE:
-				// UPDATE
+				// UPDATE1
 
 				String nomeRuolo = ruolo.getOldIDRuoloForUpdate()!=null ? ruolo.getOldIDRuoloForUpdate().getNome() : null;
 				if(nomeRuolo==null || "".equals(nomeRuolo))
@@ -649,6 +652,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("nome", "?");
 				sqlQueryObject.addUpdateField("descrizione", "?");
 				sqlQueryObject.addUpdateField("tipologia", "?");
+				sqlQueryObject.addUpdateField("nome_esterno", "?");
 				sqlQueryObject.addUpdateField("contesto_utilizzo", "?");
 				sqlQueryObject.addUpdateField("superuser", "?");
 				if(ruolo.getOraRegistrazione()!=null)
@@ -661,6 +665,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, nome);
 				updateStmt.setString(index++, descrizione);
 				updateStmt.setString(index++, ruoloTipologia!=null? ruoloTipologia.getValue() : null);
+				updateStmt.setString(index++, nomeEsterno);
 				updateStmt.setString(index++, ruoloContesto!=null? ruoloContesto.getValue() : null);
 				updateStmt.setString(index++, superuser);
 				if(ruolo.getOraRegistrazione()!=null)

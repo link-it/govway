@@ -446,7 +446,16 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(servizioApplicativoFruitore!=null){
 			msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
 		}
-
+		boolean soggettoVirtuale = false;
+		try{
+			soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale( identitaPdD );
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "isSoggettoVirtuale("+identitaPdD+")");
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
+		}
+		
 		// Aggiornamento Informazioni
 		msgDiag.setIdMessaggioRichiesta(idMessaggioConsegna);
 		if(idMessaggioPreBehaviour!=null){
@@ -639,8 +648,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 		}
 
-		if(idMessaggioPreBehaviour!=null)
+		if(idMessaggioPreBehaviour!=null) {
 			portaDiTipoStateless = false;
+		}
+		else if(soggettoVirtuale) {
+			portaDiTipoStateless = false;
+		}
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.STATELESS, portaDiTipoStateless+"");
 
 
@@ -2034,6 +2047,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
 				else{
+					
 					// Controllo Situazione Anomala ISSUE OP-7
 					if(responseMessage!=null && ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
 						OpenSPCoop2SoapMessage soapMessageResponse = responseMessage.castAsSoap();
@@ -2453,7 +2467,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 											CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 									){
 										msgDiag.mediumDebug("Validazione wsdl della risposta ...");
-										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false);
+										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false,
+												this.propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
 									}
 									
 									// Validazione XSD

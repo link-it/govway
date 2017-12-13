@@ -1234,11 +1234,35 @@ public class Sbustamento extends GenericLib{
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
 				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 				
+				// Soggetto Virtuale
+				boolean soggettoVirtuale = false;
+				try{
+					if(richiestaApplicativa.getDominio()!=null) {
+						soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale( richiestaApplicativa.getDominio() );
+					}
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e, "isSoggettoVirtuale(richiestaApplicativa,oneway)");
+					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
+							idCorrelazioneApplicativa,servizioApplicativoFruitore,e,
+							null);
+					openspcoopstate.releaseResource();
+					esito.setEsitoInvocazione(true); 
+					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"isSoggettoVirtuale(richiestaApplicativa,oneway)");
+					return esito;
+				}
+				
 				// Modalita di trasmissione sincrona/asincrona
-				if(configurazionePdDManager.isModalitaStateless(pa, bustaRichiesta.getProfiloDiCollaborazione())==false){
+				if(!soggettoVirtuale) {
+					if(configurazionePdDManager.isModalitaStateless(pa, bustaRichiesta.getProfiloDiCollaborazione())==false){
+						generazioneMsgOK = true;
+					}else{
+						generazioneMsgOK = false;
+					}
+				}
+				else {
 					generazioneMsgOK = true;
-				}else{
-					generazioneMsgOK = false;
 				}
 
 			}else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	

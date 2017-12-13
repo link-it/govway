@@ -43,6 +43,7 @@ public class RuoloModel extends AbstractModel<Ruolo> {
 		this.NOME = new Field("nome",java.lang.String.class,"ruolo",Ruolo.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"ruolo",Ruolo.class);
 		this.TIPOLOGIA = new Field("tipologia",java.lang.String.class,"ruolo",Ruolo.class);
+		this.NOME_ESTERNO = new Field("nome-esterno",java.lang.String.class,"ruolo",Ruolo.class);
 		this.CONTESTO_UTILIZZO = new Field("contesto-utilizzo",java.lang.String.class,"ruolo",Ruolo.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"ruolo",Ruolo.class);
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"ruolo",Ruolo.class);
@@ -56,6 +57,7 @@ public class RuoloModel extends AbstractModel<Ruolo> {
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"ruolo",Ruolo.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"ruolo",Ruolo.class);
 		this.TIPOLOGIA = new ComplexField(father,"tipologia",java.lang.String.class,"ruolo",Ruolo.class);
+		this.NOME_ESTERNO = new ComplexField(father,"nome-esterno",java.lang.String.class,"ruolo",Ruolo.class);
 		this.CONTESTO_UTILIZZO = new ComplexField(father,"contesto-utilizzo",java.lang.String.class,"ruolo",Ruolo.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"ruolo",Ruolo.class);
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"ruolo",Ruolo.class);
@@ -69,6 +71,8 @@ public class RuoloModel extends AbstractModel<Ruolo> {
 	public IField DESCRIZIONE = null;
 	 
 	public IField TIPOLOGIA = null;
+	 
+	public IField NOME_ESTERNO = null;
 	 
 	public IField CONTESTO_UTILIZZO = null;
 	 

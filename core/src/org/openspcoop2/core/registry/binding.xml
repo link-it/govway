@@ -312,6 +312,7 @@
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="tipologia" field="tipologia" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="nome-esterno" field="nomeEsterno" usage="optional" style="attribute"/>
     <value name="contesto-utilizzo" field="contestoUtilizzo" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>

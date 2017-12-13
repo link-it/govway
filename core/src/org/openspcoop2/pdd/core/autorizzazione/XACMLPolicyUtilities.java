@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
@@ -344,13 +345,23 @@ public class XACMLPolicyUtilities {
 					filtroRicerca.setContesto(RuoloContesto.PORTA_APPLICATIVA);
 				}
 				filtroRicerca.setTipologia(RuoloTipologia.ESTERNO);
-				List<IDRuolo> list = RegistroServiziManager.getInstance(datiInvocazione.getState()).getAllIdRuoli(filtroRicerca, null);
+				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(datiInvocazione.getState());
+				List<IDRuolo> list = registroServiziManager.getAllIdRuoli(filtroRicerca, null);
 				if(list==null || list.size()<=0){
 					throw new DriverRegistroServiziNotFound();
 				}
 				for (IDRuolo idRuolo : list) {
-					if(httpServletRequest.isUserInRole(idRuolo.getNome())){
-						roles.add(idRuolo.getNome());
+					String nomeRuoloDaVerificare = idRuolo.getNome();
+					try {
+						Ruolo ruoloRegistro = registroServiziManager.getRuolo(idRuolo.getNome(), null);
+						if(ruoloRegistro.getNomeEsterno()!=null && !"".equals(ruoloRegistro.getNomeEsterno())) {
+							nomeRuoloDaVerificare = ruoloRegistro.getNomeEsterno();
+						}
+					}catch(Exception e) {
+						throw new Exception("Recupero del ruolo '"+idRuolo.getNome()+"' fallito: "+e.getMessage(),e);
+					}
+					if(httpServletRequest.isUserInRole(nomeRuoloDaVerificare)){
+						roles.add(idRuolo.getNome()); // nella xacml policy comunque inserisco l'identificativo del ruolo nel registro della PdD
 					}
 				}
 			}

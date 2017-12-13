@@ -190,7 +190,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		// Raccolta oggetti da contesto
 		Credenziali credenziali = null;
 		javax.servlet.http.HttpServletRequest req = getHttpServletRequest();
-		URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true);
+		URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true,this.propertiesReader.getCustomContexts());
 		try {
 			credenziali = new Credenziali(urlProtocolContext.getCredential());
 		}catch(Exception e){

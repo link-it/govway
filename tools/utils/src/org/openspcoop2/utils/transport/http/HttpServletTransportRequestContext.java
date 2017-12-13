@@ -43,6 +43,9 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 	public HttpServletRequest getHttpServletRequest() {
 		return this.httpServletRequest;
 	}
+	public void updateHttpServletRequest(HttpServletRequest httpServletRequest) {
+		this.httpServletRequest = httpServletRequest;
+	}
 	
 
 	/**

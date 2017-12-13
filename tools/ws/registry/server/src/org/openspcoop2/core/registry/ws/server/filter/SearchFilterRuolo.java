@@ -30,6 +30,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipologia" type="{http://www.openspcoop2.org/core/registry}RuoloTipologia" minOccurs="0" maxOccurs="1" default="(RuoloTipologia) RuoloTipologia.toEnumConstantFromString("qualsiasi")" />
+ *         &lt;element name="nome-esterno" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="contesto-utilizzo" type="{http://www.openspcoop2.org/core/registry}RuoloContesto" minOccurs="0" maxOccurs="1" default="(RuoloContesto) RuoloContesto.toEnumConstantFromString("qualsiasi")" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -63,6 +64,7 @@ import org.openspcoop2.core.registry.constants.RuoloContesto;
     "nome",
     "descrizione",
     "tipologia",
+    "nomeEsterno",
     "contestoUtilizzo",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -110,6 +112,19 @@ public class SearchFilterRuolo extends org.openspcoop2.utils.beans.BaseBean impl
 	
 	public RuoloTipologia getTipologia(){
 		return this.tipologia;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="nome-esterno",required=false,nillable=false)
+	private String nomeEsterno;
+	
+	public void setNomeEsterno(String nomeEsterno){
+		this.nomeEsterno = nomeEsterno;
+	}
+	
+	public String getNomeEsterno(){
+		return this.nomeEsterno;
 	}
 	
 	

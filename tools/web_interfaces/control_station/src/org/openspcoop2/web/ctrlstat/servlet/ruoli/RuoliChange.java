@@ -98,6 +98,7 @@ public final class RuoliChange extends Action {
 			String nome = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
 			String descrizione = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
 			String tipologia = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
+			String nomeEsterno = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 			String contesto = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
 			
 			RuoliCore ruoliCore = new RuoliCore();
@@ -126,6 +127,7 @@ public final class RuoliChange extends Action {
 				}
 				if (tipologia == null) {
 					tipologia = ruolo.getTipologia().getValue();
+					nomeEsterno = ruolo.getNomeEsterno();
 				}
 				if (contesto == null) {
 					contesto = ruolo.getContestoUtilizzo().getValue();
@@ -136,7 +138,7 @@ public final class RuoliChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
 
 				pd.setDati(dati);
 
@@ -160,7 +162,7 @@ public final class RuoliChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.CHANGE, ruoloId, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
 
 				pd.setDati(dati);
 
@@ -176,6 +178,13 @@ public final class RuoliChange extends Action {
 			ruoloNEW.setNome(nome);
 			ruoloNEW.setDescrizione(descrizione);
 			ruoloNEW.setTipologia(RuoloTipologia.toEnumConstant(tipologia, true));
+			if(ruoloNEW.getTipologia()!=null && (RuoloTipologia.QUALSIASI.equals(ruoloNEW.getTipologia()) || RuoloTipologia.ESTERNO.equals(ruoloNEW.getTipologia()))) {
+				String n = nomeEsterno;
+				if(n!=null) {
+					n = n.trim();
+				}
+				ruoloNEW.setNomeEsterno(n);
+			}
 			ruoloNEW.setContestoUtilizzo(RuoloContesto.toEnumConstant(contesto, true));
 			ruoloNEW.setSuperUser(userLogin);
 			

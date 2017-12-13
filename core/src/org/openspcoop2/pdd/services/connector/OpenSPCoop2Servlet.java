@@ -103,8 +103,9 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			
 			op2Properties = OpenSPCoop2Properties.getInstance();
 			
-			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, op2Properties.isPrintInfoCertificate());
+			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, op2Properties.isPrintInfoCertificate(), op2Properties.getCustomContexts());
 			String function = protocolContext.getFunction();
+			IDService idServiceCustom = protocolContext.getIdServiceCustom();
 			
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocolWebContext());
 			if(pf==null){
@@ -114,25 +115,25 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
 			}
 						
-			if(function.equals(URLProtocolContext.PD_FUNCTION)){
+			if(function.equals(URLProtocolContext.PD_FUNCTION) || (idServiceCustom!=null && IDService.PORTA_DELEGATA.equals(idServiceCustom))){
 				
 				RicezioneContenutiApplicativiConnector r = new RicezioneContenutiApplicativiConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
-			else if(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) ){
+			else if(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || (idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idServiceCustom))){
 				
 				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
-			else if(function.equals(URLProtocolContext.PA_FUNCTION)){
+			else if(function.equals(URLProtocolContext.PA_FUNCTION) || (idServiceCustom!=null && IDService.PORTA_APPLICATIVA.equals(idServiceCustom))){
 				
 				RicezioneBusteConnector r = new RicezioneBusteConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 			}
 			
-			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION)){
+			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION) || (idServiceCustom!=null && IDService.INTEGRATION_MANAGER_SOAP.equals(idServiceCustom))){
 				
 				boolean wsdl = false;
 				if(HttpRequestMethod.GET.equals(method)){

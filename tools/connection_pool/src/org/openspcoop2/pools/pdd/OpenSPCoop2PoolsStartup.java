@@ -276,6 +276,7 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 		if(this.gestoreRisorseSistema!=null)
 			this.gestoreRisorseSistema.deleteRisorseSistema();
 		
+		System.out.println("Undeploy OpenSPCoop2 Pools completed");
 		
 	}
 

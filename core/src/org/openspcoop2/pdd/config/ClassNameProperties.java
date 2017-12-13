@@ -162,6 +162,18 @@ public class ClassNameProperties {
 	}
 		
 	/**
+	 * Ritorna una classe 'IAutorizzazioneSecurityContainer' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getRealmContainerCustom(String nome){
+		return this.getValue("org.openspcoop2.realmContainer.custom.", nome);
+	}
+	public String[] getRealmContainerCustom() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.realmContainer.custom.");
+	}
+	
+	/**
 	 * Ritorna una classe 'IAutenticazionePortaDelegata' se questa e' stata precedentemente registrata
 	 *
 	 * 

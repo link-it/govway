@@ -243,7 +243,7 @@ public class Utilities {
 			InputStream is = null;
 			if(isParam.read(b) == -1) {
 				if(throwExceptionInputStreamEmpty){
-					throw new UtilsException("InputStream is empty");
+					throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
 				}
 				else{
 					return null;

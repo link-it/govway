@@ -86,6 +86,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.RuoliSoggetto;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -2164,7 +2165,8 @@ public class ConfigurazionePdDReader {
 		return false;
 	}
 	
-	protected boolean autorizzazioneRoles(PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
+	protected boolean autorizzazioneRoles(RegistroServiziManager registroServiziManager, 
+			PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		if( (pa == null) || pa.getRuoli()==null || pa.getRuoli().sizeRuoloList()<=0 ){
@@ -2208,7 +2210,18 @@ public class ConfigurazionePdDReader {
 			}
 			
 			if(!trovato && checkRuoloEsterno){
-				if(httpServletRequest.isUserInRole(ruolo.getNome())){
+				String nomeRuoloDaVerificare = ruolo.getNome();
+				try {
+					org.openspcoop2.core.registry.Ruolo ruoloRegistro = registroServiziManager.getRuolo(ruolo.getNome(), null);
+					if( (RuoloTipologia.ESTERNO.equals(ruoloRegistro.getTipologia()) || RuoloTipologia.QUALSIASI.equals(ruoloRegistro.getTipologia())) &&
+							ruoloRegistro.getNomeEsterno()!=null && 
+							!"".equals(ruoloRegistro.getNomeEsterno())) {
+						nomeRuoloDaVerificare = ruoloRegistro.getNomeEsterno();
+					}
+				}catch(Exception e) {
+					throw new DriverConfigurazioneException("Recupero del ruolo '"+ruolo.getNome()+"' fallito: "+e.getMessage(),e);
+				}
+				if(httpServletRequest.isUserInRole(nomeRuoloDaVerificare)){
 					trovato = true;
 				}
 			}
@@ -2358,7 +2371,8 @@ public class ConfigurazionePdDReader {
 
 	}
 	
-	protected boolean autorizzazioneRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+	protected boolean autorizzazioneRoles(RegistroServiziManager registroServiziManager, 
+			PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
 
 		if( (pd == null) || pd.getRuoli()==null || pd.getRuoli().sizeRuoloList()<=0 ){
@@ -2402,7 +2416,18 @@ public class ConfigurazionePdDReader {
 			}
 			
 			if(!trovato && checkRuoloEsterno){
-				if(httpServletRequest.isUserInRole(ruolo.getNome())){
+				String nomeRuoloDaVerificare = ruolo.getNome();
+				try {
+					org.openspcoop2.core.registry.Ruolo ruoloRegistro = registroServiziManager.getRuolo(ruolo.getNome(), null);
+					if( (RuoloTipologia.ESTERNO.equals(ruoloRegistro.getTipologia()) || RuoloTipologia.QUALSIASI.equals(ruoloRegistro.getTipologia())) &&
+							ruoloRegistro.getNomeEsterno()!=null && 
+							!"".equals(ruoloRegistro.getNomeEsterno())) {
+						nomeRuoloDaVerificare = ruoloRegistro.getNomeEsterno();
+					}
+				}catch(Exception e) {
+					throw new DriverConfigurazioneException("Recupero del ruolo '"+ruolo.getNome()+"' fallito: "+e.getMessage(),e);
+				}
+				if(httpServletRequest.isUserInRole(nomeRuoloDaVerificare)){
 					trovato = true;
 				}
 			}

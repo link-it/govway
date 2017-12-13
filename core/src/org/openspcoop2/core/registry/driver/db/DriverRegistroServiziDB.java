@@ -5577,6 +5577,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(tipologia!=null){
 					ruolo.setTipologia(RuoloTipologia.toEnumConstant(tipologia));
 				}
+				ruolo.setNomeEsterno(rs.getString("nome_esterno"));
 				String contesto_utilizzo = rs.getString("contesto_utilizzo");
 				if(contesto_utilizzo!=null){
 					ruolo.setContestoUtilizzo(RuoloContesto.toEnumConstant(contesto_utilizzo));

@@ -1,3 +1,45 @@
+2017-12-12  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-684
+	Aggiunta la possibilità, durante la validazione dei contenuti applicativi tramite WSDL, 
+	di ignorare il valore della SOAPAction.
+	Per disabilitare tale controllo si deve agire sul file openspcoop2.properties tramite la proprietà:
+	- org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check=false 
+
+2017-12-12  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-682
+	E' adesso possibile personalizzare i servizi della PdD per quanto concerne i contesti utilizzati.
+	Oltre ai contesti standard:
+	- /openspcoop2/<protocollo>/PD: servizio porta delegata
+	- /openspcoop2/<protocollo>/PA: servizio porta applicativa
+	- /openspcoop2/<protocollo>/IntegrationManager: servizio IntegrationManager
+	E' adesso possibile personalizzare i contesti attraverso il file openspcoop2.properties.
+	Ad esempio per aggiungere il seguente contesto attivo sul servizio di porta delegata:
+	- /openspcoop2/<protocollo>/altroContesto/PDService
+	è possibile definire nel file di proprietà la seguente configurazione:
+	org.openspcoop2.pdd.function.custom.esempio.context=altroContesto
+	org.openspcoop2.pdd.function.custom.esempio.subcontext.pd.url=PDService
+	org.openspcoop2.pdd.function.custom.esempio.subcontext.pd.service=RicezioneContenutiApplicativiSOAP
+
+2017-12-12  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole]
+	Aggiunta funzionalità OP-680
+	L'autenticazione 'principal' e l'autorizzazione 'basata su ruoli esterni' utilizzano metodi disponibili nelle api HttpServletRequest
+	per recuperare rispettivamente l'identità del chiamante (metodo 'getUserPrincipal()')
+	o verificare che il client autenticato possieda un determinato ruolo (metodo 'isUserInRole(String role)').
+	Tali metodi richiedono, per default, che i servizi siano invocati tramite un autenticazione gestita dal container
+	tramite security-constraint. E' stata aggiunta la possibilità di personalizzare tale comportamento, 
+	in modo che la raccolta dell'identità del client e la verifica sull'appartenenza ad un ruolo 
+	sia personalizzabile attraverso l'implementazione di una interfaccia. 
+	Una implementazione personalizzata consente di agganciare un realm esterno 
+	senza dover richiedere la configurazione dell'application server.
+	Infine per i ruoli esterni è stata aggiunta la possibilità di definire un identificativo differente da quello registrato sulla porta di dominio. 
+	Questo poichè un identificativo di una fonte esterna potrebbe contenere caratteri non permessi sul registro (es. il carattere spazio ' ').
+
 2017-11-24  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole, PddLoader]

@@ -882,11 +882,11 @@ public class ProtocolFactoryManager {
 	}
 	
 	
-	public Openspcoop2 getProtocolManifest(HttpServletRequest request) throws ProtocolException {
+	public Openspcoop2 getProtocolManifest(HttpServletRequest request, FunctionContextsCustom customContexts) throws ProtocolException {
 		
 		URLProtocolContext urlProtocolContext = null;
 		try {
-			urlProtocolContext = new URLProtocolContext(request, this.log, true);
+			urlProtocolContext = new URLProtocolContext(request, this.log, true, customContexts);
 		} catch (Exception e) {
 			throw new ProtocolException("Impossibile recuperare il nome del contesto dalla request: ServletContext["+request.getContextPath()+"] RequestURI["+request.getRequestURI()+"]",e);
 		}
@@ -923,8 +923,8 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
-	public IProtocolFactory<?> getProtocolFactoryByServletContext(HttpServletRequest request) throws ProtocolException {
-		Openspcoop2 m = this.getProtocolManifest(request);
+	public IProtocolFactory<?> getProtocolFactoryByServletContext(HttpServletRequest request, FunctionContextsCustom customContexts) throws ProtocolException {
+		Openspcoop2 m = this.getProtocolManifest(request,customContexts);
 		if(this.factories.containsKey(m.getProtocol().getName())){
 			return this.factories.get(m.getProtocol().getName());
 		}

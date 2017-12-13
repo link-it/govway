@@ -290,14 +290,15 @@ public class ValidatoreMessaggiApplicativi {
 	 * @param isRichiesta Indicazione sul tipo di messaggio applicativo da gestire
 	 * 
 	 */
-	public void validateWithWsdlLogicoImplementativo(boolean isRichiesta) throws ValidatoreMessaggiApplicativiException {
+	public void validateWithWsdlLogicoImplementativo(boolean isRichiesta, boolean checkSoapAction) throws ValidatoreMessaggiApplicativiException {
 		
 		try{
 			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())==false){
 				throw new Exception("Tipo di validazione non supportata con Service Binding REST");
 			}
 			
-			this.wsdlValidator.wsdlConformanceCheck(isRichiesta, this.message.castAsSoap().getSoapAction(), this.idServizio.getAzione());
+			this.wsdlValidator.wsdlConformanceCheck(isRichiesta, this.message.castAsSoap().getSoapAction(), this.idServizio.getAzione(),
+					checkSoapAction, false);
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());

@@ -46,7 +46,6 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
-import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 /**
@@ -265,7 +264,7 @@ public class ConnectorUtils {
 		String function = null;
 		String parameters = null;
 		try{
-			HttpServletTransportRequestContext protocolContext = new HttpServletTransportRequestContext(req, logCore);
+			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, true, op2Properties.getCustomContexts());
 			String url = protocolContext.getUrlInvocazione_formBased();
 			if(url.endsWith("?wsdl=")){
 				// richiesta di un wsdl

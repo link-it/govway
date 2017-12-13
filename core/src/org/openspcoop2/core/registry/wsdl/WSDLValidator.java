@@ -477,9 +477,9 @@ public class WSDLValidator {
 	public Operation getOpWsdlConformanceCheck() {
 		return this.opWsdlConformanceCheck;
 	}
-	public void wsdlConformanceCheck(boolean isRichiesta,String soapAction,String operationName) throws WSDLValidatorException {
-		this.wsdlConformanceCheck(isRichiesta, soapAction, operationName, true, false);
-	}
+//	public void wsdlConformanceCheck(boolean isRichiesta,String soapAction,String operationName) throws WSDLValidatorException {
+//		this.wsdlConformanceCheck(isRichiesta, soapAction, operationName, true, false);
+//	}
 	public void wsdlConformanceCheck(boolean isRichiesta,String soapAction,String operationName,boolean throwSOAPActionException,boolean logErrorAsDebug) throws WSDLValidatorException {
 				
 		String portType = this.accordoServizioWrapper.getNomePortType();

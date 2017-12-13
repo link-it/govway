@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.engine;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -59,13 +60,19 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	public static final String IntegrationManager_ENGINE_FUNCTION_MessageBox = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_MessageBox;
 	public static final String CheckPdD_FUNCTION = "checkPdD";
 	
+	private IDService idServiceCustom;
+	
+	public IDService getIdServiceCustom() {
+		return this.idServiceCustom;
+	}
+	
 	public URLProtocolContext() throws UtilsException{
 		super();
 	}
-	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug) throws ProtocolException, UtilsException{
-		this(req, logCore, debug, false);
+	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
+		this(req, logCore, debug, false, customContexts);
 	}
-	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug, boolean integrationManagerEngine) throws ProtocolException, UtilsException{
+	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug, boolean integrationManagerEngine, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
 		super(req, logCore, debug);
 				
 		String servletContext = req.getContextPath();
@@ -167,11 +174,20 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 					protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
-					protocollo.equals(URLProtocolContext.CheckPdD_FUNCTION)) {
+					protocollo.equals(URLProtocolContext.CheckPdD_FUNCTION) ||
+					(customContexts!=null && customContexts.isMatch(protocollo, function))) {
 				// ContextProtocol Empty
 				if(logCore!=null)
 					logCore.debug("SERVLET PATH EMPTY");
-				function = protocollo;
+				if((customContexts!=null && customContexts.isMatch(protocollo, function))) {
+					this.idServiceCustom = customContexts.getServiceMatch(protocollo, function);
+					function = customContexts.getFunctionMatch(protocollo, function);
+					if(logCore!=null)
+						logCore.debug("CUSTOM FUNCTION ["+function+"] ["+this.idServiceCustom+"]");
+				}
+				else {
+					function = protocollo;
+				}
 				protocollo = Costanti.CONTEXT_EMPTY;
 				
 				int sizePrefix = (req.getContextPath() + "/" + function + "/").length();
@@ -194,8 +210,20 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				if(req.getRequestURI().length()>sizePrefix){
 					functionParameters = req.getRequestURI().substring(sizePrefix);
 				}
+				
+				if((customContexts!=null && customContexts.isMatch(function, functionParameters))) {
+					this.idServiceCustom = customContexts.getServiceMatch(function, functionParameters);
+					function = customContexts.getFunctionMatch(function, functionParameters);
+					if(logCore!=null)
+						logCore.debug("CUSTOM FUNCTION ["+function+"] ["+this.idServiceCustom+"]");
+					// ricalcolo function parameters
+					sizePrefix = (req.getContextPath() + "/"+ protocollo + "/" + function + "/").length();
+					if(req.getRequestURI().length()>sizePrefix){
+						functionParameters = req.getRequestURI().substring(sizePrefix);
+					}
+				}
 			}
-						
+									
 			if(logCore!=null)
 				logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
 			
@@ -210,6 +238,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				}
 				this.protocolName = pf.getProtocol();
 			}
+
 			this.function = function;
 			this.functionParameters = functionParameters;		
 			

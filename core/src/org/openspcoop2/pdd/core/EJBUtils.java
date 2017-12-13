@@ -1441,12 +1441,22 @@ public class EJBUtils {
 			Behaviour behaviour = null;
 			
 			
+			boolean soggettoVirtuale = false;
+			if(richiestaApplicativa!=null &&
+					richiestaApplicativa.getIDServizio()!=null &&
+							richiestaApplicativa.getIDServizio().getSoggettoErogatore()!=null){	    
+				soggettoVirtuale = this.configurazionePdDReader.isSoggettoVirtuale( richiestaApplicativa.getIDServizio().getSoggettoErogatore() );
+			}
+			
+			
 			/* ----- Indicazione Stateless ----- */
 			boolean stateless = false;
-			if(localForwardRichiestaDelegata!=null){
-				stateless = this.portaDiTipoStateless_esclusoOneWay11;
-			}else{
-				stateless = this.configurazionePdDReader.isModalitaStateless(pa, busta.getProfiloDiCollaborazione());
+			if(!soggettoVirtuale) {
+				if(localForwardRichiestaDelegata!=null){
+					stateless = this.portaDiTipoStateless_esclusoOneWay11;
+				}else{
+					stateless = this.configurazionePdDReader.isModalitaStateless(pa, busta.getProfiloDiCollaborazione());
+				}
 			}
 			
 			if(pa!=null){
@@ -1583,7 +1593,7 @@ public class EJBUtils {
 				}
 			}else{
 				// lettura da invocazione servizio
-				if(this.configurazionePdDReader.isSoggettoVirtuale( soggettoDestinatario )){	    
+				if(soggettoVirtuale){	    
 					SoggettoVirtuale soggettiVirtuali = this.configurazionePdDReader.getServiziApplicativi_SoggettiVirtuali(richiestaApplicativa);
 					if(soggettiVirtuali == null){
 						throw new EJBUtilsConsegnaException("(SoggettoVirtuale) "+this.msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"),

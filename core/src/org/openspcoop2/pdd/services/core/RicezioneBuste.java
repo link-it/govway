@@ -76,6 +76,8 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.pa.EsitoAutenticazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
+import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pa.EsitoAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazioneContenutoPortaApplicativa;
@@ -383,9 +385,30 @@ public class RicezioneBuste {
 		// Informazioni connettore ingresso
 		InfoConnettoreIngresso connettore = new InfoConnettoreIngresso();
 		connettore.setCredenziali(this.msgContext.getCredenziali());
-		if(this.msgContext.getUrlProtocolContext()!=null){
-			connettore.setUrlProtocolContext(this.msgContext.getUrlProtocolContext());
+		if(this.msgContext.getUrlProtocolContext()!=null && 
+				this.msgContext.getUrlProtocolContext().getHttpServletRequest()!=null){
+			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance(); // Puo' non essere inizializzato
+			if(properties!=null){
+				String tipo = properties.getRealContainerCustom();
+				if(tipo!=null) {
+					try {
+						ClassNameProperties className = ClassNameProperties.getInstance();
+						Loader loader = Loader.getInstance();
+						// Check tipi registrati
+						String tipoClass = className.getRealmContainerCustom(tipo);
+						IAutorizzazioneSecurityContainer authEngine = (IAutorizzazioneSecurityContainer) loader.newInstance(tipoClass);
+						authEngine.init(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), 
+								this.msgContext.getPddContext(), protocolFactory);
+						AutorizzazioneHttpServletRequest httpServletRequestAuth = new AutorizzazioneHttpServletRequest(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), authEngine);
+						this.msgContext.getUrlProtocolContext().updateHttpServletRequest(httpServletRequestAuth);					
+					}catch(Exception e){
+						setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, e, "AutorizzazioneSecurityContainerInstance");
+						return;
+					}
+				}
+			}
 		}
+		connettore.setUrlProtocolContext(this.msgContext.getUrlProtocolContext());	
 		if(ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())){
 			try{
 				connettore.setSoapAction(requestMessage.castAsSoap().getSoapAction());
@@ -1111,7 +1134,8 @@ public class RicezioneBuste {
 		
 		// PdD Function: router o normale PdD
 		boolean functionAsRouter = false;
-		msgDiag.mediumDebug("Esamina modalita' di ricezione (PdD/Router)...");
+		boolean soggettoVirtuale = false;
+		msgDiag.mediumDebug("Esamina modalita' di ricezione (PdD/Router/SoggettoVirtuale)...");
 		boolean existsSoggetto = false;
 		try{
 			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null) {
@@ -1344,7 +1368,8 @@ public class RicezioneBuste {
 		boolean generazioneListaTrasmissioni = false;
 		try{
 			InformazioniServizioURLMapping is = new InformazioniServizioURLMapping(requestMessage,protocolFactory,urlProtocolContext,
-					logCore, this.msgContext.getIdModuloAsIDService());
+					logCore, this.msgContext.getIdModuloAsIDService(),
+					propertiesReader.getCustomContexts());
 			logCore.debug("InformazioniServizioTramiteURLMapping: "+is.toString());		
 			
 		
@@ -2807,7 +2832,9 @@ public class RicezioneBuste {
 					asincronoStateless = true;
 				}
 				else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione())){
-					oneWayStateless = configurazionePdDReader.isModalitaStateless(pa,bustaRichiesta.getProfiloDiCollaborazione());
+					if(soggettoVirtuale==false) {
+						oneWayStateless = configurazionePdDReader.isModalitaStateless(pa,bustaRichiesta.getProfiloDiCollaborazione());
+					}
 				}
 				else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())){	
 					sincronoStateless = configurazionePdDReader.isModalitaStateless(pa,bustaRichiesta.getProfiloDiCollaborazione());
@@ -4165,7 +4192,8 @@ public class RicezioneBuste {
 								CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 						){
 							msgDiag.mediumDebug("Validazione wsdl della richiesta ...");
-							validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true);
+							validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true,
+									propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
 						}
 						
 						// Validazione XSD

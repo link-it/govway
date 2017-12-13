@@ -79,6 +79,7 @@ public final class RuoliAdd extends Action {
 			if (tipologia == null) {
 				tipologia = RuoliCostanti.DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA;
 			}
+			String nomeEsterno = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 			String contesto = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
 			if (contesto == null) {
 				contesto = RuoliCostanti.DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_UTILIZZO;
@@ -103,7 +104,7 @@ public final class RuoliAdd extends Action {
 
 
 				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome != null ? nome : "", descrizione != null ? descrizione : "",
-						tipologia,contesto, dati);
+						tipologia, nomeEsterno, contesto, dati);
 
 				pd.setDati(dati);
 
@@ -126,7 +127,7 @@ public final class RuoliAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, contesto, dati);
+				dati = ruoliHelper.addRuoloToDati(TipoOperazione.ADD, null, nome, descrizione, tipologia, nomeEsterno, contesto, dati);
 
 				pd.setDati(dati);
 
@@ -142,6 +143,13 @@ public final class RuoliAdd extends Action {
 			ruolo.setNome(nome);
 			ruolo.setDescrizione(descrizione);
 			ruolo.setTipologia(RuoloTipologia.toEnumConstant(tipologia, true));
+			if(ruolo.getTipologia()!=null && (RuoloTipologia.QUALSIASI.equals(ruolo.getTipologia()) || RuoloTipologia.ESTERNO.equals(ruolo.getTipologia()))) {
+				String n = nomeEsterno;
+				if(n!=null) {
+					n = n.trim();
+				}
+				ruolo.setNomeEsterno(n);
+			}
 			ruolo.setContestoUtilizzo(RuoloContesto.toEnumConstant(contesto, true));
 			ruolo.setSuperUser(userLogin);
 			

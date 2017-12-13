@@ -63,6 +63,7 @@ public class RuoliCostanti {
 	public final static String PARAMETRO_RUOLO_NOME = "ruoloNome";
 	public final static String PARAMETRO_RUOLO_DESCRIZIONE = "ruoloDescrizione";
 	public final static String PARAMETRO_RUOLO_TIPOLOGIA = "ruoloTipologia";
+	public final static String PARAMETRO_RUOLO_NOME_ESTERNO = "ruoloNomeEsterno";
 	public final static String PARAMETRO_RUOLO_CONTESTO = "ruoloContesto";
 	
 	
@@ -71,6 +72,7 @@ public class RuoliCostanti {
 	public final static String LABEL_PARAMETRO_RUOLO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_RUOLO_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = "Fonte";
+	public final static String LABEL_PARAMETRO_RUOLO_NOME_ESTERNO = "Identificativo Esterno";
 	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = "Contesto";
 	
 	
