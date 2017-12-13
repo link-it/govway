@@ -31,8 +31,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  * Interfaccia che definisce un processo di autorizzazione tramite container
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12931 $, $Date: 2017-05-01 14:41:26 +0200 (Mon, 01 May 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public interface IAutorizzazioneSecurityContainer  {

@@ -31,8 +31,8 @@ import org.openspcoop2.utils.resources.WrappedHttpServletRequest;
  * AutorizzazioneHttpServletRequest
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13289 $, $Date: 2017-09-18 11:59:20 +0200 (Mon, 18 Sep 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AutorizzazioneHttpServletRequest extends WrappedHttpServletRequest {
 

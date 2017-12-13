@@ -29,8 +29,8 @@ import org.openspcoop2.protocol.engine.constants.IDService;
  * URL Protocol Context
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12910 $, $Date: 2017-04-24 10:33:28 +0200 (Mon, 24 Apr 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 
