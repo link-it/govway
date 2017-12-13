@@ -120,7 +120,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		RequestInfo requestInfo = null;
 		try{
 			// Request Info
-			URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true);
+			URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true,openSPCoopProperties.getCustomContexts());
 			requestInfo = ConnectorUtils.getRequestInfo(protocolFactory, urlProtocolContext);
 		}catch(Exception e){
 			String msgError = "Lettura RequestInfo non riuscita: "+Utilities.readFirstErrorValidMessageFromException(e);

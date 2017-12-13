@@ -37,7 +37,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 public interface IAutorizzazioneSecurityContainer  {
 
-	public void init(HttpServletRequest req, PdDContext pddContext, IProtocolFactory protocolFactory);
+	public void init(HttpServletRequest req, PdDContext pddContext, IProtocolFactory<?> protocolFactory);
 	
 	public String getUserPrincipal();
 	

@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
+import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
@@ -91,7 +92,12 @@ public class RicezioneBusteDirect extends HttpServlet {
 			PdDContext pddContext = new PdDContext();
 			pddContext.addObject(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY, Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY);
 			httpReqWrapper.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP, pddContext);
-			URLProtocolContext protocolContext = new URLProtocolContext(httpReqWrapper, log, true);
+			FunctionContextsCustom custom = null;
+			try{
+				OpenSPCoop2Properties prop = OpenSPCoop2Properties.getInstance();
+				custom = prop.getCustomContexts();
+			}catch(Exception eRead){}
+			URLProtocolContext protocolContext = new URLProtocolContext(httpReqWrapper, log, true, custom);
 			requestInfo = ConnectorUtils.getRequestInfo(ProtocolFactoryManager.getInstance().getProtocolFactoryByName("spcoop"), protocolContext);
 			//System.out.println("getRequestURI=["+httpReqWrapper.getRequestURI()+"]");
 			//System.out.println("getRequestURL=["+httpReqWrapper.getRequestURL()+"]");
