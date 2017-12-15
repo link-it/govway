@@ -45,7 +45,6 @@ import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.DiagnosticoBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -388,7 +387,7 @@ public class MsgDiagnostico {
 				RequestInfo requestInfo = (RequestInfo) this.pddContext.getObject(Costanti.REQUEST_INFO);
 				this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SOGGETTI, protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString());
 				ServiceBinding serviceBinding = null;
-				if(URLProtocolContext.PA_FUNCTION.equals(requestInfo.getProtocolContext().getFunction())){
+				if(requestInfo.getProtocolContext().isPortaApplicativaService()) {
 					serviceBinding = requestInfo.getProtocolServiceBinding();
 				}
 				else{

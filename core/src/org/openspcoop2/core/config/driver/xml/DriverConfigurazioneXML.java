@@ -901,7 +901,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			}  
 		}  
 
-		throw new DriverConfigurazioneNotFound("Porta Delegata ["+nome+"] non esistente");
+		throw new DriverConfigurazioneNotFound("Porta Applicativa ["+nome+"] non esistente");
 	}
 	
 	@Override

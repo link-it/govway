@@ -77,7 +77,7 @@ public class ConnectorUtils {
 				
 		ServiceBinding serviceBindingDaUtilizzare = integrationServiceBinding;
 		boolean pa = false;
-		if(URLProtocolContext.PA_FUNCTION.equals(protocolContext.getFunction())){
+		if(protocolContext.isPortaApplicativaService()) {
 			serviceBindingDaUtilizzare = protocolServiceBinding;
 			pa = true;
 		}

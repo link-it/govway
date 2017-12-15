@@ -1240,7 +1240,7 @@
             <forward name="porteDelegateExtendedError" path="/jsplib/info.jsp"/>
         </action>
 
-    <!--  Porte Delegate Azione -->
+    	<!--  Porte Delegate Azione -->
     
      	<action path="/porteDelegateAzioneAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateAzioneAdd"
             scope="request" validate="true">
@@ -1260,7 +1260,7 @@
             <forward name="porteDelegateAzioneError" path="/jsplib/info.jsp"/>
         </action>
 
-		<!--  Porte Delegate (Controllo Accessi) -->
+	<!--  Porte Delegate (Controllo Accessi) -->
 
         <action path="/porteDelegateControlloAccessi" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateControlloAccessi"
             scope="request" validate="true">

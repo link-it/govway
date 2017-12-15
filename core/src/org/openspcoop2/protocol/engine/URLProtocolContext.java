@@ -66,6 +66,25 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 		return this.idServiceCustom;
 	}
 	
+	public boolean isPortaApplicativaService() {
+		if(this.idServiceCustom!=null) {
+			return IDService.PORTA_APPLICATIVA.equals(this.idServiceCustom);
+		}
+		else {
+			return URLProtocolContext.PA_FUNCTION.equals(this.function);
+		}
+	}
+	public boolean isPortaDelegataService() {
+		if(this.idServiceCustom!=null) {
+			return IDService.PORTA_DELEGATA.equals(this.idServiceCustom) || 
+					IDService.PORTA_DELEGATA_INTEGRATION_MANAGER.equals(this.idServiceCustom) || 
+					IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(this.idServiceCustom);
+		}
+		else {
+			return URLProtocolContext.PD_FUNCTION.equals(this.function);
+		}
+	}
+	
 	public URLProtocolContext() throws UtilsException{
 		super();
 	}
@@ -165,9 +184,9 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 					if(functionParameters.length()>IntegrationManager_SERVICE_MessageBox.length()) {
 						functionParameters = functionParameters.substring(IntegrationManager_SERVICE_MessageBox.length());
 					}
-					else {
-						functionParameters = null;
-					}
+//					else {
+//						functionParameters = null;
+//					}
 				}
 			}
 			else if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || 
@@ -194,6 +213,10 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				if(req.getRequestURI().length()>sizePrefix){
 					functionParameters = req.getRequestURI().substring(sizePrefix);
 				}
+				else {
+					// Serve nei casi custom
+					functionParameters = null;
+				}
 			}
 			else{
 				// Calcolo function
@@ -210,6 +233,10 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				if(req.getRequestURI().length()>sizePrefix){
 					functionParameters = req.getRequestURI().substring(sizePrefix);
 				}
+				else {
+					// Serve nei casi custom
+					functionParameters = null;
+				}
 				
 				if((customContexts!=null && customContexts.isMatch(function, functionParameters))) {
 					this.idServiceCustom = customContexts.getServiceMatch(function, functionParameters);
@@ -220,6 +247,10 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 					sizePrefix = (req.getContextPath() + "/"+ protocollo + "/" + function + "/").length();
 					if(req.getRequestURI().length()>sizePrefix){
 						functionParameters = req.getRequestURI().substring(sizePrefix);
+					}
+					else {
+						// Serve nei casi custom
+						functionParameters = null;
 					}
 				}
 			}
