@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.WrappedHttpServletRequest;
+import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
 
 
 /**
