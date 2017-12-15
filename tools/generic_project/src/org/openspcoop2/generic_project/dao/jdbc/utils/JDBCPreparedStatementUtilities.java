@@ -22,6 +22,7 @@ package org.openspcoop2.generic_project.dao.jdbc.utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,13 +55,35 @@ public class JDBCPreparedStatementUtilities {
 	private JDBCSqlLogger sqlLogger;
 	private TipiDatabase tipoDatabase = null;
 	private JDBCParameterUtilities jdbcParameterUtilities = null;
+	private Integer queryTimeout = null;
 	
 	public JDBCPreparedStatementUtilities(TipiDatabase tipoDatabase,Logger log,Connection connection) throws SQLQueryObjectException, JDBCAdapterException{
+		this(tipoDatabase, log, connection, null);
+	}
+	public JDBCPreparedStatementUtilities(TipiDatabase tipoDatabase,Logger log,Connection connection,Integer queryTimeout) throws SQLQueryObjectException, JDBCAdapterException{
 		this.log = log;
 		this.connection = connection;
 		this.sqlLogger = new JDBCSqlLogger(this.log);
 		this.tipoDatabase = tipoDatabase;
 		this.jdbcParameterUtilities = new JDBCParameterUtilities(this.tipoDatabase);
+		this.queryTimeout = queryTimeout;
+	}
+	
+	private PreparedStatement _createPreparedStatement(String sql) throws SQLException {
+		return this._createPreparedStatement(sql, null);
+	}
+	private PreparedStatement _createPreparedStatement(String sql, Integer params) throws SQLException {
+		PreparedStatement p = null;
+		if(params!=null) {
+			p = this.connection.prepareStatement(sql,params);
+		}
+		else {
+			p = this.connection.prepareStatement(sql);
+		}
+		if(this.queryTimeout!=null && this.queryTimeout>0) {
+			p.setQueryTimeout(this.queryTimeout.intValue());
+		}
+		return p;
 	}
 	
 	public long insertAndReturnGeneratedKey(ISQLQueryObject sqlQueryObject,IKeyGeneratorObject object,boolean showSql,JDBCObject ... params) throws KeyGeneratorException{
@@ -98,9 +121,9 @@ public class JDBCPreparedStatementUtilities {
 			
 			// Eseguo Prepared Statement
 			if(keyGenerator.isReturnGeneratedKeySupported()){
-				pstmt = this.connection.prepareStatement(insertString,Statement.RETURN_GENERATED_KEYS);
+				pstmt = _createPreparedStatement(insertString,Statement.RETURN_GENERATED_KEYS);
 			}else{
-				pstmt = this.connection.prepareStatement(insertString);
+				pstmt = _createPreparedStatement(insertString);
 			}
 			this.jdbcParameterUtilities.setParameters(pstmt, paramsWithId);
 			pstmt.executeUpdate();
@@ -127,7 +150,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			return pstmt.execute();
@@ -152,7 +175,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			return pstmt.executeUpdate();
@@ -198,7 +221,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			rs =  pstmt.executeQuery();
@@ -252,7 +275,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			rs =  pstmt.executeQuery();
@@ -300,7 +323,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			rs =  pstmt.executeQuery();
@@ -339,7 +362,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			rs =  pstmt.executeQuery();
@@ -371,7 +394,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			rs =  pstmt.executeQuery();
@@ -403,7 +426,7 @@ public class JDBCPreparedStatementUtilities {
 			if(showSql)
 				this.sqlLogger.infoSql(sql, params);
 			
-			pstmt = this.connection.prepareStatement(sql);
+			pstmt = _createPreparedStatement(sql);
 			this.jdbcParameterUtilities.setParameters(pstmt, params);
 			
 			rs =  pstmt.executeQuery();

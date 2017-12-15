@@ -20,6 +20,7 @@
 package org.openspcoop2.utils.jdbc;
 
 
+import java.io.InputStream;
 import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterException;
@@ -633,12 +635,30 @@ public class JDBCParameterUtilities {
 			}
 		}
 		else if(type.getName().equals(byte[].class.getName())){
-			if(name!=null){
-				return this.jdbcAdapter.getBinaryData(rs, name);
-			}
-			else{
-				return this.jdbcAdapter.getBinaryData(rs, index);
-			}
+//			if(name!=null){
+//				return this.jdbcAdapter.getBinaryData(rs, name);
+//			}
+//			else{
+//				return this.jdbcAdapter.getBinaryData(rs, index);
+//			}
+			// OP-686: si preferisce il metodo getBinaryStream per i motivi descritti nell'Issue
+			InputStream binaryStream = null;
+            if(name!=null){
+            	binaryStream = this.jdbcAdapter.getBinaryStream(rs, name);
+            }
+            else{
+            	binaryStream = this.jdbcAdapter.getBinaryStream(rs, index);
+            }
+            if(binaryStream == null) {
+            	return null;
+            }
+            try {
+            	return Utilities.getAsByteArray(binaryStream);
+            } finally {
+            	if(binaryStream != null) {
+            		try {binaryStream.close();} catch(Exception e) {}
+            	}
+            }
 		}
 		else if(type.getName().equals(URI.class.getName())){
 			String uri = null;

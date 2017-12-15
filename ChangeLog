@@ -1,3 +1,16 @@
+2017-12-15  Andrea Poli <apoli@link.it>
+
+	* [GenericProject, Utils]
+	Risolto Bug OP-686
+	Rilevato malfunzionamento durante la lettura di BLOB (grosse dimensioni) in Oracle 
+	tramite il metodo 'getBytes'; problema che non occorre se si utilizza il metodo 'getBinaryStream'.
+	Il malfunzionamento faceva bloccare casualmente a tempo indeterminato l'invocazione del metodo 'getBytes'. 
+	E' stato riscontrato che l’uso del metodo getBytes per leggere BLOB dava problemi solo 
+	in presenza di un particolare apparato di rete 'problematico'. 
+	Il problema non si presenta con il metodo 'getBinaryStream' anche in presenza del medesimo apparato di rete.
+	Per questo motivo l'utility di openspcoop2 'utilizza dopo questo fix il metodo 'getBinaryStream' invece del precedente metodo 'getBytes'.
+	Inoltre è stata aggiunta la possibilità di impostare un timeout nelle query eseguite tramite PreparedStatement.
+
 2017-12-12  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 2.3.1
