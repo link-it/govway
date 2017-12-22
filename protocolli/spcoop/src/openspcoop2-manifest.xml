@@ -75,7 +75,7 @@
 
     <registry>
 
-        <organization authentication="false" codeIPA="true">
+        <organization authentication="false" codeDomain="true" codeIPA="true">
             <types>
             	<type name="SPC"/>
             	<type name="TEST"/>

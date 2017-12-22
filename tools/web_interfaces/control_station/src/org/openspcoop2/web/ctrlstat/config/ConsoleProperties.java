@@ -943,6 +943,10 @@ public class ConsoleProperties {
 	
 	
 	/* ---------------- Gestione pddConsole locale ----------------------- */
+
+	public Boolean isSinglePdD_GestionePdd() throws UtilsException{
+		return this.readBooleanProperty(true, "singlePdD.pdd.enabled");
+	}
 	
 	public Boolean isSinglePdD_RegistroServiziLocale() throws UtilsException{
 		return this.readBooleanProperty(true, "singlePdD.registroServizi.locale");

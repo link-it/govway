@@ -376,6 +376,12 @@ public class ControlStationCore {
 		return this.msgDiagnostici_showSorgentiDatiDatabase;
 	}
 
+	/** Porte di Dominio */
+	private boolean gestionePddAbilitata = true;
+	public boolean isGestionePddAbilitata() {
+		return this.singlePdD && this.registroServiziLocale && this.gestionePddAbilitata;
+	}
+	
 	/** Registro Servizi */
 	private boolean registroServiziLocale = true;
 	public boolean isRegistroServiziLocale() {
@@ -1264,6 +1270,9 @@ public class ControlStationCore {
 		this.msgDiagnostici_ctxDatasource = core.msgDiagnostici_ctxDatasource;
 		this.driverMSGDiagnostici = core.driverMSGDiagnostici;
 
+		/** Gestione Pdd Abilitata */
+		this.gestionePddAbilitata = core.gestionePddAbilitata;
+		
 		/** Registro Servizi locale/remoto */
 		this.registroServiziLocale = core.registroServiziLocale;
 
@@ -1579,6 +1588,8 @@ public class ControlStationCore {
 			
 			// Gestione pddConsole locale
 			if(this.singlePdD){
+				this.gestionePddAbilitata = consoleProperties.isSinglePdD_GestionePdd();
+				
 				this.registroServiziLocale = consoleProperties.isSinglePdD_RegistroServiziLocale();
 				
 				this.tracce_showConfigurazioneCustomAppender = consoleProperties.isSinglePdD_TracceConfigurazioneCustomAppender();

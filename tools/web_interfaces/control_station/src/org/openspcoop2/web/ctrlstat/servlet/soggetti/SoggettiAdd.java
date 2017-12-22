@@ -83,7 +83,7 @@ public final class SoggettiAdd extends Action {
 
 
 	private String editMode = null;
-	private String nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo;
+	private String nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo,dominio;
 	private boolean isRouter,privato; 
 	private Boolean singlePdD = null;
 	private String tipologia = null;
@@ -140,6 +140,7 @@ public final class SoggettiAdd extends Action {
 			this.pd_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
 			this.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
 			this.isRouter = ServletUtils.isCheckBoxEnabled(is_router);
+			this.dominio = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			this.singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
@@ -173,7 +174,7 @@ public final class SoggettiAdd extends Action {
 			if(this.protocollo == null){
 				this.protocollo = soggettiCore.getProtocolloDefault();
 			}
-
+			
 			if(soggettiCore.isRegistroServiziLocale()){
 				List<PdDControlStation> lista = new ArrayList<PdDControlStation>();
 
@@ -201,8 +202,23 @@ public final class SoggettiAdd extends Action {
 						nomePddGestioneLocale = pddTmp.getNome();
 					}
 				}
+				
+				// Gestione pdd
+				if(soggettiCore.isGestionePddAbilitata()==false) {
+					
+					if(nomePddGestioneLocale==null) {
+						throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
+					}
+					
+					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO.equals(this.dominio)) {
+						this.pdd = nomePddGestioneLocale;
+					}
+					else {
+						this.pdd = null;
+					}
+				}
 			}
-
+			
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo
 			tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(this.protocollo);
 
@@ -237,34 +253,32 @@ public final class SoggettiAdd extends Action {
 				versioniProtocollo.add(this.versioneProtocollo);
 			}
 			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(this.protocollo); 
+			boolean isSupportatoIdentificativoPorta = soggettiCore.isSupportatoIdentificativoPorta(this.protocollo);
 
 			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(this.protocollo);
-			boolean isPddEsterna = false;
-			if(this.pdd!=null && !"".equals(this.pdd)){
-				isPddEsterna = pddCore.isPddEsterna(this.pdd);
-				if(isSupportatoAutenticazioneSoggetti){
+			boolean isPddEsterna = pddCore.isPddEsterna(this.pdd);
+			if(isSupportatoAutenticazioneSoggetti){
+				if(isPddEsterna){
+					
+					if(this.tipologia==null || "".equals(this.tipologia)){
+						this.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
+					}
+					
+					if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
+						this.tipoauthSoggetto = null;
+					}
+				}
+				if (this.tipoauthSoggetto == null) {
 					if(isPddEsterna){
 						
-						if(this.tipologia==null || "".equals(this.tipologia)){
-							this.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
-						}
-						
-						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
-							this.tipoauthSoggetto = null;
-						}
-					}
-					if (this.tipoauthSoggetto == null) {
-						if(isPddEsterna){
-							
-							if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(this.tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(this.tipologia)){
-								this.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
-							}else{
-								this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
-							}						
-						}
-						else{
+						if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(this.tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(this.tipologia)){
+							this.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
+						}else{
 							this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
-						}
+						}						
+					}
+					else{
+						this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
 					}
 				}
 			}
@@ -302,11 +316,12 @@ public final class SoggettiAdd extends Action {
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
+						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,
+						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
 						pddList,nomePddGestioneLocale, this.pdd, 
 						listaTipiProtocollo, this.protocollo ,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
-						isPddEsterna,this.tipologia);
+						isPddEsterna,this.tipologia,this.dominio);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType , this.protocolProperties);
@@ -375,11 +390,12 @@ public final class SoggettiAdd extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
+						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,
+						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
 						pddList,nomePddGestioneLocale, this.pdd,  
 						listaTipiProtocollo, this.protocollo,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
-						isPddEsterna,this.tipologia);
+						isPddEsterna,this.tipologia,this.dominio);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -416,8 +432,18 @@ public final class SoggettiAdd extends Action {
 				soggettoRegistro.setVersioneProtocollo(this.versioneProtocollo);
 				soggettoRegistro.setIdentificativoPorta(this.portadom);
 				soggettoRegistro.setCodiceIpa(this.codiceIpa);
+				
+				if(pddCore.isGestionePddAbilitata()==false){
+					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO.equals(this.dominio)) {
+						this.pdd = nomePddGestioneLocale;
+					}
+					else {
+						this.pdd = null;
+					}
+				}
+				
 				if(soggettiCore.isSinglePdD()){
-					if (this.pdd.equals("-"))
+					if (this.pdd==null || this.pdd.equals("-"))
 						soggettoRegistro.setPortaDominio(null);
 					else
 						soggettoRegistro.setPortaDominio(this.pdd);
@@ -451,7 +477,7 @@ public final class SoggettiAdd extends Action {
 				connettore.setTipo(CostantiDB.CONNETTORE_TIPO_DISABILITATO);
 			}
 
-			if ( soggettiCore.isRegistroServiziLocale() && !this.pdd.equals("-")) {
+			if ( !this.singlePdD && soggettiCore.isRegistroServiziLocale() && !this.pdd.equals("-")) {
 
 				PdDControlStation aPdD = pddCore.getPdDControlStation(this.pdd);
 				int porta = aPdD.getPorta() <= 0 ? 80 : aPdD.getPorta();

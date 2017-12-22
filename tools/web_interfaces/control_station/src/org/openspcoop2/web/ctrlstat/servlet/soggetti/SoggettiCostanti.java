@@ -91,6 +91,7 @@ public class SoggettiCostanti {
 
 	public final static String PARAMETRO_SOGGETTO_ID = "id";
 	public final static String PARAMETRO_SOGGETTO_PROTOCOLLO = "protocollo";
+	public final static String PARAMETRO_SOGGETTO_DOMINIO = "dominio";
 	public final static String PARAMETRO_SOGGETTO_NOME = "nomeprov";
 	public final static String PARAMETRO_SOGGETTO_TIPO = "tipoprov";
 	public final static String PARAMETRO_SOGGETTO_TIPOLOGIA = "tipologia";
@@ -108,6 +109,7 @@ public class SoggettiCostanti {
 	
 	/* LABEL PARAMETRI */
 
+	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO = "Dominio";
 	public final static String LABEL_PARAMETRO_SOGGETTO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_SOGGETTO_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_SOGGETTO_TIPOLOGIA = "Tipologia";
@@ -130,5 +132,10 @@ public class SoggettiCostanti {
 	public final static String SOGGETTO_RUOLO_EROGATORE = "Erogatore";
 	public final static String[] SOGGETTI_RUOLI = { SOGGETTO_RUOLO_EROGATORE, 
 		SOGGETTO_RUOLO_FRUITORE, SOGGETTO_RUOLO_ENTRAMBI };
+	
+	public final static String SOGGETTO_DOMINIO_OPERATIVO = "Interno";
+	public final static String SOGGETTO_DOMINIO_ESTERNO = "Esterno";
+	public final static String[] SOGGETTI_DOMINI = { SOGGETTO_DOMINIO_ESTERNO, 
+			SOGGETTO_DOMINIO_OPERATIVO };
 
 }

@@ -181,6 +181,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportoCodiceIPA();
 	
 	/**
+	 * Ritorna l'indicazione se il dominio del soggetto viene supportato dal protocollo
+	 * 
+	 * @return True se il dominio del soggetto viene supportato dal protocollo
+	 */
+	public boolean isSupportoIdentificativoPortaSoggetto();
+	
+	/**
 	 * Ritorna l'indicazione se la gestione dell'indirizzo di risposta viene supportata dal protocollo
 	 * 
 	 * @return True se la gestione dell'indirizzo di risposta viene supportata dal protocollo

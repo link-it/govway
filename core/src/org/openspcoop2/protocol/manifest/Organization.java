@@ -38,6 +38,7 @@ import java.io.Serializable;
  * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationTypes" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="authentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
+ * 		&lt;attribute name="codeDomain" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="codeIPA" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="replyToAddress" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
@@ -82,6 +83,18 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
     this.authentication = authentication;
   }
 
+  public boolean isCodeDomain() {
+    return this.codeDomain;
+  }
+
+  public boolean getCodeDomain() {
+    return this.codeDomain;
+  }
+
+  public void setCodeDomain(boolean codeDomain) {
+    this.codeDomain = codeDomain;
+  }
+
   public boolean isCodeIPA() {
     return this.codeIPA;
   }
@@ -116,6 +129,10 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="authentication",required=false)
   protected boolean authentication = true;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="codeDomain",required=false)
+  protected boolean codeDomain = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="codeIPA",required=false)

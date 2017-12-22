@@ -92,7 +92,7 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
 public final class SoggettiChange extends Action {
 
 	private String editMode = null;
-	private String id, nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo;
+	private String id, nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo,dominio;
 	private boolean isRouter,privato; 
 
 	// Protocol Properties
@@ -144,6 +144,7 @@ public final class SoggettiChange extends Action {
 			this.pdd = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 			String is_router = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
 			this.isRouter = ServletUtils.isCheckBoxEnabled(is_router);
+			this.dominio = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
 			String is_privato = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
 			this.privato = ServletUtils.isCheckBoxEnabled(is_privato);
 			this.codiceIpa = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
@@ -181,6 +182,13 @@ public final class SoggettiChange extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(soggettiCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(soggettiCore);
 
+			String nomePddGestioneLocale = null;
+			if(pddCore.isGestionePddAbilitata()==false){
+				nomePddGestioneLocale = pddCore.getNomePddOperativa();
+				if(nomePddGestioneLocale==null) {
+					throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
+				}
+			}
 
 			if(soggettiCore.isRegistroServiziLocale()){
 				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
@@ -216,16 +224,14 @@ public final class SoggettiChange extends Action {
 			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(this.protocollo);
 
 			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(this.protocollo); 
+			boolean isSupportatoIdentificativoPorta = soggettiCore.isSupportatoIdentificativoPorta(this.protocollo);
 
 
-			boolean isPddEsterna = false;
-			if(this.pdd!=null && !"".equals(this.pdd)){
-				isPddEsterna = pddCore.isPddEsterna(this.pdd);
-				if(isSupportatoAutenticazioneSoggetti){
-					if(isPddEsterna){
-						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
-							this.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
-						}
+			boolean isPddEsterna = pddCore.isPddEsterna(this.pdd);
+			if(isSupportatoAutenticazioneSoggetti){
+				if(isPddEsterna){
+					if(this.tipoauthSoggetto==null && ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
+						this.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
 					}
 				}
 			}
@@ -335,6 +341,24 @@ public final class SoggettiChange extends Action {
 						this.descr = soggettoRegistry.getDescrizione();
 					if(this.pdd==null)
 						this.pdd = soggettoRegistry.getPortaDominio();
+					if(pddCore.isGestionePddAbilitata()==false){
+						if(this.dominio==null) {
+							if(pddCore.isPddEsterna(this.pdd)) {
+								this.dominio = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO;
+							}
+							else {
+								this.dominio = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO;
+							}
+						}
+						else {
+							if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO.equals(this.dominio)) {
+								this.pdd = nomePddGestioneLocale;
+							}
+							else {
+								this.pdd = null;
+							}
+						}
+					}
 					if(this.versioneProtocollo==null)
 						this.versioneProtocollo = soggettoRegistry.getVersioneProtocollo();
 					if(request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO) == null){
@@ -411,11 +435,12 @@ public final class SoggettiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,null,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
+						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,
+						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
+						pddList,nomePddGestioneLocale,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
-						isPddEsterna,null);
+						isPddEsterna,null,this.dominio);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -546,11 +571,12 @@ public final class SoggettiChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,null,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
+						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,
+						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
+						pddList,nomePddGestioneLocale,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
-						isPddEsterna,null);
+						isPddEsterna,null,this.dominio);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -639,10 +665,19 @@ public final class SoggettiChange extends Action {
 					soggettoRegistry.setCodiceIpa(this.codiceIpa);
 				}
 			}
-
+		
+			if(pddCore.isGestionePddAbilitata()==false){
+				if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO.equals(this.dominio)) {
+					this.pdd = nomePddGestioneLocale;
+				}
+				else {
+					this.pdd = null;
+				}
+			}
+			
 			if(soggettiCore.isRegistroServiziLocale()){
 				if(soggettiCore.isSinglePdD()){
-					if (this.pdd.equals("-"))
+					if (this.pdd==null || this.pdd.equals("-"))
 						soggettoRegistry.setPortaDominio(null);
 					else
 						soggettoRegistry.setPortaDominio(this.pdd);

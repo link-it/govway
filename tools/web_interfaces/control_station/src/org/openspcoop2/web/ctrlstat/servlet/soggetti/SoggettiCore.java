@@ -789,6 +789,18 @@ public class SoggettiCore extends ControlStationCore {
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
+
+	public boolean isSupportatoIdentificativoPorta(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String nomeMetodo = "isSupportatoIdentificativoPorta";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoIdentificativoPortaSoggetto();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
 	
 	public boolean isSupportatoCodiceIPA(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "isSupportatoCodiceIPA";

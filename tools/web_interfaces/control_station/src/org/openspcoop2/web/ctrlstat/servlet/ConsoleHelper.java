@@ -940,7 +940,9 @@ public class ConsoleHelper {
 					if(pu.isServizi()){
 						// Link PdD
 						if(this.core.isRegistroServiziLocale()){
-							totEntries ++;
+							if(this.core.isGestionePddAbilitata()) {
+								totEntries ++;
+							}
 						}
 
 						// Soggetti ed SA
@@ -991,13 +993,15 @@ public class ConsoleHelper {
 					if(pu.isServizi()){
 						//Link PdD
 						if(this.core.isRegistroServiziLocale()){
-							entries[index][0] = PddCostanti.LABEL_PDD_MENU_VISUALE_AGGREGATA;
-							if (singlePdD == false) {
-								entries[index][1] = PddCostanti.SERVLET_NAME_PDD_LIST;
-							}else {
-								entries[index][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
+							if(this.core.isGestionePddAbilitata()) {
+								entries[index][0] = PddCostanti.LABEL_PDD_MENU_VISUALE_AGGREGATA;
+								if (singlePdD == false) {
+									entries[index][1] = PddCostanti.SERVLET_NAME_PDD_LIST;
+								}else {
+									entries[index][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
+								}
+								index++;
 							}
-							index++;
 						}
 
 						// Soggetti 
