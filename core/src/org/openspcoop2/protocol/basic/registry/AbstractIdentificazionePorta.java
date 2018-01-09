@@ -29,6 +29,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
@@ -96,7 +97,7 @@ public abstract class AbstractIdentificazionePorta {
 
 
 
-	protected abstract Object getIDPorta(String porta) throws RegistryNotFound;
+	protected abstract Object getIDPorta(String porta) throws RegistryNotFound, RegistryException;
 	
 
 	/**

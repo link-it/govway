@@ -39,12 +39,10 @@ public class RegistryNotFound extends Exception implements Serializable {
 	 public RegistryNotFound(String message, Throwable cause)
 	{
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 	public RegistryNotFound(Throwable cause)
 	{
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * serialVersionUID

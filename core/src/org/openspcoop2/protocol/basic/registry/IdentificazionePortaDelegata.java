@@ -30,6 +30,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 
 
 	@Override
-	protected Object getIDPorta(String porta) throws RegistryNotFound{
+	protected Object getIDPorta(String porta) throws RegistryNotFound, RegistryException{
 		return this.configIntegrationReader.getIdPortaDelegata(porta, this.protocolFactory);
 	}
 	

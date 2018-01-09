@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Property;
@@ -41,6 +42,9 @@ public class Soggetto  {
 			}
 		}
 
+		if(base.getConnettore() == null || TipiConnettore.DISABILITATO.getNome().equals(base.getConnettore().getTipo())) {
+			throw getException("Connettore non definito",base);
+		}
 		if(base.getConnettore() != null) {
 			for(Property prop: this.base.getConnettore().getPropertyList()) {
 				if(prop.getNome().equals("location")) {
@@ -77,13 +81,13 @@ public class Soggetto  {
 				numeroLegPerSoggetto += pt.getBase().sizeAzioneList();
 				numeroProcessPerSoggetto++;
 			} else {
-				throw new Exception("APC["+apcKey+"] erogato dal soggetto ["+base+"] non trovato");
+				throw new Exception("APC["+apcKey+"] erogato dal soggetto ["+base.getTipo()+"/"+base.getNome()+"] non trovato");
 			}
 		}
 	}
 
 	private Exception getException(String msg, org.openspcoop2.core.registry.Soggetto soggetto) {
-		return new Exception(msg + " per il soggetto nome["+soggetto.getNome()+"] tipo ["+soggetto.getTipo()+"]");
+		return new Exception(msg + " per il soggetto "+soggetto.getTipo()+"/"+soggetto.getNome());
 	}
 
 	public org.openspcoop2.core.registry.Soggetto getBase() {

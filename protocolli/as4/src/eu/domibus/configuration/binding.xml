@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="configuration" class="eu.domibus.configuration.Configuration">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <structure field="mpcs" usage="required" map-as="eu.domibus.configuration.Mpcs"/>
+    <structure field="businessProcesses" usage="required" map-as="eu.domibus.configuration.BusinessProcesses"/>
+    <value name="party" field="party" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="mpcs" class="eu.domibus.configuration.Mpcs">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="mpc" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Mpc"/>
+    </collection>
+  </mapping>
+  <mapping name="mpc" class="eu.domibus.configuration.Mpc">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="retention_downloaded" field="retentionDownloaded" usage="required" style="attribute"/>
+    <value name="retention_undownloaded" field="retentionUndownloaded" usage="required" style="attribute"/>
+    <value name="default" field="_default" usage="required" style="attribute"/>
+    <value name="enabled" field="enabled" usage="required" style="attribute"/>
+    <value name="qualifiedName" field="qualifiedName" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="businessProcesses" class="eu.domibus.configuration.BusinessProcesses">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <structure field="roles" usage="required" map-as="eu.domibus.configuration.Roles"/>
+    <structure field="parties" usage="required" map-as="eu.domibus.configuration.Parties"/>
+    <structure field="meps" usage="required" map-as="eu.domibus.configuration.Meps"/>
+    <structure field="properties" usage="required" map-as="eu.domibus.configuration.Properties"/>
+    <structure field="payloadProfiles" usage="required" map-as="eu.domibus.configuration.PayloadProfiles"/>
+    <structure field="securities" usage="required" map-as="eu.domibus.configuration.Securities"/>
+    <structure field="errorHandlings" usage="required" map-as="eu.domibus.configuration.ErrorHandlings"/>
+    <structure field="agreements" usage="required" map-as="eu.domibus.configuration.Agreements"/>
+    <structure field="services" usage="required" map-as="eu.domibus.configuration.Services"/>
+    <structure field="actions" usage="required" map-as="eu.domibus.configuration.Actions"/>
+    <structure field="as4" usage="required" map-as="eu.domibus.configuration.As4"/>
+    <structure field="legConfigurations" usage="required" map-as="eu.domibus.configuration.LegConfigurations"/>
+    <collection field="process" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Process"/>
+    </collection>
+  </mapping>
+  <mapping name="roles" class="eu.domibus.configuration.Roles">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="role" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Role"/>
+    </collection>
+  </mapping>
+  <mapping name="role" class="eu.domibus.configuration.Role">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="parties" class="eu.domibus.configuration.Parties">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <structure field="partyIdTypes" usage="required" map-as="eu.domibus.configuration.PartyIdTypes"/>
+    <collection field="party" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Party"/>
+    </collection>
+  </mapping>
+  <mapping name="partyIdTypes" class="eu.domibus.configuration.PartyIdTypes">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="partyIdType" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.PartyIdType"/>
+    </collection>
+  </mapping>
+  <mapping name="partyIdType" class="eu.domibus.configuration.PartyIdType">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="party" class="eu.domibus.configuration.Party">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="identifier" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Identifier"/>
+    </collection>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="userName" field="userName" usage="optional" style="attribute"/>
+    <value name="password" field="password" usage="optional" style="attribute"/>
+    <value name="endpoint" field="endpoint" usage="required" style="attribute"/>
+    <value name="allowChunking" field="allowChunking" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="identifier" class="eu.domibus.configuration.Identifier">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="partyId" field="partyId" usage="required" style="attribute"/>
+    <value name="partyIdType" field="partyIdType" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="meps" class="eu.domibus.configuration.Meps">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="mep" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Mep"/>
+    </collection>
+    <collection field="binding" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Binding"/>
+    </collection>
+  </mapping>
+  <mapping name="mep" class="eu.domibus.configuration.Mep">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+    <value name="legs" field="legs" default="1" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="binding" class="eu.domibus.configuration.Binding">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="properties" class="eu.domibus.configuration.Properties">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="property" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Property"/>
+    </collection>
+    <collection field="propertySet" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.PropertySet"/>
+    </collection>
+  </mapping>
+  <mapping name="property" class="eu.domibus.configuration.Property">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="key" field="key" usage="required" style="attribute"/>
+    <value name="datatype" field="datatype" usage="required" style="attribute"/>
+    <value name="required" field="required" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="propertySet" class="eu.domibus.configuration.PropertySet">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="propertyRef" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.PropertyRef"/>
+    </collection>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="propertyRef" class="eu.domibus.configuration.PropertyRef">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="property" field="property" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="payloadProfiles" class="eu.domibus.configuration.PayloadProfiles">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="payload" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Payload"/>
+    </collection>
+    <collection field="payloadProfile" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.PayloadProfile"/>
+    </collection>
+  </mapping>
+  <mapping name="payload" class="eu.domibus.configuration.Payload">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="cid" field="cid" usage="required" style="attribute"/>
+    <value name="mimeType" field="mimeType" usage="optional" style="attribute"/>
+    <value name="inBody" field="inBody" usage="optional" style="attribute"/>
+    <value name="schemaFile" field="schemaFile" usage="optional" style="attribute"/>
+    <value name="maxSize" field="maxSize" usage="optional" style="attribute"/>
+    <value name="required" field="required" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="payloadProfile" class="eu.domibus.configuration.PayloadProfile">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="attachment" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Attachment"/>
+    </collection>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="maxSize" field="maxSize" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="attachment" class="eu.domibus.configuration.Attachment">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="securities" class="eu.domibus.configuration.Securities">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <structure field="security" usage="required" map-as="eu.domibus.configuration.Security"/>
+  </mapping>
+  <mapping name="security" class="eu.domibus.configuration.Security">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="policy" field="policy" usage="required" style="attribute"/>
+    <value name="signatureMethod" field="signatureMethod" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="errorHandlings" class="eu.domibus.configuration.ErrorHandlings">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="errorHandling" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.ErrorHandling"/>
+    </collection>
+  </mapping>
+  <mapping name="errorHandling" class="eu.domibus.configuration.ErrorHandling">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="errorAsResponse" field="errorAsResponse" usage="required" style="attribute"/>
+    <value name="businessErrorNotifyProducer" field="businessErrorNotifyProducer" usage="required" style="attribute"/>
+    <value name="businessErrorNotifyConsumer" field="businessErrorNotifyConsumer" usage="required" style="attribute"/>
+    <value name="deliveryFailureNotifyProducer" field="deliveryFailureNotifyProducer" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="agreements" class="eu.domibus.configuration.Agreements">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="agreement" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Agreement"/>
+    </collection>
+  </mapping>
+  <mapping name="agreement" class="eu.domibus.configuration.Agreement">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+    <value name="type" field="type" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="services" class="eu.domibus.configuration.Services">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="service" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Service"/>
+    </collection>
+  </mapping>
+  <mapping name="service" class="eu.domibus.configuration.Service">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+    <value name="type" field="type" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="actions" class="eu.domibus.configuration.Actions">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="action" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Action"/>
+    </collection>
+  </mapping>
+  <mapping name="action" class="eu.domibus.configuration.Action">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="as4" class="eu.domibus.configuration.As4">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="receptionAwareness" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.ReceptionAwareness"/>
+    </collection>
+    <collection field="reliability" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Reliability"/>
+    </collection>
+  </mapping>
+  <mapping name="receptionAwareness" class="eu.domibus.configuration.ReceptionAwareness">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="retry" field="retry" usage="optional" style="attribute"/>
+    <value name="duplicateDetection" field="duplicateDetection" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="reliability" class="eu.domibus.configuration.Reliability">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="replyPattern" field="replyPattern" usage="required" style="attribute"/>
+    <value name="nonRepudiation" field="nonRepudiation" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="legConfigurations" class="eu.domibus.configuration.LegConfigurations">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="legConfiguration" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.LegConfiguration"/>
+    </collection>
+  </mapping>
+  <mapping name="legConfiguration" class="eu.domibus.configuration.LegConfiguration">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="service" field="service" usage="required" style="attribute"/>
+    <value name="action" field="action" usage="required" style="attribute"/>
+    <value name="security" field="security" usage="required" style="attribute"/>
+    <value name="defaultMpc" field="defaultMpc" usage="required" style="attribute"/>
+    <value name="receptionAwareness" field="receptionAwareness" usage="required" style="attribute"/>
+    <value name="reliability" field="reliability" usage="required" style="attribute"/>
+    <value name="propertySet" field="propertySet" usage="optional" style="attribute"/>
+    <value name="payloadProfile" field="payloadProfile" usage="optional" style="attribute"/>
+    <value name="errorHandling" field="errorHandling" usage="required" style="attribute"/>
+    <value name="compressPayloads" field="compressPayloads" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="process" class="eu.domibus.configuration.Process">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <structure field="initiatorParties" usage="optional" map-as="eu.domibus.configuration.InitiatorParties"/>
+    <structure field="responderParties" usage="optional" map-as="eu.domibus.configuration.ResponderParties"/>
+    <structure field="legs" usage="required" map-as="eu.domibus.configuration.Legs"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="responderRole" field="responderRole" usage="required" style="attribute"/>
+    <value name="agreement" field="agreement" usage="optional" style="attribute"/>
+    <value name="binding" field="binding" usage="required" style="attribute"/>
+    <value name="mep" field="mep" usage="required" style="attribute"/>
+    <value name="initiatorRole" field="initiatorRole" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="initiatorParties" class="eu.domibus.configuration.InitiatorParties">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="initiatorParty" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.InitiatorParty"/>
+    </collection>
+  </mapping>
+  <mapping name="initiatorParty" class="eu.domibus.configuration.InitiatorParty">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="responderParties" class="eu.domibus.configuration.ResponderParties">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="responderParty" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.ResponderParty"/>
+    </collection>
+  </mapping>
+  <mapping name="responderParty" class="eu.domibus.configuration.ResponderParty">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="legs" class="eu.domibus.configuration.Legs">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <collection field="leg" create-type="java.util.ArrayList">
+      <structure map-as="eu.domibus.configuration.Leg"/>
+    </collection>
+  </mapping>
+  <mapping name="leg" class="eu.domibus.configuration.Leg">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+</binding>

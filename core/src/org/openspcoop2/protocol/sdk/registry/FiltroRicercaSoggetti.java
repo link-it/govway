@@ -33,6 +33,7 @@ public class FiltroRicercaSoggetti {
 
 	private String tipo;
 	private String nome;
+	private String nomePdd;
 	private ProtocolProperties protocolProperties;
 
 	public String getTipo() {
@@ -46,6 +47,12 @@ public class FiltroRicercaSoggetti {
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	public String getNomePdd() {
+		return this.nomePdd;
+	}
+	public void setNomePdd(String nomePdd) {
+		this.nomePdd = nomePdd;
 	}
 	public ProtocolProperties getProtocolProperties() {
 		return this.protocolProperties;

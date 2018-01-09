@@ -48,6 +48,9 @@ public class MailcapActivationReader {
 	 public static void initDataContentHandler(Logger log,boolean forceLoadMailcap) throws UtilsException{
 	      try
 	        {
+    		  DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
+    		  List<String> typesRegistrati = dchManager.readMimeTypesRegistrati(true);
+	    	  
 	    	  java.io.InputStream is = MailcapActivationReader.class.getResourceAsStream("/META-INF/mailcap");
 	    	  java.util.Properties prop= new java.util.Properties();
 	    	  prop.load(is);
@@ -71,8 +74,6 @@ public class MailcapActivationReader {
 	    		  
 	    		  MailcapActivationReader.mimeTypes.put(keyMime, value);
 	    		  
-	    		  DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
-	    		  List<String> typesRegistrati = dchManager.readMimeTypesRegistrati();
 	    		  if(typesRegistrati.contains(keyMime)==false){
 	    			  if(forceLoadMailcap){
 	    				 log.info("DataContentHandler per mime-type "+keyMime+" non risulta registrato, caricamento in corso ...");	    		

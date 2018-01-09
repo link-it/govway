@@ -194,15 +194,20 @@ public class ProtocolPropertiesUtils {
 
 			if(property instanceof StringProperty){
 				StringProperty sp = (StringProperty) property;
-				prop.setValue(sp.getValue());
-				if(StringUtils.isNotEmpty(sp.getValue()))
-					add = true;
+				if(StringUtils.isNotEmpty(sp.getValue())) {
+					prop.setValue(sp.getValue());
+				}
+				//if(StringUtils.isNotEmpty(sp.getValue()))
+				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
+				add = true;
 			} else if(property instanceof NumberProperty){
 				NumberProperty np = (NumberProperty) property;
-				prop.setNumberValue(np.getValue());
-				if(np.getValue() != null)
-					add = true;
-
+				if(np.getValue() != null) {
+					prop.setNumberValue(np.getValue());
+				}
+				//if(np.getValue() != null)
+				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
+				add = true;
 			} else if(property instanceof BinaryProperty){
 				BinaryProperty bp = (BinaryProperty) property;
 				if(consoleOperationType.equals(ConsoleOperationType.ADD)){
@@ -227,8 +232,9 @@ public class ProtocolPropertiesUtils {
 			} else if(property instanceof BooleanProperty){
 				BooleanProperty bp = (BooleanProperty) property;
 				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false);
-				if(bp.getValue() != null)
-					add = true;
+				//if(bp.getValue() != null)
+				// aggiungo sempre per cercare proprieta' non valorizzate nelle search
+				add = true;
 			}   
 
 			if(add)

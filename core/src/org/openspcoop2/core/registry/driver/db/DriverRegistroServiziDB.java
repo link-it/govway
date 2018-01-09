@@ -134,10 +134,14 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.jdbc.JDBCAdapterException;
+import org.openspcoop2.utils.jdbc.JDBCParameterUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -20211,9 +20215,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 			for (int i = 0; i < conditions.length; i++) {
 				String aliasTabella = "pp"+i+tabella;
 				sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES, aliasTabella);
+				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addWhereCondition(aliasTabella+".tipo_proprietario=?");
-				sqlQueryObject.addWhereCondition(aliasTabella+"id_proprietario="+tabella+".id");
+				sqlQueryObject.addWhereCondition(aliasTabella+".id_proprietario="+tabella+".id");
 				FiltroRicercaProtocolProperty f = list.get(i);
+				
 				if(f.getName()!=null){
 					if(conditions[i]!=null){
 						conditions[i] = conditions[i] + " AND ";
@@ -20223,6 +20229,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					conditions[i] = conditions[i] + " " + aliasTabella+".name=?";
 				}
+				
 				if(f.getValueAsString()!=null){
 					if(conditions[i]!=null){
 						conditions[i] = conditions[i] + " AND ";
@@ -20232,7 +20239,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					conditions[i] = conditions[i] + " " + aliasTabella+".value_string=?";
 				}
-				if(f.getValueAsLong()!=null){
+				else if(f.getValueAsLong()!=null){
 					if(conditions[i]!=null){
 						conditions[i] = conditions[i] + " AND ";
 					}
@@ -20241,22 +20248,44 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					conditions[i] = conditions[i] + " " + aliasTabella+".value_number=?";
 				}
+				else if(f.getValueAsBoolean()!=null){
+					if(conditions[i]!=null){
+						conditions[i] = conditions[i] + " AND ";
+					}
+					else {
+						conditions[i] = "";
+					}
+					conditions[i] = conditions[i] + " " + aliasTabella+".value_boolean=?";
+				}
+				else {
+					if(conditions[i]!=null){
+						conditions[i] = conditions[i] + " AND ";
+					}
+					else {
+						conditions[i] = "";
+					}
+					conditions[i] = conditions[i] + " " + aliasTabella+".value_string is null";
+					conditions[i] = conditions[i] + " AND ";
+					conditions[i] = conditions[i] + " " + aliasTabella+".value_number is null";
+					conditions[i] = conditions[i] + " AND ";
+					conditions[i] = conditions[i] + " " + aliasTabella+".value_boolean is null";
+				}
 			}
 			sqlQueryObject.addWhereCondition(true, conditions);
 		}
 	}
 	
-	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaFruizioniServizio filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaFruizioniServizio filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(filtroRicerca!=null){
 			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesFruizione(), proprietario);
 		}
 	}
-	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaAzioni filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaAzioni filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(filtroRicerca!=null){
 			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesAzione(), proprietario);
 		}
 	}
-	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaOperations filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaOperations filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(filtroRicerca!=null){
 			if(ProprietariProtocolProperty.PORT_TYPE.equals(proprietario)){
 				this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesPortType(), proprietario);
@@ -20266,36 +20295,48 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 		}
 	}
-	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaPortTypes filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaPortTypes filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(filtroRicerca!=null){
 			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesPortType(), proprietario);
 		}
 	}
-	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaAccordi filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaAccordi filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(filtroRicerca!=null){
 			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesAccordo(), proprietario);
 		}
 	}
-	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicerca filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicerca filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(filtroRicerca!=null){
 			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolProperties(), proprietario);
 		}
 	}
 	
 	private void _setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
-			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+		
+		JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(this.tipoDB));
+		
 		if(list!=null && list.size()>0){
+			this.log.debug("FiltroRicercaProtocolProperty size:"+list.size()+" Proprietario stmt.setString("+proprietario.name()+")");
 			stmt.setString(index++, proprietario.name());
 			for (int i = 0; i < list.size(); i++) {
 				FiltroRicercaProtocolProperty f = list.get(i);
 				if(f.getName()!=null){
+					this.log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");
 					stmt.setString(index++, f.getName());
 				}
+				
 				if(f.getValueAsString()!=null){
-					stmt.setString(index++, f.getValueAsString());
+					this.log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsString stmt.setString("+f.getValueAsString()+")");
+					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsString(), String.class);
 				}
-				if(f.getValueAsLong()!=null){
-					stmt.setLong(index++, f.getValueAsLong());
+				else if(f.getValueAsLong()!=null){
+					this.log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsLong stmt.setLong("+f.getValueAsLong()+")");
+					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsLong(), Long.class);
+				}
+				else if(f.getValueAsBoolean()!=null){
+					this.log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsBoolean stmt.setBoolean("+f.getValueAsBoolean()+")");
+					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsBoolean(), Boolean.class);
 				}
 			}
 		}

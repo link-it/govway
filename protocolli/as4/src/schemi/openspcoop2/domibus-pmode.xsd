@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://ec.europa.eu/cefdigital/code/projects/EDELIVERY/repos/domibus/browse/Domibus-MSH/src/main/resources/schemas/domibus-pmode.xsd -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.domibus.eu/configuration"
+    targetNamespace="http://www.domibus.eu/configuration">
+    
+    <xs:annotation>
+        <xs:appinfo>
+            <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:info version="1.0" project-name="openspcoop2_protocol_as4_domibus_config">
+                    <linkit:authors>
+                        <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                    </linkit:authors>
+                </linkit:info>
+                <linkit:jax-ws xml-annotations="true" ws="false" />
+                <linkit:configuration>
+                    <linkit:field generateId="false" />
+                    <linkit:restriction enableWithOneValue="true" />
+                </linkit:configuration>
+            </linkit:project_generator>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:dao>
+                    <linkit:xml root-element="configuration" generate="true"/>
+                    <linkit:sql>
+                        <linkit:sql-script generate="false"/>
+                        <linkit:sql-mapping single-table-mapping="false"
+                            on-delete-cascade="false" />
+                    </linkit:sql>
+                </linkit:dao>
+            </linkit:generator>
+        </xs:appinfo>
+    </xs:annotation>
+    
+    
+    <xs:element name="configuration">
+        <xs:annotation>
+            <xs:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="true" />
+                </linkit:generator>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="mpcs" />
+                <xs:element ref="businessProcesses" />
+            </xs:sequence>
+            <xs:attribute name="party" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="mpcs" >
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="mpc" type="mpc"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueMpcName">
+            <xs:selector xpath="mpc"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="newUnique1">
+            <xs:selector xpath="mpc"/>
+            <xs:field xpath="@qualifiedName"/>
+        </xs:unique>
+    </xs:element>
+    <xs:complexType name="mpc">
+        <xs:attribute name="name" type="max255-non-empty-string" use="required"/>
+        <xs:attribute name="retention_downloaded" type="xs:integer"
+            use="required"/>
+        <xs:attribute name="retention_undownloaded" type="xs:integer"
+            use="required"/>
+        <xs:attribute name="default" type="xs:boolean" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean" use="required"/>
+        <xs:attribute name="qualifiedName" type="max255-non-empty-string"
+            use="required"/>
+    </xs:complexType>
+    
+    <xs:element name="businessProcesses">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="roles"/>
+                <xs:element ref="parties"/>
+                <xs:element ref="meps"/>
+                <xs:element ref="properties"/>
+                <xs:element ref="payloadProfiles"/>
+                <xs:element ref="securities"/>
+                <xs:element ref="errorHandlings"/>
+                <xs:element ref="agreements"/>
+                <xs:element ref="services"/>
+                <xs:element ref="actions"/>
+                <xs:element ref="as4"/>
+                <xs:element ref="legConfigurations"/>
+                <xs:element maxOccurs="unbounded" ref="process"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="roles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="role"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueRoleName">
+            <xs:selector xpath="role"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+    <xs:element name="role">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="value" use="required"
+                type="max255-non-empty-string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="parties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="partyIdTypes"/>
+                <xs:element maxOccurs="unbounded" ref="party"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="partyIdTypes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="partyIdType"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniquePartyIdType">
+            <xs:selector xpath="partyIdType"/>
+            <xs:field xpath="name"/>
+        </xs:unique>
+        <xs:unique name="uniquePartyIdTypeValue">
+            <xs:selector xpath="partyIdType"/>
+            <xs:field xpath="value"/>
+        </xs:unique>
+    </xs:element>
+    <xs:element name="partyIdType">
+        <xs:complexType>
+            <xs:attribute id="partyIdType" name="name"
+                type="max255-non-empty-string" use="required"/>
+            <xs:attribute name="value" type="xs:anyURI"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="party">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="identifier"/>
+            </xs:sequence>
+            <xs:attribute name="name" use="required"
+                type="xs:string"/>
+            <xs:attribute name="userName" type="max255-non-empty-string"/>
+            <xs:attribute name="password" type="max255-non-empty-string"/>
+            <xs:attribute name="endpoint" type="xs:anyURI"
+                use="required"/>
+            <!-- NOT SUPPORTED YET -->
+            <xs:attribute
+                name="allowChunking"
+                type="xs:string"
+                use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="identifier">
+        <xs:complexType>
+            <xs:attribute name="partyId" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="partyIdType" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="meps">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="mep"/>
+                <xs:element maxOccurs="unbounded" ref="binding"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="mep">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="value" type="xs:anyURI"
+                use="required"/>
+            <xs:attribute default="1" name="legs"
+                type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="binding">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="value" type="xs:anyURI"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="properties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="property"/>
+                <xs:element maxOccurs="unbounded" ref="propertySet"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="property">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="key" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute form="unqualified" name="datatype"
+                use="required" type="max255-non-empty-string"/>
+            <xs:attribute name="required" type="xs:boolean"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="propertySet">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="propertyRef"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="propertyRef">
+        <xs:complexType>
+            <xs:attribute name="property" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="payloadProfiles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="payload"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="payloadProfile"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="payload">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="cid" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="mimeType" type="max255-non-empty-string"/>
+            <xs:attribute name="inBody" type="xs:string"/>
+            <xs:attribute name="schemaFile" form="unqualified"
+                type="xs:anyURI"/>
+            <xs:attribute name="maxSize" type="xs:integer"/>
+            <xs:attribute name="required" type="xs:boolean"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="payloadProfile">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="attachment"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="maxSize" type="xs:integer"
+                use="required"/>
+        </xs:complexType>
+        <xs:unique name="uniqueAttachment">
+            <xs:selector xpath="attachment"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+    <xs:element name="attachment">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="securities">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="security"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="security">
+        <xs:complexType>
+            <xs:attribute name="name"
+                type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="policy"
+                type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute
+                name="signatureMethod"
+                use="required"
+                type="max255-non-empty-string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="errorHandlings">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="errorHandling"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="errorHandling">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="errorAsResponse"
+                type="xs:boolean" use="required"/>
+            <xs:attribute name="businessErrorNotifyProducer"
+                use="required" type="xs:boolean"/>
+            <xs:attribute name="businessErrorNotifyConsumer"
+                use="required" type="xs:boolean"/>
+            <xs:attribute name="deliveryFailureNotifyProducer"
+                use="required" type="xs:boolean"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="agreements">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="agreement"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="agreement">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="value" use="required"
+                type="max255-string"/>
+            <xs:attribute name="type"
+                use="required"
+                type="max255-string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="services">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="service"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="service">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="value" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="type" type="max255-non-empty-string"
+                use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="actions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="action"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="action">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="value" use="required"
+                type="max255-non-empty-string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="as4">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="receptionAwareness"/>
+                <xs:element maxOccurs="unbounded" ref="reliability"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="receptionAwareness">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="retry" type="max255-non-empty-string"/>
+            <xs:attribute name="duplicateDetection"
+                type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reliability">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="replyPattern" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="nonRepudiation" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="legConfigurations">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="legConfiguration"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="legConfiguration">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="service" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="action" use="required"
+                type="max255-non-empty-string"/>
+            <xs:attribute name="security" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="defaultMpc" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="receptionAwareness"
+                type="max255-non-empty-string" use="required"/>
+            <xs:attribute name="reliability" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute name="propertySet" type="max255-non-empty-string"/>
+            <xs:attribute name="payloadProfile" type="max255-non-empty-string"/>
+            <xs:attribute name="errorHandling" type="max255-non-empty-string"
+                use="required"/>
+            <xs:attribute
+                name="compressPayloads"
+                type="xs:string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="process">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="initiatorParties"/>
+                <xs:element minOccurs="0" ref="responderParties"/>
+                <xs:element ref="legs"/>
+            </xs:sequence>
+            <xs:attribute name="name" use="required" type="max255-non-empty-string"/>
+            <xs:attribute name="responderRole" use="required"
+                type="xs:string"/>
+            <xs:attribute name="agreement" type="xs:string"/>
+            <xs:attribute name="binding" type="xs:string" use="required"/>
+            <xs:attribute name="mep" type="xs:string" use="required"/>
+            <xs:attribute name="initiatorRole" use="required"
+                type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="initiatorParties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded"
+                    minOccurs="1" ref="initiatorParty"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="initiatorParty">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="responderParties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded"
+                    minOccurs="1" ref="responderParty"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="responderParty">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="legs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="leg"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="leg">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string"
+                use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:simpleType name="max255-non-empty-string">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="255"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="max255-string">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="0"/>
+            <xs:maxLength value="255"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

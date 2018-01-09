@@ -51,7 +51,9 @@ public class ProtocolPropertiesUtils {
 				fpp.setName(p.getId());
 				if(p instanceof StringProperty){
 					StringProperty sp = (StringProperty) p;
-					fpp.setValueAsString(sp.getValue());
+					if(sp.getValue()!=null && !"".equals(sp.getValue())) {
+						fpp.setValueAsString(sp.getValue());
+					}
 				}
 				else if(p instanceof NumberProperty){
 					NumberProperty np = (NumberProperty) p;

@@ -1,3 +1,16 @@
+2018-01-09  Andrea Poli <apoli@link.it>
+
+	* [Pdd, ProtocolloSPCoop]
+	Risolto Bug OP-689
+	Se si utilizzava la funzionalità di gestione del manifest, in presenza di attachments, si poteva ottenere il seguente errore:
+		"Errore avvenuto durante la consegna HTTP: no object DCH for MIME type text/xml 
+		        javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
+			at message.hdl2.writeTo(OpenSPCoop:479) ..."
+	L'errore avveniva solamente se la PdD era installato su di una istanza 'standalone' basic, non full, dell'application server. 
+	Se invece veniva utilizzata la versione standalone-full l'errore non si presentava però le comunicazioni verso le PdD non OpenSPCoop 
+	(come ad es. Avvocatura) non funzionavano, poichè gli identificativi presenti nell'attributo 'href' del manifest 
+	presentavano erroneamente le parentesi '<' e '>'. Il problema è stato risolto.
+
 2017-12-15  Andrea Poli <apoli@link.it>
 
 	* [GenericProject, Utils]

@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.id.IDPortType;
-import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
 import org.openspcoop2.protocol.as4.pmode.beans.PortType;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.resources.TemplateUtils;
 
 import freemarker.template.Template;
@@ -38,8 +38,8 @@ public class Translator {
 	}
 	
 
-	public void translate(IDriverRegistroServiziGet driver, IProtocolFactory<?> protocolFactory, Writer out) throws Exception {
-		RegistryReader reader = new RegistryReader(driver, protocolFactory);
+	public void translate(IRegistryReader driver, IProtocolFactory<?> protocolFactory, Writer out) throws Exception {
+		PModeRegistryReader reader = new PModeRegistryReader(driver, protocolFactory);
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		

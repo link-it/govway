@@ -53,7 +53,7 @@
 	<path id="classpath_dist" >
 		<fileset dir="${openspcoop2}/core/dist" >
 			<exclude name="openspcoop2_pdd*.jar"/>
-			<exclude name="openspcoop2*protocol_*.jar"/>
+			<!-- Lo utilizzo per i test: <exclude name="openspcoop2*protocol_*.jar"/> -->
 			<include name="*.jar"/>
 		</fileset>
 	</path>	
@@ -116,6 +116,24 @@
 			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>
 		</antcall>
+
+		<!-- eu.domibus.configuration -->
+		<var name="packagesCompiled" value="${packagesCompiled},eu.domibus.configuration" />
+		<var name="packagesCompiled" value="${packagesCompiled},eu.domibus.configuration.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},eu.domibus.configuration.model" />
+		<var name="packagesCompiled" value="${packagesCompiled},eu.domibus.configuration.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},eu.domibus.configuration.utils.serializer" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}/eu/domibus/configuration"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-eu-domibus-configuration"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="eu.domibus.configuration"/>
+			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>
+		</antcall>
 		
 		<!-- org.openspcoop2.protocol.as4 -->
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4" />
@@ -123,7 +141,11 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.config" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.constants" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.properties" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.validator" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.pmode" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.pmode.beans" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.pmode.test" />
 		<antcall target="compile_src_openspcoop2">
 			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}"/>

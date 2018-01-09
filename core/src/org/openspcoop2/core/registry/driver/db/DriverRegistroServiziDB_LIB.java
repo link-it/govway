@@ -5978,9 +5978,10 @@ public class DriverRegistroServiziDB_LIB {
 						}
 					}
 					
-					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
-						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
-					}
+//					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
+//						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
+//					}
+					// Per fare i filtri con is null e' necessario registrarlo!
 					if(contenutiDefiniti>1){
 						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
 								"] (string:"+stringValue+" number:"+numberValue+" binary:"+binaryValue+")");
@@ -6140,9 +6141,10 @@ public class DriverRegistroServiziDB_LIB {
 						}
 					}
 					
-					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
-						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
-					}
+//					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
+//						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
+//					}
+					// Per fare i filtri con is null e' necessario registrarlo!
 					if(contenutiDefiniti>1){
 						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
 								"] (string:"+stringValue+" number:"+numberValue+" binary:"+binaryValue+")");

@@ -263,7 +263,14 @@ public class AS4Properties {
 		
 		return file;
 	}
-
+	
+	
+	
+	
+	
+	
+	/* **** PModeTranslator **** */
+	
 	private static File pModeTranslatorPolicyFolder;
 	public File getPModeTranslatorPolicyFolder() throws ProtocolException {
 		if(AS4Properties.pModeTranslatorPolicyFolder==null){

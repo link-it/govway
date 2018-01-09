@@ -26,6 +26,7 @@ import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.config.AS4ProtocolConfiguration;
 import org.openspcoop2.protocol.as4.config.AS4ProtocolManager;
 import org.openspcoop2.protocol.as4.config.AS4ProtocolVersionManager;
+import org.openspcoop2.protocol.as4.properties.AS4DynamicConfiguration;
 import org.openspcoop2.protocol.as4.validator.AS4ValidazioneSintattica;
 import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
@@ -34,6 +35,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.slf4j.Logger;
 
 
@@ -101,4 +103,10 @@ public class AS4Factory extends BasicFactory<AS4RawContent> {
 	}
 
 	
+	/* ** CONSOLE ** */
+	
+	@Override
+	public IConsoleDynamicConfiguration createDynamicConfigurationConsole() throws ProtocolException{
+		return new AS4DynamicConfiguration(this);
+	}
 }

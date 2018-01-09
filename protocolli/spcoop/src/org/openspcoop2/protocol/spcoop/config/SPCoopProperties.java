@@ -818,6 +818,35 @@ public class SPCoopProperties {
 		return SPCoopProperties.roleAllegatoManifest;
 	}
 
+    /**
+     * Indicazione se i riferimenti presenti all'interno del Manifest 'eGov_IT:Riferimento' nell'attributo 'href'
+     * devono contenere i caratteri '<' e '>' dei Content-ID che riferiscono gli attachments 
+     *   
+     * @return Indicazione se generare i caratteri '<' e '>' dei Content-ID che riferiscono gli attachments 
+     * 
+     */
+	private static Boolean generateManifestAttachmentsIdWithBrackets = null;
+    public boolean isGenerateManifestAttachmentsIdWithBrackets(){
+    	if(SPCoopProperties.generateManifestAttachmentsIdWithBrackets==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.manifestAttachments.id.brackets"); 
+				
+				if (value != null){
+					value = value.trim();
+					SPCoopProperties.generateManifestAttachmentsIdWithBrackets = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.manifestAttachments.id.brackets' non impostata, viene utilizzato il default=false");
+					SPCoopProperties.generateManifestAttachmentsIdWithBrackets = false;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.manifestAttachments.id.brackets' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				SPCoopProperties.generateManifestAttachmentsIdWithBrackets = false;
+			}
+    	}
+    	
+    	return SPCoopProperties.generateManifestAttachmentsIdWithBrackets;
+	}
     
     
     

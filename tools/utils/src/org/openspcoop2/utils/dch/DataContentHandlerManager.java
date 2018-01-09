@@ -27,7 +27,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.CommandInfo;
 import javax.activation.CommandMap;
@@ -93,27 +95,93 @@ public class DataContentHandlerManager {
 	
 	
 	public List<String> readMimeTypesRegistrati() {
+		return readMimeTypesRegistrati(true);
+	}
+	public List<String> readMimeTypesRegistrati(boolean debug) {
 		
 		MailcapCommandMap mcap = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
 		
 		String [] gestiti = mcap.getMimeTypes();
 		List<String> gestitiAsList = new ArrayList<String>();
 		if(gestiti!=null){
-			this.log.info("MimeTypes registrati: ["+gestiti.length+"]");
+			if(debug) {
+				this.log.info("MimeTypes registrati: ["+gestiti.length+"]");
+			}
 			for (int i = 0; i < gestiti.length; i++) {
-				this.log.info("MimeType registrato: ["+gestiti[i]+"]");
+				if(debug) {
+					this.log.info("MimeType registrato: ["+gestiti[i]+"]");
+				}
 				gestitiAsList.add(gestiti[i]);
 				CommandInfo [] cis = mcap.getAllCommands(gestiti[i]);
 				for (int j = 0; j < cis.length; j++) {
-					this.log.info("\t["+j+"] "+cis[j].getCommandName()+" = "+cis[j].getCommandClass());
+					if(debug) {
+						this.log.info("\t["+j+"] "+cis[j].getCommandName()+" = "+cis[j].getCommandClass());
+					}
 				}
 			}
 		}
 		else{
-			this.log.info("Non risultano registrati MimeTypes");
+			if(debug) {
+				this.log.info("Non risultano registrati MimeTypes");
+			}
 		}
 		
 		return gestitiAsList;
+	}
+	
+	public Map<String,String> readMimeTypesContentHandler() {
+		return readMimeTypesContentHandler(true);
+	}
+	public Map<String,String> readMimeTypesContentHandler(boolean debug) {
+		return _readMimeTypesClass(debug, "content-handler");
+	}
+	
+	public Map<String,String> readMimeTypesView() {
+		return readMimeTypesView(true);
+	}
+	public Map<String,String> readMimeTypesView(boolean debug) {
+		return _readMimeTypesClass(debug, "view");
+	}
+	
+	public Map<String,String> readMimeTypesEdit() {
+		return readMimeTypesEdit(true);
+	}
+	public Map<String,String> readMimeTypesEdit(boolean debug) {
+		return _readMimeTypesClass(debug, "edit");
+	}
+	
+	private Map<String,String> _readMimeTypesClass(boolean debug,String commandName) {
+		MailcapCommandMap mcap = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+		
+		String [] gestiti = mcap.getMimeTypes();
+		Map<String,String> map = new HashMap<String,String>();
+		if(gestiti!=null){
+			if(debug) {
+				this.log.info("MimeTypes ("+commandName+") registrati: ["+gestiti.length+"]");
+			}
+			for (int i = 0; i < gestiti.length; i++) {
+				if(debug) {
+					this.log.info("MimeType ("+commandName+") registrato: ["+gestiti[i]+"]");
+				}
+				CommandInfo [] cis = mcap.getAllCommands(gestiti[i]);
+				if(cis!=null && cis.length>0) {
+					for (int j = 0; j < cis.length; j++) {
+						if(debug) {
+							this.log.info("\t["+j+"] "+cis[j].getCommandName()+" = "+cis[j].getCommandClass());
+						}
+						if(commandName.equalsIgnoreCase(cis[j].getCommandName())) {
+							map.put(gestiti[i],cis[j].getCommandClass());
+						}
+					}
+				}
+			}
+		}
+		else{
+			if(debug) {
+				this.log.info("Non risultano registrati MimeTypes ("+commandName+")");
+			}
+		}
+		return map;
 	}
 	
 	public void addMimeTypeIntoMailcap(String commandInfo) throws UtilsException{
@@ -135,7 +203,7 @@ public class DataContentHandlerManager {
 	
 	public void addMimeTypesIntoMailcap(byte[] mailcap) throws IOException, UtilsException{
 		
-		List<String> gestitiAsList = this.readMimeTypesRegistrati();
+		List<String> gestitiAsList = this.readMimeTypesRegistrati(false);
 		
 		BufferedReader br = null;
 		InputStreamReader isr = null;

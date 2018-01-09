@@ -281,7 +281,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_ID = "id";
 	public final static String PARAMETRO_APC_NOME = "nome";
 	public final static String PARAMETRO_APC_TIPO_ACCORDO = "tipoAccordo";
-	public final static String PARAMETRO_APC_PROTOCOLLO = "tipoProt";
+	public final static String PARAMETRO_APC_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	public final static String PARAMETRO_APC_DESCRIZIONE = "descr";
 	public final static String PARAMETRO_APC_TIPO_WSDL = "tipo";
 	public final static String PARAMETRO_APC_WSDL = "wsdl";

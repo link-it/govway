@@ -220,9 +220,11 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 			ProtocolHeaderInfo protocolInfo = new ProtocolHeaderInfo();
 			protocolInfo.setRiferimentoMessaggio(id);
 			msgIM.setProtocolHeaderInfo(protocolInfo);
+			String url = null;
 			try {
+				url = this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol).replace("PD", "IntegrationManager/PD");
 				PDServiceLocator locator = new PDServiceLocator();
-			    locator.setPDEndpointAddress(this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol).replace("PD", "IntegrationManager/PD"));
+			    locator.setPDEndpointAddress(url);
 			    this.log.info("Invocazione url del servizio di IntegrationManager ["+locator.getPDAddress()+"] ...");
 			    PD_PortType port = locator.getPD();
 			    
@@ -244,16 +246,18 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 					this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la ricezione del messaggio (non conforme ad openspcoopPresaInCarico.xsd)");
 					
 			} catch (Exception e) {
-				this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la creazione/esecuzione del client IntegrationManager per l'invocazione della porta delegata: "+e.getMessage());
+				this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la creazione/esecuzione del client IntegrationManager per l'invocazione della porta delegata ("+url+"): "+e.getMessage());
 			}    
 		}else{
 			javax.xml.soap.MimeHeaders mime = msg.getMimeHeaders();
 			mime.addHeader(this.testSuiteProperties.getRiferimentoAsincronoTrasporto(), id);
 			Service service = new Service();
 			
+			String url = null;
 			try {
+				url = this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol)+portaCorrelata;
 				Call call = (Call) service.createCall();
-				call.setTargetEndpointAddress(this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol)+portaCorrelata);
+				call.setTargetEndpointAddress(url);
 				if(username !=null && password!=null){
 					call.setUsername(username);
 					call.setPassword(password);
@@ -268,7 +272,7 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 					this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la ricezione del messaggio (non conforme ad openspcoopPresaInCarico.xsd)");
 	
 			} catch (Exception e) {
-				this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la creazione del client per l'invocazione della porta delegata: "+e.getMessage());
+				this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la creazione del client per l'invocazione della porta delegata ("+url+"): "+e.getMessage());
 			} 
 		}
 		

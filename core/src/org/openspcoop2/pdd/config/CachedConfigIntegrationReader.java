@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
@@ -82,14 +83,14 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password) throws RegistryNotFound{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password);
 			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -103,14 +104,14 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject) throws RegistryNotFound{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject);
 			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -124,25 +125,25 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound{
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiPrincipal(principal);
 			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound{
+	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getServizioApplicativo(idServizioApplicativo);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -152,13 +153,13 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	// PORTA DELEGATA
 	
 	@Override
-	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound{
+	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getIDPortaDelegata(nome,protocolFactory);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	@Override
@@ -172,13 +173,13 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	@Override
-	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound{
+	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
@@ -189,13 +190,13 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	// PORTA APPLICATIVA
 	
 	@Override
-	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound{
+	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getIDPortaApplicativa(nome,protocolFactory);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	@Override
@@ -209,13 +210,13 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	} 
 	@Override
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound{
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{

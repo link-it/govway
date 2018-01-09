@@ -71,6 +71,7 @@ import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
 import org.openspcoop2.protocol.utils.IDSerialGenerator;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.dch.DataContentHandlerManager;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
@@ -778,6 +779,43 @@ public class SPCoopImbustamento {
 
 
 
+	private String normalizeIdRefManifest(String contentId) {
+		StringBuffer bf = new StringBuffer();
+		if(this.spcoopProperties.isGenerateManifestAttachmentsIdWithBrackets()) {
+			if(contentId.startsWith("<")==false) {
+				bf.append("<");
+			}
+			bf.append(contentId);
+			if(contentId.endsWith(">")==false) {
+				bf.append(">");
+			}
+		}
+		else {
+			int start = 0;
+			int end = contentId.length();
+			if(contentId.startsWith("<")) {
+				start = 1;
+			}
+			if(contentId.endsWith(">")) {
+				end = contentId.length()-1;
+			}
+			bf.append(contentId.substring(start,end));
+		}
+		return bf.toString();
+	}
+
+	/**
+	 * Metodo che si occupa di costruire un Manifest per gli Attachments 
+	 * definito nella specifica eGov 
+	 * 'http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/'.
+	 * <p>
+	 * Gli attachments da linkare, all'interno del Manifesto sono prelevati
+	 * dall'oggetto <var>msg</var>.
+	 *
+	 * @param msg Messaggio su cui creare il manifesto
+	 * @param isRichiesta Tipo di Busta
+	 * 
+	 */
 	public OpenSPCoop2Message build_eGovManifest(OpenSPCoop2Message msg,RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{ 
 		try{
@@ -807,7 +845,7 @@ public class SPCoopImbustamento {
 				//Name href = sf.createName("href",Costanti.PREFIX_EGOV,Costanti.NAMESPACE_EGOV); 
 				
 				if(contentID!=null){
-					riferimento.setAttribute("href","cid:"+contentID); // xsd:anyURI
+					riferimento.setAttribute("href","cid:"+normalizeIdRefManifest(contentID)); // xsd:anyURI
 				}
 				else{
 					riferimento.setAttribute("href",contentLocation); // xsd:anyURI
@@ -882,8 +920,29 @@ public class SPCoopImbustamento {
 					InputStreamDataSource isSource = new InputStreamDataSource("ManifestEGov", HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM, body);
 					ap = soapMsg.createAttachmentPart(new DataHandler(isSource));
 				}else{
-					//System.out.println("XML");
-					Source streamSource = new DOMSource(this.xmlUtils.newElement(body));
+					Source streamSource = null;
+					DataContentHandlerManager dchManager = new DataContentHandlerManager(this.log);
+					if(dchManager.readMimeTypesContentHandler().containsKey("text/xml")) {
+						// Se è non registrato un content handler per text/xml
+						// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
+						// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
+						// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
+						//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+						//System.out.println("XML (DOMSource)");
+						streamSource = new DOMSource(this.xmlUtils.newElement(body));
+					}
+					else {
+						// Se è registrato un content handler per text/xml
+						// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
+						// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
+						//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
+						//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
+						//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+						//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
+						//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
+						//System.out.println("XML (StreamSource)");
+						streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(body));
+					}
 					ap = soapMsg.createAttachmentPart();
 					ap.setContent(streamSource, "text/xml");
 				}
@@ -897,7 +956,7 @@ public class SPCoopImbustamento {
 						SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				// Costruzione Riferimento
 				SOAPElement riferimento = descrizioneMessaggio.addChildElement("Riferimento",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
-				riferimento.setAttribute("href","cid:" + ap.getContentId()); // xsd:anyURI
+				riferimento.setAttribute("href","cid:" + normalizeIdRefManifest(ap.getContentId())); // xsd:anyURI
 				//riferimento.setAttribute("href",ap.getContentLocation()); // xsd:anyURI // Test Sbustamento con ContentLocation
 				if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 					riferimento.setAttribute("role",this.spcoopProperties.getRoleRichiestaManifest()); // xsd:string

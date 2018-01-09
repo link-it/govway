@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 import java.util.Vector;
 
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -90,7 +91,7 @@ public class SoggettiCostanti {
 	/* PARAMETRI */
 
 	public final static String PARAMETRO_SOGGETTO_ID = "id";
-	public final static String PARAMETRO_SOGGETTO_PROTOCOLLO = "protocollo";
+	public final static String PARAMETRO_SOGGETTO_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	public final static String PARAMETRO_SOGGETTO_DOMINIO = "dominio";
 	public final static String PARAMETRO_SOGGETTO_NOME = "nomeprov";
 	public final static String PARAMETRO_SOGGETTO_TIPO = "tipoprov";

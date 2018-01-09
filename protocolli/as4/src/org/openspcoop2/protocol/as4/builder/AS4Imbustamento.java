@@ -257,7 +257,7 @@ public class AS4Imbustamento {
 		partyIdFrom.setBase(AS4PropertiesUtils.getRequiredStringValue(soggettoMittente.getProtocolPropertyList(), 
 				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE, true));
 		partyIdFrom.setType(AS4PropertiesUtils.getStringValue(soggettoMittente.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE, false));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE, false));
 		from.addPartyId(partyIdFrom);
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 			from.setRole(AS4Costanti.AS4_USER_MESSAGE_FROM_ROLE_INITIATOR);
@@ -274,7 +274,7 @@ public class AS4Imbustamento {
 		partyIdTo.setBase(AS4PropertiesUtils.getRequiredStringValue(soggettoDestinatario.getProtocolPropertyList(), 
 				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE, true));
 		partyIdTo.setType(AS4PropertiesUtils.getStringValue(soggettoDestinatario.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE, false));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE, false));
 		destinatario.addPartyId(partyIdTo);
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 			destinatario.setRole(AS4Costanti.AS4_USER_MESSAGE_FROM_ROLE_RESPONDER);

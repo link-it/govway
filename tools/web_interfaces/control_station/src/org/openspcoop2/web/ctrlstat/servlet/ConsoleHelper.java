@@ -687,6 +687,13 @@ public class ConsoleHelper {
 
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			String propertyId, BinaryParameter contenutoDocumentoParameter) throws Exception {
+		
+		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+		String postBackElementName = this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
+		boolean primoAccessoAdd = (ConsoleOperationType.ADD.equals(consoleOperationType) && 
+				(editMode==null || 
+				CostantiControlStation.PARAMETRO_PROTOCOLLO.equals(postBackElementName)) );
+		
 		ProtocolProperties properties = new ProtocolProperties();
 
 		List<BaseConsoleItem> consoleItems = consoleConfiguration.getConsoleItem();
@@ -710,19 +717,28 @@ public class ConsoleHelper {
 					case NUMBER:
 						String lvS = this.getParameter(item.getId());
 						Long longValue = StringUtils.isNotEmpty(lvS) ? Long.parseLong(lvS) : null;
-						NumberProperty numberProperty = ProtocolPropertiesFactory.newProperty(item.getId(), longValue); 
+						NumberProperty numberProperty = ProtocolPropertiesFactory.newProperty(item.getId(), longValue);
+						if(primoAccessoAdd) {
+							numberProperty.setValue(((NumberConsoleItem) item).getDefaultValue());
+						}
 						properties.addProperty(numberProperty); 
 						break;
 					case BOOLEAN:
 						String bvS = this.getParameter(item.getId());
 						Boolean booleanValue = ServletUtils.isCheckBoxEnabled(bvS);
-						BooleanProperty booleanProperty = ProtocolPropertiesFactory.newProperty(item.getId(), booleanValue ? booleanValue : null); 
+						BooleanProperty booleanProperty = ProtocolPropertiesFactory.newProperty(item.getId(), booleanValue ? booleanValue : null);
+						if(primoAccessoAdd) {
+							booleanProperty.setValue(((BooleanConsoleItem) item).getDefaultValue());
+						}
 						properties.addProperty(booleanProperty); 
 						break;
 					case STRING:
 					default:
 						String parameterValue = this.getParameter(item.getId());
 						StringProperty stringProperty = ProtocolPropertiesFactory.newProperty(item.getId(), parameterValue);
+						if(primoAccessoAdd) {
+							stringProperty.setValue(((StringConsoleItem) item).getDefaultValue());
+						}
 						properties.addProperty(stringProperty);
 						break;
 					}

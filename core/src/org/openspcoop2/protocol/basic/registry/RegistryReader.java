@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.utils.ProtocolPropertiesUtils;
 import org.slf4j.Logger;
@@ -98,18 +99,18 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public PortaDominio getPortaDominio(String nome) throws RegistryNotFound{
+	public PortaDominio getPortaDominio(String nome) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverRegistroServiziGET.getPortaDominio(nome);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public List<String> findIdPorteDominio(Boolean operativo) throws RegistryNotFound{
+	public List<String> findIdPorteDominio(Boolean operativo) throws RegistryNotFound,RegistryException{
 		try{
 			FiltroRicerca filtroRicerca = new FiltroRicerca();
 			if(operativo!=null){
@@ -124,7 +125,7 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -163,7 +164,7 @@ public class RegistryReader implements IRegistryReader {
 
 	@Override
 	public IDSoggetto getIdSoggettoByCodiceIPA(String codiceIPA)
-			throws RegistryNotFound {
+			throws RegistryNotFound,RegistryException {
 		try{
 			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
 				Soggetto s = ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getSoggetto(codiceIPA);
@@ -176,12 +177,12 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 
 	@Override
-	public String getCodiceIPA(IDSoggetto idSoggetto) throws RegistryNotFound {
+	public String getCodiceIPA(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException {
 		try{
 			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
 				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getCodiceIPA(idSoggetto);
@@ -192,29 +193,29 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 
 	@Override
-	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound{
+	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException{
 		try{
 			return this.getSoggetto(idSoggetto).getIdentificativoPorta();
 		} catch (RegistryNotFound de) {
 			throw de;
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound {
+	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound,RegistryException {
 		try{
 			return this.driverRegistroServiziGET.getSoggetto(idSoggetto);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -228,13 +229,13 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound{
+	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverRegistroServiziGET.getSoggettoByCredenzialiBasic(username, password);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -248,13 +249,13 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public Soggetto getSoggettoByCredenzialiSsl(String subject) throws RegistryNotFound{
+	public Soggetto getSoggettoByCredenzialiSsl(String subject) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverRegistroServiziGET.getSoggettoByCredenzialiSsl(subject);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -268,18 +269,18 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public Soggetto getSoggettoByCredenzialiPrincipal(String principal) throws RegistryNotFound{
+	public Soggetto getSoggettoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverRegistroServiziGET.getSoggettoByCredenzialiPrincipal(principal);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public List<IDSoggetto> findIdSoggetti(FiltroRicercaSoggetti filtro) throws RegistryNotFound{
+	public List<IDSoggetto> findIdSoggetti(FiltroRicercaSoggetti filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti();
 			if(filtro.getTipo()!=null){
@@ -287,6 +288,9 @@ public class RegistryReader implements IRegistryReader {
 			}
 			if(filtro.getNome()!=null){
 				filtroDriver.setNome(filtro.getNome());
+			}
+			if(filtro.getNomePdd()!=null){
+				filtroDriver.setNomePdd(filtro.getNomePdd());
 			}
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolPropertiesUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
@@ -296,7 +300,7 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -305,19 +309,19 @@ public class RegistryReader implements IRegistryReader {
 	
 	@Override
 	public AccordoServizioParteComune getAccordoServizioParteComune(
-			IDAccordo idAccordo) throws RegistryNotFound {
+			IDAccordo idAccordo) throws RegistryNotFound,RegistryException {
 		try{
 			return this.driverRegistroServiziGET.getAccordoServizioParteComune(idAccordo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 
 	@Override
 	public AccordoServizioParteComune getAccordoServizioParteComune(
-			IDAccordo idAccordo, boolean readAllegati) throws RegistryNotFound {
+			IDAccordo idAccordo, boolean readAllegati) throws RegistryNotFound,RegistryException {
 		try{
 			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
 				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getAccordoServizioParteComune(idAccordo,readAllegati);
@@ -328,12 +332,12 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public List<IDAccordo> findIdAccordiServizioParteComune(FiltroRicercaAccordi filtro) throws RegistryNotFound{
+	public List<IDAccordo> findIdAccordiServizioParteComune(FiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaAccordi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaAccordi();
 			if(filtro.getNome()!=null){
@@ -365,7 +369,7 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -374,7 +378,7 @@ public class RegistryReader implements IRegistryReader {
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE COMUNE
 	
 	@Override
-	public PortType getPortType(IDPortType id) throws RegistryNotFound{
+	public PortType getPortType(IDPortType id) throws RegistryNotFound,RegistryException{
 		try{
 			AccordoServizioParteComune as = this.driverRegistroServiziGET.getAccordoServizioParteComune(id.getIdAccordo());
 			for (PortType pt : as.getPortTypeList()) {
@@ -386,12 +390,12 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound{
+	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes();
 			
@@ -434,12 +438,12 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public Operation getAzionePortType(IDPortTypeAzione id) throws RegistryNotFound{
+	public Operation getAzionePortType(IDPortTypeAzione id) throws RegistryNotFound,RegistryException{
 		PortType portType = this.getPortType(id.getIdPortType());
 		for (Operation opCheck : portType.getAzioneList()) {
 			if(opCheck.getNome().equals(id.getNome())){
@@ -458,7 +462,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDPortTypeAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound{
+	public List<IDPortTypeAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaOperations filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaOperations();
 			
@@ -510,12 +514,12 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public Azione getAzioneAccordo(IDAccordoAzione id) throws RegistryNotFound{
+	public Azione getAzioneAccordo(IDAccordoAzione id) throws RegistryNotFound,RegistryException{
 		AccordoServizioParteComune as = this.getAccordoServizioParteComune(id.getIdAccordo());
 		for (Azione azCheck : as.getAzioneList()) {
 			if(azCheck.getNome().equals(id.getNome())){
@@ -534,7 +538,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDAccordoAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound{
+	public List<IDAccordoAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaAzioni filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaAzioni();
 			
@@ -577,7 +581,7 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	} 
 	
@@ -588,13 +592,13 @@ public class RegistryReader implements IRegistryReader {
 	
 	@Override
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
-			IDServizio idServizio) throws RegistryNotFound {
+			IDServizio idServizio) throws RegistryNotFound,RegistryException {
 		try{
 			return this.driverRegistroServiziGET.getAccordoServizioParteSpecifica(idServizio);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -602,7 +606,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
 			IDServizio idServizio, boolean readAllegati)
-			throws RegistryNotFound {
+			throws RegistryNotFound,RegistryException {
 		try{
 			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
 				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getAccordoServizioParteSpecifica(idServizio,readAllegati);
@@ -613,12 +617,12 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 
 	@Override
-	public List<IDServizio> findIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound{
+	public List<IDServizio> findIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaServizi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaServizi();
 			
@@ -649,7 +653,7 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
@@ -659,7 +663,7 @@ public class RegistryReader implements IRegistryReader {
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE SPECIFICA
 	
 	@Override
-	public List<IDFruizione> findIdFruizioni(FiltroRicercaFruizioniServizio filtro) throws RegistryNotFound{
+	public List<IDFruizione> findIdFruizioni(FiltroRicercaFruizioniServizio filtro) throws RegistryNotFound,RegistryException{
 		
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio();
@@ -704,7 +708,7 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 		
 	} 
@@ -715,20 +719,20 @@ public class RegistryReader implements IRegistryReader {
 	
 	@Override
 	public AccordoCooperazione getAccordoCooperazione(
-			IDAccordoCooperazione idAccordo) throws RegistryNotFound {
+			IDAccordoCooperazione idAccordo) throws RegistryNotFound,RegistryException {
 		try{
 			return this.driverRegistroServiziGET.getAccordoCooperazione(idAccordo);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 
 	@Override
 	public AccordoCooperazione getAccordoCooperazione(
 			IDAccordoCooperazione idAccordo, boolean readAllegati)
-			throws RegistryNotFound {
+			throws RegistryNotFound,RegistryException {
 		try{
 			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
 				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getAccordoCooperazione(idAccordo,readAllegati);
@@ -739,12 +743,12 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 	
 	@Override
-	public List<IDAccordoCooperazione> findIdAccordiCooperazione(FiltroRicercaAccordi filtro) throws RegistryNotFound{
+	public List<IDAccordoCooperazione> findIdAccordiCooperazione(FiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaAccordi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaAccordi();
 			if(filtro.getNome()!=null){
@@ -776,7 +780,7 @@ public class RegistryReader implements IRegistryReader {
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
-			return null;
+			throw new RegistryException(e.getMessage(),e);
 		}
 	}
 

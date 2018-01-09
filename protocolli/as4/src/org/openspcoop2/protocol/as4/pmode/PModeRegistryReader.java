@@ -15,11 +15,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.constants.PddTipologia;
-import org.openspcoop2.core.registry.driver.FiltroRicerca;
-import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
-import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
-import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
@@ -28,6 +23,9 @@ import org.openspcoop2.protocol.as4.pmode.beans.PortType;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
@@ -37,28 +35,28 @@ import org.slf4j.Logger;
  * @version $ Rev: 12563 $, $Date: 08 nov 2017 $
  * 
  */
-public class RegistryReader {
+public class PModeRegistryReader {
 
 
-	private IDriverRegistroServiziGet driver;
+	private IRegistryReader registryReader;
 	private String tipo;
 	private Logger log;
 	
-	public RegistryReader(IDriverRegistroServiziGet driver, IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		this.driver = driver;
+	public PModeRegistryReader(IRegistryReader registryReader, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		this.registryReader = registryReader;
 		this.tipo = protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault();
-		this.log = LoggerWrapperFactory.getLogger(RegistryReader.class);
+		this.log = LoggerWrapperFactory.getLogger(PModeRegistryReader.class);
 	}
 	
 	public List<APC> findAllAPC() throws Exception {
 		
 		List<APC> apcList = new ArrayList<>();
 		FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
-		List<IDAccordo> allIdAccordiServizioParteComune = this.driver.getAllIdAccordiServizioParteComune(filtroRicerca);
+		List<IDAccordo> allIdAccordiServizioParteComune = this.registryReader.findIdAccordiServizioParteComune(filtroRicerca);
 		
 		int index = 1;
 		for(IDAccordo idAccordo: allIdAccordiServizioParteComune) {
-			AccordoServizioParteComune accordoServizioParteComune = this.driver.getAccordoServizioParteComune(idAccordo);
+			AccordoServizioParteComune accordoServizioParteComune = this.registryReader.getAccordoServizioParteComune(idAccordo);
 			
 			apcList.add(new APC(accordoServizioParteComune, index++));
 		}
@@ -100,7 +98,7 @@ public class RegistryReader {
 		FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
 		filtroRicercaSoggetti.setTipo(this.tipo);
 
-		List<IDSoggetto> allIdSoggetti = this.driver.getAllIdSoggetti(filtroRicercaSoggetti);
+		List<IDSoggetto> allIdSoggetti = this.registryReader.findIdSoggetti(filtroRicercaSoggetti);
 		
 		
 		List<Soggetto> soggetti = new ArrayList<>();
@@ -108,7 +106,7 @@ public class RegistryReader {
 		int legId = 1;
 		int processId = 1;
 		for(IDSoggetto idSoggetto: allIdSoggetti) {
-			org.openspcoop2.core.registry.Soggetto soggetto = this.driver.getSoggetto(idSoggetto);
+			org.openspcoop2.core.registry.Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
 			Soggetto soggettoPM = new Soggetto(soggetto, portTypes, legId, processId);
 			soggetti.add(soggettoPM);
 			processId += soggettoPM.getBase().sizeAccordoServizioParteSpecificaList();
@@ -121,22 +119,19 @@ public class RegistryReader {
 
 	public String getNomeSoggettoOperativo() throws Exception {
 		
-		FiltroRicerca filtroRicerca = new FiltroRicerca();
-		filtroRicerca.setTipo(PddTipologia.OPERATIVO.toString());
-
 		try {
-			List<String> allIdPorteDominio = this.driver.getAllIdPorteDominio(filtroRicerca);
+			List<String> allIdPorteDominio = this.registryReader.findIdPorteDominio(true);
 			
 			if(allIdPorteDominio.size() <= 0)
-				throw new Exception("Impossibile trovare una PdD di tipo OPERATIVO");
+				throw new Exception("Impossibile trovare una PdD di tipo 'operativo'");
 			
-			PortaDominio portaDominio = this.driver.getPortaDominio(allIdPorteDominio.get(0));
+			PortaDominio portaDominio = this.registryReader.getPortaDominio(allIdPorteDominio.get(0));
 			
 			FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
 			filtroRicercaSoggetti.setTipo(this.tipo);
 			filtroRicercaSoggetti.setNomePdd(portaDominio.getNome());
 				
-			List<IDSoggetto> allIdSoggetti = this.driver.getAllIdSoggetti(filtroRicercaSoggetti);
+			List<IDSoggetto> allIdSoggetti = this.registryReader.findIdSoggetti(filtroRicercaSoggetti);
 
 			if(allIdSoggetti.size() <= 0)
 				throw new Exception("Impossibile trovare il soggetto relativo alla PdD ["+portaDominio.getNome()+"]");
@@ -150,15 +145,15 @@ public class RegistryReader {
 	public Map<IDPortType, PortType> findAllPortTypes(PayloadProfiles findPayloadProfile) throws Exception {
 		
 		FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
-		filtroRicerca.setTipoSoggettoReferente(this.tipo);
-		List<IDAccordo> allId = this.driver.getAllIdAccordiServizioParteComune(filtroRicerca);
+		filtroRicerca.setSoggetto(new IDSoggetto(this.tipo,null));
+		List<IDAccordo> allId = this.registryReader.findIdAccordiServizioParteComune(filtroRicerca);
 		
 		Map<IDPortType, PortType> map = new HashMap<>();
 
 		int i = 1;
 		int indexAzione = 1;
 		for(IDAccordo idAccordo: allId) {
-			AccordoServizioParteComune apc = this.driver.getAccordoServizioParteComune(idAccordo);
+			AccordoServizioParteComune apc = this.registryReader.getAccordoServizioParteComune(idAccordo);
 			String nomeApc = "Servizio_" + i++;
 			for(org.openspcoop2.core.registry.PortType pt: apc.getPortTypeList()) {
 				IDPortType id = new IDPortType();
