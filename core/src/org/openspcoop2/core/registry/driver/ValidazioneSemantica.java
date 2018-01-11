@@ -53,6 +53,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.BindingStyle;
@@ -462,7 +463,8 @@ public class ValidazioneSemantica {
 										"], referenziato nel "+uriAS+", implementa un accordo di servizio ["+serv.getAccordoServizioParteComune()+"] che e' istanziato per uno specifico servizio ["+serv.getPortType()+"] che non risulta registrato");
 							}
 						}else{
-							if(this.existsAzione_AccordoServizioParteComune(asServizioComposto, asscsc.getAzione())==false){
+							if(this.existsAzione_AccordoServizioParteComune(asServizioComposto, asscsc.getAzione())==false &&
+									this.existsResource_AccordoServizioParteComune(asServizioComposto, asscsc.getAzione())==false){
 								this.errori.add("Il servizio componente ["+asscsc.getTipo()+"/"+asscsc.getNome()+"] erogato dal soggetto ["+asscsc.getTipoSoggetto()+"/"+asscsc.getNomeSoggetto()+
 										"], referenziato nel "+uriAS+", utilizza un'azione ["+asscsc.getAzione()+"] che non risulta definita nell'accordo di servizio ["+serv.getAccordoServizioParteComune()+"] implementato dal servizio componente");
 							}
@@ -525,7 +527,7 @@ public class ValidazioneSemantica {
 			// Se presente attributo 'correlata', deve controllare che esista nell'accordo un altra azione che possieda come nome il valore presente nell'attributo.
 			String correlata = az.getCorrelata();
 			if (correlata != null) {
-				if(this.existsAzione_AccordoServizioParteComune(as, correlata)==false){
+				if(this.existsAzione_AccordoServizioParteComune(as, correlata)==false ){
 					this.errori.add("L'azione ["+correlata+"] correlata all'azione "+az.getNome()+" nel "+uriAS+" non corrisponde a nessuna delle azioni registrate");
 				}
 			}
@@ -1118,7 +1120,8 @@ public class ValidazioneSemantica {
 							// Caso gestito nel seguito di questo metodo
 						}
 					}else{
-						if(this.existsAzione_AccordoServizioParteComune(as, az.getNome())==false){
+						if(this.existsAzione_AccordoServizioParteComune(as, az.getNome())==false &&
+								this.existsResource_AccordoServizioParteComune(as, az.getNome())==false){
 							this.errori.add("Il servizio ["+uriServizio+
 									"], utilizza un'azione ["+az.getNome()+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
 						}
@@ -1846,6 +1849,18 @@ public class ValidazioneSemantica {
 		return null;
 	}
 
+	private boolean existsResource_AccordoServizioParteComune(AccordoServizioParteComune as, String azione) throws DriverRegistroServiziException{
+		return this.getResource_AccordoServizioParteComune(as, azione)!=null;
+	}
+	private Resource getResource_AccordoServizioParteComune(AccordoServizioParteComune as, String azione) throws DriverRegistroServiziException{
+		for(int j=0; j<as.sizeResourceList();j++){
+			Resource r = as.getResource(j);
+			if(r.getNome().equals(azione))
+				return r;
+		}
+		return null;
+	}
+	
 	private boolean existsAzione_AccordoServizioParteComune(AccordoServizioParteComune as, String azione) throws DriverRegistroServiziException{
 		return this.getAzione_AccordoServizioParteComune(as, azione)!=null;
 	}

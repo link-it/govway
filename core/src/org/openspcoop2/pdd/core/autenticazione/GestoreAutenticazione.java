@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.autenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -279,122 +280,134 @@ public class GestoreAutenticazione {
 	
 
     public static EsitoAutenticazionePortaDelegata verificaAutenticazionePortaDelegata(String tipoAutenticazione, DatiInvocazionePortaDelegata datiInvocazione,
- 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
-    	return _verificaAutenticazionePortaDelegata(false, tipoAutenticazione, datiInvocazione, pddContext, protocolFactory);
+ 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
+    	return _verificaAutenticazionePortaDelegata(false, tipoAutenticazione, datiInvocazione, pddContext, protocolFactory, msg);
     }
     public static EsitoAutenticazionePortaDelegata verificaAutenticazioneMessageBox(String tipoAutenticazione, DatiInvocazionePortaDelegata datiInvocazione,
    		  PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
-    	return _verificaAutenticazionePortaDelegata(true, tipoAutenticazione, datiInvocazione, pddContext, protocolFactory);
+    	return _verificaAutenticazionePortaDelegata(true, tipoAutenticazione, datiInvocazione, pddContext, protocolFactory, null);
     }
     private static EsitoAutenticazionePortaDelegata _verificaAutenticazionePortaDelegata(boolean messageBox, String tipoAutenticazione, DatiInvocazionePortaDelegata datiInvocazione,
-   		  PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
+   		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
     	
     	checkDatiPortaDelegata(messageBox,datiInvocazione);
     	
     	IAutenticazionePortaDelegata auth = newInstanceAuthPortaDelegata(tipoAutenticazione, pddContext, protocolFactory);
     	
-    	if(GestoreAutenticazione.cacheAutenticazione==null || !auth.saveAuthenticationResultInCache()){
-    		return auth.process(datiInvocazione);
-		}
-    	else{
-    		String keyCache = buildCacheKey(messageBox, true, tipoAutenticazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthenticationResultInCache(datiInvocazione));
-
-			synchronized (GestoreAutenticazione.cacheAutenticazione) {
-
-				org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
-						return (EsitoAutenticazionePortaDelegata) response.getObject();
-					}else if(response.getException()!=null){
-						GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
-						throw (Exception) response.getException();
-					}else{
-						GestoreAutenticazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
-					}
-				}
-
-				// Effettuo la query
-				GestoreAutenticazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) ricerco nella configurazione...");
-				EsitoAutenticazionePortaDelegata esito = auth.process(datiInvocazione);
-
-				// Aggiungo la risposta in cache (se esiste una cache)	
-				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-				// - impostare il noCache a true
-				if(esito!=null){
-					if(!esito.isNoCache()){
-						GestoreAutenticazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-						try{	
-							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-							responseCache.setObject(esito);
-							GestoreAutenticazione.cacheAutenticazione.put(keyCache,responseCache);
-						}catch(UtilsException e){
-							GestoreAutenticazione.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+    	try {
+	    	if(GestoreAutenticazione.cacheAutenticazione==null || !auth.saveAuthenticationResultInCache()){
+	    		return auth.process(datiInvocazione);
+			}
+	    	else{
+	    		String keyCache = buildCacheKey(messageBox, true, tipoAutenticazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthenticationResultInCache(datiInvocazione));
+	
+				synchronized (GestoreAutenticazione.cacheAutenticazione) {
+	
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
+							return (EsitoAutenticazionePortaDelegata) response.getObject();
+						}else if(response.getException()!=null){
+							GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreAutenticazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
 						}
 					}
-					return esito;
-				}else{
-					throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaDelegata.process) ha ritornato un valore di esito null");
+	
+					// Effettuo la query
+					GestoreAutenticazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) ricerco nella configurazione...");
+					EsitoAutenticazionePortaDelegata esito = auth.process(datiInvocazione);
+	
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esito!=null){
+						if(!esito.isNoCache()){
+							GestoreAutenticazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esito);
+								GestoreAutenticazione.cacheAutenticazione.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreAutenticazione.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
+						}
+						return esito;
+					}else{
+						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaDelegata.process) ha ritornato un valore di esito null");
+					}
 				}
-			}
+	    	}
+    	}finally {
+    		if(msg!=null) {
+    			auth.cleanPostAuth(msg);
+    		}
     	}
     }
 	
     public static EsitoAutenticazionePortaApplicativa verificaAutenticazionePortaApplicativa(String tipoAutenticazione, DatiInvocazionePortaApplicativa datiInvocazione,
-    		PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
+    		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
     	  
     	checkDatiPortaApplicativa(datiInvocazione);
     	
     	IAutenticazionePortaApplicativa auth = newInstanceAuthPortaApplicativa(tipoAutenticazione, pddContext, protocolFactory);
     	
-    	if(GestoreAutenticazione.cacheAutenticazione==null || !auth.saveAuthenticationResultInCache()){
-    		return auth.process(datiInvocazione);
-		}
-    	else{
-    		String keyCache = buildCacheKey(false, false, tipoAutenticazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthenticationResultInCache(datiInvocazione));
-
-			synchronized (GestoreAutenticazione.cacheAutenticazione) {
-
-				org.openspcoop2.utils.cache.CacheResponse response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
-						return (EsitoAutenticazionePortaApplicativa) response.getObject();
-					}else if(response.getException()!=null){
-						GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
-						throw (Exception) response.getException();
-					}else{
-						GestoreAutenticazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
-					}
-				}
-
-				// Effettuo la query
-				GestoreAutenticazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) ricerco nella configurazione...");
-				EsitoAutenticazionePortaApplicativa esito = auth.process(datiInvocazione);
-
-				// Aggiungo la risposta in cache (se esiste una cache)	
-				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-				// - impostare il noCache a true
-				if(esito!=null){
-					if(!esito.isNoCache()){
-						GestoreAutenticazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-						try{	
-							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-							responseCache.setObject(esito);
-							GestoreAutenticazione.cacheAutenticazione.put(keyCache,responseCache);
-						}catch(UtilsException e){
-							GestoreAutenticazione.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+    	try {
+	    	if(GestoreAutenticazione.cacheAutenticazione==null || !auth.saveAuthenticationResultInCache()){
+	    		return auth.process(datiInvocazione);
+			}
+	    	else{
+	    		String keyCache = buildCacheKey(false, false, tipoAutenticazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthenticationResultInCache(datiInvocazione));
+	
+				synchronized (GestoreAutenticazione.cacheAutenticazione) {
+	
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
+							return (EsitoAutenticazionePortaApplicativa) response.getObject();
+						}else if(response.getException()!=null){
+							GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreAutenticazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
 						}
 					}
-					return esito;
-				}else{
-					throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaApplicativa.process) ha ritornato un valore di esito null");
+	
+					// Effettuo la query
+					GestoreAutenticazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) ricerco nella configurazione...");
+					EsitoAutenticazionePortaApplicativa esito = auth.process(datiInvocazione);
+	
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esito!=null){
+						if(!esito.isNoCache()){
+							GestoreAutenticazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esito);
+								GestoreAutenticazione.cacheAutenticazione.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreAutenticazione.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
+						}
+						return esito;
+					}else{
+						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaApplicativa.process) ha ritornato un valore di esito null");
+					}
 				}
-			}
+	    	}
+    	}finally {
+    		if(msg!=null) {
+    			auth.cleanPostAuth(msg);
+    		}
     	}
     }
     

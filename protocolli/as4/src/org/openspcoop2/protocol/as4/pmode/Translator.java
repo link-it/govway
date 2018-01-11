@@ -28,11 +28,6 @@ public class Translator {
 	private Template template;
 
 
-	/**
-	 * @param p 
-	 * @throws IOException 
-	 * 
-	 */
 	public Translator() throws IOException {
 		this.template = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-template.xml");
 	}

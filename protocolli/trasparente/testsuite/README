@@ -194,10 +194,12 @@ d. Configurare nuove utenze nel container per poter gestire l'autenticazione tra
    Seguire le indicazioni presenti in Esempio in ./protocolli/trasparente/testsuite/deploy/principal/README.txt
 
 Batterie di test:
-- 'AutenticazionePortaDelegata': verifica le funzionalità di autenticazione sulla PortaDelegata
-- 'AutenticazionePortaApplicativa': verifica le funzionalità di autenticazione sulla PortaApplicativa
-- 'AutorizzazionePortaDelegata': verifica le funzionalità di autorizzazione sulla PortaDelegata
-- 'AutorizzazionePortaApplicativa': verifica le funzionalità di autorizzazione sulla PortaApplicativa
+- 'AutenticazionePortaDelegata': verifica le funzionalità di autenticazione sulla PortaDelegata attraverso servizi SOAP
+- 'AutenticazionePortaApplicativa': verifica le funzionalità di autenticazione sulla PortaApplicativa attraverso servizi SOAP
+- 'AutorizzazionePortaDelegata': verifica le funzionalità di autorizzazione sulla PortaDelegata attraverso servizi SOAP
+- 'AutorizzazionePortaApplicativa': verifica le funzionalità di autorizzazione sulla PortaApplicativa attraverso servizi SOAP
+- 'RESTAutenticazionePortaDelegata': verifica i dettagli che non potevano essere verificati tramite servizi SOAP, come il forward degli header 'Authorization' o 'WWW-Authenticate' o il consumo dell'header in caso di autenticazione 'basic'.
+- 'RESTAutenticazionePortaApplicativa': uguale al test precedente per la porta applicativa
 
 
 ** MTOM **

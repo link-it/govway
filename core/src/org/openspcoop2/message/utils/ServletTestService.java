@@ -57,6 +57,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 
 
 /**
@@ -161,6 +162,41 @@ public class ServletTestService extends HttpServlet {
 		try{
 			
 			checkHttpServletRequestParameter(req, this.whitePropertiesList);
+			
+			
+			
+			
+			// Autenticazione Basic
+			String basicUsername = getParameter_checkWhiteList(req, this.whitePropertiesList, "basicUsername");
+			String basicPassword = getParameter_checkWhiteList(req, this.whitePropertiesList, "basicPassword");
+			String basicWWWAuthenticateDomain = getParameter_checkWhiteList(req, this.whitePropertiesList, "basicDomain");
+			if(basicUsername!=null && basicPassword!=null) {
+				HttpServletTransportRequestContext rc = new HttpServletTransportRequestContext(req, this.log);
+				if(rc.getCredential()==null ||
+						(!basicUsername.equals(rc.getCredential().getUsername())) ||
+						(!basicPassword.equals(rc.getCredential().getPassword())) 
+						) {
+					String msgError = "TestService: credenziali fornite errate user["+rc.getCredential().getUsername()+"]passw["+rc.getCredential().getPassword()+
+							"], attese user["+basicUsername+"]passw["+basicPassword+"]";
+					if(this.log!=null) {
+						this.log.error(msgError);
+					}else {
+						System.out.println("ERRORE TestService: "+msgError);
+					}
+					if(basicWWWAuthenticateDomain!=null) {
+						res.setHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE,
+								HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_PREFIX+
+								basicWWWAuthenticateDomain+
+								HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_SUFFIX);
+					}
+					res.setStatus(401);
+					res.getOutputStream().flush();
+					res.getOutputStream().close();
+					return;
+				}
+			}
+
+			
 			
 			
 			

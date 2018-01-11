@@ -23,8 +23,8 @@
 package org.openspcoop2.pdd.core.autorizzazione.pd;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.ICore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
+import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazioneContenuto;
 
 /**
  * Interfaccia che definisce un processo di autorizzazione per servizi applicativi che invocano richieste delegate.
@@ -34,7 +34,7 @@ import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
  * @version $Rev$, $Date$
  */	
 
-public interface IAutorizzazioneContenutoPortaDelegata extends ICore {
+public interface IAutorizzazioneContenutoPortaDelegata extends IAutorizzazioneContenuto {
 
 
     /**

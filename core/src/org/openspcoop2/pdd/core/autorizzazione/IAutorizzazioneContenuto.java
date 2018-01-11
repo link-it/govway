@@ -20,31 +20,23 @@
 
 
 
-package org.openspcoop2.pdd.core.autorizzazione.pa;
+package org.openspcoop2.pdd.core.autorizzazione;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
-import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazioneContenuto;
+import org.openspcoop2.pdd.core.ICore;
 
 /**
- * Interfaccia che definisce un processo di autorizzazione per servizi applicativi che invocano richieste delegate.
+ * Interfaccia che definisce un processo di autorizzazione dei contenuti
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12942 $, $Date: 2017-05-02 13:01:02 +0200 (Tue, 02 May 2017) $
  */
 
-public interface IAutorizzazioneContenutoPortaApplicativa extends IAutorizzazioneContenuto {
+public interface IAutorizzazioneContenuto extends ICore {
 
-
-    /**
-     * Avvia il processo di autorizzazione.
-     *
-     * @param datiInvocazione Dati di invocazione
-     * @param msg Messaggio Applicativo
-     * @return Esito dell'autorizzazione.
-     * 
-     */
-    public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
+    public default void cleanPostAuth(OpenSPCoop2Message message) {
+    	// nop
+    }
     
 }

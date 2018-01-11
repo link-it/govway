@@ -813,7 +813,7 @@ public class SPCoopImbustamento {
 	 * dall'oggetto <var>msg</var>.
 	 *
 	 * @param msg Messaggio su cui creare il manifesto
-	 * @param isRichiesta Tipo di Busta
+	 * @param ruoloMessaggio Tipo di Busta
 	 * 
 	 */
 	public OpenSPCoop2Message build_eGovManifest(OpenSPCoop2Message msg,RuoloMessaggio ruoloMessaggio,

@@ -1,12 +1,12 @@
 <openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
 
-	<soggetto tipo="API" nome="Anonimo" identificativo-porta="AnonimoPdD"/>
+	<soggetto tipo="API" nome="Anonimo"/>
 
-	<soggetto tipo="API" nome="applicativoComunePisa" identificativo-porta="applicativoComunePisaPdD"/>
+	<soggetto tipo="API" nome="applicativoComunePisa"/>
 
-	<soggetto tipo="API" nome="MinisteroReferente" identificativo-porta="MinisteroReferentePdD"/>
+	<soggetto tipo="API" nome="MinisteroReferente"/>
 
-	<soggetto tipo="API" nome="MinisteroFruitore" identificativo-porta="MinisteroFruitorePdD">
+	<soggetto tipo="API" nome="MinisteroFruitore">
 
 
 		<!-- **** Configurazione REST **** -->
@@ -23,6 +23,37 @@
                          <azione identificazione="static" nome="invoke"/>
 			 <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/RESTAPI"/>
                 </porta-delegata>
+
+
+		<!-- Authentication -->
+
+		<porta-delegata nome="AuthenticationREST_basic" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+		    <servizio tipo="REST" nome="API"/>
+		    <azione identificazione="static" nome="invokeBasicPdD"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicForwardAuthorizationHeader" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+		    <servizio tipo="REST" nome="API"/>
+		    <azione identificazione="static" nome="invokeBasicPdD_credenzialiNonBruciate"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_serviceWithBasicAuth" autenticazione="none" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+		    <servizio tipo="REST" nome="API"/>
+		    <azione identificazione="static" nome="invokeWithBasicAuth"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationREST_serviceWithBasicAuthDomain" autenticazione="none" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+		    <servizio tipo="REST" nome="API"/>
+		    <azione identificazione="static" nome="invokeWithBasicAuthDomain"/>
+		</porta-delegata>
 
 
 
@@ -914,6 +945,16 @@
 		</porta-delegata>
 
 
+
+		<!-- **** Configurazione REST **** -->
+
+		<servizio-applicativo nome="TestPerCredenzialiBruciateBasic" >
+		      <invocazione-porta>
+		         <credenziali tipo="basic" user="testsuiteOp2" password="12345678" />
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+
 		<!-- **** Configurazione SOAP **** -->
 
 		<servizio-applicativo nome="MinisteroFruitore_SA" >
@@ -994,7 +1035,7 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatore" identificativo-porta="MinisteroErogatorePdD">
+	<soggetto tipo="API" nome="MinisteroErogatore">
 
 
 		<!-- **** Configurazione REST **** -->
@@ -1004,6 +1045,36 @@
                     <azione nome="invoke"/>
                     <servizio-applicativo nome="api"/>
                 </porta-applicativa>
+
+		<!-- Authentication -->
+
+		<porta-applicativa nome="AuthenticationREST_basic" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="REST" nome="API"/>
+		    <azione nome="invokeBasicPdD"/>
+		    <servizio-applicativo nome="api_authBasic"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicForwardAuthorizationHeader" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="REST" nome="API"/>
+		    <azione nome="invokeBasicPdD_credenzialiNonBruciate"/>
+		    <servizio-applicativo nome="api_authBasic"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_serviceWithBasicAuth" autenticazione="none" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="REST" nome="API"/>
+		    <azione nome="invokeWithBasicAuth"/>
+		    <servizio-applicativo nome="api_authBasic"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationREST_serviceWithBasicAuthDomain" autenticazione="none" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+		    <servizio tipo="REST" nome="API"/>
+		    <azione nome="invokeWithBasicAuthDomain"/>
+		    <servizio-applicativo nome="api_authBasicWithDomain"/>
+		</porta-applicativa>
 
 
 
@@ -2116,6 +2187,22 @@
                         </invocazione-servizio>
                 </servizio-applicativo>
 
+                <servizio-applicativo nome="api_authBasic">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="api_authBasic">
+                                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?basicUsername=testsuiteOp2&amp;basicPassword=12345678"/>
+                                </connettore>     
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+                <servizio-applicativo nome="api_authBasicWithDomain">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="api_authBasicWithDomain">
+                                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?basicUsername=testsuiteOp2&amp;basicPassword=12345678&amp;basicDomain=TestSuiteOpenSPCoop2"/>
+                                </connettore>     
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
 
 
 
@@ -2253,9 +2340,9 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatoreEsterno" identificativo-porta="MinisteroErogatoreEsternoPdD"/>
+	<soggetto tipo="API" nome="MinisteroErogatoreEsterno"/>
 
-	<soggetto tipo="API" nome="ClientSoapFault11" identificativo-porta="ClientSoapFault11PdD">
+	<soggetto tipo="API" nome="ClientSoapFault11">
 
 		<!-- **** Configurazione SOAP **** -->
 
@@ -2285,7 +2372,7 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="ClientSoapFault11500" identificativo-porta="ClientSoapFault11500PdD">
+	<soggetto tipo="API" nome="ClientSoapFault11500">
 
 		<!-- **** Configurazione SOAP **** -->
 
@@ -2315,7 +2402,7 @@
 
 	</soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12" identificativo-porta="ClientSoapFault12PdD">
+        <soggetto tipo="API" nome="ClientSoapFault12">
 
 		<!-- **** Configurazione SOAP **** -->
 
@@ -2345,7 +2432,7 @@
 
 	</soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12500" identificativo-porta="ClientSoapFault12500PdD">
+        <soggetto tipo="API" nome="ClientSoapFault12500">
 
 		<!-- **** Configurazione SOAP **** -->
 

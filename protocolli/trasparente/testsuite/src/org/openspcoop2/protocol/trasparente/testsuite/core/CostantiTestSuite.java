@@ -23,6 +23,8 @@
 package org.openspcoop2.protocol.trasparente.testsuite.core;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 
@@ -39,6 +41,23 @@ public class CostantiTestSuite {
 	
 	/** Protocollo */
 	public static final String PROTOCOL_NAME = "trasparente";
+	
+	private static IProtocolFactory<?> protocolFactory = null;
+	static {
+		try {
+			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(PROTOCOL_NAME);
+		}catch(Exception e) {
+			e.printStackTrace(System.out);
+		}
+	}
+	private static String getIdentificativoPortaDefault(String nome) {
+		try {
+			return protocolFactory.createTraduttore().getIdentificativoPortaDefault(new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, nome));
+		}catch(Exception e) {
+			e.printStackTrace(System.out);
+			return "!!ERRORE!!";
+		}
+	}
 	
 	
 	/** ENTITA Profili Protocollo */
@@ -162,6 +181,12 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward";
 	
+	/** Porte Delegate per il test degli header Authorization e WWW-Authenticate: API */
+	public static final String PORTA_DELEGATA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_basic";
+	public static final String PORTA_DELEGATA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH_FORWARD_CREDENTIALS="AuthenticationREST_basic_forwardCredentials";
+	public static final String PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_serviceWithBasicAuth";
+	public static final String PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN="AuthenticationREST_serviceWithBasicAuthDomain";
+	
 
 	
 	
@@ -265,72 +290,73 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_APPLICATIVA_REST_API="APIMinisteroErogatore/RESTAPI";
 	
+	/** Porte Delegate per il test degli header Authorization e WWW-Authenticate: API */
+	public static final String PORTA_APPLICATIVA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_basic";
+	public static final String PORTA_APPLICATIVA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH_FORWARD_CREDENTIALS="AuthenticationREST_basic_forwardCredentials";
+	public static final String PORTA_APPLICATIVA_REST_SERVICE_WITH_BASIC_AUTH="AuthenticationREST_serviceWithBasicAuth";
+	public static final String PORTA_APPLICATIVA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN="AuthenticationREST_serviceWithBasicAuthDomain";
+	
 
 	
 		
 	/** Tipo Soggetto */
 	public static final String PROXY_TIPO_SOGGETTO="API";
 	
+	/** IDSoggetto Anonimo*/
+	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_ANONIMO = null; // volutamente null
 	
 	/** Nome Soggetto Fruitore */
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT11500="ClientSoapFault11500";
-	/** Nome Soggetto Fruitore */
-	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT11200="ClientSoapFault11";
-	/** Nome Soggetto Fruitore */
-	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT12500="ClientSoapFault12500";
-	/** Nome Soggetto Fruitore */
-	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT12200="ClientSoapFault12";
-	/** Nome Soggetto Fruitore */
-	public static final String PROXY_NOME_SOGGETTO_FRUITORE="MinisteroFruitore";
-	/** Nome Soggetto Fruitore Anomino*/
-	@Deprecated
-	public static final String PROXY_NOME_SOGGETTO_FRUITORE_ANONIMO="Anonimo";
-	/** Nome Soggetto Fruitore Anomino*/
-	public static final String PROXY_NOME_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA="applicativoComunePisa";
 	/** IdPorta Soggetto Fruitore */
-	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA="applicativoComunePisaPdD";
-	/** IdPorta Soggetto Fruitore */
-	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE="MinisteroFruitorePdD";
-	/** IdPorta Soggetto Fruitore */
-	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11500="ClientSoapFault11500PdD";
-	/** IdPorta Soggetto Fruitore */
-	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11200="ClientSoapFault11PdD";
-	/** IdPorta Soggetto Fruitore */
-	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12500="ClientSoapFault12500PdD";
-	/** IdPorta Soggetto Fruitore */
-	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12200="ClientSoapFault12PdD";
-	/** IdPorta Soggetto Fruitore */
-	@Deprecated
-	public static final String PROXY_IDPORTA_ANONIMO="AnonimoPdD";
-	
+	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11500=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_FRUITORE_FAULT11500);
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT11500 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT11500, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11500);
+	
+	/** Nome Soggetto Fruitore */
+	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT11200="ClientSoapFault11";
+	/** IdPorta Soggetto Fruitore */
+	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11200=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_FRUITORE_FAULT11200);
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT11200 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT11200, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11200);
+	
+	/** Nome Soggetto Fruitore */
+	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT12500="ClientSoapFault12500";
+	/** IdPorta Soggetto Fruitore */
+	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12500=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_FRUITORE_FAULT12500);
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT12500 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT12500, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12500);
+	
+	/** Nome Soggetto Fruitore */
+	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT12200="ClientSoapFault12";
+	/** IdPorta Soggetto Fruitore */
+	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12200=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_FRUITORE_FAULT12200);
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT12200 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT12200, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12200);
+	
+	/** Nome Soggetto Fruitore */
+	public static final String PROXY_NOME_SOGGETTO_FRUITORE="MinisteroFruitore";
+	/** IdPorta Soggetto Fruitore */
+	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_FRUITORE);
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE);
-	/** IDSoggetto Anonimo*/
-	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_ANONIMO = null; // volutamente null
-//			new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
-//			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_ANONIMO, CostantiTestSuite.PROXY_IDPORTA_ANONIMO);
-		
+	
+	/** Nome Soggetto Fruitore Anomino*/
+	public static final String PROXY_NOME_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA="applicativoComunePisa";
+	/** IdPorta Soggetto Fruitore */
+	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA);
 	/** IDSoggetto Autenticato Porta Applicativa */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA= new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA);
-		
+	
 	/** Nome Soggetto Erogatore */
 	public static final String PROXY_NOME_SOGGETTO_EROGATORE="MinisteroErogatore";
 	/** IdPorta Soggetto Erogatore */
-	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE="MinisteroErogatorePdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_EROGATORE);
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_EROGATORE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_EROGATORE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_EROGATORE);
@@ -338,7 +364,7 @@ public class CostantiTestSuite {
 	/** Nome Soggetto Erogatore Esterno */
 	public static final String PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatoreEsterno";
 	/** IdPorta Soggetto Erogatore Esterno */
-	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatoreEsternoPdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO);
 	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_EROGATORE_ESTERNO = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO);
@@ -347,7 +373,7 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteBasic  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC="EsempioSoggettoTrasparenteBasic";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteBasic */
-	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC="EsempioSoggettoTrasparenteBasicPdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteBasic */
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_BASIC = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC);
@@ -355,7 +381,7 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteBasic2  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_2="EsempioSoggettoTrasparenteBasic2";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteBasic2 */
-	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_2="EsempioSoggettoTrasparenteBasic2PdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_2=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_2);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteBasic */
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_BASIC_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_2);
@@ -363,7 +389,7 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteBasic3  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_3="EsempioSoggettoTrasparenteBasic3";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteBasic3 */
-	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_3="EsempioSoggettoTrasparenteBasic3PdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_3=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_3);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteBasic */
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_BASIC_3 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_BASIC_3, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_BASIC_3);
@@ -372,7 +398,7 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteSsl  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_SSL="EsempioSoggettoTrasparenteSsl";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl */
-	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL="EsempioSoggettoTrasparenteSslPdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_SSL);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_SSL = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_SSL, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL);
@@ -380,17 +406,15 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparenteSsl2  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_SSL_2="EsempioSoggettoTrasparenteSsl2";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparenteSsl2 */
-	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL_2="EsempioSoggettoTrasparenteSsl2PdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL_2=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_SSL_2);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparenteSsl */
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_SSL_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_SSL_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_SSL_2);
-	
-	
-	
+		
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparentePrincipal  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL="EsempioSoggettoTrasparentePrincipal";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparentePrincipal */
-	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL="EsempioSoggettoTrasparentePrincipalPdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparentePrincipal */
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_PRINCIPAL = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL);
@@ -398,11 +422,19 @@ public class CostantiTestSuite {
 	/** ENTITA SPCOOP: Nome Soggetto EsempioSoggettoTrasparentePrincipal2  */
 	public static final String PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL_2="EsempioSoggettoTrasparentePrincipal2";
 	/** ENTITA SPCOOP: IdPorta Soggetto EsempioSoggettoTrasparentePrincipal2 */
-	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL_2="EsempioSoggettoTrasparentePrincipal2PdD";
+	public static final String PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL_2=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL_2);
 	/** ENTITA SPCOOP: IDSoggetto EsempioSoggettoTrasparentePrincipal */
 	public static final IDSoggetto PROXY_SOGGETTO_TRASPARENTE_PRINCIPAL_2 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_TRASPARENTE_PRINCIPAL_2, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TRASPARENTE_PRINCIPAL_2);
 		
+	/** Nome Soggetto Erogatore */
+	public static final String PROXY_NOME_SOGGETTO_TEST_CREDENZIALI_BRUCIATE="TestPerCredenzialiBruciateBasic";
+	/** IdPorta Soggetto Erogatore */
+	public static final String PROXY_IDPORTA_SOGGETTO_TEST_CREDENZIALI_BRUCIATE=getIdentificativoPortaDefault(PROXY_NOME_SOGGETTO_TEST_CREDENZIALI_BRUCIATE);
+	/** IDSoggetto */
+	public static final IDSoggetto PROXY_SOGGETTO_TEST_CREDENZIALI_BRUCIATE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+			CostantiTestSuite.PROXY_NOME_SOGGETTO_TEST_CREDENZIALI_BRUCIATE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_TEST_CREDENZIALI_BRUCIATE);
+	
 	
 	
 	/** Versione Servizio */

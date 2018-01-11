@@ -23,8 +23,10 @@
 package org.openspcoop2.pdd.core.autenticazione.pd;
 
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
+import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -40,6 +42,8 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 
 public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 
+	protected boolean cleanHeaderAuthorization = true;
+	
     @Override
     public EsitoAutenticazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione) throws AutenticazioneException{
 
@@ -82,6 +86,13 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		return esito;
 		
+    }
+    
+    @Override
+	public void cleanPostAuth(OpenSPCoop2Message message) throws AutenticazioneException {
+    	if(this.cleanHeaderAuthorization) {
+    		AutenticazioneUtils.cleanHeaderAuthorization(message);
+    	}
     }
 
 }

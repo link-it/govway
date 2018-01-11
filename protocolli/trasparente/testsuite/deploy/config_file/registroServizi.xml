@@ -10,6 +10,10 @@
 		utilizzo-senza-azione="true" versione="1" service-binding="rest">
                     <soggetto-referente tipo="API" nome="MinisteroReferente"/>
 		<resource nome="invoke" />
+		<resource nome="invokeBasicPdD" />
+		<resource nome="invokeBasicPdD_credenzialiNonBruciate" />
+		<resource nome="invokeWithBasicAuth" />
+		<resource nome="invokeWithBasicAuthDomain" />
         </accordo-servizio-parte-comune>
 
 
@@ -57,6 +61,9 @@
 
 
 
+	<!-- Configurazione REST -->
+
+	<porta-dominio nome="PdDTestPerCredenzialiBruciateBasic" client-auth="disabilitato"/>
 
 	<!-- Configurazione SOAP -->
 
@@ -87,6 +94,18 @@
 	<ruolo nome="roleTerzaUtenzaAllOpenSPCoopTest" />
   
 
+
+	<!-- Configurazione REST -->
+
+	<soggetto tipo="API" nome="TestPerCredenzialiBruciateBasic" porta-dominio="PdDTestPerCredenzialiBruciateBasic">
+
+		<connettore tipo="disabilitato" nome="CNT_API_TestPerCredenzialiBruciateBasic"/>
+
+		<credenziali tipo="basic" user="testsuiteOp2" password="12345678" />
+
+	</soggetto>
+
+	<!-- Configurazione SOAP -->
 
 	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic" porta-dominio="PdDEsempioSoggettoTrasparenteBasic">
 
@@ -172,7 +191,7 @@
 
 
 
-	<soggetto tipo="API" nome="applicativoComunePisa" identificativo-porta="applicativoComunePisaPdD">
+	<soggetto tipo="API" nome="applicativoComunePisa">
     
 		<connettore tipo="disabilitato" nome="CNT_API_applicativoComunePisa"/>
 
@@ -180,13 +199,13 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroReferente" identificativo-porta="MinisteroReferentePdD">
+	<soggetto tipo="API" nome="MinisteroReferente">
 
     		<connettore tipo="disabilitato" nome="CNT_API_MinisteroReferente"/>
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroFruitore" identificativo-porta="MinisteroFruitorePdD">
+	<soggetto tipo="API" nome="MinisteroFruitore">
     
 		<connettore tipo="disabilitato" nome="CNT_API_MinisteroFruitore"/>
 
@@ -194,7 +213,7 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatore" identificativo-porta="MinisteroErogatorePdD">
+	<soggetto tipo="API" nome="MinisteroErogatore">
 		
 		<connettore tipo="disabilitato" nome="CNT_API_MinisteroErogatore"/>
 
@@ -206,6 +225,35 @@
 		                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_REST/API">
 		                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>
 		                </connettore>
+
+				<configurazione-azione nome="invokeBasicPdD">
+				    <connettore tipo="http" nome="invokeBasicPdD">
+				        <property nome="location"
+				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
+				        />
+				    </connettore>
+			     	</configurazione-azione>
+				<configurazione-azione nome="invokeBasicPdD_credenzialiNonBruciate">
+				    <connettore tipo="http" nome="invokeBasicPdD_credenzialiNonBruciate">
+				        <property nome="location"
+				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
+				        />
+				    </connettore>
+			     	</configurazione-azione>
+				<configurazione-azione nome="invokeWithBasicAuth">
+				    <connettore tipo="http" nome="invokeWithBasicAuth">
+				        <property nome="location"
+				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
+				        />
+				    </connettore>
+			     	</configurazione-azione>
+				<configurazione-azione nome="invokeWithBasicAuthDomain">
+				    <connettore tipo="http" nome="invokeWithBasicAuthDomain">
+				        <property nome="location"
+				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678&amp;basicDomain=TestSuiteOpenSPCoop2"
+				        />
+				    </connettore>
+			     	</configurazione-azione>
 		        </configurazione-servizio>
                 </accordo-servizio-parte-specifica>
 
@@ -271,7 +319,7 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatoreEsterno" identificativo-porta="MinisteroErogatoreEsternoPdD">
+	<soggetto tipo="API" nome="MinisteroErogatoreEsterno">
     
 		<connettore tipo="disabilitato" nome="CNT_API_MinisteroErogatoreEsterno"/>
 
@@ -339,25 +387,25 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="ClientSoapFault11" identificativo-porta="ClientSoapFault11PdD">
+	<soggetto tipo="API" nome="ClientSoapFault11">
     
 		<connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault11"/>
 	
 	</soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault11500" identificativo-porta="ClientSoapFault11500PdD"> 
+        <soggetto tipo="API" nome="ClientSoapFault11500"> 
     
                 <connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault11500"/>
         
         </soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12" identificativo-porta="ClientSoapFault12PdD"> 
+        <soggetto tipo="API" nome="ClientSoapFault12"> 
     
                 <connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault12"/>
         
         </soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12500" identificativo-porta="ClientSoapFault12500PdD"> 
+        <soggetto tipo="API" nome="ClientSoapFault12500"> 
     
                 <connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault12500"/>
         

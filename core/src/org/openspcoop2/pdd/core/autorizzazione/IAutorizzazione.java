@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.ICore;
 
 /**
@@ -40,5 +41,9 @@ public interface IAutorizzazione extends ICore {
      * @return Indicazione se il risultato deve essere salvato in cache
      */
     public boolean saveAuthorizationResultInCache();
+    
+    public default void cleanPostAuth(OpenSPCoop2Message message) {
+    	// nop
+    }
     
 }

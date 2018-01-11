@@ -76,12 +76,15 @@ public class RESTCore {
 	private HttpRequestMethod method;
 	private String servizioRichiesto;
 	private String portaApplicativaDelegata;
+	private String basicUsername;
+	private String basicPassword;
+
 	private RUOLO ruolo;
 	
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBase collaborazioneTrasparenteBase;
 
-	public enum RUOLO {PORTA_DELEGATA, PORTA_APPLICATIVA, PORTA_DELEGATA_LOCAL_FORWARD}
+	public enum RUOLO {PORTA_DELEGATA, PORTA_APPLICATIVA, PORTA_DELEGATA_LOCAL_FORWARD, PORTA_APPLICATIVA_TEST_CREDENZIALI_BRUCIATE}
 
 	public RESTCore(HttpRequestMethod method, RUOLO ruolo)  {
 		this.method = method;
@@ -107,6 +110,12 @@ public class RESTCore {
 			idSoggettoMittente = CostantiTestSuite.PROXY_SOGGETTO_FRUITORE;
 			idSoggettoDestinatario = CostantiTestSuite.PROXY_SOGGETTO_EROGATORE;
 			break;
+		case PORTA_APPLICATIVA_TEST_CREDENZIALI_BRUCIATE:
+			this.servizioRichiesto = Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore();
+			this.portaApplicativaDelegata = CostantiTestSuite.PORTA_APPLICATIVA_REST_API;
+			idSoggettoMittente = CostantiTestSuite.PROXY_SOGGETTO_TEST_CREDENZIALI_BRUCIATE;
+			idSoggettoDestinatario = CostantiTestSuite.PROXY_SOGGETTO_EROGATORE;
+			break;
 		default:
 			break;
 		
@@ -121,10 +130,17 @@ public class RESTCore {
 					DatabaseProperties.getInstance(), TrasparenteTestsuiteLogger.getInstance(), this.ruolo.equals(RUOLO.PORTA_DELEGATA));
 
 	}
+	public void setPortaApplicativaDelegata(String portaApplicativaDelegata) {
+		this.portaApplicativaDelegata = portaApplicativaDelegata;
+	}
+	public void setCredenziali(String username,String password) {
+		this.basicUsername = username;
+		this.basicPassword = password;
+	}
 	
 	
 	public void postInvoke(Repository repository) throws TestSuiteException, Exception{
-
+	
 		
 		String id=repository.getNext();
 		if(org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
@@ -211,11 +227,18 @@ public class RESTCore {
 
 	}
 
-	public void invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, String contentType) throws TestSuiteException, Exception{
-		this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, false, contentType);
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			String contentType) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, false, contentType);
 	}
 	
-	public void invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, boolean isHttpMethodOverride, String contentType) throws TestSuiteException, Exception{
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType) throws TestSuiteException, Exception{
+		return this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, false, contentType, false);
+	}
+	
+	public HttpResponse invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, 
+			boolean isHttpMethodOverride, String contentType, boolean authorizationError) throws TestSuiteException, Exception{
 		
 		TestFileEntry fileEntry = FileCache.get(tipoTest);
 
@@ -247,6 +270,11 @@ public class RESTCore {
 //					request.setContent("".getBytes());
 //					request.setContentType(MimeTypes.getInstance().getMimeType("txt"));
 				}
+			}
+			
+			if(this.basicUsername!=null && this.basicPassword!=null) {
+				request.setUsername(this.basicUsername);
+				request.setPassword(this.basicPassword);
 			}
 			
 			// Se richiesto dalla porta
@@ -303,11 +331,13 @@ public class RESTCore {
 					}
 				}
 				else {
-					propertiesURLBased.put("returnCode", returnCodeAtteso + "");
+					if(!authorizationError) {
+						propertiesURLBased.put("returnCode", returnCodeAtteso + "");
+					}
 				}
 			}
 
-			if(!redirect) {
+			if(!redirect && !authorizationError) {
 				propertiesURLBased.put("returnHttpHeader", nomeHeaderHttpDaRicevere +":" + valoreHeaderHttpDaRicevere);
 			}
 			
@@ -389,7 +419,7 @@ public class RESTCore {
 			}
 			
 			// Controllo header di risposta atteso
-			if(!redirect) {
+			if(!redirect && !authorizationError) {
 				String headerRispostaRitornatoValore = httpResponse.getHeader(nomeHeaderHttpDaRicevere);
 				Reporter.log("["+idMessaggio+"] Atteso Header ["+nomeHeaderHttpDaRicevere+"] con valore atteso ["+valoreHeaderHttpDaRicevere+"] e valore ritornato ["+headerRispostaRitornatoValore+"]");
 				Assert.assertTrue(headerRispostaRitornatoValore!=null);
@@ -397,7 +427,7 @@ public class RESTCore {
 			}
 			
 			// Controllo risposta
-			if(!redirect && contenutoRisposta){
+			if(!redirect && contenutoRisposta && !authorizationError){
 				
 				byte[] contentAttesoRisposta = rispostaOk ? fileEntry.getBytesRichiesta(): fileEntry.getBytesRispostaKo();
 				String contentTypeAttesoRisposta = contentType != null ? contentType : (rispostaOk) ? fileEntry.getExtRisposta(): fileEntry.getExtRispostaKo();
@@ -449,6 +479,7 @@ public class RESTCore {
 				
 			}
 	
+			return httpResponse;
 			
 		}catch(Exception e){
 			throw e;

@@ -20,28 +20,22 @@
 
 
 
-package org.openspcoop2.pdd.core.autenticazione;
-
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.ICore;
+package org.openspcoop2.pdd.core.autenticazione.pd;
 
 /**
- * Interfaccia che definisce un processo di autenticazione
+ * Classe che implementa una autenticazione BASIC.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12942 $, $Date: 2017-05-02 13:01:02 +0200 (Tue, 02 May 2017) $
  */
 
-public interface IAutenticazione extends ICore {
+public class AutenticazioneBasic_propagationHeaderAuthorization extends AutenticazioneBasic {
 
+	public AutenticazioneBasic_propagationHeaderAuthorization() {
+		super();
+		this.cleanHeaderAuthorization = false;
+	}
 
-    public boolean saveAuthenticationResultInCache();
-    
-    public default void cleanPostAuth(OpenSPCoop2Message message) throws AutenticazioneException {
-    	// nop
-    }
-    
- 
 }
 

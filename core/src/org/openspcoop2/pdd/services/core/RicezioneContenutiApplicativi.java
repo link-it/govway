@@ -1150,7 +1150,7 @@ public class RicezioneContenutiApplicativi {
 				datiInvocazione.setPd(pd);		
 				
 				EsitoAutenticazionePortaDelegata esito = 
-						GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, datiInvocazione, pddContext, protocolFactory); 
+						GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, datiInvocazione, pddContext, protocolFactory, requestMessage); 
 				if(esito.getDetails()==null){
 					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 				}else{
@@ -1745,7 +1745,7 @@ public class RicezioneContenutiApplicativi {
 			Exception eAutorizzazione = null;
 			try {						
 				EsitoAutorizzazionePortaDelegata esito = 
-						GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory); 
+						GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage); 
 				if(esito.getDetails()==null){
 					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 				}else{
@@ -2414,21 +2414,27 @@ public class RicezioneContenutiApplicativi {
 				}
 				
 				if (auth != null) {
-					// Controllo Autorizzazione
-					EsitoAutorizzazionePortaDelegata esito = auth.process(datiInvocazione,requestMessage);
-					if(esito.getDetails()==null){
-						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
-					}else{
-						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
-					}
-					if (esito.isAutorizzato() == false) {
-						errore = esito.getErroreIntegrazione();
-						eAutorizzazione = esito.getEccezioneProcessamento();
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
-					}
-					else{
-						msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
-					}
+					try {
+						// Controllo Autorizzazione
+						EsitoAutorizzazionePortaDelegata esito = auth.process(datiInvocazione,requestMessage);
+						if(esito.getDetails()==null){
+							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+						}else{
+							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
+						}
+						if (esito.isAutorizzato() == false) {
+							errore = esito.getErroreIntegrazione();
+							eAutorizzazione = esito.getEccezioneProcessamento();
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
+						}
+						else{
+							msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
+						}
+					}finally {
+			    		if(requestMessage!=null) {
+			    			auth.cleanPostAuth(requestMessage);
+			    		}
+			    	}
 				} else {
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento("gestore ["

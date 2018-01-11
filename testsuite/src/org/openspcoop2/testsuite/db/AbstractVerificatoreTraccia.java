@@ -3352,14 +3352,14 @@ public abstract class AbstractVerificatoreTraccia {
 		java.sql.Timestamp minDate = null;
 		int giro = 0;
 		int giriMax = 300;
-		LoggerWrapperFactory.getLogger("openspcoop2.testsuite").debug("Query in corso...:  select tracce.gdo from tracce where tracce."+CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '"+destinatario+"%"+"' ORDER BY tracce.gdo");
+		LoggerWrapperFactory.getLogger("openspcoop2.testsuite").debug("Query in corso...:  select tracce.gdo from tracce where tracce."+CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '%"+destinatario+"%"+"' ORDER BY tracce.gdo");
 		while(giro<giriMax){
 			try {
 				//System.out.println("SELECT [select "+CostantiDB.TRACCE_COLUMN_GDO+" from "+CostantiDB.TRACCE+" where  "+CostantiDB.TRACCE_COLUMN_ID+"="+id+" AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"=0 AND "+CostantiDatabase.ID_PORTA+" LIKE "+destinatario+"%"+" ORDER BY "+CostantiDB.TRACCE_COLUMN_GDO+"]");
 				state=this.con.prepareStatement("select "+CostantiDB.TRACCE_COLUMN_GDO+" from "+CostantiDB.TRACCE+" where "+CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"=? AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"=? AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE ? ORDER BY "+CostantiDB.TRACCE_COLUMN_GDO);
 				state.setString(1,id);
 				state.setInt(2,0);
-				state.setString(3, destinatario+"%");
+				state.setString(3, "%"+destinatario+"%");
 				res = state.executeQuery();
 				if(res.next()){
 					minDate = res.getTimestamp("gdo");
@@ -3371,7 +3371,7 @@ public abstract class AbstractVerificatoreTraccia {
 			} catch (Exception e) {
 				if(giro==(giriMax-1))
 					throw new Exception("Impostazione isArrived non riuscita (select Data) [select "+CostantiDB.TRACCE_COLUMN_GDO+" from "+CostantiDB.TRACCE+" where "+
-								CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '"+destinatario+"%"+"' ORDER BY "+CostantiDB.TRACCE_COLUMN_GDO+"]: "+e.getMessage(),e);
+								CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE '%"+destinatario+"%"+"' ORDER BY "+CostantiDB.TRACCE_COLUMN_GDO+"]: "+e.getMessage(),e);
 			}
 			finally{
 				try{
@@ -3402,7 +3402,7 @@ public abstract class AbstractVerificatoreTraccia {
 					+"=? AND "+CostantiDB.TRACCE_COLUMN_IS_ARRIVED+"=? AND "+CostantiDB.TRACCE_COLUMN_PDD_CODICE+" LIKE ? AND "+CostantiDB.TRACCE_COLUMN_GDO+"=?");
 			state.setString(1,id);
 			state.setInt(2,0);
-			state.setString(3, destinatario+"%");
+			state.setString(3, "%"+destinatario+"%");
 			state.setTimestamp(4,minDate);
 			res = state.executeQuery();
 			if(res.next()){

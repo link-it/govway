@@ -151,6 +151,9 @@
 			<lib dir="${libs}/jax">
 				<include name="jaxws-*.jar"/>
 			</lib>
+			<lib dir="${libs}/shared">
+				<include name="soap.jar"/>
+			</lib>
 			<lib dir="${required_lib}/jax">
 				<include name="${jaxp_ri_jar}" />
 			</lib>

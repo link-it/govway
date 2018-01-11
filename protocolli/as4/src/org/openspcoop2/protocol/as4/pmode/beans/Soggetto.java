@@ -125,9 +125,6 @@ public class Soggetto  {
 		this.location = location;
 	}
 
-	/**
-	 * @return
-	 */
 	public int sizeAzioni() {
 		int numAzioni = 0;
 		for(APS aps: this.aps) {
