@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -310,7 +311,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			de.setType(DataElementType.TEXT);
 			de.setValue(contenutoDocumento.getFilename());
 			dati.addElement(de);
-			
+
 			if(errore!=null){
 				de = new DataElement();
 				de.setValue(errore);
@@ -328,7 +329,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				de.setCols(110);
 				dati.addElement(de);
 			}
-			
+
 			if(id != null){
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(ProtocolPropertiesCostanti.LABEL_DOWNLOAD);
@@ -363,13 +364,13 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		de.setSize(this.getSize());
 		de.setRequired(binaryConsoleItem.isRequired()); 
 		dati.addElement(de);
-		
+
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(Costanti.PARAMETER_FILENAME_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 		de.setValue(contenutoDocumento.getFilename());
 		dati.addElement(de);
-		
+
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
 		de.setName(Costanti.PARAMETER_FILEID_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
@@ -527,7 +528,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							break;
 						}
 					}
-					
+
 					// salvataggio
 					if(save)
 						this.core.performUpdateOperation(userLogin, smista, apca);
@@ -535,7 +536,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case FRUITORE:
 					Fruitore fruitore = (Fruitore) proprietario; 
 					AccordoServizioParteSpecifica apsFrui = this.apsCore.getAccordoServizioParteSpecifica(fruitore.getIdServizio());
-					
+
 					for (Fruitore fr : apsFrui.getFruitoreList()) {
 						if(fr.getTipo().equals(fruitore.getTipo()) && fr.getNome().equals(fruitore.getNome())){
 							fr.setProtocolPropertyList(protocolPropertiesAggiornate);
@@ -543,7 +544,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							break;
 						}
 					}
-					
+
 					// salvataggio
 					if(save)
 						this.core.performUpdateOperation(userLogin, smista, apsFrui);
@@ -569,14 +570,14 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				case PORT_TYPE:
 					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
 					PortType newPt = (PortType) proprietario;
-					
+
 					for (PortType pt : apc.getPortTypeList()) {
 						if(pt.getNome().equals(newPt.getNome())){
 							pt.setProtocolPropertyList(protocolPropertiesAggiornate);
 							save = true;
 							break;
 						}
-							
+
 					}
 					// salvataggio
 					if(save)
@@ -592,7 +593,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							break;
 						}
 					}
-					
+
 					// salvataggio
 					if(save)
 						this.core.performUpdateOperation(userLogin, smista, apcr);
@@ -611,4 +612,56 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 	}
 
+	public void validateDynamicConfig(IConsoleDynamicConfiguration consoleDynamicConfiguration, Object idOggettoProprietario, String tipoAccordo, ProprietariProtocolProperty tipoProprietario,
+			ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,ProtocolProperties protocolProperties, IRegistryReader registryReader) throws ProtocolException {
+		try{
+			if(idOggettoProprietario != null){
+				switch (tipoProprietario) {
+				case ACCORDO_COOPERAZIONE:
+					IDAccordo idAccordoCooperazione = (IDAccordo) idOggettoProprietario;
+					consoleDynamicConfiguration.validateDynamicConfigCooperazione(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAccordoCooperazione);
+					break;
+				case ACCORDO_SERVIZIO_PARTE_COMUNE:
+					IDAccordo idApc = (IDAccordo) idOggettoProprietario;
+					
+					if(tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
+						consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteComune(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idApc);
+					else 
+						consoleDynamicConfiguration.validateDynamicConfigAccordoServizioComposto(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idApc);
+					break;
+				case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
+					IDServizio idAps =(IDServizio) idOggettoProprietario;
+					
+					consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAps);
+					break;
+				case AZIONE_ACCORDO:
+					IDAccordoAzione idAccordoAzione = (IDAccordoAzione) idOggettoProprietario;
+					consoleDynamicConfiguration.validateDynamicConfigAzione(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAccordoAzione);
+					break;
+				case FRUITORE:
+					IDFruizione idFruizione = (IDFruizione) idOggettoProprietario;
+					consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idFruizione);
+					break;
+				case OPERATION:
+					IDPortTypeAzione idAzionePt = (IDPortTypeAzione) idOggettoProprietario;
+					consoleDynamicConfiguration.validateDynamicConfigOperation(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAzionePt);
+					break;
+				case PORT_TYPE:
+					IDPortType idPt = (IDPortType) idOggettoProprietario;
+					consoleDynamicConfiguration.validateDynamicConfigPortType(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idPt);
+					break;
+				case RESOURCE:
+					IDResource idAccordoRisorsa = (IDResource) idOggettoProprietario;
+					consoleDynamicConfiguration.validateDynamicConfigResource(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAccordoRisorsa);
+					break;
+				case SOGGETTO:
+					IDSoggetto idSoggetto = (IDSoggetto) idOggettoProprietario;
+					consoleDynamicConfiguration.validateDynamicConfigSoggetto(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idSoggetto);
+					break;
+				}
+			}
+		}catch(ProtocolException e){
+			throw e;
+		}
+	}
 }

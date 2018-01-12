@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -181,15 +183,18 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
 			byte[] oldValue =  oldContenutoDocumento.getValue() ;
 			String errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuffer);
+			
+			// Parametri Barra titolo TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+			lstParam.add(new Parameter(ProtocolPropertiesUtilities.getLabelTipoProprietario(this.tipoProprietario,this.tipoAccordo),null));
+			// Escape della url del link, risolve il problema di autorizzazione
+			lstParam.add(new Parameter(this.nomeProprietario,URLDecoder.decode(this.urlChange,"UTF-8")));
+			lstParam.add(new Parameter(label,null));
 
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO			
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ProtocolPropertiesUtilities.getLabelTipoProprietario(this.tipoProprietario,this.tipoAccordo),null),
-						new Parameter(this.nomeProprietario,this.urlChange), 
-						new Parameter(label,null)
-						);
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -227,14 +232,21 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				isOk = false;
 			}
 			
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					ppHelper.validateDynamicConfig(this.consoleDynamicConfiguration, idOggettoProprietario, this.tipoAccordo, this.tipoProprietario, this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader);
+				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+			
 			if (!isOk) {
 
 				// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO			
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ProtocolPropertiesUtilities.getLabelTipoProprietario(this.tipoProprietario,this.tipoAccordo),null),
-						new Parameter(this.nomeProprietario,this.urlChange), 
-						new Parameter(label,null)
-						);
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -248,6 +260,9 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 						this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
 				
 				pd.setDati(dati);
+				
+				//cancello il file temporaneo
+				ppHelper.deleteBinaryProtocolPropertyTmpFiles(this.protocolProperties, this.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -266,11 +281,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			// mostro la visualizzazione del file
 			
 			// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO			
-			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(ProtocolPropertiesUtilities.getLabelTipoProprietario(this.tipoProprietario,this.tipoAccordo),null),
-					new Parameter(this.nomeProprietario,this.urlChange), 
-					new Parameter(label,null)
-					);
+			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
