@@ -360,6 +360,7 @@ public final class SoggettiAdd extends Action {
 				try{
 					soggettiHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}
@@ -371,6 +372,7 @@ public final class SoggettiAdd extends Action {
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idSoggetto); 
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}

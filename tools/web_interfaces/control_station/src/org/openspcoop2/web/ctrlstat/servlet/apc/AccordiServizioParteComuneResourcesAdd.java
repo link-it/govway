@@ -249,6 +249,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 				try{
 					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}
@@ -260,6 +261,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idRisorsa);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}

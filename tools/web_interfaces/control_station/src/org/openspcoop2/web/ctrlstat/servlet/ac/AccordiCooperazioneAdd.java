@@ -293,6 +293,7 @@ public final class AccordiCooperazioneAdd extends Action {
 				try{
 					acHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}
@@ -305,6 +306,7 @@ public final class AccordiCooperazioneAdd extends Action {
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAc);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}

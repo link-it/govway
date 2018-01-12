@@ -734,6 +734,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				try{
 					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}
@@ -745,6 +746,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idFruizione);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}

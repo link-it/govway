@@ -146,7 +146,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			}
 		}
 		
-		// La proprietà AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_ID deve essere una url
+		// La proprietà AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_ID deve essere una uri
 		StringProperty userMessagePartyTypeValueItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_ID);
 		try {

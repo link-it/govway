@@ -20317,9 +20317,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 		JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(this.tipoDB));
 		
 		if(list!=null && list.size()>0){
-			this.log.debug("FiltroRicercaProtocolProperty size:"+list.size()+" Proprietario stmt.setString("+proprietario.name()+")");
-			stmt.setString(index++, proprietario.name());
 			for (int i = 0; i < list.size(); i++) {
+				
+				this.log.debug("FiltroRicercaProtocolProperty size:"+list.size()+" ["+i+"] Proprietario stmt.setString("+proprietario.name()+")");
+				stmt.setString(index++, proprietario.name());
+				
+			}
+			for (int i = 0; i < list.size(); i++) {
+				
 				FiltroRicercaProtocolProperty f = list.get(i);
 				if(f.getName()!=null){
 					this.log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");

@@ -277,6 +277,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 				try{
 					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}
@@ -288,6 +289,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAzione);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}

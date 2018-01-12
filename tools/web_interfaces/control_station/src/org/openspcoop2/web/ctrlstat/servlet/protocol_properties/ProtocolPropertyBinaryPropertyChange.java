@@ -222,6 +222,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			try{
 				ppHelper.validaProtocolPropertyBinaria(this.nome,this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 			}catch(ProtocolException e){
+				ControlStationCore.getLog().error(e.getMessage(),e);
 				pd.setMessage(e.getMessage());
 				isOk = false;
 			}

@@ -481,6 +481,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 				try{
 					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}
@@ -492,6 +493,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAzione);
 				}catch(ProtocolException e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
 					isOk = false;
 				}

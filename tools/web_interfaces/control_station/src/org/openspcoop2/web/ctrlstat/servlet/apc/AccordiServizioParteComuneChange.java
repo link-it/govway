@@ -575,6 +575,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			try{
 				apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 			}catch(ProtocolException e){
+				ControlStationCore.getLog().error(e.getMessage(),e);
 				pd.setMessage(e.getMessage());
 				isOk = false;
 			}
@@ -589,6 +590,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				else 
 					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioComposto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAccordoOLD);
 			}catch(ProtocolException e){
+				ControlStationCore.getLog().error(e.getMessage(),e);
 				pd.setMessage(e.getMessage());
 				isOk = false;
 			}
