@@ -29,20 +29,28 @@ function postBack(dataElementName) {
 		if (nome && nome.length > 0 && nome != "idhid" && nome != "edit-mode") {
 		    var tipo = document.form.elements[k].type;
 		    var valore = "";
-		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea")
-			valore = document.form.elements[k].value;
+		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea"|| tipo == "number")
+		    	valore = document.form.elements[k].value;
 		    if (tipo == "select-one") {
-			for (var j=0; j<document.form.elements[k].options.length; j++)
-			    if (document.form.elements[k].options[j].selected == true)
-				valore = document.form.elements[k].options[j].value;
+		    	for (var j=0; j<document.form.elements[k].options.length; j++)
+		    		if (document.form.elements[k].options[j].selected == true)
+		    			valore = document.form.elements[k].options[j].value;
+		    }
+		    if (tipo == "select-multiple") {
+				for (var j=0; j<document.form.elements[k].options.length; j++) {
+				    if (document.form.elements[k].options[j].selected == true) {
+				    	valore = document.form.elements[k].options[j].value;
+				    	location += "&" + nome + "=" + encodeURIComponent(valore);
+				    }
+			    }
 		    }
 		    if (tipo == "checkbox") {
-			if (document.form.elements[k].checked)
-			    valore = "yes";
-			else
-			    valore = "no";
+		    	if (document.form.elements[k].checked)
+		    		valore = "yes";
+		    	else
+		    		valore = "no";
 		    }
-		    if (tipo == "text" || tipo == "hidden" || tipo == "select-one" || tipo == "checkbox" || tipo == "textarea") {
+		    if (tipo == "text" || tipo == "hidden" || tipo == "select-one" || tipo == "checkbox" || tipo == "textarea"|| tipo == "number") {
 // || (tipo == "file" && valore != "")) {
 			
 			    //if (appendAnd)
@@ -89,12 +97,22 @@ function postVersion_postBack(dataElementName) {
 		if(dump) { 
 		    var tipo = document.form.elements[k].type;
 		    var valore = "";
-		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea")
+		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea" || tipo == "number")
 			valore = document.form.elements[k].value;
 		    if (tipo == "select-one") {
 			for (var j=0; j<document.form.elements[k].options.length; j++)
 			    if (document.form.elements[k].options[j].selected == true)
 				valore = document.form.elements[k].options[j].value;
+		    }
+		    if (tipo == "select-multiple") {
+				for (var j=0; j<document.form.elements[k].options.length; j++) {
+				    if (document.form.elements[k].options[j].selected == true) {
+				    	if(valore.length > 0)
+				    		valore += ", ";
+				    	
+				    	valore += document.form.elements[k].options[j].value;
+				    }
+			    }
 		    }
 		    if (tipo == "checkbox") {
 			if (document.form.elements[k].checked)

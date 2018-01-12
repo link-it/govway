@@ -68,7 +68,7 @@ table {
 	border:none;
 }
 
-select, textarea, input[type="text"], input[type="password"], input[type="checkbox"], input[type="radio"] {
+select, textarea, input[type="text"], input[type="password"], input[type="checkbox"], input[type="radio"], input[type="number"] {
 	padding: 2px;
 	border: 1px solid ${input.border.color} ;
 	font-family: 'Roboto';

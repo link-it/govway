@@ -67,12 +67,12 @@ public class DataElement {
 		DataElement.escapeMap = new HashMap<String,String>();
 		
 		// carico le stringhe da sostituire
-		escapeMap.put("&lt;BR&gt;", "<BR>");
-		escapeMap.put("&lt;BR/&gt;", "<BR/>");
-		escapeMap.put("&lt;/BR&gt;", "</BR>");
-		escapeMap.put("&lt;br&gt;", "<br>");
-		escapeMap.put("&lt;br/&gt;", "<br/>");
-		escapeMap.put("&lt;/br&gt;", "</br>");
+		DataElement.escapeMap.put("&lt;BR&gt;", "<BR>");
+		DataElement.escapeMap.put("&lt;BR/&gt;", "<BR/>");
+		DataElement.escapeMap.put("&lt;/BR&gt;", "</BR>");
+		DataElement.escapeMap.put("&lt;br&gt;", "<br>");
+		DataElement.escapeMap.put("&lt;br/&gt;", "<br/>");
+		DataElement.escapeMap.put("&lt;/br&gt;", "</br>");
 	}
 
 	String label, value, type, subType, url, target, name, onClick, onChange, selected,toolTip;
@@ -88,6 +88,10 @@ public class DataElement {
 	
 	String note = null;
 	String styleClass = null;
+	
+	String [] selezionati = null; // serve per gestire i valori selezionati in una multiselect
+	
+	private Integer minValue = null, maxValue= null;
 
 	public String getIdToRemove() {
 		return this.idToRemove;
@@ -139,7 +143,7 @@ public class DataElement {
 			bf.append("<B>");
 		}
 		
-		bf.append(getEscapedValue(checkNull(this.label)));
+		bf.append(DataElement.getEscapedValue(DataElement.checkNull(this.label)));
 		if(elementsRequiredEnabled && this.required){
 			//	bf.append(" (*)");
 			bf.append(" <em>*</em>");
@@ -154,7 +158,7 @@ public class DataElement {
 		this.value = s;
 	}
 	public String getValue() {
-		return checkNull(this.value);
+		return DataElement.checkNull(this.value);
 	}
 
 	public void setType(DataElementType s) {
@@ -174,7 +178,7 @@ public class DataElement {
 		}
 	}
 	public String getType() {
-		return checkNull(this.type);
+		return DataElement.checkNull(this.type);
 	}
 	
 	public boolean isRequired() {
@@ -195,7 +199,7 @@ public class DataElement {
 		this.subType = s;
 	}
 	public String getSubType() {
-		return checkNull(this.subType);
+		return DataElement.checkNull(this.subType);
 	}
 
 	public void setUrl(String s) {
@@ -214,28 +218,28 @@ public class DataElement {
 		}
 	}
 	public String getUrl() {
-		return checkNull(this.url);
+		return DataElement.checkNull(this.url);
 	}
 
 	public void setTarget(String s) {
 		this.target = s;
 	}
 	public String getTarget() {
-		return checkNull(this.target);
+		return DataElement.checkNull(this.target);
 	}
 
 	public void setName(String s) {
 		this.name = s;
 	}
 	public String getName() {
-		return checkNull(this.name);
+		return DataElement.checkNull(this.name);
 	}
 
 	public void setOnClick(String s) {
 		this.onClick = s;
 	}
 	public String getOnClick() {
-		return checkNull(this.onClick);
+		return DataElement.checkNull(this.onClick);
 	}
 
 	@Deprecated
@@ -246,7 +250,7 @@ public class DataElement {
 		this.onChange = s;
 	}
 	public String getOnChange() {
-		return checkNull(this.onChange);
+		return DataElement.checkNull(this.onChange);
 	}
 
 	public void setSelected(String s) {
@@ -275,7 +279,7 @@ public class DataElement {
 		}
 	}
 	public String getSelected() {
-		return checkNull(this.selected);
+		return DataElement.checkNull(this.selected);
 	}
 
 	public void setSize(int i) {
@@ -323,7 +327,7 @@ public class DataElement {
 		if( s != null && s.length > 0){
 			this.labels = new String[ s.length];
 			for (int i = 0; i < s.length; i++) {
-				this.labels[i] = getEscapedValue( s[i]);
+				this.labels[i] = DataElement.getEscapedValue( s[i]);
 			}
 		}else {
 			this.labels = s;
@@ -413,7 +417,7 @@ public class DataElement {
 	}
 	
 	public static String getEscapedValue(String value){
-		String escaped = StringEscapeUtils.escapeHtml(StringEscapeUtils.unescapeHtml(checkNull(value)));
+		String escaped = StringEscapeUtils.escapeHtml(StringEscapeUtils.unescapeHtml(DataElement.checkNull(value)));
 		
 		// ripristino evenutali caratteri html
 		for (String key : DataElement.escapeMap.keySet()) {
@@ -426,7 +430,7 @@ public class DataElement {
 	}
 
 	public String getNote() {
-		return checkNull(this.note);
+		return DataElement.checkNull(this.note);
 	}
 
 	public void setNote(String note) {
@@ -434,11 +438,70 @@ public class DataElement {
 	}
 
 	public String getStyleClass() {
-		return checkNull(this.styleClass);
+		return DataElement.checkNull(this.styleClass);
 	}
 
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
+	}
+	
+	public void setSelezionati(String [] s) {
+			this.selezionati = s;
+	}
+	
+	public void setSelezionati(List<String> s) {
+		if(s==null || s.size()<=0){
+			return;
+		}
+		this.setSelezionati(s.toArray(new String[1]));
+	}
+	public String[] getSelezionati() {
+		return this.selezionati;
+	}
+	
+	public String getSelezionatiAsString() {
+		if(this.selezionati ==null || this.selezionati.length <=0){
+			return "";
+		}
+		
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < this.selezionati.length; i++) {
+			if(sb.length() > 0)
+				sb.append(", ");
+			
+			sb.append(DataElement.checkNull(this.selezionati[i]));
+		}
+		
+		return sb.toString();
+	}
+	
+	public boolean isSelected(String value) {
+		if(this.selezionati ==null || this.selezionati.length <=0){
+			return false;
+		}
+		
+		for (int i = 0; i < this.selezionati.length; i++) {
+			if(value.equals(DataElement.checkNull(this.selezionati[i])))
+				return true;
+		}
+		
+		return false;
+	}
+
+	public Integer getMinValue() {
+		return this.minValue;
+	}
+
+	public void setMinValue(Integer minValue) {
+		this.minValue = minValue;
+	}
+
+	public Integer getMaxValue() {
+		return this.maxValue;
+	}
+
+	public void setMaxValue(Integer maxValue) {
+		this.maxValue = maxValue;
 	}
 	
 	
