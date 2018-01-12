@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://ec.europa.eu/cefdigital/code/projects/EDELIVERY/repos/domibus/browse/Domibus-MSH/src/main/resources/schemas/domibus-pmode.xsd -->
+
+<!-- 
+	Estratto dallo schema domibus-pmode.xsd serve a far effettuare la validazione del payload profile 
+	L'xml deve tutto essere interamente non qualificato, per poterlo poi inserire correttamente dentro la configurazione di domibus
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+          attributeFormDefault="unqualified" elementFormDefault="unqualified">
+    
+    <xs:element name="payloadProfiles">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="payload"
+                            maxOccurs="unbounded"
+                            minOccurs="0">
+                    <xs:complexType>
+                        <xs:attribute name="name" use="required"
+                                      type="max255-non-empty-string"/>
+                        <xs:attribute name="cid" type="max255-non-empty-string"
+                                      use="required"/>
+                        <xs:attribute name="mimeType" type="max255-non-empty-string"/>
+                        <xs:attribute name="inBody" type="xs:string"/>
+                        <xs:attribute name="schemaFile" form="unqualified"
+                                      type="xs:anyURI"/>
+                        <xs:attribute name="maxSize" type="xs:integer"/>
+                        <xs:attribute name="required" type="xs:boolean"
+                                      use="required"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="payloadProfile"
+                            maxOccurs="unbounded"
+                            minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded"
+                                        name="attachment">
+                                <xs:complexType>
+                                    <xs:attribute name="name" type="max255-non-empty-string"
+                                                  use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="max255-non-empty-string"
+                                      use="required"/>
+                        <xs:attribute name="maxSize" type="xs:integer"
+                                      use="required"/>
+                    </xs:complexType>
+                    <xs:unique name="uniqueAttachment">
+                        <xs:selector xpath="attachment"/>
+                        <xs:field xpath="@name"/>
+                    </xs:unique>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:simpleType name="max255-non-empty-string">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="255"/>
+        </xs:restriction>
+    </xs:simpleType>
+                            
+</xs:schema>

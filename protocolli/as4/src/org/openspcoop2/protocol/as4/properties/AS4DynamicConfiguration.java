@@ -258,12 +258,12 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			}
 		}
 		
-		// 
+		// Payload Profile
 		BinaryProperty payloadProfileItem = (BinaryProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_ID);
 		if(payloadProfileItem!=null && payloadProfileItem.getValue()!=null) {
 			try {
-				eu.domibus.configuration.utils.XSDValidator.getXSDValidator(this.log).valida(new ByteArrayInputStream(payloadProfileItem.getValue()));
+				eu.domibus.configuration.utils.PayloadProfilesXSDValidator.getXSDValidator(this.log).valida(new ByteArrayInputStream(payloadProfileItem.getValue()));
 			}catch(Exception e) {
 				throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+"', presenta una struttura non valida: "+e.getMessage(),e);
 			}	

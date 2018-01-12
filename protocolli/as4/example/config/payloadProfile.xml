@@ -1,0 +1,16 @@
+                <payloadProfiles>
+                        <payload name="businessContentPayload"
+                                        cid="cid:message"
+                                        required="true"
+                                        mimeType="text/xml"/>
+                        <payload name="businessContentAttachment"
+                                        cid="cid:attachment" 
+                                        required="false"
+                                        mimeType="application/octet-stream"/>
+                        <payloadProfile name="MessageProfile" 
+                                        maxSize="40894464">
+                                <attachment name="businessContentPayload"/>
+                                <attachment name="businessContentAttachment"/>
+                        </payloadProfile>
+                </payloadProfiles>
+
