@@ -1,3 +1,9 @@
+2018-01-15  Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole]
+	Aggiunta funzionalità OP-691
+	Aggiunti nuovi input di tipo numerico e selezione multipla.
+
 2018-01-09  Andrea Poli <apoli@link.it>
 
 	* [Pdd, ProtocolloSPCoop]
