@@ -6,16 +6,26 @@
     <soggetto tipo="AS4" nome="Blue">
         
         <!-- Esempio SOAP -->
-        <porta-applicativa nome="SoapExample" stateless="abilitato">
+        <porta-applicativa nome="SoapExample/testXml" stateless="abilitato">
+            <servizio tipo="AS4" nome="SoapExample"/>
+            <azione nome="testXml"/>
+            <servizio-applicativo nome="TRACE"/>
+        </porta-applicativa>
+        <porta-applicativa nome="SoapExample/test" stateless="abilitato">
             <servizio tipo="AS4" nome="SoapExample"/>
             <azione nome="test"/>
             <servizio-applicativo nome="TRACE"/>
         </porta-applicativa>
 
         <!-- Esempio REST -->
-        <porta-applicativa nome="RestExample" stateless="abilitato">
+        <porta-applicativa nome="RestExample/test" stateless="abilitato">
             <servizio tipo="AS4" nome="RestExample"/>
             <azione nome="test"/>
+            <servizio-applicativo nome="TRACE"/>
+        </porta-applicativa>
+        <porta-applicativa nome="RestExample/test2" stateless="abilitato">
+            <servizio tipo="AS4" nome="RestExample"/>
+            <azione nome="test2"/>
             <servizio-applicativo nome="TRACE"/>
         </porta-applicativa>
         

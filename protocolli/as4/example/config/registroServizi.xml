@@ -7,8 +7,11 @@
         utilizzo-senza-azione="false" versione="1" service-binding="soap">
 	<soggetto-referente tipo="AS4" nome="Blue" />
         <port-type nome="GestioneFileSOAP" profilo-collaborazione="oneway">
-            <azione nome="test">
+            <azione nome="testXml">
 		<protocol-property name="ebmsActionPayloadProfile" value="XmlProfile"/>
+		<protocol-property name="ebmsActionCompressPayload" value="true"/>
+	    </azione>
+	    <azione nome="test">
 		<protocol-property name="ebmsActionCompressPayload" value="true"/>
 	    </azione>
         </port-type>
@@ -21,6 +24,9 @@
         utilizzo-senza-azione="false" versione="1" service-binding="rest">
 	<soggetto-referente tipo="AS4" nome="Blue" />
         <resource nome="test">
+	    <protocol-property name="ebmsActionCompressPayload" value="false"/>
+        </resource>
+        <resource nome="test2" method="GET">
             <protocol-property name="ebmsActionCompressPayload" value="false"/>
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />

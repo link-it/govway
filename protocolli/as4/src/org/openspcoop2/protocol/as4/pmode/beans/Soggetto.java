@@ -74,9 +74,9 @@ public class Soggetto  {
 			IDAccordo apcKey = IDAccordoFactory.getInstance().getIDAccordoFromUri(aps.getAccordoServizioParteComune());
 			
 			if(accordi.containsKey(apcKey)) {
-				API pt = accordi.get(apcKey);
-				this.aps.add(new APS(aps, pt, indiceInizialeLeg+numeroLegPerSoggetto, "Process_" + (indiceInizialeProcess+numeroProcessPerSoggetto)));
-				numeroLegPerSoggetto += pt.getBase().sizeAzioneList();
+				API api = accordi.get(apcKey);
+				this.aps.add(new APS(aps, api, indiceInizialeLeg+numeroLegPerSoggetto, "Process_" + (indiceInizialeProcess+numeroProcessPerSoggetto)));
+				numeroLegPerSoggetto += api.getActions().size();
 				numeroProcessPerSoggetto++;
 			} else {
 				throw new Exception("APC["+apcKey+"] erogato dal soggetto ["+base.getTipo()+"/"+base.getNome()+"] non trovato");

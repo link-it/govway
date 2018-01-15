@@ -6,7 +6,13 @@
     <soggetto tipo="AS4" nome="Red">
         
         <!-- Esempio SOAP -->
-        <porta-delegata nome="SoapExample" autenticazione="none" autorizzazione="none"
+        <porta-delegata nome="SoapExample/testXml" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="AS4" nome="Blue"/>
+            <servizio tipo="AS4" nome="SoapExample"/>
+            <azione nome="testXml"/>
+        </porta-delegata>
+        <porta-delegata nome="SoapExample/test" autenticazione="none" autorizzazione="none"
             integrazione="trasporto,urlBased,soap" stateless="abilitato">
             <soggetto-erogatore tipo="AS4" nome="Blue"/>
             <servizio tipo="AS4" nome="SoapExample"/>
@@ -14,11 +20,17 @@
         </porta-delegata>
 
         <!-- Esempio REST -->
-        <porta-delegata nome="RestExample" autenticazione="none" autorizzazione="none"
+        <porta-delegata nome="RestExample/test" autenticazione="none" autorizzazione="none"
             integrazione="trasporto,urlBased" stateless="abilitato">
             <soggetto-erogatore tipo="AS4" nome="Blue"/>
             <servizio tipo="AS4" nome="RestExample"/>
             <azione nome="test"/>
+        </porta-delegata>
+        <porta-delegata nome="RestExample/test2" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="AS4" nome="Blue"/>
+            <servizio tipo="AS4" nome="RestExample"/>
+            <azione nome="test2"/>
         </porta-delegata>
          
     </soggetto>

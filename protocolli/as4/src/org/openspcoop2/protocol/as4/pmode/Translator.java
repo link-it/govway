@@ -47,11 +47,6 @@ public class Translator {
 		map.put("apis", accordi);
 		List<Soggetto> soggetti = reader.findAllSoggetti(accordi);
 		map.put("soggetti", soggetti);
-		System.out.println("SOGGETTI: "+soggetti.size());
-		for (Soggetto soggetto : soggetti) {
-			System.out.println("SOGGETTO: "+soggetto.getBase().getNome());
-			System.out.println("APS: "+soggetto.getAps().size());
-		}
 		map.put("partyIdTypes", reader.findAllPartyIdTypes(soggetti));
 		map.put("soggettoOperativo", reader.getNomeSoggettoOperativo());
 		this.template.process(map, out);
