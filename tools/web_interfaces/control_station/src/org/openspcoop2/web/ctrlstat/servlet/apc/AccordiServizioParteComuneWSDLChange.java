@@ -207,11 +207,11 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				if(serviceBinding != null) {
 					switch(serviceBinding) {
 					case REST:
-						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3);
+						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST);
 						break;
 					case SOAP:
 					default:
-						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WSDL_11);
+						formatoSpecifica = org.openspcoop2.protocol.manifest.constants.InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SOAP);
 						break;
 					}
 				}

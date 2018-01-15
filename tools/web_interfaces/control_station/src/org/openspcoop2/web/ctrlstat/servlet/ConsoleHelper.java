@@ -2280,10 +2280,10 @@ public class ConsoleHelper {
 
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
-			if (((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) 
+			if (((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) 
 					&& pattern.equals(""))) {
 				String tmpElenco = "";
-				if ((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
+				if ((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
 					if (tmpElenco.equals("")) {
 						tmpElenco = CostantiControlStation.LABEL_PATTERN;
 					} else {
@@ -2295,10 +2295,10 @@ public class ConsoleHelper {
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) 
-					&& !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
-					&& !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
-					&& !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
+			if (!mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
 				return false;
 			}
@@ -2380,9 +2380,9 @@ public class ConsoleHelper {
 
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
-			if (((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals(""))) {
+			if (((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals(""))) {
 				String tmpElenco = "";
-				if ((mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
+				if ((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
 					if (tmpElenco.equals("")) {
 						tmpElenco = CostantiControlStation.LABEL_PATTERN;
 					} else {
@@ -2394,7 +2394,7 @@ public class ConsoleHelper {
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) && !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) && !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) && !mode.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
+			if (!mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) && !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) && !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) && !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
 				return false;
 			}
@@ -3430,20 +3430,20 @@ public class ConsoleHelper {
 						switch (type) {
 						case OPEN_API_3:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
+							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
 							break;
 						case SWAGGER_2:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
+							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2;
 							break;
 						case WADL:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL;
+							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_WADL;
 							break;
 						case WSDL_11:
 						default:
 							labels[i] = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11;
+							values[i] = CostantiControlStation.VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11;
 							break;
 						}
 					}

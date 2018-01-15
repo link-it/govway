@@ -53,9 +53,12 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
@@ -67,6 +70,7 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -780,7 +784,7 @@ public class XMLDataConverter {
 			Class<?> cProtocolFactoryManager = Class.forName("org.openspcoop2.protocol.engine.ProtocolFactoryManager");
 			Object protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
 			
-			String protocollo = (String) cProtocolFactoryManager.getMethod("getProtocolBySubjectType",String.class).invoke(protocolFactoryManager,idSoggetto.getTipo());
+			String protocollo = (String) cProtocolFactoryManager.getMethod("getProtocolByOrganizationType",String.class).invoke(protocolFactoryManager,idSoggetto.getTipo());
 			
 			Class<?> cProtocolFactory = Class.forName("org.openspcoop2.protocol.sdk.IProtocolFactory");
 			Object protocolFactory = cProtocolFactoryManager.getMethod("getProtocolFactoryByName",String.class).invoke(protocolFactoryManager, protocollo);
@@ -801,7 +805,7 @@ public class XMLDataConverter {
 			Class<?> cProtocolFactoryManager = Class.forName("org.openspcoop2.protocol.engine.ProtocolFactoryManager");
 			Object protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
 			
-			String protocollo = (String) cProtocolFactoryManager.getMethod("getProtocolBySubjectType",String.class).invoke(protocolFactoryManager,idSoggetto.getTipo());
+			String protocollo = (String) cProtocolFactoryManager.getMethod("getProtocolByOrganizationType",String.class).invoke(protocolFactoryManager,idSoggetto.getTipo());
 			
 			Class<?> cProtocolFactory = Class.forName("org.openspcoop2.protocol.sdk.IProtocolFactory");
 			Object protocolFactory = cProtocolFactoryManager.getMethod("getProtocolFactoryByName",String.class).invoke(protocolFactoryManager, protocollo);
@@ -847,6 +851,8 @@ public class XMLDataConverter {
 				Soggetto soggetto = this.sorgenteRegistro.getSoggetto(i);
 				for(int j=0; j<soggetto.sizeAccordoServizioParteSpecificaList(); j++){
 					AccordoServizioParteSpecifica servizio = soggetto.getAccordoServizioParteSpecifica(j);
+					servizio.setTipoSoggettoErogatore(soggetto.getTipo());
+					servizio.setNomeSoggettoErogatore(soggetto.getNome());
 					IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(servizio);
 					String uri = this.idServizioFactory.getUriFromAccordo(servizio);
 					this.log.info("Servizio "+uri+" eliminazione in corso...");
@@ -1264,6 +1270,15 @@ public class XMLDataConverter {
 			impostaInformazioniRegistroDB_Soggetto(soggetto,pddOperativaCtrlstatSinglePdd);
 		}
 		
+		// protocol properties: bytes
+		if(soggetto.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : soggetto.getProtocolPropertyList()) {
+				if(pp.getFile()!=null) {
+					pp.setByteFile(this.readDocumento(pp.getFile()));
+				}
+			}
+		}
+		
 		if( (reset==false) && this.gestoreCRUD.existsSoggetto(idSoggetto)){
 			if(aggiornamentoSoggetti){
 				this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
@@ -1299,6 +1314,14 @@ public class XMLDataConverter {
 			ac.getSpecificaSemiformale(k).setFile(name);
 			ac.getSpecificaSemiformale(k).setRuolo(RuoliDocumento.specificaSemiformale.toString());
 			ac.getSpecificaSemiformale(k).setTipoProprietarioDocumento(ProprietariDocumento.accordoCooperazione.toString());
+		}
+		// protocol properties: bytes
+		if(ac.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : ac.getProtocolPropertyList()) {
+				if(pp.getFile()!=null) {
+					pp.setByteFile(this.readDocumento(pp.getFile()));
+				}
+			}
 		}
 		IDAccordoCooperazione idAccordo = this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac);
 		String uriAC = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo);
@@ -1405,6 +1428,59 @@ public class XMLDataConverter {
 				as.getServizioComposto().getSpecificaCoordinamento(k).setFile(name);
 				as.getServizioComposto().getSpecificaCoordinamento(k).setRuolo(RuoliDocumento.specificaCoordinamento.toString());
 				as.getServizioComposto().getSpecificaCoordinamento(k).setTipoProprietarioDocumento(ProprietariDocumento.accordoServizio.toString());
+			}
+		}
+		// protocol properties: bytes
+		if(as.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : as.getProtocolPropertyList()) {
+				if(pp.getFile()!=null) {
+					pp.setByteFile(this.readDocumento(pp.getFile()));
+				}
+			}
+			if(as.sizeAzioneList()>0) {
+				for (Azione azione : as.getAzioneList()) {
+					for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
+						if(pp.getFile()!=null) {
+							pp.setByteFile(this.readDocumento(pp.getFile()));
+						}
+					}
+				}
+			}
+			if(as.sizePortTypeList()>0) {
+				for (PortType pt : as.getPortTypeList()) {
+					for (ProtocolProperty pp : pt.getProtocolPropertyList()) {
+						if(pp.getFile()!=null) {
+							pp.setByteFile(this.readDocumento(pp.getFile()));
+						}
+					}
+					if(pt.sizeAzioneList()>0) {
+						for (Operation azione : pt.getAzioneList()) {
+							for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
+								if(pp.getFile()!=null) {
+									pp.setByteFile(this.readDocumento(pp.getFile()));
+								}
+							}
+						}
+					}
+				}
+			}
+			if(as.sizeResourceList()>0) {
+				for (Resource resource : as.getResourceList()) {
+					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+						if(pp.getFile()!=null) {
+							pp.setByteFile(this.readDocumento(pp.getFile()));
+						}
+					}
+				}
+			}
+		}
+		if(ServiceBinding.SOAP.equals(as.getServiceBinding())) {
+			if(as.getFormatoSpecifica()==null) {
+				as.setFormatoSpecifica(CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_SOAP);
+			}
+		}else {
+			if(as.getFormatoSpecifica()==null) {
+				as.setFormatoSpecifica(CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_REST);
 			}
 		}
 	
@@ -1560,6 +1636,25 @@ public class XMLDataConverter {
 			servizio.getSpecificaSicurezza(k).setFile(name);
 			servizio.getSpecificaSicurezza(k).setRuolo(RuoliDocumento.specificaSicurezza.toString());
 			servizio.getSpecificaSicurezza(k).setTipoProprietarioDocumento(ProprietariDocumento.servizio.toString());
+		}
+		// protocol properties: bytes
+		if(servizio.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : servizio.getProtocolPropertyList()) {
+				if(pp.getFile()!=null) {
+					pp.setByteFile(this.readDocumento(pp.getFile()));
+				}
+			}
+			if(servizio.sizeFruitoreList()>0) {
+				for (Fruitore fruitore : servizio.getFruitoreList()) {
+					if(fruitore.sizeProtocolPropertyList()>0) {
+						for (ProtocolProperty pp : fruitore.getProtocolPropertyList()) {
+							if(pp.getFile()!=null) {
+								pp.setByteFile(this.readDocumento(pp.getFile()));
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());

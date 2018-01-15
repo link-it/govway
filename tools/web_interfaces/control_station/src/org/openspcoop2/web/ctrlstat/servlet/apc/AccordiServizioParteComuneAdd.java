@@ -362,11 +362,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				if(this.serviceBinding != null) {
 					switch(this.serviceBinding) {
 					case REST:
-						this.interfaceType = InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3);
+						this.interfaceType = InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST);
 						break;
 					case SOAP:
 					default:
-						this.interfaceType = InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_INTERFACE_TYPE_WSDL_11);
+						this.interfaceType = InterfaceType.toEnumConstant(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SOAP);
 						break;
 					}
 				}

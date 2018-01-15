@@ -22,6 +22,8 @@
 package org.openspcoop2.web.ctrlstat.costanti;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 
 /**
  * CostantiControlStation
@@ -234,7 +236,7 @@ public class CostantiControlStation {
 	
 	public final static String PARAMETRO_AZIONE = "azione";
 	
-	/** DEFAULT VALUES **/
+	/** VALUES **/
 	
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato";
 	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";
@@ -262,15 +264,17 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_BINARY = "BINARY";
 	public final static String DEFAULT_VALUE_PARAMETRO_MESSAGE_TYPE_MIME_MULTIPART = "MIME_MULTIPART";
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11 = "wsdl11";
-	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_WADL = "wadl";
-	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = "swagger2";
-	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = "openApi3";
+	public final static String VALUE_PARAMETRO_INTERFACE_TYPE_WSDL_11 = FormatoSpecifica.WSDL_11.getValue();
+	public final static String VALUE_PARAMETRO_INTERFACE_TYPE_WADL = FormatoSpecifica.WADL.getValue();
+	public final static String VALUE_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = FormatoSpecifica.SWAGGER_2.getValue();
+	public final static String VALUE_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = FormatoSpecifica.OPENAPI_3.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_REST = CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_REST.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_INTERFACE_TYPE_SOAP = CostantiRegistroServizi.DEFAULT_VALUE_INTERFACE_TYPE_SOAP.getValue();
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO.toString();
+	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED.toString();
+	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED.toString();
+	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString();
+	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO.toString();
 	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
 	public static final String DEFAULT_VALUE_AZIONE_NON_SELEZIONATA = "-";
