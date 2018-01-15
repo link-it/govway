@@ -99,7 +99,8 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
-			String azione = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+			// multiselect
+			String[] azionis = request.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -182,7 +183,8 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			}
 			
 			// Prendo le azioni  disponibili
-			boolean addTrattinoSelezioneNonEffettuata = true;
+			boolean addTrattinoSelezioneNonEffettuata = false;
+			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
 			List<String> azioni = porteApplicativeCore.getAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
 			if(azioni!=null && azioni.size()>0) {
@@ -214,13 +216,13 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				if(azioniDisponibiliList==null || azioniDisponibiliList.length<=1) {
+				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
 					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
 					pd.disableEditMode();
 				}
 				else {
-					dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azione);
+					dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				}
 				pd.setDati(dati);
@@ -242,7 +244,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azione);
+				dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps,  dati);
 
 				pd.setDati(dati);
@@ -254,7 +256,9 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			}
 
 			// aggiungo azione nel db
-			pa.getAzione().addAzioneDelegata(azione);
+			for(String azione: azionis) {
+				pa.getAzione().addAzioneDelegata(azione);
+			}
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 

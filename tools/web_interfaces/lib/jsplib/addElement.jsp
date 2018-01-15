@@ -55,7 +55,6 @@ PageData pd = (PageData) session.getAttribute(pdString);
 <script type="text/javascript">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
-var version= '<%= (String)session.getAttribute("version")%>';
 var path = '<%= request.getContextPath()%>';
 </script>
 <script type="text/javascript" src="js/PostBack.js"></script>
@@ -68,10 +67,8 @@ var path = '<%= request.getContextPath()%>';
 <script type="text/javascript" src="js/jquery.timepicker-table.js"></script>
 <style type="text/css">@import url(css/ui.core.css);</style>
 <style type="text/css">@import url(css/ui.theme.css);</style>
-<style type="text/css">@import url(css/ui.spinner.css);</style>
 <style type="text/css">@import url(css/ui.slider.css);</style>
 <script type="text/javascript" src="js/ui.core.js"></script>
-<script type="text/javascript" src="js/ui.spinner.min.js"></script>
 <script type="text/javascript" src="js/ui.slider.js"></script>
 <script>
 var nr = 0;
@@ -92,14 +89,8 @@ function CheckDati() {
                 //date time diagnostica
                 $(":input[name='datainizio']").datepicker({dateFormat: 'yy-mm-dd'});
                 $(":input[name='datafine']").datepicker({dateFormat: 'yy-mm-dd'});
-				var minvalue = 1;
-                if(version=="optional"){
-                    minvalue = 0;
-                }	
-                
-                $("input[name=versione]:not([type=hidden])").spinner({min:minvalue,max:999});
 
-				showSlider($("select[name^='percentuale']:not([type=hidden])"));
+                showSlider($("select[name^='percentuale']:not([type=hidden])"));
         });
 </script>
 

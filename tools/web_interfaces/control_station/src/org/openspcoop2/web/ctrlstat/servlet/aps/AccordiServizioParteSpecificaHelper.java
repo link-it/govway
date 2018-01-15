@@ -2727,9 +2727,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setValue(versione);
 			if(visualizzaVersione){
 				if( modificaAbilitata ){
-					de.setType(DataElementType.TEXT_EDIT);
+					de.setType(DataElementType.NUMBER);
+					de.setMinValue(1);
+					de.setMaxValue(999);
+					
 					//de.setRequired(true);
-					this.session.setAttribute(AccordiServizioParteSpecificaCostanti.SESSION_ATTRIBUTE_APS_VERSION, AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_SESSION_ATTRIBUTE_APS_VERSION);
 				}else{
 					de.setType(DataElementType.TEXT);
 				}
@@ -4401,12 +4403,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //									asps.getServizio().getTipoSoggettoErogatore(), asps.getServizio().getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
 //									new Search(true)).size();
 							Search searchForCount = new Search(true,1);
-							this.apsCore.serviziFruitoriPorteDelegateList(this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo()), 
-									asps.getTipo(),asps.getNome(), asps.getId(), 
-									asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
-									searchForCount);
-							int num = searchForCount.getNumEntries(Liste.SERVIZI_FRUITORI_PORTE_DELEGATE);
-							ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, (long) num);
+							IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+							long idSoggetto = this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo());
+							IDSoggetto idSoggettoFr = new IDSoggetto(fruitore.getNome(), fruitore.getTipo());
+							this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFr , idSoggetto,asps.getTipo(), asps.getNome(),
+									idServizioFromAccordo, asps.getId(), 
+									asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), searchForCount);
+							//int numPD = fruLista.size();
+							int numPD = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_FRUIZIONE);
+							ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, (long) numPD );
+							
 						}catch(Exception e){
 							this.log.error("Calcolo numero pa non riuscito",e);
 							ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, "N.D.");
@@ -4662,7 +4668,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	
 	public Vector<DataElement> addConfigurazioneErogazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome,
-			String azione, String[] azionis, String[] azioniDisponibiliList, 
+			String azione, String[] azioniDisponibiliList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String nomeSA, String [] saSoggetti, 
@@ -4768,7 +4774,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 	public boolean configurazioneErogazioneCheckData(TipoOperazione tipoOp, String nome, String azione,
-			String[] azionis, AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
+			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
 			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
 		if(azione == null || azione.equals("") || azione.equals("-")) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -4831,7 +4837,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	
 	public boolean configurazioneFruizioneCheckData(TipoOperazione tipoOp, String nome, String azione,
-			String[] azionis, AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
+			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
 			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
 		if(azione == null || azione.equals("") || azione.equals("-")) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -4883,7 +4889,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 	public Vector<DataElement> addConfigurazioneFruizioneToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String nome,
-			String azione, String[] azionis, String[] azioniDisponibiliList, String idAsps,
+			String azione, String[] azioniDisponibiliList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
 			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, List<String> saList,

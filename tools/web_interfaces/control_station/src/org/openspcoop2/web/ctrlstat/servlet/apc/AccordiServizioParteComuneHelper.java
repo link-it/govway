@@ -2826,7 +2826,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE);
 		de.setValue(versione);
 		if( modificheAbilitate ){
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.NUMBER);
+			de.setMinValue(1);
+			de.setMaxValue(999);
 		}else{
 			de.setType(DataElementType.TEXT);
 		}

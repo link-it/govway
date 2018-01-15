@@ -266,6 +266,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE = "soggvirt";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "servizio";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.PARAMETRO_AZIONE;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.PARAMETRO_AZIONI;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA = "oldNomePA";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = "integrazione";

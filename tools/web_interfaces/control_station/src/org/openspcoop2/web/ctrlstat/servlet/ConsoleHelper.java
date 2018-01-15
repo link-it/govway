@@ -3476,35 +3476,37 @@ public class ConsoleHelper {
 	}
 	
 	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate) {
-		String azione = this.request.getParameter(CostantiControlStation.PARAMETRO_AZIONE);
+		String[] azionis = this.request.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
 		
-		if(azione == null || azione.equals("") || azione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
+		if(azionis == null || azionis.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
 			return false;
 		}
 		
-		if(azioniOccupate.contains(azione)) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
-			return false;			
+		for (String azione : azionis) {
+			if(azioniOccupate.contains(azione)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+				return false;			
+			}
 		}
 		
 		return true;
 	}
 
-	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,String[] azioniDisponibiliList, String azione) {
+	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,String[] azioniDisponibiliList, String[] azioni) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Azione
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONI);
 		de.setValues(azioniDisponibiliList);
-		de.setSelected(azione);
-		de.setType(DataElementType.SELECT);
-		de.setName(CostantiControlStation.PARAMETRO_AZIONE);
+		de.setSelezionati(azioni);
+		de.setType(DataElementType.MULTI_SELECT);
+		de.setName(CostantiControlStation.PARAMETRO_AZIONI);
 		de.setRequired(true); 
 		dati.addElement(de);
 		

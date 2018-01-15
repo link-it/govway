@@ -120,7 +120,6 @@ public class AccordiCooperazioneCostanti {
 	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO = "nomeDoc";
 	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE = "tipoFile";
 	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO = "ruolo";
-	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_VERSION = "version";
 	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO_LABEL = "privatoLabel";
 	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "documento";
 	public final static String PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE = "theFile";
@@ -149,7 +148,6 @@ public class AccordiCooperazioneCostanti {
 	
 	/* DEFAULT VALUE PARAMETRI */
 
-	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VERSION = "required";
 	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PUBBLICA = "pubblica";
 	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PRIVATA = "privata";
 }

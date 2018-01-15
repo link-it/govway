@@ -233,7 +233,6 @@ for (int i = 0; i < dati.size(); i++) {
 									    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
 									    			</div><%
 									    	} else {
-									    		String versionFromSession = (String)session.getAttribute("version");
 									    		String minvalue = de.getMinValue() != null ? " min=\"" + de.getMinValue() + "\"" : "";
 									    		String maxValue = de.getMaxValue() != null ? " max=\"" + de.getMaxValue() + "\"" : "";
 									    		

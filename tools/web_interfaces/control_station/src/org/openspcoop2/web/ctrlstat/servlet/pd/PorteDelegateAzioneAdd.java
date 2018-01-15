@@ -103,7 +103,8 @@ public final class PorteDelegateAzioneAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
-			String azione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			// multiselect
+			String[] azionis = request.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -157,7 +158,8 @@ public final class PorteDelegateAzioneAdd extends Action {
 			}
 			
 			// Prendo le azioni  disponibili
-			boolean addTrattinoSelezioneNonEffettuata = true;
+			boolean addTrattinoSelezioneNonEffettuata = false;
+			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
 			List<String> azioni = porteDelegateCore.getAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
 			if(azioni!=null && azioni.size()>0) {
@@ -189,13 +191,13 @@ public final class PorteDelegateAzioneAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				if(azioniDisponibiliList==null || azioniDisponibiliList.length<=1) {
+				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
 					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
 					pd.disableEditMode();
 				}
 				else {
-					dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azione);
+					dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, idFruizione, dati);
 				}
 				pd.setDati(dati);
@@ -217,7 +219,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azione);
+				dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, idFruizione, dati);
 
 				pd.setDati(dati);
@@ -229,7 +231,9 @@ public final class PorteDelegateAzioneAdd extends Action {
 			}
 
 			// aggiungo azione nel db
-			portaDelegata.getAzione().addAzioneDelegata(azione);
+			for(String azione: azionis) {
+				portaDelegata.getAzione().addAzioneDelegata(azione);
+			}
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 

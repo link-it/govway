@@ -235,6 +235,7 @@ public class CostantiControlStation {
 	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE = 2;
 	
 	public final static String PARAMETRO_AZIONE = "azione";
+	public final static String PARAMETRO_AZIONI = "azioni";
 	
 	/** VALUES **/
 	

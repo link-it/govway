@@ -119,8 +119,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			String azione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			String nome = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			// multiselect
-			String[] azionis = request.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+		
 			String modeCreazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE);
 			String identificazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE);
 			String mappingPD = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MAPPING);
@@ -221,6 +220,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			// Prendo le azioni  disponibili
 			boolean addTrattinoSelezioneNonEffettuata = true;
+			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
 			List<String> azioni = porteDelegateCore.getAzioni(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
 			if(azioni!=null && azioni.size()>0) {
@@ -284,13 +284,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				if(azioniDisponibiliList==null || azioniDisponibiliList.length<=1) {
-					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
-					
+				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
-
 					pd.disableEditMode();
-					
 				}
 				else {
 				
@@ -332,7 +328,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					
 	
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
-					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoFruitore,
+					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
 							mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
@@ -349,7 +345,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azione, azionis, asps, azioniOccupate,modeCreazione,null,true);
+			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azione, asps, azioniOccupate,modeCreazione,null,true);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,lstParm); 
@@ -361,7 +357,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 
-				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azionis, azioniDisponibiliList, idAsps, idSoggettoFruitore,
+				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
 						mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 

@@ -608,13 +608,13 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setValue(versione);
 		if( modificheAbilitate ){
 //			if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED)){
-				de.setType(DataElementType.TEXT_EDIT);
+				de.setType(DataElementType.NUMBER);
+				de.setMinValue(1);
+				de.setMaxValue(999);
 				//if(this.core.isBackwardCompatibilityAccordo11()==false){
 				//de.setRequired(true);
 				// version spinner parte da 1
-
-				this.session.setAttribute(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSION, 
-						AccordiCooperazioneCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VERSION);
+			
 				/*}else{
 						// version spinner parte da 0
 						if(versione==null || "".equals(versione)){

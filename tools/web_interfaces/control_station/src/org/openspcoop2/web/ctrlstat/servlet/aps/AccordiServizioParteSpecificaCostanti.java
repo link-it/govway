@@ -232,9 +232,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	
 	public final static String SESSION_ATTRIBUTE_APS_SERVIZI_AGGIUNTI = "serviziAggiunti";
-	public final static String SESSION_ATTRIBUTE_APS_VERSION = "version";
-	
-
 	
 	
 	/* LABEL PARAMETRI */
@@ -290,8 +287,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String DEFAULT_VALUE_PUBBLICA = "pubblica";	
 	
 	/* DEFAULT VALUE ATTRIBUTI SESSIONE */
-	public final static String DEFAULT_VALUE_SESSION_ATTRIBUTE_APS_VERSION = "required";
-	
 	
 	/* MESSAGGI INFO SEARCH */
 	public static final String MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY = "{0} contenenti la stringa '{1}'";
