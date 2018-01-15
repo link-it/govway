@@ -26,11 +26,15 @@ public class Payload {
 	public Payload(Node node) {
 		this.name = node.getAttributes().getNamedItem("name").getNodeValue();
 		this.cid = node.getAttributes().getNamedItem("cid").getNodeValue();
-		this.inBody = Boolean.parseBoolean(node.getAttributes().getNamedItem("inBody").getNodeValue());
+		this.inBody = node.getAttributes().getNamedItem("inBody")!=null ? 
+				Boolean.parseBoolean(node.getAttributes().getNamedItem("inBody").getNodeValue()) : null;
 		this.required = Boolean.parseBoolean(node.getAttributes().getNamedItem("required").getNodeValue());
-		this.schemaFile = node.getAttributes().getNamedItem("schemaFile").getNodeValue();
-		this.maxSize = Long.parseLong(node.getAttributes().getNamedItem("maxSize").getNodeValue());
-		this.mimeType = node.getAttributes().getNamedItem("mimeType").getNodeValue();
+		this.schemaFile = node.getAttributes().getNamedItem("schemaFile")!=null ? 
+				node.getAttributes().getNamedItem("schemaFile").getNodeValue() : null;
+		this.maxSize = node.getAttributes().getNamedItem("maxSize")!=null ?
+				Long.parseLong(node.getAttributes().getNamedItem("maxSize").getNodeValue()) : null;
+		this.mimeType = node.getAttributes().getNamedItem("mimeType")!=null ?
+				node.getAttributes().getNamedItem("mimeType").getNodeValue() : null;
 	}
 	public String getName() {
 		return this.name;

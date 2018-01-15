@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.TipiConnettore;
-import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
@@ -30,7 +30,7 @@ public class Soggetto  {
 	private String location;
 	private List<APS> aps;
 
-	public Soggetto(org.openspcoop2.core.registry.Soggetto base, Map<IDPortType, PortType> ptList, int indiceInizialeLeg, int indiceInizialeProcess) throws Exception {
+	public Soggetto(org.openspcoop2.core.registry.Soggetto base, Map<IDAccordo, API> accordi, int indiceInizialeLeg, int indiceInizialeProcess) throws Exception {
 		this.base = base;
 		for(ProtocolProperty prop: this.base.getProtocolPropertyList()) {
 			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_NAME)) {
@@ -71,12 +71,10 @@ public class Soggetto  {
 		int numeroProcessPerSoggetto = 0;
 		for(AccordoServizioParteSpecifica aps: base.getAccordoServizioParteSpecificaList()) {
 
-			IDPortType apcKey = new IDPortType();
-			apcKey.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(aps.getAccordoServizioParteComune()));
-			apcKey.setNome(aps.getNome());
+			IDAccordo apcKey = IDAccordoFactory.getInstance().getIDAccordoFromUri(aps.getAccordoServizioParteComune());
 			
-			if(ptList.containsKey(apcKey)) {
-				PortType pt = ptList.get(apcKey);
+			if(accordi.containsKey(apcKey)) {
+				API pt = accordi.get(apcKey);
 				this.aps.add(new APS(aps, pt, indiceInizialeLeg+numeroLegPerSoggetto, "Process_" + (indiceInizialeProcess+numeroProcessPerSoggetto)));
 				numeroLegPerSoggetto += pt.getBase().sizeAzioneList();
 				numeroProcessPerSoggetto++;

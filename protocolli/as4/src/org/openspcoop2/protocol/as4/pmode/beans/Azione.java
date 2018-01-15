@@ -3,6 +3,8 @@
  */
 package org.openspcoop2.protocol.as4.pmode.beans;
 
+import java.util.List;
+
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
@@ -15,15 +17,32 @@ import org.openspcoop2.protocol.as4.constants.AS4Costanti;
  */
 public class Azione {
 
-	private Operation base;
+	// soap
+	private org.openspcoop2.core.registry.Azione baseAzione;
+	private Operation baseOperation;
+	// rest
+	private org.openspcoop2.core.registry.Resource baseResource;
+	
 	private String id;
 	private String ebmsActionPayloadProfile;
 	private Boolean ebmsActionCompressPayload;
 	
+	public Azione(org.openspcoop2.core.registry.Azione base, String id, PayloadProfiles payloadProfiles) throws Exception {
+		this(base.getProtocolPropertyList(),id,payloadProfiles);
+		this.baseAzione = base;
+	}
 	public Azione(Operation base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this.base = base;
+		this(base.getProtocolPropertyList(),id,payloadProfiles);
+		this.baseOperation = base;
+	}
+	public Azione(org.openspcoop2.core.registry.Resource base, String id, PayloadProfiles payloadProfiles) throws Exception {
+		this(base.getProtocolPropertyList(),id,payloadProfiles);
+		this.baseResource = base;
+	}
+	private Azione(List<ProtocolProperty> list, String id, PayloadProfiles payloadProfiles) throws Exception {
+		
 		this.id = id;
-		for(ProtocolProperty prop: base.getProtocolPropertyList()) {
+		for(ProtocolProperty prop: list) {
 			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE)) {
 				
 				this.ebmsActionPayloadProfile = prop.getValue();
@@ -49,11 +68,24 @@ public class Azione {
 			this.ebmsActionCompressPayload = true;
 		
 	}
-	public Operation getBase() {
-		return this.base;
+
+	public org.openspcoop2.core.registry.Azione getBaseAzione() {
+		return this.baseAzione;
 	}
-	public void setBase(Operation base) {
-		this.base = base;
+	public void setBaseAzione(org.openspcoop2.core.registry.Azione baseAzione) {
+		this.baseAzione = baseAzione;
+	}
+	public Operation getBaseOperation() {
+		return this.baseOperation;
+	}
+	public void setBaseOperation(Operation baseOperation) {
+		this.baseOperation = baseOperation;
+	}
+	public org.openspcoop2.core.registry.Resource getBaseResource() {
+		return this.baseResource;
+	}
+	public void setBaseResource(org.openspcoop2.core.registry.Resource baseResource) {
+		this.baseResource = baseResource;
 	}
 	public String getId() {
 		return this.id;

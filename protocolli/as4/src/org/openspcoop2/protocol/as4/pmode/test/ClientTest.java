@@ -63,6 +63,8 @@ public class ClientTest {
 			
 			out.flush();
 			out.close();
+			
+			System.out.println("File generato in ["+f.getAbsolutePath()+"]");
 		
 		}finally{
 			try{

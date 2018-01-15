@@ -3,7 +3,6 @@
  */
 package org.openspcoop2.protocol.as4.pmode.beans;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,25 +25,37 @@ public class PayloadProfiles {
 	List<Payload> payloads;
 	List<PayloadProfile> payloadProfiles;
 	
-	public PayloadProfiles(File file, List<String> fileNames) throws Exception {
+	public PayloadProfiles(List<byte[]> contents) throws Exception {
 
 		this.payloads = new ArrayList<>();
 		this.payloadProfiles = new ArrayList<>();
 		
+		List<String> payloadsDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
+		payloadsDefault.add("businessContentPayload");
+		payloadsDefault.add("businessContentAttachment");
+		
 		Map<String, Payload> payloadsMap = new HashMap<>();
+		
+		List<String> payloadsProfilesDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
+		payloadsProfilesDefault.add("MessageProfile");
+		
 		Map<String, PayloadProfile> payloadProfilesMap = new HashMap<>();
 
-		for(String fileName: fileNames) {
-			Document doc = XMLUtils.getInstance().newDocument(new File(file, fileName));
+		for(byte[] content: contents) {
+			
+			Document doc = XMLUtils.getInstance().newDocument(content);
 			doc.getDocumentElement().normalize();
 	
 			NodeList payloadList = doc.getElementsByTagName("payload");
 			for (int temp = 0; temp < payloadList.getLength(); temp++) {
 				Node node = payloadList.item(temp);
 				Payload payload = new Payload(node);
+				if(payloadsDefault.contains(payload.getName())) {
+					throw new Exception("Il payload con nome ["+payload.getName()+"] è già presente nella configurazione di default; modificare il nome");
+				}
 				if(payloadsMap.containsKey(payload.getName())) {
 					if(!payloadsMap.get(payload.getName()).equals(payload)) {
-						throw new Exception("Conflitto di payload per il nome ["+payload.getName()+"]");
+						throw new Exception("Payload con nome ["+payload.getName()+"] risulta utilizzato su più accordi");
 					}
 				}
 				payloadsMap.put(payload.getName(), payload);
@@ -54,9 +65,12 @@ public class PayloadProfiles {
 			for (int temp = 0; temp < payloadProfileList.getLength(); temp++) {
 				Node node = payloadProfileList.item(temp);
 				PayloadProfile payloadProfile = new PayloadProfile(node);
+				if(payloadsProfilesDefault.contains(payloadProfile.getName())) {
+					throw new Exception("Il payload-profile con nome ["+payloadProfile.getName()+"] è già presente nella configurazione di default; modificare il nome");
+				}
 				if(payloadProfilesMap.containsKey(payloadProfile.getName())) {
 					if(!payloadProfilesMap.get(payloadProfile.getName()).equals(payloadProfile)) {
-						throw new Exception("Conflitto di payloadProfile per il nome ["+payloadProfile.getName()+"]");
+						throw new Exception("Payload-profile con nome ["+payloadProfile.getName()+"] risulta utilizzato su più accordi");
 					}
 				}
 				payloadProfilesMap.put(payloadProfile.getName(), payloadProfile);

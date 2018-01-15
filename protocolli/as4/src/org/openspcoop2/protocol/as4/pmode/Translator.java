@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
+import org.openspcoop2.protocol.as4.pmode.beans.API;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
-import org.openspcoop2.protocol.as4.pmode.beans.PortType;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -43,10 +43,15 @@ public class Translator {
 		map.put("apcList", apcList);
 		PayloadProfiles findPayloadProfile = reader.findPayloadProfile(apcList);
 		map.put("payloadProfiles", findPayloadProfile);
-		Map<IDPortType, PortType> portTypes = reader.findAllPortTypes(findPayloadProfile);
-		map.put("portTypes", portTypes);
-		List<Soggetto> soggetti = reader.findAllSoggetti(portTypes);
+		Map<IDAccordo, API> accordi = reader.findAllAccordi(findPayloadProfile);
+		map.put("apis", accordi);
+		List<Soggetto> soggetti = reader.findAllSoggetti(accordi);
 		map.put("soggetti", soggetti);
+		System.out.println("SOGGETTI: "+soggetti.size());
+		for (Soggetto soggetto : soggetti) {
+			System.out.println("SOGGETTO: "+soggetto.getBase().getNome());
+			System.out.println("APS: "+soggetto.getAps().size());
+		}
 		map.put("partyIdTypes", reader.findAllPartyIdTypes(soggetti));
 		map.put("soggettoOperativo", reader.getNomeSoggettoOperativo());
 		this.template.process(map, out);

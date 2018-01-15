@@ -10,22 +10,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
+import org.openspcoop2.protocol.as4.pmode.beans.API;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
-import org.openspcoop2.protocol.as4.pmode.beans.PortType;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
@@ -52,13 +56,14 @@ public class PModeRegistryReader {
 		
 		List<APC> apcList = new ArrayList<>();
 		FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
+		filtroRicerca.setSoggetto(new IDSoggetto(this.tipo, null));
 		List<IDAccordo> allIdAccordiServizioParteComune = this.registryReader.findIdAccordiServizioParteComune(filtroRicerca);
 		
 		int index = 1;
 		for(IDAccordo idAccordo: allIdAccordiServizioParteComune) {
 			AccordoServizioParteComune accordoServizioParteComune = this.registryReader.getAccordoServizioParteComune(idAccordo);
 			
-			apcList.add(new APC(accordoServizioParteComune, index++));
+			apcList.add(new APC(this.log,accordoServizioParteComune, index++));
 		}
 		
 		return apcList;
@@ -66,14 +71,14 @@ public class PModeRegistryReader {
 	
 	public PayloadProfiles findPayloadProfile(List<APC> apcList) throws Exception {
 		
-		List<String> fileNames = new ArrayList<>();
+		List<byte[]> contents = new ArrayList<byte[]>();
 		for(APC apc: apcList) {
 			
 			if(apc.getEbmsServicePayloadProfile() != null)
-				fileNames.add(apc.getEbmsServicePayloadProfile());
+				contents.add(apc.getEbmsServicePayloadProfile());
 		}
 		
-		return new PayloadProfiles(AS4Properties.getInstance(this.log).getPModeTranslatorPayloadProfilesFolder(), fileNames);
+		return new PayloadProfiles(contents);
 	}
 	
 	public List<Policy> findAllPolicies() throws Exception {
@@ -93,7 +98,7 @@ public class PModeRegistryReader {
 		return policies;
 	}
 	
-	public List<Soggetto> findAllSoggetti(Map<IDPortType, PortType> portTypes) throws Exception {
+	public List<Soggetto> findAllSoggetti(Map<IDAccordo, API> accordi) throws Exception {
 		
 		FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
 		filtroRicercaSoggetti.setTipo(this.tipo);
@@ -107,7 +112,28 @@ public class PModeRegistryReader {
 		int processId = 1;
 		for(IDSoggetto idSoggetto: allIdSoggetti) {
 			org.openspcoop2.core.registry.Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
-			Soggetto soggettoPM = new Soggetto(soggetto, portTypes, legId, processId);
+			
+			if(soggetto.sizeAccordoServizioParteSpecificaList()>0) {
+				// xml
+			}
+			else {
+				// db ?
+				FiltroRicercaServizi filtroRicercaServizi = new FiltroRicercaServizi();
+				filtroRicercaServizi.setTipoServizio(this.tipo);
+				filtroRicercaServizi.setSoggettoErogatore(idSoggetto);
+				List<IDServizio> listServizi = null;
+				try {
+					listServizi = this.registryReader.findIdAccordiServizioParteSpecifica(filtroRicercaServizi);
+				}catch(RegistryNotFound e) {}
+				if(listServizi!=null && listServizi.size()>0) {
+					for (IDServizio idServizio : listServizi) {
+						AccordoServizioParteSpecifica asps = this.registryReader.getAccordoServizioParteSpecifica(idServizio);
+						soggetto.addAccordoServizioParteSpecifica(asps);
+					}
+				}
+			}
+			
+			Soggetto soggettoPM = new Soggetto(soggetto, accordi, legId, processId);
 			soggetti.add(soggettoPM);
 			processId += soggettoPM.getBase().sizeAccordoServizioParteSpecificaList();
 			legId += soggettoPM.sizeAzioni();
@@ -142,26 +168,32 @@ public class PModeRegistryReader {
 		}
 	}
 
-	public Map<IDPortType, PortType> findAllPortTypes(PayloadProfiles findPayloadProfile) throws Exception {
+	public Map<IDAccordo, API> findAllAccordi(PayloadProfiles findPayloadProfile) throws Exception {
 		
 		FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
 		filtroRicerca.setSoggetto(new IDSoggetto(this.tipo,null));
 		List<IDAccordo> allId = this.registryReader.findIdAccordiServizioParteComune(filtroRicerca);
 		
-		Map<IDPortType, PortType> map = new HashMap<>();
+		Map<IDAccordo, API> map = new HashMap<IDAccordo, API>();
 
 		int i = 1;
 		int indexAzione = 1;
 		for(IDAccordo idAccordo: allId) {
 			AccordoServizioParteComune apc = this.registryReader.getAccordoServizioParteComune(idAccordo);
 			String nomeApc = "Servizio_" + i++;
-			for(org.openspcoop2.core.registry.PortType pt: apc.getPortTypeList()) {
-				IDPortType id = new IDPortType();
-				id.setIdAccordo(idAccordo);
-				id.setNome(pt.getNome());
-				
-				map.put(id, new PortType(pt, nomeApc, indexAzione, findPayloadProfile));
-				indexAzione+= pt.sizeAzioneList();
+			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile));
+			if(ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
+				if(apc.sizeAzioneList()>0) {
+					indexAzione+= apc.sizeAzioneList();
+				}
+				if(apc.sizePortTypeList()>0) {
+					for (org.openspcoop2.core.registry.PortType pt : apc.getPortTypeList()) {
+						indexAzione+= pt.sizeAzioneList();
+					}
+				}
+			}
+			else {
+				indexAzione+= apc.sizeResourceList();
 			}
 		}
 		return map;

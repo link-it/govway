@@ -3,9 +3,14 @@
  */
 package org.openspcoop2.protocol.as4.pmode.beans;
 
+import java.io.File;
+
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.slf4j.Logger;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
@@ -16,16 +21,25 @@ import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 public class APC {
 
 	private AccordoServizioParteComune base;
-	private String ebmsServicePayloadProfile;
+	private byte[] ebmsServicePayloadProfile;
 	private String ebmsUserMessageCollaborationInfoServiceType;
 	private String id;
 	
-	public APC(AccordoServizioParteComune base, int index) throws Exception {
+	public APC(Logger log, AccordoServizioParteComune base, int index) throws Exception {
 		this.base = base;
 		this.id = "Servizio_" + index;
 		for(ProtocolProperty prop: base.getProtocolPropertyList()) {
 			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE)) {
-				this.ebmsServicePayloadProfile = prop.getFile();
+				if(prop.getByteFile()!=null) {
+					this.ebmsServicePayloadProfile = prop.getByteFile();
+				}
+				else {			
+					File fCheck = new File(prop.getFile());
+					if(fCheck.exists()==false) {
+						fCheck = new File(AS4Properties.getInstance(log).getPModeTranslatorPayloadProfilesFolder(), prop.getFile());
+					}
+					this.ebmsServicePayloadProfile = FileSystemUtilities.readBytesFromFile(fCheck);
+				}
 			}else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE)) {
 				this.ebmsUserMessageCollaborationInfoServiceType = prop.getValue();
 			}
@@ -59,11 +73,11 @@ public class APC {
 		this.id = id;
 	}
 
-	public String getEbmsServicePayloadProfile() {
+	public byte[] getEbmsServicePayloadProfile() {
 		return this.ebmsServicePayloadProfile;
 	}
 
-	public void setEbmsServicePayloadProfile(String ebmsServicePayloadProfile) {
+	public void setEbmsServicePayloadProfile(byte[] ebmsServicePayloadProfile) {
 		this.ebmsServicePayloadProfile = ebmsServicePayloadProfile;
 	}
 }

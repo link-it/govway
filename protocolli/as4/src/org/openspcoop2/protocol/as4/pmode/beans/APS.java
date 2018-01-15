@@ -20,11 +20,11 @@ public class APS {
 
 	private AccordoServizioParteSpecifica base;
 	private Map<String, Azione> azioni;
-	private PortType pt;
+	private API pt;
 	private String ebmsSecurityProfile;
 	private String id;
 	
-	public APS(AccordoServizioParteSpecifica base, PortType pt, int idInizialeLeg, String id) throws Exception {
+	public APS(AccordoServizioParteSpecifica base, API pt, int idInizialeLeg, String id) throws Exception {
 		this.base = base;
 		this.pt = pt;
 		this.id = id;
@@ -48,10 +48,10 @@ public class APS {
 	public void setBase(AccordoServizioParteSpecifica base) {
 		this.base = base;
 	}
-	public PortType getPt() {
+	public API getPt() {
 		return this.pt;
 	}
-	public void setPt(PortType pt) {
+	public void setPt(API pt) {
 		this.pt = pt;
 	}
 	public Map<String, Azione> getAzioni() {

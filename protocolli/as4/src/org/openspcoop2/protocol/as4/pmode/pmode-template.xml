@@ -62,11 +62,11 @@
 			<#list payloadProfiles.payloads as payload>
 			<payload name="${payload.name}"
 					cid="${payload.cid}" 
-					inBody="${payload.inBody?c}" 
+					<#if payload.inBody?has_content>inBody="${payload.inBody?c}"</#if> 
 					required="${payload.required?c}"
-					schemaFile="${payload.schemaFile}"
-					maxSize="${payload.maxSize}" 
-					mimeType="${payload.mimeType}"/>
+					<#if payload.schemaFile?has_content>schemaFile="${payload.schemaFile}"</#if> 
+					<#if payload.maxSize?has_content>maxSize="${payload.maxSize}"</#if> 
+					<#if payload.mimeType?has_content>mimeType="${payload.mimeType}"/></#if> 
 			</#list>
 			<payloadProfile name="MessageProfile" 
 					maxSize="40894464">
@@ -106,9 +106,12 @@
 		</#list>
 		</services>
 		<actions>
-		<#list portTypes?values as portType>
-			<#list portType.actions?values as action>
-			<action name="${action.id}" value="${action.base.nome}"/>
+		<#list apis?values as api>
+			<#list api.actions?values as action>
+			<#if action.baseAzione?has_content><action name="${action.id}" value="${action.baseAzione.nome}"/></#if>
+			<#if action.baseOperation?has_content><action name="${action.id}" value="${action.baseOperation.nome}"/></#if>
+			<#if action.baseResource?has_content><action name="${action.id}" value="${action.baseResource.nome}"/></#if>
+			
 			</#list>
 		</#list>
 		</actions>

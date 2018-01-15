@@ -260,4 +260,17 @@
 	
 	
 	
+	<target name="runPmodeConfigGenerator">
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.protocol.as4.pmode.test.ClientTest" fork="true">
+		        <classpath>
+		        		<path refid="classpath_run_lib" />
+		        		<path refid="classpath_run_openspcoop_dist" />
+		        		<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
+	</target>
+	
+	
+	
 </project>
