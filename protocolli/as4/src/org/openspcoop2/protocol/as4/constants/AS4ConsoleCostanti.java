@@ -77,16 +77,18 @@ public class AS4ConsoleCostanti {
 	
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL = "Payload Profile";
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE;
+	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT = "MessageProfile";
 	
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_LABEL = "Payload Compress";
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD;
+	public static final Boolean AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_DEFAULT = true;
 	
 	
 	
 	// Erogazioni
 	
 	public static final String AS4_TITLE_EROGAZIONE_LABEL = AS4_PREFIX_TITLE_LABEL+"Service Info";
-	public static final String AS4_TITLE_EROGAZINE_ID = "as4ErogazioneTitleId";
+	public static final String AS4_TITLE_EROGAZIONE_ID = "as4ErogazioneTitleId";
 	
 	public static final String AS4_EROGAZIONE_SECURITY_PROFILE_LABEL = "Security Profile";
 	public static final String AS4_EROGAZIONE_SECURITY_PROFILE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE;

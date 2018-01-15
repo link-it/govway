@@ -79,7 +79,7 @@ public class PModeRegistryReader {
 	public List<Policy> findAllPolicies() throws Exception {
 		List<Policy> policies = new ArrayList<>();
 		
-		String[] list = AS4Properties.getInstance(this.log).getPModeTranslatorPolicyFolder().list();
+		String[] list = AS4Properties.getInstance(this.log).getSecurityPoliciesFolder().list();
 		
 		for(String file: list) {
 			Policy policy = new Policy();

@@ -7,7 +7,21 @@
                                         cid="cid:attachment" 
                                         required="false"
                                         mimeType="application/octet-stream"/>
+                        <payload name="businessContentAttachmentXml"
+                                        cid="cid:attachment" 
+                                        required="false"
+                                        mimeType="text/xml"/>
                         <payloadProfile name="MessageProfile" 
+                                        maxSize="40894464">
+                                <attachment name="businessContentPayload"/>
+                                <attachment name="businessContentAttachment"/>
+                        </payloadProfile>
+			<payloadProfile name="XmlProfile" 
+                                        maxSize="40894464">
+                                <attachment name="businessContentPayload"/>
+                                <attachment name="businessContentAttachmentXml"/>
+                        </payloadProfile>
+                        <payloadProfile name="OctectProfile" 
                                         maxSize="40894464">
                                 <attachment name="businessContentPayload"/>
                                 <attachment name="businessContentAttachment"/>

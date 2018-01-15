@@ -22,11 +22,18 @@ package org.openspcoop2.protocol.as4.properties;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
@@ -40,6 +47,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BaseConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
+import org.openspcoop2.protocol.sdk.properties.BooleanConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
@@ -50,6 +58,9 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+
+import eu.domibus.configuration.PayloadProfile;
+import eu.domibus.configuration.PayloadProfiles;
 
 /**
  * TrasparenteTestsuiteDynamicConfiguration
@@ -272,133 +283,109 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	}
 	
 
-//	/*** AZIONE ACCORDO ***/
-//
-//	@Override
-//	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
-//			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordoAzione id)
-//					throws ProtocolException {
-//		List<ProtocolProperty> protocolPropertyList = null;
-//		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
-//	}
-//
-//	@Override
-//	public void updateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-//			ProtocolProperties properties, IRegistryReader registryReader, IDAccordoAzione id)
-//					throws ProtocolException {
-//		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
-//	}
-//	
-//	@Override
-//	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
-//			IDAccordoAzione id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
-//	}
-//
-//
-//	/*** OPERATION PORT TYPE ***/
-//
-//	@Override
-//	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType,
-//			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortTypeAzione id)
-//					throws ProtocolException {
-//		List<ProtocolProperty> protocolPropertyList = null;
-//		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
-//	}
-//
-//	@Override
-//	public void updateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-//			ProtocolProperties properties, IRegistryReader registryReader, IDPortTypeAzione id)
-//					throws ProtocolException {
-//		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
-//	}
-//	
-//	@Override
-//	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
-//			IDPortTypeAzione id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
-//	}
-//
-//
-//	/*** PORT TYPE ***/
-//
-//	@Override
-//	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType,
-//			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortType id)
-//					throws ProtocolException {
-//		List<ProtocolProperty> protocolPropertyList = null;
-//		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
-//	}
-//
-//	@Override
-//	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-//			ProtocolProperties properties, IRegistryReader registryReader, IDPortType id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
-//	}
-//	
-//	@Override
-//	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
-//			IDPortType id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
-//	}
-//	
-//	/*** RESOURCE ***/
-//
-//	@Override
-//	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType,
-//			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDResource id)
-//					throws ProtocolException {
-//		List<ProtocolProperty> protocolPropertyList = null;
-//		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
-//	}
-//
-//	@Override
-//	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-//			ProtocolProperties properties, IRegistryReader registryReader, IDResource id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
-//	}
-//	
-//	@Override
-//	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
-//			IDResource id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
-//	}
-//	
-//	/*** ACCORDO COOPERAZIONE ***/
-//	
-//	@Override
-//	public ConsoleConfiguration getDynamicConfigAccordoCooperazione(ConsoleOperationType consoleOperationType,
-//			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
-//			throws ProtocolException {
-//		List<ProtocolProperty> protocolPropertyList = null;
-//		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
-//	}
-//	
-//	@Override
-//	public void updateDynamicConfigAccordoCooperazione(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-//			ProtocolProperties properties, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
-//	}
-//	
-//	@Override
-//	public void validateDynamicConfigCooperazione(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
-//			IDAccordo id) throws ProtocolException {
-//		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
-//	}
-//	
-//	
+//	/*** AZIONE ACCORDO / OPERATION PORT TYPE / RESOURCE  ***/
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordoAzione id)
+					throws ProtocolException {	
+		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, id.getIdAccordo());		
+	}
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortTypeAzione id)
+					throws ProtocolException {
+		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, id.getIdPortType().getIdAccordo());
+	}
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDResource id)
+					throws ProtocolException {
+		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, id.getIdAccordo());
+	}
+	
+	private ConsoleConfiguration _getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
+		
+		ConsoleConfiguration configuration = new ConsoleConfiguration();
+		
+		BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_AZIONE_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_AZIONE_LABEL);
+		configuration.addConsoleItem(titolo );
+		
+		AccordoServizioParteComune as = null;
+		try {
+			as = registryReader.getAccordoServizioParteComune(id);
+		}catch(Exception e) {
+			throw new ProtocolException("Impossibile recuperare l'accordo con id ["+id+"]: "+e.getMessage(),e);
+		}	
+		byte[] profilesBytes = null;
+		try {
+			for (ProtocolProperty pp : as.getProtocolPropertyList()) {
+				if(AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_ID.equals(pp.getName())) {
+					profilesBytes = pp.getByteFile();
+					break;
+				}
+			}
+		}catch(Exception e) {
+			throw new ProtocolException("Impossibile recuperare la configurazione del payloadProfile dall'accordo con id ["+id+"]: "+e.getMessage(),e);
+		}
+		PayloadProfiles pps = null;
+		try {
+			if(profilesBytes!=null) {
+				// aggiungo namespace per poter effettuare unmarshall
+				String profiles = new String(profilesBytes);
+				profiles = profiles.replace("<payloadProfiles>", "<payloadProfiles xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+				eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+				pps = deserializer.readPayloadProfiles(profiles.getBytes());
+			}
+		}catch(Exception e) {
+			throw new ProtocolException("Errore durante la lettura della configurazione del payloadProfile dall'accordo con id ["+id+"]: "+e.getMessage(),e);
+		}
+		List<String> profiles = new ArrayList<>();
+		if(pps!=null && pps.sizePayloadProfileList()>0) {
+			for (PayloadProfile pp : pps.getPayloadProfileList()) {
+				profiles.add(pp.getName());
+			}
+		}
+		
+		if(profiles.size()>0) {
+			StringConsoleItem actionPayloadProfile = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(
+							ConsoleItemValueType.STRING,
+							ConsoleItemType.SELECT,
+							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_ID, 
+							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL);
+			if(profiles.contains(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT)==false) {
+				actionPayloadProfile.addLabelValue(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT, AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT);
+			}
+			for (String p : profiles) {
+				actionPayloadProfile.addLabelValue(p, p);
+			}
+			actionPayloadProfile.setDefaultValue(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT);
+			actionPayloadProfile.setRequired(false);
+			configuration.addConsoleItem(actionPayloadProfile);
+		}
+		
+		BooleanConsoleItem actionCompressPayloadItem = (BooleanConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.BOOLEAN,
+						ConsoleItemType.CHECKBOX,
+						AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_ID, 
+						AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_LABEL);
+		actionCompressPayloadItem.setRequired(false);
+		actionCompressPayloadItem.setDefaultValue(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_DEFAULT);
+		configuration.addConsoleItem(actionCompressPayloadItem);
+		
+		return configuration;
+	}
+
+
 //	/*** ACCORDI SERVIZIO PARTE SPECIFICA ***/
-//	
+
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDServizio id)
@@ -409,8 +396,8 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
 		
 		BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
-				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_ID, 
-				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_LABEL);
+				AS4ConsoleCostanti.AS4_TITLE_EROGAZIONE_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_EROGAZIONE_LABEL);
 		configuration.addConsoleItem(titolo );
 		
 		StringConsoleItem securityProfileItem = (StringConsoleItem) ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
@@ -423,6 +410,10 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		}
 		for (Policy policy : listPolicy) {
 			securityProfileItem.addLabelValue(policy.getName(),policy.getName());
+		}
+		AS4Properties props = AS4Properties.getInstance(this.log);
+		if(props.getSecurityPolicyDefault()!=null) {
+			securityProfileItem.setDefaultValue(props.getSecurityPolicyDefault());
 		}
 		configuration.addConsoleItem(securityProfileItem);
 		

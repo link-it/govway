@@ -23,11 +23,13 @@ package org.openspcoop2.protocol.as4.config;
 import java.io.File;
 import java.util.Properties;
 
-import org.slf4j.Logger;
+import org.openspcoop2.protocol.as4.properties.SecurityPolicyXSDValidator;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
+import org.slf4j.Logger;
 
 /**
  * Classe che gestisce il file di properties 'as4.properties' del protocollo AS4
@@ -132,6 +134,39 @@ public class AS4Properties {
 			
 			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+			
+			File f = this.getSecurityPoliciesFolder();
+			File[] list = f.listFiles();
+			if(list==null || list.length<=0) {
+				throw new Exception("Almeno una security policy deve essere definita all'interno del file '"+f.getAbsolutePath()+"'");
+			}
+			for(File file: list) {
+				try {
+					AbstractValidatoreXSD validator = SecurityPolicyXSDValidator.getXSDValidator(this.log);
+					validator.valida(file);
+				}catch(Exception e) {
+					throw new Exception("SecurityPolicy '"+file.getAbsolutePath()+"' contiene un formato non corretto: "+e.getMessage(),e);
+				}
+			}
+			
+			String secPolicyDefault = getSecurityPolicyDefault();
+			if(secPolicyDefault!=null) {
+				boolean find = false;
+				for(File file: list) {
+					int lastIndexOf = file.getName().lastIndexOf(".");
+					String fileWithoutExt = (lastIndexOf > 0) ? file.getName().substring(0, lastIndexOf) : file.getName();
+					if(fileWithoutExt.equals(secPolicyDefault)) {
+						find = true;
+						break;
+					}
+				}
+				if(!find) {
+					throw new Exception("SecurityPolicy indicata come default '"+secPolicyDefault+"' non esiste tra le policy registrate nella directory '"+f.getAbsolutePath()+"'");
+				}
+			}
+			
+			// Per versione xml
+			this.getPModeTranslatorPayloadProfilesFolder();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo as4, "+e.getMessage();
@@ -252,8 +287,12 @@ public class AS4Properties {
 	private File getFile(String fileName) throws Exception {
 		File file = new File(fileName);
 		
-		if(!file.exists())
-			throw new Exception("Directory ["+fileName+"] non esiste");
+		if(!file.exists()) {
+			FileSystemUtilities.mkdirParentDirectory(file);
+			if(file.mkdir()==false) {
+				throw new Exception("Directory ["+fileName+"] non esiste e creazione non riuscita");
+			}
+		}
 		
 		if(!file.isDirectory())
 			throw new Exception("File ["+fileName+"] non e' una directory");
@@ -268,30 +307,52 @@ public class AS4Properties {
 	
 	
 	
+	/* **** Domibus Configuration **** */
 	
-	/* **** PModeTranslator **** */
-	
-	private static File pModeTranslatorPolicyFolder;
-	public File getPModeTranslatorPolicyFolder() throws ProtocolException {
-		if(AS4Properties.pModeTranslatorPolicyFolder==null){
+	private static File securityPoliciesFolder;
+	public File getSecurityPoliciesFolder() throws ProtocolException {
+		if(AS4Properties.securityPoliciesFolder==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPolicyFolder"); 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.folder"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.pModeTranslatorPolicyFolder = this.getFile(value);
+					AS4Properties.securityPoliciesFolder = this.getFile(value);
 				}else{
-					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.payloadProfilesFolder' non impostata");
+					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.securityPolicies.folder' non impostata");
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.payloadProfilesFolder', errore:"+e.getMessage());
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.securityPolicies.folder', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.pModeTranslatorPolicyFolder;
+		return AS4Properties.securityPoliciesFolder;
 	}
 	
+	private static String securityPolicyDefault;
+	public String getSecurityPolicyDefault() throws ProtocolException {
+		if(AS4Properties.securityPolicyDefault==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.securityPolicies.default"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.securityPolicyDefault = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.securityPolicies.default', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.securityPolicyDefault;
+	}
+	
+	
+	
+	/* **** PModeTranslator **** */
+		
 	private static File pModeTranslatorPayloadProfilesFolder;
 	public File getPModeTranslatorPayloadProfilesFolder() throws ProtocolException {
 		if(AS4Properties.pModeTranslatorPayloadProfilesFolder==null){

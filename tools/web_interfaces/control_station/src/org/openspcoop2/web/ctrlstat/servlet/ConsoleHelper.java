@@ -692,7 +692,9 @@ public class ConsoleHelper {
 		String postBackElementName = this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 		boolean primoAccessoAdd = (ConsoleOperationType.ADD.equals(consoleOperationType) && 
 				(editMode==null || 
-				CostantiControlStation.PARAMETRO_PROTOCOLLO.equals(postBackElementName)) );
+				CostantiControlStation.PARAMETRO_PROTOCOLLO.equals(postBackElementName) ||  // per default in accordo parte comune
+				AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO.equals(postBackElementName))  // per default in accordo parte aspecifica
+				);
 		
 		ProtocolProperties properties = new ProtocolProperties();
 
