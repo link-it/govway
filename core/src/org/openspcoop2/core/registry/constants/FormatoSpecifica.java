@@ -40,8 +40,8 @@ public enum FormatoSpecifica implements IEnumeration , Serializable , Cloneable 
 	WSDL_11 ("wsdl11"),
 	@javax.xml.bind.annotation.XmlEnumValue("swagger2")
 	SWAGGER_2 ("swagger2"),
-	@javax.xml.bind.annotation.XmlEnumValue("openapi3")
-	OPENAPI_3 ("openapi3"),
+	@javax.xml.bind.annotation.XmlEnumValue("openApi3")
+	OPEN_API_3 ("openApi3"),
 	@javax.xml.bind.annotation.XmlEnumValue("wadl")
 	WADL ("wadl");
 	

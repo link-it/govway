@@ -4875,7 +4875,7 @@ public class ControlStationCore {
 		switch (formatoSpecifica) {
 		case SWAGGER_2:
 			return InterfaceType.SWAGGER_2;
-		case OPENAPI_3:
+		case OPEN_API_3:
 			return InterfaceType.OPEN_API_3;
 		case WADL:
 			return InterfaceType.WADL;
@@ -4895,7 +4895,7 @@ public class ControlStationCore {
 		case SWAGGER_2:
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.SWAGGER_2;
 		case OPEN_API_3:
-			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPENAPI_3;
+			return org.openspcoop2.core.registry.constants.FormatoSpecifica.OPEN_API_3;
 		case WADL:
 			return org.openspcoop2.core.registry.constants.FormatoSpecifica.WADL;
 			

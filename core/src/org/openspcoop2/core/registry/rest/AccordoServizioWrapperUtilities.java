@@ -113,7 +113,7 @@ public class AccordoServizioWrapperUtilities {
 				throw new DriverRegistroServiziException("Inizializzazione Reader Specifica ["+this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()+"] fallito: "+e.getMessage(),e);
 			}
 			break;
-		case OPENAPI_3:
+		case OPEN_API_3:
 			try {
 				apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 			}catch(Exception e) {

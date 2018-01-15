@@ -113,6 +113,6 @@ public class CostantiRegistroServizi {
 	public final static String TARGET_NAMESPACE = "http://www.openspcoop2.org/core/registry";
 	
 	public final static FormatoSpecifica DEFAULT_VALUE_INTERFACE_TYPE_SOAP = FormatoSpecifica.WSDL_11;
-	public final static FormatoSpecifica DEFAULT_VALUE_INTERFACE_TYPE_REST = FormatoSpecifica.OPENAPI_3;
+	public final static FormatoSpecifica DEFAULT_VALUE_INTERFACE_TYPE_REST = FormatoSpecifica.OPEN_API_3;
 
 }

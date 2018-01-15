@@ -180,7 +180,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 					case SWAGGER_2:
 						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.SWAGGER_2, log);
 						break;
-					case OPENAPI_3:
+					case OPEN_API_3:
 						_setProtocolInfoFromRestInterface(wsdlConcettuale, accordoServizioParteComune, ApiFormats.OPEN_API_3, log);
 						break;
 					default:
