@@ -1,0 +1,37 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
+    
+    
+    <soggetto tipo="AS4" nome="Red">
+        
+        <!-- Esempio SOAP -->
+        <porta-delegata nome="SoapExample" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="AS4" nome="Blue"/>
+            <servizio tipo="AS4" nome="SoapExample"/>
+            <azione nome="test"/>
+        </porta-delegata>
+
+        <!-- Esempio REST -->
+        <porta-delegata nome="RestExample" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="AS4" nome="Blue"/>
+            <servizio tipo="AS4" nome="RestExample"/>
+            <azione nome="test"/>
+        </porta-delegata>
+         
+    </soggetto>
+  
+    
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+    
+</openspcoop2>
