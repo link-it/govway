@@ -5252,16 +5252,31 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
+			boolean existsBigDescription = false;
 			if (lista != null) {
+				
 				Iterator<org.openspcoop2.core.registry.Resource> it = lista.iterator();
+				while (it.hasNext()) {
+					org.openspcoop2.core.registry.Resource risorsa = it.next();
+					if(risorsa.getDescrizione()!=null && risorsa.getDescrizione().length()>30) {
+						existsBigDescription = true;
+						break;
+					}
+				}
 
+				it = lista.iterator();
 				while (it.hasNext()) {
 					org.openspcoop2.core.registry.Resource risorsa = it.next();
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
-					de.setValue(risorsa.getMethod().toString());
+					if(risorsa.getMethod()==null) {
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI);
+					}
+					else {
+						de.setValue(risorsa.getMethod().toString());
+					}
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -5272,9 +5287,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+""),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
-					de.setValue(risorsa.getPath());
+					if(risorsa.getPath()==null || "".equals(risorsa.getPath())) {
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI);
+					}
+					else {
+						de.setValue(risorsa.getPath());
+					}
 					de.setToolTip(nomeRisorsa);
 					de.setIdToRemove(nomeRisorsa);
+					if(existsBigDescription==false) {
+						de.setSize(100);
+					}
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -5420,6 +5443,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			dati.addElement(this.getHttpMethodDataElement(tipoOperazione, httpMethod));	
 			
+			boolean nameRequired = (AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod) || httpMethod==null);
+			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
 			de.setValue(path);
@@ -5428,16 +5453,19 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setValue(" ");
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PATH);
 			de.setSize(this.getSize());
-			de.setRequired(true);
+			de.setRequired(!(nameRequired));
 			dati.addElement(de);	
 	
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);
 			de.setValue(nomeRisorsa);
 			de.setType(DataElementType.TEXT_EDIT);
-			de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE); 
+			if(!nameRequired) {
+				de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE);
+			}
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			de.setSize(this.getSize());
+			de.setRequired(nameRequired);
 			dati.addElement(de);
 
 			de = new DataElement();
@@ -5578,13 +5606,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		try{
 			// Campi obbligatori
 			// path
-			if (path.equals("")) {
+			if ((path==null || path.equals("")) && httpMethod!=null) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare un Path");
 				return false;
 			}
 			
 			// validazione del campo path, controllo solo che non ci siano spazi bianchi
-			if(path.contains(" ")){
+			if(path!=null && path.contains(" ")){
 				this.pd.setMessage("Il campo "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH+" non pu&ograve; contenere spazi bianchi");
 				return false;
 			}
@@ -5606,8 +5634,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));
 				if (giaRegistrato) {
-					this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +httpMethod 
-								+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +path + ") &egrave; gi&agrave; stata associata all'accordo");
+					String m = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
+					if(httpMethod!=null && !"".equals(httpMethod) && !AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod)) {
+						m = httpMethod;
+					}
+					String p = path;
+					if(p==null || "".equals(p)) {
+						p = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI;
+					}
+					this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +m +" , "
+								+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +p + ") &egrave; gi&agrave; stata associata all'accordo");
 					return false;
 				}
 				
@@ -5621,7 +5657,23 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			} else {
 				// change
 				// se ho modificato path o method controllo se e' disponibile
-				if(!oldPath.equals(path) || !oldHttpMethod.equals(httpMethod)) {
+				boolean modificatoPath = false;
+				if(oldPath!=null) {
+					modificatoPath = !oldPath.equals(path);
+				}
+				else {
+					modificatoPath = (path!=null);
+				}
+				boolean modificatoHttpMethod = false;
+				if(oldHttpMethod!=null) {
+					modificatoHttpMethod = !oldHttpMethod.equals(httpMethod);
+				}
+				else {
+					modificatoHttpMethod = (httpMethod!=null);
+				}
+				
+				
+				if(modificatoPath || modificatoHttpMethod) {
 					boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));
 					if (giaRegistrato) {
 						this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +httpMethod 
@@ -5655,46 +5707,50 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_HTTP_METHOD);
 		de.setSize(this.getSize());
+		de.setPostBack(true);
 		
 		HttpMethod[] httpMethods = HttpMethod.values();
-		String [] values = new String[httpMethods.length];
-		String [] labels = new String[httpMethods.length];
+		String [] values = new String[httpMethods.length+1];
+		String [] labels = new String[httpMethods.length+1];
+		
+		labels[0] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
+		values[0] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
 		
 		for (int i = 0; i < httpMethods.length; i++) {
 			HttpMethod method = httpMethods[i];
 			switch (method) {
 			case DELETE:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE;
 				break;
 			case GET:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET;
 				break;
 			case HEAD:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD;
 				break;
 			case OPTIONS:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS;
 				break;
 			case PATCH:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH;
 				break;
 			case POST:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST;
 				break;
 			case PUT:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT;
 				break;
 			case TRACE:
 			default:
-				labels[i] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE;
-				values[i] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE;
+				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE;
+				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE;
 				break;
 			}
 		}

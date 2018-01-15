@@ -3835,8 +3835,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordo);
-			stm.setString(2, httpMethod);
-			stm.setString(3, path);
+			if(httpMethod==null) {
+				stm.setString(2, CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE);
+			}
+			else {
+				stm.setString(2, httpMethod);
+			}
+			if(path==null) {
+				stm.setString(3, CostantiDB.API_RESOURCE_PATH_ALL_VALUE);
+			}
+			else {
+				stm.setString(3, path);
+			}
 			rs = stm.executeQuery();
 			if (rs.next())
 				exist = true;
@@ -16320,7 +16330,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.getWhereLikeCondition("http_method", search, true, true),
 						sqlQueryObject.getWhereLikeCondition("path", search, true, true));
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.addOrderBy("path");
+				sqlQueryObject.addOrderBy("http_method");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -16337,7 +16348,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("message_type");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
-				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.addOrderBy("path");
+				sqlQueryObject.addOrderBy("http_method");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);

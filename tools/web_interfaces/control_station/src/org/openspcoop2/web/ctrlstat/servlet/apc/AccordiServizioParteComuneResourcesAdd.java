@@ -230,19 +230,37 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
 			}
 
+			boolean isOk = true;
+			
+			// controllo valori method e path
+			if(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod) || "".equals(httpMethod)) {
+				httpMethod = null;
+			}
+			
 			// 1. se il path non inizia per '/' aggiungo all'inizio della stringa
-			String pathNormalizzato = path.trim();
-			if(!pathNormalizzato.startsWith("/"))
-				pathNormalizzato = "/" + pathNormalizzato;
+			String pathNormalizzato = null;
+			if(path!=null && !"".equals(path)) {
+				pathNormalizzato = path.trim();
+				if(!pathNormalizzato.startsWith("/"))
+					pathNormalizzato = "/" + pathNormalizzato;
+			}
 			
 			// 2. se il nome non e; stato impostato allora genero un nome automatico
 			String nomeRisorsaProposto = nomeRisorsa;
 			if(StringUtils.isEmpty(nomeRisorsaProposto)) {
-				nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
+				if(httpMethod==null) {
+					pd.setMessage("Il campo '"+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME+"' non è stato definito");
+					isOk = false;
+				}
+				else {
+					nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
+				}
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null,null);
+			if(isOk){
+				isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null,null);
+			}
 
 			// Validazione base dei parametri custom 
 			if(isOk){

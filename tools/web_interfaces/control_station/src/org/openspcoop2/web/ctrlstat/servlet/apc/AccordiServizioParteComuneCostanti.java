@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -502,6 +503,9 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST = "POST";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT = "PUT";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE = "TRACE";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI = "Qualsiasi";
+	
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI = "*";
 	
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_ID = "ID";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS = "HTTP Status";
@@ -623,6 +627,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST = "POST";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT = "PUT";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE = "TRACE";
+	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI = CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_XML = "xml";
 	public final static String DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_JSON = "json";
