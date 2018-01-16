@@ -2243,7 +2243,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 				// nome con link al PortaDeletagataChange
 				DataElement de = new DataElement();
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore);
 				de.setValue(mapping.isDefault() ? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT : mapping.getNome());
 				de.setIdToRemove(pdAssociata.getNome());
 				de.setToolTip(StringUtils.isNotEmpty(pdAssociata.getDescrizione()) ? pdAssociata.getDescrizione() : pdAssociata.getNome());
