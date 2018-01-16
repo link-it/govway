@@ -167,7 +167,7 @@ public final class EliminazioneXML extends Action {
 				try{
 
 					XMLDataConverter dataConverter = new XMLDataConverter(data,accesso,userLogin,core.getProtocolloDefault(),LoaderCore.getLog());
-					dataConverter.delete(core.isGestioneSoggetti());
+					dataConverter.delete(core.isGestioneSoggetti(), true);
 
 				}catch(Exception e){
 

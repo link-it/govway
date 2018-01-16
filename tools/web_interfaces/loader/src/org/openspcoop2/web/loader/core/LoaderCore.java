@@ -449,13 +449,13 @@ public class LoaderCore{
 		} finally {
 			try{
 				risultato.close();
-			}catch(Exception eClose){}
+			}catch(Throwable eClose){}
 			try{
 				stmt.close();
-			}catch(Exception eClose){}
+			}catch(Throwable eClose){}
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Throwable eClose){}
 		}
 	}
 	

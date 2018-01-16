@@ -87,6 +87,7 @@
 					<arg value="${tipoConversioneRegistroServizi}" />
 					<arg value="${gestioneSoggettiRegistroServizi}" />
 					<arg value="${mantieniFruitoriServiziEsistentiRegistroServizi}" />
+					<arg value="${gestioneMappingErogazioneFruizioneRegistroServizi}" />
 					<arg value="${statoAccordi}" />
 					<arg value="${protocolloDefault}" />
 					<arg value="${pddOperativa}" />

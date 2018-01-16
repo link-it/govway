@@ -50,7 +50,7 @@ public class TestXMLDataConverter {
 	public static void main(String[] argoments) throws Exception {
 
 		if (argoments.length  < 9) {
-			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter sorgenteXML tipoRegistroCRUD proprietaRegistroCRUD reset tipoConversione gestioneSoggetti mantieniFruitori statoAccordiImportati protocolloDefault [[logger] [nomePddOperativa logger]]";
+			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter sorgenteXML tipoRegistroCRUD proprietaRegistroCRUD reset tipoConversione gestioneSoggetti mantieniFruitori deleteMappingErogazioneFruizione statoAccordiImportati protocolloDefault [[logger] [nomePddOperativa logger]]";
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}
@@ -62,16 +62,17 @@ public class TestXMLDataConverter {
 		String args_tipoConversione = argoments[4].trim();
 		String args_gestioneSoggetti = argoments[5].trim();
 		String args_mantieniFruitori = argoments[6].trim();
-		String args_statoAccordiImportati = argoments[7].trim();
-		String args_protocolloDefault = argoments[8].trim();
+		String args_deleteMappingErogazioneFruizione = argoments[7].trim();
+		String args_statoAccordiImportati = argoments[8].trim();
+		String args_protocolloDefault = argoments[9].trim();
 		String args_nomePddOperativa = null;
 		String args_logger = null;
-		if(argoments.length==10){
-			args_logger = argoments[9].trim();
+		if(argoments.length==11){
+			args_logger = argoments[10].trim();
 		}
 		else{
-			args_nomePddOperativa = argoments[9].trim();
-			args_logger = argoments[10].trim();
+			args_nomePddOperativa = argoments[10].trim();
+			args_logger = argoments[11].trim();
 		}
 		
 		// Inizializzo logger
@@ -121,6 +122,9 @@ public class TestXMLDataConverter {
 		
 		// MantieniFruitori
 		boolean mantieniFruitori = Boolean.parseBoolean(args_mantieniFruitori);
+		
+		// DeleteMappingErogazioneFruizione
+		boolean deleteMappingErogazioneFruizione = Boolean.parseBoolean(args_deleteMappingErogazioneFruizione);
 		
 		// Properties
 		java.util.Properties reader = new java.util.Properties();
@@ -248,7 +252,7 @@ public class TestXMLDataConverter {
 			}
 			
 			TestXMLDataConverter.letturaSorgenti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
-					statoAccordoObject, protocolloDefault, args_tipoConversione, args_nomePddOperativa, gestioneSoggetti, reset, mantieniFruitori);
+					statoAccordoObject, protocolloDefault, args_tipoConversione, args_nomePddOperativa, gestioneSoggetti, reset, mantieniFruitori,deleteMappingErogazioneFruizione);
 			
 		}catch(Exception e){
 			String errorMsg = "Errore durante la conversione XML dei dati: "+e.getMessage(); 
@@ -285,7 +289,7 @@ public class TestXMLDataConverter {
 			String tipoDatabase,Logger log,String superUser,AccessoRegistroRegistro acCRUD,
 			StatiAccordo statoAccordoObject,String protocolloDefault,
 			String tipoConversione,String nomePddOperativa,
-			boolean gestioneSoggetti,boolean reset, boolean mantieniFruitori) throws Exception{
+			boolean gestioneSoggetti,boolean reset, boolean mantieniFruitori, boolean deleteMappingErogazioneFruizione) throws Exception{
 		if(fSorgente.isFile()){
 			if(fSorgente.canRead()==false){
 				throw new Exception("Sorgente XML ["+fSorgente.getAbsolutePath()+"] non accessibile in lettura");
@@ -293,7 +297,7 @@ public class TestXMLDataConverter {
 			if(fSorgente.getName().endsWith(".xml")){
 				// Per non convertire i wsdl e i xml
 				TestXMLDataConverter.converti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
-						statoAccordoObject, protocolloDefault,tipoConversione,nomePddOperativa,gestioneSoggetti,reset,mantieniFruitori);
+						statoAccordoObject, protocolloDefault,tipoConversione,nomePddOperativa,gestioneSoggetti,reset,mantieniFruitori,deleteMappingErogazioneFruizione);
 			}
 			else{
 				log.debug("File ["+fSorgente.getAbsolutePath()+"] ignorato. Non possiede l'estensione .xml");
@@ -312,7 +316,7 @@ public class TestXMLDataConverter {
 			for(int i=0; i<f.length; i++){
 			
 				TestXMLDataConverter.letturaSorgenti(f[i], connectionDB, connectionSQL, tipoDatabase, log, superUser, acCRUD, 
-						statoAccordoObject, protocolloDefault,tipoConversione,nomePddOperativa,gestioneSoggetti,reset,mantieniFruitori);
+						statoAccordoObject, protocolloDefault,tipoConversione,nomePddOperativa,gestioneSoggetti,reset,mantieniFruitori,deleteMappingErogazioneFruizione);
 				
 			}
 		}
@@ -323,7 +327,7 @@ public class TestXMLDataConverter {
 			String tipoDatabase,Logger log,String superUser,AccessoRegistroRegistro acCRUD,
 			StatiAccordo statoAccordoObject,String protocolloDefault,
 			String tipoConversione,String nomePddOperativa,
-			boolean gestioneSoggetti,boolean reset, boolean mantieniFruitori) throws Exception{
+			boolean gestioneSoggetti,boolean reset, boolean mantieniFruitori, boolean deleteMappingErogazioneFruizione) throws Exception{
 		
 		Logger logDriver = null;
 		if( "uddi".equals(acCRUD.getTipo()) || "web".equals(acCRUD.getTipo()) ){
@@ -352,7 +356,7 @@ public class TestXMLDataConverter {
 		}
 		else if("delete".equals(tipoConversione)){
 			log.info("Inizio conversione...");
-			dataConverter.delete(gestioneSoggetti);
+			dataConverter.delete(gestioneSoggetti, deleteMappingErogazioneFruizione);
 			log.info("Conversione terminata.");
 		}else{
 			throw new Exception("Valore opzione 'tipoConversioneRegistroServizi' non gestito (valori possibili insertUpdate/delete): "+tipoConversione);

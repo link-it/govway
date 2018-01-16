@@ -784,6 +784,7 @@ public class XMLDataConverter {
 								if(index<100) {
 									
 									PortaDelegata pdClone = (PortaDelegata) pd.clone();
+									pdClone.setId(null);
 									pdClone.setNome(idPDclone.getNome());
 									pdClone.setAzione(null);
 									idPDDefault = idPDclone;
@@ -796,9 +797,9 @@ public class XMLDataConverter {
 									String nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
 									boolean isDefault = true;
 									IDSoggetto idFruitore = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
-									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione in corso...");
-									DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idFruitore, idPD, con, driver.getTipoDB());
-									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato.");
+									this.log.info("Creazione mapping di fruizione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pdClone.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione delegante in corso...");
+									DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idFruitore, idPDclone, con, driver.getTipoDB());
+									this.log.info("Creazione mapping di fruizione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pdClone.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato delegante.");
 									
 								}
 							}
@@ -919,6 +920,7 @@ public class XMLDataConverter {
 								}
 								if(index<100) {
 									PortaApplicativa paClone = (PortaApplicativa) pa.clone();
+									paClone.setId(null);
 									paClone.setNome(idPAclone.getNome());
 									paClone.setAzione(null);
 									idPADefault = idPAclone;
@@ -930,9 +932,9 @@ public class XMLDataConverter {
 									
 									String nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
 									boolean isDefault = true;
-									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creazione in corso...");
-									DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, driver.getTipoDB());
-									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creato.");
+									this.log.info("Creazione mapping di erogazione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+paClone.getNome()+"] e servizio ["+idServizio+"] creazione delegante in corso...");
+									DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPAclone, con, driver.getTipoDB());
+									this.log.info("Creazione mapping di erogazione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+paClone.getNome()+"] e servizio ["+idServizio+"] creato delegante.");
 							
 								}
 							}
@@ -1090,9 +1092,9 @@ public class XMLDataConverter {
 							IDServizio idServizio = toIdServizio(pd);
 							boolean existsMapping = DBMappingUtils.existsMappingFruizione(idServizio, idFruitore, idPD, con, driver.getTipoDB());
 							if(existsMapping) {
-								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione in corso...");
+								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] eliminazione in corso...");
 								DBMappingUtils.deleteMappingFruizione(idServizio, idFruitore, idPD, con, driver.getTipoDB());
-								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato.");
+								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] eliminato.");
 							}
 						}finally {
 							driver.releaseConnection(con);
@@ -1131,9 +1133,9 @@ public class XMLDataConverter {
 							IDServizio idServizio = this.toIdServizio(pa);
 							boolean existsMapping = DBMappingUtils.existsMappingErogazione(idServizio, idPA, con, driver.getTipoDB());
 							if(existsMapping) {
-								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creazione in corso...");
+								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] eliminazione in corso...");
 								DBMappingUtils.deleteMappingErogazione(idServizio, idPA, con, driver.getTipoDB());
-								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creato.");
+								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] eliminato.");
 							}
 						}finally {
 							driver.releaseConnection(con);

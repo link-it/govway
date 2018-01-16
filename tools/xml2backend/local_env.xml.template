@@ -57,6 +57,8 @@
 	<property name="gestioneSoggettiRegistroServizi" value="false" />
 	<!-- Mantieni fruitori sui servizi esistenti -->
 	<property name="mantieniFruitoriServiziEsistentiRegistroServizi" value="true" />
+	<!-- Gestione dei mapping della fruizione e della erogazione -->
+	<property name="gestioneMappingErogazioneFruizioneRegistroServizi" value="true" />
 	<!-- PddOperativa in caso di conversione su control station, es. PdDOpenSPCoop
 	   Usare string vuota per non usare questa funzionalita'
 	-->

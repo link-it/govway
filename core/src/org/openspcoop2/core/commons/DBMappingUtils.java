@@ -356,6 +356,45 @@ public class DBMappingUtils {
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
 		deleteMappingErogazione(idServizio, null, con, tipoDB, tabellaSoggetti);
 	}
+	public static void deleteMappingErogazione(IDServizio idServizio, boolean deletePorte,
+			Connection con, String tipoDB) throws CoreException{
+		deleteMappingErogazione(idServizio, deletePorte, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static void deleteMappingErogazione(IDServizio idServizio, boolean deletePorte,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
+		List<IDPortaApplicativa> list = null;
+		if(deletePorte) {
+			list = getIDPorteApplicativeAssociate(idServizio, con, tipoDB);
+		}
+		deleteMappingErogazione(idServizio, null, con, tipoDB, tabellaSoggetti);
+		if(list!=null && list.size()>0) {
+			for (IDPortaApplicativa idPortaApplicativa : list) {
+				PreparedStatement stmt = null;
+				try {
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE);
+					sqlQueryObject.addWhereCondition("id=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					String queryString = sqlQueryObject.createSQLDelete();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, DBUtils.getIdPortaApplicativa(idPortaApplicativa.getNome(), con, tipoDB));
+					stmt.executeUpdate();
+					stmt.close();
+				}catch(Exception e){
+					throw new CoreException("deletePAMappingErogazione error",e);
+				} finally {
+
+					//Chiudo statement and resultset
+					try{
+						if(stmt!=null) stmt.close();
+					}catch (Exception e) {
+						//ignore
+					}
+
+				}
+			}
+		}
+	}
 	public static void deleteMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
 			Connection con, String tipoDB) throws CoreException{
 		deleteMappingErogazione(idServizio, idPortaApplicativa, con, tipoDB, CostantiDB.SOGGETTI);
@@ -1173,6 +1212,45 @@ public class DBMappingUtils {
 	public static void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
 		deleteMappingFruizione(idServizio, idFruitore, null, con, tipoDB, tabellaSoggetti);
+	}
+	public static void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, boolean deletePorte,
+			Connection con, String tipoDB) throws CoreException{
+		deleteMappingFruizione(idServizio, idFruitore, deletePorte, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, boolean deletePorte,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
+		List<IDPortaDelegata> list = null;
+		if(deletePorte) {
+			list = getIDPorteDelegateAssociate(idServizio, idFruitore, con, tipoDB);
+		}
+		deleteMappingFruizione(idServizio, idFruitore, null, con, tipoDB, tabellaSoggetti);
+		if(list!=null && list.size()>0) {
+			for (IDPortaDelegata idPortaDelegata : list) {
+				PreparedStatement stmt = null;
+				try {
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE);
+					sqlQueryObject.addWhereCondition("id=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					String queryString = sqlQueryObject.createSQLDelete();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, DBUtils.getIdPortaDelegata(idPortaDelegata.getNome(), con, tipoDB));
+					stmt.executeUpdate();
+					stmt.close();
+				}catch(Exception e){
+					throw new CoreException("deletePAMappingErogazione error",e);
+				} finally {
+
+					//Chiudo statement and resultset
+					try{
+						if(stmt!=null) stmt.close();
+					}catch (Exception e) {
+						//ignore
+					}
+
+				}
+			}
+		}
 	}
 	public static void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
 			Connection con, String tipoDB) throws CoreException{

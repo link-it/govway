@@ -42,6 +42,7 @@ import javax.net.ssl.TrustManagerFactory;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
+import org.openspcoop2.core.commons.DBMappingUtils;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -842,7 +843,7 @@ public class XMLDataConverter {
 		}
 	}
 	
-	public void delete(boolean deleteSoggetti) throws DriverRegistroServiziException{
+	public void delete(boolean deleteSoggetti, boolean deleteMappingErogazioneFruizione) throws DriverRegistroServiziException{
 		
 		// Servizi
 		try{
@@ -855,6 +856,32 @@ public class XMLDataConverter {
 					servizio.setNomeSoggettoErogatore(soggetto.getNome());
 					IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(servizio);
 					String uri = this.idServizioFactory.getUriFromAccordo(servizio);
+					
+					if(deleteMappingErogazioneFruizione && this.gestoreCRUD instanceof DriverRegistroServiziDB) {
+						DriverRegistroServiziDB driver = (DriverRegistroServiziDB) this.gestoreCRUD;
+						Connection con = null;
+						try {
+							con = driver.getConnection("XMLDataConverter.mappingErogazioneFruizione");
+							this.log.info("Servizio "+uri+" (mappingErogazione) eliminazione in corso...");							
+							if(this.gestoreCRUD.existsAccordoServizioParteSpecifica(idServizio)){
+								// elimino anche tutti i mapping fruitori
+								AccordoServizioParteSpecifica dbImage = driver.getAccordoServizioParteSpecifica(idServizio);
+								for (Fruitore fruitore : dbImage.getFruitoreList()) {
+									IDSoggetto idFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+									if(DBMappingUtils.existsIDPorteDelegateAssociate(idServizio, idFruitore, con, driver.getTipoDB())) {
+										DBMappingUtils.deleteMappingFruizione(idServizio, idFruitore, true, con, driver.getTipoDB()); // elimina anche le porte delegate
+									}
+								}
+							}
+							if(DBMappingUtils.existsIDPorteApplicativeAssociate(idServizio, con, driver.getTipoDB())) {
+								DBMappingUtils.deleteMappingErogazione(idServizio, true, con, driver.getTipoDB()); // elimina anche le porte applicative
+							}
+							this.log.info("Servizio "+uri+" (mappingErogazione) eliminazione completata");
+						}finally {
+							driver.releaseConnection(con);
+						}
+					}
+					
 					this.log.info("Servizio "+uri+" eliminazione in corso...");
 					if(this.gestoreCRUD.existsAccordoServizioParteSpecifica(idServizio)){
 						this.gestoreCRUD.deleteAccordoServizioParteSpecifica(((IDriverRegistroServiziGet)this.gestoreCRUD).getAccordoServizioParteSpecifica(idServizio));
