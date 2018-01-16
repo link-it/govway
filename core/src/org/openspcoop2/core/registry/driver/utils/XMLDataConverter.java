@@ -878,6 +878,11 @@ public class XMLDataConverter {
 							}
 							this.log.info("Servizio "+uri+" (mappingErogazione) eliminazione completata");
 						}finally {
+							try {
+								if(driver.isAtomica()) {
+									con.commit();
+								}
+							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}

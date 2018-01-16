@@ -732,16 +732,35 @@ public class XMLDataConverter {
 									}
 								}
 								else {
-									nomeMapping = pd.getAzione().getNome();
-									idServizio.setAzione(pd.getAzione().getNome());
-									if(DBMappingUtils.existsIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, driver.getTipoDB())==false) {
-										create = true;
-										
-										// modifico porta delegata adeguandola alla nuova specifica
-										pd.getAzione().setIdentificazione(PortaDelegataAzioneIdentificazione.DELEGATED_BY); 
-										pd.getAzione().addAzioneDelegata(pd.getAzione().getNome());
-										pd.getAzione().setNome(null);
-										listPDModificare.put(idPD, pd);
+									if(PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(pd.getAzione().getIdentificazione())) {
+										// gia' nel nuovo formato devo solo creare il mapping che per qualche motivo si è perso
+										if(pd.getAzione().sizeAzioneDelegataList()<=0) {
+											this.log.error("Trovata porta delegata "+pd.getNome()+"] con un'identificazione dell'azione delegata senza pero' possedere azioni delegate");
+											create=false;
+										}
+										else {
+											String nomeAzione = pd.getAzione().getAzioneDelegata(0); // utilizzo un'azione a caso.
+											nomeMapping = nomeAzione;
+											idServizio.setAzione(nomeAzione);
+											if(DBMappingUtils.existsIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, driver.getTipoDB())==false) {
+												create = true;
+											}
+										}
+									}
+									else {
+										nomeMapping = pd.getAzione().getNome();
+										if(nomeMapping!=null && !"".equals(nomeMapping)) {
+											idServizio.setAzione(pd.getAzione().getNome());
+											if(DBMappingUtils.existsIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, driver.getTipoDB())==false) {
+												create = true;
+												
+												// modifico porta delegata adeguandola alla nuova specifica
+												pd.getAzione().setIdentificazione(PortaDelegataAzioneIdentificazione.DELEGATED_BY); 
+												pd.getAzione().addAzioneDelegata(pd.getAzione().getNome());
+												pd.getAzione().setNome(null);
+												listPDModificare.put(idPD, pd);
+											}
+										}
 									}
 								}
 								if(create) {
@@ -752,6 +771,11 @@ public class XMLDataConverter {
 								
 							}
 						}finally {
+							try {
+								if(driver.isAtomica()) {
+									con.commit();
+								}
+							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}
@@ -812,6 +836,11 @@ public class XMLDataConverter {
 							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato per nomeDelegante.");
 						}
 					}finally {
+						try {
+							if(driver.isAtomica()) {
+								con.commit();
+							}
+						}catch(Throwable t) {}
 						driver.releaseConnection(con);
 					}
 				}
@@ -871,16 +900,35 @@ public class XMLDataConverter {
 									}
 								}
 								else {
-									nomeMapping = pa.getAzione().getNome();
-									idServizio.setAzione(pa.getAzione().getNome());
-									if(DBMappingUtils.existsIDPortaApplicativaAssociataAzione(idServizio, con, driver.getTipoDB())==false) {
-										create = true;
-										
-										// modifico porta applicativa adeguandola alla nuova specifica
-										pa.getAzione().setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
-										pa.getAzione().addAzioneDelegata(pa.getAzione().getNome());
-										pa.getAzione().setNome(null);
-										listPAModificare.put(idPA, pa);
+									if(PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(pa.getAzione().getIdentificazione())) {
+										// gia' nel nuovo formato devo solo creare il mapping che per qualche motivo si è perso
+										if(pa.getAzione().sizeAzioneDelegataList()<=0) {
+											this.log.error("Trovata porta applicativa "+pa.getNome()+"] con un'identificazione dell'azione delegata senza pero' possedere azioni delegate");
+											create=false;
+										}
+										else {
+											String nomeAzione = pa.getAzione().getAzioneDelegata(0); // utilizzo un'azione a caso.
+											nomeMapping = nomeAzione;
+											idServizio.setAzione(nomeAzione);
+											if(DBMappingUtils.existsIDPortaApplicativaAssociataAzione(idServizio, con, driver.getTipoDB())==false) {
+												create = true;
+											}
+										}
+									}
+									else {
+										nomeMapping = pa.getAzione().getNome();
+										if(nomeMapping!=null && !"".equals(nomeMapping)) {
+											idServizio.setAzione(pa.getAzione().getNome());
+											if(DBMappingUtils.existsIDPortaApplicativaAssociataAzione(idServizio, con, driver.getTipoDB())==false) {
+												create = true;
+												
+												// modifico porta applicativa adeguandola alla nuova specifica
+												pa.getAzione().setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
+												pa.getAzione().addAzioneDelegata(pa.getAzione().getNome());
+												pa.getAzione().setNome(null);
+												listPAModificare.put(idPA, pa);
+											}
+										}
 									}
 								}
 								if(create) {
@@ -891,6 +939,11 @@ public class XMLDataConverter {
 								
 							}
 						}finally {
+							try {
+								if(driver.isAtomica()) {
+									con.commit();
+								}
+							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}
@@ -947,6 +1000,11 @@ public class XMLDataConverter {
 							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato per nomeDelegante.");
 						}
 					}finally {
+						try {
+							if(driver.isAtomica()) {
+								con.commit();
+							}
+						}catch(Throwable t) {}
 						driver.releaseConnection(con);
 					}
 				}
@@ -1097,6 +1155,11 @@ public class XMLDataConverter {
 								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] eliminato.");
 							}
 						}finally {
+							try {
+								if(driver.isAtomica()) {
+									con.commit();
+								}
+							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}
@@ -1138,6 +1201,11 @@ public class XMLDataConverter {
 								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] eliminato.");
 							}
 						}finally {
+							try {
+								if(driver.isAtomica()) {
+									con.commit();
+								}
+							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}

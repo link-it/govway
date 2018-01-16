@@ -507,6 +507,11 @@ public abstract class AbstractArchiveEngine {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		finally{
+			try {
+				if(this.driverRegistroServizi.isAtomica()) {
+					con.commit();
+				}
+			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
 			}catch(Exception eClose){}
@@ -571,6 +576,11 @@ public abstract class AbstractArchiveEngine {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		finally{
+			try {
+				if(this.driverRegistroServizi.isAtomica()) {
+					con.commit();
+				}
+			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
 			}catch(Exception eClose){}
@@ -587,6 +597,11 @@ public abstract class AbstractArchiveEngine {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		finally{
+			try {
+				if(this.driverRegistroServizi.isAtomica()) {
+					con.commit();
+				}
+			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
 			}catch(Exception eClose){}
@@ -683,6 +698,11 @@ public abstract class AbstractArchiveEngine {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		finally{
+			try {
+				if(this.driverRegistroServizi.isAtomica()) {
+					con.commit();
+				}
+			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
 			}catch(Exception eClose){}
@@ -747,6 +767,11 @@ public abstract class AbstractArchiveEngine {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		finally{
+			try {
+				if(this.driverRegistroServizi.isAtomica()) {
+					con.commit();
+				}
+			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
 			}catch(Exception eClose){}
@@ -763,6 +788,11 @@ public abstract class AbstractArchiveEngine {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		finally{
+			try {
+				if(this.driverRegistroServizi.isAtomica()) {
+					con.commit();
+				}
+			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
 			}catch(Exception eClose){}

@@ -175,6 +175,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	// Variabile di controllo del tipo di operazione da effettuare
 	// l'autoCommit viene gestito internamente a questa classe
 	private boolean atomica = true;
+	public boolean isAtomica() {
+		return this.atomica;
+	}
 
 	/** Tabella soggetti */
 	String tabellaSoggetti = CostantiDB.SOGGETTI;
