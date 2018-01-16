@@ -900,10 +900,10 @@ public class ExporterArchiveUtils {
 					archive.getAccordiServizioParteSpecifica().add(archiveAs);
 					
 					
-					// portaApplicativa associata
-					IDPortaApplicativa idPA = this.archiveEngine.getIDPortaApplicativaAssociataErogazione(idAccordoServizio);
-					if(idPA!=null){
-						archiveAs.setIdPortaApplicativaAssociata(idPA);
+					// porteApplicative associate
+					List<IDPortaApplicativa> listIDPA = this.archiveEngine.getIDPorteApplicativeAssociateErogazione(idAccordoServizio);
+					if(listIDPA!=null && listIDPA.size()>0){
+						archiveAs.setIdPorteApplicativeAssociate(listIDPA);
 					}
 					
 					
@@ -962,10 +962,12 @@ public class ExporterArchiveUtils {
 				}
 			}catch(DriverConfigurazioneNotFound notFound){}
 			
-			// portaApplicativa associata
-			IDPortaApplicativa idPA_associata = this.archiveEngine.getIDPortaApplicativaAssociataErogazione(idAccordoServizio);
-			if(idPA_associata!=null){
-				this.readPortaApplicativa(archive, idPA_associata, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
+			// porteApplicative associate
+			List<IDPortaApplicativa> listIDPA_associate = this.archiveEngine.getIDPorteApplicativeAssociateErogazione(idAccordoServizio);
+			if(listIDPA_associate!=null && listIDPA_associate.size()>0){
+				for (IDPortaApplicativa idPA_associata : listIDPA_associate) {
+					this.readPortaApplicativa(archive, idPA_associata, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
+				}
 			}
 			
 			// porteApplicative "normali"
@@ -978,8 +980,8 @@ public class ExporterArchiveUtils {
 				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
 					for (IDPortaApplicativa idPortaApplicativa : idsPA) {
-						if(idPA_associata!=null){
-							if(idPA_associata.equals(idPortaApplicativa)){
+						if(listIDPA_associate!=null && listIDPA_associate.size()>0){
+							if(listIDPA_associate.contains(idPortaApplicativa)){
 								continue;
 							}
 						}
@@ -1046,10 +1048,10 @@ public class ExporterArchiveUtils {
 					ArchiveFruitore archiveFruitore = new ArchiveFruitore(idAccordoServizio, fruitore, this.idCorrelazione);
 					archive.getAccordiFruitori().add(archiveFruitore);
 					
-					// portaDelegata associata
-					IDPortaDelegata idPD = this.archiveEngine.getIDPortaDelegataAssociataFruizione(idAccordoServizio, idFruitore);
-					if(idPD!=null){
-						archiveFruitore.setIdPortaDelegataAssociata(idPD);
+					// porteDelegate associate
+					List<IDPortaDelegata> listIDPD = this.archiveEngine.getIDPorteDelegateAssociateFruizione(idAccordoServizio, idFruitore);
+					if(listIDPD!=null && listIDPD.size()>0){
+						archiveFruitore.setIdPorteDelegateAssociate(listIDPD);
 					}
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -1072,10 +1074,12 @@ public class ExporterArchiveUtils {
 		
 		if(cascadeAvanti){
 		
-			// portaDelegata associata
-			IDPortaDelegata idPD = this.archiveEngine.getIDPortaDelegataAssociataFruizione(idAccordoServizio, idFruitore);
-			if(idPD!=null){
-				this.readPortaDelegata(archive, idPD, cascadeConfig, ArchiveType.FRUITORE);
+			// porteDelegate associate
+			List<IDPortaDelegata> listIDPD = this.archiveEngine.getIDPorteDelegateAssociateFruizione(idAccordoServizio, idFruitore);
+			if(listIDPD!=null && listIDPD.size()>0){
+				for (IDPortaDelegata idPortaDelegata_associata : listIDPD) {
+					this.readPortaDelegata(archive, idPortaDelegata_associata, cascadeConfig, ArchiveType.FRUITORE);	
+				}
 			}
 			
 		}

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk.archive;
 
+import java.util.List;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
@@ -96,12 +98,12 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 	private IDAccordo idAccordoServizioParteComune;
 	private AccordoServizioParteSpecifica accordoServizioParteSpecifica;
 	
-	private IDPortaApplicativa idPortaApplicativaAssociata;
-	public IDPortaApplicativa getIdPortaApplicativaAssociata() {
-		return this.idPortaApplicativaAssociata;
+	private List<IDPortaApplicativa> idPorteApplicativeAssociate;
+	public List<IDPortaApplicativa> getIdPorteApplicativeAssociate() {
+		return this.idPorteApplicativeAssociate;
 	}
-	public void setIdPortaApplicativaAssociata(IDPortaApplicativa idPortaApplicativaAssociata) {
-		this.idPortaApplicativaAssociata = idPortaApplicativaAssociata;
+	public void setIdPorteApplicativeAssociate(List<IDPortaApplicativa> idPorteApplicativeAssociate) {
+		this.idPorteApplicativeAssociate = idPorteApplicativeAssociate;
 	}
 
 

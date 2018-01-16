@@ -134,7 +134,8 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				PortaApplicativa paGenerataAutomcaticamente = null;
+				List<PortaApplicativa> paGenerateAutomcaticamente = null;
+				List<IDPortaApplicativa> idPAGenerateAutomaticamente = null;
 				
 				String uri = idsToRemove.get(i);
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uri);
@@ -143,8 +144,6 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				
 				// Verifico se sono in modalità di interfaccia 'standard' che non si tratti della PortaApplicativa generata automaticamente.
 				// In tal caso la posso eliminare.
-				boolean foundPAGenerataAutomaticamente = false;
-				String nomeGenerato = null;
 				if(apsCore.isGenerazioneAutomaticaPorteApplicative() && asps!=null && asps.getPortType()!=null && !"".equals(asps.getPortType())){
 					boolean generaPACheckSoggetto = true;
 					IDSoggetto idSoggettoEr = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
@@ -164,11 +163,14 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 //						}
 						
 						// Verifico se esiste il mapping con l'erogazione
-						IDPortaApplicativa idPA = porteApplicativeCore.getIDPortaApplicativaAssociata(idServizio);
-						if(idPA!=null){
-							paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(idPA);
-							foundPAGenerataAutomaticamente = true;
-							nomeGenerato = paGenerataAutomcaticamente.getNome();
+						idPAGenerateAutomaticamente = porteApplicativeCore.getIDPorteApplicativeAssociate(idServizio);
+						if(idPAGenerateAutomaticamente!=null && idPAGenerateAutomaticamente.size()>0){
+							for (IDPortaApplicativa idPortaApplicativa : idPAGenerateAutomaticamente) {
+								if(paGenerateAutomcaticamente==null) {
+									paGenerateAutomcaticamente=new ArrayList<>();
+								}
+								paGenerateAutomcaticamente.add(porteApplicativeCore.getPortaApplicativa(idPortaApplicativa));
+							}
 						}
 						
 					}
@@ -177,47 +179,52 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				
 				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
-				if (apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, nomeGenerato)) {// accordo in uso
+				if (apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, idPAGenerateAutomaticamente)) {// accordo in uso
 					isInUso = true;
 					msg += DBOggettiInUsoUtils.toString(idServizio, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 				} else {// accordo non in uso
 					
 					List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
-					if(paGenerataAutomcaticamente!=null){
+					if(paGenerateAutomcaticamente!=null && paGenerateAutomcaticamente.size()>0){
 						
-						if(extendedServlet!=null){
-							List<IExtendedBean> listExt = null;
-							try{
-								listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,apsHelper,apsCore,paGenerataAutomcaticamente);
-							}catch(Exception e){
-								ControlStationCore.logError(e.getMessage(), e);
-							}
-							if(listExt!=null && listExt.size()>0){
-								for (IExtendedBean iExtendedBean : listExt) {
-									WrapperExtendedBean wrapper = new WrapperExtendedBean();
-									wrapper.setExtendedBean(iExtendedBean);
-									wrapper.setExtendedServlet(extendedServlet);
-									wrapper.setOriginalBean(paGenerataAutomcaticamente);
-									wrapper.setManageOriginalBean(false);		
-									listaOggettiDaEliminare.add(wrapper);
+						for (PortaApplicativa paGenerataAutomcaticamente : paGenerateAutomcaticamente) {
+							
+							if(extendedServlet!=null){
+								List<IExtendedBean> listExt = null;
+								try{
+									listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,apsHelper,apsCore,paGenerataAutomcaticamente);
+								}catch(Exception e){
+									ControlStationCore.logError(e.getMessage(), e);
+								}
+								if(listExt!=null && listExt.size()>0){
+									for (IExtendedBean iExtendedBean : listExt) {
+										WrapperExtendedBean wrapper = new WrapperExtendedBean();
+										wrapper.setExtendedBean(iExtendedBean);
+										wrapper.setExtendedServlet(extendedServlet);
+										wrapper.setOriginalBean(paGenerataAutomcaticamente);
+										wrapper.setManageOriginalBean(false);		
+										listaOggettiDaEliminare.add(wrapper);
+									}
 								}
 							}
+							
+							MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
+							IDSoggetto soggettoErogatore = new IDSoggetto(paGenerataAutomcaticamente.getTipoSoggettoProprietario(),paGenerataAutomcaticamente.getNomeSoggettoProprietario());
+							IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+							idPortaApplicativa.setNome(paGenerataAutomcaticamente.getNome());
+							mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
+							IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(paGenerataAutomcaticamente.getServizio().getTipo(),
+									paGenerataAutomcaticamente.getServizio().getNome(), soggettoErogatore, paGenerataAutomcaticamente.getServizio().getVersione());
+							mappingErogazione.setIdServizio(idServizioPA);
+							if(porteApplicativeCore.existsMappingErogazionePortaApplicativa(mappingErogazione)) {
+								listaOggettiDaEliminare.add(mappingErogazione);
+							}
+							
+							listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
+							
 						}
 						
-						MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
-						IDSoggetto soggettoErogatore = new IDSoggetto(paGenerataAutomcaticamente.getTipoSoggettoProprietario(),paGenerataAutomcaticamente.getNomeSoggettoProprietario());
-						IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
-						idPortaApplicativa.setNome(paGenerataAutomcaticamente.getNome());
-						mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
-						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(paGenerataAutomcaticamente.getServizio().getTipo(),
-								paGenerataAutomcaticamente.getServizio().getNome(), soggettoErogatore, paGenerataAutomcaticamente.getServizio().getVersione());
-						mappingErogazione.setIdServizio(idServizioPA);
-						if(porteApplicativeCore.existsMappingErogazionePortaApplicativa(mappingErogazione)) {
-							listaOggettiDaEliminare.add(mappingErogazione);
-						}
-						
-						listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 					}
 					listaOggettiDaEliminare.add(asps);
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray());

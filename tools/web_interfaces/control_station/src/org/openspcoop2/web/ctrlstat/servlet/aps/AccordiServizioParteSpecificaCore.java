@@ -376,7 +376,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	
 		
 	public boolean isAccordoServizioParteSpecificaInUso(AccordoServizioParteSpecifica as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso,
-			String nomePAGenerataAutomaticamente) throws DriverRegistroServiziException {
+			List<IDPortaApplicativa> nomePAGenerateAutomaticamente) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isAccordoServizioPArteSpecificaInUso";
 		try {
@@ -384,7 +384,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(as);
-			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePAGenerataAutomaticamente);			
+			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePAGenerateAutomaticamente);			
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
@@ -1152,7 +1152,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			
-			return DBMappingUtils.mappingErogazionePortaApplicativaList(con,this.tipoDB,idAccordoServizioParteSpecifica,idServizio, idSoggettoErogatore, ricerca);
+			return DBMappingUtils.mappingErogazionePortaApplicativaList(con,this.tipoDB,idAccordoServizioParteSpecifica,idServizio, ricerca);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1431,9 +1431,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public List<MappingFruizionePortaDelegata> serviziFruitoriMappingList(Long idFru, IDSoggetto idSoggettoFruitore, Long idSoggetto, 
-			String tipoServizio, String nomeServizio, IDServizio idAccordoServizio, Long idServizio, 
-			String tipoSoggettoErogatore, String nomeSoggettoErogatore, Long idSoggettoErogatore, 
+	public List<MappingFruizionePortaDelegata> serviziFruitoriMappingList(Long idFru, IDSoggetto idSoggettoFruitore,
+			IDServizio idAccordoServizio,
 			ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "serviziFruitoriMappingList";
@@ -1441,9 +1440,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		try {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
-			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idFru,idSoggettoFruitore, idSoggetto, 
-					tipoServizio, nomeServizio, idAccordoServizio, idServizio, 
-					tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, 
+			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idFru,idSoggettoFruitore,  
+					idAccordoServizio, 
 					ricerca);
 
 		} catch (Exception e) {

@@ -143,8 +143,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			IDSoggetto idSoggettoFruitore = soggettiCore.getIdSoggettoRegistro(soggInt); 
 			
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-			List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList((long)idFruizioneInt, idSoggettoFruitore, (long)soggInt, asps.getTipo(), asps.getNome(), idServizio2, 
-					(long)idServizio, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), null);
+			List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList((long)idFruizioneInt, idSoggettoFruitore, idServizio2, null);
 			List<String> azioniOccupate = new ArrayList<>();
 			int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
 			if(listaMappingFruizioneSize > 0) {

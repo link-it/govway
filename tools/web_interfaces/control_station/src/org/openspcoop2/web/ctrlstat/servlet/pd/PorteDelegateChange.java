@@ -1154,8 +1154,7 @@ public final class PorteDelegateChange extends Action {
 				asps = apsCore.getAccordoServizioParteSpecifica(idAspsInt);
 				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 				
-				List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), ids, (long) soggInt, asps.getTipo(), asps.getNome(), idServizio2, 
-						(long) idAspsInt, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), ricerca);
+				List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), ids, idServizio2, ricerca);
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 				apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
 				

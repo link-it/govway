@@ -107,13 +107,16 @@ public class DeleterArchiveUtils {
 				archiveAccordoServizioParteSpecifica.update();
 				
 				// gestione portaApplicativaAssociata
-				if(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata()!=null){
-					IDPortaApplicativa idPACheck = this.importerEngine.getIDPortaApplicativaAssociataErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
-					if(idPACheck!=null){
-						MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
-						mapping.setIdServizio(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
-						mapping.setIdPortaApplicativa(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata());
-						listMappingErogazionePA.add(mapping);	
+				if(archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()!=null &&
+						archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate().size()>0){
+					List<IDPortaApplicativa> idPACheck = this.importerEngine.getIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+					for (IDPortaApplicativa idPA_associata : archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()) {
+						if(idPACheck.contains(idPA_associata)){
+							MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+							mapping.setIdServizio(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+							mapping.setIdPortaApplicativa(idPA_associata);
+							listMappingErogazionePA.add(mapping);	
+						}	
 					}
 				}
 			}
@@ -124,14 +127,17 @@ public class DeleterArchiveUtils {
 				archiveFruitore.update();
 			
 				// gestione portaDelegataAssociata
-				if(archiveFruitore.getIdPortaDelegataAssociata()!=null){
-					IDPortaDelegata idPDCheck = this.importerEngine.getIDPortaDelegataAssociataFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
-					if(idPDCheck!=null){
-						MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
-						mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
-						mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
-						mapping.setIdPortaDelegata(archiveFruitore.getIdPortaDelegataAssociata());
-						listMappingFruizionePD.add(mapping);
+				if(archiveFruitore.getIdPorteDelegateAssociate()!=null &&
+						archiveFruitore.getIdPorteDelegateAssociate().size()>0){
+					List<IDPortaDelegata> idPDCheck = this.importerEngine.getIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+					for (IDPortaDelegata idPD_associata : archiveFruitore.getIdPorteDelegateAssociate()) {
+						if(idPDCheck!=null){
+							MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+							mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
+							mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
+							mapping.setIdPortaDelegata(idPD_associata);
+							listMappingFruizionePD.add(mapping);
+						}
 					}
 				}
 			}
@@ -175,8 +181,7 @@ public class DeleterArchiveUtils {
 					archivePortaApplicativa.update();
 					if(archivePortaApplicativa.getIdServizio()!=null){
 						try{
-							// NOTA: anche se esiste una associazione, non e' detto che sia quella con la porta applicativa presente in archivio
-							if(this.importerEngine.existsIDPortaApplicativaAssociata(archivePortaApplicativa.getIdServizio())){
+							if(this.importerEngine.existsMappingErogazione(archivePortaApplicativa.getIdServizio(), archivePortaApplicativa.getIdPortaApplicativa())){
 								this.importerEngine.deleteMappingErogazione(archivePortaApplicativa.getIdServizio(), archivePortaApplicativa.getIdPortaApplicativa());
 							}
 						}catch(Exception e){
@@ -208,8 +213,7 @@ public class DeleterArchiveUtils {
 									new IDSoggetto(pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()), 
 									pd.getServizio().getVersione()); 
 							try{
-								// NOTA: anche se esiste una associazione, non e' detto che sia quella con la porta applicativa presente in archivio
-								if(this.importerEngine.existsIDPortaDelegataAssociata(idServizio, archivePortaDelegata.getIdSoggettoProprietario())){
+								if(this.importerEngine.existsMappingFruizione(idServizio, archivePortaDelegata.getIdSoggettoProprietario(), archivePortaDelegata.getIdPortaDelegata())){
 									this.importerEngine.deleteMappingFruizione(idServizio, archivePortaDelegata.getIdSoggettoProprietario(), archivePortaDelegata.getIdPortaDelegata());
 								}
 							}catch(Exception e){
@@ -235,7 +239,7 @@ public class DeleterArchiveUtils {
 				try{
 					//archiveFruitore.update(); effettuato durante la preparazione del mapping Fruizione - PD
 					if(archiveFruitore.getIdAccordoServizioParteSpecifica()!=null){
-						if(this.importerEngine.existsIDPortaDelegataAssociata(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore())){
+						if(this.importerEngine.existsIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore())){
 							this.importerEngine.deleteMappingFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
 						}
 					}
@@ -285,7 +289,7 @@ public class DeleterArchiveUtils {
 				try{
 					//archiveAccordoServizioParteSpecifica.update(); eseguito durante la preparazione della lista listAccordiServizioParteSpecifica_serviziComposti
 					if(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica()!=null){
-						if(this.importerEngine.existsIDPortaApplicativaAssociata(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())){
+						if(this.importerEngine.existsIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())){
 							this.importerEngine.deleteMappingErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
 						}
 					}
@@ -319,7 +323,7 @@ public class DeleterArchiveUtils {
 				try{
 					//archiveAccordoServizioParteSpecifica.update(); eseguito durante la preparazione della lista listAccordiServizioParteSpecifica
 					if(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica()!=null){
-						if(this.importerEngine.existsIDPortaApplicativaAssociata(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())){
+						if(this.importerEngine.existsIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())){
 							this.importerEngine.deleteMappingErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
 						}
 					}

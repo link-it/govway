@@ -163,9 +163,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 			idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
 			idSoggettoFruitore.setNome(nomeSoggettoFruitore);
-			List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore ,
-					idSoggFru, asps.getTipo(), asps.getNome(), idServizio2, (long) idServizio, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
-					asps.getIdSoggetto(), null);
+			List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore, idServizio2, null);
 			
 			MappingFruizionePortaDelegata mappingSelezionato = null, mappingDefault = null;
 
@@ -478,9 +476,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 
-			List<MappingFruizionePortaDelegata> lista = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore ,
-					idSoggFru, asps.getTipo(), asps.getNome(), idServizio2, (long) idServizio, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
-					asps.getIdSoggetto(), ricerca);
+			List<MappingFruizionePortaDelegata> lista = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore , idServizio2, ricerca);
 			
 			apsHelper.serviziFruitoriMappingList(lista, idAsps, idSoggFruitoreDelServizio, idFruizione, ricerca);
 

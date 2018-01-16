@@ -94,6 +94,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			Long idFru = Long.parseLong(idFruizione);
 			
 			String idSoggFruitoreDelServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
+			@SuppressWarnings("unused")
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
 			
 			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -183,9 +184,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
 			List<MappingFruizionePortaDelegata> lista =
-					apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore ,
-							idSoggFru, asps.getTipo(), asps.getNome(), idServizioFromAccordo, idS, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
-					asps.getIdSoggetto(), ricerca);
+					apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore, idServizioFromAccordo, ricerca);
 	
 			apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggFruitoreDelServizio, idFruizione, ricerca);
 

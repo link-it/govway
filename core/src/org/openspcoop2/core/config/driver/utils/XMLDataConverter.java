@@ -32,6 +32,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
+import java.util.HashMap;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -39,6 +40,7 @@ import javax.net.ssl.TrustManagerFactory;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
+import org.openspcoop2.core.commons.DBMappingUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
@@ -54,15 +56,19 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.xml.ValidatoreXSD;
@@ -594,9 +600,27 @@ public class XMLDataConverter {
 		}
 	}
 	
+	// Per motivi di dipendenze di compilazione non e' possibile usare  IDServizioFactory
+	@SuppressWarnings("deprecation")
+	private IDServizio toIdServizio(PortaDelegata pd) {
+		IDServizio idServizio = new IDServizio();
+		idServizio.setTipo(pd.getServizio().getTipo());
+		idServizio.setNome(pd.getServizio().getNome());
+		idServizio.setVersione(pd.getServizio().getVersione());
+		idServizio.setSoggettoErogatore(new IDSoggetto(pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+		return idServizio;
+	}
+	@SuppressWarnings("deprecation")
+	private IDServizio toIdServizio(PortaApplicativa pa) {
+		IDServizio idServizio = new IDServizio();
+		idServizio.setTipo(pa.getServizio().getTipo());
+		idServizio.setNome(pa.getServizio().getNome());
+		idServizio.setVersione(pa.getServizio().getVersione());
+		idServizio.setSoggettoErogatore(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+		return idServizio;
+	}
 	
-	
-	public void convertXML(boolean reset,boolean aggiornamentoSoggetti) throws DriverConfigurazioneException{
+	public void convertXML(boolean reset,boolean aggiornamentoSoggetti, boolean createMappingErogazioneFruizione) throws DriverConfigurazioneException{
 		
 		// Reset
 		if(reset){
@@ -661,6 +685,7 @@ public class XMLDataConverter {
 		try{
 			for(int i=0; i<this.sorgenteConfigurazione.sizeSoggettoList(); i++){
 				Soggetto soggetto = this.sorgenteConfigurazione.getSoggetto(i);
+				HashMap<IDPortaDelegata, PortaDelegata> listPDModificare = new  HashMap<>(); 
 				for(int j=0;j<soggetto.sizePortaDelegataList();j++){
 					PortaDelegata pd = soggetto.getPortaDelegata(j);
 					
@@ -680,6 +705,114 @@ public class XMLDataConverter {
 						this.gestoreCRUD.createPortaDelegata(pd);
 						this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creato.");
 					}
+					
+					if(createMappingErogazioneFruizione && this.gestoreCRUD instanceof DriverConfigurazioneDB) {
+						DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.gestoreCRUD;
+						Connection con = null;
+						try {
+							con = driver.getConnection("XMLDataConverter.mappingFruizione");
+							IDSoggetto idFruitore = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
+							IDServizio idServizio = toIdServizio(pd);
+							boolean existsMapping = DBMappingUtils.existsMappingFruizione(idServizio, idFruitore, idPD, con, driver.getTipoDB());
+							if(!existsMapping) {
+								boolean isDefault = false;
+								String nomeMapping = null;
+								boolean create = false;
+								if( (pd.getAzione()==null) || 
+										( 
+												!PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(pd.getAzione().getIdentificazione()) 
+												&&
+												(pd.getAzione().getNome()==null || "".equals(pd.getAzione().getNome()))
+										)
+									){
+									nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+									isDefault = true;
+									if(DBMappingUtils.existsIDPortaDelegataAssociataDefault(idServizio, idFruitore, con, driver.getTipoDB())==false) {
+										create = true;
+									}
+								}
+								else {
+									nomeMapping = pd.getAzione().getNome();
+									idServizio.setAzione(pd.getAzione().getNome());
+									if(DBMappingUtils.existsIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, driver.getTipoDB())==false) {
+										create = true;
+										
+										// modifico porta delegata adeguandola alla nuova specifica
+										pd.getAzione().setIdentificazione(PortaDelegataAzioneIdentificazione.DELEGATED_BY); 
+										pd.getAzione().addAzioneDelegata(pd.getAzione().getNome());
+										pd.getAzione().setNome(null);
+										listPDModificare.put(idPD, pd);
+									}
+								}
+								if(create) {
+									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione in corso...");
+									DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idFruitore, idPD, con, driver.getTipoDB());
+									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato.");
+								}
+								
+							}
+						}finally {
+							driver.releaseConnection(con);
+						}
+					}
+				}
+				if(listPDModificare!=null && listPDModificare.size()>0) {
+					DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.gestoreCRUD;
+					Connection con = null;
+					try {
+						con = driver.getConnection("XMLDataConverter.mappingFruizione");
+						for (IDPortaDelegata idPD : listPDModificare.keySet()) {
+							PortaDelegata pd = listPDModificare.get(idPD);
+							
+							IDServizio idServizio = this.toIdServizio(pd);
+							IDPortaDelegata idPDDefault = DBMappingUtils.getIDPortaDelegataAssociataDefault(idServizio, new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()), con, driver.getTipoDB());
+							
+							if(idPDDefault==null) {
+								// Creo una porta delegata automaticamente simile a quella delegatedBy
+								IDPortaDelegata idPDclone = new IDPortaDelegata();
+								String nameDefault = pd.getTipoSoggettoProprietario()+ pd.getNomeSoggettoProprietario()+
+										"/"+
+										idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome()+
+										"/"+
+										idServizio.getTipo()+idServizio.getNome();
+								idPDclone.setNome(nameDefault);
+								int index = 2;
+								while(this.gestoreCRUD.existsPortaDelegata(idPDclone) && index<100) {
+									idPDclone.setNome(nameDefault+"_"+index);
+									index++;
+								}
+								if(index<100) {
+									
+									PortaDelegata pdClone = (PortaDelegata) pd.clone();
+									pdClone.setNome(idPDclone.getNome());
+									pdClone.setAzione(null);
+									idPDDefault = idPDclone;
+									
+									// creo porta delegata standard
+									this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione delegante in corso...");
+									this.gestoreCRUD.createPortaDelegata(pdClone);
+									this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione delegante.");
+									
+									String nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+									boolean isDefault = true;
+									IDSoggetto idFruitore = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
+									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione in corso...");
+									DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idFruitore, idPD, con, driver.getTipoDB());
+									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato.");
+									
+								}
+							}
+							
+							pd.getAzione().setNomePortaDelegante(idPDDefault.getNome());
+							
+							// comunque devo aggiornare i dati per delegatedBy
+							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento per nomeDelegante in corso...");
+							this.gestoreCRUD.updatePortaDelegata(pd);
+							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato per nomeDelegante.");
+						}
+					}finally {
+						driver.releaseConnection(con);
+					}
 				}
 			}
 		}catch(Exception e){
@@ -691,6 +824,7 @@ public class XMLDataConverter {
 		try{
 			for(int i=0; i<this.sorgenteConfigurazione.sizeSoggettoList(); i++){
 				Soggetto soggetto = this.sorgenteConfigurazione.getSoggetto(i);
+				HashMap<IDPortaApplicativa, PortaApplicativa> listPAModificare = new  HashMap<>(); 
 				for(int j=0;j<soggetto.sizePortaApplicativaList();j++){
 					PortaApplicativa pa = soggetto.getPortaApplicativa(j);
 					
@@ -711,6 +845,108 @@ public class XMLDataConverter {
 						this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creato.");
 					}
 					
+					if(createMappingErogazioneFruizione && this.gestoreCRUD instanceof DriverConfigurazioneDB) {
+						DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.gestoreCRUD;
+						Connection con = null;
+						try {
+							con = driver.getConnection("XMLDataConverter.mappingErogazione");
+							IDServizio idServizio = this.toIdServizio(pa);
+							boolean existsMapping = DBMappingUtils.existsMappingErogazione(idServizio, idPA, con, driver.getTipoDB());
+							if(!existsMapping) {
+								boolean isDefault = false;
+								String nomeMapping = null;
+								boolean create = false;
+								if( (pa.getAzione()==null) || 
+										( 
+												!PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(pa.getAzione().getIdentificazione()) 
+												&&
+												(pa.getAzione().getNome()==null || "".equals(pa.getAzione().getNome()))
+										)
+									){
+									nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+									isDefault = true;
+									if(DBMappingUtils.existsIDPortaApplicativaAssociataDefault(idServizio, con, driver.getTipoDB())==false) {
+										create = true;
+									}
+								}
+								else {
+									nomeMapping = pa.getAzione().getNome();
+									idServizio.setAzione(pa.getAzione().getNome());
+									if(DBMappingUtils.existsIDPortaApplicativaAssociataAzione(idServizio, con, driver.getTipoDB())==false) {
+										create = true;
+										
+										// modifico porta applicativa adeguandola alla nuova specifica
+										pa.getAzione().setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
+										pa.getAzione().addAzioneDelegata(pa.getAzione().getNome());
+										pa.getAzione().setNome(null);
+										listPAModificare.put(idPA, pa);
+									}
+								}
+								if(create) {
+									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creazione in corso...");
+									DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, driver.getTipoDB());
+									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creato.");
+								}
+								
+							}
+						}finally {
+							driver.releaseConnection(con);
+						}
+					}
+				}
+				if(listPAModificare!=null && listPAModificare.size()>0) {
+					DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.gestoreCRUD;
+					Connection con = null;
+					try {
+						con = driver.getConnection("XMLDataConverter.mappingErogazione");
+						for (IDPortaApplicativa idPA : listPAModificare.keySet()) {
+							PortaApplicativa pa = listPAModificare.get(idPA);
+							
+							IDServizio idServizio = this.toIdServizio(pa);
+							IDPortaApplicativa idPADefault = DBMappingUtils.getIDPortaApplicativaAssociataDefault(idServizio, con, driver.getTipoDB());
+							
+							if(idPADefault==null) {
+								// Creo una porta applicativa automaticamente simile a quella delegatedBy
+								IDPortaApplicativa idPAclone = new IDPortaApplicativa();
+								String nameDefault = idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome()+
+										"/"+
+										idServizio.getTipo()+idServizio.getNome();
+								idPAclone.setNome(nameDefault);
+								int index = 2;
+								while(this.gestoreCRUD.existsPortaApplicativa(idPAclone) && index<100) {
+									idPAclone.setNome(nameDefault+"_"+index);
+									index++;
+								}
+								if(index<100) {
+									PortaApplicativa paClone = (PortaApplicativa) pa.clone();
+									paClone.setNome(idPAclone.getNome());
+									paClone.setAzione(null);
+									idPADefault = idPAclone;
+									
+									// creo porta applicativa standard
+									this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione delegante in corso...");
+									this.gestoreCRUD.createPortaApplicativa(paClone);
+									this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione delegante.");
+									
+									String nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+									boolean isDefault = true;
+									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creazione in corso...");
+									DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, driver.getTipoDB());
+									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creato.");
+							
+								}
+							}
+							
+							pa.getAzione().setNomePortaDelegante(idPADefault.getNome());
+							
+							// comunque devo aggiornare i dati per delegatedBy
+							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento per nomeDelegante in corso...");
+							this.gestoreCRUD.updatePortaApplicativa(pa);
+							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato per nomeDelegante.");
+						}
+					}finally {
+						driver.releaseConnection(con);
+					}
 				}
 			}
 		}catch(Exception e){
@@ -831,7 +1067,7 @@ public class XMLDataConverter {
 	
 	
 	
-	public void delete(boolean deleteSoggetti) throws DriverConfigurazioneException{
+	public void delete(boolean deleteSoggetti, boolean deleteMappingErogazioneFruizione) throws DriverConfigurazioneException{
 		
 		
 		// Porte Delegate
@@ -840,13 +1076,35 @@ public class XMLDataConverter {
 				Soggetto soggetto = this.sorgenteConfigurazione.getSoggetto(i);
 				for(int j=0;j<soggetto.sizePortaDelegataList();j++){
 					PortaDelegata pd = soggetto.getPortaDelegata(j);
+					pd.setTipoSoggettoProprietario(soggetto.getTipo());
+					pd.setNomeSoggettoProprietario(soggetto.getNome());	
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(pd.getNome());		
+					
+					if(deleteMappingErogazioneFruizione && this.gestoreCRUD instanceof DriverConfigurazioneDB) {
+						DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.gestoreCRUD;
+						Connection con = null;
+						try {
+							con = driver.getConnection("XMLDataConverter.mappingFruizione");
+							IDSoggetto idFruitore = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
+							IDServizio idServizio = toIdServizio(pd);
+							boolean existsMapping = DBMappingUtils.existsMappingFruizione(idServizio, idFruitore, idPD, con, driver.getTipoDB());
+							if(existsMapping) {
+								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione in corso...");
+								DBMappingUtils.deleteMappingFruizione(idServizio, idFruitore, idPD, con, driver.getTipoDB());
+								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato.");
+							}
+						}finally {
+							driver.releaseConnection(con);
+						}
+					}
+					
 					this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminazione in corso...");
 					if(this.gestoreCRUD.existsPortaDelegata(idPD)){
 						this.gestoreCRUD.deletePortaDelegata(((IDriverConfigurazioneGet)this.gestoreCRUD).getPortaDelegata(idPD));
 					}
 					this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminata.");
+					
 				}
 			}
 		}catch(Exception e){
@@ -859,14 +1117,35 @@ public class XMLDataConverter {
 			for(int i=0; i<this.sorgenteConfigurazione.sizeSoggettoList(); i++){
 				Soggetto soggetto = this.sorgenteConfigurazione.getSoggetto(i);
 				for(int j=0;j<soggetto.sizePortaApplicativaList();j++){
-					PortaApplicativa pa = soggetto.getPortaApplicativa(j);
+					PortaApplicativa pa = soggetto.getPortaApplicativa(j);					
+					pa.setTipoSoggettoProprietario(soggetto.getTipo());
+					pa.setNomeSoggettoProprietario(soggetto.getNome());				
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(pa.getNome());		
+					idPA.setNome(pa.getNome());
+					
+					if(deleteMappingErogazioneFruizione && this.gestoreCRUD instanceof DriverConfigurazioneDB) {
+						DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.gestoreCRUD;
+						Connection con = null;
+						try {
+							con = driver.getConnection("XMLDataConverter.mappingErogazione");
+							IDServizio idServizio = this.toIdServizio(pa);
+							boolean existsMapping = DBMappingUtils.existsMappingErogazione(idServizio, idPA, con, driver.getTipoDB());
+							if(existsMapping) {
+								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creazione in corso...");
+								DBMappingUtils.deleteMappingErogazione(idServizio, idPA, con, driver.getTipoDB());
+								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creato.");
+							}
+						}finally {
+							driver.releaseConnection(con);
+						}
+					}
+					
 					this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminazione in corso...");
 					if( this.gestoreCRUD.existsPortaApplicativa(idPA)){
 						this.gestoreCRUD.deletePortaApplicativa(((IDriverConfigurazioneGet)this.gestoreCRUD).getPortaApplicativa(idPA));
 					}
 					this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminata.");
+					
 				}
 			}
 		}catch(Exception e){

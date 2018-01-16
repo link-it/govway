@@ -38,7 +38,8 @@
 	<property name="resetConfigurazione" value="false" />
 	<!-- Gestione dei soggetti SPCoop -->
 	<property name="gestioneSoggettiConfigurazione" value="false" />
-	
+	<!-- Gestione dei mapping della fruizione e della erogazione -->
+	<property name="gestioneMappingErogazioneFruizioneConfigurazione" value="true" />
 	
 	<!-- Registro dei Servizi -->
 	<property name="conversioneRegistroServizi" value="true"/>

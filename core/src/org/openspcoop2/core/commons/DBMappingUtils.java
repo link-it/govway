@@ -88,15 +88,75 @@ public class DBMappingUtils {
 		}
 	}
 	
-	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, IDServizio idAccordoServizio, Integer idServizio, Integer idSoggettoErogatore, ISearch ricerca) throws CoreException{
-		return _mappingErogazionePortaApplicativaList(con, tipoDB, idAccordoServizio, idServizio, idSoggettoErogatore, ricerca,CostantiDB.SOGGETTI);
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio, 
+			ISearch ricerca) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
+						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
+						con, tipoDB), 
+				ricerca,CostantiDB.SOGGETTI);
+	}
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio, 
+			ISearch ricerca,String tabellaSoggetti) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
+						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
+						con, tipoDB), 
+				ricerca,tabellaSoggetti);
 	}
 	
-	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, IDServizio idAccordoServizio, Integer idServizio, Integer idSoggettoErogatore, ISearch ricerca,String tabellaSoggetti) throws CoreException{
-		return _mappingErogazionePortaApplicativaList(con, tipoDB, idAccordoServizio, idServizio, idSoggettoErogatore, ricerca,tabellaSoggetti);
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
+						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
+						con, tipoDB), 
+				null,CostantiDB.SOGGETTI);
+	}
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio, 
+			String tabellaSoggetti) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
+						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
+						con, tipoDB), 
+				null,tabellaSoggetti);
 	}
 	
-	private static List<MappingErogazionePortaApplicativa> _mappingErogazionePortaApplicativaList(Connection con, String tipoDB, IDServizio idAccordoServizio, Integer idServizio, Integer idSoggettoErogatore, ISearch ricerca,String tabellaSoggetti) throws CoreException{
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio, long idServizioAsLong, 
+			ISearch ricerca) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, idServizioAsLong, 
+				ricerca,CostantiDB.SOGGETTI);
+	}
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio, long idServizioAsLong, 
+			ISearch ricerca,String tabellaSoggetti) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, idServizioAsLong, 
+				ricerca,tabellaSoggetti);
+	}
+	
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio, long idServizioAsLong) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, idServizioAsLong, 
+				null,CostantiDB.SOGGETTI);
+	}
+	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
+			IDServizio idServizio, long idServizioAsLong, 
+			String tabellaSoggetti) throws CoreException{
+		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
+				idServizio, idServizioAsLong, 
+				null,tabellaSoggetti);
+	}
+	
+	private static List<MappingErogazionePortaApplicativa> _mappingErogazionePortaApplicativaList(Connection con, String tipoDB, 
+			IDServizio idServizio, long idServizioAsLong, 
+			ISearch ricerca,String tabellaSoggetti) throws CoreException{
 		int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 		int offset = 0;
 		int limit = 0;
@@ -114,35 +174,37 @@ public class DBMappingUtils {
 		
 		List<MappingErogazionePortaApplicativa> lista = new ArrayList<MappingErogazionePortaApplicativa>();
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-			sqlQueryObject.addSelectCountField("*", "cont");
-			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
-			if (!search.equals("")) {
-				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
-			} 
-			
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			int index = 1;
-			stmt.setLong(index++, idServizio);
-			
-			risultato = stmt.executeQuery();
-			if (risultato.next() && ricerca != null)
-				ricerca.setNumEntries(idLista,risultato.getInt(1));
-			risultato.close();
-			stmt.close();
+			if(ricerca != null) {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
+				if (!search.equals("")) {
+					sqlQueryObject.addWhereCondition(false, 
+							sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".nome", search, true, true),
+							sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
+				} 
+				
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				int index = 1;
+				stmt.setLong(index++, idServizioAsLong);
+				
+				risultato = stmt.executeQuery();
+				if (risultato.next())
+					ricerca.setNumEntries(idLista,risultato.getInt(1));
+				risultato.close();
+				stmt.close();
+			}
 			
 			// ricavo le entries
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione");
@@ -154,7 +216,7 @@ public class DBMappingUtils {
 			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
 			
-			if (!search.equals("")) {
+			if (ricerca!=null && !search.equals("")) {
 				sqlQueryObject.addWhereCondition(false, 
 						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".nome", search, true, true),
 						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
@@ -163,14 +225,16 @@ public class DBMappingUtils {
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default",false);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".nome");
 			sqlQueryObject.setSortType(true);
-			sqlQueryObject.setLimit(limit);
-			sqlQueryObject.setOffset(offset);
+			if(ricerca != null) {
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+			}
 			queryString = sqlQueryObject.createSQLQuery();
 			
 			stmt = con.prepareStatement(queryString);
 			
-			index = 1;
-			stmt.setLong(index++, idServizio);
+			int index = 1;
+			stmt.setLong(index++, idServizioAsLong);
 			
 			risultato = stmt.executeQuery();
 			
@@ -191,7 +255,7 @@ public class DBMappingUtils {
 				mapping.setTableId(id);
 				mapping.setDefault(isDefault);
 				// evitiamo una join utilizzo l'id che mi sono passato come parametro
-				mapping.setIdServizio(idAccordoServizio);
+				mapping.setIdServizio(idServizio);
 				
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				String nomePorta = risultato.getString("nome_porta");
@@ -353,21 +417,63 @@ public class DBMappingUtils {
 	}
 		
 
-	
-	public static IDPortaApplicativa getIDPortaApplicativaAssociata(IDServizio idServizio,
+	public static IDPortaApplicativa getIDPortaApplicativaAssociataDefault(IDServizio idServizio,
 			Connection con, String tipoDB) throws CoreException {
-		return getIDPortaApplicativaAssociata(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
+		return getIDPortaApplicativaAssociataDefault(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static IDPortaApplicativa getIDPortaApplicativaAssociata(IDServizio idServizio, 
+	public static IDPortaApplicativa getIDPortaApplicativaAssociataDefault(IDServizio idServizio,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
 		if(idServizioLong<=0){
 			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
 		}
-		return _getIDPortaApplicativaAssociata(idServizioLong, con, tipoDB, tabellaSoggetti);
+		List<IDPortaApplicativa> l = _getIDPorteApplicativeAssociate(idServizioLong, true, null, con, tipoDB, tabellaSoggetti);
+		if(l!=null && l.size()>0) {
+			if(l.size()>1) {
+				throw new CoreException("Esiste più di un mapping di default per l'erogazione del servizio ["+idServizio.toString()+"]");
+			}
+			return l.get(0);
+		}
+		return null;
 	}
 	
-	private static IDPortaApplicativa _getIDPortaApplicativaAssociata(long idServizioLong, 
+	public static IDPortaApplicativa getIDPortaApplicativaAssociataAzione(IDServizio idServizio,
+			Connection con, String tipoDB) throws CoreException {
+		return getIDPortaApplicativaAssociataAzione(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static IDPortaApplicativa getIDPortaApplicativaAssociataAzione(IDServizio idServizio,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		if(idServizio.getAzione()==null) {
+			throw new CoreException("Azione non indicata nel parametro 'idServizio'");
+		}
+		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
+		if(idServizioLong<=0){
+			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
+		}
+		List<IDPortaApplicativa> l = _getIDPorteApplicativeAssociate(idServizioLong, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti);
+		if(l!=null && l.size()>0) {
+			if(l.size()>1) {
+				throw new CoreException("Esiste più di un mapping per l'erogazione dell'azione '"+idServizio.getAzione()+"' del servizio ["+idServizio.toString()+"]");
+			}
+			return l.get(0);
+		}
+		return null;
+	}
+	
+	public static List<IDPortaApplicativa> getIDPorteApplicativeAssociate(IDServizio idServizio,
+			Connection con, String tipoDB) throws CoreException {
+		return getIDPorteApplicativeAssociate(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static List<IDPortaApplicativa> getIDPorteApplicativeAssociate(IDServizio idServizio, 
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
+		if(idServizioLong<=0){
+			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
+		}
+		return _getIDPorteApplicativeAssociate(idServizioLong, false, null, con, tipoDB, tabellaSoggetti);
+	}
+	
+	private static List<IDPortaApplicativa> _getIDPorteApplicativeAssociate(long idServizioLong, boolean defaultMapping, String azioneMapping,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -386,16 +492,31 @@ public class DBMappingUtils {
 //			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
 //			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addWhereCondition("id_erogazione = ?");
+			if(defaultMapping) {
+				sqlQueryObject.addWhereCondition("is_default = ?");
+			}
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
+			if(azioneMapping!=null) {
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".azione = ?");
+			}
 //			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.PORTE_APPLICATIVE+".id_soggetto");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			stm.setLong(indexStmt++,idServizioLong);
+			if(defaultMapping) {
+				stm.setInt(indexStmt++,1);
+			}
+			if(azioneMapping!=null) {
+				stm.setString(indexStmt++,azioneMapping);
+			}
 		
 			rs = stm.executeQuery();
-			if (rs.next()) {
+			List<IDPortaApplicativa> list = new ArrayList<IDPortaApplicativa>();
+			while (rs.next()) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				String nome = rs.getString("nome_porta");
 				idPA.setNome(nome);
@@ -403,11 +524,14 @@ public class DBMappingUtils {
 //				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 //				idPA.setSoggetto(idS);
 				
-				return idPA;
+				list.add(idPA);
 			}
-			else{
+			if(list.size()<=0){
 				//throw new CoreException("Mapping tra PA e servizio ["+idServizio.toString()+"] non esistente");
 				return null;
+			}
+			else {
+				return list;
 			}
 		}catch(CoreException de){
 			throw de;
@@ -431,22 +555,67 @@ public class DBMappingUtils {
 		}
 	}
 	
-	
-	
-	public static boolean existsIDPortaApplicativaAssociata(IDServizio idServizio,
+	public static boolean existsIDPortaApplicativaAssociataDefault(IDServizio idServizio,
 			Connection con, String tipoDB) throws CoreException {
-		return existsIDPortaApplicativaAssociata(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
+		return existsIDPortaApplicativaAssociataDefault(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static boolean existsIDPortaApplicativaAssociata(IDServizio idServizio, 
+	public static boolean existsIDPortaApplicativaAssociataDefault(IDServizio idServizio, 
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
 		if(idServizioLong<=0){
 			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
 		}
-		return _existsIDPortaApplicativaAssociata(idServizioLong, con, tipoDB, tabellaSoggetti);
+		int c = _countIDPorteApplicativeAssociate(idServizioLong, true, null, con, tipoDB, tabellaSoggetti);
+		if(c<=0) {
+			return false;
+		}
+		else {
+			if(c>1) {
+				throw new CoreException("Esiste più di un mapping di default per l'erogazione del servizio ["+idServizio.toString()+"]");
+			}
+			return true;
+		}
 	}
 	
-	private static boolean _existsIDPortaApplicativaAssociata(long idServizioLong, 
+	public static boolean existsIDPortaApplicativaAssociataAzione(IDServizio idServizio,
+			Connection con, String tipoDB) throws CoreException {
+		return existsIDPortaApplicativaAssociataAzione(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static boolean existsIDPortaApplicativaAssociataAzione(IDServizio idServizio, 
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		if(idServizio.getAzione()==null) {
+			throw new CoreException("Azione non indicata nel parametro 'idServizio'");
+		}
+		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
+		if(idServizioLong<=0){
+			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
+		}
+		int c = _countIDPorteApplicativeAssociate(idServizioLong, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti);
+		if(c<=0) {
+			return false;
+		}
+		else {
+			if(c>1) {
+				throw new CoreException("Esiste più di un mapping per l'erogazione dell'azione '"+idServizio.getAzione()+"' del servizio ["+idServizio.toString()+"]");
+			}
+			return true;
+		}
+	}
+	
+	public static boolean existsIDPorteApplicativeAssociate(IDServizio idServizio,
+			Connection con, String tipoDB) throws CoreException {
+		return existsIDPorteApplicativeAssociate(idServizio, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static boolean existsIDPorteApplicativeAssociate(IDServizio idServizio, 
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
+		if(idServizioLong<=0){
+			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
+		}
+		return _countIDPorteApplicativeAssociate(idServizioLong, false, null, con, tipoDB, tabellaSoggetti)>0;
+	}
+	
+	private static int _countIDPorteApplicativeAssociate(long idServizioLong, boolean defaultMapping, String azioneMapping, 
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -460,14 +629,34 @@ public class DBMappingUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
 			sqlQueryObject.addWhereCondition("id_erogazione = ?");
+			if(defaultMapping) {
+				sqlQueryObject.addWhereCondition("is_default = ?");
+			}
+			if(azioneMapping!=null) {
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".azione = ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			stm.setLong(indexStmt++,idServizioLong);
+			if(defaultMapping) {
+				stm.setInt(indexStmt++,1);
+			}
+			if(azioneMapping!=null) {
+				stm.setString(indexStmt++,azioneMapping);
+			}
 		
 			rs = stm.executeQuery();
-			return rs.next();
+			int c = 0;
+			while(rs.next()) {
+				c++;
+			}
+			return c;
 		}catch(CoreException de){
 			throw de;
 		}
@@ -695,18 +884,97 @@ public class DBMappingUtils {
 		}
 	}
 	
-	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, Long idFru, IDSoggetto idSoggettoFruitore, Long idSoggetto, String tipoServizio, String nomeServizio, IDServizio idAccordoServizio, Long idServizio, String tipoSoggettoErogatore,
-			String nomeSoggettoErogatore, Long idSoggettoErogatore, ISearch ricerca) throws CoreException {
-		return _mappingFruizionePortaDelegataList(con, tipoDB, idFru, idSoggettoFruitore, idSoggetto, tipoServizio, nomeServizio,  idAccordoServizio, idServizio, tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, ricerca, CostantiDB.SOGGETTI); 
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			long idFruizione, 
+			IDSoggetto idSoggettoFruitore,
+			IDServizio idServizio,
+			ISearch ricerca) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				idFruizione, 
+				idSoggettoFruitore, 
+				idServizio,
+				ricerca, CostantiDB.SOGGETTI); 
+	}
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			long idFruizione, 
+			IDSoggetto idSoggettoFruitore, 
+			IDServizio idServizio,
+			ISearch ricerca,String tabellaSoggetti) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				idFruizione, 
+				idSoggettoFruitore, 
+				idServizio,
+				ricerca, tabellaSoggetti); 
 	}
 	
-	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, Long idFru, IDSoggetto idSoggettoFruitore, Long idSoggetto, String tipoServizio, String nomeServizio,  IDServizio idAccordoServizio, Long idServizio, String tipoSoggettoErogatore,
-			String nomeSoggettoErogatore, Long idSoggettoErogatore, ISearch ricerca,String tabellaSoggetti) throws CoreException {
-		return _mappingFruizionePortaDelegataList(con, tipoDB, idFru, idSoggettoFruitore, idSoggetto, tipoServizio, nomeServizio, idAccordoServizio, idServizio, tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, ricerca, tabellaSoggetti); 
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			long idFruizione, 
+			IDSoggetto idSoggettoFruitore,
+			IDServizio idServizio) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				idFruizione, 
+				idSoggettoFruitore, 
+				idServizio,
+				null, CostantiDB.SOGGETTI); 
+	}
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			long idFruizione, 
+			IDSoggetto idSoggettoFruitore, 
+			IDServizio idServizio,
+			String tabellaSoggetti) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				idFruizione, 
+				idSoggettoFruitore, 
+				idServizio,
+				null, tabellaSoggetti); 
 	}
 	
-	private static List<MappingFruizionePortaDelegata> _mappingFruizionePortaDelegataList(Connection con, String tipoDB, Long idFru,IDSoggetto idSoggettoFruitore,  Long idSoggetto, String tipoServizio, String nomeServizio, IDServizio idAccordoServizio, Long idServizio, String tipoSoggettoErogatore,
-			String nomeSoggettoErogatore, Long idSoggettoErogatore, ISearch ricerca,String tabellaSoggetti) throws CoreException {
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			IDSoggetto idSoggettoFruitore,
+			IDServizio idServizio,
+			ISearch ricerca) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
+				idSoggettoFruitore, 
+				idServizio,
+				ricerca, CostantiDB.SOGGETTI); 
+	}
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			IDSoggetto idSoggettoFruitore, 
+			IDServizio idServizio,
+			ISearch ricerca,String tabellaSoggetti) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
+				idSoggettoFruitore, 
+				idServizio,
+				ricerca, tabellaSoggetti); 
+	}
+	
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			IDSoggetto idSoggettoFruitore,
+			IDServizio idServizio) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
+				idSoggettoFruitore, 
+				idServizio,
+				null, CostantiDB.SOGGETTI); 
+	}
+	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			IDSoggetto idSoggettoFruitore, 
+			IDServizio idServizio,
+			String tabellaSoggetti) throws CoreException {
+		return _mappingFruizionePortaDelegataList(con, tipoDB, 
+				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
+				idSoggettoFruitore, 
+				idServizio,
+				null, tabellaSoggetti); 
+	}
+	
+	private static List<MappingFruizionePortaDelegata> _mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
+			long idFruizione,
+			IDSoggetto idSoggettoFruitore, 
+			IDServizio idServizio,
+			ISearch ricerca,String tabellaSoggetti) throws CoreException {
 		int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 		int offset = 0;
 		int limit = 0;
@@ -724,35 +992,37 @@ public class DBMappingUtils {
 		
 		List<MappingFruizionePortaDelegata> lista = new ArrayList<MappingFruizionePortaDelegata>();
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addSelectCountField("*", "cont");
-			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
-			if (!search.equals("")) {
-				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
-			} 
-			
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			int index = 1;
-			stmt.setLong(index++, idFru);
-			
-			risultato = stmt.executeQuery();
-			if (risultato.next() && ricerca != null)
-				ricerca.setNumEntries(idLista,risultato.getInt(1));
-			risultato.close();
-			stmt.close();
+			if(ricerca != null) {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
+				if (!search.equals("")) {
+					sqlQueryObject.addWhereCondition(false, 
+							sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true),
+							sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
+				} 
+				
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				int index = 1;
+				stmt.setLong(index++, idFruizione);
+				
+				risultato = stmt.executeQuery();
+				if (risultato.next())
+					ricerca.setNumEntries(idLista,risultato.getInt(1));
+				risultato.close();
+				stmt.close();
+			}
 			
 			// ricavo le entries
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione");
@@ -764,7 +1034,7 @@ public class DBMappingUtils {
 			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
 			
-			if (!search.equals("")) {
+			if (ricerca != null && !search.equals("")) {
 				sqlQueryObject.addWhereCondition(false, 
 						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true),
 						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
@@ -773,14 +1043,16 @@ public class DBMappingUtils {
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default",false);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
 			sqlQueryObject.setSortType(true);
-			sqlQueryObject.setLimit(limit);
-			sqlQueryObject.setOffset(offset);
+			if(ricerca != null) {
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+			}
 			queryString = sqlQueryObject.createSQLQuery();
 			
 			stmt = con.prepareStatement(queryString);
 			
-			index = 1;
-			stmt.setLong(index++, idFru);
+			int index = 1;
+			stmt.setLong(index++, idFruizione);
 			
 			risultato = stmt.executeQuery();
 			
@@ -801,7 +1073,7 @@ public class DBMappingUtils {
 				mapping.setTableId(id);
 				mapping.setDefault(isDefault);
 				// evitiamo una join utilizzo l'id che mi sono passato come parametro
-				mapping.setIdServizio(idAccordoServizio);
+				mapping.setIdServizio(idServizio);
 				mapping.setIdFruitore(idSoggettoFruitore); 
 				
 				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
@@ -962,21 +1234,63 @@ public class DBMappingUtils {
 		}
 	}
 
-	
-	public static IDPortaDelegata getIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto idFruitore,
+	public static IDPortaDelegata getIDPortaDelegataAssociataDefault(IDServizio idServizio, IDSoggetto idFruitore,
 			Connection con, String tipoDB) throws CoreException {
-		return getIDPortaDelegataAssociata(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
+		return getIDPortaDelegataAssociataDefault(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static IDPortaDelegata getIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto idFruitore,
+	public static IDPortaDelegata getIDPortaDelegataAssociataDefault(IDServizio idServizio, IDSoggetto idFruitore,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
 		if(idFruizione<=0){
 			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
 		}
-		return _getIDPortaDelegataAssociata(idFruizione, con, tipoDB, tabellaSoggetti);
+		List<IDPortaDelegata> l = _getIDPorteDelegateAssociate(idFruizione, true, null, con, tipoDB, tabellaSoggetti);
+		if(l!=null && l.size()>0) {
+			if(l.size()>1) {
+				throw new CoreException("Esiste più di un mapping di default per la fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"]");
+			}
+			return l.get(0);
+		}
+		return null;
 	}
 	
-	private static IDPortaDelegata _getIDPortaDelegataAssociata(long idFruizione,
+	public static IDPortaDelegata getIDPortaDelegataAssociataAzione(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB) throws CoreException {
+		return getIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static IDPortaDelegata getIDPortaDelegataAssociataAzione(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		if(idServizio.getAzione()==null) {
+			throw new CoreException("Azione non indicata nel parametro 'idServizio'");
+		}
+		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
+		if(idFruizione<=0){
+			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
+		}
+		List<IDPortaDelegata> l = _getIDPorteDelegateAssociate(idFruizione, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti);
+		if(l!=null && l.size()>0) {
+			if(l.size()>1) {
+				throw new CoreException("Esiste più di un mapping per l'azione '"+idServizio.getAzione()+"' per la fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"]");
+			}
+			return l.get(0);
+		}
+		return null;
+	}
+	
+	public static List<IDPortaDelegata> getIDPorteDelegateAssociate(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB) throws CoreException {
+		return getIDPorteDelegateAssociate(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static List<IDPortaDelegata> getIDPorteDelegateAssociate(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
+		if(idFruizione<=0){
+			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
+		}
+		return _getIDPorteDelegateAssociate(idFruizione, false, null, con, tipoDB, tabellaSoggetti);
+	}
+	
+	private static List<IDPortaDelegata> _getIDPorteDelegateAssociate(long idFruizione, boolean defaultMapping, String azioneMapping,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -995,15 +1309,32 @@ public class DBMappingUtils {
 //			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
 //			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addWhereCondition("id_fruizione = ?");
+			if(defaultMapping) {
+				sqlQueryObject.addWhereCondition("is_default = ?");
+			}
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
+			if(azioneMapping!=null) {
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_AZIONI+".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".azione = ?");
+			}
 //			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.PORTE_DELEGATE+".id_soggetto");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			stm.setLong(indexStmt++,idFruizione);
+			if(defaultMapping) {
+				stm.setInt(indexStmt++,1);
+			}
+			if(azioneMapping!=null) {
+				stm.setString(indexStmt++,azioneMapping);
+			}
 		
 			rs = stm.executeQuery();
+			
+			List<IDPortaDelegata> list = new ArrayList<>();
+			
 			if (rs.next()) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				String nome = rs.getString("nome_porta");
@@ -1012,11 +1343,14 @@ public class DBMappingUtils {
 //				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 //				idPD.setSoggettoFruitore(idS);
 				
-				return idPD;
+				list.add(idPD);
 			}
-			else{
+			if(list.size()<=0){
 				//throw new CoreException("Mapping tra PD e Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
 				return null;
+			}
+			else {
+				return list;
 			}
 		}catch(CoreException de){
 			throw de;
@@ -1042,22 +1376,67 @@ public class DBMappingUtils {
 	
 	
 	
-	
-
-	public static boolean existsIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto idFruitore,
+	public static boolean existsIDPortaDelegataAssociataDefault(IDServizio idServizio, IDSoggetto idFruitore,
 			Connection con, String tipoDB) throws CoreException {
-		return existsIDPortaDelegataAssociata(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
+		return existsIDPortaDelegataAssociataDefault(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static boolean existsIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto idFruitore,
+	public static boolean existsIDPortaDelegataAssociataDefault(IDServizio idServizio, IDSoggetto idFruitore,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
 		if(idFruizione<=0){
 			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
 		}
-		return _existsIDPortaDelegataAssociata(idFruizione, con, tipoDB, tabellaSoggetti);
+		int c = _countIDPorteDelegateAssociate(idFruizione, true, null, con, tipoDB, tabellaSoggetti);
+		if(c<=0) {
+			return false;
+		}
+		else {
+			if(c>1) {
+				throw new CoreException("Esiste più di un mapping di default per la fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"]");
+			}
+			return true;
+		}
 	}
 	
-	private static boolean _existsIDPortaDelegataAssociata(long idFruizione,
+	public static boolean existsIDPortaDelegataAssociataAzione(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB) throws CoreException {
+		return existsIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static boolean existsIDPortaDelegataAssociataAzione(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		if(idServizio.getAzione()==null) {
+			throw new CoreException("Azione non indicata nel parametro 'idServizio'");
+		}
+		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
+		if(idFruizione<=0){
+			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
+		}
+		int c = _countIDPorteDelegateAssociate(idFruizione, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti);
+		if(c<=0) {
+			return false;
+		}
+		else {
+			if(c>1) {
+				throw new CoreException("Esiste più di un mapping per la fruizione dell'azione '"+idServizio.getAzione()+"' da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"]");
+			}
+			return true;
+		}
+	}
+
+	public static boolean existsIDPorteDelegateAssociate(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB) throws CoreException {
+		return existsIDPorteDelegateAssociate(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static boolean existsIDPorteDelegateAssociate(IDServizio idServizio, IDSoggetto idFruitore,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
+		if(idFruizione<=0){
+			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
+		}
+		return _countIDPorteDelegateAssociate(idFruizione, false, null, con, tipoDB, tabellaSoggetti)>0;
+	}
+	
+	private static int _countIDPorteDelegateAssociate(long idFruizione, boolean defaultMapping, String azioneMapping, 
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -1071,14 +1450,34 @@ public class DBMappingUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 			sqlQueryObject.addWhereCondition("id_fruizione = ?");
+			if(defaultMapping) {
+				sqlQueryObject.addWhereCondition("is_default = ?");
+			}
+			if(azioneMapping!=null) {
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_AZIONI+".id_porta");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".azione = ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
 			stm.setLong(indexStmt++,idFruizione);
+			if(defaultMapping) {
+				stm.setInt(indexStmt++,1);
+			}
+			if(azioneMapping!=null) {
+				stm.setString(indexStmt++,azioneMapping);
+			}
 		
 			rs = stm.executeQuery();
-			return rs.next();
+			int c = 0;
+			while(rs.next()) {
+				c++;
+			}
+			return c;
 		}catch(CoreException de){
 			throw de;
 		}
@@ -1100,6 +1499,7 @@ public class DBMappingUtils {
 
 		}
 	}
+
 	
 	
 	
@@ -1176,7 +1576,7 @@ public class DBMappingUtils {
 			throw de;
 		}
 		catch(Exception e){
-			throw new CoreException("getIDPortaApplicativaAssociata error",e);
+			throw new CoreException("_getTableIdMappingFruizione error",e);
 		} finally {
 
 			//Chiudo statement and resultset

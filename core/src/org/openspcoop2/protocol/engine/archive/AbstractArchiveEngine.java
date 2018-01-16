@@ -513,11 +513,43 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	public IDPortaApplicativa getIDPortaApplicativaAssociataErogazione(IDServizio idServizio) throws DriverRegistroServiziException{
+	public IDPortaApplicativa getIDPortaApplicativaDefaultAssociataErogazione(IDServizio idServizio) throws DriverRegistroServiziException{
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection("getIDPortaApplicativaAssociataErogazione");
-			return DBMappingUtils.getIDPortaApplicativaAssociata(idServizio, con, this.driverRegistroServizi.getTipoDB());
+			con = this.driverRegistroServizi.getConnection("getIDPortaApplicativaDefaultAssociataErogazione");
+			return DBMappingUtils.getIDPortaApplicativaAssociataDefault(idServizio, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public IDPortaApplicativa getIDPortaApplicativaPerAzioneAssociataErogazione(IDServizio idServizio) throws DriverRegistroServiziException{
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getIDPortaApplicativaPerAzioneAssociataErogazione");
+			return DBMappingUtils.getIDPortaApplicativaAssociataAzione(idServizio, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public List<IDPortaApplicativa> getIDPorteApplicativeAssociateErogazione(IDServizio idServizio) throws DriverRegistroServiziException{
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getIDPorteApplicativeAssociateErogazione");
+			return DBMappingUtils.getIDPorteApplicativeAssociate(idServizio, con, this.driverRegistroServizi.getTipoDB());
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -561,11 +593,59 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	boolean existsIDPortaApplicativaAssociata(IDServizio idServizio) throws DriverRegistroServiziException {
+	public boolean existsIDPortaApplicativaDefaultAssociataErogazione(IDServizio idServizio) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection("existsIDPortaApplicativaAssociata");
-			return DBMappingUtils.existsIDPortaApplicativaAssociata(idServizio, con, this.driverRegistroServizi.getTipoDB());
+			con = this.driverRegistroServizi.getConnection("existsIDPortaApplicativaDefaultAssociataErogazione");
+			return DBMappingUtils.existsIDPortaApplicativaAssociataDefault(idServizio, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean existsIDPortaApplicativaPerAzioneAssociataErogazione(IDServizio idServizio) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsIDPortaApplicativaPerAzioneAssociataErogazione");
+			return DBMappingUtils.existsIDPortaApplicativaAssociataAzione(idServizio, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean existsIDPorteApplicativeAssociateErogazione(IDServizio idServizio) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsIDPorteApplicativeAssociateErogazione");
+			return DBMappingUtils.existsIDPorteApplicativeAssociate(idServizio, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean existsMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsMappingErogazione");
+			return DBMappingUtils.existsMappingErogazione(idServizio, idPortaApplicativa, con, this.driverRegistroServizi.getTipoDB());
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -609,11 +689,43 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	public IDPortaDelegata getIDPortaDelegataAssociataFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException{
+	public IDPortaDelegata getIDPortaDelegataDefaultAssociataFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException{
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection("getIDPortaDelegataAssociataFruizione");
-			return DBMappingUtils.getIDPortaDelegataAssociata(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+			con = this.driverRegistroServizi.getConnection("getIDPortaDelegataDefaultAssociataFruizione");
+			return DBMappingUtils.getIDPortaDelegataAssociataDefault(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public IDPortaDelegata getIDPortaDelegataPerAzioneAssociataFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException{
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getIDPortaDelegataPerAzioneAssociataFruizione");
+			return DBMappingUtils.getIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public List<IDPortaDelegata> getIDPorteDelegateAssociateFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException{
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getIDPorteDelegateAssociateFruizione");
+			return DBMappingUtils.getIDPorteDelegateAssociate(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -657,11 +769,59 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	public boolean existsIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException {
+	public boolean existsIDPortaDelegataDefaultAssociataFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
-			con = this.driverRegistroServizi.getConnection("existsIDPortaDelegataAssociata");
-			return DBMappingUtils.existsIDPortaDelegataAssociata(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+			con = this.driverRegistroServizi.getConnection("existsIDPortaDelegataDefaultAssociataFruizione");
+			return DBMappingUtils.existsIDPortaDelegataAssociataDefault(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean existsIDPortaDelegataPerAzioneAssociataFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsIDPortaDelegataPerAzioneAssociataFruizione");
+			return DBMappingUtils.existsIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean existsIDPorteDelegateAssociateFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsIDPorteDelegateAssociateFruizione");
+			return DBMappingUtils.existsIDPorteDelegateAssociate(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean existsMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsMappingFruizione");
+			return DBMappingUtils.existsMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);

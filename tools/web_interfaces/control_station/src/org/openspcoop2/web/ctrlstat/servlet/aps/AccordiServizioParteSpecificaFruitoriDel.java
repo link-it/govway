@@ -157,43 +157,49 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 //				if (porteDelegateCore.existsPortaDelegata(myidpd)) {
 				IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservzio);
 				IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getTipo(), fru.getNome());
-				IDPortaDelegata myidpd = porteDelegateCore.getIDPortaDelegataAssociata(idServizioObject, idSoggettoFruitore);
+				List<IDPortaDelegata> myidpds = porteDelegateCore.getIDPorteDelegateAssociate(idServizioObject, idSoggettoFruitore);
 				
-				if(myidpd!=null){
-					PortaDelegata mypd = porteDelegateCore.getPortaDelegata(myidpd);
+				if(myidpds!=null && myidpds.size()>0){
 					
 					List<Object> listPerformOperations = new ArrayList<Object>();
 					
-					if(extendedServlet!=null){
-						List<IExtendedBean> listExt = null;
-						try{
-							listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,apsHelper,apsCore,mypd);
-						}catch(Exception e){
-							ControlStationCore.logError(e.getMessage(), e);
-						}
-						if(listExt!=null && listExt.size()>0){
-							for (IExtendedBean iExtendedBean : listExt) {
-								WrapperExtendedBean wrapper = new WrapperExtendedBean();
-								wrapper.setExtendedBean(iExtendedBean);
-								wrapper.setExtendedServlet(extendedServlet);
-								wrapper.setOriginalBean(mypd);
-								wrapper.setManageOriginalBean(false);		
-								listPerformOperations.add(wrapper);
+					for (IDPortaDelegata myidpd : myidpds) {
+						
+						PortaDelegata mypd = porteDelegateCore.getPortaDelegata(myidpd);
+												
+						if(extendedServlet!=null){
+							List<IExtendedBean> listExt = null;
+							try{
+								listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,apsHelper,apsCore,mypd);
+							}catch(Exception e){
+								ControlStationCore.logError(e.getMessage(), e);
+							}
+							if(listExt!=null && listExt.size()>0){
+								for (IExtendedBean iExtendedBean : listExt) {
+									WrapperExtendedBean wrapper = new WrapperExtendedBean();
+									wrapper.setExtendedBean(iExtendedBean);
+									wrapper.setExtendedServlet(extendedServlet);
+									wrapper.setOriginalBean(mypd);
+									wrapper.setManageOriginalBean(false);		
+									listPerformOperations.add(wrapper);
+								}
 							}
 						}
+						
+						MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+						mappingFruizione.setIdFruitore(idSoggettoFruitore);
+						mappingFruizione.setIdServizio(idServizioObject);
+						mappingFruizione.setIdPortaDelegata(myidpd);
+						if(porteDelegateCore.existsMappingFruizionePortaDelegata(mappingFruizione)) {
+							listPerformOperations.add(mappingFruizione);
+						}
+						
+						listPerformOperations.add(mypd);
+						
 					}
-					
-					MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
-					mappingFruizione.setIdFruitore(idSoggettoFruitore);
-					mappingFruizione.setIdServizio(idServizioObject);
-					mappingFruizione.setIdPortaDelegata(myidpd);
-					if(porteDelegateCore.existsMappingFruizionePortaDelegata(mappingFruizione)) {
-						listPerformOperations.add(mappingFruizione);
-					}
-					
-					listPerformOperations.add(mypd);
 					
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listPerformOperations.toArray(new Object[1]) );
+					
 				}
 			}
 

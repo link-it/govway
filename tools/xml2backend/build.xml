@@ -113,6 +113,7 @@
 					<arg value="${gestioneCRUDConfigurazionePdD}" />
 					<arg value="${tipoConversioneConfigurazione}" />
 					<arg value="${gestioneSoggettiConfigurazione}" />
+					<arg value="${gestioneMappingErogazioneFruizioneConfigurazione}" />
 					<arg value="${protocolloDefault}" />
 					<arg value="${build}/xml2backend.log4j2.properties" />
 					<classpath>

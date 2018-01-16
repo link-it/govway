@@ -32,6 +32,7 @@ import java.util.Set;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -1006,7 +1007,7 @@ public class DBOggettiInUsoUtils  {
 
 	private static boolean isAccordoServizioParteSpecificaInUso(Connection con, String tipoDB, long idAccordoServizioParteSpecifica, 
 			Map<ErrorsHandlerCostant,List<String>> whereIsInUso, String nomeMetodo,
-			String nomePAGenerataAutomaticamente) throws UtilsException {
+			List<IDPortaApplicativa> nomePAGenerateAutomaticamente) throws UtilsException {
 		
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
@@ -1102,7 +1103,9 @@ public class DBOggettiInUsoUtils  {
 			while (risultato.next()) {
 				
 				String nomePorta = risultato.getString("nome_porta");
-				if(!nomePorta.equals(nomePAGenerataAutomaticamente)){
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePorta);
+				if(nomePAGenerateAutomaticamente!=null && !nomePAGenerateAutomaticamente.contains(idPA)) {
 					isInUso=true;
 					porteApplicative_list.add(nomePorta);
 				}
@@ -1260,7 +1263,11 @@ public class DBOggettiInUsoUtils  {
 				String tipo_soggetto = risultato.getString("tipo_soggetto");
 				String nome_soggetto = risultato.getString("nome_soggetto");
 				String nome = risultato.getString("nome_porta");
-				if(porteApplicative_list.contains(nome)==false && !nome.equals(nomePAGenerataAutomaticamente)){
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nome);
+				if(porteApplicative_list.contains(nome)==false && 
+						nomePAGenerateAutomaticamente!=null && 
+						!nomePAGenerateAutomaticamente.contains(idPA)){
 					mappingErogazionePA_list.add("("+tipo_soggetto + "/" + nome_soggetto+")_"+nome);
 					isInUso=true;
 				}
@@ -1341,7 +1348,7 @@ public class DBOggettiInUsoUtils  {
 	
 	public static boolean isAccordoServizioParteSpecificaInUso(Connection con, String tipoDB, IDServizio idServizio, 
 			Map<ErrorsHandlerCostant,List<String>> whereIsInUso,
-			String nomePAGenerataAutomaticamente) throws UtilsException {
+			List<IDPortaApplicativa> nomePAGenerateAutomaticamente) throws UtilsException {
 		String nomeMetodo = "isAccordoServizioParteSpecificaInUso(IDServizio)";
 		long idAccordoServizioParteSpecifica = -1;
 		try {
@@ -1352,7 +1359,7 @@ public class DBOggettiInUsoUtils  {
 		}catch (Exception se) {
 			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		}
-		return isAccordoServizioParteSpecificaInUso(con, tipoDB, idAccordoServizioParteSpecifica, whereIsInUso,nomeMetodo,nomePAGenerataAutomaticamente);
+		return isAccordoServizioParteSpecificaInUso(con, tipoDB, idAccordoServizioParteSpecifica, whereIsInUso,nomeMetodo,nomePAGenerateAutomaticamente);
 	}
 	public static String toString(IDServizio idServizio, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
 		

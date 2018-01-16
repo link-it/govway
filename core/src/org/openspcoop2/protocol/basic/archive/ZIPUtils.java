@@ -1550,7 +1550,10 @@ public class ZIPUtils  {
 			
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
 			idPA.setNome(idLine);
-			archiveASPS.setIdPortaApplicativaAssociata(idPA);
+			if(archiveASPS.getIdPorteApplicativeAssociate()==null) {
+				archiveASPS.setIdPorteApplicativeAssociate(new ArrayList<>());
+			}
+			archiveASPS.getIdPorteApplicativeAssociate().add(idPA);
 			
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
@@ -1678,7 +1681,10 @@ public class ZIPUtils  {
 			ArchiveFruitore archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
 			IDPortaDelegata idPD = new IDPortaDelegata();
 			idPD.setNome(idLine);
-			archiveFruitore.setIdPortaDelegataAssociata(idPD);
+			if(archiveFruitore.getIdPorteDelegateAssociate()==null) {
+				archiveFruitore.setIdPorteDelegateAssociate(new ArrayList<>());
+			}
+			archiveFruitore.getIdPorteDelegateAssociate().add(idPD);
 			
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);

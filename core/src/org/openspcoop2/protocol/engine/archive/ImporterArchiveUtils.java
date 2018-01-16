@@ -1688,7 +1688,7 @@ public class ImporterArchiveUtils {
 				aggiornatoStatoFruitori(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica(), 
 						StatiAccordo.valueOf(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getStatoPackage()));
 			
-			IDPortaApplicativa idPACheck = null;
+			List<IDPortaApplicativa> idPACheck = null;
 			ArchiveStatoImport statoImport = null;
 			
 			if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
@@ -1714,7 +1714,7 @@ public class ImporterArchiveUtils {
 				this.importerEngine.updateAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica());
 				statoImport = ArchiveStatoImport.UPDATED;
 				
-				idPACheck = this.importerEngine.getIDPortaApplicativaAssociataErogazione(idAccordoServizioParteSpecifica);
+				idPACheck = this.importerEngine.getIDPorteApplicativeAssociateErogazione(idAccordoServizioParteSpecifica);
 					
 			}
 			// --- create ---
@@ -1724,12 +1724,15 @@ public class ImporterArchiveUtils {
 			}
 			
 			// gestione portaApplicativaAssociata
-			if(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata()!=null){
-				if(idPACheck==null){
-					MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
-					mapping.setIdServizio(idAccordoServizioParteSpecifica);
-					mapping.setIdPortaApplicativa(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata());
-					listMappingErogazionePA.add(mapping);
+			if(archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()!=null &&
+					archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate().size()>0){
+				for (IDPortaApplicativa idPortaApplicativa_associata : archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()) {
+					if(idPACheck.contains(idPortaApplicativa_associata)==false){
+						MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+						mapping.setIdServizio(idAccordoServizioParteSpecifica);
+						mapping.setIdPortaApplicativa(idPortaApplicativa_associata);
+						listMappingErogazionePA.add(mapping);
+					}	
 				}
 			}
 			
@@ -1870,14 +1873,17 @@ public class ImporterArchiveUtils {
 			this.importerEngine.updateAccordoServizioParteSpecifica(oldAccordo);
 			
 			// gestione portaDelegataAssociata
-			if(archiveFruitore.getIdPortaDelegataAssociata()!=null){
-				IDPortaDelegata idPDCheck = this.importerEngine.getIDPortaDelegataAssociataFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
-				if(idPDCheck==null){
-					MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
-					mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
-					mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
-					mapping.setIdPortaDelegata(archiveFruitore.getIdPortaDelegataAssociata());
-					listMappingFruizionePD.add(mapping);
+			if(archiveFruitore.getIdPorteDelegateAssociate()!=null &&
+					archiveFruitore.getIdPorteDelegateAssociate().size()>0){
+				List<IDPortaDelegata> idPDCheck = this.importerEngine.getIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+				for (IDPortaDelegata idPortaDelegata_associata : archiveFruitore.getIdPorteDelegateAssociate()) {
+					if(idPDCheck.contains(idPortaDelegata_associata)==false){
+						MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+						mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
+						mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
+						mapping.setIdPortaDelegata(idPortaDelegata_associata);
+						listMappingFruizionePD.add(mapping);
+					}	
 				}
 			}
 			

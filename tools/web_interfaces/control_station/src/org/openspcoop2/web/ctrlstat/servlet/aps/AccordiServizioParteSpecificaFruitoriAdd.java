@@ -418,7 +418,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				if(apsCore.filterFruitoriRispettoAutenticazione(asps)){
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
 							asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getVersione());
-					IDPortaApplicativa idPA = porteApplicativeCore.getIDPortaApplicativaAssociata(idServizio);
+					IDPortaApplicativa idPA = porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
 					PortaApplicativa pa = null;
 					if(idPA!=null){
 						pa = porteApplicativeCore.getPortaApplicativa(idPA);

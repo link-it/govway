@@ -499,9 +499,9 @@ public class PorteDelegateCore extends ControlStationCore {
 	
 	
 	
-	public IDPortaDelegata getIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto fruitore) throws DriverConfigurazioneException {
+	public IDPortaDelegata getIDPortaDelegataAssociataDefault(IDServizio idServizio, IDSoggetto fruitore) throws DriverConfigurazioneException {
 		Connection con = null;
-		String nomeMetodo = "getIDPortaDelegataAssociata";
+		String nomeMetodo = "getIDPortaDelegataAssociataDefault";
 		DriverControlStationDB driver = null;
 
 		try {
@@ -510,7 +510,49 @@ public class PorteDelegateCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getIDPortaDelegataAssociata(idServizio,fruitore);
+			return driver.getIDPortaDelegataAssociataDefault(idServizio,fruitore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public IDPortaDelegata getIDPortaDelegataAssociataAzione(IDServizio idServizio, IDSoggetto fruitore) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getIDPortaDelegataAssociataAzione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getIDPortaDelegataAssociataAzione(idServizio,fruitore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDPortaDelegata> getIDPorteDelegateAssociate(IDServizio idServizio, IDSoggetto fruitore) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getIDPorteDelegateAssociate";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getIDPorteDelegateAssociate(idServizio,fruitore);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

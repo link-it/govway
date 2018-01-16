@@ -187,7 +187,7 @@ public final class EliminazioneXML extends Action {
 				try{
 					org.openspcoop2.core.config.driver.utils.XMLDataConverter dataConverter = 
 						new org.openspcoop2.core.config.driver.utils.XMLDataConverter(data,accesso,false,false,userLogin,core.getProtocolloDefault(),LoaderCore.getLog());
-					dataConverter.delete(core.isGestioneSoggetti());
+					dataConverter.delete(core.isGestioneSoggetti(),true);
 
 				}catch(Exception e){
 

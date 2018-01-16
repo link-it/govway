@@ -22,11 +22,14 @@ package org.openspcoop2.protocol.engine.archive;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openspcoop2.core.commons.DBMappingUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -136,19 +139,20 @@ public class UtilitiesMappingFruizioneErogazione  {
 										
 										for (IDServizio idServizio : listServizi) {
 												
-											Connection con = null;
-											try{
-												con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.existsIDPortaApplicativaAssociata");
-												if(DBMappingUtils.existsIDPortaApplicativaAssociata(idServizio, con, this.driverRegistroServizi.getTipoDB())){
-													this.log.debug("PortaApplicativa (soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") mapping già esistente");
-													continue;
-												}
-											}finally{
-												try{
-													this.driverRegistroServizi.releaseConnection(con);
-												}catch(Throwable t){}
-											}
+											// Devo controllare il mapping per ogni porta applicativa
+//											Connection con = null;
+//											try{
+//												con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.existsIDPortaApplicativaAssociata");
+//												if(DBMappingUtils.existsIDPortaApplicativaAssociata(idServizio, con, this.driverRegistroServizi.getTipoDB())){
+//													this.log.debug("PortaApplicativa (soggetto:"+idSoggetto+" servizio:"+
+//															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") mapping già esistente");
+//													continue;
+//												}
+//											}finally{
+//												try{
+//													this.driverRegistroServizi.releaseConnection(con);
+//												}catch(Throwable t){}
+//											}
 											
 											this.log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
 													idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") ricerca in corso...");
@@ -167,56 +171,99 @@ public class UtilitiesMappingFruizioneErogazione  {
 											this.log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
 													idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") trovate: "+listPA.size());
 											
-											String nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
-											boolean isDefault = true;
-											if(listPA.size()==1){
-												IDPortaApplicativa idPA = listPA.get(0);
-												this.log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-													idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" in corso...");
-												con = null;
+											String nomePortaDefault = null;
+											HashMap<String, IDPortaApplicativa> mapPorte = new HashMap<>(); 
+											HashMap<IDPortaApplicativa, PortaApplicativa> listPAModificare = new  HashMap<>(); 
+											for (IDPortaApplicativa idPortaApplicativa : listPA) {
+												
+												Connection con = null;
 												try{
-													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione");
-													
-													DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, this.driverRegistroServizi.getTipoDB());
+													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.existsIDPortaApplicativaAssociata");
+													if(DBMappingUtils.existsMappingErogazione(idServizio, idPortaApplicativa, con, this.driverRegistroServizi.getTipoDB())){
+														this.log.debug("PortaApplicativa '"+idPortaApplicativa.getNome()+"' (soggetto:"+idSoggetto+" servizio:"+
+																idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") mapping già esistente");
+														continue;
+													}
 												}finally{
 													try{
 														this.driverRegistroServizi.releaseConnection(con);
 													}catch(Throwable t){}
 												}
-												this.log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" effettuata con successo");
-											}
-											else if(listPA.size()>1){
-												// cerco se esiste una PA che possiede una azione '*'
-												this.log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") search PA con azione * ...");
-												IDPortaApplicativa idPA = null;
-												for (IDPortaApplicativa idPACheck : listPA) {
-													PortaApplicativa pa = this.driverConfigurazione.getPortaApplicativa(idPACheck);
-													if(pa.getAzione()==null || pa.getAzione().getNome()==null || "".equals(pa.getAzione().getNome())){
-														idPA = idPACheck;
-														break;
+												
+												String nomeMapping = null;
+												boolean isDefault = false;
+												PortaApplicativa pa = this.driverConfigurazione.getPortaApplicativa(idPortaApplicativa);
+												if( (pa.getAzione()==null) || 
+														( 
+																!PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(pa.getAzione().getIdentificazione()) 
+																&&
+																(pa.getAzione().getNome()==null || "".equals(pa.getAzione().getNome()))
+														)
+													){
+													nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+													isDefault = true;
+													if(nomePortaDefault!=null) {
+														// già trovato una pa di default, questa non la considero
+														this.log.debug("PortaApplicativa '"+idPortaApplicativa.getNome()+"' ignorata (soggetto:"+idSoggetto+" servizio:"+
+																idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+"): mapping di default già esistente nella pa con nome ["+nomePortaDefault+"]");
+														continue;
+													}
+													else {
+														nomePortaDefault = idPortaApplicativa.getNome();
 													}
 												}
-												this.log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") search PA con azione search completato (trovato:"+(idPA!=null)+")");
-												if(idPA!=null){
-													this.log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" in corso...");
-													con = null;
+												else {
+													String nomeAzione = pa.getAzione().getNome();
+													if(mapPorte.containsKey(nomeAzione)) {
+														// già trovato una pa che gestisce l'azione
+														this.log.debug("PortaApplicativa '"+idPortaApplicativa.getNome()+"' ignorata (soggetto:"+idSoggetto+" servizio:"+
+																idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+"): mapping per l'azione '"+nomeAzione+"' già esistente nella pa con nome ["+mapPorte.get(nomeAzione)+"]");
+														continue;
+													}
+													else {
+														mapPorte.put(nomeAzione, idPortaApplicativa);
+													}
+													nomeMapping = nomeAzione;
+													
+													// modifico porta applicativa adeguandola alla nuova specifica
+													pa.getAzione().setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
+													pa.getAzione().addAzioneDelegata(nomeAzione);
+													pa.getAzione().setNome(null);
+													
+													listPAModificare.put(idPortaApplicativa, pa);
+												}
+												this.log.debug("Creazione Mapping Erogazione (default:"+isDefault+" nome:"+nomeMapping+") soggetto:"+idSoggetto+" servizio:"+
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pa:"+idPortaApplicativa.getNome()+" in corso...");
+												con = null;
+												try{
+													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione");
+													
+													DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPortaApplicativa, con, this.driverRegistroServizi.getTipoDB());
+												}finally{
 													try{
-														con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione.sizeMoreThenOne");
-														DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, this.driverRegistroServizi.getTipoDB());
-													}finally{
-														try{
-															this.driverRegistroServizi.releaseConnection(con);
-														}catch(Throwable t){}
-													}
-													this.log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" effettuata con successo");
+														this.driverRegistroServizi.releaseConnection(con);
+													}catch(Throwable t){}
 												}
+												this.log.debug("Creazione Mapping Erogazione (default:"+isDefault+" nome:"+nomeMapping+") soggetto:"+idSoggetto+" servizio:"+
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pa:"+idPortaApplicativa.getNome()+" effettuata con successo");
+												
 											}
 											
+											if(listPAModificare.size()>0) {
+												for (IDPortaApplicativa idPortaApplicativa : listPAModificare.keySet()) {
+													PortaApplicativa pa = listPAModificare.get(idPortaApplicativa);
+													pa.getAzione().setNomePortaDelegante(nomePortaDefault);
+													
+													// comunque devo aggiornare i dati per delegatedBy (anche se nomePortaDefault is null)
+													
+													this.log.debug("Aggiornamento Porta Applicativa '"+idPortaApplicativa+"' per  Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
+															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" per impostare nome delegate '"+nomePortaDefault+"' in corso...");
+													this.driverConfigurazione.updatePortaApplicativa(pa);
+													this.log.debug("Aggiornamento Porta Applicativa '"+idPortaApplicativa+"' per  Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
+															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" per impostare nome delegate '"+nomePortaDefault+"' effettuata con successo");
+													
+												}
+											}
 										}
 										
 									}
@@ -242,20 +289,21 @@ public class UtilitiesMappingFruizioneErogazione  {
 										
 										for (IDServizio idServizio : listServizi) {
 										
-											Connection con = null;
-											try{
-												con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.existsIDPortaDelegataAssociata");		
-												if(DBMappingUtils.existsIDPortaDelegataAssociata(idServizio, idSoggetto, con, this.driverRegistroServizi.getTipoDB())){
-													this.log.debug("PortaDelegata (soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") mapping già esistente");
-													continue;
-												}
-											}finally{
-												try{
-													this.driverRegistroServizi.releaseConnection(con);
-												}catch(Throwable t){}
-											}
+											// Devo controllare il mapping per ogni porta delegata
+//											Connection con = null;
+//											try{
+//												con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.existsIDPortaDelegataAssociata");		
+//												if(DBMappingUtils.existsIDPortaDelegataAssociata(idServizio, idSoggetto, con, this.driverRegistroServizi.getTipoDB())){
+//													this.log.debug("PortaDelegata (soggetto-fruitore:"+idSoggetto+
+//															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
+//															idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") mapping già esistente");
+//													continue;
+//												}
+//											}finally{
+//												try{
+//													this.driverRegistroServizi.releaseConnection(con);
+//												}catch(Throwable t){}
+//											}
 											
 											this.log.debug("PorteDelegate (soggetto-fruitore:"+idSoggetto+
 														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
@@ -278,17 +326,78 @@ public class UtilitiesMappingFruizioneErogazione  {
 														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
 														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") trovate: "+listPD.size());
 											
-											String nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
-											boolean isDefault = true;
-											if(listPD.size()==1){
-												IDPortaDelegata idPD = listPD.get(0);
+											String nomePortaDefault = null;
+											HashMap<String, IDPortaDelegata> mapPorte = new HashMap<>(); 
+											HashMap<IDPortaDelegata, PortaDelegata> listPDModificare = new  HashMap<>(); 
+											for (IDPortaDelegata idPortaDelegata : listPD) {
+												
+												Connection con = null;
+												try{
+													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.existsIDPortaDelegataAssociata");
+													if(DBMappingUtils.existsMappingFruizione(idServizio, idSoggetto, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB())){
+														this.log.debug("PortaDelegata '"+idPortaDelegata.getNome()+"' (soggetto-fruitore:"+idSoggetto+
+														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") mapping già esistente");
+														continue;
+													}
+												}finally{
+													try{
+														this.driverRegistroServizi.releaseConnection(con);
+													}catch(Throwable t){}
+												}
+												
+												String nomeMapping = null;
+												boolean isDefault = false;
+												PortaDelegata pd = this.driverConfigurazione.getPortaDelegata(idPortaDelegata);
+												if( (pd.getAzione()==null) || 
+														( 
+																!PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(pd.getAzione().getIdentificazione()) 
+																&&
+																(pd.getAzione().getNome()==null || "".equals(pd.getAzione().getNome()))
+														)
+													){
+													nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+													isDefault = true;
+													if(nomePortaDefault!=null) {
+														// già trovato una pa di default, questa non la considero
+														this.log.debug("PortaDelegata '"+idPortaDelegata.getNome()+"' ignorata (soggetto-fruitore:"+idSoggetto+
+														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+"): mapping di default già esistente nella pd con nome ["+nomePortaDefault+"]");
+														continue;
+													}
+													else {
+														nomePortaDefault = idPortaDelegata.getNome();
+													}
+												}
+												else {
+													String nomeAzione = pd.getAzione().getNome();
+													if(mapPorte.containsKey(nomeAzione)) {
+														// già trovato una pa che gestisce l'azione
+														this.log.debug("PortaDelegata '"+idPortaDelegata.getNome()+"' ignorata (soggetto-fruitore:"+idSoggetto+
+														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+"): mapping per l'azione '"+nomeAzione+"' già esistente nella pa con nome ["+mapPorte.get(nomeAzione)+"]");
+														continue;
+													}
+													else {
+														mapPorte.put(nomeAzione, idPortaDelegata);
+													}
+													nomeMapping = nomeAzione;
+													
+													// modifico porta applicativa adeguandola alla nuova specifica
+													pd.getAzione().setIdentificazione(PortaDelegataAzioneIdentificazione.DELEGATED_BY); 
+													pd.getAzione().addAzioneDelegata(nomeAzione);
+													pd.getAzione().setNome(null);
+													
+													listPDModificare.put(idPortaDelegata, pd);
+												}
 												this.log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
 														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" in corso...");
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pd:"+idPortaDelegata.getNome()+" in corso...");
 												con = null;
 												try{
-													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione");		
-													DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idSoggetto, idPD, con, this.driverRegistroServizi.getTipoDB());
+													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione");
+													
+													DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idSoggetto, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
 												}finally{
 													try{
 														this.driverRegistroServizi.releaseConnection(con);
@@ -296,43 +405,26 @@ public class UtilitiesMappingFruizioneErogazione  {
 												}
 												this.log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
 														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" effettuata con successo");
-											}
-											else if(listPD.size()>1){
-												// cerco se esiste una PD che possiede una azione '*'
-												this.log.debug("PorteDelegate (soggetto-fruitore:"+idSoggetto+
-														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") search PD con azione * ...");
-												IDPortaDelegata idPD = null;
-												for (IDPortaDelegata idPDCheck : listPD) {
-													PortaDelegata pd = this.driverConfigurazione.getPortaDelegata(idPDCheck);
-													if(pd.getAzione()==null || pd.getAzione().getNome()==null || "".equals(pd.getAzione().getNome())){
-														idPD = idPDCheck;
-														break;
-													}
-												}
-												this.log.debug("PorteDelegate (soggetto-fruitore:"+idSoggetto+
-														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+") search PD con azione search completato (trovato:"+(idPD!=null)+")");
-												if(idPD!=null){
-													this.log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
-														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" in corso...");
-													con = null;
-													try{
-														con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione.sizeMoreThenOne");		
-														DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idSoggetto, idPD, con, this.driverRegistroServizi.getTipoDB());
-													}finally{
-														try{
-															this.driverRegistroServizi.releaseConnection(con);
-														}catch(Throwable t){}
-													}
-													this.log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
-														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" effettuata con successo");
-												}
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" con pd:"+idPortaDelegata.getNome()+" effettuata con successo");
 											}
 											
+											if(listPDModificare.size()>0) {
+												for (IDPortaDelegata idPortaDelegata : listPDModificare.keySet()) {
+													PortaDelegata pd = listPDModificare.get(idPortaDelegata);
+													pd.getAzione().setNomePortaDelegante(nomePortaDefault);
+													
+													// comunque devo aggiornare i dati per delegatedBy (anche se nomePortaDefault is null)
+													
+													this.log.debug("Aggiornamento Porta Delegata '"+idPortaDelegata+"' per  Mapping Fruizione soggetto-fruitore:"+idSoggetto+
+														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" per impostare nome delegate '"+nomePortaDefault+"' in corso...");
+													this.driverConfigurazione.updatePortaDelegata(pd);
+													this.log.debug("Aggiornamento Porta Delegata '"+idPortaDelegata+"' per  Mapping Fruizione soggetto-fruitore:"+idSoggetto+
+														" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
+														idServizio.getTipo()+"/"+idServizio.getNome()+" v"+idServizio.getVersione()+" per impostare nome delegate '"+nomePortaDefault+"' effettuata con successo");
+													
+												}
+											}
 										}
 									}
 									

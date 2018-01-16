@@ -985,8 +985,8 @@ public class DriverControlStationDB  {
 
 	}
 	
-	public IDPortaDelegata getIDPortaDelegataAssociata(IDServizio idServizio,IDSoggetto idFruitore) throws DriverControlStationException {
-		String nomeMetodo = "getIDPortaDelegataAssociata";
+	public IDPortaDelegata getIDPortaDelegataAssociataDefault(IDServizio idServizio,IDSoggetto idFruitore) throws DriverControlStationException {
+		String nomeMetodo = "getIDPortaDelegataAssociataDefault";
 
 		Connection con = null;
 
@@ -1007,7 +1007,85 @@ public class DriverControlStationDB  {
 
 		try {
 
-			return DBMappingUtils.getIDPortaDelegataAssociata(idServizio, idFruitore, con, this.tipoDB);
+			return DBMappingUtils.getIDPortaDelegataAssociataDefault(idServizio, idFruitore, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+	
+	public IDPortaDelegata getIDPortaDelegataAssociataAzione(IDServizio idServizio,IDSoggetto idFruitore) throws DriverControlStationException {
+		String nomeMetodo = "getIDPortaDelegataAssociataAzione";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			return DBMappingUtils.getIDPortaDelegataAssociataAzione(idServizio, idFruitore, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+	
+	public List<IDPortaDelegata> getIDPorteDelegateAssociate(IDServizio idServizio,IDSoggetto idFruitore) throws DriverControlStationException {
+		String nomeMetodo = "getIDPorteDelegateAssociate";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			return DBMappingUtils.getIDPorteDelegateAssociate(idServizio, idFruitore, con, this.tipoDB);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
@@ -1183,8 +1261,8 @@ public class DriverControlStationDB  {
 
 	}
 	
-	public IDPortaApplicativa getIDPortaApplicativaAssociata(IDServizio idServizio) throws DriverControlStationException {
-		String nomeMetodo = "getIDPortaApplicativaAssociata";
+	public IDPortaApplicativa getIDPortaApplicativaAssociataDefault(IDServizio idServizio) throws DriverControlStationException {
+		String nomeMetodo = "getIDPortaApplicativaAssociataDefault";
 
 		Connection con = null;
 
@@ -1205,7 +1283,85 @@ public class DriverControlStationDB  {
 
 		try {
 
-			return DBMappingUtils.getIDPortaApplicativaAssociata(idServizio, con, this.tipoDB);
+			return DBMappingUtils.getIDPortaApplicativaAssociataDefault(idServizio, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+	
+	public IDPortaApplicativa getIDPortaApplicativaAssociataAzione(IDServizio idServizio) throws DriverControlStationException {
+		String nomeMetodo = "getIDPortaApplicativaAssociataAzione";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			return DBMappingUtils.getIDPortaApplicativaAssociataAzione(idServizio, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+	
+	public List<IDPortaApplicativa> getIDPorteApplicativeAssociate(IDServizio idServizio) throws DriverControlStationException {
+		String nomeMetodo = "getIDPorteApplicativeAssociate";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			return DBMappingUtils.getIDPorteApplicativeAssociate(idServizio, con, this.tipoDB);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);

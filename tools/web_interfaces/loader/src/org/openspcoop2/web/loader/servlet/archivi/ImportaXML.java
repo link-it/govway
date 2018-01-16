@@ -192,7 +192,7 @@ public final class ImportaXML extends Action {
 
 					org.openspcoop2.core.config.driver.utils.XMLDataConverter dataConverter = 
 						new org.openspcoop2.core.config.driver.utils.XMLDataConverter(data,accesso,false,false,userLogin,core.getProtocolloDefault(),LoaderCore.getLog());
-					dataConverter.convertXML(false,core.isGestioneSoggetti());
+					dataConverter.convertXML(false,core.isGestioneSoggetti(),true);
 
 				}catch(Exception e){
 

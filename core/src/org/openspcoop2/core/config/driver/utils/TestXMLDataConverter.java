@@ -49,8 +49,8 @@ public class TestXMLDataConverter {
 
 		
 		                               
-		if (argoments.length  < 8) {
-			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter sorgenteXML tipoConfigurazioneCRUD proprietaConfigurazioneCRUD reset isGestioneConfigurazione tipoConversione gestioneSoggetti protocolloDefault [Logger]";
+		if (argoments.length  < 9) {
+			String errorMsg = "ERROR, Usage:  java TestXMLDataConverter sorgenteXML tipoConfigurazioneCRUD proprietaConfigurazioneCRUD reset isGestioneConfigurazione tipoConversione gestioneSoggetti gestioneMappingErogazioneFruizione protocolloDefault [Logger]";
 			System.err.println(errorMsg);
 			throw new Exception(errorMsg);
 		}
@@ -62,10 +62,11 @@ public class TestXMLDataConverter {
 		String args_isGestioneConfigurazione = argoments[4].trim();
 		String args_tipoConversione = argoments[5].trim();
 		String args_gestioneSoggetti = argoments[6].trim();
-		String args_protocolloDefault = argoments[7].trim();
+		String args_gestioneMappingErogazioneFruizione = argoments[7].trim();
+		String args_protocolloDefault = argoments[8].trim();
 		String args_logger = null;
-		if(argoments.length>8){
-			args_logger = argoments[8].trim();
+		if(argoments.length>9){
+			args_logger = argoments[9].trim();
 		}
 		
 		// Inizializzo logger
@@ -115,6 +116,9 @@ public class TestXMLDataConverter {
 		
 		// isGestioneConfigurazione
 		boolean isGestioneConfigurazione = Boolean.parseBoolean(args_isGestioneConfigurazione);
+		
+		// GestioneMappingErogazioneFruizione
+		boolean gestioneMappingErogazioneFruizione =  Boolean.parseBoolean(args_gestioneMappingErogazioneFruizione);
 		
 		// Raccolta proprieta'
 		AccessoConfigurazionePdD acCRUD = new AccessoConfigurazionePdD();
@@ -206,7 +210,7 @@ public class TestXMLDataConverter {
 			}
 			
 			TestXMLDataConverter.letturaSorgenti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
-					condivisioneDBRegservPddValue, superUser,protocolloDefault, args_tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti);
+					condivisioneDBRegservPddValue, superUser,protocolloDefault, args_tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti, gestioneMappingErogazioneFruizione);
 			
 		}catch(Exception e){
 			String errorMsg = "Errore durante la conversione XML dei dati: "+e.getMessage(); 
@@ -242,7 +246,7 @@ public class TestXMLDataConverter {
 	private static void letturaSorgenti(File fSorgente,boolean connectionDB,Connection connectionSQL,
 			String tipoDatabase,Logger log,AccessoConfigurazionePdD acCRUD,
 			boolean condivisioneDBRegservPddValue,String superUser,String protocolloDefault,
-			String tipoConversione, boolean isGestioneConfigurazione,boolean reset,boolean gestioneSoggetti) throws Exception{
+			String tipoConversione, boolean isGestioneConfigurazione,boolean reset,boolean gestioneSoggetti,boolean gestioneMappingErogazioneFruizione) throws Exception{
 		if(fSorgente.isFile()){
 			if(fSorgente.canRead()==false){
 				throw new Exception("Sorgente XML ["+fSorgente.getAbsolutePath()+"] non accessibile in lettura");
@@ -250,7 +254,7 @@ public class TestXMLDataConverter {
 			if(fSorgente.getName().endsWith(".xml")){
 				// Per non convertire i wsdl e i xml
 				TestXMLDataConverter.converti(fSorgente, connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
-						condivisioneDBRegservPddValue, superUser,protocolloDefault, tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti);
+						condivisioneDBRegservPddValue, superUser,protocolloDefault, tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti,gestioneMappingErogazioneFruizione);
 			}
 			else{
 				log.debug("File ["+fSorgente.getAbsolutePath()+"] ignorato. Non possiede l'estensione .xml");
@@ -269,7 +273,7 @@ public class TestXMLDataConverter {
 			for(int i=0; i<f.length; i++){
 			
 				TestXMLDataConverter.letturaSorgenti(f[i], connectionDB, connectionSQL, tipoDatabase, log, acCRUD, 
-						condivisioneDBRegservPddValue, superUser,protocolloDefault, tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti);
+						condivisioneDBRegservPddValue, superUser,protocolloDefault, tipoConversione, isGestioneConfigurazione, reset, gestioneSoggetti,gestioneMappingErogazioneFruizione);
 				
 			}
 		}
@@ -279,7 +283,7 @@ public class TestXMLDataConverter {
 	private static void converti(File f,boolean connectionDB,Connection connectionSQL,
 			String tipoDatabase,Logger log,AccessoConfigurazionePdD acCRUD,
 			boolean condivisioneDBRegservPddValue,String superUser,String protocolloDefault,
-			String tipoConversione, boolean isGestioneConfigurazione,boolean reset,boolean gestioneSoggetti) throws Exception{
+			String tipoConversione, boolean isGestioneConfigurazione,boolean reset,boolean gestioneSoggetti,boolean gestioneMappingErogazioneFruizione) throws Exception{
 		// XMLDataConverter
 		XMLDataConverter dataConverter = null;
 		Logger logDriver = null;
@@ -295,12 +299,12 @@ public class TestXMLDataConverter {
 		
 		if("insertUpdate".equals(tipoConversione)){
 			log.info("Inizio conversione...");
-			dataConverter.convertXML(TestXMLDataConverter.reset(reset),gestioneSoggetti);
+			dataConverter.convertXML(TestXMLDataConverter.reset(reset),gestioneSoggetti,gestioneMappingErogazioneFruizione);
 			log.info("Conversione terminata.");
 		}
 		else if("delete".equals(tipoConversione)){
 			log.info("Inizio conversione...");
-			dataConverter.delete(gestioneSoggetti);
+			dataConverter.delete(gestioneSoggetti,gestioneMappingErogazioneFruizione);
 			log.info("Conversione terminata.");
 		}else{
 			throw new Exception("Valore opzione 'tipoConversioneConfigurazione' non gestito (valori possibili insertUpdate/delete): "+tipoConversione);

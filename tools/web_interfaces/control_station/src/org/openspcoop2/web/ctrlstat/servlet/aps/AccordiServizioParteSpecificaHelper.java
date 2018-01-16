@@ -1499,11 +1499,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //									ricerca);
 							Search searchForCount = new Search(true,1);
 							IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-							long idSoggetto = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
+							//long idSoggetto = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
 							IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getNome(), fru.getTipo());
-							this.apsCore.serviziFruitoriMappingList(fru.getId(), idSoggettoFruitore , idSoggetto,asps.getTipo(), asps.getNome(),
-									idServizioFromAccordo, (long) Integer.parseInt(id), 
-									asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), searchForCount);
+							this.apsCore.serviziFruitoriMappingList(fru.getId(), idSoggettoFruitore , idServizioFromAccordo, searchForCount);
 							//int numPD = fruLista.size();
 							int numPD = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_FRUIZIONE);
 							ServletUtils.setDataElementVisualizzaLabel(de, (long) numPD );
@@ -3130,7 +3128,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			IDServizio idServizio = this.idServizioFactory.getIDServizioFromValues(tipoServizioEffettivo, nomeServizioEffettivo, 
 					tmp[0], tmp[1], versioneInt); 
 			if(isModalitaAvanzata==false){
-				idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociata(idServizio);
+				idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
 			}
 			
 			
@@ -4367,7 +4365,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(isModalitaAvanzata==false){
 					IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
 							asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore(),asps.getVersione());
-					idPD = this.porteDelegateCore.getIDPortaDelegataAssociata(idServizioObject, idSoggettoFruitoreObject);
+					idPD = this.porteDelegateCore.getIDPortaDelegataAssociataDefault(idServizioObject, idSoggettoFruitoreObject);
 				}
 				
 				
@@ -4404,11 +4402,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //									new Search(true)).size();
 							Search searchForCount = new Search(true,1);
 							IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-							long idSoggetto = this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo());
+							//long idSoggetto = this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo());
 							IDSoggetto idSoggettoFr = new IDSoggetto(fruitore.getNome(), fruitore.getTipo());
-							this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFr , idSoggetto,asps.getTipo(), asps.getNome(),
-									idServizioFromAccordo, asps.getId(), 
-									asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getIdSoggetto(), searchForCount);
+							this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFr, idServizioFromAccordo, searchForCount);
 							//int numPD = fruLista.size();
 							int numPD = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_FRUIZIONE);
 							ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, (long) numPD );
