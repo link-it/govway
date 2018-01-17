@@ -1,6 +1,7 @@
 package org.openspcoop2.protocol.as4.pmode;
 
-import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.openspcoop2.protocol.as4.pmode.beans.API;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.resources.TemplateUtils;
 
@@ -26,30 +28,54 @@ import freemarker.template.Template;
 public class Translator {
 
 	private Template template;
+	private PModeRegistryReader reader;
 
 
-	public Translator() throws IOException {
-		this.template = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-template.xml");
+	public Translator(IRegistryReader driver, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		try {
+			this.template = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-template.xml");
+			this.reader = new PModeRegistryReader(driver, protocolFactory);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+
+	public void translate(OutputStream out) throws Exception {
+		this.translate(out, this.reader.getNomeSoggettoOperativo());
+	}
+	public void translate(OutputStream out,String nomeSoggetto) throws Exception {
+		OutputStreamWriter oow = new OutputStreamWriter(out);
+		this.translate(oow, nomeSoggetto);
+		oow.flush();
+		oow.close();
 	}
 	
-
-	public void translate(IRegistryReader driver, IProtocolFactory<?> protocolFactory, Writer out) throws Exception {
-		PModeRegistryReader reader = new PModeRegistryReader(driver, protocolFactory);
-		
+	public void translate(Writer out) throws Exception {
+		this.translate(out, this.reader.getNomeSoggettoOperativo());
+	}
+	public void translate(Writer out,String nomeSoggetto) throws Exception {
+		try {
+			Map<String, Object> map = this.buildMap();
+			map.put("soggettoOperativo", nomeSoggetto);
+			this.template.process(map, out);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	private Map<String, Object> buildMap() throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
-		map.put("policies", reader.findAllPolicies());
-		List<APC> apcList = reader.findAllAPC();
+		map.put("policies", this.reader.findAllPolicies());
+		List<APC> apcList = this.reader.findAllAPC();
 		map.put("apcList", apcList);
-		PayloadProfiles findPayloadProfile = reader.findPayloadProfile(apcList);
+		PayloadProfiles findPayloadProfile = this.reader.findPayloadProfile(apcList);
 		map.put("payloadProfiles", findPayloadProfile);
-		Map<IDAccordo, API> accordi = reader.findAllAccordi(findPayloadProfile);
+		Map<IDAccordo, API> accordi = this.reader.findAllAccordi(findPayloadProfile);
 		map.put("apis", accordi);
-		List<Soggetto> soggetti = reader.findAllSoggetti(accordi);
+		List<Soggetto> soggetti = this.reader.findAllSoggetti(accordi);
 		map.put("soggetti", soggetti);
-		map.put("partyIdTypes", reader.findAllPartyIdTypes(soggetti));
-		map.put("soggettoOperativo", reader.getNomeSoggettoOperativo());
-		this.template.process(map, out);
+		map.put("partyIdTypes", this.reader.findAllPartyIdTypes(soggetti));
+		return map;
 	}
 	
 }

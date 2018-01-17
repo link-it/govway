@@ -137,6 +137,7 @@
 		
 		<!-- org.openspcoop2.protocol.as4 -->
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.archive" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.builder" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.config" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.constants" />

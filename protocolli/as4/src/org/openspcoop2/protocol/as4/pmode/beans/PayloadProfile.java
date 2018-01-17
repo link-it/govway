@@ -58,6 +58,9 @@ public class PayloadProfile {
 	public Long getMaxSize() {
 		return this.maxSize;
 	}
+	public String getMaxSizeAsString() {
+		return this.maxSize.toString();
+	}
 	public void setMaxSize(Long maxSize) {
 		this.maxSize = maxSize;
 	}

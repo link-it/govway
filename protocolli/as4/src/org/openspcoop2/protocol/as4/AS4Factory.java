@@ -21,6 +21,7 @@
 package org.openspcoop2.protocol.as4;
 
 
+import org.openspcoop2.protocol.as4.archive.AS4Archive;
 import org.openspcoop2.protocol.as4.builder.AS4BustaBuilder;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.config.AS4ProtocolConfiguration;
@@ -32,6 +33,7 @@ import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
@@ -78,6 +80,14 @@ public class AS4Factory extends BasicFactory<AS4RawContent> {
 	public AS4ValidazioneSintattica createValidazioneSintattica()
 			throws ProtocolException {
 		return new AS4ValidazioneSintattica(this);
+	}
+	
+	
+	/* ** ARCHIVE ** */
+	
+	@Override
+	public IArchive createArchive() throws ProtocolException{
+		return new AS4Archive(this);
 	}
 
 

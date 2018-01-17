@@ -76,7 +76,7 @@
 			
 			<#list payloadProfiles.payloadProfiles as payloadProfile>
 			<payloadProfile name="${payloadProfile.name}" 
-					maxSize="${payloadProfile.maxSize}">
+					maxSize="${payloadProfile.maxSizeAsString}">
 			<#list payloadProfile.attachments as attachment>
 				<attachment name="${attachment}"/>
 			</#list>			
@@ -134,10 +134,10 @@
 					payloadProfile="${azione.ebmsActionPayloadProfile}"
 					errorHandling="demoErrorHandling"
 					compressPayloads="${azione.ebmsActionCompressPayload?c}"/>
-		</legConfigurations>
 					</#list>
 			</#list>
 		</#list>
+		</legConfigurations>
 		<#list soggetti as soggetto>
 			<#list soggetto.aps as aps>
 <process name="${aps.id}"

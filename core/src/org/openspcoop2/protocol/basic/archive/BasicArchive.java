@@ -754,7 +754,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
 			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
 		
-		ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader,configIntegrationReader);
+		ZIPReadUtils zipUtils = new ZIPReadUtils(this.protocolFactory.getLogger(),registryReader,configIntegrationReader);
 		return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		
 	}
@@ -765,7 +765,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
 		
 		try{
-			ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader,configIntegrationReader);
+			ZIPReadUtils zipUtils = new ZIPReadUtils(this.protocolFactory.getLogger(),registryReader,configIntegrationReader);
 			return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		}finally{
 			try{
@@ -779,12 +779,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	
 	@Override
 	public String toString(ArchiveEsitoImport esito, ArchiveMode archiveMode) throws ProtocolException{
-		return this.esitoUtils.toString(esito,false,true);
+		return this.esitoUtils.toString(esito,true,true);
 	}
 	
 	@Override
 	public String toString(ArchiveEsitoDelete esito, ArchiveMode archiveMode) throws ProtocolException{
-		return this.esitoUtils.toString(esito,false,false);
+		return this.esitoUtils.toString(esito,true,false);
 	}
 	
 	
@@ -796,23 +796,27 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	/* ----- Export ----- */
 	
 	@Override
-	public List<ExportMode> getExportModes(ArchiveType archiveType) throws ProtocolException {
+	public List<ExportMode> getExportModes(ArchiveType archiveType)
+			throws ProtocolException {
 		List<ExportMode> list = new ArrayList<ExportMode>();
+		list.add((ExportMode)Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.clone()); // vengono supportati tutti i tipi
 		return list;
 	}
-	
+
 	@Override
 	public byte[] exportArchive(Archive archive, ArchiveMode mode,
 			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader)
 			throws ProtocolException {
-		throw new ProtocolException("Not Implemented");
+		ZIPWriteUtils zipUtils = new ZIPWriteUtils(super.getProtocolFactory().getLogger(),registryReader,configIntegrationReader);
+		return zipUtils.generateArchive(archive);
 	}
-
+	
 	@Override
 	public void exportArchive(Archive archive, OutputStream out, ArchiveMode mode,
 			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader)
 			throws ProtocolException {
-		throw new ProtocolException("Not Implemented");
+		ZIPWriteUtils zipUtils = new ZIPWriteUtils(super.getProtocolFactory().getLogger(),registryReader,configIntegrationReader);
+		zipUtils.generateArchive(archive, out);
 	}
 	
 

@@ -26,7 +26,7 @@
         <resource nome="test">
 	    <protocol-property name="ebmsActionCompressPayload" value="false"/>
         </resource>
-        <resource nome="test2" method="GET">
+        <resource nome="test2" path="test2">
             <protocol-property name="ebmsActionCompressPayload" value="false"/>
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="erogazione" class="org.openspcoop2.protocol.abstraction.Erogazione">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <structure field="accordoServizioParteComune" usage="required" map-as="org.openspcoop2.protocol.abstraction.RiferimentoAccordoServizioParteComune"/>
+    <structure name="soggetto-erogatore" field="soggettoErogatore" usage="required" map-as="_RiferimentoSoggetto_Type"/>
+    <structure field="servizio" usage="optional" map-as="org.openspcoop2.protocol.abstraction.DatiServizio"/>
+    <structure field="servizioApplicativo" usage="optional" map-as="org.openspcoop2.protocol.abstraction.RiferimentoServizioApplicativoErogatore"/>
+    <value name="tipologia" field="tipologia" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="fruizione" class="org.openspcoop2.protocol.abstraction.Fruizione">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <structure field="accordoServizioParteSpecifica" usage="required" map-as="org.openspcoop2.protocol.abstraction.RiferimentoAccordoServizioParteSpecifica"/>
+    <structure name="soggetto-fruitore" field="soggettoFruitore" usage="required" map-as="_RiferimentoSoggetto_Type"/>
+    <structure field="fruizione" usage="optional" map-as="org.openspcoop2.protocol.abstraction.DatiFruizione"/>
+    <structure field="servizioApplicativo" usage="optional" map-as="org.openspcoop2.protocol.abstraction.RiferimentoServizioApplicativoFruitore"/>
+    <value name="tipologia" field="tipologia" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="accordo-servizio-parte-comune" class="org.openspcoop2.protocol.abstraction.RiferimentoAccordoServizioParteComune">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="uri" field="uri" usage="optional"/>
+    <structure field="idAccordo" usage="optional" map-as="org.openspcoop2.protocol.abstraction.IdentificatoreAccordo"/>
+    <value name="servizio" field="servizio" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="servizio" class="org.openspcoop2.protocol.abstraction.DatiServizio">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="endpoint" field="endpoint" usage="optional"/>
+    <value name="tipo" field="tipo" usage="optional"/>
+    <value name="nome" field="nome" usage="optional"/>
+    <value name="tipologia-servizio" field="tipologiaServizio" usage="optional" enum-value-method="toString"/>
+    <structure field="fruitori" usage="optional" map-as="org.openspcoop2.protocol.abstraction.Fruitori"/>
+  </mapping>
+  <mapping name="fruitori" class="org.openspcoop2.protocol.abstraction.Fruitori">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <collection field="fruitore" create-type="java.util.ArrayList">
+      <structure name="fruitore" map-as="_Soggetto_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="servizio-applicativo" class="org.openspcoop2.protocol.abstraction.RiferimentoServizioApplicativoErogatore">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="nome" field="nome" usage="optional"/>
+    <value name="nome-porta-applicativa" field="nomePortaApplicativa" usage="optional"/>
+    <structure field="datiApplicativi" usage="optional" map-as="org.openspcoop2.protocol.abstraction.DatiApplicativiErogazione"/>
+  </mapping>
+  <mapping name="dati-applicativi" class="org.openspcoop2.protocol.abstraction.DatiApplicativiErogazione">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="endpoint" field="endpoint" usage="required"/>
+    <structure field="credenzialiBasic" usage="optional" map-as="org.openspcoop2.protocol.abstraction.CredenzialiInvocazioneBasic"/>
+  </mapping>
+  <mapping name="credenziali-basic" class="org.openspcoop2.protocol.abstraction.CredenzialiInvocazioneBasic">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="username" field="username" usage="required" style="attribute"/>
+    <value name="password" field="password" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="accordo-servizio-parte-specifica" class="org.openspcoop2.protocol.abstraction.RiferimentoAccordoServizioParteSpecifica">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="uri" field="uri" usage="optional"/>
+    <structure field="idServizio" usage="optional" map-as="org.openspcoop2.protocol.abstraction.IdentificatoreServizio"/>
+  </mapping>
+  <mapping name="id-servizio" class="org.openspcoop2.protocol.abstraction.IdentificatoreServizio">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <structure name="soggetto" field="soggetto" usage="optional" map-as="_Soggetto_Type"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="fruizione" class="org.openspcoop2.protocol.abstraction.DatiFruizione">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="endpoint" field="endpoint" usage="optional"/>
+    <value name="client-auth" field="clientAuth" usage="optional" enum-value-method="toString"/>
+  </mapping>
+  <mapping name="servizio-applicativo" class="org.openspcoop2.protocol.abstraction.RiferimentoServizioApplicativoFruitore">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="nome" field="nome" usage="optional"/>
+    <value name="nome-porta-delegata" field="nomePortaDelegata" usage="optional"/>
+    <structure field="datiApplicativi" usage="optional" map-as="org.openspcoop2.protocol.abstraction.DatiApplicativiFruizione"/>
+  </mapping>
+  <mapping name="dati-applicativi" class="org.openspcoop2.protocol.abstraction.DatiApplicativiFruizione">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="basic-username" field="basicUsername" usage="optional"/>
+    <value name="basic-password" field="basicPassword" usage="optional"/>
+    <value name="ssl-subject" field="sslSubject" usage="optional"/>
+    <value name="autenticazione" field="autenticazione" usage="required" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="id-soggetto" class="org.openspcoop2.protocol.abstraction.Soggetto" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Soggetto_Type" class="org.openspcoop2.protocol.abstraction.Soggetto" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="soggetto-erogatore" class="org.openspcoop2.protocol.abstraction.RiferimentoSoggetto" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_Soggetto_Type"/>
+    <structure field="notExistsBehaviour" usage="optional" map-as="org.openspcoop2.protocol.abstraction.SoggettoNotExistsBehaviour"/>
+  </mapping>
+
+  <mapping type-name="_RiferimentoSoggetto_Type" class="org.openspcoop2.protocol.abstraction.RiferimentoSoggetto" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_Soggetto_Type"/>
+    <structure field="notExistsBehaviour" usage="optional" map-as="org.openspcoop2.protocol.abstraction.SoggettoNotExistsBehaviour"/>
+  </mapping>
+  <mapping name="not-exists-behaviour" class="org.openspcoop2.protocol.abstraction.SoggettoNotExistsBehaviour">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <value name="endpoint" field="endpoint" usage="optional"/>
+    <value name="porta-dominio" field="portaDominio" usage="optional"/>
+    <value name="create" field="create" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="id-accordo" class="org.openspcoop2.protocol.abstraction.IdentificatoreAccordo">
+    <namespace uri="http://www.openspcoop2.org/protocol/abstraction" default="elements"/>
+    <structure name="soggetto" field="soggetto" usage="optional" map-as="_Soggetto_Type"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="versione" field="versione" usage="optional" style="attribute"/>
+  </mapping>
+</binding>

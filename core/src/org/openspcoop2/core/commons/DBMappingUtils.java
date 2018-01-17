@@ -31,6 +31,8 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiErogazione;
+import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -260,6 +262,11 @@ public class DBMappingUtils {
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				String nomePorta = risultato.getString("nome_porta");
 				idPortaApplicativa.setNome(nomePorta);
+				
+				IdentificativiErogazione identificativiErogazione = new IdentificativiErogazione();
+				identificativiErogazione.setIdServizio(idServizio);
+				idPortaApplicativa.setIdentificativiErogazione(identificativiErogazione);
+				
 				mapping.setIdPortaApplicativa(idPortaApplicativa);
 
 				lista.add(mapping);
@@ -466,7 +473,8 @@ public class DBMappingUtils {
 		if(idServizioLong<=0){
 			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
 		}
-		List<IDPortaApplicativa> l = _getIDPorteApplicativeAssociate(idServizioLong, true, null, con, tipoDB, tabellaSoggetti);
+		List<IDPortaApplicativa> l = _getIDPorteApplicativeAssociate(idServizioLong, true, null, con, tipoDB, tabellaSoggetti,
+				idServizio);
 		if(l!=null && l.size()>0) {
 			if(l.size()>1) {
 				throw new CoreException("Esiste più di un mapping di default per l'erogazione del servizio ["+idServizio.toString()+"]");
@@ -489,7 +497,8 @@ public class DBMappingUtils {
 		if(idServizioLong<=0){
 			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
 		}
-		List<IDPortaApplicativa> l = _getIDPorteApplicativeAssociate(idServizioLong, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti);
+		List<IDPortaApplicativa> l = _getIDPorteApplicativeAssociate(idServizioLong, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti,
+				idServizio);
 		if(l!=null && l.size()>0) {
 			if(l.size()>1) {
 				throw new CoreException("Esiste più di un mapping per l'erogazione dell'azione '"+idServizio.getAzione()+"' del servizio ["+idServizio.toString()+"]");
@@ -509,11 +518,13 @@ public class DBMappingUtils {
 		if(idServizioLong<=0){
 			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
 		}
-		return _getIDPorteApplicativeAssociate(idServizioLong, false, null, con, tipoDB, tabellaSoggetti);
+		return _getIDPorteApplicativeAssociate(idServizioLong, false, null, con, tipoDB, tabellaSoggetti,
+				idServizio);
 	}
 	
 	private static List<IDPortaApplicativa> _getIDPorteApplicativeAssociate(long idServizioLong, boolean defaultMapping, String azioneMapping,
-			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+			Connection con, String tipoDB,String tabellaSoggetti,
+			IDServizio idServizio) throws CoreException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
@@ -526,10 +537,7 @@ public class DBMappingUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-//			sqlQueryObject.addFromTable(tabellaSoggetti);
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
-//			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
-//			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addWhereCondition("id_erogazione = ?");
 			if(defaultMapping) {
 				sqlQueryObject.addWhereCondition("is_default = ?");
@@ -540,7 +548,6 @@ public class DBMappingUtils {
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta");
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".azione = ?");
 			}
-//			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.PORTE_APPLICATIVE+".id_soggetto");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
@@ -560,13 +567,13 @@ public class DBMappingUtils {
 				String nome = rs.getString("nome_porta");
 				idPA.setNome(nome);
 				
-//				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
-//				idPA.setSoggetto(idS);
+				IdentificativiErogazione identificativiErogazione = new IdentificativiErogazione();
+				identificativiErogazione.setIdServizio(idServizio);
+				idPA.setIdentificativiErogazione(identificativiErogazione);
 				
 				list.add(idPA);
 			}
 			if(list.size()<=0){
-				//throw new CoreException("Mapping tra PA e servizio ["+idServizio.toString()+"] non esistente");
 				return null;
 			}
 			else {
@@ -1118,6 +1125,12 @@ public class DBMappingUtils {
 				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
 				String nomePorta = risultato.getString("nome_porta");
 				idPortaDelegata.setNome(nomePorta);
+				
+				IdentificativiFruizione identificativiFruizione = new IdentificativiFruizione();
+				identificativiFruizione.setSoggettoFruitore(idSoggettoFruitore);
+				identificativiFruizione.setIdServizio(idServizio);
+				idPortaDelegata.setIdentificativiFruizione(identificativiFruizione);
+				
 				mapping.setIdPortaDelegata(idPortaDelegata);
 				
 				lista.add(mapping);
@@ -1322,7 +1335,8 @@ public class DBMappingUtils {
 		if(idFruizione<=0){
 			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
 		}
-		List<IDPortaDelegata> l = _getIDPorteDelegateAssociate(idFruizione, true, null, con, tipoDB, tabellaSoggetti);
+		List<IDPortaDelegata> l = _getIDPorteDelegateAssociate(idFruizione, true, null, con, tipoDB, tabellaSoggetti,
+				idFruitore, idServizio);
 		if(l!=null && l.size()>0) {
 			if(l.size()>1) {
 				throw new CoreException("Esiste più di un mapping di default per la fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"]");
@@ -1345,7 +1359,8 @@ public class DBMappingUtils {
 		if(idFruizione<=0){
 			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
 		}
-		List<IDPortaDelegata> l = _getIDPorteDelegateAssociate(idFruizione, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti);
+		List<IDPortaDelegata> l = _getIDPorteDelegateAssociate(idFruizione, false, idServizio.getAzione(), con, tipoDB, tabellaSoggetti,
+				idFruitore, idServizio);
 		if(l!=null && l.size()>0) {
 			if(l.size()>1) {
 				throw new CoreException("Esiste più di un mapping per l'azione '"+idServizio.getAzione()+"' per la fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"]");
@@ -1365,11 +1380,13 @@ public class DBMappingUtils {
 		if(idFruizione<=0){
 			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
 		}
-		return _getIDPorteDelegateAssociate(idFruizione, false, null, con, tipoDB, tabellaSoggetti);
+		return _getIDPorteDelegateAssociate(idFruizione, false, null, con, tipoDB, tabellaSoggetti,
+				idFruitore, idServizio);
 	}
 	
 	private static List<IDPortaDelegata> _getIDPorteDelegateAssociate(long idFruizione, boolean defaultMapping, String azioneMapping,
-			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+			Connection con, String tipoDB,String tabellaSoggetti,
+			IDSoggetto idFruitore, IDServizio idServizio) throws CoreException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
@@ -1382,10 +1399,7 @@ public class DBMappingUtils {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-//			sqlQueryObject.addFromTable(tabellaSoggetti);
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
-//			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
-//			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addWhereCondition("id_fruizione = ?");
 			if(defaultMapping) {
 				sqlQueryObject.addWhereCondition("is_default = ?");
@@ -1396,7 +1410,6 @@ public class DBMappingUtils {
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_AZIONI+".id_porta");
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".azione = ?");
 			}
-//			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.PORTE_DELEGATE+".id_soggetto");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
@@ -1418,8 +1431,10 @@ public class DBMappingUtils {
 				String nome = rs.getString("nome_porta");
 				idPD.setNome(nome);
 				
-//				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
-//				idPD.setSoggettoFruitore(idS);
+				IdentificativiFruizione identificativiFruizione = new IdentificativiFruizione();
+				identificativiFruizione.setSoggettoFruitore(idFruitore);
+				identificativiFruizione.setIdServizio(idServizio);
+				idPD.setIdentificativiFruizione(identificativiFruizione);
 				
 				list.add(idPD);
 			}

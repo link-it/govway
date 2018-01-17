@@ -200,14 +200,14 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR = "accordiServizioParteSpecifica";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_FILE_NAME = "accordo.xml";
-	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_MAPPING_PA = "mappingErogazionePA.id";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_MAPPING_PA_SUFFIX = "_mappingErogazionePA.id";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR = "accordiServizioComposto";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR = "accordiCooperazione";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_DIR = "fruitori";
 	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI = "serviziApplicativiAutorizzati.csv"; // backward compatibility
-	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD = "mappingFruizionePD.id";
+	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD_SUFFIX = "_mappingFruizionePD.id";
 	
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL = "wsdl";

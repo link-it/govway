@@ -1498,6 +1498,13 @@ public class XMLDataConverter {
 			}
 			if(as.sizeResourceList()>0) {
 				for (Resource resource : as.getResourceList()) {
+					if(resource.getPath()!=null && !"".equals(resource.getPath())) {
+						String pathNormalizzato = null;
+						pathNormalizzato = resource.getPath().trim();
+						if(!pathNormalizzato.startsWith("/"))
+							pathNormalizzato = "/" + pathNormalizzato;
+						resource.setPath(pathNormalizzato);
+					}
 					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
 						if(pp.getFile()!=null) {
 							pp.setByteFile(this.readDocumento(pp.getFile()));

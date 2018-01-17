@@ -114,9 +114,31 @@
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="protocol-api"/>
 				</antcall>
 				
+				<!-- org.openspcoop.2.protocol.abstraction -->	
+				<var name="packagesCompiled" value="org.openspcoop2.protocol.abstraction," />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.constants" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.csv" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.model" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.template" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.utils" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.utils.serializer" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/protocol/abstraction"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="protocol-abstraction"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.abstraction"/>
+					<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
+					<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="protocol-api"/>
+				</antcall>
+
 				<!-- org.openspcoop.2.protocol.basic -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic,org.openspcoop2.protocol.basic.builder" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.archive" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.archive.abstraction" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.config" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.diagnostica" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.tracciamento" />

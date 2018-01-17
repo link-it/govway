@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/protocol/abstraction"
+	targetNamespace="http://www.openspcoop2.org/protocol/abstraction"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	
+	<xsd:element name="erogazione" type="erogazione"/>
+	<xsd:complexType name="erogazione">
+		<xsd:sequence>
+			
+			<!-- 
+				Riferimento all'accordo implementato. 
+				Potrà essere indicato l'uri dell'accordo oppure anche solo alcuni dei campi chiave dell'id (es. solo il nome).
+				In questo secondo caso se esisterà più di un accordo verrà sollevata una eccezione durante la fase di mapping 
+			-->
+			<xsd:element name="accordo-servizio-parte-comune" type="RiferimentoAccordoServizioParteComune" />
+			
+			<!-- 
+				Soggetto Erogatore. 
+				Potrà essere indicato se creare il soggetto erogatore nel caso non esista.
+				In tal caso gli si potrà associare un endpoint.
+				L'endpoint è obbligatorio se la tipologia è esterna, opzionale se è interna.
+				Sempre se il soggetto non esiste è possibile associargli una porta di dominio.
+				Se la tipologia è esterna la porta di dominio se indicata deve essere esterna. Se non indicata ne viene creata una associata al soggetto.
+				Se è stata indicata ma non esiste viene creata con tale nome.
+				Se la tipologia è interna la porta di dominio se indicata deve essere operativa. Se non indicata il soggetto viene associato alla pdd operativa.
+			-->
+			<xsd:element name="soggetto-erogatore" type="RiferimentoSoggetto" />
+			
+			<!--
+				Dati sul servizio, opzionale.
+				Consente di indicare:
+				- EdnpointServizio. Consente di indicare un endpoint dove è in ascolta la PortaApplicativa,
+				sovrascrivendo quanto indicato nel soggetto erogatore.
+				- NomeServizio. Andrebbe a sovrascrivere il nome del port type dell'accordo.
+				- TipoServizio. E' possibile indicare un tipo differente da quello di default per il protocollo
+				- Indicazione se è un servizio correlato
+				- Fruitori. E' possibile indicare dei fruitori
+			-->
+			<xsd:element name="servizio" type="DatiServizio" minOccurs="0"/>
+			
+			<!-- 
+				Servizio Applicativo Erogatore, valido solamente nel caso di tipologia interna.
+				E' possibile indicare il nome di un servizio applicativo appartenente al soggetto erogatore indicato,
+				oppure fornire i dati applicativi. In quest'ultimo caso il servizio applicativo verrà creato automaticamente.
+				E' possibile anche indicare il nome della Porta Applicativa
+			-->
+			<xsd:element name="servizio-applicativo" type="RiferimentoServizioApplicativoErogatore" minOccurs="0"/>
+			
+		</xsd:sequence>
+		<xsd:attribute name="tipologia" type="Tipologia" use="required" /> <!-- Indica se il servizio viene erogato sulla PdD (interna) o da un'altra pdd (esterno) -->
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional" />
+	</xsd:complexType>
+	
+	
+	<xsd:element name="fruizione" type="fruizione"/>
+	<xsd:complexType name="fruizione">
+		<xsd:sequence>
+			
+			<!-- 
+				Riferimento all'accordo che si desidera fruire. 
+				Potrà essere indicato l'uri dell'accordo oppure anche solo alcuni dei campi chiave dell'id (es. solo il nome).
+				In questo secondo caso se esisterà più di un accordo verrà sollevata una eccezione durante la fase di mapping 
+			-->
+			<xsd:element name="accordo-servizio-parte-specifica" type="RiferimentoAccordoServizioParteSpecifica" />
+			
+			<!-- 
+				Soggetto Fruitore. 
+				Potrà essere indicato se creare il soggetto fruitore nel caso non esista.
+				In tal caso gli si potrà associare un endpoint.
+				L'endpoint è sempre opzionale.
+				Sempre se il soggetto non esiste è possibile associargli una porta di dominio.
+				Se la tipologia è esterna la porta di dominio se indicata deve essere esterna. Se non indicata ne viene creata una associata al soggetto.
+				Se è stata indicata ma non esiste viene creata con tale nome.
+				Se la tipologia è interna la porta di dominio se indicata deve essere operativa. Se non indicata il soggetto viene associato alla pdd operativa.
+			-->
+			<xsd:element name="soggetto-fruitore" type="RiferimentoSoggetto" />
+			
+			<!--
+				Dati sulla fruizione, opzionale.
+				Consente di indicare:
+				- EdnpointServizio. Consente di indicare un endpoint dove è in ascolto il servizio, per la particolare fruizione
+				- Client-Auth. Consente di indicare l'autenticazione client della fruizione su di una porta applicativa
+			-->
+			<xsd:element name="fruizione" type="DatiFruizione" minOccurs="0"/>
+			
+			<!-- 
+				Servizio Applicativo Fruitore, valido solamente nel caso di tipologia interna.
+				E' possibile indicare il nome di un servizio applicativo appartenente al soggetto fruitore indicato,
+				oppure fornire i dati applicativi. In quest'ultimo caso il servizio applicativo verrà creato automaticamente.
+				E' possibile anche indicare il nome della Porta Delegata
+			-->
+			<xsd:element name="servizio-applicativo" type="RiferimentoServizioApplicativoFruitore" minOccurs="0"/>
+			
+		</xsd:sequence>
+		<xsd:attribute name="tipologia" type="Tipologia" use="required" /> <!-- Indica se la fruizione viene attuata sulla PdD (interna) o si tratta di una fruizione che arriva da un altra PdD (esterno) -->
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional" />
+	</xsd:complexType>
+	
+	
+	
+	
+	
+	
+	
+	<!-- Oggetto di una Erogazione -->
+	
+	<xsd:complexType name="RiferimentoAccordoServizioParteComune">
+		<xsd:choice>
+			<xsd:element name="uri" type="xsd:string" />
+			<xsd:element name="id-accordo" type="IdentificatoreAccordo" />
+		</xsd:choice>
+		<xsd:attribute name="servizio" type="xsd:string" use="optional" /> <!-- Indica il PortType Implementato dell'accordo parte comune -->
+	</xsd:complexType>
+	
+	<xsd:complexType name="DatiServizio">
+		<xsd:sequence>
+			<xsd:element name="endpoint" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="tipo" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome" type="xsd:string" minOccurs="0" />
+			<xsd:element name="tipologia-servizio" type="TipologiaServizio" minOccurs="0"/>
+			<xsd:element name="fruitori" type="Fruitori" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="TipologiaServizio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="normale"/>
+			<xsd:enumeration value="correlato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="Fruitori">
+		<xsd:sequence>
+			<xsd:element name="fruitore" type="Soggetto" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RiferimentoServizioApplicativoErogatore">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-porta-applicativa" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="dati-applicativi" type="DatiApplicativiErogazione" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DatiApplicativiErogazione">
+		<xsd:sequence>
+			<xsd:element name="endpoint" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="credenziali-basic" type="CredenzialiInvocazioneBasic" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CredenzialiInvocazioneBasic">
+		<xsd:attribute name="username" type="xsd:string" use="required"/>
+		<xsd:attribute name="password" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Oggetto di una Fruizione -->
+	
+	<xsd:complexType name="RiferimentoAccordoServizioParteSpecifica">
+		<xsd:choice>
+			<xsd:element name="uri" type="xsd:string" />
+			<xsd:element name="id-servizio" type="IdentificatoreServizio" />
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="IdentificatoreServizio">
+		<xsd:sequence>
+			<xsd:element name="soggetto" type="Soggetto" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required" />
+		<xsd:attribute name="tipo" type="xsd:string" use="optional" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="DatiFruizione">
+		<xsd:sequence>
+			<xsd:element name="endpoint" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="client-auth" type="Stato" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RiferimentoServizioApplicativoFruitore">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-porta-delegata" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="dati-applicativi" type="DatiApplicativiFruizione" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DatiApplicativiFruizione">
+		<xsd:sequence>
+			<xsd:element name="basic-username" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="basic-password" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ssl-subject" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="autenticazione" type="Autenticazione" use="required" />
+	</xsd:complexType>
+	
+	<xsd:simpleType name="Autenticazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="basic"/>
+			<xsd:enumeration value="ssl"/>
+			<xsd:enumeration value="none"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+	
+	
+	<!-- Oggetto Condivisi -->
+	
+	<xsd:complexType name="Soggetto">
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="Tipologia">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="interna"/>
+			<xsd:enumeration value="esterna"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="RiferimentoSoggetto">
+		<xsd:sequence>
+			<xsd:element name="id-soggetto" type="Soggetto" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="not-exists-behaviour" type="SoggettoNotExistsBehaviour" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SoggettoNotExistsBehaviour">
+		<xsd:sequence>
+			<xsd:element name="endpoint" type="xsd:string" minOccurs="0" maxOccurs="1"/> <!-- EndPoint Utilizzato nel caso di creazione del soggetto -->
+			<xsd:element name="porta-dominio" type="xsd:string" minOccurs="0" maxOccurs="1"/> <!-- Porta di Dominio da associare al soggetto -->
+		</xsd:sequence>
+		<xsd:attribute name="create" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="IdentificatoreAccordo">
+		<xsd:sequence>
+			<xsd:element name="soggetto" type="Soggetto" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required" />
+		<xsd:attribute name="versione" type="xsd:integer" use="optional" />
+	</xsd:complexType>
+	
+	<xsd:simpleType name="Stato">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="disabilitato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+</xsd:schema>

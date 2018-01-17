@@ -39,6 +39,9 @@ public class ClientTest {
 
 		TipiDatabase tipoDatabase = TipiDatabase.toEnumConstant("postgresql");
 		
+		String nomeSoggetto = "Red";
+		//String nomeSoggetto = "Blue";
+		
 		Class.forName(driver).newInstance();
 		Connection con = null;
 		try{
@@ -50,16 +53,16 @@ public class ClientTest {
 			ProtocolFactoryManager.initializeSingleProtocol(log, configPdD, AS4Costanti.PROTOCOL_NAME);
 			IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
 	
-			Translator t = new Translator();
-			File f  = File.createTempFile("configPMODE", ".xml");
-			FileOutputStream fout = new FileOutputStream(f);
-			Writer out = new OutputStreamWriter(fout);
-			
 			IDriverRegistroServiziGet driverOp2 = 
 					new DriverRegistroServiziDB(con, log, tipoDatabase.getNome());
 			IRegistryReader rr = p.getRegistryReader(driverOp2);
 			
-			t.translate(rr, p, out);
+			Translator t = new Translator(rr, p);
+			File f  = File.createTempFile("configPMODE", ".xml");
+			FileOutputStream fout = new FileOutputStream(f);
+			Writer out = new OutputStreamWriter(fout);
+				
+			t.translate(out,nomeSoggetto);
 			
 			out.flush();
 			out.close();
