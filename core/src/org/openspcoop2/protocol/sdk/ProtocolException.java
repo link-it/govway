@@ -30,7 +30,15 @@ package org.openspcoop2.protocol.sdk;
  */
 public class ProtocolException extends Exception {
 
-	 /**
+	private boolean forceTrace; // indicazione se deve essere forzato il tracciamento
+	public boolean isForceTrace() {
+		return this.forceTrace;
+	}
+	public void setForceTrace(boolean forceTrace) {
+		this.forceTrace = forceTrace;
+	}
+	
+	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;

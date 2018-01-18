@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -258,7 +259,8 @@ public class SDIProtocolManager extends BasicManager {
 	@Override
 	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
-    		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext) throws ProtocolException{
+    		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
+    		IRegistryReader registryReader) throws ProtocolException{
     			
 		if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio())){
 			if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
@@ -273,7 +275,7 @@ public class SDIProtocolManager extends BasicManager {
 		}
 		
 		return super.updateOpenSPCoop2MessageResponse(msg, busta, 
-				notifierInputStreamParams,transportRequestContext,transportResponseContext);
+				notifierInputStreamParams,transportRequestContext,transportResponseContext,registryReader);
 	}
 	
 	

@@ -29,9 +29,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.CharEncoding;
-import org.slf4j.Logger;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.abstraction.Erogazione;
+import org.openspcoop2.protocol.abstraction.Fruizione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.ManagerUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.csv.Format;
@@ -40,10 +41,9 @@ import org.openspcoop2.utils.csv.Parser;
 import org.openspcoop2.utils.csv.ParserResult;
 import org.openspcoop2.utils.csv.Record;
 import org.openspcoop2.utils.resources.TemplateUtils;
+import org.slf4j.Logger;
 
 import freemarker.template.Template;
-import org.openspcoop2.protocol.abstraction.Erogazione;
-import org.openspcoop2.protocol.abstraction.Fruizione;
 
 /**     
  * Deserializer
@@ -61,17 +61,22 @@ public class Deserializer {
 	private org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer jaxbAbstractionDeserializer = null;
 	private boolean validate;
 	private Logger log;
-	private ProtocolFactoryManager protocolFactoryManager;
 	public Deserializer(boolean validate,Logger log) throws ProtocolException{
 		// -- unmarshall
 		this.jaxbAbstractionDeserializer = new org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer();
 		this.validate = validate;
 		this.log = log;
-		this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 	}
 
 
+	
 
+	
+	
+	
+	
+	
+	
 
 	// *********** EROGAZIONE ******************
 
@@ -184,9 +189,9 @@ public class Deserializer {
 				// TipoSoggettoDefault
 				String protocollo = record.getMap().get(PROTOCOLLO);
 				if(protocollo == null){
-					protocollo = this.protocolFactoryManager.getDefaultProtocolFactory().getProtocol();
+					protocollo = ManagerUtils.getDefaultProtocol();
 				}
-				mapFreemarker.put(DEFAULT_SUBJECT_TYPE, this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo));
+				mapFreemarker.put(DEFAULT_SUBJECT_TYPE, ManagerUtils.getDefaultOrganizationType(protocollo));
 				
 				// Creo xml della singola erogazione
 				byte[] xmlErogazione = null;
@@ -338,9 +343,9 @@ public class Deserializer {
 				// TipoSoggettoDefault
 				String protocollo = record.getMap().get(PROTOCOLLO);
 				if(protocollo == null){
-					protocollo = this.protocolFactoryManager.getDefaultProtocolFactory().getProtocol();
+					protocollo = ManagerUtils.getDefaultProtocol();
 				}
-				mapFreemarker.put(DEFAULT_SUBJECT_TYPE, this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo));
+				mapFreemarker.put(DEFAULT_SUBJECT_TYPE, ManagerUtils.getDefaultOrganizationType(protocollo));
 				
 				// Creo xml della singola fruizione
 				byte[] xmlFruizione = null;

@@ -34,16 +34,27 @@
     </accordo-servizio-parte-comune>
 
 
+    <!-- Soggetto Gateway dove verranno inoltrati i messaggi in uscita dalla PdD -->
+    <soggetto tipo="AS4" nome="DomibusGateway">
+
+        <connettore tipo="http" nome="PdDDomibusGateway">
+            <property nome="location" valore="http://Red:8180/domibus/services/backend"/>
+        </connettore>
+
+    </soggetto>
+
+
     <!-- Soggetto Mittente degli esempi -->
     <soggetto tipo="AS4" nome="Red">
 
         <connettore tipo="http" nome="PdDRed">
-            <property nome="location" valore="http://localhost:9080/domibus/services/backend"/>
+            <property nome="location" valore="http://Red:8180/domibus/services/msh"/>
         </connettore>
 
 	<protocol-property name="ebmsUserMessagePartyId" value="domibus-red" />
 	<protocol-property name="ebmsUserMessagePartyIdTypeName" value="partyTypeUrn" />
 	<protocol-property name="ebmsUserMessagePartyIdTypeValue" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered" />
+	<protocol-property name="ebmsUserMessagePartyCommonName" value="red_gw" />
 
     </soggetto>
 
@@ -52,12 +63,13 @@
     <soggetto tipo="AS4" nome="Blue" >
 
         <connettore tipo="http" nome="PdDBlue">
-            <property nome="location" valore="http://localhost:8080/domibus/services/backend"/>
+            <property nome="location" valore="http://Blue:8080/domibus/services/msh"/>
         </connettore>
 
 	<protocol-property name="ebmsUserMessagePartyId" value="domibus-blue" />
 	<protocol-property name="ebmsUserMessagePartyIdTypeName" value="partyTypeUrn" />
 	<protocol-property name="ebmsUserMessagePartyIdTypeValue" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered" />
+	<protocol-property name="ebmsUserMessagePartyCommonName" value="blue_gw" />
 
         <accordo-servizio-parte-specifica tipo="AS4" nome="SoapExample"
             accordo-servizio-parte-comune="AS4/Blue:SoapExample:1"

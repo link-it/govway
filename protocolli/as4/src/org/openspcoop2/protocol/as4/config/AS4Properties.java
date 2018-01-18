@@ -21,6 +21,10 @@
 package org.openspcoop2.protocol.as4.config;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.protocol.as4.properties.SecurityPolicyXSDValidator;
@@ -167,6 +171,18 @@ public class AS4Properties {
 			
 			// Per versione xml
 			this.getPModeTranslatorPayloadProfilesFolder();
+			
+			// connettore
+			if(this.isDomibusGatewayRegistry()) {
+				this.getDomibusGatewayRegistrySoggettoDefault();
+			}
+			else {
+				this.getDomibusGatewayConfigDefaultUrl();
+				boolean https = this.isDomibusGatewayConfigDefaultHttpsEnabled();
+				if(https) {
+					this.getDomibusGatewayConfigDefaultHttpsProperties();
+				}
+			}
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo as4, "+e.getMessage();
@@ -374,5 +390,246 @@ public class AS4Properties {
 		return AS4Properties.pModeTranslatorPayloadProfilesFolder;
 	}
 
+
+	
+	
+	/* **** Comunicazione HTTP verso Gateway **** */
+	
+	private static Boolean isDomibusGatewayRegistry= null;
+	private static Boolean isDomibusGatewayRegistryRead= null;
+    public Boolean isDomibusGatewayRegistry() throws ProtocolException{
+    	if(AS4Properties.isDomibusGatewayRegistryRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.isDomibusGatewayRegistry = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' non impostata");
+				}
+				
+				AS4Properties.isDomibusGatewayRegistryRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.registry' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				AS4Properties.isDomibusGatewayRegistryRead = true;
+				throw new ProtocolException(e);
+				
+			}
+    	}
+    	
+    	return AS4Properties.isDomibusGatewayRegistry;
+	}
+	
+	
+	private static String domibusGatewayRegistrySoggettoDefault;
+	public String getDomibusGatewayRegistrySoggettoDefault() throws ProtocolException {
+		if(AS4Properties.domibusGatewayRegistrySoggettoDefault==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.default"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayRegistrySoggettoDefault = value;
+				}
+				else {
+					throw new Exception("Proprieta' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.default', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayRegistrySoggettoDefault;
+	}
+	
+	private static List<String> domibusGatewayRegistrySoggettoCustom_Read = new ArrayList<String>();
+	private static HashMap<String,String> domibusGatewayRegistrySoggettoCustom = new HashMap<String,String>();
+	public String getDomibusGatewayRegistrySoggettoCustom(String nome) throws ProtocolException {
+		if(AS4Properties.domibusGatewayRegistrySoggettoCustom_Read.contains(nome)==false){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto."+nome); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayRegistrySoggettoCustom.put(nome, value);
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto."+nome+"', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				AS4Properties.domibusGatewayRegistrySoggettoCustom_Read.add(nome);
+			}
+    	}
+		return AS4Properties.domibusGatewayRegistrySoggettoCustom.get(nome);
+	}
+    
+	private static List<String> domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
+	public List<String> getDomibusGatewayRegistrySoggettoCustomList() throws ProtocolException {
+		if(domibusGatewayRegistrySoggettoCustomList==null){
+	    	try{  
+	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.");
+	    		domibusGatewayRegistrySoggettoCustomList = new ArrayList<String>();
+	    		Enumeration<?> keys = p.keys();
+	    		while (keys.hasMoreElements()) {
+					Object object = (Object) keys.nextElement();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = p.getProperty(key);
+						domibusGatewayRegistrySoggettoCustomList.add(value);
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.registry.soggetto.*', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return domibusGatewayRegistrySoggettoCustomList;
+	}
+    
+	
+	private static String domibusGatewayConfigDefaultUrl;
+	public String getDomibusGatewayConfigDefaultUrl() throws ProtocolException {
+		if(AS4Properties.domibusGatewayConfigDefaultUrl==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.url"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayConfigDefaultUrl = value;
+				}
+				else {
+					throw new Exception("Proprieta' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config.default.url', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayConfigDefaultUrl;
+	}
+	
+	private static Boolean isDomibusGatewayConfigDefaultHttpsEnabled= null;
+	private static Boolean isDomibusGatewayConfigDefaultHttpsEnabledRead= null;
+    public Boolean isDomibusGatewayConfigDefaultHttpsEnabled(){
+    	if(AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabledRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled' non impostata, viene utilizzato il default=false");
+					AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = false;
+				}
+				
+				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabledRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = false;
+				
+				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabledRead = true;
+			}
+    	}
+    	
+    	return AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled;
+	}
+    
+    private static Properties domibusGatewayConfigDefaultHttpsProperties;
+	public Properties getDomibusGatewayConfigDefaultHttpsProperties() throws ProtocolException {
+		if(AS4Properties.domibusGatewayConfigDefaultHttpsProperties==null){
+	    	try{  
+	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.");
+				
+				if (p != null && p.size()>0){
+					AS4Properties.domibusGatewayConfigDefaultHttpsProperties = p;
+				}
+				else {
+					throw new Exception("Proprieta' non impostate");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.*', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayConfigDefaultHttpsProperties;
+	}
+	
+	private static List<String> domibusGatewayConfigCustomUrl_Read = new ArrayList<String>();
+	private static HashMap<String,String> domibusGatewayConfigCustomUrl = new HashMap<String,String>();
+	public String getDomibusGatewayConfigCustomUrl(String nome) throws ProtocolException {
+		if(AS4Properties.domibusGatewayConfigCustomUrl_Read.contains(nome)==false){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".url"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayConfigCustomUrl.put(nome, value);
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".url', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				AS4Properties.domibusGatewayConfigCustomUrl_Read.add(nome);
+			}
+    	}
+		return AS4Properties.domibusGatewayConfigCustomUrl.get(nome);
+	}
+	
+	private static List<String> domibusGatewayConfigCustomHttsEnabled_Read = new ArrayList<String>();
+	private static HashMap<String,Boolean> domibusGatewayConfigCustomHttpsEnabled = new HashMap<String,Boolean>();
+    public Boolean isDomibusGatewayConfigCustomHttpsEnabled(String nome) throws ProtocolException{
+    	if(AS4Properties.domibusGatewayConfigCustomHttsEnabled_Read.contains(nome)==false){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.enabled"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayConfigCustomHttpsEnabled.put(nome, Boolean.parseBoolean(value));
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+	    	finally {
+	    		AS4Properties.domibusGatewayConfigCustomHttsEnabled_Read.add(nome);
+	    	}
+    	}
+    	
+    	return AS4Properties.domibusGatewayConfigCustomHttpsEnabled.get(nome);
+	}
+    
+    private static List<String> domibusGatewayConfigCustomHttsProperties_Read = new ArrayList<String>();
+	private static HashMap<String,Properties> domibusGatewayConfigCustomHttpsProperties = new HashMap<String,Properties>();
+	public Properties getDomibusGatewayConfigCustomHttpsProperties(String nome) throws ProtocolException {
+		if(AS4Properties.domibusGatewayConfigCustomHttsProperties_Read.contains(nome)==false){
+	    	try{  
+	    		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.property.");
+				
+				if (p != null && p.size()>0){
+					AS4Properties.domibusGatewayConfigCustomHttpsProperties.put(nome, p);
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusGateway.config."+nome+".https.property.*', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+	    	finally {
+	    		AS4Properties.domibusGatewayConfigCustomHttsProperties_Read.add(nome);
+	    	}
+    	}
+		return AS4Properties.domibusGatewayConfigCustomHttpsProperties.get(nome);
+	}
+	
 
 }

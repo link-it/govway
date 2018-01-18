@@ -52,6 +52,9 @@ public class AS4ConsoleCostanti {
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE;
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_DEFAULT_VALUE = "urn:oasis:names:tc:ebcore:partyid-type:unregistered";
 	
+	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_LABEL = "Common Name";
+	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME;
+	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_NOTE = "CN del certificato esposto dal Gateway Domibus associato al Soggetto";
 	
 	
 	// API

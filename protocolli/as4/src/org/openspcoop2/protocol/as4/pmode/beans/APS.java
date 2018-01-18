@@ -3,10 +3,13 @@
  */
 package org.openspcoop2.protocol.as4.pmode.beans;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 
@@ -23,6 +26,7 @@ public class APS {
 	private API pt;
 	private String ebmsSecurityProfile;
 	private String id;
+	private List<String> cnFruitori = new ArrayList<String>();
 	
 	public APS(AccordoServizioParteSpecifica base, API pt, int idInizialeLeg, String id) throws Exception {
 		this.base = base;
@@ -71,5 +75,22 @@ public class APS {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public List<String> getCnFruitori() {
+		return this.cnFruitori;
+	}
+	public void setCnFruitori(List<String> cnFruitori) {
+		this.cnFruitori = cnFruitori;
+	}
+	public void initCNFruitori(List<Soggetto> soggetti) {
+		for (Fruitore fruitore : this.base.getFruitoreList()) {
+			for (Soggetto soggetto : soggetti) {
+				if(soggetto.getBase().getNome().equals(fruitore.getNome())) {
+					this.cnFruitori.add(soggetto.getEbmsUserMessagePartyCN());
+					break;
+				}
+			}
+		}
 	}
 }

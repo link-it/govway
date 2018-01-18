@@ -22,6 +22,7 @@ public class APC {
 
 	private AccordoServizioParteComune base;
 	private byte[] ebmsServicePayloadProfile;
+	private String ebmsUserMessageCollaborationInfoServiceName;
 	private String ebmsUserMessageCollaborationInfoServiceType;
 	private String id;
 	
@@ -42,11 +43,13 @@ public class APC {
 				}
 			}else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE)) {
 				this.ebmsUserMessageCollaborationInfoServiceType = prop.getValue();
+			}else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE)) {
+				this.ebmsUserMessageCollaborationInfoServiceName = prop.getValue();
 			}
 		}
 		
-		if(this.ebmsUserMessageCollaborationInfoServiceType == null)
-			throw new Exception("Property ["+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE+"] non definita per l'apc ["+base+"]");
+		if(this.ebmsUserMessageCollaborationInfoServiceName == null)
+			throw new Exception("Property ["+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE+"] non definita per l'apc ["+base+"]");
 	}
 
 	public AccordoServizioParteComune getBase() {
@@ -57,6 +60,14 @@ public class APC {
 		this.base = base;
 	}
 
+	public String getEbmsUserMessageCollaborationInfoServiceName() {
+		return this.ebmsUserMessageCollaborationInfoServiceName;
+	}
+
+	public void setEbmsUserMessageCollaborationInfoServiceName(String ebmsUserMessageCollaborationInfoServiceName) {
+		this.ebmsUserMessageCollaborationInfoServiceName = ebmsUserMessageCollaborationInfoServiceName;
+	}
+	
 	public String getEbmsUserMessageCollaborationInfoServiceType() {
 		return this.ebmsUserMessageCollaborationInfoServiceType;
 	}

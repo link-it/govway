@@ -25,6 +25,7 @@
     		<interfaces>
     			<specification type="wsdl11" />
     		</interfaces>
+    		<profile oneway="true" inputOutput="false" asyncInputOutput="false" polledInputOutput="false" />
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">

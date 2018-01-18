@@ -22,6 +22,8 @@
 package org.openspcoop2.protocol.trasparente.config;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.config.BasicVersionManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -29,6 +31,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 /**
  * Classe che implementa, in base al protocollo Trasparente, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolVersionManager} 
@@ -146,6 +149,17 @@ public class TrasparenteProtocolVersionManager extends TrasparenteProtocolManage
 		return this.basicVersionManager.isGenerazioneErroreMessaggioOnewayDuplicato();
 	}
 	
+	
+	
+	
+	
+	/* *********** CONNETTORE ******************* */
+	
+	@Override
+	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
+			IRegistryReader registryReader) throws ProtocolException{
+		return this.basicVersionManager.getStaticRoute(idSoggettoMittente, idServizio, registryReader);
+	}
 	
 	
 	

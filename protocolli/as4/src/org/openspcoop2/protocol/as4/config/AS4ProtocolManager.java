@@ -21,10 +21,37 @@
 
 package org.openspcoop2.protocol.as4.config;
 
-import org.slf4j.Logger;
+import java.net.URL;
+import java.util.List;
+
+import javax.xml.ws.BindingProvider;
+
+import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.as4.constants.AS4Costanti;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.GetStatusRequest;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.MessageStatus;
 import org.openspcoop2.protocol.basic.config.BasicManager;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.slf4j.Logger;
+import org.w3c.dom.Node;
+
+import backend.ecodex.org._1_1.SendResponse;
 
 /**
  * Classe che implementa, in base al protocollo AS4, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolManager} 
@@ -54,5 +81,98 @@ public class AS4ProtocolManager extends BasicManager {
 	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
 		return this.as4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
-	
+
+	@Override
+	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
+    		NotifierInputStreamParams notifierInputStreamParams, 
+    		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
+    		IRegistryReader registryReader) throws ProtocolException{
+		try {
+			if(busta!=null && msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())) {
+				OpenSPCoop2SoapMessage soapMsg = (OpenSPCoop2SoapMessage) msg.castAsSoap();
+				if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()==false) {
+					
+					List<Node> list = SoapUtils.getNotEmptyChildNodes(soapMsg.getSOAPBody(), false);
+					if(list.size()==1) {
+						Node n = list.get(0);
+						// provo a vedere se si tratta di una risposta
+						if(backend.ecodex.org._1_1.utils.ProjectInfo.getInstance().getProjectNamespace().equals(n.getNamespaceURI()) &&
+								"sendResponse".equals(n.getLocalName())) {
+							
+							// recupero id
+							backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer deserializer = new backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer();
+							byte[]b=XMLUtils.getInstance().toByteArray(n);
+							SendResponse sendResponse = deserializer.readSendResponse(b);
+							String responseId = sendResponse.getMessageIDList().get(0);
+							busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_ID, responseId);
+							
+							// recupero stato
+							Connettore connettore = this.protocolFactory.createProtocolVersionManager(this.protocolFactory.createProtocolConfiguration().getVersioneDefault()).
+								getStaticRoute(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()),
+										IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+												new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario()), 
+												busta.getVersioneServizio()), 
+										registryReader);
+							String url = null;
+							for (Property p : connettore.getPropertyList()) {
+								if(CostantiConnettori.CONNETTORE_LOCATION.equals(p.getNome())) {
+									url = p.getValore();
+									break;
+								}
+							}
+							org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.BackendInterface domibusPort = null;
+							org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.BackendService11 domibusService = null;
+							domibusService = new org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.BackendService11(new URL(url+"?wsdl"));
+							domibusPort = domibusService.getBACKENDPORT();
+							BindingProvider imProviderMessageBox = (BindingProvider)domibusPort;
+							imProviderMessageBox.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+
+							GetStatusRequest statusReq = new GetStatusRequest();
+							statusReq.setMessageID(responseId);
+							MessageStatus stat = domibusPort.getMessageStatus(statusReq);
+							int index = 10;
+							while( (stat==null) && index<10) {
+								Utilities.sleep(1000);
+								stat = domibusPort.getMessageStatus(statusReq);
+							}
+							if(stat==null) {
+								ProtocolException pe = new ProtocolException("Fallito recupero da Domibus dello stato del messaggio spedito con id '"+responseId+"'");
+								pe.setForceTrace(true);
+								throw pe;
+							}
+							if(MessageStatus.SEND_IN_PROGRESS.equals(stat)) {
+								this.log.debug("Stato del messaggio con id '"+responseId+"' risulta in spedizione");
+								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+							}
+							else if(MessageStatus.SEND_ENQUEUED.equals(stat)) {
+								this.log.debug("Stato del messaggio con id '"+responseId+"' risulta salvato su domibus, in attesa di essere spedito");
+								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+							}
+							else if(MessageStatus.ACKNOWLEDGED.equals(stat) || MessageStatus.ACKNOWLEDGED_WITH_WARNING.equals(stat)) {
+								this.log.debug("Stato del messaggio con id '"+responseId+"': "+stat);
+								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+							}
+							else {
+								this.log.error("Stato del messaggio con id '"+responseId+"': "+stat);
+								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+								ProtocolException pe = new ProtocolException("Domibus non è riuscito a gestire la spedizione del messaggio con id '"+responseId+"'; stato ritornato: "+stat);
+								pe.setForceTrace(true);
+								throw pe;
+							}
+							
+							// risposta non prevista, profili oneway
+							return null;
+						}
+					}
+				}
+			}
+			return super.updateOpenSPCoop2MessageResponse(msg, busta, notifierInputStreamParams, transportRequestContext, transportResponseContext, registryReader);
+		}
+		catch(ProtocolException pe) {
+			throw pe;
+		}
+		catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 }

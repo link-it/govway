@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ManagerUtils;
 import org.openspcoop2.utils.RandomString;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.TemplateUtils;
@@ -152,7 +153,7 @@ public class FruizioneConverter extends AbstractConverter {
 			
 			// Protocollo
 			@SuppressWarnings("unused")
-			String protocollo = this.protocolFactoryManager.getProtocolByOrganizationType(soggettoErogatore.getTipo());
+			String protocollo = ManagerUtils.getProtocolByOrganizationType(soggettoErogatore.getTipo());
 						
 			// Dati Servizio
 			DatiServizio datiServizio = new DatiServizio();

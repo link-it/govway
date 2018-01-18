@@ -23,7 +23,7 @@
 				</#list>
 			</partyIdTypes>
 			<#list soggetti as soggetto>
-			<party name="${soggetto.base.nome}"
+			<party name="${soggetto.ebmsUserMessagePartyCN}"
 				    endpoint="${soggetto.location}"
 					allowChunking="false">
 				<identifier partyId="${soggetto.ebmsUserMessagePartyId}" partyIdType="${soggetto.ebmsUserMessagePartyIdTypeName}"/>
@@ -102,7 +102,7 @@
 		</agreements>
 		<services>
 		<#list apcList as apc>
-			<service name="${apc.id}" value="${apc.base.nome}" type="${apc.ebmsUserMessageCollaborationInfoServiceType}"/>
+			<service name="${apc.id}" value="${apc.ebmsUserMessageCollaborationInfoServiceName}" type="${apc.ebmsUserMessageCollaborationInfoServiceType}"/>
 		</#list>
 		</services>
 		<actions>
@@ -147,12 +147,12 @@
          initiatorRole="defaultInitiatorRole"
          responderRole="defaultResponderRole">
 	<initiatorParties>
-		<#list aps.base.fruitoreList as fruitore>
-		<initiatorParty name="${fruitore.nome}"/>
+		<#list aps.cnFruitori as fruitore>
+		<initiatorParty name="${fruitore}"/>
 		</#list>
 	</initiatorParties>
 	<responderParties>
-		<responderParty name="${soggetto.base.nome}"/>
+		<responderParty name="${soggetto.ebmsUserMessagePartyCN}"/>
 	</responderParties>
 	<legs>
 		<#list aps.azioni?keys as azioneK>

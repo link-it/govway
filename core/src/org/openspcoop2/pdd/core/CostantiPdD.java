@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core;
 
+import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.jmx.CostantiJMX;
 
 
@@ -41,29 +42,19 @@ public class CostantiPdD {
     /* ********  F I E L D S    S T A T I C    P U B L I C  ******** */
 
     /** Versione beta, es: "b1" */
-    public static final String OPENSPCOOP2_BETA = ".1";
+    public static final String OPENSPCOOP2_BETA = Costanti.OPENSPCOOP2_BETA;
     /** Versione di OpenSPCoop */
-    public static final String OPENSPCOOP2_VERSION = "2.3"+CostantiPdD.OPENSPCOOP2_BETA;
+    public static final String OPENSPCOOP2_VERSION = Costanti.OPENSPCOOP2_VERSION;
     /** Versione di OpenSPCoop */
-    public static final String OPENSPCOOP2_PRODUCT = "OpenSPCoop2";
+    public static final String OPENSPCOOP2_PRODUCT = Costanti.OPENSPCOOP2_PRODUCT;
     /** Versione di OpenSPCoop (User-Agent) */
-    public static final String OPENSPCOOP2_PRODUCT_VERSION = CostantiPdD.OPENSPCOOP2_PRODUCT+"/"+CostantiPdD.OPENSPCOOP2_VERSION;
+    public static final String OPENSPCOOP2_PRODUCT_VERSION = Costanti.OPENSPCOOP2_PRODUCT_VERSION;
     /** Details */
-    public static final String OPENSPCOOP2_DETAILS = "www.openspcoop2.org";
+    public static final String OPENSPCOOP2_DETAILS = Costanti.OPENSPCOOP2_DETAILS;
     /** Copyright */
-	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2017 Link.it srl";
+	public final static String OPENSPCOOP2_COPYRIGHT = Costanti.OPENSPCOOP2_COPYRIGHT;
 	 /** License */
-	public final static String OPENSPCOOP2_LICENSE = "This program is free software: you can redistribute it and/or modify\n"+
-	"it under the terms of the GNU General Public License version 3, as published by\n"+
-	"the Free Software Foundation.\n"+
-	"\n"+
-	"This program is distributed in the hope that it will be useful,\n"+
-	"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"+
-	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"+
-	"GNU General Public License for more details.\n"+
-	"\n"+
-	"You should have received a copy of the GNU General Public License\n"+
-	"along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+	public final static String OPENSPCOOP2_LICENSE = Costanti.OPENSPCOOP2_LICENSE;
 	
 	
 

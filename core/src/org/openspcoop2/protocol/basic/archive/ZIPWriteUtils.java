@@ -51,7 +51,6 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.generic_project.exception.SerializerException;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -200,7 +199,7 @@ public class ZIPWriteUtils {
 			// version
 			String nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_VERSION_FILE_NAME;
 			zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
-			zipOut.write(ArchiveVersion.getContentFileVersion(CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION).getBytes());
+			zipOut.write(ArchiveVersion.getContentFileVersion(org.openspcoop2.utils.Costanti.OPENSPCOOP2_PRODUCT_VERSION).getBytes());
 			
 			// configurazione
 			if(archive.getConfigurazionePdD()!=null){

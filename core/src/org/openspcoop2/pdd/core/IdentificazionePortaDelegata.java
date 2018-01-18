@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core;
 
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -196,6 +197,14 @@ public class IdentificazionePortaDelegata {
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
 							getErrore401_PortaInesistente(notFound.getMessage(),this.idPortaDelegata.getNome(),this.invocationUrlWithFormBasedParameters);
+				return false;
+			}
+			
+			// Verifico che l'azione non sia in modalità delegatedBy
+			if(this.pd.getAzione()!=null && PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(this.pd.getAzione().getIdentificazione())) {
+				this.erroreIntegrazione = 
+						ErroriIntegrazione.ERRORE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE.
+							getErrore441_PortaNonInvocabileDirettamente(this.idPortaDelegata.getNome(),this.invocationUrlWithFormBasedParameters);
 				return false;
 			}
 			

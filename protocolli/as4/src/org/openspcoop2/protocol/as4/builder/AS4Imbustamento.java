@@ -47,12 +47,10 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Operation;
-import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -131,29 +129,14 @@ public class AS4Imbustamento {
 			AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
 			
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-			IDPortType idPT = new IDPortType();
-			idPT.setIdAccordo(idAccordo);
-			idPT.setNome(asps.getPortType());
-			PortType portType = registryReader.getPortType(idPT);
-			
-			Operation operation = null;
-			for (Operation opCheck : portType.getAzioneList()) {
-				if(opCheck.getNome().equals(busta.getAzione())){
-					operation = opCheck;
-					break;
-				}
-			}
-			if(operation==null){
-				throw new ProtocolException("Azione ["+busta.getAzione()+"] non trovata");
-			}
-			
-			
+			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo);
+						
 			// **** Prepare *****
 			
 			Map<String,String> mapIdPartInfoToIdAttach = new Hashtable<>();
 			
 			Messaging ebmsV3_0Messagging = this.buildEbmsV3_0Messagging(ruoloMessaggio,busta,
-					soggettoMittente, soggettoDestinatario, portType, operation);
+					soggettoMittente, soggettoDestinatario, aspc, busta.getAzione());
 			
 			// PayloadInfo
 			PayloadInfo payloadInfo = new PayloadInfo();
@@ -238,7 +221,7 @@ public class AS4Imbustamento {
 	}
 	
 	private Messaging buildEbmsV3_0Messagging(RuoloMessaggio ruoloMessaggio, Busta busta, 
-			Soggetto soggettoMittente, Soggetto soggettoDestinatario, PortType portType, Operation operation) throws RegistryNotFound, ProtocolException, DriverRegistroServiziException{
+			Soggetto soggettoMittente, Soggetto soggettoDestinatario, AccordoServizioParteComune aspc,String azione) throws RegistryNotFound, ProtocolException, DriverRegistroServiziException{
 		
 		Messaging ebmsV3_0Messagging = new Messaging();
 		
@@ -255,9 +238,9 @@ public class AS4Imbustamento {
 		From from = new From();
 		PartyId partyIdFrom = new PartyId();
 		partyIdFrom.setBase(AS4PropertiesUtils.getRequiredStringValue(soggettoMittente.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE, true));
-		partyIdFrom.setType(AS4PropertiesUtils.getStringValue(soggettoMittente.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE, false));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE));
+		partyIdFrom.setType(AS4PropertiesUtils.getRequiredStringValue(soggettoMittente.getProtocolPropertyList(), 
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE));
 		from.addPartyId(partyIdFrom);
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 			from.setRole(AS4Costanti.AS4_USER_MESSAGE_FROM_ROLE_INITIATOR);
@@ -272,9 +255,9 @@ public class AS4Imbustamento {
 		To destinatario = new To();
 		PartyId partyIdTo = new PartyId();
 		partyIdTo.setBase(AS4PropertiesUtils.getRequiredStringValue(soggettoDestinatario.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE, true));
-		partyIdTo.setType(AS4PropertiesUtils.getStringValue(soggettoDestinatario.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE, false));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE));
+		partyIdTo.setType(AS4PropertiesUtils.getRequiredStringValue(soggettoDestinatario.getProtocolPropertyList(), 
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE));
 		destinatario.addPartyId(partyIdTo);
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 			destinatario.setRole(AS4Costanti.AS4_USER_MESSAGE_FROM_ROLE_RESPONDER);
@@ -292,16 +275,15 @@ public class AS4Imbustamento {
 		// CollaborationInfo (Service)
 		
 		Service service = new Service();
-		service.setBase(AS4PropertiesUtils.getRequiredStringValue(portType.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE, true));
-		service.setType(AS4PropertiesUtils.getRequiredStringValue(portType.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE, true));
+		service.setBase(AS4PropertiesUtils.getRequiredStringValue(aspc.getProtocolPropertyList(), 
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE));
+		service.setType(AS4PropertiesUtils.getOptionalStringValue(aspc.getProtocolPropertyList(), 
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE));
 		collaborationInfo.setService(service);
 		
 		// CollaborationInfo (Action)
 		
-		collaborationInfo.setAction(AS4PropertiesUtils.getRequiredStringValue(operation.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION, true));
+		collaborationInfo.setAction(azione);
 		
 		// MessageProperties
 		

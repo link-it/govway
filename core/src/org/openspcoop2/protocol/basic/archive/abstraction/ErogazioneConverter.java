@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ManagerUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.TemplateUtils;
 import org.slf4j.Logger;
@@ -133,7 +134,7 @@ public class ErogazioneConverter extends AbstractConverter {
 			soggettoErogatore.setNome(erogazione.getSoggettoErogatore().getIdSoggetto().getNome());
 			
 			// Protocollo
-			String protocollo = this.protocolFactoryManager.getProtocolByOrganizationType(soggettoErogatore.getTipo());
+			String protocollo = ManagerUtils.getProtocolByOrganizationType(soggettoErogatore.getTipo());
 			
 			// Nome Servizio
 			String nomeServizio = null;
@@ -153,7 +154,7 @@ public class ErogazioneConverter extends AbstractConverter {
 				tipoServizio = erogazione.getServizio().getTipo();
 			}
 			else{
-				tipoServizio = this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
+				tipoServizio = ManagerUtils.getDefaultServiceType(protocollo);
 			}
 			
 			// Dati Servizio

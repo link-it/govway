@@ -34,14 +34,18 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class AS4PropertiesUtils {
 
-	public static String getRequiredStringValue(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
-		String value = getStringValue(list, propertyName, throwNotFoundException);
+	public static String getRequiredStringValue(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		String value = getStringValue(list, propertyName, true);
 		if(value==null){
 			throw new ProtocolException("Property ["+propertyName+"] with null value?");
 		}
 		return value;
 	}
-	public static String getStringValue(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
+	public static String getOptionalStringValue(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+		String value = getStringValue(list, propertyName, false);
+		return value;
+	}
+	private static String getStringValue(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{
 		
 		ProtocolProperty pp = getProtocolProperty(list, propertyName, throwNotFoundException);
 		if(pp!=null){

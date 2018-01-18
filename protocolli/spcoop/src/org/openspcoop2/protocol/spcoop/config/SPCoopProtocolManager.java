@@ -31,6 +31,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -195,14 +196,16 @@ public class SPCoopProtocolManager extends BasicComponentFactory implements IPro
     }
     
     @Override
-	public OpenSPCoop2Message updateOpenSPCoop2MessageRequest(OpenSPCoop2Message msg, Busta busta) throws ProtocolException{
+	public OpenSPCoop2Message updateOpenSPCoop2MessageRequest(OpenSPCoop2Message msg, Busta busta,
+    		IRegistryReader registryReader) throws ProtocolException{
     	return msg;
     }
     
     @Override
 	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
-    		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext) throws ProtocolException{
+    		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
+    		IRegistryReader registryReader) throws ProtocolException{
     	return msg;
     }
 	

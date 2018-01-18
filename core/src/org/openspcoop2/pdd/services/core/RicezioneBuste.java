@@ -2343,7 +2343,8 @@ public class RicezioneBuste {
 		/* -------- OpenSPCoop2Message Update ------------- */
 		try {
 			msgDiag.mediumDebug("Aggiornamento del messaggio");
-			requestMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(requestMessage, bustaRichiesta);
+			requestMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(requestMessage, bustaRichiesta,
+					protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
 		} catch (Exception e) {
 			// Emetto log, non ancora emesso
 			if(validatore.getBusta()!=null && 

@@ -118,7 +118,16 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		userMessagePartyTypeValueItem.setRequired(true);
 		configuration.addConsoleItem(userMessagePartyTypeValueItem);
 		
-		
+		StringConsoleItem userMessagePartyCNItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.TEXT_EDIT,
+						AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_ID, 
+						AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_LABEL);
+		userMessagePartyTypeValueItem.setDefaultValue(id.getNome());
+		userMessagePartyCNItem.setRequired(true);
+		configuration.addConsoleItem(userMessagePartyCNItem);
+			
 		return configuration;
 		
 	}

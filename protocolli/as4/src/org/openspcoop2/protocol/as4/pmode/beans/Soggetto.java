@@ -27,6 +27,8 @@ public class Soggetto  {
 	private String ebmsUserMessagePartyId;
 	private String ebmsUserMessagePartyIdTypeName;
 	private String ebmsUserMessagePartyIdTypeValue;
+	private String ebmsUserMessagePartyCN;
+	
 	private String location;
 	private List<APS> aps;
 
@@ -39,6 +41,8 @@ public class Soggetto  {
 				this.ebmsUserMessagePartyIdTypeValue = prop.getValue();
 			} else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE)) {
 				this.ebmsUserMessagePartyId = prop.getValue();
+			} else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME)) {
+				this.ebmsUserMessagePartyCN = prop.getValue();
 			}
 		}
 
@@ -61,6 +65,9 @@ public class Soggetto  {
 
 		if(this.ebmsUserMessagePartyId== null)
 			throw getException("nessuna property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE+" trovata", base);
+		
+		if(this.ebmsUserMessagePartyCN== null)
+			throw getException("nessuna property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME+" trovata", base);
 
 		if(this.location== null)
 			throw getException("nessuna property location trovata", base);
@@ -106,13 +113,17 @@ public class Soggetto  {
 	public void setEbmsUserMessagePartyIdTypeValue(String ebmsUserMessagePartyIdTypeValue) {
 		this.ebmsUserMessagePartyIdTypeValue = ebmsUserMessagePartyIdTypeValue;
 	}
-
 	public String getEbmsUserMessagePartyId() {
 		return this.ebmsUserMessagePartyId;
 	}
-
 	public void setEbmsUserMessagePartyId(String ebmsUserMessagePartyId) {
 		this.ebmsUserMessagePartyId = ebmsUserMessagePartyId;
+	}
+	public String getEbmsUserMessagePartyCN() {
+		return this.ebmsUserMessagePartyCN;
+	}
+	public void setEbmsUserMessagePartyCN(String ebmsUserMessagePartyCN) {
+		this.ebmsUserMessagePartyCN = ebmsUserMessagePartyCN;
 	}
 
 	public String getLocation() {

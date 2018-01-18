@@ -10,6 +10,7 @@ import java.util.Map;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
 import org.openspcoop2.protocol.as4.pmode.beans.API;
+import org.openspcoop2.protocol.as4.pmode.beans.APS;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -56,7 +57,14 @@ public class Translator {
 	public void translate(Writer out,String nomeSoggetto) throws Exception {
 		try {
 			Map<String, Object> map = this.buildMap();
-			map.put("soggettoOperativo", nomeSoggetto);
+			@SuppressWarnings("unchecked")
+			List<Soggetto> soggetti = (List<Soggetto>) map.get("soggetti");
+			for (Soggetto soggetto : soggetti) {
+				if(nomeSoggetto.equals(soggetto.getBase().getNome())) {
+					map.put("soggettoOperativo", soggetto.getEbmsUserMessagePartyCN());
+					break;
+				}
+			}
 			this.template.process(map, out);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
@@ -73,6 +81,12 @@ public class Translator {
 		Map<IDAccordo, API> accordi = this.reader.findAllAccordi(findPayloadProfile);
 		map.put("apis", accordi);
 		List<Soggetto> soggetti = this.reader.findAllSoggetti(accordi);
+		for (Soggetto soggetto : soggetti) {
+			List<APS> listAPS = soggetto.getAps();
+			for (APS aps : listAPS) {
+				aps.initCNFruitori(soggetti);
+			}
+		}
 		map.put("soggetti", soggetti);
 		map.put("partyIdTypes", this.reader.findAllPartyIdTypes(soggetti));
 		return map;

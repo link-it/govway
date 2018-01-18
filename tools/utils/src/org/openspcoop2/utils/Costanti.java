@@ -32,5 +32,30 @@ public class Costanti {
 	public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
 	
 	 public final static String OPENSPCOOP2_LOOKUP = "OPENSPCOOP2_LOOKUP";
+	 
+    /** Versione beta, es: "b1" */
+    public static final String OPENSPCOOP2_BETA = "";
+    /** Versione di OpenSPCoop */
+    public static final String OPENSPCOOP2_VERSION = "3.0"+Costanti.OPENSPCOOP2_BETA;
+    /** Versione di OpenSPCoop */
+    public static final String OPENSPCOOP2_PRODUCT = "OpenSPCoop2";
+    /** Versione di OpenSPCoop (User-Agent) */
+    public static final String OPENSPCOOP2_PRODUCT_VERSION = Costanti.OPENSPCOOP2_PRODUCT+"/"+Costanti.OPENSPCOOP2_VERSION;
+    /** Details */
+    public static final String OPENSPCOOP2_DETAILS = "www.openspcoop2.org";
+    /** Copyright */
+	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2017 Link.it srl";
+	 /** License */
+	public final static String OPENSPCOOP2_LICENSE = "This program is free software: you can redistribute it and/or modify\n"+
+	"it under the terms of the GNU General Public License version 3, as published by\n"+
+	"the Free Software Foundation.\n"+
+	"\n"+
+	"This program is distributed in the hope that it will be useful,\n"+
+	"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"+
+	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"+
+	"GNU General Public License for more details.\n"+
+	"\n"+
+	"You should have received a copy of the GNU General Public License\n"+
+	"along with this program.  If not, see <http://www.gnu.org/licenses/>.";
 
 }

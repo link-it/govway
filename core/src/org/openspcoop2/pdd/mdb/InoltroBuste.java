@@ -118,6 +118,7 @@ import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.Trasmissione;
@@ -858,19 +859,34 @@ public class InoltroBuste extends GenericLib{
 			Connettore connettore = null;
 			String erroreRicercaConnettore = null;
 			Exception eForwardRoute = null;
-			try{
-				connettore = configurazionePdDManager.getForwardRoute(soggettoFruitore,idServizio,functionAsRouter);
-			}catch(Exception e){
-				eForwardRoute = e;
-				erroreRicercaConnettore = e.getMessage();
+			if(functionAsRouter==false){
+				try{
+					org.openspcoop2.core.registry.Connettore connettoreProtocol = 
+							protocolFactory.createProtocolVersionManager(profiloGestione).getStaticRoute(soggettoFruitore,idServizio,
+									protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
+					if(connettoreProtocol!=null) {
+						connettore = connettoreProtocol.mappingIntoConnettoreConfigurazione();
+					}
+				}catch(Exception e){
+					eForwardRoute = e;
+					erroreRicercaConnettore = e.getMessage();
+				}
 			}
-			if(functionAsRouter){
-				if(connettore==null){
-					try{
-						connettore = configurazionePdDManager.getForwardRoute(idServizio.getSoggettoErogatore(),functionAsRouter);
-					}catch(Exception e){
-						eForwardRoute = e;
-						erroreRicercaConnettore = erroreRicercaConnettore+ "\nRicerca in base al solo soggetto destinatario:\n"+ e.getMessage();
+			if(connettore==null && eForwardRoute==null){ // in pratica se non e' stato trovato un connettore via protocol
+				try{
+					connettore = configurazionePdDManager.getForwardRoute(soggettoFruitore,idServizio,functionAsRouter);
+				}catch(Exception e){
+					eForwardRoute = e;
+					erroreRicercaConnettore = e.getMessage();
+				}
+				if(functionAsRouter){
+					if(connettore==null){
+						try{
+							connettore = configurazionePdDManager.getForwardRoute(idServizio.getSoggettoErogatore(),functionAsRouter);
+						}catch(Exception e){
+							eForwardRoute = e;
+							erroreRicercaConnettore = erroreRicercaConnettore+ "\nRicerca in base al solo soggetto destinatario:\n"+ e.getMessage();
+						}
 					}
 				}
 			}
@@ -2109,8 +2125,22 @@ public class InoltroBuste extends GenericLib{
 				}
 				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 						bustaRichiesta, nParams,
-						requestMessage.getTransportRequestContext(),transportResponseContext);
+						requestMessage.getTransportRequestContext(),transportResponseContext,
+						protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
 			} catch (Exception e) {
+				
+				if(e instanceof ProtocolException) {
+					ProtocolException pe = (ProtocolException) e;
+					if(pe.isForceTrace()) {
+						msgDiag.mediumDebug("Tracciamento della richiesta...");
+						EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(e.getMessage());
+						tracciamento.registraRichiesta(requestMessage,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
+								Tracciamento.createLocationString(false, location),
+								idCorrelazioneApplicativa);
+					}
+				}
+				
+				
 				msgDiag.addKeywordErroreProcessamento(e, "Aggiornamento messaggio fallito");
 				msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
 				String msgErrore = "ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage();

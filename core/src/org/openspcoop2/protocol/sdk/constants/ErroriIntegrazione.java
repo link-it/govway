@@ -214,6 +214,10 @@ public enum ErroriIntegrazione {
 	ERRORE_440_PARSING_EXCEPTION_RISPOSTA("Il contenuto applicativo della risposta ricevuta non è processabile dalla Porta di Dominio: "+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA),
+	
+	ERRORE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE("La porta utilizzata"+
+			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI+" non è invocabile direttamente",
+			CodiceErroreIntegrazione.CODICE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE),
 
 	// errori spediti in buste errore
 	
@@ -308,6 +312,7 @@ public enum ErroriIntegrazione {
 			this.equals(ERRORE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL) ||
 			this.equals(ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL) ||
 			this.equals(ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL) ||
+			this.equals(ERRORE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE) ||
 			this.equals(ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA) ||
 			this.equals(ERRORE_4XX_CUSTOM) ||
 			this.equals(ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE) ||
@@ -827,6 +832,34 @@ public enum ErroriIntegrazione {
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,e.getMessage()));
 		else
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,e.toString()));
+		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
+	}
+	
+	public ErroreIntegrazione getErrore441_PortaNonInvocabileDirettamente(String location,String urlInvocazione) {
+		return getErrore441_PortaNonInvocabileDirettamente(location, urlInvocazione,null);
+	}
+	public ErroreIntegrazione getErrore441_PortaNonInvocabileDirettamente(String servizioApplicativo) {
+		return getErrore441_PortaNonInvocabileDirettamente(null, null,servizioApplicativo);
+	}
+	public ErroreIntegrazione getErrore441_PortaNonInvocabileDirettamente(String location,String urlInvocazione,String servizioApplicativo) {
+		if(!this.equals(ERRORE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_401_PORTA_INESISTENTE.name());
+		}
+		StringBuffer bf = new StringBuffer();
+		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
+		if(location!=null){
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION,location));
+			bf.append(" porta["+location+"]");
+		}
+		if(urlInvocazione!=null){
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_URL_INVOCAZIONE,urlInvocazione));
+			bf.append(" urlInvocazione["+urlInvocazione+"]");
+		}
+		if(servizioApplicativo!=null){
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_SERVIZIO_APPLICATIVO,servizioApplicativo));
+			bf.append(" servizioApplicativo["+servizioApplicativo+"]");
+		}
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI,bf.toString()));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	

@@ -34,7 +34,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.abstraction.Soggetto;
 import org.openspcoop2.protocol.basic.archive.ZIPReadUtils;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
@@ -58,14 +57,12 @@ public abstract class AbstractConverter {
 	
 	protected IDAccordoFactory idAccordoFactory;
 	protected IDServizioFactory idServizioFactory;
-	protected ProtocolFactoryManager protocolFactoryManager;
 	protected Logger log;
 	protected ZIPReadUtils filler;
 	
 	protected AbstractConverter(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idServizioFactory = IDServizioFactory.getInstance();
-		this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		this.log = log;
 		this.filler = new ZIPReadUtils(log,registryReader,configIntegrationReader);
 	}

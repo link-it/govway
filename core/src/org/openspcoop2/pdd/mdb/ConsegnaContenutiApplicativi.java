@@ -1775,7 +1775,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 						bustaRichiesta, nParams,
-						consegnaMessage.getTransportRequestContext(),transportResponseContext);
+						consegnaMessage.getTransportRequestContext(),transportResponseContext,
+						protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
 			} catch (Exception e) {
 				msgDiag.addKeywordErroreProcessamento(e, "Aggiornamento messaggio fallito");
 				msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");

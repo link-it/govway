@@ -47,11 +47,10 @@ public class AS4Costanti {
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE = "ebmsUserMessagePartyId";
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_NAME = "ebmsUserMessagePartyIdTypeName";
 	public static final String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE = "ebmsUserMessagePartyIdTypeValue";
+	public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME = "ebmsUserMessagePartyCommonName";
     
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE = "ebmsUserMessageCollaborationInfoService";
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE = "ebmsUserMessageCollaborationInfoServiceType";
-
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION = "ebmsUserMessageCollaborationInfoAction";
     
     public final static String AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE = "ebmsSecurityProfile";
     public final static String AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE = "ebmsServicePayloadProfile";
@@ -65,6 +64,9 @@ public class AS4Costanti {
     public final static String AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE = "MimeType";
     
     public static final String AS4_NAMESPACE_CID_MESSAGGIO = "http://www.openspcoop2.org/protocol/as4";
+    
+    public final static String AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_ID = "domibus.messageID";
+    public final static String AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS = "domibus.status";
     
 	/** Archive mode */
 	public static final ArchiveMode PMODE_ARCHIVE_MODE_SINGLE_XML = new ArchiveMode("domibus-pmode (single xml configuration)");

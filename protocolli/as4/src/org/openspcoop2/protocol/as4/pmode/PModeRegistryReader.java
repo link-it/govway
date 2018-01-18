@@ -108,10 +108,29 @@ public class PModeRegistryReader {
 		
 		List<Soggetto> soggetti = new ArrayList<>();
 		
+		AS4Properties props = AS4Properties.getInstance(this.log);
+		String defaultGW = null;
+		List<String> customGW = new ArrayList<>();
+		if(props.isDomibusGatewayRegistry()) {
+			defaultGW = props.getDomibusGatewayRegistrySoggettoDefault();
+			customGW = props.getDomibusGatewayRegistrySoggettoCustomList();
+		}
+		
 		int legId = 1;
 		int processId = 1;
 		for(IDSoggetto idSoggetto: allIdSoggetti) {
 			org.openspcoop2.core.registry.Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
+			
+			if(defaultGW!=null) {
+				if(soggetto.getNome().equals(defaultGW)) {
+					continue;
+				}
+			}
+			if(customGW!=null && customGW.size()>0) {
+				if(customGW.contains(soggetto.getNome())) {
+					continue;
+				}
+			}
 			
 			if(soggetto.sizeAccordoServizioParteSpecificaList()>0) {
 				// xml
