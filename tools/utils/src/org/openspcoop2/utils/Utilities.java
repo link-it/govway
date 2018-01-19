@@ -390,7 +390,7 @@ public class Utilities {
 			}
 			return prop;
 		}catch(java.lang.Exception e) {
-			throw new UtilsException("Utilities.readProperties Riscontrato errore durante la lettura delle propriete con prefisso ["+prefix+"]: "+e.getMessage(),e);
+			throw new UtilsException("Utilities.readProperties Riscontrato errore durante la lettura delle proprieta' con prefisso ["+prefix+"]: "+e.getMessage(),e);
 		}  
 	}
 	/**

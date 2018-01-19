@@ -1,0 +1,33 @@
+# JNDI Env
+#as4.jndi.<name>=value
+as4.jndi.java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory
+
+# ConnectionFactory
+as4.connectionFactory=ConnectionFactory
+
+# Credenziali
+as4.username=admin
+as4.password=123456
+
+# ConsumeMessages
+as4.consumeMessage=false
+
+
+# ---- Receive Message ----
+as4.tipoOperazione=receive
+# URLBroker JMS
+as4.jndi.java.naming.provider.url=tcp://BLUE:61616
+# Nome Coda JMS
+as4.queue=messages
+# Aggiungo in jndi per activeMQ che non possiede un vero jndi server
+as4.jndi.queue.messages=domibus.backend.jms.outQueue
+
+
+# ---- Receive Ack ----
+#as4.tipoOperazione=ack
+# URLBroker JMS
+#as4.jndi.java.naming.provider.url=tcp://RED:61716
+# Nome Coda JMS
+#as4.queue=acks
+# Aggiungo in jndi per activeMQ che non possiede un vero jndi server
+#as4.jndi.queue.acks=domibus.notification.webservice

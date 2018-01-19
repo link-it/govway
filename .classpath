@@ -22,6 +22,7 @@
 	<classpathentry excluding="handler-chain.xml" kind="src" path="protocolli/sdi/example/server/SdIRiceviFile_v1.0/src"/>
 	<classpathentry excluding="openspcoop2-manifest.xml" kind="src" path="protocolli/as4/src"/>
 	<classpathentry kind="src" path="protocolli/as4/example/domibusClient/src"/>
+	<classpathentry kind="src" path="protocolli/as4/example/domibusJMSClient/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/audit/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/mvc/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/queue/src"/>
