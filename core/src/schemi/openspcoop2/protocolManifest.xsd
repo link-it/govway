@@ -61,6 +61,7 @@
                             <xsd:element name="factory" type="xsd:string"/>
                      </xsd:sequence>
                      <xsd:attribute name="name" type="xsd:string" use="required" />
+                     <xsd:attribute name="logger" type="xsd:boolean" use="optional" default="false" />
               </xsd:complexType>
        </xsd:element>
        

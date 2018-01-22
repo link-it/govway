@@ -38,6 +38,7 @@ import java.io.Serializable;
  * 			&lt;element name="factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="logger" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -76,6 +77,18 @@ public class Protocol extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.name = name;
   }
 
+  public boolean isLogger() {
+    return this.logger;
+  }
+
+  public boolean getLogger() {
+    return this.logger;
+  }
+
+  public void setLogger(boolean logger) {
+    this.logger = logger;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -87,5 +100,9 @@ public class Protocol extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="logger",required=false)
+  protected boolean logger = false;
 
 }

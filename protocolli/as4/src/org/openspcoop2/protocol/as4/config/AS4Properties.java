@@ -183,6 +183,16 @@ public class AS4Properties {
 					this.getDomibusGatewayConfigDefaultHttpsProperties();
 				}
 			}
+			
+			// jms
+			this.getDomibusGatewayJMS_threadsPoolSize();
+			this.getDomibusGatewayJMS_jndiContext();
+			this.getDomibusGatewayJMS_connectionFactory();
+			this.getDomibusGatewayJMS_username();
+			this.getDomibusGatewayJMS_password();
+			this.getDomibusGatewayJMS_queueReceiver();
+			this.getDomibusGatewayJMS_queueSender();
+			this.getDomibusGatewayJMS_jndiContextForAck();
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo as4, "+e.getMessage();
@@ -632,4 +642,228 @@ public class AS4Properties {
 	}
 	
 
+	
+	
+	
+	
+	/* **** Comunicazione JMS verso Broker **** */
+	
+	private static Integer domibusGatewayJMS_threadsPoolSize;
+	public Integer getDomibusGatewayJMS_threadsPoolSize() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_threadsPoolSize==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.threadsPool.size"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_threadsPoolSize = Integer.parseInt(value);
+				}
+				else {
+					throw new Exception("Proprieta' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.threadsPool.size', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_threadsPoolSize;
+	}
+	
+	private static Integer domibusGatewayJMS_threadCheckIntervalSeconds;
+	public Integer getDomibusGatewayJMS_threadCheckIntervalSeconds() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_threadCheckIntervalSeconds==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalSeconds"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_threadCheckIntervalSeconds = Integer.parseInt(value);
+				}
+				else {
+					throw new Exception("Proprieta' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalSeconds', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_threadCheckIntervalSeconds;
+	}
+	
+	private static Properties domibusGatewayJMS_jndiContext = null;
+	public Properties getDomibusGatewayJMS_jndiContext() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_jndiContext==null){
+	    	try{  
+	    		AS4Properties.domibusGatewayJMS_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.jndi.");
+	    		if (AS4Properties.domibusGatewayJMS_jndiContext == null || AS4Properties.domibusGatewayJMS_jndiContext.size()<0){
+	    			AS4Properties.domibusGatewayJMS_jndiContext = new Properties(); // context jndi vuoto
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.jndi.*', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_jndiContext;
+	}
+	
+	private static String domibusGatewayJMS_connectionFactory;
+	public String getDomibusGatewayJMS_connectionFactory() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_connectionFactory==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.connectionFactory"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_connectionFactory = value;
+				}
+				else {
+					throw new Exception("Proprieta' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.connectionFactory', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_connectionFactory;
+	}
+	
+	private static Boolean domibusGatewayJMS_username_read;
+	private static String domibusGatewayJMS_username;
+	public String getDomibusGatewayJMS_username() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_username_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.username"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_username = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.username', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				domibusGatewayJMS_username_read = true;
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_username;
+	}
+	
+	private static Boolean domibusGatewayJMS_password_read;
+	private static String domibusGatewayJMS_password;
+	public String getDomibusGatewayJMS_password() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_password_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.password"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_password = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.password', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				domibusGatewayJMS_password_read = true;
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_password;
+	}
+	
+	private static String domibusGatewayJMS_queueReceiver;
+	public String getDomibusGatewayJMS_queueReceiver() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_queueReceiver==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.receiver"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_queueReceiver = value;
+				}
+				else {
+					throw new Exception("Proprieta' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.queue.receiver', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_queueReceiver;
+	}
+	
+	private static String domibusGatewayJMS_queueSender;
+	public String getDomibusGatewayJMS_queueSender() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_queueSender==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_queueSender = value;
+				}
+				else {
+					throw new Exception("Proprieta' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.queue.sender', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_queueSender;
+	}
+	
+	private static Boolean domibusGatewayJMS_AckProviderUrl_read;
+	private static String domibusGatewayJMS_AckProviderUrl;
+	private String getDomibusGatewayJMS_AckProviderUrl() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_AckProviderUrl_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.queue.sender.provider.url"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_AckProviderUrl = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.queue.sender.provider.url', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				domibusGatewayJMS_AckProviderUrl_read = true;
+			}
+    	}
+		return AS4Properties.domibusGatewayJMS_AckProviderUrl;
+	}
+	
+	private static Properties domibusGatewayJMS_jndiContextForAck = null;
+	public Properties getDomibusGatewayJMS_jndiContextForAck() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_jndiContextForAck==null){
+			if(this.getDomibusGatewayJMS_AckProviderUrl()!=null) {
+				domibusGatewayJMS_jndiContextForAck = new Properties();
+				Properties p = this.getDomibusGatewayJMS_jndiContext();
+				Enumeration<?> keys = p.keys();
+				while (keys.hasMoreElements()) {
+					Object object = (Object) keys.nextElement();
+					if(object instanceof String) {
+						String key = (String) object;
+						if(!"java.naming.provider.url".equalsIgnoreCase(key)) {
+							domibusGatewayJMS_jndiContextForAck.put(key, p.get(key));
+						}
+					}
+				}
+				domibusGatewayJMS_jndiContextForAck.put("java.naming.provider.url", this.getDomibusGatewayJMS_AckProviderUrl());
+			}
+			else {
+				domibusGatewayJMS_jndiContextForAck = this.getDomibusGatewayJMS_jndiContext();
+			}
+			
+    	}
+		return AS4Properties.domibusGatewayJMS_jndiContextForAck;
+	}
 }

@@ -70,6 +70,7 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	
 	private String protocol;
 	protected Logger log;
+	protected Logger logProtocol;
 	private ConfigurazionePdD configPdD;
 	private Openspcoop2 manifest;
 
@@ -82,7 +83,30 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		this.configPdD = configPdD;
 		this.manifest = manifest;
 	}
-		
+	
+	@Override
+	public void initProtocolLogger(Logger protocolLogger) throws ProtocolException{
+		this.logProtocol = protocolLogger;
+	}
+	
+	
+	/* ** LOGGER ** */
+	
+	@Override
+	public Logger getLogger() {
+		return this.log;
+	}
+	
+	@Override
+	public Logger getProtocolLogger() {
+		if(this.logProtocol!=null) {
+			return this.logProtocol;
+		}
+		else {
+			return this.log; // Per contesti di utilizzo fuori dalla PdD, (es. console) per non avere nullPointer
+		}
+	}
+	
 	
 	/* ** INFO SERVIZIO ** */
 	
@@ -90,12 +114,7 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	public String getProtocol() {
 		return this.protocol;
 	}
-	
-	@Override
-	public Logger getLogger() {
-		return this.log;
-	}
-	
+		
 	@Override
 	public ConfigurazionePdD getConfigurazionePdD() {
 		return this.configPdD;

@@ -83,8 +83,22 @@ public class CostantiPdD {
        
     public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "openspcoop2_local.log4j2.properties";
     public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_LOGGER_PROPERTIES";
+    
+    public final static String OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO = "IDPROTOCOLLO";
+    private final static String OPENSPCOOP2_LOGGER_PROTOCOL_LOCAL_PATH = "openspcoop2_local.protocol_"+OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO+".log4j2.properties";
+    public static String getOpenspcoop2LoggerProtocolLocalPath(String protocol) {
+		return OPENSPCOOP2_LOGGER_PROTOCOL_LOCAL_PATH.replace(OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
+	}
+	private final static String OPENSPCOOP2_LOGGER_PROTOCOL_PROPERTIES = "OPENSPCOOP2_LOGGER_PROTOCOL_"+OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO+"_PROPERTIES";
+    public static String getOpenspcoop2LoggerProtocolProperties(String protocol) {
+		return OPENSPCOOP2_LOGGER_PROTOCOL_PROPERTIES.replace(OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
+	}
+    private final static String OPENSPCOOP2_LOGGER_FACTORY_NAME = "openspcoop2."+OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO;
+    public static String getOpenspcoop2LoggerFactoryName(String protocol) {
+		return OPENSPCOOP2_LOGGER_FACTORY_NAME.replace(OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
+	}
      
-    public final static String OPENSPCOOP2_CACHE_DEFAULT_PROPERTIES_NAME = "openspcoop2.jcs.properties";
+	public final static String OPENSPCOOP2_CACHE_DEFAULT_PROPERTIES_NAME = "openspcoop2.jcs.properties";
     public final static String OPENSPCOOP2_CACHE_LOCAL_PATH = "openspcoop2_local.jcs.properties";
     public final static String OPENSPCOOP2_CACHE_PROPERTIES = "OPENSPCOOP2_CACHE_PROPERTIES";
     

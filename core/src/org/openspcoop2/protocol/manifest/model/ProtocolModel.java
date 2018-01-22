@@ -42,6 +42,7 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 	
 		this.FACTORY = new Field("factory",java.lang.String.class,"protocol",Protocol.class);
 		this.NAME = new Field("name",java.lang.String.class,"protocol",Protocol.class);
+		this.LOGGER = new Field("logger",boolean.class,"protocol",Protocol.class);
 	
 	}
 	
@@ -51,6 +52,7 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 	
 		this.FACTORY = new ComplexField(father,"factory",java.lang.String.class,"protocol",Protocol.class);
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"protocol",Protocol.class);
+		this.LOGGER = new ComplexField(father,"logger",boolean.class,"protocol",Protocol.class);
 	
 	}
 	
@@ -59,6 +61,8 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 	public IField FACTORY = null;
 	 
 	public IField NAME = null;
+	 
+	public IField LOGGER = null;
 	 
 
 	@Override

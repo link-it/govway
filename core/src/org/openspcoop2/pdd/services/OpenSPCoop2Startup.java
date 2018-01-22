@@ -971,6 +971,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// forzo update logger. (viene caricato dopo il log della console)
 				ProtocolFactoryManager.updateLogger(logCore);
 				protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				// Update protocolLogger
+				boolean isInitializeLoggerProtocol = OpenSPCoop2Logger.initializeProtocolLogger(OpenSPCoop2Startup.log, true, propertiesReader.getRootDirectory(),loggerP); 
+				if(isInitializeLoggerProtocol == false){
+					return;
+				}
+				// Initialize Protocols
 				protocolFactoryManager.initializeAllProtocols();
 				OpenSPCoop2Startup.log.info("ProtocolFactory default: "+protocolFactoryManager.getDefaultProtocolFactory().getProtocol());
 			} catch(Exception e) {

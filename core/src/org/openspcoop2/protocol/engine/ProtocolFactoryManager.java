@@ -95,6 +95,11 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
+	public boolean isSupportedProtocolLogger(String protocol) throws ProtocolException {
+		IProtocolFactory<?> p = this.getProtocolFactoryByName(protocol);
+		return p.getManifest().getProtocol().isLogger();
+	}
+	
 	public void initializeAllProtocols() throws ProtocolException{
 		//System.out.println("Init All Factories ["+this.factories.size()+"] ...");
 		if(this.factories!=null){
@@ -103,11 +108,17 @@ public class ProtocolFactoryManager {
 				IProtocolFactory<?> iProtocolFactory = (IProtocolFactory<?>) factories.nextElement();
 				//System.out.println("Init ["+iProtocolFactory.getProtocol()+"] ...");
 				
-				// base
-				iProtocolFactory.getLogger();
-				iProtocolFactory.getManifest();
+				// INFO SERVIZIO
+				iProtocolFactory.getProtocol();
+				Openspcoop2 manifest = iProtocolFactory.getManifest();
 				iProtocolFactory.getConfigurazionePdD();
 				
+				// LOGGER
+				iProtocolFactory.getLogger();
+				if(manifest.getProtocol().isLogger()) {
+					iProtocolFactory.getProtocolLogger();
+				}
+								
 				// PROTOCOL BUILDER
 				iProtocolFactory.createBustaBuilder();
 				iProtocolFactory.createErroreApplicativoBuilder();
@@ -130,7 +141,7 @@ public class ProtocolFactoryManager {
 				iProtocolFactory.createTracciaDriver();
 				iProtocolFactory.createTracciaProducer();
 				iProtocolFactory.createTracciaSerializer();
-				
+								
 				// ARCHIVE
 				iProtocolFactory.createArchive();
 				
@@ -147,6 +158,9 @@ public class ProtocolFactoryManager {
 				traduttore.toString(LivelloRilevanza.INFO);
 				traduttore.toString(ProfiloDiCollaborazione.SINCRONO);
 				traduttore.toString(TipoOraRegistrazione.LOCALE);
+				
+				// CONSOLE
+				iProtocolFactory.createDynamicConfigurationConsole();
 				
 				//System.out.println("Init ["+iProtocolFactory.getProtocol()+"] ok");
 			}

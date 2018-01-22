@@ -64,15 +64,20 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	
 	/* ** INIT ** */
 	
-	public void init(Logger log,String protocol,ConfigurazionePdD configPdD,Openspcoop2 openspcoop2Manifest) throws ProtocolException;
+	public void init(Logger logCore,String protocol,ConfigurazionePdD configPdD,Openspcoop2 openspcoop2Manifest) throws ProtocolException;
+	public void initProtocolLogger(Logger protocolLogger) throws ProtocolException;
 	
 	/* ** INFO SERVIZIO ** */
 	
 	public String getProtocol();
-	public Logger getLogger();
 	public ConfigurazionePdD getConfigurazionePdD();
 	public Openspcoop2 getManifest();
 	
+	/* ** LOGGER ** */
+	
+	public Logger getLogger();
+	public Logger getProtocolLogger();
+		
 	/* ** PROTOCOL BUILDER ** */
 	
 	public IBustaBuilder<BustaRawType> createBustaBuilder() throws ProtocolException;

@@ -12,6 +12,7 @@
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <value name="factory" field="factory" usage="required"/>
     <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="logger" field="logger" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="binding" class="org.openspcoop2.protocol.manifest.Binding">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>

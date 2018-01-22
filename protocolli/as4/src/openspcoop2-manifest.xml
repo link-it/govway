@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocol name="as4">
+    <protocol name="as4" logger="true">
     	<factory>org.openspcoop2.protocol.as4.AS4Factory</factory>
     </protocol>
     

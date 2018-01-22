@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.logger;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -42,6 +43,7 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.IPdDContextSerializer;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.DateBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
@@ -49,8 +51,10 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
@@ -218,37 +222,9 @@ public class OpenSPCoop2Logger {
 			
 			if(loadExternalConfiguration){
 			
-				// File Local Implementation
-				CollectionProperties loggerPropertiesRidefinito =  
-					PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole, CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES ,CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, rootDirectory);
-				if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
-					Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
-					while (ridefinito.hasMoreElements()) {
-						String key = (String) ridefinito.nextElement();
-						String value = (String) loggerPropertiesRidefinito.get(key);
-						if(loggerProperties.containsKey(key)){
-							//Object o = 
-							loggerProperties.remove(key);
-						}
-						loggerProperties.put(key, value);
-						//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
-					}
-				}
+				loadExternal(logConsole, CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES ,CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, 
+						rootDirectory, loggerProperties, objectProperties);
 				
-				// File Object Implementation
-				if(objectProperties!=null && objectProperties.size()>0){
-					Enumeration<?> ridefinito = objectProperties.keys();
-					while (ridefinito.hasMoreElements()) {
-						String key = (String) ridefinito.nextElement();
-						String value = (String) objectProperties.get(key);
-						if(loggerProperties.containsKey(key)){
-							//Object o = 
-							loggerProperties.remove(key);
-						}
-						loggerProperties.put(key, value);
-						//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
-					}
-				}
 			}
 
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
@@ -390,6 +366,92 @@ public class OpenSPCoop2Logger {
 			return true;
 		}catch(Exception e){
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.error("Riscontrato errore durante l'inizializzazione del sistema di logging di OpenSPCoop: "
+					+e.getMessage(),e);
+			return false;
+		}
+	}
+	
+	private static void loadExternal(Logger logConsole, String loggerProperty, String loggerPath, String rootDirectory,
+			java.util.Properties loggerProperties, Properties objectProperties) {
+			
+		// File Local Implementation
+		CollectionProperties loggerPropertiesRidefinito =  
+			PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole, loggerProperty ,loggerPath, rootDirectory);
+		if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
+			Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
+			while (ridefinito.hasMoreElements()) {
+				String key = (String) ridefinito.nextElement();
+				String value = (String) loggerPropertiesRidefinito.get(key);
+				if(loggerProperties.containsKey(key)){
+					//Object o = 
+					loggerProperties.remove(key);
+				}
+				loggerProperties.put(key, value);
+				//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
+			}
+		}
+		
+		// File Object Implementation
+		if(objectProperties!=null && objectProperties.size()>0){
+			Enumeration<?> ridefinito = objectProperties.keys();
+			while (ridefinito.hasMoreElements()) {
+				String key = (String) ridefinito.nextElement();
+				String value = (String) objectProperties.get(key);
+				if(loggerProperties.containsKey(key)){
+					//Object o = 
+					loggerProperties.remove(key);
+				}
+				loggerProperties.put(key, value);
+				//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
+			}
+		}
+
+	}
+	
+	public static boolean initializeProtocolLogger(Logger logConsole, boolean loadExternalConfiguration,String rootDirectory,
+			Properties objectProperties) {
+		
+		try{
+		
+			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+			Enumeration<String> protocolNames = protocolFactoryManager.getProtocolNames();
+			while (protocolNames.hasMoreElements()) {
+				String protocol = (String) protocolNames.nextElement();
+				if(protocolFactoryManager.isSupportedProtocolLogger(protocol)) {
+					
+					java.util.Properties loggerPropertiesProtocolAdjunct = null;
+					InputStream isLoggerProtocol = OpenSPCoop2Logger.class.getResourceAsStream("/openspcoop2.protocolAdjunct.log4j2.properties");
+					if(isLoggerProtocol!=null){
+						String content = Utilities.getAsString(isLoggerProtocol, Charset.UTF_8.getValue());
+						if(content!=null) {
+							content = content.replaceAll(CostantiPdD.OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
+						}
+						loggerPropertiesProtocolAdjunct = new java.util.Properties();
+						StringReader sr = new StringReader(content);
+						loggerPropertiesProtocolAdjunct.load(sr);
+						sr.close();
+					}
+					if(loadExternalConfiguration){
+						
+						loadExternal(logConsole, CostantiPdD.getOpenspcoop2LoggerProtocolProperties(protocol),
+								CostantiPdD.getOpenspcoop2LoggerProtocolLocalPath(protocol) ,
+								rootDirectory, loggerPropertiesProtocolAdjunct, objectProperties);
+						
+					}
+					logConsole.info("Protocol '"+protocol+"': Log4j config append");
+					LoggerWrapperFactory.setLogConfiguration(loggerPropertiesProtocolAdjunct,true);
+					
+					Logger log = LoggerWrapperFactory.getLogger(CostantiPdD.getOpenspcoop2LoggerFactoryName(protocol));
+					protocolFactoryManager.getProtocolFactoryByName(protocol).initProtocolLogger(log);
+					log.info("Inizializzazione completata");
+					
+				}
+			}
+			
+			return true;
+			
+		}catch(Exception e){
+			OpenSPCoop2Logger.loggerOpenSPCoopConsole.error("Riscontrato errore durante l'inizializzazione del sistema di logging di OpenSPCoop per i protocolli: "
 					+e.getMessage(),e);
 			return false;
 		}
