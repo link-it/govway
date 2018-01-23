@@ -150,7 +150,7 @@ public class ValidazioneSintattica {
 		if(update){
 			this.msg = msg;
 			if(this.headerProtocollo!=null){
-				org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<?> validazioneSintattica = this.protocolFactory.createValidazioneSintattica();
+				org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<?> validazioneSintattica = this.protocolFactory.createValidazioneSintattica(this.state);
 				this.headerProtocollo = validazioneSintattica.getBustaRawContent_senzaControlli(this.msg);
 			}
 		}
@@ -227,14 +227,14 @@ public class ValidazioneSintattica {
 		ValidazioneSintatticaResult<?> result = null;
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<?> validazioneSintattica = null;
 		try {
-			validazioneSintattica = this.protocolFactory.createValidazioneSintattica();
+			validazioneSintattica = this.protocolFactory.createValidazioneSintattica(this.state);
 			ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
 			pValidazioneErrori.setIgnoraEccezioniNonGravi(this.protocolManager.isIgnoraEccezioniNonGravi());
 			if(this.isRichiesta==null || this.isRichiesta){
-				result = validazioneSintattica.validaRichiesta(this.state,this.msg, this.busta, pValidazioneErrori);
+				result = validazioneSintattica.validaRichiesta(this.msg, this.busta, pValidazioneErrori);
 			}
 			else{
-				result = validazioneSintattica.validaRisposta(this.state,this.msg, this.busta, pValidazioneErrori);
+				result = validazioneSintattica.validaRisposta(this.msg, this.busta, pValidazioneErrori);
 			}
 			
 		} catch (ProtocolException e) {
@@ -281,7 +281,7 @@ public class ValidazioneSintattica {
 	 * @return true se esiste un protocollo, false altrimenti
 	 */
 	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, RuoloMessaggio ruoloMessaggio) throws Exception{
-		return this.protocolFactory.createValidazioneSintattica().verifyProtocolPresence(tipoPdD, profilo, ruoloMessaggio, this.msg);
+		return this.protocolFactory.createValidazioneSintattica(this.state).verifyProtocolPresence(tipoPdD, profilo, ruoloMessaggio, this.msg);
 	}
 	
 
@@ -293,7 +293,7 @@ public class ValidazioneSintattica {
 	 * 
 	 */
 	public void validazioneFault(OpenSPCoop2Message msg) throws ProtocolException{
-		ValidazioneSintatticaResult<?> result = this.protocolFactory.createValidazioneSintattica().validazioneFault(msg);
+		ValidazioneSintatticaResult<?> result = this.protocolFactory.createValidazioneSintattica(this.state).validazioneFault(msg);
 		if(result != null){
 			if(result.getBusta() != null)
 				this.busta = result.getBusta();
@@ -325,7 +325,7 @@ public class ValidazioneSintattica {
 	 * 
 	 */
 	public void validazioneManifestAttachments(OpenSPCoop2Message msg,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{
-		ValidazioneSintatticaResult<?> result = this.protocolFactory.createValidazioneSintattica().validazioneManifestAttachments(msg, proprietaManifestAttachments);
+		ValidazioneSintatticaResult<?> result = this.protocolFactory.createValidazioneSintattica(this.state).validazioneManifestAttachments(msg, proprietaManifestAttachments);
 		if(result != null){
 			if(result.getBusta() != null)
 				this.busta = result.getBusta();
@@ -350,7 +350,7 @@ public class ValidazioneSintattica {
 	}
 	
 	public BustaRawContent<?> getHeaderProtocollo_senzaControlli() throws ProtocolException{
-		return this.protocolFactory.createValidazioneSintattica().getBustaRawContent_senzaControlli(this.msg);
+		return this.protocolFactory.createValidazioneSintattica(this.state).getBustaRawContent_senzaControlli(this.msg);
 	}
 
 }

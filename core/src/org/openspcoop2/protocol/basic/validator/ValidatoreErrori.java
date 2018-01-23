@@ -27,13 +27,14 @@ import javax.xml.soap.SOAPFault;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 
 /**
@@ -45,13 +46,12 @@ import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
  * 
  */
 
-public class ValidatoreErrori extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.validator.IValidatoreErrori {
+public class ValidatoreErrori extends BasicStateComponentFactory implements org.openspcoop2.protocol.sdk.validator.IValidatoreErrori {
 
-	/** Logger utilizzato per debug. */
 	private ITraduttore costanti;
-
-	public ValidatoreErrori(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		super(protocolFactory);
+	
+	public ValidatoreErrori(IProtocolFactory<?> protocolFactory,IState state) throws ProtocolException{
+		super(protocolFactory, state);
 		this.costanti = protocolFactory.createTraduttore();
 	}
 	

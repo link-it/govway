@@ -10,11 +10,17 @@
             <servizio tipo="AS4" nome="SoapExample"/>
             <azione nome="testXml"/>
             <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="AS4" nome="Red"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa nome="SoapExample/test" stateless="abilitato">
             <servizio tipo="AS4" nome="SoapExample"/>
             <azione nome="test"/>
             <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="AS4" nome="Red"/>
+	    </soggetti>
         </porta-applicativa>
 
         <!-- Esempio REST -->
@@ -22,11 +28,17 @@
             <servizio tipo="AS4" nome="RestExample"/>
             <azione nome="test"/>
             <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="AS4" nome="Red"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa nome="RestExample/test2" stateless="abilitato">
             <servizio tipo="AS4" nome="RestExample"/>
             <azione nome="test2"/>
             <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="AS4" nome="Red"/>
+	    </soggetti>
         </porta-applicativa>
         
         

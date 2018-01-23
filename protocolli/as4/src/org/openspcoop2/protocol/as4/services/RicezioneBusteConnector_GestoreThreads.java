@@ -66,7 +66,7 @@ public class RicezioneBusteConnector_GestoreThreads implements IGestoreRunnableI
 	public Runnable newRunnable(RunnableLogger runnableLog) throws UtilsException {
 		try {
 			RicezioneBusteConnector connector = new RicezioneBusteConnector(runnableLog, this.asProperties);
-			return new Runnable(runnableLog, connector, this.asProperties.getDomibusGatewayJMS_threadCheckIntervalSeconds());
+			return new Runnable(runnableLog, connector, this.asProperties.getDomibusGatewayJMS_threadCheckIntervalMs());
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}

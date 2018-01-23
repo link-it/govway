@@ -35,13 +35,14 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
 import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
@@ -60,7 +61,7 @@ import org.xml.sax.SAXException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopValidazioneConSchema extends BasicComponentFactory implements IValidazioneConSchema {
+public class SPCoopValidazioneConSchema extends BasicStateComponentFactory implements IValidazioneConSchema {
 
 	/** Validatore della busta SPCoop */
 	private static ValidatoreXSD validatoreBustaSPCoop = null;
@@ -81,8 +82,8 @@ public class SPCoopValidazioneConSchema extends BasicComponentFactory implements
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidazioneConSchema(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		super(protocolFactory);		
+	public SPCoopValidazioneConSchema(IProtocolFactory<?> protocolFactory,IState state) throws ProtocolException{
+		super(protocolFactory, state);		
 		this.xmlUtils = XMLUtils.getInstance();
 	}
 
@@ -203,7 +204,7 @@ public class SPCoopValidazioneConSchema extends BasicComponentFactory implements
 		// Validazione eGov
 		try {
 
-			SPCoopBustaRawContent bustaElement = (SPCoopBustaRawContent) this.protocolFactory.createValidazioneSintattica().getBustaRawContent_senzaControlli(message);
+			SPCoopBustaRawContent bustaElement = (SPCoopBustaRawContent) this.protocolFactory.createValidazioneSintattica(this.state).getBustaRawContent_senzaControlli(message);
 			SOAPElement header = bustaElement.getElement();
 			
 			if(isSPCoopErroreProcessamento==false && isSPCoopErroreIntestazione==false){

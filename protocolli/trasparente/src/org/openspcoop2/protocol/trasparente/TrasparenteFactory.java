@@ -29,6 +29,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.trasparente.properties.TrasparenteTestsuiteDynamicConfiguration;
 import org.openspcoop2.protocol.trasparente.builder.TrasparenteBustaBuilder;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
@@ -67,17 +68,17 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public TrasparenteBustaBuilder createBustaBuilder() throws ProtocolException {
-		return new TrasparenteBustaBuilder(this);
+	public TrasparenteBustaBuilder createBustaBuilder(IState state) throws ProtocolException {
+		return new TrasparenteBustaBuilder(this,state);
 	}
 
 		
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	@Override
-	public TrasparenteValidazioneSintattica createValidazioneSintattica()
+	public TrasparenteValidazioneSintattica createValidazioneSintattica(IState state)
 			throws ProtocolException {
-		return new TrasparenteValidazioneSintattica(this);
+		return new TrasparenteValidazioneSintattica(this,state);
 	}
 
 

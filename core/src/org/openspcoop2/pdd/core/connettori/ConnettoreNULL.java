@@ -68,7 +68,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 			// SIMULAZIONE WRITE_TO
 			
 			org.apache.commons.io.output.NullOutputStream nullOutputStream = new org.apache.commons.io.output.NullOutputStream();
-			request.getRequestMessage().writeTo(nullOutputStream,true);
+			this.requestMsg.writeTo(nullOutputStream,true);
 			nullOutputStream.flush();
 			nullOutputStream.close();
 		
@@ -111,7 +111,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 		
 		try{
 					
-			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(request.getRequestMessage().getMessageType(),MessageRole.RESPONSE);
+			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE);
 			
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;

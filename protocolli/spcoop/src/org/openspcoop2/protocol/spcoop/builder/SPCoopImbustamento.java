@@ -105,8 +105,9 @@ public class SPCoopImbustamento {
 	private AbstractXMLUtils xmlUtils = null;
 	private ITraduttore traduttore = null;
 	private IProtocolManager protocolManager = null;
+	private IState state;
 
-	public SPCoopImbustamento(IProtocolFactory<SOAPHeaderElement> factory) throws ProtocolException{
+	public SPCoopImbustamento(IProtocolFactory<SOAPHeaderElement> factory, IState state) throws ProtocolException{
 		this.factory = factory;
 		this.log = factory.getLogger();
 		this.spcoopProperties = SPCoopProperties.getInstance(this.log);
@@ -114,8 +115,10 @@ public class SPCoopImbustamento {
 		this.tipiSoggetti = this.factory.createProtocolConfiguration().getTipiSoggetti();
 		this.tipiServizi = this.factory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP);
 		
-		this.validazioneSemantica = (SPCoopValidazioneSemantica) this.factory.createValidazioneSemantica();
-		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.factory.createValidazioneSintattica();
+		this.state = state;
+		
+		this.validazioneSemantica = (SPCoopValidazioneSemantica) this.factory.createValidazioneSemantica(this.state);
+		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.factory.createValidazioneSintattica(this.state);
 		
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		
@@ -182,7 +185,7 @@ public class SPCoopImbustamento {
 	 * @return un oggetto String contenente l'identificativo secondo specifica eGov.
 	 * 
 	 */
-	public String buildID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
+	public String buildID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
 
 		
 		String idPD = idSoggetto.getCodicePorta();
@@ -201,7 +204,7 @@ public class SPCoopImbustamento {
 			
 			ConfigurazionePdD config = this.factory.getConfigurazionePdD();
 			
-			serialGenerator = new IDSerialGenerator(config.getLog(),state,config.getTipoDatabase());
+			serialGenerator = new IDSerialGenerator(config.getLog(),this.state,config.getTipoDatabase());
 			
 			serialGeneratorParameter = new IDSerialGeneratorParameter(this.factory.getProtocol());
 			serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());

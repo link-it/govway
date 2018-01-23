@@ -76,12 +76,12 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiMessage;
 import org.openspcoop2.pdd.mdb.EsitoLib;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.InoltroRisposteMessage;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.core.RicezioneBusteMessage;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiMessage;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.DettaglioEccezioneOpenSPCoop2Builder;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -772,10 +772,10 @@ public class EJBUtils {
 
 				// --- Creo lo stato del messaggio,visto che sto' spedendo una risposta generata da OpenSPCoop, 
 				// creando anche un IDResponse)
-				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
+				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 
 				idRisposta = 
-					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+					imbustatore.buildID(this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RISPOSTA);
@@ -852,9 +852,9 @@ public class EJBUtils {
 			String idSbloccoRicezioneContenutiApplicativi = null;
 			if(consegnaRispostaAsincrona && idModuloInAttesa != null){
 				//	Creo stato per msgSbloccoRicezioneContenutiApplicativi
-				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
+				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 				idSbloccoRicezioneContenutiApplicativi= 
-					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+					imbustatore.buildID(this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RISPOSTA);
@@ -1013,9 +1013,9 @@ public class EJBUtils {
 				if(idRisposta == null){
 					// Creo ID Risposta
 					
-					Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
+					Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 					idRisposta = 
-						imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+						imbustatore.buildID(this.identitaPdD, idTransazione, 
 								this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 								this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 								RuoloMessaggio.RISPOSTA);
@@ -1104,9 +1104,9 @@ public class EJBUtils {
 			/* ------- Gestione msgSbloccoRicezioneContenutiApplicativi --------------- */
 			if(consegnaRispostaAsincrona && idModuloInAttesa != null){
 				//	Creo stato per msgSbloccoRicezioneContenutiApplicativi
-				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
+				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
 				String idSbloccoRicezioneContenutiApplicativi= 
-					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+					imbustatore.buildID(this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RISPOSTA);
@@ -1428,11 +1428,13 @@ public class EJBUtils {
 	public boolean isGestioneSolamenteConIntegrationManager() {
 		return this.gestioneSolamenteConIntegrationManager;
 	}
-	public Behaviour sendToConsegnaContenutiApplicativi(RichiestaApplicativa richiestaApplicativa,Busta busta,
+	public Behaviour sendToConsegnaContenutiApplicativi(RequestInfo requestInfo,
+			RichiestaApplicativa richiestaApplicativa,Busta busta,
 			GestoreMessaggi gestoreMessaggi,PortaApplicativa pa,RepositoryBuste repositoryBuste) throws EJBUtilsException{
-		return sendToConsegnaContenutiApplicativi(richiestaApplicativa, busta, gestoreMessaggi, pa, repositoryBuste, null);
+		return sendToConsegnaContenutiApplicativi(requestInfo,richiestaApplicativa, busta, gestoreMessaggi, pa, repositoryBuste, null);
 	}
-	public Behaviour sendToConsegnaContenutiApplicativi(RichiestaApplicativa richiestaApplicativa,Busta busta,
+	public Behaviour sendToConsegnaContenutiApplicativi(RequestInfo requestInfo,
+			RichiestaApplicativa richiestaApplicativa,Busta busta,
 			GestoreMessaggi gestoreMessaggi,PortaApplicativa pa,RepositoryBuste repositoryBuste,
 			RichiestaDelegata localForwardRichiestaDelegata) throws EJBUtilsException{
 
@@ -1479,7 +1481,7 @@ public class EJBUtils {
 				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_BEHAVIOUR, pa.getBehaviour());
 				IBehaviour behaviourImpl = (IBehaviour) Loader.getInstance().newInstance(tipoBehaviour);
 				gestoreMessaggi.setPortaDiTipoStateless(stateless);
-				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta);
+				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, requestInfo);
 				
 				behaviourResponseTo = behaviour!=null && behaviour.isResponseTo();
 				
@@ -1601,7 +1603,7 @@ public class EJBUtils {
 								this.msgDiag.getCodice(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"));
 					}
 					boolean GESTISCI_BEHAVIOUR = true;
-					List<String> idServiziApplicativiVirtuali = soggettiVirtuali.getIdServiziApplicativi(GESTISCI_BEHAVIOUR,gestoreMessaggi,busta);
+					List<String> idServiziApplicativiVirtuali = soggettiVirtuali.getIdServiziApplicativi(GESTISCI_BEHAVIOUR,gestoreMessaggi,busta, requestInfo);
 					if(idServiziApplicativiVirtuali.size()>0){
 						serviziApplicativiConfigurazione = idServiziApplicativiVirtuali.toArray(new String[1]);
 					}
@@ -2160,10 +2162,10 @@ public class EJBUtils {
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 
 		//Costruisco busta Errore 
-		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
+		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
 
 		String id_bustaErrore = 
-			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+			imbustatore.buildID(this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
@@ -2247,9 +2249,9 @@ public class EJBUtils {
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
 
 		//Costruisco busta Errore 
-		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
+		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
 		String id_bustaErrore = 
-			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, 
+			imbustatore.buildID(this.identitaPdD, 
 					(String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
@@ -2289,9 +2291,9 @@ public class EJBUtils {
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 
 		//Costruisco busta Errore 
-		Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
+		Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
 		String id_bustaErrore = 
-			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+			imbustatore.buildID(this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
@@ -2507,9 +2509,9 @@ public class EJBUtils {
 		RequestInfo requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 
 		// ID Busta Sblocco
-		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
+		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 		String idSblocco =	
-			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+			imbustatore.buildID(this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
@@ -2522,9 +2524,9 @@ public class EJBUtils {
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 		
 		// ID Busta Sblocco
-		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
+		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 		String idSblocco = 
-			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+			imbustatore.buildID(this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
@@ -2556,9 +2558,9 @@ public class EJBUtils {
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 		
 		// ID Busta Costruita
-		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
+		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 		String id_busta = 
-			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
+			imbustatore.buildID(this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);

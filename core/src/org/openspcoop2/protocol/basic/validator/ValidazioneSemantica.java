@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.basic.validator;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -41,11 +41,11 @@ import org.openspcoop2.utils.digest.IDigestReader;
  * @version $Rev$, $Date$
  * 
  */
-public class ValidazioneSemantica extends BasicComponentFactory implements
+public class ValidazioneSemantica extends BasicStateComponentFactory implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica {
 
-	public ValidazioneSemantica(IProtocolFactory<?> factory) throws ProtocolException{
-		super(factory);
+	public ValidazioneSemantica(IProtocolFactory<?> factory,IState state) throws ProtocolException{
+		super(factory,state);
 	}
 
 	
@@ -61,7 +61,7 @@ public class ValidazioneSemantica extends BasicComponentFactory implements
 	}
 
 	@Override
-	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, IState state,
+	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, 
 			ProprietaValidazione tipoValidazione, RuoloBusta tipoBusta)
 			throws ProtocolException {
 		return new ValidazioneSemanticaResult(null, null, null, null, null, null);

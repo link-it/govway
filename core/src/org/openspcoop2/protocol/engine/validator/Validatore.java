@@ -227,7 +227,7 @@ public class Validatore  {
 				return false;
 			}
 			this.busta = this.validatoreSintattico.getBusta();
-			IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori();
+			IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori(this.state);
 			ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
 			pValidazioneErrori.setIgnoraEccezioniNonGravi(this.protocolManager.isIgnoraEccezioniNonGravi());
 			this.isMessaggioErrore = validatoreErrori.isBustaErrore(this.busta,this.msg,pValidazioneErrori);
@@ -354,7 +354,7 @@ public class Validatore  {
 			if(this.protocolFactory.createProtocolVersionManager(this.versioneProtocollo).isEccezioniLivelloInfoAbilitato()){
 				// Eventuali eccezioni trovate in buste errore, di livello INFO, non marcano il msg come BustaErrore, rieffettuo il test
 				if(this.isMessaggioErrore){
-					IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori();
+					IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori(this.state);
 					ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
 					pValidazioneErrori.setIgnoraEccezioniNonGravi(this.protocolManager.isIgnoraEccezioniNonGravi());
 					pValidazioneErrori.setVersioneProtocollo(this.versioneProtocollo);
@@ -388,7 +388,7 @@ public class Validatore  {
 				
 			/** Leggo contesto sicurezza prima di processare la parte MessageSecurity */
 			if(messageSecurityContext!= null && messageSecurityContext.getDigestReader()!=null){
-				this.securityInfo = this.protocolFactory.createValidazioneSemantica().readSecurityInformation(messageSecurityContext.getDigestReader(),
+				this.securityInfo = this.protocolFactory.createValidazioneSemantica(this.state).readSecurityInformation(messageSecurityContext.getDigestReader(),
 						this.msg);
 			}		
 
@@ -553,7 +553,8 @@ public class Validatore  {
 			if( this.proprietaValidazione.isValidazioneConSchema() ){
 				ValidazioneConSchema schemaValidator = new ValidazioneConSchema(this.msg,
 						this.isMessaggioErroreProcessamento, this.isMessaggioErroreIntestazione,
-						this.proprietaValidazione.isValidazioneManifestAttachments(), this.log, this.protocolFactory);
+						this.proprietaValidazione.isValidazioneManifestAttachments(), this.log, this.protocolFactory,
+						this.state);
 				schemaValidator.valida(hasAttachments);
 				addListaEccezioni(schemaValidator.getEccezioniValidazione(),this.erroriValidazione);
 				addListaEccezioni(schemaValidator.getEccezioniProcessamento(),this.erroriProcessamento);

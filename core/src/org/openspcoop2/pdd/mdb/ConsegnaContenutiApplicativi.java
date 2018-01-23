@@ -107,10 +107,10 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
@@ -787,7 +787,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 		try{
 			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log,
-					this.idModulo, requestInfo);
+					this.idModulo, requestInfo, openspcoopstate.getStatoRichiesta());
 			generatoreErrorePA.updateInformazioniCooperazione(soggettoFruitore, idServizio);
 			generatoreErrorePA.updateInformazioniCooperazione(servizioApplicativoFruitore);
 			generatoreErrorePA.updateTipoPdD(TipoPdD.APPLICATIVA);
@@ -963,9 +963,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(existsModuloInAttesaRispostaApplicativa){
 			msgDiag.mediumDebug("Creazione id risposta...");
 			try{
-				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory);
+				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = 
+						new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory,openspcoopstate.getStatoRichiesta());
 				idMessageResponse = 
-					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, 
+					imbustatore.buildID(identitaPdD, 
 							(String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID),
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
@@ -1578,7 +1579,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			if(configurazionePdDManager.dumpMessaggi() ){
 				
 				// Invoco il metodo getMessage del ConnettoreMsg per provocare l'eventuale sbustamento delle informazioni di protocollo
-				connettoreMsg.getRequestMessage();
+				connettoreMsg.getRequestMessage(requestInfo);
 				
 				String idMessaggioDump = idMessaggioConsegna;
 				if(idMessaggioPreBehaviour!=null){
@@ -2082,17 +2083,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				
 				String messaggioErroreConsegnaConnettore = "Consegna ["+tipoConnector+"] con errore: "+motivoErroreConsegna;
 				if(existsModuloInAttesaRispostaApplicativa) {
-					if(connettoreMsg.getRequestMessage().getParseException() != null){
+					OpenSPCoop2Message connettoreMsgRequest = connettoreMsg.getRequestMessage(requestInfo);
+					if(connettoreMsgRequest.getParseException() != null){
 						
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(connettoreMsg.getRequestMessage().getParseException().getParseException()),
+								ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(connettoreMsgRequest.getParseException().getParseException()),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
-								connettoreMsg.getRequestMessage().getParseException().getParseException(),connettoreMsg.getRequestMessage().getParseException());
+								connettoreMsgRequest.getParseException().getParseException(),connettoreMsgRequest.getParseException());
 						
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,connettoreMsg.getRequestMessage().getParseException().getParseException().getMessage());
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,connettoreMsgRequest.getParseException().getParseException().getMessage());
 						return esito;
 					} else if(responseMessage==null && 
 							!pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){

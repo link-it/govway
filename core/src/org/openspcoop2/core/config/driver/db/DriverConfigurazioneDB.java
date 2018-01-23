@@ -141,6 +141,7 @@ import org.openspcoop2.core.config.driver.IDServizioUtils;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneSearch;
+import org.openspcoop2.core.config.driver.PortaDelegatedByUtils;
 import org.openspcoop2.core.config.driver.TipologiaServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -2282,7 +2283,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			pa.add(this.getPortaApplicativa(idPA));
 		}
 
-		return pa;
+		return PortaDelegatedByUtils.filter(pa,service);
 	}
 
 	@Override

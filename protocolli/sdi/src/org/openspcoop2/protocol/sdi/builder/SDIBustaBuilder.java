@@ -26,6 +26,8 @@ import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdi.SDIBustaRawContent;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
@@ -58,20 +60,20 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 	/** SDISbustamento */
 	private SDISbustamento sdiSbustamento;
 	
-	public SDIBustaBuilder(IProtocolFactory<SOAPElement> factory) throws ProtocolException {
-		super(factory);
+	public SDIBustaBuilder(IProtocolFactory<SOAPElement> factory, IState state) throws ProtocolException {
+		super(factory, state);
 		this.sdiProperties = SDIProperties.getInstance(this.log);
 		this.sdiImbustamento = new SDIImbustamento(this);
 		this.sdiSbustamento = new SDISbustamento(this);
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		
-		ProtocolMessage protocolMessage = super.imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 		
 		// Modifico il messaggio per aggiungere la struttura SDI in base all'azione invocata e al ruolo (Richiesta/Risposta) e al fatto che non vi sono errori.
 		// TODO: il body attuale lo devo inserire come valore codificato in base 64 tramite la struttura Corretta
@@ -100,11 +102,11 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 			// Servizio
 			if(SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE.equals(busta.getServizio())
 					&& SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE.equals(busta.getAzione())){
-				element = this.sdiImbustamento.creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(this.protocolFactory, state, busta, msg);
+				element = this.sdiImbustamento.creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(this.protocolFactory, this.state, busta, msg);
 			}
 			else if(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA.equals(busta.getServizio())
 					&& SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO.equals(busta.getAzione())){
-				element = this.sdiImbustamento.creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(this.protocolFactory,state,busta,msg,
+				element = this.sdiImbustamento.creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(this.protocolFactory,this.state,busta,msg,
 						this.sdiProperties.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov(),
 						this.sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov());
 			}
@@ -160,7 +162,7 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 			// Servizio
 			if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio())
 					&& SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
-				element = this.sdiImbustamento.creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(this.protocolFactory,state,busta,msg);
+				element = this.sdiImbustamento.creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(this.protocolFactory,this.state,busta,msg);
 			}
 			else{
 				boolean whiteList = false;
@@ -183,9 +185,9 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 	
 	@Override
-	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
-			FaseSbustamento faseSbustamento) throws ProtocolException{
+			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException{
 		
 		try{
 		

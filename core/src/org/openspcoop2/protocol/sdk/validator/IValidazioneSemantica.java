@@ -27,7 +27,6 @@ import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
-import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.digest.IDigestReader;
 
 
@@ -99,14 +98,13 @@ public interface IValidazioneSemantica extends IComponentFactory {
 	 *
 	 * @param msg Messaggio su cui effettuare la validazione semantica
 	 * @param busta Busta con i dati di cooperazione da validare
-	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
 	 * @param proprietaValidazione Contiene alcune indicazione sulla modalità di validazione del messaggio
 	 * @param tipoBusta Ruolo della busta da validare
 	 * @return ValidazioneSemanticaResult cotenente i risultati della validazione.
 	 * @throws ProtocolException
 	 */
 	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, 
-			IState state, ProprietaValidazione proprietaValidazione, 
+			ProprietaValidazione proprietaValidazione, 
 			RuoloBusta tipoBusta) throws ProtocolException;
 	
 	/**

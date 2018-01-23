@@ -988,7 +988,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			// Eventuale sbustamento
 			if(sbustamento_informazioni_protocollo){
 				try{
-					IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder();
+					IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder(stato.getStatoRichiesta());
 					
 					FaseSbustamento fase = null;
 					if(RuoloMessaggio.RICHIESTA.equals(fase)){
@@ -1000,8 +1000,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = this.propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(stato.getStatoRichiesta(),consegnaMessage, 
-							busta, ruoloMessaggio, proprietaManifest, fase);
+					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(consegnaMessage, 
+							busta, ruoloMessaggio, proprietaManifest, fase, null, null); // TODO: salvare nel messaggio su I.M. il service binding associato ??? Oppure fare prima lo sbustamento ??
 					consegnaMessage = protocolMessage.getMessage(); // updated
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");

@@ -22,9 +22,7 @@
 
 package org.openspcoop2.protocol.as4.services;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -37,8 +35,18 @@ import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.servlet.ServletException;
 
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.pdd.services.connector.ConnectorUtils;
+import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.pdd.services.service.RicezioneBusteService;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
+import org.openspcoop2.protocol.as4.services.message.AS4ConnectorInMessage;
+import org.openspcoop2.protocol.as4.services.message.AS4ConnectorOutMessage;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.threads.IRunnableInstance;
@@ -90,7 +98,7 @@ public class RicezioneBusteConnector implements IRunnableInstance{
 				throw new JMSException("ExceptionJMSListener ha rilevato una connessione jms corrotta: " + this.exceptionListenerJMS.getException().getMessage());
 			}
 		
-			Message received = (Message) this.receiver.receive(1000);
+			Message received = (Message) this.receiver.receive(1); // sblocco immediatamente se non e' presente un messsaggio
 			if(received==null) {
 				this.log.debug("Non sono presenti messaggi in coda");
 				return;
@@ -98,54 +106,69 @@ public class RicezioneBusteConnector implements IRunnableInstance{
 			
 			if(received instanceof MapMessage) {
 				MapMessage map = (MapMessage) received;
-				Enumeration<?> mapNames = map.getMapNames();
-				while (mapNames.hasMoreElements()) {
-					Object name = (Object) mapNames.nextElement();
-					if(name instanceof String) {
-						String key = (String) name;
-						Object value = received.getObjectProperty(key);
-						if(value!=null) {
-							this.log.debug("\t-Map["+key+"]("+value.getClass().getName()+"): "+value);
-						}
-						else {
-							byte[] bytes = map.getBytes(key);
-							if(bytes!=null) {
-								File f = File.createTempFile("content", ".bin");
-								FileOutputStream fos =new FileOutputStream(f);
-								fos.write(bytes);
-								fos.flush();
-								fos.close();
-								this.log.debug("\t-Map["+key+"] scritto in "+f.getAbsolutePath());
-							}
-							else {
-								this.log.debug("\t-Map["+key+"]: "+value);
-							}
-						}
-					}
-					else {
-						this.log.debug("\t-Map con key diverso dal tipo String: "+name);
+				
+				RicezioneBusteConnettoreUtils utils = new RicezioneBusteConnettoreUtils(this.log);
+				
+				if(this.asProperties.isDomibusGatewayJMS_debug()) {
+					utils.debug(map);
+				}
+				
+				HashMap<String, byte[]> content = new HashMap<String, byte[]>();
+				UserMessage userMessage = new UserMessage();
+				utils.fillUserMessage(map, userMessage, content);
+				
+								
+				AS4ConnectorInMessage as4In = null;
+				try{
+					as4In = new AS4ConnectorInMessage(userMessage, content);
+				}catch(Exception e){
+					ConnectorUtils.getErrorLog().error("AS4ConnectorInMessage init error: "+e.getMessage(),e);
+					throw new ServletException(e.getMessage(),e);
+				}
+				
+				IProtocolFactory<?> protocolFactory = null;
+				try{
+					protocolFactory = as4In.getProtocolFactory();
+				}catch(Throwable e){}
+				
+				AS4ConnectorOutMessage as4Out = null;
+				try{
+					as4Out = new AS4ConnectorOutMessage();
+				}catch(Exception e){
+					ConnectorUtils.getErrorLog().error("AS4ConnectorOutMessage init error: "+e.getMessage(),e);
+					throw new ServletException(e.getMessage(),e);
+				}
+					
+				RicezioneBusteExternalErrorGenerator generatoreErrore = null;
+				try{
+					generatoreErrore = 
+							new RicezioneBusteExternalErrorGenerator(protocolFactory.getLogger(),
+									org.openspcoop2.pdd.services.connector.RicezioneBusteConnector.ID_MODULO, as4In.getRequestInfo(), null);
+				}catch(Exception e){
+					throw new Exception("Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e),e);
+				}
+					
+				
+				RicezioneBusteService ricezioneBuste = new RicezioneBusteService(generatoreErrore);
+				
+				try{
+					ricezioneBuste.process(as4In, as4Out);
+				}catch(Exception e){
+					ConnectorUtils.getErrorLog().error("RicezioneContenutiApplicativi.process error: "+e.getMessage(),e);
+					throw new ServletException(e.getMessage(),e);
+				}
+				
+				if(as4Out.getResponseStatus()!=200 && as4Out.getResponseStatus()!=202) {
+					throw new Exception("Servizio Ricezione Buste terminato con codice: "+as4Out.getResponseStatus());
+				}
+				if(as4Out.getMessage()!=null) {
+					OpenSPCoop2SoapMessage soapMsg = as4Out.getMessage().castAsSoap();
+					if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()) {
+						throw new Exception("Servizio Ricezione Buste terminato con un soapFault: "+
+								SoapUtils.toString(soapMsg.getSOAPBody().getFault()));
 					}
 				}
 				
-				this.log.debug("Ricevuto msg: "+received.getJMSMessageID());
-				this.log.debug("Ricevuto msg: "+received.getClass().getName());
-				Enumeration<?> en = received.getPropertyNames();
-				while (en.hasMoreElements()) {
-					Object name = (Object) en.nextElement();
-					if(name instanceof String) {
-						String key = (String) name;
-						Object value = received.getObjectProperty(key);
-						if(value!=null) {
-							this.log.debug("\t-Property["+key+"]("+value.getClass().getName()+"): "+value);
-						}
-						else {
-							this.log.debug("\t-Property["+key+"]: "+value);
-						}
-					}
-					else {
-						this.log.debug("\t-Property con key diverso dal tipo String: "+name);
-					}
-				}
 			}
 			else {
 				throw new Exception("Tipo di messaggio ["+received.getClass().getName()+"] non atteso");
@@ -186,7 +209,7 @@ public class RicezioneBusteConnector implements IRunnableInstance{
 		}
 			
 	}
-
+	
 	
 	private void initJMS() throws Exception {
 		

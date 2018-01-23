@@ -78,9 +78,11 @@ public class AS4ConsoleCostanti {
 	public static final String AS4_TITLE_AZIONE_LABEL = AS4_PREFIX_TITLE_LABEL+"Action Info";
 	public static final String AS4_TITLE_AZIONE_ID = "as4AzioneTitleId";
 	
+	public static final String AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID_LABEL = "Action Name";
+	public static final String AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION;
+	
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL = "Payload Profile";
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE;
-	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT = "MessageProfile";
 	
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_LABEL = "Payload Compress";
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD;

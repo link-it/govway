@@ -55,14 +55,15 @@ public class Imbustamento  {
 	@SuppressWarnings("unused")
 	private Logger log = null;
 	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
+	private IState state;
 	
-	public Imbustamento(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory) throws ProtocolException{
+	public Imbustamento(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
 			this.log = LoggerWrapperFactory.getLogger(Imbustamento.class);
 		this.protocolFactory = protocolFactory;
-	
+		this.state = state;
 	}
 
 	public org.openspcoop2.protocol.sdk.IProtocolFactory<?> getProtocolFactory(){
@@ -79,10 +80,10 @@ public class Imbustamento  {
 	//	return this.buildID(idSoggetto, idTransazione, Configurazione.getAttesaAttiva(), Configurazione.getCheckInterval(), isRichiesta);
 	//}
 
-	public String buildID(IState state, IDSoggetto idSoggetto, String idTransazione, long attesaAttiva,
+	public String buildID(IDSoggetto idSoggetto, String idTransazione, long attesaAttiva,
 			int checkInterval, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
 		try{
-			return this.protocolFactory.createBustaBuilder().newID(state,idSoggetto, idTransazione, ruoloMessaggio);	
+			return this.protocolFactory.createBustaBuilder(this.state).newID(idSoggetto, idTransazione, ruoloMessaggio);	
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -93,12 +94,12 @@ public class Imbustamento  {
 
 	/* ----------------  Metodi per la costruzione di una busta  -------------------- */
 
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
-		return this.imbustamento(state, msg, busta,integrazione, false, RuoloMessaggio.RISPOSTA, false, proprietaManifestAttachments);
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
+		return this.imbustamento(msg, busta,integrazione, false, RuoloMessaggio.RISPOSTA, false, proprietaManifestAttachments);
 	}
 
 
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
 			boolean gestioneManifest,RuoloMessaggio ruoloMessaggio,boolean scartaBody,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 		if(proprietaManifestAttachments==null){
@@ -106,7 +107,7 @@ public class Imbustamento  {
 		}
 		proprietaManifestAttachments.setGestioneManifest(gestioneManifest);
 		proprietaManifestAttachments.setScartaBody(scartaBody);
-		return this.protocolFactory.createBustaBuilder().imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		return this.protocolFactory.createBustaBuilder(this.state).imbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 	}
 
 
@@ -118,7 +119,7 @@ public class Imbustamento  {
 	 */
 
 	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute) throws ProtocolException{
-		return this.protocolFactory.createBustaBuilder().addTrasmissione(message, trasmissione);
+		return this.protocolFactory.createBustaBuilder(this.state).addTrasmissione(message, trasmissione);
 	}
 
 

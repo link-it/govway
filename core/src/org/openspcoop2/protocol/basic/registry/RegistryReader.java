@@ -28,6 +28,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -37,6 +38,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -51,6 +53,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordoAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortType;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -533,8 +536,7 @@ public class RegistryReader implements IRegistryReader {
 		}catch(Exception e){
 			uriAccordo = id.getIdAccordo().toString();
 		}
-		throw new RegistryNotFound("Azione ["+id.getNome()+"] non trovata all'interno del PortType ["+id.getNome()+
-					"] dell'accordo ["+uriAccordo+"]");
+		throw new RegistryNotFound("Azione ["+id.getNome()+"] non trovata all'interno dell'accordo ["+uriAccordo+"]");
 	}
 	
 	@Override
@@ -585,6 +587,70 @@ public class RegistryReader implements IRegistryReader {
 		}
 	} 
 	
+	@Override
+	public Resource getResourceAccordo(IDResource id) throws RegistryNotFound,RegistryException{
+		AccordoServizioParteComune as = this.getAccordoServizioParteComune(id.getIdAccordo());
+		for (Resource resourceCheck : as.getResourceList()) {
+			if(resourceCheck.getNome().equals(id.getNome())){
+				return resourceCheck;
+			}
+		}
+
+		String uriAccordo = null;
+		try{
+			uriAccordo = IDAccordoFactory.getInstance().getUriFromIDAccordo(id.getIdAccordo());
+		}catch(Exception e){
+			uriAccordo = id.getIdAccordo().toString();
+		}
+		throw new RegistryNotFound("Risorsa ["+id.getNome()+"] non trovata all'interno dell'accordo ["+uriAccordo+"]");
+	}
+	@Override
+	public List<IDResource> findIdResourceAccordo(FiltroRicercaRisorse filtro) throws RegistryNotFound,RegistryException{
+		try{
+			org.openspcoop2.core.registry.driver.FiltroRicercaResources filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaResources();
+			
+			// azioni
+			if(filtro.getNomeRisorsa()!=null){
+				filtroDriver.setResourceName(filtro.getNomeRisorsa());
+			}
+			List<FiltroRicercaProtocolProperty> listPP_resources = ProtocolPropertiesUtils.convert(filtro.getProtocolPropertiesRisorsa());
+			if(listPP_resources!=null && listPP_resources.size()>0){
+				filtroDriver.setProtocolPropertiesResources(listPP_resources);
+			}	
+			
+			// accordo
+			if(filtro.getNome()!=null){
+				filtroDriver.setNomeAccordo(filtro.getNome());
+			}
+			if(filtro.getVersione()!=null){
+				filtroDriver.setVersione(filtro.getVersione());
+			}
+			if(filtro.getSoggetto()!=null){
+				if(filtro.getSoggetto().getTipo()!=null){
+					filtroDriver.setTipoSoggettoReferente(filtro.getSoggetto().getTipo());
+				}
+				if(filtro.getSoggetto().getNome()!=null){
+					filtroDriver.setNomeSoggettoReferente(filtro.getSoggetto().getNome());
+				}
+			}
+			List<FiltroRicercaProtocolProperty> listPP = ProtocolPropertiesUtils.convert(filtro.getProtocolProperties());
+			if(listPP!=null && listPP.size()>0){
+				filtroDriver.setProtocolPropertiesAccordo(listPP);
+			}	
+			if(filtro.getEscludiServiziComposti()!=null){
+				filtroDriver.setServizioComposto(!filtro.getEscludiServiziComposti());
+			}
+			if(filtro.getEscludiServiziNonComposti()!=null){
+				filtroDriver.setServizioComposto(filtro.getEscludiServiziNonComposti());
+			}
+
+			return this.driverRegistroServiziGET.getAllIdResource(filtroDriver);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	} 
 	
 	
 	
@@ -627,6 +693,9 @@ public class RegistryReader implements IRegistryReader {
 			org.openspcoop2.core.registry.driver.FiltroRicercaServizi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaServizi();
 			
 			// servizio
+			if(filtro.getIdAccordoServizioParteComune()!=null){
+				filtroDriver.setIdAccordoServizioParteComune(filtro.getIdAccordoServizioParteComune());
+			}
 			if(filtro.getTipoServizio()!=null){
 				filtroDriver.setTipo(filtro.getTipoServizio());
 			}
@@ -682,6 +751,9 @@ public class RegistryReader implements IRegistryReader {
 			}
 			
 			// servizio
+			if(filtro.getIdAccordoServizioParteComune()!=null){
+				filtroDriver.setIdAccordoServizioParteComune(filtro.getIdAccordoServizioParteComune());
+			}
 			if(filtro.getTipoServizio()!=null){
 				filtroDriver.setTipo(filtro.getTipoServizio());
 			}

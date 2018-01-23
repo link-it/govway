@@ -27,7 +27,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.ImbustamentoErrore;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -57,13 +57,21 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 
 	private boolean forceSoapPrefixCompatibilitOpenSPCoopV1 = false;
 	
-	public RicezioneBusteExternalErrorGenerator(Logger log, String idModulo, RequestInfo requestInfo) throws ProtocolException{
+	private IState state;
+	public void updateState(IState state) {
+		this.state = state;
+	}
+
+	public RicezioneBusteExternalErrorGenerator(Logger log, String idModulo, RequestInfo requestInfo, IState state) throws ProtocolException{
 		
 		super(log, idModulo, requestInfo, TipoPdD.APPLICATIVA, false);
-			
-		this.imbustamentoErrore = new ImbustamentoErrore(this.log, this.protocolFactory, this.serviceBinding);
+
+		this.state = state;
+		
+		this.imbustamentoErrore = new ImbustamentoErrore(this.log, this.protocolFactory, this.state, this.serviceBinding);
 		
 		this.forceSoapPrefixCompatibilitOpenSPCoopV1 = this.openspcoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1();
+
 	}
 	
 	public OpenSPCoop2Message buildErroreProcessamento(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione) {
@@ -144,7 +152,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 	
 	
 	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationError integrationError,
-			IState state, Busta busta,Integrazione integrazione, String idTransazione,
+			Busta busta,Integrazione integrazione, String idTransazione,
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
@@ -152,7 +160,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(state,this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -169,7 +177,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 	}
 	
 	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationError integrationError,
-			IState state, Busta busta,Integrazione integrazione, String idTransazione,
+			Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreCooperazione erroreCooperazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
@@ -178,7 +186,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(state,this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -195,7 +203,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 	}
 	
 	public OpenSPCoop2Message buildErroreProtocollo_Processamento(IntegrationError integrationError,
-			IState state, Busta busta,Integrazione integrazione, String idTransazione,
+			Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
@@ -204,7 +212,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(state,this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					busta, integrazione, idTransazione, erroreIntegrazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -221,7 +229,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 	}
 	
 	public  OpenSPCoop2Message buildErroreProtocollo_Intestazione(IntegrationError integrationError,
-			IState state, Busta busta,Integrazione integrazione, String idTransazione,		
+			Busta busta,Integrazione integrazione, String idTransazione,		
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
@@ -229,7 +237,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(state,this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -245,7 +253,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 	}
 	
 	public OpenSPCoop2Message buildErroreProtocollo_Intestazione(IntegrationError integrationError,
-			IState state, Busta busta,Integrazione integrazione, 
+			Busta busta,Integrazione integrazione, 
 			String idTransazione,
 			ErroreCooperazione erroreCooperazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -257,7 +265,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(state,this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,

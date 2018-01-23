@@ -90,8 +90,9 @@ public class ImbustamentoErrore  {
 	private DettaglioEccezioneOpenSPCoop2Builder dettaglioEccezioneOpenSPCoop2Builder;
 	private ServiceBinding serviceBinding;
 	private Imbustamento imbustamento;
+	private IState state;
 	
-	public ImbustamentoErrore(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) throws ProtocolException{
+	public ImbustamentoErrore(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, IState state, ServiceBinding serviceBinding) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
@@ -106,7 +107,9 @@ public class ImbustamentoErrore  {
 		
 		this.serviceBinding = serviceBinding;
 		
-		this.imbustamento = new Imbustamento(this.log, protocolFactory);
+		this.state = state;
+		
+		this.imbustamento = new Imbustamento(this.log, protocolFactory, state);
 	}
 
 	public org.openspcoop2.protocol.sdk.IProtocolFactory<?> getProtocolFactory(){
@@ -256,7 +259,7 @@ public class ImbustamentoErrore  {
 			if(busta.getRiferimentoMessaggio()!=null){
 				ProprietaValidazione proprietaValidazione = new ProprietaValidazione();
 				proprietaValidazione.setValidazioneIDCompleta(false);
-				if(this.protocolFactory.createValidazioneSemantica().validazioneID(busta.getRiferimentoMessaggio(), null, proprietaValidazione)==false){
+				if(this.protocolFactory.createValidazioneSemantica(this.state).validazioneID(busta.getRiferimentoMessaggio(), null, proprietaValidazione)==false){
 					busta.setRiferimentoMessaggio(null);
 				}
 			}
@@ -555,14 +558,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * @param checkInterval Intervallo di check per la gestione  del livello di serializable
 	 * 
 	 */
-	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IState state,IDSoggetto identitaPdD, TipoPdD tipoPdD,
+	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, 
 			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
-		return msgErroreProtocollo_Processamento(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, errori, null,
+		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, errori, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
@@ -580,26 +583,26 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * @param checkInterval Intervallo di check per la gestione  del livello di serializable
 	 * 
 	 */
-	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IState state,IDSoggetto identitaPdD, TipoPdD tipoPdD,
+	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreCooperazione erroreCooperazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
 			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){ 
-		return msgErroreProtocollo_Processamento(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, erroreCooperazione, null, null,
+		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, erroreCooperazione, null, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 	
-	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IState state,IDSoggetto identitaPdD, TipoPdD tipoPdD,
+	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
 			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){ 
-		return msgErroreProtocollo_Processamento(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, null, erroreIntegrazione,
+		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, null, erroreIntegrazione,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
@@ -619,7 +622,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * @param checkInterval Intervallo di check per la gestione  del livello di serializable
 	 * 
 	 */
-	private OpenSPCoop2Message msgErroreProtocollo_Processamento(IState state, IDSoggetto identitaPdD, TipoPdD tipoPdD,
+	private OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreCooperazione erroreCooperazione, List<Eccezione> errori, ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -639,7 +642,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 
 			String id_bustaErrore = 
-					this.imbustamento.buildID(state,identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
+					this.imbustamento.buildID(identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
 
 			if(errori==null){
 				errori = new ArrayList<Eccezione>();
@@ -707,7 +710,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 			
 			// imbustamento
-			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(state, responseMessage, busta, integrazione, null);
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(responseMessage, busta, integrazione, null);
 			responseMessage = protocolMessage.getMessage(); // updated
 
 
@@ -716,7 +719,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
 					if(messageSecurityContext.processOutgoing(responseMessage) == false){
-						return this.msgErroreProtocollo_Intestazione(state,identitaPdD, tipoPdD, modulo,
+						return this.msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, modulo,
 								busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
@@ -746,14 +749,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * @param checkInterval Intervallo di check per la gestione  del livello di serializable
 	 * 
 	 */
-	public  OpenSPCoop2Message msgErroreProtocollo_Intestazione(IState state,IDSoggetto identitaPdD, TipoPdD tipoPdD,
+	public  OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,
 			String modulo,Busta busta,Integrazione integrazione, String idTransazione,		
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni, 
 			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
-		return msgErroreProtocollo_Intestazione(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, errori,
+		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, null, errori,
 				messageSecurityPropertiesResponse,messageSecurityContext,attesaAttiva,checkInterval,
 				profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
@@ -771,7 +774,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * @param checkInterval Intervallo di check per la gestione  del livello di serializable
 	 * 
 	 */
-	public OpenSPCoop2Message msgErroreProtocollo_Intestazione(IState state,IDSoggetto identitaPdD, TipoPdD tipoPdD,
+	public OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,
 			String modulo, 
 			Busta busta,Integrazione integrazione, 
 			String idTransazione,
@@ -783,7 +786,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			String profiloGestione,
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
 			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
-		return msgErroreProtocollo_Intestazione(state,identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, erroreCooperazione,null,
+		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, modulo, busta, integrazione, idTransazione, erroreCooperazione,null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, 
 				profiloGestione, tipoTempo, generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
@@ -802,7 +805,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * @param checkInterval Intervallo di check per la gestione  del livello di serializable
 	 * 
 	 */
-	private OpenSPCoop2Message msgErroreProtocollo_Intestazione(IState state,IDSoggetto identitaPdD, TipoPdD tipoPdD,
+	private OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione, 
 			ErroreCooperazione erroreCooperazione, List<Eccezione> errori, 
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -820,7 +823,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 
 			String id_bustaErrore = 
-					this.imbustamento.buildID(state,identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
+					this.imbustamento.buildID(identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
 
 
 			if(errori==null){
@@ -872,7 +875,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 			// Add header
 
-			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(state, responseMessage, busta,integrazione, null);
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(responseMessage, busta,integrazione, null);
 			responseMessage = protocolMessage.getMessage(); // updated
 
 			// Message-Security
@@ -880,7 +883,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
 					if(messageSecurityContext.processOutgoing(responseMessage) == false){
-						return this.msgErroreProtocollo_Intestazione(state,identitaPdD,tipoPdD,modulo,
+						return this.msgErroreProtocollo_Intestazione(identitaPdD,tipoPdD,modulo,
 								busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);

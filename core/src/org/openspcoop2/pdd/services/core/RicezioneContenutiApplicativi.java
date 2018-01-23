@@ -117,7 +117,6 @@ import org.openspcoop2.pdd.mdb.ImbustamentoMessage;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
@@ -128,6 +127,7 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
 import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -1562,9 +1562,9 @@ public class RicezioneContenutiApplicativi {
 			msgDiag.mediumDebug("Costruzione identificativo...");
 			try {
 				
-				Imbustamento imbustatore = new Imbustamento(logCore, protocolFactory);
+				Imbustamento imbustatore = new Imbustamento(logCore, protocolFactory,openspcoopstate.getStatoRichiesta());
 				idMessageRequest = 
-					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, 
+					imbustatore.buildID(identitaPdD, 
 							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),
@@ -1691,7 +1691,7 @@ public class RicezioneContenutiApplicativi {
 		/*
 		  * --------- Informazioni protocollo ----------
 		 */
-		IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder();
+		IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder(openspcoopstate.getStatoRichiesta());
 		IDServizio idServizio = richiestaDelegata.getIdServizio();	
 		this.msgContext.getProtocol().setFruitore(soggettoFruitore);	
 		this.msgContext.getProtocol().setErogatore(idServizio.getSoggettoErogatore());		
@@ -2524,8 +2524,8 @@ public class RicezioneContenutiApplicativi {
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					ProtocolMessage protocolMessage = bustaBuilder.sbustamento(openspcoopstate.getStatoRichiesta(),requestMessage, bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest,
-							FaseSbustamento.PRE_INVIO_RICHIESTA_PER_RIFERIMENTO);
+					ProtocolMessage protocolMessage = bustaBuilder.sbustamento(requestMessage, bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest,
+							FaseSbustamento.PRE_INVIO_RICHIESTA_PER_RIFERIMENTO, requestInfo.getIntegrationServiceBinding(), requestInfo.getBindingConfig());
 					requestMessage = protocolMessage.getMessage(); // updated
 				}
 			}catch(Exception e){

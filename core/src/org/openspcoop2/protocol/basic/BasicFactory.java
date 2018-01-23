@@ -129,8 +129,8 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> createBustaBuilder() throws ProtocolException {
-		return new BustaBuilder<BustaRawType>(this);
+	public org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> createBustaBuilder(IState state) throws ProtocolException {
+		return new BustaBuilder<BustaRawType>(this, state);
 	}
 	
 	@Override
@@ -147,23 +147,23 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	@Override
-	public org.openspcoop2.protocol.sdk.validator.IValidatoreErrori createValidatoreErrori()  throws ProtocolException{
-		return new ValidatoreErrori(this);
+	public org.openspcoop2.protocol.sdk.validator.IValidatoreErrori createValidatoreErrori(IState state)  throws ProtocolException{
+		return new ValidatoreErrori(this, state);
 	}
 
 	@Override
-	public org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<BustaRawType> createValidazioneSintattica() throws ProtocolException {
-		return new ValidazioneSintattica<BustaRawType>(this);
+	public org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<BustaRawType> createValidazioneSintattica(IState state) throws ProtocolException {
+		return new ValidazioneSintattica<BustaRawType>(this, state);
 	}
 	
 	@Override
-	public org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica createValidazioneSemantica()  throws ProtocolException {
-		return new ValidazioneSemantica(this);
+	public org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica createValidazioneSemantica(IState state)  throws ProtocolException {
+		return new ValidazioneSemantica(this, state);
 	}
 
 	@Override
-	public org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema createValidazioneConSchema()  throws ProtocolException{
-		return new ValidazioneConSchema(this);
+	public org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema createValidazioneConSchema(IState state)  throws ProtocolException{
+		return new ValidazioneConSchema(this, state);
 	}
 	
 	@Override

@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneAccordi;
@@ -89,8 +90,8 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public SPCoopBustaBuilder createBustaBuilder() throws ProtocolException {
-		return new SPCoopBustaBuilder(this);
+	public SPCoopBustaBuilder createBustaBuilder(IState state) throws ProtocolException {
+		return new SPCoopBustaBuilder(this,state);
 	}
 
 	@Override
@@ -108,26 +109,26 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	@Override
-	public IValidatoreErrori createValidatoreErrori() throws ProtocolException {
-		return new SPCoopValidatoreErrori(this);
+	public IValidatoreErrori createValidatoreErrori(IState state) throws ProtocolException {
+		return new SPCoopValidatoreErrori(this,state);
 	}
 	
 	@Override
-	public SPCoopValidazioneSintattica createValidazioneSintattica()
+	public SPCoopValidazioneSintattica createValidazioneSintattica(IState state)
 			throws ProtocolException {
-		return new SPCoopValidazioneSintattica(this);
+		return new SPCoopValidazioneSintattica(this,state);
 	}
 
 	@Override
-	public IValidazioneSemantica createValidazioneSemantica()
+	public IValidazioneSemantica createValidazioneSemantica(IState state)
 			throws ProtocolException {
-		return new SPCoopValidazioneSemantica(this);
+		return new SPCoopValidazioneSemantica(this,state);
 	}
 	
 	@Override
-	public IValidazioneConSchema createValidazioneConSchema()
+	public IValidazioneConSchema createValidazioneConSchema(IState state)
 			throws ProtocolException {
-		return new SPCoopValidazioneConSchema(this);
+		return new SPCoopValidazioneConSchema(this,state);
 	}
 
 	@Override

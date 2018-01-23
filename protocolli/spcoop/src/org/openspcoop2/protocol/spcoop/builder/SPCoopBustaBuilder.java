@@ -27,7 +27,9 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -46,24 +48,24 @@ import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopBustaBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<SOAPHeaderElement> {
+public class SPCoopBustaBuilder extends BasicStateComponentFactory implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<SOAPHeaderElement> {
 
 	private SPCoopImbustamento spcoopImbustamento = null;
 	private SPCoopSbustamento spcoopSbustamento = null;
 	
-	public SPCoopBustaBuilder(IProtocolFactory<SOAPHeaderElement> factory) throws ProtocolException{
-		super(factory);
-		this.spcoopImbustamento = new SPCoopImbustamento(factory);
-		this.spcoopSbustamento = new SPCoopSbustamento(factory);
+	public SPCoopBustaBuilder(IProtocolFactory<SOAPHeaderElement> factory, IState state) throws ProtocolException{
+		super(factory,state);
+		this.spcoopImbustamento = new SPCoopImbustamento(factory, this.state);
+		this.spcoopSbustamento = new SPCoopSbustamento(factory, this.state);
 		this.log = factory.getLogger();
 	}
 	
 
 	@Override
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione,
+	public String newID(IDSoggetto idSoggetto, String idTransazione,
 			RuoloMessaggio ruoloMessaggio)
 			throws ProtocolException {
-		return this.spcoopImbustamento.buildID(state, idSoggetto, idTransazione, ruoloMessaggio);
+		return this.spcoopImbustamento.buildID(idSoggetto, idTransazione, ruoloMessaggio);
 	}
 
 	@Override
@@ -91,7 +93,7 @@ public class SPCoopBustaBuilder extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
@@ -115,9 +117,9 @@ public class SPCoopBustaBuilder extends BasicComponentFactory implements org.ope
 	}
 
 	@Override
-	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
-			FaseSbustamento faseSbustamento) throws ProtocolException {
+			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException {
 		
 		ProtocolMessage protocolMessage = new ProtocolMessage();
 		protocolMessage.setMessage(msg);

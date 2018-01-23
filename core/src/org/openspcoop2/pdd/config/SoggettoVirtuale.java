@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.resources.Loader;
 
@@ -87,7 +88,7 @@ public class SoggettoVirtuale  {
 		return list;
 	}
 	
-	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta) throws Exception{
+	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta, RequestInfo requestInfo) throws Exception{
 		List<String> list = new ArrayList<String>();
 		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
 
@@ -111,7 +112,7 @@ public class SoggettoVirtuale  {
 					bustaConSoggettiReali.setDestinatario(sa.getIdSoggettoReale().getNome());
 					bustaConSoggettiReali.setTipoDestinatario(sa.getIdSoggettoReale().getTipo());
 					
-					Behaviour behaviour = behaviourImpl.behaviour(gestoreMessaggi, bustaConSoggettiReali);
+					Behaviour behaviour = behaviourImpl.behaviour(gestoreMessaggi, bustaConSoggettiReali, requestInfo);
 					if(behaviour!=null && behaviour.getForwardTo()!=null &&
 							behaviour.getForwardTo().size()==1){
 						BehaviourForwardToFilter filter = behaviour.getForwardTo().get(0).getFilter();

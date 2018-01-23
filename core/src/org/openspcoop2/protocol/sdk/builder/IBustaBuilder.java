@@ -26,6 +26,8 @@ import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -33,7 +35,6 @@ import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
-import org.openspcoop2.protocol.sdk.state.IState;
 
 
 /**
@@ -53,7 +54,6 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * Metodo che si occupa di costruire una stringa formata da un identificativo
 	 * conforme alla specifica del protocollo in uso.
 	 *
-	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
 	 * @param idSoggetto Soggetto che stà gestendo il messaggio
 	 * @param idTransazione Identificativo della transazione in corso sulla PdD
 	 * @param ruoloMessaggio Indicazione se l'identificativo deve essere generato per un messaggio di richiesta o risposta
@@ -61,7 +61,7 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException;
+	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException;
 	
 	/**
 	 * Se l'identificativo di protocollo contiene una data, il metodo la restituisce, altrimenti ritorna null.
@@ -75,7 +75,6 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	/**
 	 * Modifica il messaggio applicativo inserendo i metadati di cooperazione secondo le specifiche del protocollo in uso. 
 	 *  
-	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
 	 * @param msg Messaggio in cui inserire le informazioni di cooperazione.
 	 * @param busta Busta contenente i metadati di cooperazione da convertire in informazione raw del protocollo
 	 * @param ruoloMessaggio Indicazione se la busta appartiene ad un messaggio di richiesta o di risposta
@@ -84,7 +83,7 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio, 
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio, 
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException;
 
 	/**
@@ -100,7 +99,6 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	/**
 	 * Rimuove le informazioni di cooperazione dal messaggio. 
 	 * 
-	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
 	 * @param msg Messaggio da cui devono essere estratte le informazioni di cooperazione.
 	 * @param busta Busta contenente i metadati di cooperazione
 	 * @param ruoloMessaggio Indicazione se la busta appartiene ad un messaggio di richiesta o di risposta
@@ -109,9 +107,10 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo) e l'eventuale messaggio modificato
 	 * @throws ProtocolException
 	 */
-	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
-			FaseSbustamento faseSbustamento) throws ProtocolException;
+			FaseSbustamento faseSbustamento, 
+			ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException;
 }
 
 

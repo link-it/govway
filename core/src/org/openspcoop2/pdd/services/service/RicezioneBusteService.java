@@ -59,7 +59,6 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -74,6 +73,7 @@ import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneBusteContext;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -134,7 +134,7 @@ public class RicezioneBusteService  {
 		try{
 			if(this.generatoreErrore==null){
 				this.generatoreErrore = 
-						new RicezioneBusteExternalErrorGenerator(logCore, RicezioneBusteConnector.ID_MODULO, requestInfo);
+						new RicezioneBusteExternalErrorGenerator(logCore, RicezioneBusteConnector.ID_MODULO, requestInfo, null);
 			}
 		}catch(Exception e){
 			String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);

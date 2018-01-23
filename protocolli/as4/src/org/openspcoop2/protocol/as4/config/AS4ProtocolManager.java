@@ -104,7 +104,7 @@ public class AS4ProtocolManager extends BasicManager {
 							byte[]b=XMLUtils.getInstance().toByteArray(n);
 							SendResponse sendResponse = deserializer.readSendResponse(b);
 							String responseId = sendResponse.getMessageIDList().get(0);
-							busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_ID, responseId);
+							busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID, responseId);
 							
 							// recupero stato
 							Connettore connettore = this.protocolFactory.createProtocolVersionManager(this.protocolFactory.createProtocolConfiguration().getVersioneDefault()).
@@ -142,19 +142,19 @@ public class AS4ProtocolManager extends BasicManager {
 							}
 							if(MessageStatus.SEND_IN_PROGRESS.equals(stat)) {
 								this.log.debug("Stato del messaggio con id '"+responseId+"' risulta in spedizione");
-								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS, stat.name());
 							}
 							else if(MessageStatus.SEND_ENQUEUED.equals(stat)) {
 								this.log.debug("Stato del messaggio con id '"+responseId+"' risulta salvato su domibus, in attesa di essere spedito");
-								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS, stat.name());
 							}
 							else if(MessageStatus.ACKNOWLEDGED.equals(stat) || MessageStatus.ACKNOWLEDGED_WITH_WARNING.equals(stat)) {
 								this.log.debug("Stato del messaggio con id '"+responseId+"': "+stat);
-								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS, stat.name());
 							}
 							else {
 								this.log.error("Stato del messaggio con id '"+responseId+"': "+stat);
-								busta.addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS, stat.name());
+								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS, stat.name());
 								ProtocolException pe = new ProtocolException("Domibus non è riuscito a gestire la spedizione del messaggio con id '"+responseId+"'; stato ritornato: "+stat);
 								pe.setForceTrace(true);
 								throw pe;

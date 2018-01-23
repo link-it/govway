@@ -2276,7 +2276,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = con.prepareStatement(sqlQuery);
-				stm.setLong(1, aPD.getId());
+				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli associati alla Porta Delegata "+idPortaDelegata);
@@ -2291,7 +2291,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("ruolo", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, aPD.getId());
+						stm.setLong(1, idPortaDelegata);
 						stm.setString(2, ruolo.getNome());
 						stm.executeUpdate();
 						stm.close();
@@ -2312,7 +2312,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = con.prepareStatement(sqlQuery);
-				stm.setLong(1, aPD.getId());
+				stm.setLong(1, idPortaDelegata);
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
@@ -2327,7 +2327,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("azione", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, aPD.getId());
+						stm.setLong(1, idPortaDelegata);
 						stm.setString(2, azioneDelegata);
 						stm.executeUpdate();
 						stm.close();
@@ -4326,7 +4326,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = con.prepareStatement(sqlQuery);
-				stm.setLong(1, aPA.getId());
+				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli associati alla Porta Applicativa "+idPortaApplicativa);
@@ -4341,7 +4341,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("ruolo", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, aPA.getId());
+						stm.setLong(1, idPortaApplicativa);
 						stm.setString(2, ruolo.getNome());
 						stm.executeUpdate();
 						stm.close();
@@ -4361,7 +4361,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = con.prepareStatement(sqlQuery);
-				stm.setLong(1, aPA.getId());
+				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" soggetti associati alla Porta Applicativa "+idPortaApplicativa);
@@ -4377,7 +4377,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("nome_soggetto", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, aPA.getId());
+						stm.setLong(1, idPortaApplicativa);
 						stm.setString(2, soggetto.getTipo());
 						stm.setString(3, soggetto.getNome());
 						stm.executeUpdate();
@@ -4398,7 +4398,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = con.prepareStatement(sqlQuery);
-				stm.setLong(1, aPA.getId());
+				stm.setLong(1, idPortaApplicativa);
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" azioni associati alla Porta Applicativa "+idPortaApplicativa);
@@ -4413,7 +4413,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("azione", "?");
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, aPA.getId());
+						stm.setLong(1, idPortaApplicativa);
 						stm.setString(2, azioneDelegata);
 						stm.executeUpdate();
 						stm.close();

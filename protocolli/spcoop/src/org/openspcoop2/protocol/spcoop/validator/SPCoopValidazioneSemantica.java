@@ -28,7 +28,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.registry.RisultatoValidazione;
@@ -65,12 +65,7 @@ import org.openspcoop2.utils.digest.IDigestReader;
  * @version $Rev$, $Date$
  */
 
-public class SPCoopValidazioneSemantica extends BasicComponentFactory implements IValidazioneSemantica {
-
-	/** Se IState e' un'istanza di StatefulMessage possiede una Connessione SQL in autoCommit mode su cui effettuare query 
-	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni  */
-	@SuppressWarnings("unused")
-	private IState state;
+public class SPCoopValidazioneSemantica extends BasicStateComponentFactory implements IValidazioneSemantica {
 
 	/** Errori di validazione riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriValidazione;
@@ -104,8 +99,8 @@ public class SPCoopValidazioneSemantica extends BasicComponentFactory implements
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidazioneSemantica(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		super(protocolFactory);
+	public SPCoopValidazioneSemantica(IProtocolFactory<?> protocolFactory,IState state) throws ProtocolException{
+		super(protocolFactory,state);
 	}
 
 
@@ -1171,12 +1166,11 @@ public class SPCoopValidazioneSemantica extends BasicComponentFactory implements
 
 
 	@Override
-	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, IState state,
+	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, 
 			ProprietaValidazione proprietaValidazione, RuoloBusta tipoBusta)
 			throws ProtocolException {
 		this.busta = busta;
-		this.state = state;
-		this.registroServiziReader = RegistroServiziManager.getInstance(state);
+		this.registroServiziReader = RegistroServiziManager.getInstance(this.state);
 		this.validazioneIDEGovCompleta = proprietaValidazione.isValidazioneIDCompleta();
 		this.valida(proprietaValidazione, tipoBusta, proprietaValidazione.getVersioneProtocollo());
 		ValidazioneSemanticaResult result = new ValidazioneSemanticaResult(this.erroriValidazione, this.erroriProcessamento, 

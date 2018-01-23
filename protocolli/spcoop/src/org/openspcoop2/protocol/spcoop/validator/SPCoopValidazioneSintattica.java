@@ -47,7 +47,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -86,7 +86,7 @@ import org.w3c.dom.Node;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopValidazioneSintattica extends BasicComponentFactory implements IValidazioneSintattica<SOAPHeaderElement>{
+public class SPCoopValidazioneSintattica extends BasicStateComponentFactory implements IValidazioneSintattica<SOAPHeaderElement>{
 
 	/** Messaggio. */
 	private OpenSPCoop2SoapMessage msg;
@@ -141,8 +141,8 @@ public class SPCoopValidazioneSintattica extends BasicComponentFactory implement
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidazioneSintattica(IProtocolFactory<SOAPHeaderElement> protocolFactory) throws ProtocolException{
-		super(protocolFactory);
+	public SPCoopValidazioneSintattica(IProtocolFactory<SOAPHeaderElement> protocolFactory,IState state) throws ProtocolException{
+		super(protocolFactory,state);
 		if(this.errorsTrovatiSullaListaEccezioni == null)
 			this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
 		if(this.erroriProcessamento == null)
@@ -4462,7 +4462,7 @@ public class SPCoopValidazioneSintattica extends BasicComponentFactory implement
 
 
 	@Override
-	public ValidazioneSintatticaResult<SOAPHeaderElement> validaRichiesta(IState state, OpenSPCoop2Message msg,  Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+	public ValidazioneSintatticaResult<SOAPHeaderElement> validaRichiesta(OpenSPCoop2Message msg,  Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
 		try{
 			this.msg = msg.castAsSoap();
 		}catch(Exception e){
@@ -4479,7 +4479,7 @@ public class SPCoopValidazioneSintattica extends BasicComponentFactory implement
 	}
 	
 	@Override
-	public ValidazioneSintatticaResult<SOAPHeaderElement> validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+	public ValidazioneSintatticaResult<SOAPHeaderElement> validaRisposta(OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
 		try{
 			this.msg = msg.castAsSoap();
 		}catch(Exception e){

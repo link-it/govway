@@ -120,15 +120,15 @@ public class ProtocolFactoryManager {
 				}
 								
 				// PROTOCOL BUILDER
-				iProtocolFactory.createBustaBuilder();
+				iProtocolFactory.createBustaBuilder(null);
 				iProtocolFactory.createErroreApplicativoBuilder();
 				iProtocolFactory.createEsitoBuilder();
 				
 				// PROTOCOL VALIDATOR
-				iProtocolFactory.createValidatoreErrori();
-				iProtocolFactory.createValidazioneSintattica();
-				iProtocolFactory.createValidazioneSemantica();
-				iProtocolFactory.createValidazioneConSchema();
+				iProtocolFactory.createValidatoreErrori(null);
+				iProtocolFactory.createValidazioneSintattica(null);
+				iProtocolFactory.createValidazioneSemantica(null);
+				iProtocolFactory.createValidazioneConSchema(null);
 				iProtocolFactory.createValidazioneDocumenti();
 				iProtocolFactory.createValidazioneAccordi();
 				
@@ -255,7 +255,7 @@ public class ProtocolFactoryManager {
 				// Factory
 				IProtocolFactory<?> p = this.getProtocolFactoryEngine(manifestOpenspcoop2);
 				p.init(configPdD.getLog(), protocolManifest, configPdD,manifestOpenspcoop2);
-				if(!p.createValidazioneConSchema().initialize()){
+				if(!p.createValidazioneConSchema(null).initialize()){
 					throw new Exception("[protocol:"+protocolManifest+"] Inizialize with error for ValidazioneConSchema");
 				}
 				tmp_factories.put(protocolManifest, p);

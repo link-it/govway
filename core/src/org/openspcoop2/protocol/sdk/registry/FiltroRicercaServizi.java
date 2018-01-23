@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.sdk.registry;
 
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
@@ -32,12 +33,19 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
  */
 public class FiltroRicercaServizi {
 
+	private IDAccordo idAccordoServizioParteComune;
 	private String tipoServizio;
 	private String nomeServizio;
 	private Integer versioneServizio;
 	private IDSoggetto soggettoErogatore;
 	private ProtocolProperties protocolPropertiesServizi;
 
+	public IDAccordo getIdAccordoServizioParteComune() {
+		return this.idAccordoServizioParteComune;
+	}
+	public void setIdAccordoServizioParteComune(IDAccordo idAccordoServizioParteComune) {
+		this.idAccordoServizioParteComune = idAccordoServizioParteComune;
+	}
 	public String getTipoServizio() {
 		return this.tipoServizio;
 	}

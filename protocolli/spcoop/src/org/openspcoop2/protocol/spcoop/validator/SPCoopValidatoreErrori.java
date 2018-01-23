@@ -26,11 +26,12 @@ import javax.xml.soap.SOAPFault;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -42,8 +43,7 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopValidatoreErrori extends BasicComponentFactory implements IValidatoreErrori {
-
+public class SPCoopValidatoreErrori extends BasicStateComponentFactory implements IValidatoreErrori {
 
 	/**
 	 * Costruttore.
@@ -52,8 +52,8 @@ public class SPCoopValidatoreErrori extends BasicComponentFactory implements IVa
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidatoreErrori(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		super(protocolFactory);
+	public SPCoopValidatoreErrori(IProtocolFactory<?> protocolFactory,IState state) throws ProtocolException{
+		super(protocolFactory,state);
 	}
 	
 

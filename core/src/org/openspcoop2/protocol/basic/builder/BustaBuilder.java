@@ -34,10 +34,11 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -69,15 +70,15 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> {
+public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> {
 	
 	protected OpenSPCoop2MessageFactory msgFactory;
 	protected AbstractXMLUtils xmlUtils;
 	protected ITraduttore traduttore;
 	protected IErroreApplicativoBuilder erroreApplicativoBuilder = null;
 		
-	public BustaBuilder(IProtocolFactory<?> factory) throws ProtocolException{
-		super(factory);
+	public BustaBuilder(IProtocolFactory<?> factory, IState state) throws ProtocolException{
+		super(factory,state);
 		this.msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
 		this.xmlUtils = XMLUtils.getInstance();
 		this.traduttore = this.protocolFactory.createTraduttore();
@@ -88,10 +89,10 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 	private final static UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
 	
 	@Override
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
-		return newID(state, idSoggetto, idTransazione, ruoloMessaggio, true);
+	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
+		return newID(idSoggetto, idTransazione, ruoloMessaggio, true);
 	}
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio, boolean generateIDasUUID) throws ProtocolException {
+	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio, boolean generateIDasUUID) throws ProtocolException {
 		
 		if(generateIDasUUID){
 			
@@ -164,7 +165,7 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 
 	
 	@Override
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
@@ -250,9 +251,9 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 	}
 
 	@Override
-	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
-			FaseSbustamento faseSbustamento) throws ProtocolException {
+			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException {
 		
 		ProtocolMessage protocolMessage = new ProtocolMessage();
 		protocolMessage.setMessage(msg);

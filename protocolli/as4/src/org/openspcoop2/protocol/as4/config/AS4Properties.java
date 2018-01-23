@@ -185,7 +185,9 @@ public class AS4Properties {
 			}
 			
 			// jms
+			this.isDomibusGatewayJMS_debug();
 			this.getDomibusGatewayJMS_threadsPoolSize();
+			this.getDomibusGatewayJMS_threadCheckIntervalMs();
 			this.getDomibusGatewayJMS_jndiContext();
 			this.getDomibusGatewayJMS_connectionFactory();
 			this.getDomibusGatewayJMS_username();
@@ -648,6 +650,34 @@ public class AS4Properties {
 	
 	/* **** Comunicazione JMS verso Broker **** */
 	
+	private static Boolean domibusGatewayJMS_debug= null;
+	private static Boolean domibusGatewayJMS_debugRead= null;
+    public Boolean isDomibusGatewayJMS_debug(){
+    	if(AS4Properties.domibusGatewayJMS_debugRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.debug"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.domibusGatewayJMS_debug = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.debug' non impostata, viene utilizzato il default=false");
+					AS4Properties.domibusGatewayJMS_debug = false;
+				}
+				
+				AS4Properties.domibusGatewayJMS_debugRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.debug' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				AS4Properties.isDomibusGatewayConfigDefaultHttpsEnabled = false;
+				
+				AS4Properties.domibusGatewayJMS_debug = false;
+			}
+    	}
+    	
+    	return AS4Properties.domibusGatewayJMS_debug;
+	}
+	
 	private static Integer domibusGatewayJMS_threadsPoolSize;
 	public Integer getDomibusGatewayJMS_threadsPoolSize() throws ProtocolException {
 		if(AS4Properties.domibusGatewayJMS_threadsPoolSize==null){
@@ -670,26 +700,26 @@ public class AS4Properties {
 		return AS4Properties.domibusGatewayJMS_threadsPoolSize;
 	}
 	
-	private static Integer domibusGatewayJMS_threadCheckIntervalSeconds;
-	public Integer getDomibusGatewayJMS_threadCheckIntervalSeconds() throws ProtocolException {
-		if(AS4Properties.domibusGatewayJMS_threadCheckIntervalSeconds==null){
+	private static Integer domibusGatewayJMS_threadCheckIntervalMs;
+	public Integer getDomibusGatewayJMS_threadCheckIntervalMs() throws ProtocolException {
+		if(AS4Properties.domibusGatewayJMS_threadCheckIntervalMs==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalSeconds"); 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalMs"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.domibusGatewayJMS_threadCheckIntervalSeconds = Integer.parseInt(value);
+					AS4Properties.domibusGatewayJMS_threadCheckIntervalMs = Integer.parseInt(value);
 				}
 				else {
 					throw new Exception("Proprieta' non impostata");
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalSeconds', errore:"+e.getMessage());
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.domibusJms.thread.checkIntervalMs', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}
     	}
-		return AS4Properties.domibusGatewayJMS_threadCheckIntervalSeconds;
+		return AS4Properties.domibusGatewayJMS_threadCheckIntervalMs;
 	}
 	
 	private static Properties domibusGatewayJMS_jndiContext = null;

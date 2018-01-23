@@ -32,11 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorOutMessage;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.service.RicezioneBusteService;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -91,7 +91,7 @@ public class RicezioneBusteConnector {
 		RicezioneBusteExternalErrorGenerator generatoreErrore = null;
 		try{
 			generatoreErrore = 
-					new RicezioneBusteExternalErrorGenerator(logCore,ID_MODULO, requestInfo);
+					new RicezioneBusteExternalErrorGenerator(logCore,ID_MODULO, requestInfo, null);
 		}catch(Exception e){
 			String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);

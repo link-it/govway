@@ -27,6 +27,7 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -273,21 +274,21 @@ public class ConnettoreMsg  {
 	public void setCheckPresenzaHeaderPrimaSbustamento(boolean checkPresenzaHeaderPrimaSbustamento) {
 		this.checkPresenzaHeaderPrimaSbustamento = checkPresenzaHeaderPrimaSbustamento;
 	}
-	public OpenSPCoop2Message getRequestMessage() throws ProtocolException {
+	public OpenSPCoop2Message getRequestMessage(RequestInfo requestInfo) throws ProtocolException {
 		if(!this.localForward && this.sbustamentoInformazioniProtocollo && !this.sbustamentoProtocolInfoEffettuato){
 			boolean protocolloPresente = true;
 			if(this.checkPresenzaHeaderPrimaSbustamento){
 				try{
-					protocolloPresente = this.protocolFactory.createValidazioneSintattica().
+					protocolloPresente = this.protocolFactory.createValidazioneSintattica(this.state).
 						verifyProtocolPresence(this.outRequestContext.getTipoPorta(), this.busta.getProfiloDiCollaborazione(), this.ruoloMessaggio, this.request);
 				}catch(Exception e){}
 			}
 			if(protocolloPresente){
 				org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
-						new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory);
-					ProtocolMessage protocolMessage = sbustatore.sbustamento(this.state,this.request,this.busta,
+						new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory,this.state);
+					ProtocolMessage protocolMessage = sbustatore.sbustamento(this.request,this.busta,
 							this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments,
-							FaseSbustamento.PRE_CONSEGNA_RICHIESTA);
+							FaseSbustamento.PRE_CONSEGNA_RICHIESTA, requestInfo);
 					this.soapProtocolInfo = protocolMessage.getBustaRawContent();
 					this.request = protocolMessage.getMessage(); // updated
 					this.sbustamentoProtocolInfoEffettuato = true;

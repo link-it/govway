@@ -1,8 +1,12 @@
 package org.openspcoop2.protocol.as4.pmode;
 
+import java.io.BufferedReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.resources.TemplateUtils;
 
+import eu.domibus.configuration.Payload;
+import eu.domibus.configuration.PayloadProfile;
 import freemarker.template.Template;
 
 /**
@@ -29,13 +35,87 @@ import freemarker.template.Template;
 public class Translator {
 
 	private Template template;
+	private Template templatePayloadDefault;
+	private Template templatePayloadProfileDefault;
 	private PModeRegistryReader reader;
 
 
 	public Translator(IRegistryReader driver, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		try {
-			this.template = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-template.xml");
+			this.template = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-template.ftl");
+			this.templatePayloadDefault = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-payloadDefault.ftl");
+			this.templatePayloadProfileDefault = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-payloadProfileDefault.ftl");
 			this.reader = new PModeRegistryReader(driver, protocolFactory);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+
+	public List<Payload> translatePayloadDefault() throws ProtocolException {
+		try {
+			Map<String, Object> map = this.buildMap();
+			StringWriter writer = new StringWriter();
+			this.templatePayloadDefault.process(map, writer);
+			String s = writer.toString();
+			BufferedReader br = new BufferedReader(new StringReader(s));
+			List<Payload> list = new ArrayList<Payload>();
+			String line;
+			StringBuffer bf = new StringBuffer();
+			while ((line = br.readLine()) != null) {
+				if(bf.length()>0) {
+					bf.append("\n");
+				}
+				bf.append(line);
+				if(line.contains("/>") || line.contains("</payload>")) {
+					String finalString = bf.toString();
+					if(finalString!=null && !"".equals(finalString)) {
+						String sWithNamespace = finalString.replace("<payload>", 
+								"<payload xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+						sWithNamespace = sWithNamespace.replace("<payload ", 
+								"<payload xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
+						eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+						Payload p = deserializer.readPayload(sWithNamespace.getBytes());
+						list.add(p);
+					}
+					bf = new StringBuffer();
+				}
+			}
+			return list;
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+
+	public List<PayloadProfile> translatePayloadProfileDefault() throws ProtocolException {
+		try {
+			Map<String, Object> map = this.buildMap();
+			StringWriter writer = new StringWriter();
+			this.templatePayloadProfileDefault.process(map, writer);
+			String s = writer.toString();
+			BufferedReader br = new BufferedReader(new StringReader(s));
+			List<PayloadProfile> list = new ArrayList<PayloadProfile>();
+			String line;
+			StringBuffer bf = new StringBuffer();
+			while ((line = br.readLine()) != null) {
+				if(bf.length()>0) {
+					bf.append("\n");
+				}
+				bf.append(line);
+				if(line.contains("</payloadProfile>")) {
+					String finalString = bf.toString();
+					if(finalString!=null && !"".equals(finalString)) {
+						String sWithNamespace = 
+								finalString.replace("<payloadProfile>", "<payloadProfile xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+						sWithNamespace = sWithNamespace.replace("<payloadProfile ", 
+								"<payloadProfile xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
+						eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+						PayloadProfile p = deserializer.readPayloadProfile(sWithNamespace.getBytes());
+						list.add(p);
+					}
+					bf = new StringBuffer();
+				}
+			}
+			return list;
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -50,7 +130,7 @@ public class Translator {
 		oow.flush();
 		oow.close();
 	}
-	
+
 	public void translate(Writer out) throws Exception {
 		this.translate(out, this.reader.getNomeSoggettoOperativo());
 	}
@@ -70,7 +150,7 @@ public class Translator {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
-	
+
 	private Map<String, Object> buildMap() throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("policies", this.reader.findAllPolicies());
@@ -91,5 +171,5 @@ public class Translator {
 		map.put("partyIdTypes", this.reader.findAllPartyIdTypes(soggetti));
 		return map;
 	}
-	
+
 }

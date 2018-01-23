@@ -21,6 +21,8 @@
 package org.openspcoop2.protocol.as4;
 
 
+import javax.xml.soap.SOAPElement;
+
 import org.openspcoop2.protocol.as4.archive.AS4Archive;
 import org.openspcoop2.protocol.as4.builder.AS4BustaBuilder;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
@@ -38,6 +40,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 
 
@@ -48,7 +51,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AS4Factory extends BasicFactory<AS4RawContent> {
+public class AS4Factory extends BasicFactory<SOAPElement> {
 
 	/**
 	 * 
@@ -69,17 +72,17 @@ public class AS4Factory extends BasicFactory<AS4RawContent> {
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public AS4BustaBuilder createBustaBuilder() throws ProtocolException {
-		return new AS4BustaBuilder(this);
+	public AS4BustaBuilder createBustaBuilder(IState state) throws ProtocolException {
+		return new AS4BustaBuilder(this, state);
 	}
 
 		
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	@Override
-	public AS4ValidazioneSintattica createValidazioneSintattica()
+	public AS4ValidazioneSintattica createValidazioneSintattica(IState state)
 			throws ProtocolException {
-		return new AS4ValidazioneSintattica(this);
+		return new AS4ValidazioneSintattica(this, state);
 	}
 	
 	

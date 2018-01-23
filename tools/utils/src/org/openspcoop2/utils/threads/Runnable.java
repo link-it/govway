@@ -53,15 +53,15 @@ public class Runnable extends Thread{
 		return this.finished;
 	}
 
-	private int checkIntervalSeconds = -1; // ogni X secondi reinvoco l'instance
+	private int checkIntervalMs = -1; // ogni X ms reinvoco l'instance
 	private IRunnableInstance instance;
 	
 	/** Costruttore */
-	public Runnable(RunnableLogger runnableLogger, IRunnableInstance instance,int checkIntervalSeconds) throws UtilsException{
+	public Runnable(RunnableLogger runnableLogger, IRunnableInstance instance,int checkIntervalMs) throws UtilsException{
 		
 		this.log = runnableLogger;
 		this.instance = instance;
-		this.checkIntervalSeconds = checkIntervalSeconds;
+		this.checkIntervalMs = checkIntervalMs;
 		
 		this.log.info("Avviato");
 	}
@@ -85,13 +85,23 @@ public class Runnable extends Thread{
 					
 			// CheckInterval
 			if(this.stop==false){
-				int i=0;
-				while(i<this.checkIntervalSeconds){
+				if(this.checkIntervalMs<=1000) {
 					Utilities.sleep(1000);
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
+				}
+				else {		
+					int checkIntervalSeconds = this.checkIntervalMs / 1000;
+					int checkInterval_resto = this.checkIntervalMs % 1000;
+					int i=0;
+					while(i<checkIntervalSeconds){
+						Utilities.sleep(1000);
+						if(this.stop){
+							break; // thread terminato, non lo devo far piu' dormire
+						}
+						i++;
 					}
-					i++;
+					if(!this.stop && checkInterval_resto>0){
+						Utilities.sleep(checkInterval_resto);
+					}
 				}
 			}
 		} 

@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.as4;
 
-import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
@@ -34,9 +34,11 @@ import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AS4RawContent extends BustaRawContent<SOAPEnvelope> {
+public class AS4RawContent extends BustaRawContent<SOAPElement> {
 
-	public AS4RawContent(SOAPEnvelope element) {
+	// in fase di spedizione e' una SOAPEnvelope, quando lo ricevo una SOAPElement
+	
+	public AS4RawContent(SOAPElement element) {
 		super(element);
 	}
 	

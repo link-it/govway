@@ -80,16 +80,16 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 		
 	/* ** PROTOCOL BUILDER ** */
 	
-	public IBustaBuilder<BustaRawType> createBustaBuilder() throws ProtocolException;
+	public IBustaBuilder<BustaRawType> createBustaBuilder(IState state) throws ProtocolException;
 	public IErroreApplicativoBuilder createErroreApplicativoBuilder() throws ProtocolException;
 	public IEsitoBuilder createEsitoBuilder() throws ProtocolException;
 	
 	/* ** PROTOCOL VALIDATOR ** */
 	
-	public IValidatoreErrori createValidatoreErrori() throws ProtocolException;
-	public IValidazioneSintattica<BustaRawType> createValidazioneSintattica() throws ProtocolException;
-	public IValidazioneSemantica createValidazioneSemantica() throws ProtocolException;
-	public IValidazioneConSchema createValidazioneConSchema() throws ProtocolException;
+	public IValidatoreErrori createValidatoreErrori(IState state) throws ProtocolException;
+	public IValidazioneSintattica<BustaRawType> createValidazioneSintattica(IState state) throws ProtocolException;
+	public IValidazioneSemantica createValidazioneSemantica(IState state) throws ProtocolException;
+	public IValidazioneConSchema createValidazioneConSchema(IState state) throws ProtocolException;
 	public IValidazioneDocumenti createValidazioneDocumenti() throws ProtocolException;
 	public IValidazioneAccordi createValidazioneAccordi() throws ProtocolException;
 	

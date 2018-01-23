@@ -29,7 +29,6 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
-import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * La Porta di Dominio verifica che le informazioni di cooperazione
@@ -46,27 +45,25 @@ public interface IValidazioneSintattica<BustaRawType> extends IComponentFactory 
 	/**
 	 * Esegue la validazione sintattica delle informazioni di cooperazione
 	 * 
-	 * @param state Stato delle risorse utilizzate durante la gestione della richiesta dalla PdD
 	 * @param msg Messaggio da validare
 	 * @param datiBustaLettiURLMappingProperties Eventuale busta costruita con i parametri letti tramite url Mapping Properties (Porta Applicativa)
 	 * @param proprietaValidazioneErrori Contiene alcune indicazione sulla modalità di validazione del messaggio
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 * @throws ProtocolException
 	 */
-	public ValidazioneSintatticaResult<BustaRawType> validaRichiesta(IState state, OpenSPCoop2Message msg, 
+	public ValidazioneSintatticaResult<BustaRawType> validaRichiesta(OpenSPCoop2Message msg, 
 			Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException;
 	
 	/**
 	 * Esegue la validazione sintattica delle informazioni di cooperazione
 	 * 
-	 * @param state Stato delle risorse utilizzate durante la gestione della risposta dalla PdD
 	 * @param msg Messaggio da validare
 	 * @param bustaRichiesta Busta di richiesta
 	 * @param proprietaValidazioneErrori Contiene alcune indicazione sulla modalità di validazione del messaggio
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 * @throws ProtocolException
 	 */
-	public ValidazioneSintatticaResult<BustaRawType> validaRisposta(IState state, OpenSPCoop2Message msg, 
+	public ValidazioneSintatticaResult<BustaRawType> validaRisposta(OpenSPCoop2Message msg, 
 			Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException;
 		
 	/**

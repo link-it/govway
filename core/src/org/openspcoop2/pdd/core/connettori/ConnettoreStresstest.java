@@ -124,7 +124,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			// SIMULAZIONE WRITE_TO
 			
 			org.apache.commons.io.output.NullOutputStream nullOutputStream = new org.apache.commons.io.output.NullOutputStream();
-			request.getRequestMessage().writeTo(nullOutputStream,true);
+			this.requestMsg.writeTo(nullOutputStream,true);
 			nullOutputStream.flush();
 			nullOutputStream.close();
 				
@@ -413,10 +413,10 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			if(dominio==null)
 				dominio=bustaRichiesta.getDestinatario()+"SPCoopIT";
 			String idBustaRisposta = null;
-			Imbustamento imbustatore = new Imbustamento(this.logger.getLogger(), this.getProtocolFactory());
+			Imbustamento imbustatore = new Imbustamento(this.logger.getLogger(), this.getProtocolFactory(),state);
 			try{
 				idBustaRisposta = 
-					imbustatore.buildID(state,new IDSoggetto(bustaRichiesta.getTipoDestinatario(), bustaRichiesta.getDestinatario(), dominio), 
+					imbustatore.buildID(new IDSoggetto(bustaRichiesta.getTipoDestinatario(), bustaRichiesta.getDestinatario(), dominio), 
 							null, 
 							this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
 							this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),

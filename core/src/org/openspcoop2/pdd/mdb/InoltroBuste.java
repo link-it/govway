@@ -104,11 +104,11 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.validator.Validatore;
@@ -308,27 +308,7 @@ public class InoltroBuste extends GenericLib{
 		PdDContext pddContext = inoltroBusteMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
-				
-		/* Protocol Factory */
-		IProtocolFactory<?> protocolFactory = null;
-		org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = null;
-		IProtocolVersionManager protocolManager = null;
-		IValidazioneSemantica validazioneSemantica = null;
-		try{
-			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
-			traduttore = protocolFactory.createTraduttore();
-			protocolManager = protocolFactory.createProtocolVersionManager(inoltroBusteMsg.getRichiestaDelegata().getProfiloGestione());
-			validazioneSemantica = protocolFactory.createValidazioneSemantica();
-		}catch(Exception e){
-			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione"); 
-			openspcoopstate.releaseResource();
-			esito.setEsitoInvocazione(false); 
-			esito.setStatoInvocazioneErroreNonGestito(e);
-			return esito;
-		}
-		
-		msgDiag.setPddContext(pddContext, protocolFactory);	
-		
+						
 		/* ID e tipo di implementazione PdD con cui interoperare */
 		String idMessageRequest = openspcoopstate.getIDMessaggioSessione();
 		String implementazionePdDDestinatario = inoltroBusteMsg.getImplementazionePdDSoggettoDestinatario();
@@ -366,9 +346,6 @@ public class InoltroBuste extends GenericLib{
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
 		msgDiag.setFruitore(richiestaDelegata.getIdSoggettoFruitore());
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());
-
-		ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
-		pValidazioneErrori.setIgnoraEccezioniNonGravi(protocolManager.isIgnoraEccezioniNonGravi());
 		
 
 		
@@ -387,6 +364,29 @@ public class InoltroBuste extends GenericLib{
 
 
 
+		/* Protocol Factory */
+		IProtocolFactory<?> protocolFactory = null;
+		org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = null;
+		IProtocolVersionManager protocolManager = null;
+		IValidazioneSemantica validazioneSemantica = null;
+		try{
+			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			traduttore = protocolFactory.createTraduttore();
+			protocolManager = protocolFactory.createProtocolVersionManager(inoltroBusteMsg.getRichiestaDelegata().getProfiloGestione());
+			validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopstate.getStatoRichiesta());
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
+		}
+		
+		msgDiag.setPddContext(pddContext, protocolFactory);	
+		
+		ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
+		pValidazioneErrori.setIgnoraEccezioniNonGravi(protocolManager.isIgnoraEccezioniNonGravi());
+		
 
 
 
@@ -583,7 +583,7 @@ public class InoltroBuste extends GenericLib{
 		
 		if(functionAsRouter){
 			try{
-				RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
+				RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo, openspcoopstate.getStatoRichiesta());
 				generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio());
 				generatoreErrorePA.updateTipoPdD(TipoPdD.ROUTER);
 				ejbUtils.setGeneratoreErrorePortaApplicativa(generatoreErrorePA);
@@ -1232,7 +1232,8 @@ public class InoltroBuste extends GenericLib{
 			BustaRawContent<?> headerBustaRichiesta = null;
 			try{
 				msgDiag.highDebug("Imbustamento (creoImbustamentoUtils) ...");
-				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore =  new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log, protocolFactory);
+				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = 
+						new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log, protocolFactory, openspcoopstate.getStatoRichiesta());
 				msgDiag.highDebug("Imbustamento (invokeSdk) ...");
 				if(functionAsRouter){
 					if(this.propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDDestinatario)){
@@ -1248,7 +1249,7 @@ public class InoltroBuste extends GenericLib{
 					}
 				}else{
 					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
-					ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),requestMessage,bustaRichiesta,integrazione,gestioneManifest,
+					ProtocolMessage protocolMessage = imbustatore.imbustamento(requestMessage,bustaRichiesta,integrazione,gestioneManifest,
 							RuoloMessaggio.RICHIESTA,scartaBody,proprietaManifestAttachments);
 					headerBustaRichiesta = protocolMessage.getBustaRawContent();
 					requestMessage = protocolMessage.getMessage(); // updated
@@ -2506,7 +2507,7 @@ public class InoltroBuste extends GenericLib{
 				if(presenzaRispostaProtocollo){
 					try{
 						// ulteriore controllo per evitare che il protocollo trasparente generi una busta di risposta per il profilo oneway
-						presenzaRispostaProtocollo = protocolFactory.createValidazioneSintattica().
+						presenzaRispostaProtocollo = protocolFactory.createValidazioneSintattica(openspcoopstate.getStatoRisposta()).
 								verifyProtocolPresence(tipoPdD,bustaRichiesta.getProfiloDiCollaborazione(),RuoloMessaggio.RISPOSTA,responseMessage);
 					} catch (Exception e){
 						this.log.debug("Messaggio non riconosciuto come busta: "+e.getMessage());
@@ -2824,7 +2825,8 @@ public class InoltroBuste extends GenericLib{
 							
 							List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
 							
-							org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
+							org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
+									new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory, openspcoopstate.getStatoRisposta());
 							
 							// GestioneManifest solo se ho ricevuto una busta correttamente formata nel manifest
 							boolean sbustamentoManifestRisposta = gestioneManifestRisposta;
@@ -2836,9 +2838,9 @@ public class InoltroBuste extends GenericLib{
 							}	
 							msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 									+"] ["+responseMessage.getClass().getName()+"]");
-							ProtocolMessage protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,
+							ProtocolMessage protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
 									RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
-									FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA);
+									FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA, requestInfo);
 							headerProtocolloRisposta = protocolMessage.getBustaRawContent();
 							responseMessage = protocolMessage.getMessage(); // updated
 							msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
@@ -2850,9 +2852,9 @@ public class InoltroBuste extends GenericLib{
 								// Questa invocazione andrebbe implementata su ricezionecontenutiApplicativi teoricamente
 								msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
 										+"] ["+responseMessage.getClass().getName()+"]");
-								protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,
+								protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
 										RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
-										FaseSbustamento.PRE_CONSEGNA_RISPOSTA);
+										FaseSbustamento.PRE_CONSEGNA_RISPOSTA, requestInfo);
 								headerProtocolloRisposta = protocolMessage.getBustaRawContent();
 								responseMessage = protocolMessage.getMessage(); // updated
 								msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
@@ -3667,7 +3669,7 @@ public class InoltroBuste extends GenericLib{
 
 
 			/* ------- Gestione punto 1 (Carico HTTP Reply vuoto) -------- */
-			IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori();
+			IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori(openspcoopstate.getStatoRisposta());
 			if ( responseMessage == null ) {
 				if(functionAsRouter){
 

@@ -40,8 +40,8 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
@@ -238,7 +238,7 @@ public class ImbustamentoRisposte extends GenericLib {
 		}
 		
 		try{
-			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
+			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo,openspcoopstate.getStatoRichiesta());
 			generatoreErrorePA.updateInformazioniCooperazione(soggettoFruitore, idServizio);
 			generatoreErrorePA.updateInformazioniCooperazione(servizioApplicativoFruitore);
 			generatoreErrorePA.updateTipoPdD(TipoPdD.APPLICATIVA);

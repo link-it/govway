@@ -24,26 +24,30 @@ public class Azione {
 	private org.openspcoop2.core.registry.Resource baseResource;
 	
 	private String id;
+	private String ebmsUserMessageCollaborationInfoActionName;
 	private String ebmsActionPayloadProfile;
 	private Boolean ebmsActionCompressPayload;
 	
 	public Azione(org.openspcoop2.core.registry.Azione base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,payloadProfiles);
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
 		this.baseAzione = base;
 	}
 	public Azione(Operation base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,payloadProfiles);
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
 		this.baseOperation = base;
 	}
 	public Azione(org.openspcoop2.core.registry.Resource base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,payloadProfiles);
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
 		this.baseResource = base;
 	}
-	private Azione(List<ProtocolProperty> list, String id, PayloadProfiles payloadProfiles) throws Exception {
+	private Azione(List<ProtocolProperty> list, String id, String nomeAzione, PayloadProfiles payloadProfiles) throws Exception {
 		
 		this.id = id;
 		for(ProtocolProperty prop: list) {
-			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE)) {
+			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION)) {
+				this.ebmsUserMessageCollaborationInfoActionName = prop.getValue();
+			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE)) {
 				
 				this.ebmsActionPayloadProfile = prop.getValue();
 				
@@ -61,6 +65,9 @@ public class Azione {
 			}
 		}
 		
+		if(this.ebmsUserMessageCollaborationInfoActionName == null)
+			throw new Exception("Property ["+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION+"] non definita per l'azione ["+nomeAzione+"]");
+		
 		if(this.ebmsActionPayloadProfile == null)
 			this.ebmsActionPayloadProfile = "MessageProfile";
 		
@@ -74,6 +81,12 @@ public class Azione {
 	}
 	public void setBaseAzione(org.openspcoop2.core.registry.Azione baseAzione) {
 		this.baseAzione = baseAzione;
+	}
+	public String getEbmsUserMessageCollaborationInfoActionName() {
+		return this.ebmsUserMessageCollaborationInfoActionName;
+	}
+	public void setEbmsUserMessageCollaborationInfoActionName(String ebmsUserMessageCollaborationInfoActionName) {
+		this.ebmsUserMessageCollaborationInfoActionName = ebmsUserMessageCollaborationInfoActionName;
 	}
 	public Operation getBaseOperation() {
 		return this.baseOperation;

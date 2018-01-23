@@ -136,7 +136,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			
 			//this.response = request.getRequestMessage();
 			java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-			request.getRequestMessage().writeTo(bout, true);
+			this.requestMsg.writeTo(bout, true);
 			bout.flush();
 			bout.close();
 			
@@ -188,7 +188,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				Busta busta = validatoreProtocollo.getBusta();
 				
 				// informazione spcoopErrore
-				IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori();
+				IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori(state);
 				ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
 				pValidazioneErrori.setIgnoraEccezioniNonGravi(protocolManager.isIgnoraEccezioniNonGravi());
 				boolean isBustaSPCoopErrore = validatoreErrori.isBustaErrore(busta,this.responseMsg,pValidazioneErrori);
@@ -210,10 +210,10 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 //				}
 				
 				// rimozione vecchia busta
-				Sbustamento sbustatore = new Sbustamento(protocolFactory);
-				ProtocolMessage protocolMessage = sbustatore.sbustamento(state,this.responseMsg,busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
+				Sbustamento sbustatore = new Sbustamento(protocolFactory,state);
+				ProtocolMessage protocolMessage = sbustatore.sbustamento(this.responseMsg,busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
 						this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
-						FaseSbustamento.PRE_CONSEGNA_RICHIESTA);
+						FaseSbustamento.PRE_CONSEGNA_RICHIESTA,this.requestInfo);
 				headerProtocolloRisposta = protocolMessage.getBustaRawContent();
 				this.responseMsg = protocolMessage.getMessage(); // updated
 				
@@ -314,10 +314,10 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 						dominio = protocolFactory.createTraduttore().getIdentificativoPortaDefault(new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario()));
 					}
 					String idBustaRisposta = null;
-					Imbustamento imbustatore = new Imbustamento(this.logger.getLogger(), protocolFactory);
+					Imbustamento imbustatore = new Imbustamento(this.logger.getLogger(), protocolFactory, state);
 					try{
 						idBustaRisposta = 
-							imbustatore.buildID(state,new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario(), dominio), 
+							imbustatore.buildID(new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario(), dominio), 
 									null, 
 									this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
 									this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
@@ -377,7 +377,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					// imbustamento nuova busta
 					Integrazione integrazione = new Integrazione();
 					integrazione.setStateless(true);
-					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,gestioneManifest,RuoloMessaggio.RISPOSTA,false,
+					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamento(this.responseMsg,bustaRisposta,integrazione,gestioneManifest,RuoloMessaggio.RISPOSTA,false,
 							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
 					this.responseMsg = protocolMessageRisposta.getMessage(); // updated
 

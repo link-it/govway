@@ -27,6 +27,7 @@ import org.openspcoop2.protocol.basic.BasicEmptyRawContent;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * Classe che implementa, in base al protocollo Trasparente, l'interfaccia {@link org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica}
@@ -38,8 +39,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class TrasparenteValidazioneSintattica extends ValidazioneSintattica<BasicEmptyRawContent>{
 
-	public TrasparenteValidazioneSintattica(IProtocolFactory<BasicEmptyRawContent> factory) throws ProtocolException {
-		super(factory);
+	public TrasparenteValidazioneSintattica(IProtocolFactory<BasicEmptyRawContent> factory, IState state) throws ProtocolException {
+		super(factory, state);
 	}
 
 	

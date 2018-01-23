@@ -202,6 +202,7 @@
 				<include name="joda-time-2.9.4.jar" />
 				<include name="guava-19.0.jar"/>
 				<include name="java-uuid-generator-3.1.4.jar"/>
+				<include name="freemarker-2.3.25.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jminix">
 				<include name="*.jar"/>

@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 
 /**
@@ -58,8 +59,8 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 	/** Errori di processamento riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriProcessamento;
 
-	public SDIValidazioneConSchema(IProtocolFactory<?> factory) throws ProtocolException {
-		super(factory);
+	public SDIValidazioneConSchema(IProtocolFactory<?> factory, IState state) throws ProtocolException {
+		super(factory, state);
 	}
 
 

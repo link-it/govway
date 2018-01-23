@@ -27,6 +27,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -36,6 +37,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 
 /**
@@ -97,6 +99,9 @@ public interface IRegistryReader {
 	
 	public Azione getAzioneAccordo(IDAccordoAzione id) throws RegistryNotFound,RegistryException; 
 	public List<IDAccordoAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound,RegistryException; 
+	
+	public Resource getResourceAccordo(IDResource id) throws RegistryNotFound,RegistryException; 
+	public List<IDResource> findIdResourceAccordo(FiltroRicercaRisorse filtro) throws RegistryNotFound,RegistryException; 
 	
 	
 	// ACCORDI PARTE SPECIFICA

@@ -22,9 +22,12 @@ package org.openspcoop2.protocol.as4.builder;
 
 import java.util.Date;
 
+import javax.xml.soap.SOAPElement;
+
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.as4.AS4RawContent;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -32,6 +35,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
@@ -42,30 +46,31 @@ import org.openspcoop2.protocol.sdk.state.IState;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AS4BustaBuilder extends BustaBuilder<AS4RawContent> {
+public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 
 
 	private AS4Properties as4Properties;
-	public AS4BustaBuilder(IProtocolFactory<?> factory) throws ProtocolException {
-		super(factory);
+	public AS4BustaBuilder(IProtocolFactory<?> factory, IState state) throws ProtocolException {
+		super(factory, state);
 		this.as4Properties = AS4Properties.getInstance(factory.getLogger());
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		
 		AS4Imbustamento imbustamento = new AS4Imbustamento();
-		return imbustamento.buildASMessage(msg, busta, ruoloMessaggio, proprietaManifestAttachments, this.getProtocolFactory().getCachedRegistryReader(state));
+		return imbustamento.buildASMessage(msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
+				this.getProtocolFactory().getCachedRegistryReader(this.state), this.getProtocolFactory());
 		
 	}
 	
 	
 	@Override
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
-		return super.newID(state, idSoggetto, idTransazione, ruoloMessaggio, this.as4Properties.generateIDasUUID());
+	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
+		return super.newID(idSoggetto, idTransazione, ruoloMessaggio, this.as4Properties.generateIDasUUID());
 	}
 	
 	
@@ -75,4 +80,22 @@ public class AS4BustaBuilder extends BustaBuilder<AS4RawContent> {
 		
 	}
 	
+	@Override
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException {
+		
+		if(FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA.equals(faseSbustamento) ){
+		
+			AS4Sbustamento sbustamento = new AS4Sbustamento();
+			
+			return sbustamento.buildMessage(this.state, msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
+					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration);
+		
+		}
+		else {
+			return super.sbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
+					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration);
+		}
+	}
 }

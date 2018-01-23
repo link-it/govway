@@ -42,6 +42,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -69,13 +70,16 @@ public class SPCoopSbustamento {
 	private SPCoopValidazioneSintattica validazioneSintattica = null;
 	private AbstractXMLUtils xmlUtils = null;
 	private SPCoopProperties spcoopProperties = null;
+	private IState state;
 	
-	public SPCoopSbustamento(IProtocolFactory<?> protocolFactory) throws ProtocolException{
+	public SPCoopSbustamento(IProtocolFactory<?> protocolFactory,IState state) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
 		this.log = protocolFactory.getLogger();
 		this.spcoopProperties = SPCoopProperties.getInstance(this.log);
 		
-		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.protocolFactory.createValidazioneSintattica();
+		this.state = state;
+		
+		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.protocolFactory.createValidazioneSintattica(this.state);
 		
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 	}

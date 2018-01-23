@@ -55,9 +55,9 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.FiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.History;
@@ -235,7 +235,7 @@ public class Sbustamento extends GenericLib{
 		}
 		
 		try{
-			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
+			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo, openspcoopstate.getStatoRichiesta());
 			generatoreErrorePA.updateInformazioniCooperazione(idSoggettoFruitore, idServizio);
 			generatoreErrorePA.updateInformazioniCooperazione(richiestaApplicativa.getIdentitaServizioApplicativoFruitore());
 			generatoreErrorePA.updateTipoPdD(TipoPdD.APPLICATIVA);
@@ -2100,7 +2100,7 @@ public class Sbustamento extends GenericLib{
 				if(ricevutaAsincrona==null){
 					if(consegnaApplicativaAsincrona==null){
 						msgDiag.mediumDebug("Invio messaggio a ConsegnaContenutiApplicativi...");
-						behaviour = ejbUtils.sendToConsegnaContenutiApplicativi(richiestaApplicativa,	bustaRichiesta,msgRequest,pa,repositoryBuste);
+						behaviour = ejbUtils.sendToConsegnaContenutiApplicativi(requestInfo,richiestaApplicativa,bustaRichiesta,msgRequest,pa,repositoryBuste);
 						if(ejbUtils.isGestioneStatelessConIntegrationManager()){
 							generazioneMsgOK = true;
 							sendSbloccoRicezioneBuste = true;

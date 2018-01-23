@@ -55,7 +55,7 @@ public class SPCoopTracciaSerializer extends TracciaSerializer implements ITracc
 	
 	public SPCoopTracciaSerializer(IProtocolFactory<SOAPHeaderElement> factory) throws ProtocolException{
 		super(factory);
-		this.imbustamento = new SPCoopImbustamento(factory);
+		this.imbustamento = new SPCoopImbustamento(factory,null);
 	}
 	
 	@Override

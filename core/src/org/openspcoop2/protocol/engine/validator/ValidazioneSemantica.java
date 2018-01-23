@@ -157,7 +157,7 @@ public class ValidazioneSemantica  {
 			
 			proprietaValidazione.setValidazioneIDCompleta(this.validazioneIdentificativiCompleta);
 			proprietaValidazione.setVersioneProtocollo(versioneProtocollo);
-			ValidazioneSemanticaResult result = this.protocolFactory.createValidazioneSemantica().valida(msg, this.busta, this.state, proprietaValidazione, tipoBusta);
+			ValidazioneSemanticaResult result = this.protocolFactory.createValidazioneSemantica(this.state).valida(msg, this.busta, proprietaValidazione, tipoBusta);
 			this.infoServizio = result.getInfoServizio();
 			this.servizioCorrelato = result.getServizioCorrelato();
 			this.tipoServizioCorrelato = result.getTipoServizioCorrelato();
@@ -357,7 +357,7 @@ public class ValidazioneSemantica  {
 		ProprietaValidazione proprietaValidazione = new ProprietaValidazione();
 		proprietaValidazione.setValidazioneIDCompleta(this.validazioneIdentificativiCompleta);
 		IDSoggetto dominio = new IDSoggetto(tipoCodAmm, codAmm, codDominio);
-		return this.protocolFactory.createValidazioneSemantica().validazioneID(id, dominio, proprietaValidazione);
+		return this.protocolFactory.createValidazioneSemantica(this.state).validazioneID(id, dominio, proprietaValidazione);
 	}
 
 	

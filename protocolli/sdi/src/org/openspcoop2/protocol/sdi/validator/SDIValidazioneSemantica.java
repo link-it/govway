@@ -67,15 +67,15 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 	/** Errori di processamento riscontrati sulla busta */
 	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
 	
-	public SDIValidazioneSemantica(IProtocolFactory<?> factory) throws ProtocolException {
-		super(factory);
+	public SDIValidazioneSemantica(IProtocolFactory<?> factory, IState state) throws ProtocolException {
+		super(factory, state);
 		this.sdiProperties = SDIProperties.getInstance(this.log);
 		this.validazioneUtils = new SDIValidazioneUtils(factory);
 	}
 
 	@Override
 	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, 
-			IState state, ProprietaValidazione proprietaValidazione, 
+			ProprietaValidazione proprietaValidazione, 
 			RuoloBusta tipoBusta) throws ProtocolException{
 		
 		OpenSPCoop2SoapMessage soapMsg = null;

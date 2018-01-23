@@ -26,6 +26,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 
 /**
@@ -38,7 +39,8 @@ import org.openspcoop2.protocol.sdk.Busta;
 public class ExampleResponseToNewMessageBehaviour implements IBehaviour {
 
 	@Override
-	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta) throws CoreException {
+	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
+			RequestInfo requestInfo) throws CoreException {
 		try{
 			Behaviour behaviour = new Behaviour();
 			

@@ -51,6 +51,7 @@ public class AS4Costanti {
     
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE = "ebmsUserMessageCollaborationInfoService";
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE = "ebmsUserMessageCollaborationInfoServiceType";
+    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION = "ebmsUserMessageCollaborationInfoAction";
     
     public final static String AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE = "ebmsSecurityProfile";
     public final static String AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE = "ebmsServicePayloadProfile";
@@ -64,10 +65,7 @@ public class AS4Costanti {
     public final static String AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE = "MimeType";
     
     public static final String AS4_NAMESPACE_CID_MESSAGGIO = "http://www.openspcoop2.org/protocol/as4";
-    
-    public final static String AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_ID = "domibus.messageID";
-    public final static String AS4_PROTOCOL_PROPERTIES_SEND_RESPONSE_STATUS = "domibus.status";
-    
+        
 	/** Archive mode */
 	public static final ArchiveMode PMODE_ARCHIVE_MODE_SINGLE_XML = new ArchiveMode("domibus-pmode (single xml configuration)");
 	public static final ArchiveMode PMODE_ARCHIVE_MODE_MULTIPLE_ZIP = new ArchiveMode("domibus-pmode (archive zip)");
@@ -81,6 +79,62 @@ public class AS4Costanti {
 	public static final String PMODE_ARCHIVE_EXT_ZIP = "zip";
 	public static final String PMODE_ARCHIVE_ROOT_DIR = "pmodes";
 
+	
+	
+	public static final String JMS_FROM_PARTY_ID = "fromPartyId";
+	public static final String JMS_FROM_PARTY_TYPE = "fromPartyType";
+	public static final String JMS_FROM_ROLE = "fromRole";
+	
+	public static final String JMS_TO_PARTY_ID = "toPartyId";
+	public static final String JMS_TO_PARTY_TYPE = "toPartyType";
+	public static final String JMS_TO_ROLE = "toRole";
+	
+	public static final String JMS_SERVICE = "service";
+	public static final String JMS_SERVICE_TYPE = "serviceType";
+	public static final String JMS_ACTION = "action";
+	
+	public static final String JMS_CONVERSATION_ID = "conversationId";
+	
+	public static final String JMS_MESSAGE_ID = "messageId";
+	public static final String JMS_REF_TO_MESSAGE_ID = "refToMessageId";
+	
+	public static final String JMS_AGREEMENT_REF = "agreementRef";
+	
+	public static final String JMS_PROTOCOL = "protocol";
+	
+	public static final String JMS_MESSAGE_TYPE = "messageType";
+	
+	public static final String JMS_PAYLOADS_NUMBER = "totalNumberOfPayloads";
+	public static final String JMS_PAYLOAD_PREFIX = "payload_";
+	public static final String JMS_PAYLOAD_MIME_CONTENT_ID_SUFFIX = "_mimeContentId";
+	public static final String JMS_PAYLOAD_MIME_TYPE_SUFFIX = "_mimeType";
+	
+	
+	
+	public final static String AS4_CONTEXT_USER_MESSAGE = "AS4_CONTEXT_USER_MESSAGE";
+	public final static String AS4_CONTEXT_CONTENT = "AS4_CONTEXT_CONTENT";
+
+	
+	/** Properties per oggetto Busta */
+	
+	public final static String AS4_BUSTA_PREFIX = "ebmsUserMessage";
+	
+    public final static String AS4_BUSTA_MITTENTE_PARTY_ID_BASE = AS4_BUSTA_PREFIX+"FromPartyId";
+	public static final String AS4_BUSTA_MITTENTE_PARTY_ID_TYPE = AS4_BUSTA_PREFIX+"FromPartyIdType";
+	
+    public final static String AS4_BUSTA_DESTINATARIO_PARTY_ID_BASE = AS4_BUSTA_PREFIX+"ToPartyId";
+	public static final String AS4_BUSTA_DESTINATARIO_PARTY_ID_TYPE = AS4_BUSTA_PREFIX+"ToPartyIdType";
+	
+	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_BASE = AS4_BUSTA_PREFIX+"CollaborationInfoService";
+	public static final String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_TYPE = AS4_BUSTA_PREFIX+"CollaborationInfoServiceType";
+	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION = AS4_BUSTA_PREFIX+"CollaborationInfoAction";
+	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_CONVERSATION_ID = AS4_BUSTA_PREFIX+"CollaborationInfoConversationId";
+	
+	public final static String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID = AS4_BUSTA_PREFIX+"Id";
+	public final static String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_REF_TO_MESSAGE_ID = AS4_BUSTA_PREFIX+"RefToMessageId";
+	public final static String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS = AS4_BUSTA_PREFIX+"SendStatus";
+	
+	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX = AS4_BUSTA_PREFIX+"Property_";
 }
 
 

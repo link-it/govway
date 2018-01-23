@@ -32,10 +32,11 @@ import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.protocol.as4.builder.AS4PayloadProfilesUtils;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
+import org.openspcoop2.protocol.as4.pmode.Translator;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -55,6 +56,9 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordoAzioni;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -302,6 +306,44 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	}
 
 	@Override
+	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
+			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
+		
+		StringProperty actionTypeItem = (StringProperty) 
+				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
+		
+		// IdAzione deve essere univoca
+		List<IDAccordoAzione> idAccordiAzioniList = null;
+		FiltroRicercaAccordoAzioni filtroAccordi = new FiltroRicercaAccordoAzioni();
+		filtroAccordi.setNome(id.getIdAccordo().getNome());
+		filtroAccordi.setSoggetto(id.getIdAccordo().getSoggettoReferente());
+		filtroAccordi.setVersione(id.getIdAccordo().getVersione());
+		filtroAccordi.setProtocolPropertiesAzione(new ProtocolProperties());
+		filtroAccordi.getProtocolPropertiesAzione().addProperty(actionTypeItem);
+		try{
+			idAccordiAzioniList = registryReader.findIdAzioneAccordo(filtroAccordi);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+			StringBuffer bfExc = new StringBuffer();
+			for (IDAccordoAzione idAccordoAzione : idAccordiAzioniList) {
+				if(id.equals(idAccordoAzione)==false) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append(idAccordoAzione.getNome());
+				}
+			}
+			if(bfExc.length()>0) {
+				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato all'interno dell'accordo per l'azione: "+bfExc.toString()); // dovrebbe essere uno solo
+			}
+		}
+	}
+	
+	@Override
 	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortTypeAzione id)
 					throws ProtocolException {
@@ -309,10 +351,89 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	}
 
 	@Override
+	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
+			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
+		
+		StringProperty actionTypeItem = (StringProperty) 
+				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
+		
+		// IdAzione deve essere univoca
+		List<IDPortTypeAzione> idAccordiAzioniList = null;
+		FiltroRicercaPortTypeAzioni filtroAccordi = new FiltroRicercaPortTypeAzioni();
+		filtroAccordi.setNome(id.getIdPortType().getIdAccordo().getNome());
+		filtroAccordi.setSoggetto(id.getIdPortType().getIdAccordo().getSoggettoReferente());
+		filtroAccordi.setVersione(id.getIdPortType().getIdAccordo().getVersione());
+		filtroAccordi.setNomePortType(id.getIdPortType().getNome());
+		filtroAccordi.setProtocolPropertiesAzione(new ProtocolProperties());
+		filtroAccordi.getProtocolPropertiesAzione().addProperty(actionTypeItem);
+		try{
+			idAccordiAzioniList = registryReader.findIdAzionePortType(filtroAccordi);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+			StringBuffer bfExc = new StringBuffer();
+			for (IDPortTypeAzione idAccordoAzione : idAccordiAzioniList) {
+				if(id.equals(idAccordoAzione)==false) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append(idAccordoAzione.getNome());
+				}
+			}
+			if(bfExc.length()>0) {
+				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato all'interno dell'accordo per l'azione: "+bfExc.toString()); // dovrebbe essere uno solo
+			}
+		}
+		
+	}
+	
+	@Override
 	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDResource id)
 					throws ProtocolException {
 		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, id.getIdAccordo());
+	}
+	
+	@Override
+	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
+			IRegistryReader registryReader, IDResource id) throws ProtocolException{
+		
+		StringProperty actionTypeItem = (StringProperty) 
+				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
+		
+		// IdAzione deve essere univoca
+		List<IDResource> idAccordiAzioniList = null;
+		FiltroRicercaRisorse filtroAccordi = new FiltroRicercaRisorse();
+		filtroAccordi.setNome(id.getIdAccordo().getNome());
+		filtroAccordi.setSoggetto(id.getIdAccordo().getSoggettoReferente());
+		filtroAccordi.setVersione(id.getIdAccordo().getVersione());
+		filtroAccordi.setProtocolPropertiesRisorsa(new ProtocolProperties());
+		filtroAccordi.getProtocolPropertiesRisorsa().addProperty(actionTypeItem);
+		try{
+			idAccordiAzioniList = registryReader.findIdResourceAccordo(filtroAccordi);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di risorse di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+			StringBuffer bfExc = new StringBuffer();
+			for (IDResource idAccordoAzione : idAccordiAzioniList) {
+				if(id.equals(idAccordoAzione)==false) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append(idAccordoAzione.getNome());
+				}
+			}
+			if(bfExc.length()>0) {
+				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato all'interno dell'accordo per la risorsa: "+bfExc.toString()); // dovrebbe essere uno solo
+			}
+		}
+		
 	}
 	
 	private ConsoleConfiguration _getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
@@ -331,35 +452,24 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		}catch(Exception e) {
 			throw new ProtocolException("Impossibile recuperare l'accordo con id ["+id+"]: "+e.getMessage(),e);
 		}	
-		byte[] profilesBytes = null;
-		try {
-			for (ProtocolProperty pp : as.getProtocolPropertyList()) {
-				if(AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_ID.equals(pp.getName())) {
-					profilesBytes = pp.getByteFile();
-					break;
-				}
-			}
-		}catch(Exception e) {
-			throw new ProtocolException("Impossibile recuperare la configurazione del payloadProfile dall'accordo con id ["+id+"]: "+e.getMessage(),e);
-		}
-		PayloadProfiles pps = null;
-		try {
-			if(profilesBytes!=null) {
-				// aggiungo namespace per poter effettuare unmarshall
-				String profiles = new String(profilesBytes);
-				profiles = profiles.replace("<payloadProfiles>", "<payloadProfiles xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
-				eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
-				pps = deserializer.readPayloadProfiles(profiles.getBytes());
-			}
-		}catch(Exception e) {
-			throw new ProtocolException("Errore durante la lettura della configurazione del payloadProfile dall'accordo con id ["+id+"]: "+e.getMessage(),e);
-		}
+		
+		PayloadProfiles pps = AS4PayloadProfilesUtils.read(registryReader,this.getProtocolFactory(),
+				as, id, false);
 		List<String> profiles = new ArrayList<>();
 		if(pps!=null && pps.sizePayloadProfileList()>0) {
 			for (PayloadProfile pp : pps.getPayloadProfileList()) {
 				profiles.add(pp.getName());
 			}
 		}
+		
+		AbstractConsoleItem<?> actionTypeItem = 
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.TEXT_EDIT,
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID, 
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID_LABEL);
+		actionTypeItem.setRequired(true);
+		configuration.addConsoleItem(actionTypeItem);
 		
 		if(profiles.size()>0) {
 			StringConsoleItem actionPayloadProfile = (StringConsoleItem) 
@@ -368,13 +478,15 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 							ConsoleItemType.SELECT,
 							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_ID, 
 							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL);
-			if(profiles.contains(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT)==false) {
-				actionPayloadProfile.addLabelValue(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT, AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT);
+			Translator t = new Translator(registryReader, this.protocolFactory);
+			String defaultProfile = t.translatePayloadProfileDefault().get(0).getName();
+			if(profiles.contains(defaultProfile)==false) {
+				actionPayloadProfile.addLabelValue(defaultProfile, defaultProfile);
 			}
 			for (String p : profiles) {
 				actionPayloadProfile.addLabelValue(p, p);
 			}
-			actionPayloadProfile.setDefaultValue(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_DEFAULT);
+			actionPayloadProfile.setDefaultValue(defaultProfile);
 			actionPayloadProfile.setRequired(false);
 			configuration.addConsoleItem(actionPayloadProfile);
 		}
@@ -391,6 +503,8 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		
 		return configuration;
 	}
+	
+	
 
 
 //	/*** ACCORDI SERVIZIO PARTE SPECIFICA ***/

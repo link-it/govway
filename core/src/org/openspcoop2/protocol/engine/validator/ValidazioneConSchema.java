@@ -27,6 +27,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 
 /**
@@ -60,17 +61,20 @@ public class ValidazioneConSchema  {
 	
 	private IProtocolFactory<?> protocolFactory;
 	
+	private IState state;
+	
 	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments, 
-			IProtocolFactory<?> protocolFactory){
-		this(message,isErroreProcessamento,isErroreIntestazione,validazioneManifestAttachments,Configurazione.getLibraryLog(), protocolFactory);
+			IProtocolFactory<?> protocolFactory,IState state){
+		this(message,isErroreProcessamento,isErroreIntestazione,validazioneManifestAttachments,Configurazione.getLibraryLog(), protocolFactory, state);
 	}
 	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments,
-			Logger aLog, IProtocolFactory<?> protocolFactory){
+			Logger aLog, IProtocolFactory<?> protocolFactory,IState state){
 		this.message = message;
 		this.isErroreProcessamento = isErroreProcessamento;
 		this.isErroreIntestazione = isErroreIntestazione;
 		this.validazioneManifestAttachments = validazioneManifestAttachments;
 		this.protocolFactory = protocolFactory;
+		this.state = state;
 	}
 
 	public IProtocolFactory<?> getProtocolFactory(){
@@ -105,7 +109,7 @@ public class ValidazioneConSchema  {
 	 * 
 	 */
 	public void valida(boolean isMessaggioConAttachments) throws Exception {
-		org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema validazione = this.protocolFactory.createValidazioneConSchema();
+		org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema validazione = this.protocolFactory.createValidazioneConSchema(this.state);
 		validazione.valida(this.message, this.isErroreProcessamento, this.isErroreIntestazione, isMessaggioConAttachments,this.validazioneManifestAttachments);
 		this.erroriProcessamento = validazione.getEccezioniProcessamento();
 		this.erroriValidazione = validazione.getEccezioniValidazione();

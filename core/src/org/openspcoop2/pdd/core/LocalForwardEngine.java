@@ -53,9 +53,9 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -114,6 +115,7 @@ public class LocalForwardEngine {
 			this.richiestaApplicativa = this.localForwardParameter.getRichiestaApplicativa();
 			
 			((OpenSPCoopState)this.localForwardParameter.getOpenspcoopstate()).setIDMessaggioSessione(this.localForwardParameter.getIdRequest());
+			IState state = ((OpenSPCoopState)this.localForwardParameter.getOpenspcoopstate()).getStatoRichiesta();
 			
 			String profiloGestione = null;
 			IDSoggetto soggettoFruitore = null;
@@ -202,7 +204,7 @@ public class LocalForwardEngine {
 			this.generatoreErrorePortaDelegata.updateProprietaErroreApplicativo(fault);
 				
 			this.generatoreErrorePortaApplicativa = new RicezioneBusteExternalErrorGenerator(this.localForwardParameter.getLog(), 
-					this.localForwardParameter.getIdModulo(), this.requestInfo);
+					this.localForwardParameter.getIdModulo(), this.requestInfo, state);
 			this.generatoreErrorePortaApplicativa.updateInformazioniCooperazione(soggettoFruitore, idServizio);
 			this.generatoreErrorePortaApplicativa.updateInformazioniCooperazione(servizioApplicativo);
 			
@@ -252,7 +254,7 @@ public class LocalForwardEngine {
 			Exception configException = null;
 			MessageSecurityFactory messageSecurityFactory = new MessageSecurityFactory();
 		
-			
+			IState state = ((OpenSPCoopState)this.localForwardParameter.getOpenspcoopstate()).getStatoRichiesta();
 			
 			
 			
@@ -372,7 +374,7 @@ public class LocalForwardEngine {
 				if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
 					try{
 						this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PD) ...");
-						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica();
+						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
 						this.securityInfoRequest = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessage);
 					}catch(Exception e){
 						posizione = "LetturaInformazioniSicurezzaPDRequest";
@@ -537,7 +539,7 @@ public class LocalForwardEngine {
 			if(erroreIntegrazione==null && messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
 				try{
 					this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PA) ...");
-					IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica();
+					IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
 					this.securityInfoRequest = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessage);
 				}catch(Exception e){
 					posizione = "LetturaInformazioniSicurezzaPARequest";
@@ -662,7 +664,7 @@ public class LocalForwardEngine {
 		
 		try{
 
-			Behaviour behaviour = this.ejbUtils.sendToConsegnaContenutiApplicativi(this.richiestaApplicativa, this.busta, gestoreMessaggiRequest, this.pa, 
+			Behaviour behaviour = this.ejbUtils.sendToConsegnaContenutiApplicativi(this.requestInfo, this.richiestaApplicativa, this.busta, gestoreMessaggiRequest, this.pa, 
 					this.localForwardParameter.getRepositoryBuste(), this.richiestaDelegata);
 			boolean behaviourResponseTo = behaviour!=null && behaviour.isResponseTo();
 			
@@ -740,7 +742,7 @@ public class LocalForwardEngine {
 			Exception configException = null;
 			MessageSecurityFactory messageSecurityFactory = new MessageSecurityFactory();
 
-			
+			IState state = ((OpenSPCoopState)this.localForwardParameter.getOpenspcoopstate()).getStatoRisposta();
 			
 			
 			
@@ -828,7 +830,7 @@ public class LocalForwardEngine {
 			if(erroreIntegrazione==null && messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
 				try{
 					this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PA-Response) ...");
-					IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica();
+					IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
 					this.securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
 				}catch(Exception e){
 					posizione = "LetturaInformazioniSicurezzaPAResponse";
@@ -1050,7 +1052,7 @@ public class LocalForwardEngine {
 				if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
 					try{
 						this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PD-Response) ...");
-						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica();
+						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
 						this.securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
 					}catch(Exception e){
 						posizione = "LetturaInformazioniSicurezzaPDResponse";

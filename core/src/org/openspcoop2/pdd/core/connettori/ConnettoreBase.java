@@ -37,7 +37,7 @@ import org.openspcoop2.pdd.core.handlers.PostOutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInResponseContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -175,9 +175,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		// Logger
 		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
 		
+		// MessageConfiguration
+		if(this.getPddContext()!=null && this.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)){
+			this.requestInfo = (RequestInfo) this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
 		// Raccolta altri parametri
 		try{
-			this.requestMsg =  request.getRequestMessage();
+			this.requestMsg =  request.getRequestMessage(this.requestInfo);
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
 			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
@@ -208,12 +213,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		// Context per invocazioni handler
 		this.outRequestContext = request.getOutRequestContext();
 		this.msgDiagnostico = request.getMsgDiagnostico();
-		
-		// MessageConfiguration
-		if(this.getPddContext()!=null && this.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)){
-			this.requestInfo = (RequestInfo) this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
-		}
-		
+
 		return true;
 	}
 	

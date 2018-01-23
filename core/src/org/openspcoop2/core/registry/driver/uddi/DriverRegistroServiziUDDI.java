@@ -814,7 +814,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							}
 						}
 						// ProtocolProperties PT
-						if(ProtocolPropertiesUtilities.isMatch(resource, filtroResource.getProtocolPropertiesPortType())==false){
+						if(ProtocolPropertiesUtilities.isMatch(resource, filtroResource.getProtocolPropertiesResources())==false){
 							continue;
 						}
 						

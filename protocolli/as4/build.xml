@@ -145,11 +145,14 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.pmode" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.pmode.beans" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.pmode.test" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.services" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.services.message" />
 		<antcall target="compile_src_openspcoop2">
 			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}"/>
 			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-plugin"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="org/openspcoop2/protocol/as4/**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.ftl"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.as4"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>

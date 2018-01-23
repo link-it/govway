@@ -28,6 +28,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 
@@ -41,7 +42,8 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 public class ExampleResponseToNewMessageAndBustaBehaviour implements IBehaviour {
 
 	@Override
-	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta) throws CoreException {
+	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
+			RequestInfo requestInfo) throws CoreException {
 		try{
 			Behaviour behaviour = new Behaviour();
 			
@@ -63,7 +65,7 @@ public class ExampleResponseToNewMessageAndBustaBehaviour implements IBehaviour 
 			bustaRisposta.setRiferimentoMessaggio(busta.getID());
 			IDSoggetto mittente = new IDSoggetto(bustaRisposta.getTipoMittente(), bustaRisposta.getMittente());
 			mittente.setCodicePorta(gestoreMessaggioRichiesta.getProtocolFactory().createTraduttore().getIdentificativoPortaDefault(mittente));
-			bustaRisposta.setID(gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder().newID(gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta(), 
+			bustaRisposta.setID(gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder(gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta()).newID( 
 					mittente, 
 					(String) gestoreMessaggioRichiesta.getPddContext().getObject(Costanti.CLUSTER_ID), 
 					RuoloMessaggio.RISPOSTA));

@@ -63,6 +63,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDServizioUtils;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
+import org.openspcoop2.core.config.driver.PortaDelegatedByUtils;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -1033,11 +1034,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		}  
 		
 		if(paList.size()>0){
-			return paList;
+			return PortaDelegatedByUtils.filter(paList,service);
 		}
 		
 		if(paSenzaAzioneList.size()>0 && ricercaPuntuale==false)
-			return paSenzaAzioneList;
+			return PortaDelegatedByUtils.filter(paSenzaAzioneList,service);
 
 		throw new DriverConfigurazioneNotFound("PorteApplicative non esistenti");
 	}

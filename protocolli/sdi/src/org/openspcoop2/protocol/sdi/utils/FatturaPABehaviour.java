@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
 import org.openspcoop2.pdd.core.behaviour.DefaultBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdi.SDIFactory;
 import org.openspcoop2.protocol.sdi.builder.SDIBustaBuilder;
 import org.openspcoop2.protocol.sdi.builder.SDIImbustamento;
@@ -77,7 +78,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 	}
 	
 	@Override
-	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta) throws CoreException {
+	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, RequestInfo requestInfo) throws CoreException {
 		
 		if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio()) &&
 				SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
@@ -85,6 +86,11 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 			try{
 				if(openspcoop2Properties==null){
 					init();
+				}
+				
+				IState state = null;
+				if(gestoreMessaggioRichiesta.getOpenspcoopstate()!=null){
+					state = gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta();
 				}
 				
 				OpenSPCoop2Message msg = gestoreMessaggioRichiesta.getMessage();
@@ -95,8 +101,9 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 					// gestisco con lo splitter
 					try{
 						SDIFactory sdiFactory = new SDIFactory();
-						sdiFactory.createBustaBuilder().sbustamento(null, msg, busta, RuoloMessaggio.RICHIESTA, new ProprietaManifestAttachments(),
-								FaseSbustamento.PRE_CONSEGNA_RICHIESTA);
+						sdiFactory.createBustaBuilder(state).
+							sbustamento(msg, busta, RuoloMessaggio.RICHIESTA, new ProprietaManifestAttachments(),
+								FaseSbustamento.PRE_CONSEGNA_RICHIESTA,requestInfo.getIntegrationServiceBinding(),requestInfo.getBindingConfig());
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						TunnelSoapUtils.sbustamentoMessaggio(msg,bout);
 						bout.flush();
@@ -132,11 +139,8 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 				behaviour.setResponseTo(responseTo);
 				OpenSPCoop2Message replyTo = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(msg.getMessageType(),MessageRole.RESPONSE);
 				
-				SDIImbustamento sdiImbustamento = new SDIImbustamento((SDIBustaBuilder) gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder());
-				IState state = null;
-				if(gestoreMessaggioRichiesta.getOpenspcoopstate()!=null){
-					state = gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta();
-				}
+				SDIImbustamento sdiImbustamento = new SDIImbustamento((SDIBustaBuilder) gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder(state));
+				
 				sdiImbustamento.creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(gestoreMessaggioRichiesta.getProtocolFactory(), 
 						state, busta, replyTo);
 				behaviour.getResponseTo().setMessage(replyTo);
@@ -264,7 +268,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 		}
 		
 		else{
-			return super.behaviour(gestoreMessaggioRichiesta, busta);
+			return super.behaviour(gestoreMessaggioRichiesta, busta, requestInfo);
 		}
 		
 	}

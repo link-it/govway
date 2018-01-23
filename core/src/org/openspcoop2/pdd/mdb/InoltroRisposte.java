@@ -70,9 +70,9 @@ import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.Tracciamento;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.core.FlowProperties;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
@@ -139,23 +139,6 @@ public class InoltroRisposte extends GenericLib{
 		@SuppressWarnings("unused")
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
-		/* Protocol Factory */
-		IProtocolFactory<?> protocolFactory = null;
-		IValidazioneSemantica validazioneSemantica = null;
-		org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = null;
-		try{
-			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
-			traduttore = protocolFactory.createTraduttore();
-			validazioneSemantica = protocolFactory.createValidazioneSemantica();
-		}catch(Exception e){
-			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione"); 
-			openspcoopstate.releaseResource();
-			esito.setEsitoInvocazione(false); 
-			esito.setStatoInvocazioneErroreNonGestito(e);
-			return esito;
-		}
-		
-		msgDiag.setPddContext(pddContext, protocolFactory);	
 		/* Busta e tipo di implementazione PdD con cui interoperare */
 		// Busta da inviare (tracciamento e Message-Security)
 		Busta busta = inoltroRisposteMsg.getBustaRisposta();
@@ -206,6 +189,24 @@ public class InoltroRisposte extends GenericLib{
 		registroServiziManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 		configurazionePdDManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 		msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		
+		/* Protocol Factory */
+		IProtocolFactory<?> protocolFactory = null;
+		IValidazioneSemantica validazioneSemantica = null;
+		org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = null;
+		try{
+			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			traduttore = protocolFactory.createTraduttore();
+			validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopstate.getStatoRichiesta());
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
+		}
+		
+		msgDiag.setPddContext(pddContext, protocolFactory);	
 
 
 		/* ------------- STATO RICHIESTA E STATO RISPOSTA ------------------------------- */
@@ -583,7 +584,8 @@ public class InoltroRisposte extends GenericLib{
 					RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RISPOSTA;
 					if(inoltroSegnalazioneErrore)
 						ruoloMessaggio = RuoloMessaggio.RICHIESTA;
-					org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory);
+					org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = 
+							new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory, openspcoopstate.getStatoRichiesta());
 	
 					boolean gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments();
 					// viene controllato servizio is not null, poiche' i riscontri non hanno un servizio
@@ -605,7 +607,7 @@ public class InoltroRisposte extends GenericLib{
 						Integrazione integrazione = new Integrazione();
 						integrazione.setStateless(false);
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,busta,integrazione,
+						ProtocolMessage protocolMessage = imbustatore.imbustamento(responseMessage,busta,integrazione,
 								gestioneManifest,ruoloMessaggio,scartaBody,proprietaManifestAttachments);
 						headerBusta = protocolMessage.getBustaRawContent();
 						responseMessage = protocolMessage.getMessage(); // updated
@@ -1073,7 +1075,7 @@ public class InoltroRisposte extends GenericLib{
 
 
 			/* ------------  Tracciamento Richiesta e Messaggio Diagnostico ------------- */
-			IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori();
+			IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori(openspcoopstate.getStatoRichiesta());
 			if(invokerNonSupportato==false){ //&& errorConsegna==false){
 
 				// Tracciamento effettuato sempre
@@ -1217,10 +1219,11 @@ public class InoltroRisposte extends GenericLib{
 					boolean gestioneManifestRispostaHttp = false;
 					if(functionAsRouter==false)
 						gestioneManifestRispostaHttp = configurazionePdDManager.isGestioneManifestAttachments();
-					org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
-					ProtocolMessage protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseHttpReply,busta,
+					org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
+							new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory,openspcoopstate.getStatoRichiesta());
+					ProtocolMessage protocolMessage = sbustatore.sbustamento(responseHttpReply,busta,
 							RuoloMessaggio.RISPOSTA,gestioneManifestRispostaHttp,proprietaManifestAttachments,
-							FaseSbustamento.POST_CONSEGNA_RISPOSTA_NEW_CONNECTION);
+							FaseSbustamento.POST_CONSEGNA_RISPOSTA_NEW_CONNECTION, requestInfo);
 					headerProtocolloRispostaConnectionReply = protocolMessage.getBustaRawContent();
 					responseHttpReply = protocolMessage.getMessage(); // updated
 				}catch(Exception e){

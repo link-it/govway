@@ -23,10 +23,11 @@ package org.openspcoop2.protocol.basic.validator;
 import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * ValidazioneConSchema
@@ -37,11 +38,11 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  * 
  */
 
-public class ValidazioneConSchema extends BasicComponentFactory implements
+public class ValidazioneConSchema extends BasicStateComponentFactory implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema {
 
-	public ValidazioneConSchema(IProtocolFactory<?> factory) throws ProtocolException{
-		super(factory);
+	public ValidazioneConSchema(IProtocolFactory<?> factory,IState state) throws ProtocolException{
+		super(factory, state);
 	}
 
 	@Override

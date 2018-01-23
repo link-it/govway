@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.engine.builder;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -48,15 +49,17 @@ public class Sbustamento  {
 
 	private IProtocolFactory<?> protocolFactory;
 	//private Logger log;
+	private IState state;
 
-	public Sbustamento(IProtocolFactory<?> protocolFactory){
-		this(Configurazione.getLibraryLog(), protocolFactory);
+	public Sbustamento(IProtocolFactory<?> protocolFactory,IState state){
+		this(Configurazione.getLibraryLog(), protocolFactory, state);
 	}
 	
-	public Sbustamento(Logger log, IProtocolFactory<?> protocolFactory){
+	public Sbustamento(Logger log, IProtocolFactory<?> protocolFactory,IState state){
 		if(log==null) log = Configurazione.getLibraryLog();
 		//this.log = log;
 		this.protocolFactory = protocolFactory;
+		this.state = state;
 	}
 	
 	public IProtocolFactory<?> getProtocolFactory(){
@@ -70,14 +73,15 @@ public class Sbustamento  {
 	 * @param gestioneManifest Indicazione se deve essere gestito il manifest degli attachments	
 	 * 
 	 */
-	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg,Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg,Busta busta,
 			RuoloMessaggio ruoloMessaggio, boolean gestioneManifest,ProprietaManifestAttachments proprietaManifestAttachments,
-			FaseSbustamento faseSbustamento) throws ProtocolException{
+			FaseSbustamento faseSbustamento, RequestInfo requestInfo) throws ProtocolException{
 		if(proprietaManifestAttachments==null){
 			proprietaManifestAttachments = new ProprietaManifestAttachments();
 		}
 		proprietaManifestAttachments.setGestioneManifest(gestioneManifest);
-		return this.protocolFactory.createBustaBuilder().sbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments,faseSbustamento);
+		return this.protocolFactory.createBustaBuilder(this.state).sbustamento( msg, busta, ruoloMessaggio, proprietaManifestAttachments,
+				faseSbustamento,requestInfo.getIntegrationServiceBinding(),requestInfo.getBindingConfig());
 	}
 }
 

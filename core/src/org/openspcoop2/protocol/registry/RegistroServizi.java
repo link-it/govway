@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -66,6 +67,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
@@ -1951,6 +1953,11 @@ public class RegistroServizi  {
 	@SuppressWarnings("unchecked")
 	public List<IDAccordoAzione> getAllIdAzioneAccordo(Connection connectionPdD, String nomeRegistro, FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return (List<IDAccordoAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzioneAccordo");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDResource> getAllIdResource(Connection connectionPdD, String nomeRegistro, FiltroRicercaResources filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return (List<IDResource>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdResource");
 	}
 	
 	@SuppressWarnings("unchecked")

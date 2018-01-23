@@ -46,18 +46,18 @@ public class TrasparenteBustaBuilder extends BustaBuilder<BasicEmptyRawContent> 
 
 
 	private TrasparenteProperties trasparenteProperties;
-	public TrasparenteBustaBuilder(IProtocolFactory<?> factory) throws ProtocolException {
-		super(factory);
+	public TrasparenteBustaBuilder(IProtocolFactory<?> factory,IState state) throws ProtocolException {
+		super(factory,state);
 		this.trasparenteProperties = TrasparenteProperties.getInstance(factory.getLogger());
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		
-		ProtocolMessage protocolMessage = super.imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 				
 		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && busta.sizeListaEccezioni()>0 ){
 			// le eccezioni vengono tornate anche per gli errori di processamento poiche' in TrasparenteProtocolVersionManager
@@ -89,8 +89,8 @@ public class TrasparenteBustaBuilder extends BustaBuilder<BasicEmptyRawContent> 
 	
 	
 	@Override
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
-		return super.newID(state, idSoggetto, idTransazione, ruoloMessaggio, this.trasparenteProperties.generateIDasUUID());
+	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
+		return super.newID( idSoggetto, idTransazione, ruoloMessaggio, this.trasparenteProperties.generateIDasUUID());
 	}
 	
 	

@@ -180,7 +180,7 @@ public class OperationFinder {
 								azione = idServizio.getAzione();
 							}
 							else{
-								Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(message);
+								Busta busta = protocolFactory.createValidazioneSintattica(null).getBusta_senzaControlli(message);
 								if(busta!=null){
 									azione = busta.getAzione();
 								}
@@ -214,7 +214,7 @@ public class OperationFinder {
 						azione = idServizio.getAzione();
 					}
 					else{
-						Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(message);
+						Busta busta = protocolFactory.createValidazioneSintattica(null).getBusta_senzaControlli(message);
 						if(busta!=null){
 							azione = busta.getAzione();
 						}

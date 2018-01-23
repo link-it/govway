@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.Hashtable;
 
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.utils.id.UniqueIdentifierException;
 

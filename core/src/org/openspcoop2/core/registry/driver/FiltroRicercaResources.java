@@ -46,19 +46,19 @@ public class FiltroRicercaResources extends FiltroRicercaAccordi implements Seri
 	private String resourceName;
 
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolPropertiesPortType = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolProperty> protocolPropertiesResources = new ArrayList<FiltroRicercaProtocolProperty>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesPortType() {
-		return this.protocolPropertiesPortType;
+	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesResources() {
+		return this.protocolPropertiesResources;
 	}
 
-	public void setProtocolPropertiesPortType(
+	public void setProtocolPropertiesResources(
 			List<FiltroRicercaProtocolProperty> list) {
-		this.protocolPropertiesPortType = list;
+		this.protocolPropertiesResources = list;
 	}
 
-	public void addProtocolPropertyPortType(FiltroRicercaProtocolProperty filtro){
-		this.protocolPropertiesPortType.add(filtro);
+	public void addProtocolPropertyResource(FiltroRicercaProtocolProperty filtro){
+		this.protocolPropertiesResources.add(filtro);
 	}
 	
 	public String getResourceName() {
@@ -73,9 +73,9 @@ public class FiltroRicercaResources extends FiltroRicercaAccordi implements Seri
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
-		bf.append("Filtro PortType: ");
+		bf.append("Filtro Resources: ");
 		this.addDetails(bf);
-		if(bf.length()=="Filtro PortType: ".length())
+		if(bf.length()=="Filtro Resources: ".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();
 	}
@@ -83,10 +83,10 @@ public class FiltroRicercaResources extends FiltroRicercaAccordi implements Seri
 	public void addDetails(StringBuffer bf){
 		if(this.resourceName!=null)
 			bf.append(" [nome-risorsa:"+this.resourceName+"]");
-		if(this.protocolPropertiesPortType!=null && this.protocolPropertiesPortType.size()>0){
-			bf.append(" [protocol-properties-port-type:"+this.protocolPropertiesPortType.size()+"]");
-			for (int i = 0; i < this.protocolPropertiesPortType.size(); i++) {
-				bf.append(" [protocol-properties-port-type["+i+"]:"+this.protocolPropertiesPortType.get(i).toString()+"]");
+		if(this.protocolPropertiesResources!=null && this.protocolPropertiesResources.size()>0){
+			bf.append(" [protocol-properties-resource:"+this.protocolPropertiesResources.size()+"]");
+			for (int i = 0; i < this.protocolPropertiesResources.size(); i++) {
+				bf.append(" [protocol-properties-resource["+i+"]:"+this.protocolPropertiesResources.get(i).toString()+"]");
 			}
 		}
 		super.addDetails(bf);

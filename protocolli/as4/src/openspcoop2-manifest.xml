@@ -72,13 +72,15 @@
     
 		<!-- Contesto api supporta sia soap che rest 
 		     con il mapping definito a livello generare di binding -->
-	    <context name="as4"/>
+	    <context name="as4">
+	    	<emptySubContext function="PA" messageType="soap12"/> <!-- es. http://server/openspcoop2/as4/PA -->
+	    </context>
 
     </web>
 
     <registry>
 
-        <organization>
+        <organization authentication="false">
             <types>
             	<type name="AS4"/>
             </types>

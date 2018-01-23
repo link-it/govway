@@ -26,8 +26,8 @@ import java.util.Date;
 
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;

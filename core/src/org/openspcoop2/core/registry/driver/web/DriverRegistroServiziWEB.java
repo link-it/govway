@@ -701,7 +701,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 							}
 						}
 						// ProtocolProperties PT
-						if(ProtocolPropertiesUtilities.isMatch(resource, filtroResource.getProtocolPropertiesPortType())==false){
+						if(ProtocolPropertiesUtilities.isMatch(resource, filtroResource.getProtocolPropertiesResources())==false){
 							continue;
 						}
 						

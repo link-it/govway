@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.slf4j.Logger;
@@ -74,29 +75,29 @@ public class SDIFactory extends BasicFactory<SOAPElement> {
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public SDIBustaBuilder createBustaBuilder() throws ProtocolException {
-		return new SDIBustaBuilder(this);
+	public SDIBustaBuilder createBustaBuilder(IState state) throws ProtocolException {
+		return new SDIBustaBuilder(this,state);
 	}
 	
 		
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	@Override
-	public SDIValidazioneSintattica createValidazioneSintattica()
+	public SDIValidazioneSintattica createValidazioneSintattica(IState state)
 			throws ProtocolException {
-		return new SDIValidazioneSintattica(this);
+		return new SDIValidazioneSintattica(this, state);
 	}
 
 	@Override
-	public IValidazioneSemantica createValidazioneSemantica()
+	public IValidazioneSemantica createValidazioneSemantica(IState state)
 			throws ProtocolException {
-		return new SDIValidazioneSemantica(this);
+		return new SDIValidazioneSemantica(this, state);
 	}
 	
 	@Override
-	public IValidazioneConSchema createValidazioneConSchema()
+	public IValidazioneConSchema createValidazioneConSchema(IState state)
 			throws ProtocolException {
-		return new SDIValidazioneConSchema(this);
+		return new SDIValidazioneConSchema(this, state);
 	}
 	
 	

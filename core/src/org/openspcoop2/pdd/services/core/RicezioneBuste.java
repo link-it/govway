@@ -46,6 +46,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -121,10 +122,10 @@ import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoMessage;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
-import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.pdd.services.service.RicezioneBusteServiceUtils;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerLock;
@@ -132,6 +133,7 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
 import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -1011,7 +1013,7 @@ public class RicezioneBuste {
 			String idBusta = null;
 			String profiloBusta = null;
 			try{
-				Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
+				Busta busta = protocolFactory.createValidazioneSintattica(openspcoopstate.getStatoRichiesta()).getBusta_senzaControlli(requestMessage);
 				if(busta==null){
 					throw new Exception("Protocollo non individuato nel messaggio");
 				}
@@ -1049,7 +1051,15 @@ public class RicezioneBuste {
 					if(listPa.size()>1)
 						throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
 					pa = listPa.get(0);
-					requestInfo.getProtocolContext().setInterfaceName(pa.getNome());
+					
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(pa.getNome());
+					idPA.setIdentificativiErogazione(new IdentificativiErogazione());
+					idPA.getIdentificativiErogazione().setIdServizio(idServizio);
+					RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, this.generatoreErrore, 
+							ServicesUtils.getServiceIdentificationReader(logCore, requestInfo), msgDiag, 
+							urlProtocolContext, idPA);
+					//requestInfo.getProtocolContext().setInterfaceName(pa.getNome());
 				}
 				
 			}catch(Exception e){
@@ -1417,9 +1427,9 @@ public class RicezioneBuste {
 			// ID Protocollo
 			id = null;
 			if(is.isStaticBasedIdentificationMode_IdProtocol()){
-				Imbustamento imbustamento = new Imbustamento(logCore, protocolFactory);
+				Imbustamento imbustamento = new Imbustamento(logCore, protocolFactory, openspcoopstate.getStatoRichiesta());
 				id = 
-					imbustamento.buildID(openspcoopstate.getStatoRichiesta(),idServizio.getSoggettoErogatore(), 
+					imbustamento.buildID(idServizio.getSoggettoErogatore(), 
 							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),
@@ -3291,10 +3301,10 @@ public class RicezioneBuste {
 				bustaDiServizio==false){
 			msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 					+"] ["+requestMessage.getClass().getName()+"]");
-			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
-			ProtocolMessage protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),requestMessage,bustaRichiesta,
+			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory,openspcoopstate.getStatoRichiesta());
+			ProtocolMessage protocolMessage = sbustatore.sbustamento(requestMessage,bustaRichiesta,
 					RuoloMessaggio.RICHIESTA,properties.isValidazioneManifestAttachments(),proprietaManifestAttachments,
-					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA);
+					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA, requestInfo);
 			headerProtocolloRichiesta = protocolMessage.getBustaRawContent();
 			requestMessage = protocolMessage.getMessage(); // updated
 			msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
@@ -5569,7 +5579,7 @@ public class RicezioneBuste {
 							gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory);
 						}
 					}
-					Imbustamento imbustatore = new Imbustamento(logCore, protocolFactory);
+					Imbustamento imbustatore = new Imbustamento(logCore, protocolFactory,openspcoopstate.getStatoRichiesta());
 					if(functionAsRouter && 
 							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 					){
@@ -5588,7 +5598,7 @@ public class RicezioneBuste {
 						}
 					}else{
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,infoIntegrazione,
+						ProtocolMessage protocolMessage = imbustatore.imbustamento(responseMessage,bustaRisposta,infoIntegrazione,
 								gestioneManifestRisposta,RuoloMessaggio.RISPOSTA,scartaBody,proprietaManifestAttachments);
 						headerBustaRisposta = protocolMessage.getBustaRawContent();
 						responseMessage = protocolMessage.getMessage(); // updated
@@ -5767,7 +5777,7 @@ public class RicezioneBuste {
 					SecurityInfo securityInfoResponse  = null;
 					if(functionAsRouter==false){
 						if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
-							IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica();
+							IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopstate.getStatoRichiesta());
 							securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
 						}
 					}
@@ -5775,7 +5785,7 @@ public class RicezioneBuste {
 							Tracciamento.createLocationString(false,this.msgContext.getFromLocation()),
 							correlazioneApplicativa,idCorrelazioneApplicativaRisposta);
 				}
-				IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori();
+				IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori(openspcoopstate.getStatoRichiesta());
 				IProtocolManager protocolManager = protocolFactory.createProtocolManager();
 				ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
 				pValidazioneErrori.setIgnoraEccezioniNonGravi(protocolManager.isIgnoraEccezioniNonGravi());
@@ -6127,11 +6137,11 @@ public class RicezioneBuste {
 			
 
 			// Genero messaggio di errore
+			this.generatoreErrore.updateState(openspcoopState.getStatoRichiesta());
 			if(parametriGenerazioneBustaErrore.isErroreProcessamento()){
 				if(erroreCooperazione!=null){
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
 							integrationError,
-							openspcoopState.getStatoRichiesta(),
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, erroreCooperazione,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -6143,7 +6153,6 @@ public class RicezioneBuste {
 				else if(erroreIntegrazione!=null){
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
 							integrationError,
-							openspcoopState.getStatoRichiesta(),
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, erroreIntegrazione,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -6154,7 +6163,6 @@ public class RicezioneBuste {
 				}else{
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
 							integrationError,
-							openspcoopState.getStatoRichiesta(),
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, error,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -6167,7 +6175,6 @@ public class RicezioneBuste {
 				if(erroreCooperazione!=null){
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Intestazione(
 							integrationError,
-							openspcoopState.getStatoRichiesta(),
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione,erroreCooperazione,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -6181,7 +6188,6 @@ public class RicezioneBuste {
 				else {
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Intestazione(
 							integrationError,
-							openspcoopState.getStatoRichiesta(),
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione,error,
 							securityPropertiesResponse,messageSecurityContext,
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -6202,7 +6208,7 @@ public class RicezioneBuste {
 				boolean functionAsRouter = false; // In questo caso dovrebbe essere sempre false?
 				if(functionAsRouter){
 					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
-						IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica();
+						IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopState.getStatoRichiesta());
 						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseErrorMessage);
 					}
 				}
@@ -7102,7 +7108,7 @@ public class RicezioneBuste {
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"ricezioneBustaDuplicata");
 		}
 		
-		Imbustamento imbustatore = new Imbustamento(log, protocolFactory);
+		Imbustamento imbustatore = new Imbustamento(log, protocolFactory, openspcoopstate.getStatoRichiesta());
 		
 		/* 
 		 * 1) duplicato in caso di oneWay: se confermaRicezione=true e la gestione dei riscontri e' attiva, re-invio un riscontro
@@ -7123,7 +7129,7 @@ public class RicezioneBuste {
 			bustaHTTPReply = bustaRichiesta.invertiBusta(tipoOraRegistrazione,protocolFactory.createTraduttore().toString(tipoOraRegistrazione));
 
 			String id_busta_risposta = 
-					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+					imbustatore.buildID(identitaPdD, idTransazione, 
 							properties.getGestioneSerializableDB_AttesaAttiva(),
 							properties.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RISPOSTA);
@@ -7143,7 +7149,7 @@ public class RicezioneBuste {
 			http200 = false;
 			
 			String id_busta_risposta = 
-					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+					imbustatore.buildID(identitaPdD, idTransazione, 
 							properties.getGestioneSerializableDB_AttesaAttiva(),
 							properties.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RISPOSTA);
@@ -7206,7 +7212,7 @@ public class RicezioneBuste {
 					bustaHTTPReply.setCollaborazione(bustaRichiesta.getCollaborazione());		
 				
 				String id_busta_risposta = 
-						imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+						imbustatore.buildID(identitaPdD, idTransazione, 
 								properties.getGestioneSerializableDB_AttesaAttiva(),
 								properties.getGestioneSerializableDB_CheckInterval(),
 								RuoloMessaggio.RISPOSTA);
@@ -7219,7 +7225,7 @@ public class RicezioneBuste {
 				http200 = false;
 				
 				String id_busta_risposta = 
-						imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
+						imbustatore.buildID(identitaPdD, idTransazione, 
 								properties.getGestioneSerializableDB_AttesaAttiva(),
 								properties.getGestioneSerializableDB_CheckInterval(),
 								RuoloMessaggio.RISPOSTA);
@@ -7249,7 +7255,7 @@ public class RicezioneBuste {
 			else{
 				msg = this.generatoreErrore.buildErroreIntestazione(IntegrationError.INTERNAL_ERROR);
 			}
-			ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),msg,bustaHTTPReply,integrazione,
+			ProtocolMessage protocolMessage = imbustatore.imbustamento(msg,bustaHTTPReply,integrazione,
 					false,RuoloMessaggio.RISPOSTA,false,null);
 			msg = protocolMessage.getMessage(); // updated
 			

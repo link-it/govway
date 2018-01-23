@@ -8,10 +8,12 @@
 	<soggetto-referente tipo="AS4" nome="Blue" />
         <port-type nome="GestioneFileSOAP" profilo-collaborazione="oneway">
             <azione nome="testXml">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:testXml"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="XmlProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" value="true"/>
 	    </azione>
 	    <azione nome="test">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:test"/>
 		<protocol-property name="ebmsActionCompressPayload" value="true"/>
 	    </azione>
         </port-type>
@@ -24,10 +26,12 @@
         utilizzo-senza-azione="false" versione="1" service-binding="rest">
 	<soggetto-referente tipo="AS4" nome="Blue" />
         <resource nome="test">
-	    <protocol-property name="ebmsActionCompressPayload" value="false"/>
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
+		<protocol-property name="ebmsActionCompressPayload" value="false"/>
         </resource>
         <resource nome="test2" path="test2">
-            <protocol-property name="ebmsActionCompressPayload" value="false"/>
+        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test2"/>
+		<protocol-property name="ebmsActionCompressPayload" value="false"/>
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
 	<protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-REST" />
