@@ -19,7 +19,7 @@
  */
 
 
-package org.openspcoop2.utils.swagger;
+package org.openspcoop2.utils.openapi;
 
 import java.io.File;
 import java.net.URI;
@@ -37,16 +37,16 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * Test
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13435 $, $Date: 2017-11-15 17:02:49 +0100(mer, 15 nov 2017) $
  *
  */
 public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		URI jsonUri = Test.class.getResource("/org/openspcoop2/utils/swagger/test.json").toURI();
-		URI yamlUri = Test.class.getResource("/org/openspcoop2/utils/swagger/test.yaml").toURI();
+		URI jsonUri = Test.class.getResource("/org/openspcoop2/utils/openapi/test.json").toURI();
+		URI yamlUri = Test.class.getResource("/org/openspcoop2/utils/openapi/test.yaml").toURI();
 
 		test(jsonUri,"json");
 		
@@ -57,7 +57,7 @@ public class Test {
 
 	public static void test(URI uri, String testName) throws Exception {
 
-		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
+		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
 		Api api = apiReader.read();
 
@@ -67,23 +67,23 @@ public class Test {
 		api.validate(false);
 		System.out.println("["+testName+"] Validazione effettuata con successo");
 		
-		String test = "http://petstore.swagger.io/v2/pet";
+		String test = "http://petstore.swagger.io/api/pets";
 		System.out.println("["+testName+"] API-Op ["+test+"]: "+api.findOperation(HttpRequestMethod.POST, test));
 
-		String testSenzaBaseUri = "/pet";
+		String testSenzaBaseUri = "/pets";
 		System.out.println("["+testName+"] API-Op ["+testSenzaBaseUri+"]: "+api.findOperation(HttpRequestMethod.POST, testSenzaBaseUri));
 
-		String testConPetid = "/pet/2";
+		String testConPetid = "/pets/2";
 		System.out.println("["+testName+"] API-Op ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.GET, testConPetid));
 		System.out.println("["+testName+"] API-Op PUT ["+testConPetid+"]: "+api.findOperation(HttpRequestMethod.PUT, testConPetid));
 
-		String testConPetid2 = "/pet/2/uploadImage";
+		String testConPetid2 = "/pets/2/uploadImage";
 		System.out.println("["+testName+"] API-Op ["+testConPetid2+"]: "+api.findOperation(HttpRequestMethod.POST, testConPetid2));
 
-		String testPathInesistente = "/pet/find/inesistente";
+		String testPathInesistente = "/pets/find/inesistente";
 		System.out.println("["+testName+"] API-Op ["+testPathInesistente+"]: "+api.findOperation(HttpRequestMethod.GET, testPathInesistente));
 
-		String testConRequestConParametriInline = "/pet/findByTags";
+		String testConRequestConParametriInline = "/pets/findByStatus";
 		System.out.println("["+testName+"] API-Op ["+testConRequestConParametriInline+"]: "+api.findOperation(HttpRequestMethod.GET, testConRequestConParametriInline));
 
 	}

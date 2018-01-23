@@ -26,7 +26,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
@@ -34,11 +36,11 @@ import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.api.AbstractApiParameter;
 import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiRequest;
-import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
@@ -50,25 +52,37 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.RefModel;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.CookieParameter;
-import io.swagger.models.parameters.FormParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.parameters.RefParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.parser.SwaggerParser;
+import v2.io.swagger.models.ArrayModel;
+import v2.io.swagger.models.ComposedModel;
+import v2.io.swagger.models.Model;
+import v2.io.swagger.models.ModelImpl;
+import v2.io.swagger.models.Operation;
+import v2.io.swagger.models.Path;
+import v2.io.swagger.models.RefModel;
+import v2.io.swagger.models.Response;
+import v2.io.swagger.models.Swagger;
+import v2.io.swagger.models.parameters.BodyParameter;
+import v2.io.swagger.models.parameters.CookieParameter;
+import v2.io.swagger.models.parameters.FormParameter;
+import v2.io.swagger.models.parameters.HeaderParameter;
+import v2.io.swagger.models.parameters.Parameter;
+import v2.io.swagger.models.parameters.PathParameter;
+import v2.io.swagger.models.parameters.QueryParameter;
+import v2.io.swagger.models.parameters.RefParameter;
+import v2.io.swagger.models.properties.AbstractNumericProperty;
+import v2.io.swagger.models.properties.ArrayProperty;
+import v2.io.swagger.models.properties.BinaryProperty;
+import v2.io.swagger.models.properties.BooleanProperty;
+import v2.io.swagger.models.properties.DateProperty;
+import v2.io.swagger.models.properties.DateTimeProperty;
+import v2.io.swagger.models.properties.MapProperty;
+import v2.io.swagger.models.properties.ObjectProperty;
+import v2.io.swagger.models.properties.PasswordProperty;
+import v2.io.swagger.models.properties.Property;
+import v2.io.swagger.models.properties.RefProperty;
+import v2.io.swagger.models.properties.StringProperty;
+import v2.io.swagger.models.properties.UUIDProperty;
+import v2.io.swagger.parser.SwaggerParser;
 
 
 /**
@@ -82,7 +96,7 @@ import io.swagger.parser.SwaggerParser;
 public class SwaggerApiReader implements IApiReader {
 
 	private Swagger swagger;
-	
+
 	@Override
 	public void init(Logger log, File file, ApiReaderConfig config) throws ProcessingException {
 		this._init(log, file, config);
@@ -188,27 +202,27 @@ public class SwaggerApiReader implements IApiReader {
 				for (String pathK : this.swagger.getPaths().keySet()) {
 					Path path = this.swagger.getPaths().get(pathK);
 					if(path.getGet() != null) {
-						ApiOperation operation = getOperation(path.getGet(), HttpRequestMethod.GET, pathK);
+						ApiOperation operation = getOperation(path.getGet(), HttpRequestMethod.GET, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getPost() != null) {
-						ApiOperation operation = getOperation(path.getPost(), HttpRequestMethod.POST, pathK);
+						ApiOperation operation = getOperation(path.getPost(), HttpRequestMethod.POST, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getPut() != null) {
-						ApiOperation operation = getOperation(path.getPut(), HttpRequestMethod.PUT, pathK);
+						ApiOperation operation = getOperation(path.getPut(), HttpRequestMethod.PUT, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getDelete() != null) {
-						ApiOperation operation = getOperation(path.getDelete(), HttpRequestMethod.DELETE, pathK);
+						ApiOperation operation = getOperation(path.getDelete(), HttpRequestMethod.DELETE, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getPatch() != null) {
-						ApiOperation operation = getOperation(path.getPatch(), HttpRequestMethod.PATCH, pathK);
+						ApiOperation operation = getOperation(path.getPatch(), HttpRequestMethod.PATCH, pathK, api);
 						api.addOperation(operation);
 					}
 					if(path.getOptions() != null) {
-						ApiOperation operation = getOperation(path.getOptions(), HttpRequestMethod.OPTIONS, pathK);
+						ApiOperation operation = getOperation(path.getOptions(), HttpRequestMethod.OPTIONS, pathK, api);
 						api.addOperation(operation);
 					}
 				}
@@ -219,14 +233,14 @@ public class SwaggerApiReader implements IApiReader {
 		}
 	}
 
-	private ApiOperation getOperation(Operation operation, HttpRequestMethod method, String pathK) {
+	private ApiOperation getOperation(Operation operation, HttpRequestMethod method, String pathK, SwaggerApi api) {
 		ApiOperation apiOperation = new ApiOperation(method, pathK);
 		if(operation.getParameters() != null) {
 			ApiRequest request = new ApiRequest();
 
 			for(Parameter param: operation.getParameters()) {
 
-				List<AbstractApiParameter> abstractParamList = createRequestParameters(param, operation.getConsumes(), method, pathK);
+				List<AbstractApiParameter> abstractParamList = createRequestParameters(param, operation.getConsumes(), method, pathK, api);
 
 				if(!abstractParamList.isEmpty()) {
 					
@@ -254,7 +268,7 @@ public class SwaggerApiReader implements IApiReader {
 		if(operation.getResponses()!= null && !operation.getResponses().isEmpty()) {
 			List<ApiResponse> responses = new ArrayList<ApiResponse>();
 			for(String responseK: operation.getResponses().keySet()) {
-				responses.addAll(createResponses(responseK, operation.getResponses().get(responseK), operation.getProduces(), method, pathK));	
+				responses.addAll(createResponses(responseK, operation.getResponses().get(responseK), operation.getProduces(), method, pathK, api));	
 			}
 			apiOperation.setResponses(responses);
 		}
@@ -267,7 +281,7 @@ public class SwaggerApiReader implements IApiReader {
 	 * @param produces
 	 * @return
 	 */
-	private List<AbstractApiParameter> createRequestParameters(Parameter param, List<String> consumes, HttpRequestMethod method, String path) {
+	private List<AbstractApiParameter> createRequestParameters(Parameter param, List<String> consumes, HttpRequestMethod method, String path, SwaggerApi api) {
 		
 		String prefix = "["+method.name()+" "+path+"]";
 		
@@ -296,11 +310,23 @@ public class SwaggerApiReader implements IApiReader {
 					reference = ref.getReference();
 
 				}
+				else if(model instanceof ModelImpl) {
+					ModelImpl modelImpl = (ModelImpl) model;
+					type = "request_" + method.toString() + "_" + path.replace("/", "_");
+					name = modelImpl.getType();
+					api.getDefinitions().put(type, modelImpl);
+				}
+				else if(model instanceof ComposedModel) {
+					ComposedModel composedModel = (ComposedModel) model;
+					type = "request_" + method.toString() + "_" + path.replace("/", "_");
+					name = composedModel.getTitle();
+					api.getDefinitions().put(type, composedModel);
+				}
 				else if(model instanceof ArrayModel) {
 					ArrayModel arrayModel = (ArrayModel) model;
 					Property p = arrayModel.getItems();
-					if(p instanceof io.swagger.models.properties.RefProperty) {
-						io.swagger.models.properties.RefProperty ref = (io.swagger.models.properties.RefProperty) p;
+					if(p instanceof v2.io.swagger.models.properties.RefProperty) {
+						v2.io.swagger.models.properties.RefProperty ref = (v2.io.swagger.models.properties.RefProperty) p;
 						reference = ref.get$ref();
 					}
 					else {
@@ -311,9 +337,11 @@ public class SwaggerApiReader implements IApiReader {
 					throw new RuntimeException("Not Implemented "+prefix+" (model): "+model.getClass().getName());
 				}
 				
-				type = reference.replaceAll("#/definitions/", "");
+				if(type == null)
+					type = reference.replaceAll("#/definitions/", "");
 
-				name = this.swagger.getDefinitions().get(type).getTitle();
+				if(name == null)
+					name = this.swagger.getDefinitions().get(type).getTitle();
 
 				if(name == null) {
 					name = realParam.getName();
@@ -344,7 +372,7 @@ public class SwaggerApiReader implements IApiReader {
 		return lst;
 	}
 
-	private List<ApiResponse> createResponses(String responseK, Response response, List<String> produces, HttpRequestMethod method, String path) {
+	private List<ApiResponse> createResponses(String responseK, Response response, List<String> produces, HttpRequestMethod method, String path, SwaggerApi api) {
 		
 		String prefix = "[status:"+responseK+" "+method.name()+" "+path+"]";
 		
@@ -370,13 +398,12 @@ public class SwaggerApiReader implements IApiReader {
 		if(response.getHeaders() != null) {
 			for(String header: response.getHeaders().keySet()) {
 				Property property = response.getHeaders().get(header);
-				Property realProperty = property;
-				String name = realProperty.getName();
+				String name = property.getName();
 				if(name==null) {
 					name = header;
 				}
-				ApiHeaderParameter parameter = new ApiHeaderParameter(name, realProperty.getType());
-				parameter.setDescription(realProperty.getDescription());
+				ApiHeaderParameter parameter = new ApiHeaderParameter(name, property.getType());
+				parameter.setDescription(property.getDescription());
 				parameter.setRequired(property.getRequired());
 				apiResponse.addHeaderParameter(parameter);
 			}
@@ -388,23 +415,59 @@ public class SwaggerApiReader implements IApiReader {
 				
 				Property responseSchema = response.getSchema();
 				
+				while(responseSchema instanceof ArrayProperty) {
+					responseSchema = ((ArrayProperty)responseSchema).getItems();
+				}
 				String type = null;
 				String name = null;
-				if(responseSchema instanceof RefProperty) {
+				if( (responseSchema instanceof StringProperty) ||
+					(responseSchema instanceof AbstractNumericProperty) ||
+					(responseSchema instanceof BinaryProperty) ||
+					(responseSchema instanceof BooleanProperty) ||
+					(responseSchema instanceof DateProperty) ||
+					(responseSchema instanceof DateTimeProperty) ||
+					(responseSchema instanceof PasswordProperty) ||
+					(responseSchema instanceof UUIDProperty)
+						){
+					name = "response_" +responseK+"_" + method.toString() + "_" + path.replace("/", "_");
+					Model value = new ModelImpl();
+					Map<String, Property> prop = new HashMap<String, Property>();
+					prop.put("type", responseSchema);
+					value.setProperties(prop);
+					value.setTitle(name);
+					value.setDescription(response.getDescription());
+					api.getDefinitions().put(name, value);
+					type = name;
+				}
+				else if(responseSchema instanceof MapProperty) {
+					MapProperty schema = (MapProperty) responseSchema;
+
+					name = "response_" +responseK+"_" + method.toString() + "_" + path.replace("/", "_");
+					type = name;
+					ModelImpl value = new ModelImpl();
+					value.setAdditionalProperties(schema.getAdditionalProperties());
+					value.setTitle(name);
+					value.setType("object");
+					value.setVendorExtensions(new HashMap<>());
+					value.setDescription(response.getDescription());
+					api.getDefinitions().put(name, value);
+				}
+				else if(responseSchema instanceof ObjectProperty) {
+					ObjectProperty schema = (ObjectProperty) responseSchema;
+					
+					name = "response_" +responseK+"_" + method.toString() + "_" + path.replace("/", "_");
+					type = name;
+					ModelImpl value = new ModelImpl();
+					value.setProperties(schema.getProperties());
+					value.setTitle(name);
+					value.setType("object");
+					value.setVendorExtensions(new HashMap<>());
+					value.setDescription(response.getDescription());
+					api.getDefinitions().put(name, value);
+				}
+				else if(responseSchema instanceof RefProperty) {
 					type = ((RefProperty)responseSchema).getSimpleRef();
 					name = this.swagger.getDefinitions().get(type).getTitle();
-				}
-				else if(responseSchema instanceof ArrayProperty) {
-					ArrayProperty schema = (ArrayProperty) responseSchema;
-					
-					if(schema.getItems() instanceof RefProperty) {
-						RefProperty items = (RefProperty) schema.getItems();
-						type = items.getSimpleRef();
-						name = this.swagger.getDefinitions().get(type).getTitle();
-					} else {
-						type = schema.getName();
-						name = this.swagger.getDefinitions().get(type).getTitle();
-					}
 				}
 				else {
 					throw new RuntimeException("Not Implemented "+prefix+" (property): "+responseSchema.getClass().getName());

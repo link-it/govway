@@ -74,14 +74,13 @@ public class ValidatorTest {
 		List<byte[]> file2M = new ArrayList<byte[]>();
 		file2M.add(json2M);
 
-//		for(ApiName name : ApiName.values()) {
-		ApiName name = ApiName.NETWORK_NT;
-			ValidatorTest.validazioneListaFile("fileNonValidi", name, fileNonValidi, 10000, false);
-//			ValidatorTest.validazioneListaFile("file1K", name, file1K, 10000, true);
-//			ValidatorTest.validazioneListaFile("file50K", name, file50K, 1000, true);
-//			ValidatorTest.validazioneListaFile("file500K", name, file500K, 100, true);
-//			ValidatorTest.validazioneListaFile("file2M", name, file2M, 10, true);
-//		}
+		for(ApiName name : ApiName.values()) {
+			ValidatorTest.validazioneListaFile("fileNonValidi", name, fileNonValidi, 10, false);
+			ValidatorTest.validazioneListaFile("file1K", name, file1K, 10000, true);
+			ValidatorTest.validazioneListaFile("file50K", name, file50K, 1000, true);
+			ValidatorTest.validazioneListaFile("file500K", name, file500K, 100, true);
+			ValidatorTest.validazioneListaFile("file2M", name, file2M, 10, true);
+		}
 		ValidatorTest.executor.shutdown();
 	}
 
@@ -119,7 +118,12 @@ public class ValidatorTest {
 		List<Future<Boolean>> futures = ValidatorTest.executor.invokeAll(lst);
 		for(Future<Boolean> result: futures) {
 			if(!result.get())
-				throw new Exception("Errore validazione con validatore ["+validator.getClass().getName()+"]");
+				if(expectedSuccess) {
+					throw new Exception("Riscontrato errore validazione non atteso con validatore ["+validator.getClass().getName()+"]");	
+				} else {
+					throw new Exception("Atteso errore validazione non riscontrato con validatore ["+validator.getClass().getName()+"]");
+				}
+				
 		}
 		long after = System.currentTimeMillis();
 		System.out.println("test ["+testName+"] validatore["+name+"] Tempo ["+((after-before)/1000.0)+"]");
@@ -141,6 +145,12 @@ public class ValidatorTest {
 		public Boolean call() throws Exception {
 			ValidationResponse response = this.validator.validate(this.instance);
 
+			if(response.getErrors() != null && this.expectedSuccess) {
+				for(String error: response.getErrors()) {
+					System.out.println(error);
+				}
+			}
+			
 			boolean valid = response.getEsito().equals(ESITO.OK);
 			return valid == this.expectedSuccess;
 		}

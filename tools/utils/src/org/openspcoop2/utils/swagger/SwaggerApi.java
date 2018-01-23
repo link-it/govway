@@ -21,9 +21,13 @@
 
 package org.openspcoop2.utils.swagger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openspcoop2.utils.rest.api.Api;
 
-import io.swagger.models.Swagger;
+import v2.io.swagger.models.Model;
+import v2.io.swagger.models.Swagger;
 
 
 /**
@@ -36,9 +40,12 @@ import io.swagger.models.Swagger;
  */
 public class SwaggerApi extends Api {
 	private Swagger swagger;
+	private Map<String, Model> definitions;
+
 
 	public SwaggerApi(Swagger swagger) {
 		this.swagger = swagger;
+		this.definitions = new HashMap<String, Model>();
 	}
 	
 	public Swagger getSwagger() {
@@ -48,5 +55,20 @@ public class SwaggerApi extends Api {
 	public void setSwagger(Swagger swagger) {
 		this.swagger = swagger;
 	}
+
+	public Map<String, Model> getDefinitions() {
+		return this.definitions;
+	}
+
+	public void setDefinitions(Map<String, Model> definitions) {
+		this.definitions = definitions;
+	}
 	
+	public Map<String, Model> getAllDefinitions() {
+		Map<String, Model>  defs = new HashMap<String, Model>();
+		defs.putAll(this.swagger.getDefinitions());
+		defs.putAll(this.getDefinitions());
+		return defs;
+	}
+
 }

@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.utils.swagger.validator;
+package org.openspcoop2.utils.openapi.validator;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,20 +36,20 @@ import org.openspcoop2.utils.json.ValidationException;
 import org.openspcoop2.utils.json.ValidationResponse;
 import org.openspcoop2.utils.json.ValidationResponse.ESITO;
 import org.openspcoop2.utils.json.ValidatorFactory;
+import org.openspcoop2.utils.openapi.OpenapiApi;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
-import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
+import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
-import org.openspcoop2.utils.swagger.SwaggerApi;
 import org.slf4j.Logger;
 
-import v2.io.swagger.models.Model;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 
 /**
@@ -57,12 +57,12 @@ import io.swagger.util.Json;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13412 $, $Date: 2017-11-08 17:52:14 +0100(mer, 08 nov 2017) $
  */
 public class Validator extends AbstractApiValidator implements IApiValidator {
 
-	private SwaggerApi api;
+	private OpenapiApi api;
 	private Map<String, IJsonSchemaValidator> validatorMap;
 	
 	@Override
@@ -72,25 +72,25 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		if(api == null)
 			throw new ProcessingException("Api cannot be null");
 
-		if(!(api instanceof SwaggerApi))
-			throw new ProcessingException("Api class invalid. Expected ["+SwaggerApi.class.getName()+"] found ["+api.getClass().getName()+"]");
+		if(!(api instanceof OpenapiApi))
+			throw new ProcessingException("Api class invalid. Expected ["+OpenapiApi.class.getName()+"] found ["+api.getClass().getName()+"]");
 
-		this.api = (SwaggerApi) api;
+		this.api = (OpenapiApi) api;
 		ApiName jsonValidatorAPI;
-		if(config instanceof SwaggerApiValidatorConfig) {
-			jsonValidatorAPI = ((SwaggerApiValidatorConfig)config).getJsonValidatorAPI();
+		if(config instanceof OpenapiApiValidatorConfig) {
+			jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
 		} else {
 			jsonValidatorAPI = ApiName.NETWORK_NT;
 		}
 		
 		try {
 			
-			Map<String, Model> definitions = this.api.getAllDefinitions();
+			Map<String, Schema> definitions = this.api.getAllDefinitions();
 			
 			this.validatorMap = new HashMap<>();
 			
 			String definitionString = Json.mapper().writeValueAsString(definitions);
-			for(String modelName: definitions.keySet()) {
+			for(String schemaName: definitions.keySet()) {
 				byte[] schema = ("{\"definitions\" : "+definitionString+"}").getBytes();
 				
 				IJsonSchemaValidator validator = ValidatorFactory.newJsonSchemaValidator(jsonValidatorAPI);
@@ -98,10 +98,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				JsonSchemaValidatorConfig schemaValidationConfig = new JsonSchemaValidatorConfig();
 				schemaValidationConfig.setAdditionalProperties(ADDITIONAL.FORCE_DISABLE);
 				schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.ANY);
-				schemaValidationConfig.setTipi(Arrays.asList("#/definitions/"+modelName));
+				schemaValidationConfig.setTipi(Arrays.asList("#/definitions/"+schemaName));
 				validator.setSchema(schema, schemaValidationConfig);
 				
-				this.validatorMap.put(modelName, validator);
+				this.validatorMap.put(schemaName, validator);
 
 			}
 					
@@ -171,7 +171,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		if(httpEntity instanceof HttpBaseRequestEntity) {
 			for(ApiBodyParameter body: operation.getRequest().getBodyParameters()) {
-				lst.add(this.validatorMap.get(body.getElement()));
+				if(this.validatorMap.containsKey(body.getElement())) {
+					lst.add(this.validatorMap.get(body.getElement()));
+				}
 			}
 		}
 		
