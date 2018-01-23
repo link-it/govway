@@ -359,6 +359,8 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idRisorsa);
 
