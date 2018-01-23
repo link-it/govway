@@ -51,6 +51,7 @@
 			</propertySet>
 		</properties>				
 		<payloadProfiles>
+			<#include "/org/openspcoop2/protocol/as4/pmode/pmode-payloadDefault.ftl">
 			<payload name="businessContentPayload"
 					cid="cid:message"
 					required="true"
@@ -68,6 +69,7 @@
 					<#if payload.maxSize?has_content>maxSize="${payload.maxSize}"</#if> 
 					<#if payload.mimeType?has_content>mimeType="${payload.mimeType}"/></#if> 
 			</#list>
+			<#include "/org/openspcoop2/protocol/as4/pmode/pmode-payloadProfileDefault.ftl">
 			<payloadProfile name="MessageProfile" 
 					maxSize="40894464">
 				<attachment name="businessContentPayload"/>
@@ -108,10 +110,7 @@
 		<actions>
 		<#list apis?values as api>
 			<#list api.actions?values as action>
-			<#if action.baseAzione?has_content><action name="${action.id}" value="${action.baseAzione.nome}"/></#if>
-			<#if action.baseOperation?has_content><action name="${action.id}" value="${action.baseOperation.nome}"/></#if>
-			<#if action.baseResource?has_content><action name="${action.id}" value="${action.baseResource.nome}"/></#if>
-			
+				<action name="${action.id}" value="${action.ebmsUserMessageCollaborationInfoActionName}"/>
 			</#list>
 		</#list>
 		</actions>
