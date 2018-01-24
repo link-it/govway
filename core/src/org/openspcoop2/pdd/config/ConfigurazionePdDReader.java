@@ -25,7 +25,6 @@ package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -532,7 +531,7 @@ public class ConfigurazionePdDReader {
 			return false;
 
 		/** Lista di Soggetti Virtuali */
-		HashSet<String> listaSoggettiVirtuali = null;
+		List<IDSoggetto> listaSoggettiVirtuali = null;
 		try{
 			listaSoggettiVirtuali = this.configurazionePdD.getSoggettiVirtuali(connectionPdD);
 		}catch(DriverConfigurazioneNotFound de){
@@ -540,9 +539,15 @@ public class ConfigurazionePdDReader {
 			return false;
 		}
 
-		String keySoggetto = idSoggetto.getTipo() + idSoggetto.getNome();
-
-		return listaSoggettiVirtuali.contains(keySoggetto);
+		if(listaSoggettiVirtuali!=null && listaSoggettiVirtuali.size()>0) {
+			for (int i = 0; i < listaSoggettiVirtuali.size(); i++) {
+				if(listaSoggettiVirtuali.get(i).equals(idSoggetto)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	/**
@@ -569,7 +574,7 @@ public class ConfigurazionePdDReader {
 	 * @return Restituisce la lista dei servizi associati a soggetti virtuali gestiti dalla PdD
 	 * @throws DriverConfigurazioneException
 	 */
-	protected  HashSet<IDServizio> getServizi_SoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected  List<IDServizio> getServizi_SoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getServizi_SoggettiVirtuali(connectionPdD);
 	}
 

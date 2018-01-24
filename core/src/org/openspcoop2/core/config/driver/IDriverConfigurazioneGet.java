@@ -21,7 +21,6 @@
 
 package org.openspcoop2.core.config.driver;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +84,7 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * @return Restituisce la lista dei soggetti virtuali gestiti dalla PdD
 	 * @throws DriverConfigurazioneException
 	 */
-	public HashSet<String> getSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public List<IDSoggetto> getSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce la lista dei soggetti virtuali gestiti dalla PdD
@@ -93,7 +92,7 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * @return Restituisce la lista dei servizi associati a soggetti virtuali gestiti dalla PdD
 	 * @throws DriverConfigurazioneException
 	 */
-	public HashSet<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce la lista degli identificativi dei soggetti

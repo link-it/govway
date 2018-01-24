@@ -479,11 +479,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	 * @throws DriverConfigurazioneException
 	 */
 	@Override
-	public HashSet<String> getSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{	
+	public List<IDSoggetto> getSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{	
 
 		refreshConfigurazioneXML();
 
-		HashSet<String> lista = new HashSet<String>();
+		List<IDSoggetto> lista = new ArrayList<IDSoggetto>();
 		try{
 			for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
 				Soggetto soggetto = this.openspcoop.getSoggetto(i);
@@ -492,8 +492,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 					if(pa.getSoggettoVirtuale()!=null && 
 							pa.getSoggettoVirtuale().getTipo()!=null &&
 							pa.getSoggettoVirtuale().getNome()!=null){
-						String soggettoVirtuale = 
-							pa.getSoggettoVirtuale().getTipo() + pa.getSoggettoVirtuale().getNome();
+						IDSoggetto soggettoVirtuale = new IDSoggetto(pa.getSoggettoVirtuale().getTipo(),pa.getSoggettoVirtuale().getNome());
 						if(lista.contains(soggettoVirtuale)==false){
 							this.log.info("aggiunto Soggetto "+soggettoVirtuale+" alla lista dei Soggetti Virtuali");
 							lista.add(soggettoVirtuale);
@@ -519,11 +518,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	 * @throws DriverConfigurazioneException
 	 */
 	@Override
-	public HashSet<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		refreshConfigurazioneXML();
 
-		HashSet<IDServizio> lista = new HashSet<IDServizio>();
+		List<IDServizio> lista = new ArrayList<IDServizio>();
 		HashSet<String> unique = new HashSet<String>();
 		try{
 			for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){

@@ -30,7 +30,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +82,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
@@ -93,7 +93,6 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -117,8 +116,8 @@ import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
-import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.config.constants.RicercaTipologiaErogazione;
@@ -153,6 +152,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -1120,9 +1120,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 * @throws DriverConfigurazioneException
 	 */
 	@Override
-	public HashSet<String> getSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public List<IDSoggetto> getSoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		HashSet<String> soggettiVirtuali = new HashSet<String>();
+		List<IDSoggetto> soggettiVirtuali = new ArrayList<IDSoggetto>();
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -1162,7 +1162,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
-				String soggettoVirtuale = rs.getString("tipo_soggetto_virtuale") + rs.getString("nome_soggetto_virtuale");
+				IDSoggetto soggettoVirtuale = new IDSoggetto(rs.getString("tipo_soggetto_virtuale") , rs.getString("nome_soggetto_virtuale"));
 				this.log.info("aggiunto Soggetto " + soggettoVirtuale + " alla lista dei Soggetti Virtuali");
 				soggettiVirtuali.add(soggettoVirtuale);
 			}
@@ -9644,6 +9644,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 
 
+
 	/**
 	 * metodo di utilita per il recupero della lista di servizi applicativi
 	 * @param ricerca
@@ -11013,9 +11014,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public HashSet<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		HashSet<IDServizio> servizi = new HashSet<IDServizio>();
+		List<IDServizio> servizi = new ArrayList<IDServizio>();
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -11175,27 +11176,28 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				tmp = rs.getString("pa_url_prefix_rewriter");
 				Soggetto.setPaUrlPrefixRewriter(((tmp == null || tmp.equals("")) ? null : tmp));
 
-				// Aggiungo i servizi applicativi
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addWhereCondition("id_soggetto=?");
-				sqlQuery = sqlQueryObject.createSQLQuery();
-				stm1 = con.prepareStatement(sqlQuery);
-				stm1.setLong(1, rs.getLong("id"));
-				rs1 = stm1.executeQuery();
-
-				ServizioApplicativo servizioApplicativo = null;
-				while (rs1.next()) {
-					// setto solo il nome come da specifica
-					servizioApplicativo = new ServizioApplicativo();
-					servizioApplicativo.setId(rs1.getLong("id"));
-					servizioApplicativo.setNome(rs1.getString("nome"));
-					Soggetto.addServizioApplicativo(servizioApplicativo);
-				}
-				rs1.close();
-				stm1.close();
+				// Creava OutOfMemory, non dovrebbe servire
+//				// Aggiungo i servizi applicativi
+//				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+//				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+//				sqlQueryObject.addSelectField("id");
+//				sqlQueryObject.addSelectField("nome");
+//				sqlQueryObject.addWhereCondition("id_soggetto=?");
+//				sqlQuery = sqlQueryObject.createSQLQuery();
+//				stm1 = con.prepareStatement(sqlQuery);
+//				stm1.setLong(1, rs.getLong("id"));
+//				rs1 = stm1.executeQuery();
+//
+//				ServizioApplicativo servizioApplicativo = null;
+//				while (rs1.next()) {
+//					// setto solo il nome come da specifica
+//					servizioApplicativo = new ServizioApplicativo();
+//					servizioApplicativo.setId(rs1.getLong("id"));
+//					servizioApplicativo.setNome(rs1.getString("nome"));
+//					Soggetto.addServizioApplicativo(servizioApplicativo);
+//				}
+//				rs1.close();
+//				stm1.close();
 
 			} else {
 				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getSoggetto] Soggetto non Esistente.");

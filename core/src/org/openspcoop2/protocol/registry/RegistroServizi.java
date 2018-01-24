@@ -57,6 +57,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -627,6 +628,13 @@ public class RegistroServizi  {
 			
 			/* ********  R I C E R C A    S E R V I Z I  (utilizzo dei driver) ******** */
 			
+
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero accordi di servizio parte comune ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
 			List<IDAccordo> listAccordi = null;
 			try{
@@ -634,6 +642,13 @@ public class RegistroServizi  {
 			}
 			catch(DriverRegistroServiziNotFound notFound){}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listAccordi!=null ? listAccordi.size() : 0)+" accordi di servizio parte comune";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			if(listAccordi!=null && listAccordi.size()>0){
 				
 				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listAccordi.size()+" accordi di servizio parte comune ...";
@@ -643,6 +658,12 @@ public class RegistroServizi  {
 				}
 				
 				for (IDAccordo idAccordo : listAccordi) {
+					
+					msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero dati per l'accordo di servizio parte comune ["+idAccordo+"] ...";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
 					
 					try{
 						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, null));
@@ -658,47 +679,150 @@ public class RegistroServizi  {
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
+					AccordoServizioParteComune as = null;
 					try{
 						this.cache.remove(_getKey_getAccordoServizioParteComune(idAccordo, true));
-						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, true);
+						as = this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, true);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-					
-					FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
-					List<IDSoggetto> listSoggetti = null;
-					try{
-						listSoggetti = this.driverRegistroServizi.get(nomeRegistro).getAllIdSoggetti(filtroSoggetti);
-					}
-					catch(DriverRegistroServiziNotFound notFound){}
-					catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-					if(listSoggetti!=null && listSoggetti.size()>0){
-						for (IDSoggetto idSoggetto : listSoggetti) {
-							
-							try{
-								this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,null));
-								this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo);
+										
+					boolean serviziCorrelati = false;
+					if(as!=null) {
+						ProfiloCollaborazione profiloAS = as.getProfiloCollaborazione();
+						for (Azione az : as.getAzioneList()) {
+							ProfiloCollaborazione profiloAZ = profiloAS;
+							if (CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(az.getProfAzione())) {
+								profiloAZ = az.getProfiloCollaborazione();
 							}
-							catch(DriverRegistroServiziNotFound notFound){}
-							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-							
-							try{
-								this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,false));
-								this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, false);
+							if(ProfiloCollaborazione.ASINCRONO_ASIMMETRICO.equals(profiloAZ) || 
+									ProfiloCollaborazione.ASINCRONO_SIMMETRICO.equals(profiloAZ)) {
+								serviziCorrelati = true;
+								break;
+							} 
+						}
+						if(!serviziCorrelati) {
+							for (PortType pt : as.getPortTypeList()) {
+								ProfiloCollaborazione profiloPT = profiloAS;
+								if (CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(pt.getProfiloPT())) {
+									profiloPT = pt.getProfiloCollaborazione();
+								}
+								for (Operation az : pt.getAzioneList()) {
+									ProfiloCollaborazione profiloAZ = profiloPT;
+									if (CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(az.getProfAzione())) {
+										profiloAZ = az.getProfiloCollaborazione();
+									}
+									if(ProfiloCollaborazione.ASINCRONO_ASIMMETRICO.equals(profiloAZ) || 
+											ProfiloCollaborazione.ASINCRONO_SIMMETRICO.equals(profiloAZ)) {
+										serviziCorrelati = true;
+										break;
+									} 
+								}
+								if(serviziCorrelati) {
+									break;
+								}
 							}
-							catch(DriverRegistroServiziNotFound notFound){}
-							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-							
-							try{
-								this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,true));
-								this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, true);
-							}
-							catch(DriverRegistroServiziNotFound notFound){}
-							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-							
 						}
 					}
+					
+					msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero dati per l'accordo di servizio parte comune ["+idAccordo+"] completato";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
+					
+					if(serviziCorrelati) {
+					
+						msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], (analisi profilo asincrono) recupero servizi che implementano l'accordo di servizio parte comune ["+idAccordo+"] ...";
+						this.log.debug(msg);
+						if(alogConsole!=null){
+							alogConsole.debug(msg);
+						}
+					
+						FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
+						filtroServizi.setIdAccordoServizioParteComune(idAccordo);
+						List<IDServizio> listServizi = null;
+						try{
+							listServizi = this.driverRegistroServizi.get(nomeRegistro).getAllIdServizi(filtroServizi);
+						}
+						catch(DriverRegistroServiziNotFound notFound){}
+						catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+
+						msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], (analisi profilo asincrono) recuperati "+(listServizi!=null ? listServizi.size() : 0)+" servizi che implementano l'accordo di servizio parte comune ["+idAccordo+"]";
+						this.log.debug(msg);
+						if(alogConsole!=null){
+							alogConsole.debug(msg);
+						}
+						
+						if(listServizi!=null && listServizi.size()>0) {
+							for (IDServizio idServizio : listServizi) {
+								
+								IDSoggetto idSoggetto = idServizio.getSoggettoErogatore();
+								
+								if(org.openspcoop2.core.constants.TipologiaServizio.CORRELATO.equals(idServizio.getTipologia())) {
+									
+									msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+
+											"], recupero dati asincroni per l'accordo di servizio parte comune ["+idAccordo+"] e soggetto ["+idSoggetto+"] ...";
+									this.log.debug(msg);
+									if(alogConsole!=null){
+										alogConsole.debug(msg);
+									}
+																		
+									try{
+										this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,null));
+										this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo);
+									}
+									catch(DriverRegistroServiziNotFound notFound){}
+									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+									
+									try{
+										this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,false));
+										this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, false);
+									}
+									catch(DriverRegistroServiziNotFound notFound){}
+									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+									
+									try{
+										this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,true));
+										this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, true);
+									}
+									catch(DriverRegistroServiziNotFound notFound){}
+									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+									
+									msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+
+											"], recupero dati asincroni per l'accordo di servizio parte comune ["+idAccordo+"] e soggetto ["+idSoggetto+"] completato";
+									this.log.debug(msg);
+									if(alogConsole!=null){
+										alogConsole.debug(msg);
+									}
+									
+								}
+								
+								else {
+									msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+
+											"], recupero dati asincroni per l'accordo di servizio parte comune ["+idAccordo+"] e soggetto ["+idSoggetto+"] non effettuata essendo il servizio non di tipologia correlata";
+									this.log.debug(msg);
+									if(alogConsole!=null){
+										alogConsole.debug(msg);
+									}
+								}
+							}
+						}
+					}
+
 				}
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listAccordi.size()+" accordi di servizio parte comune completato";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero porte di dominio ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 			
 			FiltroRicerca filtroPdd = new FiltroRicerca();
@@ -708,9 +832,16 @@ public class RegistroServizi  {
 			}
 			catch(DriverRegistroServiziNotFound notFound){}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperate "+(listPdd!=null ? listPdd.size() : 0)+" porte di dominio";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			if(listPdd!=null && listPdd.size()>0){
 				
-				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listPdd.size()+" pdd ...";
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listPdd.size()+" porte di dominio ...";
 				this.log.debug(msg);
 				if(alogConsole!=null){
 					alogConsole.debug(msg);
@@ -726,6 +857,18 @@ public class RegistroServizi  {
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 				}
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listPdd.size()+" porte di dominio completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero ruoli ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 			
 			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
@@ -735,6 +878,13 @@ public class RegistroServizi  {
 			}
 			catch(DriverRegistroServiziNotFound notFound){}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listRuoli!=null ? listRuoli.size() : 0)+" ruoli";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			if(listRuoli!=null && listRuoli.size()>0){
 				
 				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listRuoli.size()+" ruoli ...";
@@ -753,6 +903,18 @@ public class RegistroServizi  {
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 				}
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listRuoli.size()+" ruoli completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero soggetti ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 			
 			FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
@@ -762,6 +924,13 @@ public class RegistroServizi  {
 			}
 			catch(DriverRegistroServiziNotFound notFound){}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listSoggetti!=null ? listSoggetti.size() : 0)+" soggetti";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			if(listSoggetti!=null && listSoggetti.size()>0){
 				
 				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listSoggetti.size()+" soggetti ...";
@@ -815,6 +984,18 @@ public class RegistroServizi  {
 						}
 					}
 				}
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listSoggetti.size()+" soggetti completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero servizi ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 			
 			FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
@@ -824,6 +1005,13 @@ public class RegistroServizi  {
 			}
 			catch(DriverRegistroServiziNotFound notFound){}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listServizi!=null ? listServizi.size() : 0)+" servizi";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			if(listServizi!=null && listServizi.size()>0){
 				
 				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listServizi.size()+" servizi ...";
@@ -833,6 +1021,12 @@ public class RegistroServizi  {
 				}
 				
 				for (IDServizio idServizio : listServizi) {
+					
+					msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero dati per l'accordo di servizio parte specifica ["+idServizio+"] ...";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
 					
 					try{
 						this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,null));
@@ -933,7 +1127,25 @@ public class RegistroServizi  {
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					// Correlato implementato nella parte comune
+					
+					msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero dati per l'accordo di servizio parte specifica ["+idServizio+"] completata";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
 				}
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listServizi.size()+" servizi completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero accordi di cooperazione ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 			
 			FiltroRicercaAccordi filtroAccordiCooperazione = new FiltroRicercaAccordi();
@@ -943,6 +1155,13 @@ public class RegistroServizi  {
 			}
 			catch(DriverRegistroServiziNotFound notFound){}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listAccordiCooperazione!=null ? listAccordiCooperazione.size() : 0)+" accordi di cooperazione";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			if(listAccordiCooperazione!=null && listAccordiCooperazione.size()>0){
 				
 				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listAccordiCooperazione.size()+" accordi di cooperazione ...";
@@ -974,6 +1193,12 @@ public class RegistroServizi  {
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
+				}
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listAccordiCooperazione.size()+" accordi di cooperazione completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
 				}
 			}
 			

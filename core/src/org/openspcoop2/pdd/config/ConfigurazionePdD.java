@@ -24,7 +24,6 @@ package org.openspcoop2.pdd.config;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -504,6 +503,13 @@ public class ConfigurazionePdD  {
 		}
 		
 		// *** Soggetti ***
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recupero soggetti ...";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
 		List<IDSoggetto> idSoggetti = null;
 		try{
@@ -511,6 +517,13 @@ public class ConfigurazionePdD  {
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperati "+(idSoggetti!=null ? idSoggetti.size() : 0)+" soggetti";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		if(idSoggetti!=null && idSoggetti.size()>0){
 			
 			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idSoggetti.size()+" soggetti ...";
@@ -529,6 +542,19 @@ public class ConfigurazionePdD  {
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 			}
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idSoggetti.size()+" soggetti completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+		}
+		
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recupero porte delegate ...";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
 		}
 		
 		FiltroRicercaPorteDelegate filtroPorteDelegate = new FiltroRicercaPorteDelegate();
@@ -538,6 +564,13 @@ public class ConfigurazionePdD  {
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperate "+(idPDs!=null ? idPDs.size() : 0)+" porte delegate";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		if(idPDs!=null && idPDs.size()>0){
 			
 			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idPDs.size()+" porte delegate ...";
@@ -547,6 +580,12 @@ public class ConfigurazionePdD  {
 			}
 			
 			for (IDPortaDelegata idPortaDelegata : idPDs) {
+				
+				msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati della porta delegata ["+idPortaDelegata+"] ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
 				
 				try{
 					this.cache.remove(_getKey_getIDPortaDelegata(idPortaDelegata.getNome()));
@@ -637,6 +676,18 @@ public class ConfigurazionePdD  {
 						}
 					}
 				}
+				
+				msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati della porta delegata ["+idPortaDelegata+"] completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idPDs.size()+" porte delegate completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 		}
 		
@@ -667,10 +718,23 @@ public class ConfigurazionePdD  {
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di router/soggettiVirtuali completata";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		// *** PorteDelegate ***
 		// getPortaDelegata invocata precedentemente con i soggetti
 		
 		// *** PorteApplicative ***
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recupero porte applicative ...";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		FiltroRicercaPorteApplicative filtroPorteApplicative = new FiltroRicercaPorteApplicative();
 		List<IDPortaApplicativa> idPAs = null;
 		try{
@@ -678,6 +742,13 @@ public class ConfigurazionePdD  {
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperate "+(idPAs!=null ? idPAs.size() : 0)+" porte applicative";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		if(idPAs!=null && idPAs.size()>0){
 			
 			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idPAs.size()+" porte applicative ...";
@@ -687,7 +758,13 @@ public class ConfigurazionePdD  {
 			}
 			
 			for (IDPortaApplicativa idPA : idPAs) {
-								
+						
+				msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati della porta applicativa ["+idPA+"] ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
 				try{
 					this.cache.remove(_getKey_getIDPortaApplicativa(idPA.getNome()));
 					this.getIDPortaApplicativa(connectionPdD, idPA.getNome());
@@ -730,10 +807,23 @@ public class ConfigurazionePdD  {
 					
 				}
 				
+				msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati della porta applicativa ["+idPA+"] completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idPAs.size()+" porte applicative completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 		}
 		
 		// getPorteApplicative_SoggettiVirtuali non inizializzabile
+		// getPorteApplicativeVirtuali non inizializzabile
 		
 		// *** ServiziApplicativi ***
 		// getServizioApplicativo(PD) invocata precedentemente con i soggetti
@@ -741,6 +831,13 @@ public class ConfigurazionePdD  {
 		// getServizioApplicativoAutenticatoBasic(PD) invocata precedentemente con i soggetti
 		// getServizioApplicativoAutenticatoSsl(PD) invocata precedentemente con i soggetti
 		// getServizioApplicativoAutenticatoPrincipal(PD) invocata precedentemente con i soggetti
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recupero servizi applicativi ...";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		FiltroRicercaServiziApplicativi filtroServiziApplicativi = new FiltroRicercaServiziApplicativi();
 		List<IDServizioApplicativo> idSAs = null;
 		try{
@@ -748,6 +845,13 @@ public class ConfigurazionePdD  {
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperati "+(idSAs!=null ? idSAs.size() : 0)+" servizi applicativi";
+		this.log.debug(msg);
+		if(alogConsole!=null){
+			alogConsole.debug(msg);
+		}
+		
 		if(idSAs!=null && idSAs.size()>0){
 			
 			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idSAs.size()+" servizi applicativi ...";
@@ -794,6 +898,12 @@ public class ConfigurazionePdD  {
 						}
 					}
 				}
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di "+idSAs.size()+" servizi applicativi completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 		}
 		
@@ -888,6 +998,7 @@ public class ConfigurazionePdD  {
 		
 		
 		org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti filtroSoggetti = new org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti();
+		@SuppressWarnings("unused")
 		List<IDSoggetto> listSoggetti = null;
 		try{
 			listSoggetti = registroServiziReader.getAllIdSoggetti_noCache(filtroSoggetti,null);
@@ -903,6 +1014,14 @@ public class ConfigurazionePdD  {
 		catch(DriverRegistroServiziNotFound notFound){}
 		catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
+		List<IDSoggetto> soggettiVirtuali = null;
+		try{
+			this.cache.remove(_getKey_getSoggettiVirtuali());
+			soggettiVirtuali = this.getSoggettiVirtuali(null);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
 		if(listIdServizi!=null && listIdServizi.size()>0){
 		
 			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD-RegistroServizi), lettura di "+listIdServizi.size()+" servizi ...";
@@ -913,6 +1032,12 @@ public class ConfigurazionePdD  {
 			
 			for (IDServizio idServizio : listIdServizi) {
 			
+				msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati registro correlati al servizio ["+idServizio+"] ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
 				try{
 					this.cache.remove(_getKey_getPorteApplicative(idServizio,false));
 					this.getPorteApplicative(null, idServizio, false);
@@ -934,15 +1059,15 @@ public class ConfigurazionePdD  {
 				catch(DriverConfigurazioneNotFound notFound){}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
-				if(listSoggetti!=null && listSoggetti.size()>0){
-				
-					msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD-RegistroServizi), lettura di "+listSoggetti.size()+" soggetto per il servizio ["+idServizio+"] ...";
+				if(soggettiVirtuali!=null && soggettiVirtuali.size()>0) {
+					
+					msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati registro correlati al servizio per soggetti virtuali ("+soggettiVirtuali.size()+") ["+idServizio+"] ...";
 					this.log.debug(msg);
 					if(alogConsole!=null){
 						alogConsole.debug(msg);
 					}
 					
-					for (IDSoggetto idSoggetto : listSoggetti) {
+					for (IDSoggetto idSoggetto : soggettiVirtuali) {
 						
 						try{
 							this.cache.remove(_getKey_getPorteApplicativeVirtuali(idSoggetto, idServizio,false));
@@ -959,8 +1084,24 @@ public class ConfigurazionePdD  {
 						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 						
 					}
-					
+						
+					msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati registro correlati al servizio per soggetti virtuali ("+soggettiVirtuali.size()+") ["+idServizio+"] completata";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
 				}
+				
+				msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura dati registro correlati al servizio ["+idServizio+"] completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD-RegistroServizi), lettura di "+listIdServizi.size()+" servizi completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
 			}
 		}
 		
@@ -1333,7 +1474,7 @@ public class ConfigurazionePdD  {
 		return "getSoggettiVirtuali";
 	}
 	@SuppressWarnings(value = "unchecked")
-	public HashSet<String> getSoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public List<IDSoggetto> getSoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
@@ -1348,17 +1489,17 @@ public class ConfigurazionePdD  {
 					else
 						throw (DriverConfigurazioneException) response.getException();
 				}else{
-					return ((HashSet<String>) response.getObject());
+					return ((List<IDSoggetto>) response.getObject());
 				}
 			}
 		}
 
 		// Algoritmo CACHE
-		HashSet<String> lista = null;
+		List<IDSoggetto> lista = null;
 		if(this.cache!=null){
-			lista = (HashSet<String>) this.getObjectCache(key,"getSoggettiVirtuali",connectionPdD);
+			lista = (List<IDSoggetto>) this.getObjectCache(key,"getSoggettiVirtuali",connectionPdD);
 		}else{
-			lista = (HashSet<String>) this.getObject("getSoggettiVirtuali",connectionPdD);
+			lista = (List<IDSoggetto>) this.getObject("getSoggettiVirtuali",connectionPdD);
 		}
 
 		if(lista!=null)
@@ -1371,7 +1512,7 @@ public class ConfigurazionePdD  {
 		return "getServizi_SoggettiVirtuali";
 	}
 	@SuppressWarnings(value = "unchecked")
-	public HashSet<IDServizio> getServizi_SoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public List<IDServizio> getServizi_SoggettiVirtuali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
@@ -1386,17 +1527,17 @@ public class ConfigurazionePdD  {
 					else
 						throw (DriverConfigurazioneException) response.getException();
 				}else{
-					return ((HashSet<IDServizio>) response.getObject());
+					return ((List<IDServizio>) response.getObject());
 				}
 			}
 		}
 
 		// Algoritmo CACHE
-		HashSet<IDServizio> lista = null;
+		List<IDServizio> lista = null;
 		if(this.cache!=null){
-			lista = (HashSet<IDServizio>) this.getObjectCache(key,"getServizi_SoggettiVirtuali",connectionPdD);
+			lista = (List<IDServizio>) this.getObjectCache(key,"getServizi_SoggettiVirtuali",connectionPdD);
 		}else{
-			lista = (HashSet<IDServizio>) this.getObject("getServizi_SoggettiVirtuali",connectionPdD);
+			lista = (List<IDServizio>) this.getObject("getServizi_SoggettiVirtuali",connectionPdD);
 		}
 
 		if(lista!=null)

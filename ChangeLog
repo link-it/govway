@@ -1,3 +1,14 @@
+2018-01-24  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-693
+	Dove la configurazione di una PdD presenta moltissime entità (es. 50000 servizi applicativi) 
+	si presentano condizioni di OutOfMemory sull'Application Server.
+	Il problema è dovuto ad un utilizzo eccessivo della memoria occupata dagli oggetti salvati in cache 
+	durante l'accesso alla configurazione ed al registro dei servizi.
+	Utlizzando le opzioni di prefill per il caricamento forzato delle cache di configurazione e di registro, 
+	si poteva ottenere immediatamente, all'avvio dell'Application Server il problema di OutOfMemory.
+
 2018-01-15  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole]

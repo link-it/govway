@@ -22,7 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -112,32 +110,6 @@ public class SoggettiCore extends ControlStationCore {
 		}
 	}
 
-	
-	public HashSet<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getServizi_SoggettiVirtuali";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getServizi_SoggettiVirtuali();
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage());
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-	
 	public boolean existsSoggetto(IDSoggetto idSoggetto) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "existsSoggetto";
@@ -381,31 +353,6 @@ public class SoggettiCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().getRouter();
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage());
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-	
-	public HashSet<String> getSoggettiVirtuali() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getSoggettiVirtuali";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getSoggettiVirtuali();
 
 		} catch (DriverConfigurazioneNotFound de) {
 			ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage());
