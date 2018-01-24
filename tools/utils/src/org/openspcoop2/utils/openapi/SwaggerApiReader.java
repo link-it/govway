@@ -17,28 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.swagger.validator;
 
-import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
-import org.openspcoop2.utils.rest.ApiValidatorConfig;
+
+package org.openspcoop2.utils.openapi;
+
+import org.openspcoop2.utils.rest.ApiFormats;
+
 
 /**
- * SwaggerApiValidatorConfig
+ * OpenapiApiReader
  * 
- * @author Bussu Giovanni (bussu@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Andrea Poli (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 13468 $, $Date: 2017-11-27 12:45:09 +0100(lun, 27 nov 2017) $
  *
  */
-public class SwaggerApiValidatorConfig extends ApiValidatorConfig {
+public class SwaggerApiReader extends AbstractOpenapiApiReader {
 
-	private ApiName jsonValidatorAPI;
-
-	public ApiName getJsonValidatorAPI() {
-		return this.jsonValidatorAPI;
+	public SwaggerApiReader() {
+		super(ApiFormats.SWAGGER_2);
 	}
 
-	public void setJsonValidatorAPI(ApiName jsonValidatorAPI) {
-		this.jsonValidatorAPI = jsonValidatorAPI;
-	}
+	
 }

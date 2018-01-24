@@ -42,7 +42,7 @@ public class ApiFactory {
 			case WADL:
 				return (IApiReader) loader.newInstance("org.openspcoop2.utils.wadl.WADLApiReader");
 			case SWAGGER_2:
-				return (IApiReader) loader.newInstance("org.openspcoop2.utils.swagger.SwaggerApiReader");
+				return (IApiReader) loader.newInstance("org.openspcoop2.utils.openapi.SwaggerApiReader");
 			case OPEN_API_3:
 				return (IApiReader) loader.newInstance("org.openspcoop2.utils.openapi.OpenapiApiReader");
 			}
@@ -60,7 +60,7 @@ public class ApiFactory {
 			case WADL:
 				return (IApiValidator) loader.newInstance("org.openspcoop2.utils.wadl.validator.Validator");
 			case SWAGGER_2:
-				return (IApiValidator) loader.newInstance("org.openspcoop2.utils.swagger.validator.Validator");
+				return (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.Validator");
 			case OPEN_API_3:
 				return (IApiValidator) loader.newInstance("org.openspcoop2.utils.openapi.validator.Validator");
 			}

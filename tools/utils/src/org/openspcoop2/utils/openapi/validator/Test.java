@@ -49,21 +49,18 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class Test {
 
-	public static void main(String[] args) throws Exception {
+	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format) throws Exception {
 		try {
-			URI uri = Test.class.getResource("/org/openspcoop2/utils/openapi/test.yaml").toURI();
 	
-			IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+			IApiReader apiReader = ApiFactory.newApiReader(format);
 			apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
 			Api api = apiReader.read();
-			IApiValidator apiValidator = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			IApiValidator apiValidator = ApiFactory.newApiValidator(format);
 			OpenapiApiValidatorConfig config = new OpenapiApiValidatorConfig();
 			config.setJsonValidatorAPI(ApiName.FGE);
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
 	
-			String baseUrl = "http://petstore.swagger.io/api";
-	
-			System.out.println("Test #1 (Richiesta GET con parametro path)");
+			System.out.println("["+testName+"] Test #1 (Richiesta GET con parametro path)");
 			String testUrl1 = baseUrl + "/pets/2";
 			HttpBaseEntity<?> httpEntity = new TextHttpRequestEntity();
 			httpEntity.setMethod(HttpRequestMethod.GET);
@@ -74,9 +71,9 @@ public class Test {
 			httpEntity.setParametersTrasporto(parametersTrasporto);
 			apiValidator.validate(httpEntity);
 	
-			System.out.println("Test #1 completato");
+			System.out.println("["+testName+"] Test #1 completato");
 	
-			System.out.println("Test #2 (Richiesta GET senza parametri query ove richiesti)");
+			System.out.println("["+testName+"] Test #2 (Richiesta GET senza parametri query ove richiesti)");
 			String testUrl2 = baseUrl + "/pets/findByStatus";
 			HttpBaseEntity<?> httpEntity2 = new TextHttpRequestEntity();
 			httpEntity2.setMethod(HttpRequestMethod.GET);
@@ -85,11 +82,11 @@ public class Test {
 				apiValidator.validate(httpEntity2);
 				throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 			} catch(ValidatorException e) {
-				System.out.println("Errore trovato: " + e.getMessage());
-				System.out.println("Test #2 completato");
+				System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+				System.out.println("["+testName+"] Test #2 completato");
 			}
 			
-			System.out.println("Test #3 (Richiesta GET con parametri query)");
+			System.out.println("["+testName+"] Test #3 (Richiesta GET con parametri query)");
 			Properties parametersQuery = new Properties();
 			HttpBaseEntity<?> httpEntity3 = new TextHttpRequestEntity();
 			parametersQuery.put("status", "available");
@@ -98,9 +95,9 @@ public class Test {
 			httpEntity3.setUrl(testUrl2);
 			apiValidator.validate(httpEntity3);
 	
-			System.out.println("Test #3 completato");
+			System.out.println("["+testName+"] Test #3 completato");
 			
-			System.out.println("Test #4 (Richiesta POST con body json corretto)");
+			System.out.println("["+testName+"] Test #4 (Richiesta POST con body json corretto)");
 			TextHttpRequestEntity httpEntity4 = new TextHttpRequestEntity();
 			httpEntity4.setMethod(HttpRequestMethod.POST);
 			httpEntity4.setUrl("/pets");
@@ -108,9 +105,9 @@ public class Test {
 			httpEntity4.setContentType("application/json");
 			apiValidator.validate(httpEntity4);
 
-			System.out.println("Test #4 completato");
+			System.out.println("["+testName+"] Test #4 completato");
 
-			System.out.println("Test #5 (Richiesta POST con body json errato)");
+			System.out.println("["+testName+"] Test #5 (Richiesta POST con body json errato)");
 			TextHttpRequestEntity httpEntity5 = new TextHttpRequestEntity();
 			httpEntity5.setMethod(HttpRequestMethod.POST);
 			httpEntity5.setUrl("/pets");
@@ -120,8 +117,8 @@ public class Test {
 				apiValidator.validate(httpEntity5);
 				throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 			} catch(ValidatorException e) {
-				System.out.println("Errore trovato: " + e.getMessage());
-				System.out.println("Test #5 completato");
+				System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
+				System.out.println("["+testName+"] Test #5 completato");
 			}
 
 //			System.out.println("Test #6 (Richiesta POST con body xml corretto)");
@@ -137,7 +134,7 @@ public class Test {
 //			System.out.println("Test #6 completato");
 
 		} catch(Exception e) {
-			System.err.println("Errore durante l'esecuzione dei test: " + e.getMessage());
+			System.err.println("["+testName+"] Errore durante l'esecuzione dei test: " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}

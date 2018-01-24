@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.rest;
 
 import org.openspcoop2.utils.beans.BaseBean;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 
@@ -37,6 +38,7 @@ public class ApiReaderConfig extends BaseBean {
 	private boolean verbose = false;
 	private boolean processInclude = true;
 	private boolean processInlineSchema = true;
+	private Charset charset = Charset.UTF_8;
 	private AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	
 	public AbstractXMLUtils getXmlUtils() {
@@ -44,6 +46,12 @@ public class ApiReaderConfig extends BaseBean {
 	}
 	public void setXmlUtils(AbstractXMLUtils xmlUtils) {
 		this.xmlUtils = xmlUtils;
+	}
+	public Charset getCharset() {
+		return this.charset;
+	}
+	public void setCharset(Charset charset) {
+		this.charset = charset;
 	}
 	public boolean isVerbose() {
 		return this.verbose;

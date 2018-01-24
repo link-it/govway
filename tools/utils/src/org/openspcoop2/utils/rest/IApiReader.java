@@ -38,24 +38,24 @@ import org.w3c.dom.Element;
  * @version $Rev$, $Date$
  */
 public interface IApiReader {
-
-	public void init(Logger log,File file, ApiReaderConfig config) throws ProcessingException;
-	public void init(Logger log,File file, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
 	
-	public void init(Logger log,String content, String charsetName, ApiReaderConfig config) throws ProcessingException;
-	public void init(Logger log,String content, String charsetName, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
+	public void init(Logger log,String content, ApiReaderConfig config) throws ProcessingException;
+	public void init(Logger log,String content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
 	
 	public void init(Logger log,byte[] content, ApiReaderConfig config) throws ProcessingException;
 	public void init(Logger log,byte[] content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
+	
+	public void init(Logger log,File file, ApiReaderConfig config) throws ProcessingException;
+	public void init(Logger log,File file, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
+	
+	public void init(Logger log,URI uri, ApiReaderConfig config) throws ProcessingException;
+	public void init(Logger log,URI uri, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
 	
 	public void init(Logger log,Document doc, ApiReaderConfig config) throws ProcessingException;
 	public void init(Logger log,Document doc, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
 	
 	public void init(Logger log,Element element, ApiReaderConfig config) throws ProcessingException;
 	public void init(Logger log,Element element, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
-	
-	public void init(Logger log,URI uri, ApiReaderConfig config) throws ProcessingException;
-	public void init(Logger log,URI uri, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException;
 	
 	public Api read() throws ProcessingException;
 		

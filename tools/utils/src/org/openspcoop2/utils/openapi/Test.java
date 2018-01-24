@@ -43,21 +43,9 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class Test {
 
-	public static void main(String[] args) throws Exception {
+	public static void test(URI uri, String testName, ApiFormats format) throws Exception {
 
-		URI jsonUri = Test.class.getResource("/org/openspcoop2/utils/openapi/test.json").toURI();
-		URI yamlUri = Test.class.getResource("/org/openspcoop2/utils/openapi/test.yaml").toURI();
-
-		test(jsonUri,"json");
-		
-		System.out.println("\n\n\n==============================================================");
-		test(yamlUri,"yaml");
-
-	}
-
-	public static void test(URI uri, String testName) throws Exception {
-
-		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		IApiReader apiReader = ApiFactory.newApiReader(format);
 		apiReader.init(LoggerWrapperFactory.getLogger(Test.class), new File(uri), new ApiReaderConfig());
 		Api api = apiReader.read();
 

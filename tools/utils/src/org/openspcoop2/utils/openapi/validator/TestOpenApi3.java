@@ -19,24 +19,34 @@
  */
 
 
-package org.openspcoop2.utils.openapi;
+package org.openspcoop2.utils.openapi.validator;
+
+import java.net.URI;
 
 import org.openspcoop2.utils.rest.ApiFormats;
 
 
 /**
- * OpenapiApiReader
+ * Test
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author: apoli $
- * @version $Rev: 13468 $, $Date: 2017-11-27 12:45:09 +0100(lun, 27 nov 2017) $
+ * @version $Rev: 13435 $, $Date: 2017-11-15 17:02:49 +0100(mer, 15 nov 2017) $
  *
  */
-public class OpenapiApiReader extends AbstractOpenapiApiReader {
+public class TestOpenApi3 {
 
-	public OpenapiApiReader() {
-		super(ApiFormats.OPEN_API_3);
+	public static void main(String[] args) throws Exception {
+
+		URI jsonUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json").toURI();
+		URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
+		String baseUri = "http://petstore.swagger.io/api";
+		
+		Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3);
+		
+		System.out.println("\n\n\n==============================================================");
+		Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3);
+
 	}
 
-	
 }

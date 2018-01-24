@@ -217,16 +217,16 @@
 	<archive path="/op2_3.0.dev/lib/spring-security/spring-security-core-4.1.3.RELEASE.jar"/>
 	<archive path="/op2_3.0.dev/lib/spring-security/spring-security-web-4.1.3.RELEASE.jar"/>
 	<!-- swagger -->
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-annotations-2.0.0-rc2.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-core-2.0.0-rc2.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-models-2.0.0-rc2.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-2.0.0-rc1.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-core-2.0.0-rc1.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-v2-2.0.0-rc1.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-v2-converter-2.0.0-rc1.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-v3-2.0.0-rc1.jar"/>
-	<archive path="/op2_3.0.dev/lib/swagger/swagger-jaxrs-1.5.16.jar"/>
-
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-annotations-2.0.0-rc4.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-core-2.0.0-rc4.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-models-2.0.0-rc4.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-2.0.0-rc3.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-core-2.0.0-rc3.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-v3-2.0.0-rc3.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-v2-converter-2.0.0-rc3.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-parser-1.0.34.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-core-1.5.18.jar"/>
+	<archive path="/op2_3.0.dev/lib/swagger/swagger-models-1.5.18.jar"/>
 	<!-- testsuite-->
         <archive path="/op2_3.0.dev/lib/testsuite/testng-6.9.12.jar"/>
 	<archive path="/op2_3.0.dev/lib/testsuite/jcommander-1.48.jar"/>

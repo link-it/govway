@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.openspcoop2.utils.rest.api.Api;
 
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 
 
 /**
@@ -38,36 +38,37 @@ import io.swagger.oas.models.OpenAPI;
  *
  */
 public class OpenapiApi extends Api {
-	private OpenAPI swagger;
-	private Map<String, io.swagger.oas.models.media.Schema<?>> definitions;
+	private OpenAPI api;
+	private Map<String, io.swagger.v3.oas.models.media.Schema<?>> definitions;
 
 
 	public OpenapiApi(OpenAPI swagger) {
-		this.swagger = swagger;
-		this.definitions = new HashMap<String, io.swagger.oas.models.media.Schema<?>>();
+		this.api = swagger;
+		this.definitions = new HashMap<String, io.swagger.v3.oas.models.media.Schema<?>>();
 	}
 	
-	public OpenAPI getSwagger() {
-		return this.swagger;
+	public OpenAPI getApi() {
+		return this.api;
 	}
 
-	public void setSwagger(OpenAPI swagger) {
-		this.swagger = swagger;
+	public void setApi(OpenAPI swagger) {
+		this.api = swagger;
 	}
 
-	public Map<String, io.swagger.oas.models.media.Schema<?>> getDefinitions() {
+	public Map<String, io.swagger.v3.oas.models.media.Schema<?>> getDefinitions() {
 		return this.definitions;
 	}
 
-	public Map<String, io.swagger.oas.models.media.Schema> getAllDefinitions() {
-		Map<String, io.swagger.oas.models.media.Schema> map = new HashMap<>();
+	@SuppressWarnings("rawtypes")
+	public Map<String, io.swagger.v3.oas.models.media.Schema> getAllDefinitions() {
+		Map<String, io.swagger.v3.oas.models.media.Schema> map = new HashMap<>();
 		map.putAll(this.getDefinitions());
-		if(this.swagger.getComponents() != null && this.swagger.getComponents().getSchemas() != null)
-			map.putAll(this.swagger.getComponents().getSchemas());
+		if(this.api.getComponents() != null && this.api.getComponents().getSchemas() != null)
+			map.putAll(this.api.getComponents().getSchemas());
 		return map;
 	}
 
-	public void setDefinitions(Map<String, io.swagger.oas.models.media.Schema<?>> definitions) {
+	public void setDefinitions(Map<String, io.swagger.v3.oas.models.media.Schema<?>> definitions) {
 		this.definitions = definitions;
 	}
 

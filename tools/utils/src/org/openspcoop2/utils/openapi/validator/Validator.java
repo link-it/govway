@@ -49,8 +49,8 @@ import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.slf4j.Logger;
 
-import io.swagger.oas.models.media.Schema;
-import io.swagger.util.Json;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.core.util.Json;
 
 /**
  * Validator
@@ -85,6 +85,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		try {
 			
+			@SuppressWarnings("rawtypes")
 			Map<String, Schema> definitions = this.api.getAllDefinitions();
 			
 			this.validatorMap = new HashMap<>();
