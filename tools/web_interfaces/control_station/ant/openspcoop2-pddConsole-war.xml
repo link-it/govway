@@ -328,6 +328,7 @@
 				<include name="commons-io-2.5.jar" />
 				<include name="commons-lang-2.6.jar" />
 				<include name="${commons_logging_jar}"/>
+				<include name="commons-lang3-3.4.jar"/>
 			</lib>
 			<lib dir="${required_lib_pddConsole}/jibx">
 				<include name="jibx-run-1.2.6.jar" />
