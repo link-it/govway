@@ -169,6 +169,7 @@ public class RicezioneBusteConnector implements IRunnableInstance{
 					}
 				}
 				
+				this.qs.commit();
 			}
 			else {
 				throw new Exception("Tipo di messaggio ["+received.getClass().getName()+"] non atteso");
