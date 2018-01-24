@@ -101,7 +101,7 @@ public class Test {
 			TextHttpRequestEntity httpEntity4 = new TextHttpRequestEntity();
 			httpEntity4.setMethod(HttpRequestMethod.POST);
 			httpEntity4.setUrl("/pets");
-			httpEntity4.setContent("{\"name\" : \"aaa\", \"tag\": \"boh\"}");
+			httpEntity4.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
 			httpEntity4.setContentType("application/json");
 			apiValidator.validate(httpEntity4);
 

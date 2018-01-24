@@ -27,7 +27,7 @@ import java.util.Map;
 import org.openspcoop2.utils.rest.api.Api;
 
 import io.swagger.v3.oas.models.OpenAPI;
-
+import io.swagger.v3.oas.models.media.Schema;
 
 /**
  * SwaggerApi
@@ -39,12 +39,12 @@ import io.swagger.v3.oas.models.OpenAPI;
  */
 public class OpenapiApi extends Api {
 	private OpenAPI api;
-	private Map<String, io.swagger.v3.oas.models.media.Schema<?>> definitions;
+	private Map<String, Schema<?>> definitions;
 
 
 	public OpenapiApi(OpenAPI swagger) {
 		this.api = swagger;
-		this.definitions = new HashMap<String, io.swagger.v3.oas.models.media.Schema<?>>();
+		this.definitions = new HashMap<String, Schema<?>>();
 	}
 	
 	public OpenAPI getApi() {
@@ -55,20 +55,21 @@ public class OpenapiApi extends Api {
 		this.api = swagger;
 	}
 
-	public Map<String, io.swagger.v3.oas.models.media.Schema<?>> getDefinitions() {
+	public Map<String, Schema<?>> getDefinitions() {
 		return this.definitions;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Map<String, io.swagger.v3.oas.models.media.Schema> getAllDefinitions() {
-		Map<String, io.swagger.v3.oas.models.media.Schema> map = new HashMap<>();
+	public Map<String, Schema<?>> getAllDefinitions() {
+		Map<String, Schema<?>> map = new HashMap<>();
 		map.putAll(this.getDefinitions());
 		if(this.api.getComponents() != null && this.api.getComponents().getSchemas() != null)
-			map.putAll(this.api.getComponents().getSchemas());
+			for(String k: this.api.getComponents().getSchemas().keySet()) {
+				map.put(k, this.api.getComponents().getSchemas().get(k));
+			}
 		return map;
 	}
 
-	public void setDefinitions(Map<String, io.swagger.v3.oas.models.media.Schema<?>> definitions) {
+	public void setDefinitions(Map<String, Schema<?>> definitions) {
 		this.definitions = definitions;
 	}
 

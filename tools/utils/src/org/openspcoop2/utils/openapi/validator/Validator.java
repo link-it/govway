@@ -85,8 +85,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		try {
 			
-			@SuppressWarnings("rawtypes")
-			Map<String, Schema> definitions = this.api.getAllDefinitions();
+			Map<String, Schema<?>> definitions = this.api.getAllDefinitions();
 			
 			this.validatorMap = new HashMap<>();
 			

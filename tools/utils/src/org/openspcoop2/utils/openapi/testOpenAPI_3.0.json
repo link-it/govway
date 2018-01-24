@@ -267,15 +267,49 @@
         ]
       },
       "NewPet": {
+        "type": "object",
+        "title": "petTitle",
         "required": [
-          "name"
+          "name",
+          "photoUrls"
         ],
         "properties": {
-          "name": {
-            "type": "string"
+          "id": {
+            "type": "integer",
+            "format": "int64"
           },
-          "tag": {
-            "type": "string"
+          "name": {
+            "type": "string",
+            "example": "doggie"
+          },
+          "photoUrls": {
+            "type": "array",
+            "xml": {
+              "name": "photoUrl",
+              "wrapped": true
+            },
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "xml": {
+              "name": "tag",
+              "wrapped": true
+            },
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "pet status in the store",
+            "enum": [
+              "available",
+              "pending",
+              "sold"
+            ]
           }
         }
       },

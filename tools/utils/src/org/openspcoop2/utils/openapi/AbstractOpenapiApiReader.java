@@ -55,6 +55,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.CookieParameter;
@@ -284,22 +285,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			if(operation.getParameters() != null) {
 				for(Parameter param: operation.getParameters()) {
 
-					AbstractApiParameter abstractParam = createRequestParameter(param);
-
-					if(abstractParam != null) {
-
-						if(abstractParam instanceof ApiRequestDynamicPathParameter) {
-							request.addDynamicPathParameter((ApiRequestDynamicPathParameter) abstractParam);
-						} else if(abstractParam instanceof ApiRequestQueryParameter) {
-							request.addQueryParameter((ApiRequestQueryParameter) abstractParam);
-						} else if(abstractParam instanceof ApiHeaderParameter) {
-							request.addHeaderParameter((ApiHeaderParameter) abstractParam);
-						} else if(abstractParam instanceof ApiCookieParameter) {
-							request.addCookieParameter((ApiCookieParameter) abstractParam);
-						} else if(abstractParam instanceof ApiRequestFormParameter) {
-							request.addFormParameter((ApiRequestFormParameter) abstractParam);
-						}
-					}
+					addRequestParameter(param, request);
 				}
 			}
 			if(operation.getRequestBody() != null) {
@@ -332,51 +318,94 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 				Schema<?> model = requestBody.getContent().get(consume).getSchema();
 
+				String type = null;
 				if(model.get$ref()!= null) {
-
-					ApiBodyParameter bodyParam = new ApiBodyParameter(model.get$ref());
-					bodyParam.setMediaType(consume);
-					bodyParam.setElement(model.get$ref().replaceAll("#/components/schemas/", ""));
-					if(requestBody.getRequired() != null)
-						bodyParam.setRequired(requestBody.getRequired());
-					lst.add(bodyParam);
+					type = model.get$ref().replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
 				} else {
-					String type = ("request_" + method.toString() + "_" + path+ "_" + consume).replace("/", "_");
-	
+					type = ("request_" + method.toString() + "_" + path+ "_" + consume).replace("/", "_");
 					api.getDefinitions().put(type, model);
-	
-					ApiBodyParameter bodyParam = new ApiBodyParameter(type);
-					bodyParam.setMediaType(consume);
-					bodyParam.setElement(type);
-					if(requestBody.getRequired() != null)
-						bodyParam.setRequired(requestBody.getRequired());
-					lst.add(bodyParam);
 				}
+				
+				ApiBodyParameter bodyParam = new ApiBodyParameter(type);
+				bodyParam.setMediaType(consume);
+				bodyParam.setElement(type);
+				if(requestBody.getRequired() != null)
+					bodyParam.setRequired(requestBody.getRequired());
+
+				lst.add(bodyParam);
+
 			}
 		}
 
 		return lst;
 	}
 
-	private AbstractApiParameter createRequestParameter(Parameter param) {
+	private void addRequestParameter(Parameter param, ApiRequest request) {
 
 		AbstractApiParameter abstractParam = null;
+		String type = getParameterType(param.getSchema(), param.get$ref()); 
 		if(param instanceof PathParameter) {
-			abstractParam = new ApiRequestDynamicPathParameter(param.getName(), ((PathParameter)param).getSchema().getType());
+			abstractParam = new ApiRequestDynamicPathParameter(param.getName(), type);
 		} else if(param instanceof QueryParameter) {
-			abstractParam = new ApiRequestQueryParameter(param.getName(), ((QueryParameter)param).getSchema().getType());
+			abstractParam = new ApiRequestQueryParameter(param.getName(), type);
 		} else if(param instanceof HeaderParameter) {
-			abstractParam = new ApiHeaderParameter(param.getName(), ((HeaderParameter)param).getSchema().getType());
+			abstractParam = new ApiHeaderParameter(param.getName(), type);
 		} else if(param instanceof CookieParameter) {
-			abstractParam = new ApiCookieParameter(param.getName(), ((CookieParameter)param).getSchema().getType());
+			abstractParam = new ApiCookieParameter(param.getName(), type);
+		}
+
+		if(abstractParam == null) {
+			if(param.getIn() != null) {
+				if(param.getIn().equals("query")) {
+					abstractParam = new ApiRequestQueryParameter(param.getName(), type);
+				} else if(param.getIn().equals("header")) {
+					abstractParam = new ApiHeaderParameter(param.getName(), type);
+				} else if(param.getIn().equals("cookie")) {
+					abstractParam = new ApiCookieParameter(param.getName(), type);
+				} else if(param.getIn().equals("path")) {
+					abstractParam = new ApiRequestDynamicPathParameter(param.getName(), type);
+				}
+			}
 		}
 
 		if(abstractParam != null) {
 			abstractParam.setDescription(param.getDescription());
-			abstractParam.setRequired(param.getRequired());
+			if(param.getRequired() != null)
+				abstractParam.setRequired(param.getRequired());
+
+			if(abstractParam instanceof ApiRequestDynamicPathParameter) {
+				request.addDynamicPathParameter((ApiRequestDynamicPathParameter) abstractParam);
+			} else if(abstractParam instanceof ApiRequestQueryParameter) {
+				request.addQueryParameter((ApiRequestQueryParameter) abstractParam);
+			} else if(abstractParam instanceof ApiHeaderParameter) {
+				request.addHeaderParameter((ApiHeaderParameter) abstractParam);
+			} else if(abstractParam instanceof ApiCookieParameter) {
+				request.addCookieParameter((ApiCookieParameter) abstractParam);
+			} else if(abstractParam instanceof ApiRequestFormParameter) {
+				request.addFormParameter((ApiRequestFormParameter) abstractParam);
+			}
 		}
 
-		return abstractParam;
+	}
+
+	private String getParameterType(Schema<?> schema, String ref) {
+		if(ref != null) {
+			return ref.replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+		}
+
+		if(schema.get$ref() != null) {
+			return getParameterType(schema, schema.get$ref());
+		}
+		
+		if(schema instanceof ArraySchema) {
+			return getParameterType(((ArraySchema)schema).getItems(), null); 
+		}
+		
+		if(schema.getFormat() != null) {
+			return schema.getFormat();
+		} else {
+			return schema.getType();
+		}
 	}
 
 	private ApiResponse createResponses(String responseK, io.swagger.v3.oas.models.responses.ApiResponse response, HttpRequestMethod method, String path, OpenapiApi api) {
@@ -397,20 +426,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			for(String header: response.getHeaders().keySet()) {
 				Header property = response.getHeaders().get(header);
 				
-				String type = null;
-				if(property.get$ref() != null) {
-					type = property.get$ref().replaceAll("#/components/schemas/", "");
-				} else if(property.getSchema() != null) {
-					if(property.getSchema().get$ref() != null) {
-						type = property.getSchema().get$ref().replaceAll("#/components/schemas/", "");
-					} else {
-						if(property.getSchema().getFormat() != null) {
-							type = property.getSchema().getFormat();
-						} else {
-							type = property.getSchema().getType();						
-						}
-					}
-				}
+				String type = getParameterType(property.getSchema(), property.get$ref());
 				
 				ApiHeaderParameter parameter = new ApiHeaderParameter(header, type);
 				parameter.setDescription(property.getDescription());
@@ -425,11 +441,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			for(String contentType: response.getContent().keySet()) {
 
 				MediaType mediaType = response.getContent().get(contentType);
-				Schema<?> model = mediaType.getSchema();
+				Schema<?> schema = mediaType.getSchema();
 
 				String type = ("response_" +method.toString() + "_" + path + "_" + contentType).replace("/", "_");
 
-				api.getDefinitions().put(type, model);
+				api.getDefinitions().put(type, schema);
 
 				ApiBodyParameter bodyParam = new ApiBodyParameter(type);
 				bodyParam.setMediaType(contentType);
