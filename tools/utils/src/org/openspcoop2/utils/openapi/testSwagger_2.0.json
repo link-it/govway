@@ -480,6 +480,11 @@
             "description": "successful operation",
             "schema": {
               "$ref": "#/definitions/Pet"
+            },
+            "headers": {
+              "X-Limit": {
+                "type": "string"
+              }
             }
           }
         },

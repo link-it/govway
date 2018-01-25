@@ -210,6 +210,13 @@ paths:
               application/json:
                 schema:
                  $ref: '#/components/schemas/Pet'
+            headers:
+              X-RateLimit-Reset:
+                schema:
+                  type: string
+                  format: date-time
+                description: The UTC date/time at which the current rate limit window resets.
+
       security:
         - petstore_auth:
             - 'write:pets'

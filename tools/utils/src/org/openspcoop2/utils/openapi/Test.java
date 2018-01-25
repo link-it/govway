@@ -111,14 +111,26 @@ public class Test {
 		if(api.getRequest().sizeQueryParameters() <=0)
 			throw new Exception("Resource "+nome+" non contiene query parameters");
 		
-		if(!apiFormat.equals(ApiFormats.SWAGGER_2)) {
+		if(api.getRequest().sizeDynamicPathParameters() <=0)
+			throw new Exception("Resource "+nome+" non contiene dynamic path parameters");
+
+		if(!apiFormat.equals(ApiFormats.SWAGGER_2)) { //non supportato da Swagger 2.0
 			if(api.getRequest().sizeCookieParameters() <=0)
 				throw new Exception("Resource "+nome+" non contiene cookie parameters");
 		}
 		
-		if(api.getRequest().sizeDynamicPathParameters() <=0)
-			throw new Exception("Resource "+nome+" non contiene dynamic path parameters");
+		if(api.getResponses().size() < 0) {
+			throw new Exception("Resource "+nome+" non contiene responses");
+		}
+
+		if(api.getResponses().get(0).sizeHeaderParameters() <= 0) {
+			throw new Exception("Resource "+nome+" non contiene response header parameters");
+		}
 		
+		if(api.getResponses().get(0).sizeBodyParameters() <= 0) {
+			throw new Exception("Resource "+nome+" non contiene response body parameters");
+		}
+
 		
 		return resp;
 
