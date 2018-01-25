@@ -190,7 +190,7 @@ paths:
           description: Pet not found
       security:
         - api_key: []
-    post:
+    put:
       tags:
         - pet
       summary: Updates a pet in the store with form data

@@ -40,11 +40,12 @@ public class TestSwagger2 {
 
 		URI jsonUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.json").toURI();
 		URI yamlUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.yaml").toURI();
+		String baseUri = "http://petstore.swagger.io/v2";
 
-		Test.test(jsonUri,"json", ApiFormats.SWAGGER_2);
+		Test.test(jsonUri,"json", ApiFormats.SWAGGER_2, baseUri);
 		
 		System.out.println("\n\n\n==============================================================");
-		Test.test(yamlUri,"yaml", ApiFormats.SWAGGER_2);
+		Test.test(yamlUri,"yaml", ApiFormats.SWAGGER_2, baseUri);
 
 	}
 
