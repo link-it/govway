@@ -30,6 +30,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -289,6 +290,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 															paClone.setId(null);
 															paClone.setNome(idPAclone.getNome());
 															paClone.setAzione(null);
+															paClone.setRicercaPortaAzioneDelegata(StatoFunzionalita.ABILITATO);
 															nomePortaDefault = idPAclone.getNome();
 															
 															// creo porta applicativa standard
@@ -515,6 +517,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 															pdClone.setId(null);
 															pdClone.setNome(idPDclone.getNome());
 															pdClone.setAzione(null);
+															pdClone.setRicercaPortaAzioneDelegata(StatoFunzionalita.ABILITATO);
 															nomePortaDefault = idPDclone.getNome();
 															
 															// creo porta delegata standard

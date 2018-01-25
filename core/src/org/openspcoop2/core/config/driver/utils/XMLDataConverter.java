@@ -58,6 +58,7 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
@@ -811,6 +812,7 @@ public class XMLDataConverter {
 									pdClone.setId(null);
 									pdClone.setNome(idPDclone.getNome());
 									pdClone.setAzione(null);
+									pdClone.setRicercaPortaAzioneDelegata(StatoFunzionalita.ABILITATO);
 									idPDDefault = idPDclone;
 									
 									// creo porta delegata standard
@@ -976,6 +978,7 @@ public class XMLDataConverter {
 									paClone.setId(null);
 									paClone.setNome(idPAclone.getNome());
 									paClone.setAzione(null);
+									paClone.setRicercaPortaAzioneDelegata(StatoFunzionalita.ABILITATO);
 									idPADefault = idPAclone;
 									
 									// creo porta applicativa standard
