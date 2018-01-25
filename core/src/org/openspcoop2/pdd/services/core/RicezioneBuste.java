@@ -3305,13 +3305,18 @@ public class RicezioneBuste {
 			ProtocolMessage protocolMessage = sbustatore.sbustamento(requestMessage,bustaRichiesta,
 					RuoloMessaggio.RICHIESTA,properties.isValidazioneManifestAttachments(),proprietaManifestAttachments,
 					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA, requestInfo);
-			headerProtocolloRichiesta = protocolMessage.getBustaRawContent();
+			if(protocolMessage.isUseBustaRawContentReadByValidation()) {
+				headerProtocolloRichiesta = soapHeaderElement;
+			}
+			else {
+				headerProtocolloRichiesta = protocolMessage.getBustaRawContent();
+			}
 			requestMessage = protocolMessage.getMessage(); // updated
 			msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 					+"] ["+requestMessage.getClass().getName()+"]");
 		}
 		else{
-			headerProtocolloRichiesta = validatore.getHeaderProtocollo();
+			headerProtocolloRichiesta = soapHeaderElement;
 		}
 		
 		

@@ -126,6 +126,7 @@ public class AS4Sbustamento {
 			
 			ProtocolMessage protocolMessage = new ProtocolMessage();
 			protocolMessage.setMessage(newMessage);
+			protocolMessage.setUseBustaRawContentReadByValidation(true);
 			return protocolMessage;
 			
 		}catch(Throwable e){

@@ -32,6 +32,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 public class ProtocolMessage {
 
 	private BustaRawContent<?> bustaRawContent;
+	private boolean useBustaRawContentReadByValidation = false;
 	private OpenSPCoop2Message message;
 	
 	public BustaRawContent<?> getBustaRawContent() {
@@ -39,6 +40,12 @@ public class ProtocolMessage {
 	}
 	public void setBustaRawContent(BustaRawContent<?> bustaRawContent) {
 		this.bustaRawContent = bustaRawContent;
+	}
+	public boolean isUseBustaRawContentReadByValidation() {
+		return this.useBustaRawContentReadByValidation;
+	}
+	public void setUseBustaRawContentReadByValidation(boolean useBustaRawContentReadByValidation) {
+		this.useBustaRawContentReadByValidation = useBustaRawContentReadByValidation;
 	}
 	public OpenSPCoop2Message getMessage() {
 		return this.message;
