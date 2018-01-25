@@ -509,6 +509,8 @@ public class AccordiServizioParteComuneCostanti {
 	
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_ID = "ID";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS = "HTTP Status";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_NOTE = "Non fornire alcun valore per indicare uno stato di default";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT = "Default";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE = "Descrizione";
 	
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_ID = "ID";

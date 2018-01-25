@@ -37,6 +37,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -99,11 +100,15 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 			}
 			
 			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
-			Integer status = null;
-			try {
-				if(statusS!=null)
+			int status = -1;
+			if(statusS==null) {
+				status = ApiResponse.getDefaultHttpReturnCode();
+			}
+			else {
+				try {
 					status = Integer.parseInt(statusS);
-			} catch(Exception e) {}
+				} catch(Exception e) {}
+			}
 			
 			// Preparo il menu
 			apcHelper.makeMenu();
@@ -154,7 +159,12 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME+"="+nomeRisorsa+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(statusS, null)
+						new Parameter(
+								(
+										AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" "+
+												(ApiResponse.isDefaultHttpReturnCode(status)? AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT : statusS)
+								)
+								, null)
 						);
 
 				// Prendo i dati dell'accordo
@@ -204,7 +214,12 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME+"="+nomeRisorsa+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(nomeRisorsa, null)
+						new Parameter(
+								(
+										AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" "+
+												(ApiResponse.isDefaultHttpReturnCode(status)? AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT : statusS)
+								)
+								, null)
 						);
 
 				// preparo i campi

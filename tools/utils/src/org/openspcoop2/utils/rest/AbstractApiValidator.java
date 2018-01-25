@@ -104,7 +104,7 @@ public abstract class AbstractApiValidator   {
 					
 					if(responses != null) {
 						for(ApiResponse output: responses) {
-							if(status==output.getHttpReturnCode()) {
+							if(status==output.getHttpReturnCode() || output.isDefaultHttpReturnCode()) {
 								if(output.sizeBodyParameters()>0) {
 									for(ApiBodyParameter outputBodyParameter: output.getBodyParameters()) {
 										if(outputBodyParameter.getMediaType().equals(httpEntity.getContentType())) {

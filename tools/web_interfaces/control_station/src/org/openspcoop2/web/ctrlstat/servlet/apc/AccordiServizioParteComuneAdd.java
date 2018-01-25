@@ -671,7 +671,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(enableAutoMapping){
 				if(as.getByteWsdlConcettuale() != null || as.getByteWsdlLogicoErogatore() != null || as.getByteWsdlLogicoFruitore() != null) {
 					apcCore.mappingAutomatico(this.tipoProtocollo, as);
-					if(enableAutoMapping_estraiXsdSchemiFromWsdlTypes){
+					if(enableAutoMapping_estraiXsdSchemiFromWsdlTypes && InterfaceType.WSDL_11.equals(this.interfaceType)){
 						Hashtable<String, byte[]> schemiAggiuntiInQuestaOperazione = new Hashtable<String, byte[]>();
 						if(as.getByteWsdlConcettuale() != null){ 
 							apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlConcettuale(),AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE, schemiAggiuntiInQuestaOperazione);

@@ -49,6 +49,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -211,7 +212,9 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 								AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME+"="+nomeRisorsa+"&"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));
-				labelOwner = statusS;
+				labelOwner = 
+					AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" "+
+						(ApiResponse.isDefaultHttpReturnCode(status)? AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT : statusS);
 			} 
 			
 			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION + " di " + labelOwner, 

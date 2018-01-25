@@ -97,6 +97,11 @@ public class ValidazioneStatoPackageException extends Exception {
 		return bf.toString();
 	}
 	
+	@Override
+	public String getMessage() {
+		return this.toString();
+	}
+	
 	public void addErroreValidazione(String e){
 		this.errori_validazione.add(e);
 	}

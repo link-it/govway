@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -100,11 +101,15 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 			}
 			
 			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
-			Integer status = null;
-			try {
-				if(statusS!=null)
+			int status = -1;
+			if(statusS==null) {
+				status = ApiResponse.getDefaultHttpReturnCode();
+			}
+			else {
+				try {
 					status = Integer.parseInt(statusS);
-			} catch(Exception e) {}
+				} catch(Exception e) {}
+			}
 
 			// Preparo il menu
 			apcHelper.makeMenu();

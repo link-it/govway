@@ -578,16 +578,22 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						for (ApiResponse apiResponse : apiOp.getResponses()) {
 							
 							int status = apiResponse.getHttpReturnCode();
+							boolean defaultResponse = apiResponse.isDefaultHttpReturnCode();
 							ResourceResponse resourceOpenSPCoopResponse = null;
 							for (ResourceResponse resourceCheck : resourceOpenSPCoop.getResponseList()) {
-								if(status == resourceCheck.getStatus()) {
+								if( (status == resourceCheck.getStatus()) || (defaultResponse && ApiResponse.isDefaultHttpReturnCode(resourceCheck.getStatus()))) {
 									resourceOpenSPCoopResponse = resourceCheck;
 									break;
 								}
 							}
 							if(resourceOpenSPCoopResponse==null) {
 								resourceOpenSPCoopResponse = new ResourceResponse();
-								resourceOpenSPCoopResponse.setStatus(apiResponse.getHttpReturnCode());
+								if(defaultResponse) {
+									resourceOpenSPCoopResponse.setStatus(ApiResponse.getDefaultHttpReturnCode());
+								}
+								else {
+									resourceOpenSPCoopResponse.setStatus(status);
+								}
 								resourceOpenSPCoop.addResponse(resourceOpenSPCoopResponse);
 							}
 							resourceOpenSPCoopResponse.setDescrizione(apiResponse.getDescription());

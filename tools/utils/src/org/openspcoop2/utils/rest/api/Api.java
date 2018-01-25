@@ -211,17 +211,32 @@ public abstract class Api extends BaseBean {
 				}
 			}
 			
+			boolean defaultResponse = false;
+			
 			for (int k = 0; k < op.sizeResponses(); k++) {
 		
 				String pResponse = prefix +"[response '"+k+"'] ";
 				
 				ApiResponse response = op.getResponse(k);
 				
-				if(response.getHttpReturnCode()<=0) {
+				if(response.isDefaultHttpReturnCode()) {
+					if(defaultResponse) {
+						throw new ProcessingException(pResponse+"Http Return Code Default already defined");
+					}
+					else {
+						defaultResponse = true;
+					}
+				}
+				if(response.getHttpReturnCode()<=0 && !response.isDefaultHttpReturnCode()) {
 					throw new ProcessingException(pResponse+"Http Return Code undefined");
 				}
 		
-				pResponse = prefix +"[response status '"+response.getHttpReturnCode()+"'] ";
+				if(response.isDefaultHttpReturnCode()) {
+					pResponse = prefix +"[response status 'default'] ";
+				}
+				else {
+					pResponse = prefix +"[response status '"+response.getHttpReturnCode()+"'] ";
+				}
 				
 				for (int j = 0; j < response.sizeBodyParameters(); j++) {
 					ApiBodyParameter bodyParm = response.getBodyParameter(j);

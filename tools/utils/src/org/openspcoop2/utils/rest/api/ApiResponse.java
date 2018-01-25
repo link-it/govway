@@ -35,6 +35,14 @@ import org.openspcoop2.utils.beans.BaseBean;
  */
 public class ApiResponse extends BaseBean {
 	
+	private final static int defaultHttpReturnCode = -2;
+	public final static int getDefaultHttpReturnCode() {
+		return defaultHttpReturnCode;
+	}
+	public final static boolean isDefaultHttpReturnCode(int value) {
+		return defaultHttpReturnCode==value;
+	}
+	
 	private String description;
 	private int httpReturnCode;
 	
@@ -49,8 +57,14 @@ public class ApiResponse extends BaseBean {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public boolean isDefaultHttpReturnCode() {
+		return isDefaultHttpReturnCode(this.httpReturnCode);
+	}
 	public int getHttpReturnCode() {
 		return this.httpReturnCode;
+	}
+	public void setDefaultHttpReturnCode() {
+		this.httpReturnCode = getDefaultHttpReturnCode();
 	}
 	public void setHttpReturnCode(int httpReturnCode) {
 		this.httpReturnCode = httpReturnCode;

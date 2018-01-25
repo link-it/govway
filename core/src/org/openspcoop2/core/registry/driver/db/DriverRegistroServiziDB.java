@@ -2109,9 +2109,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					rr.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
 					
 					int status = rs.getInt("status");
-					if(CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED!=status) {
-						rr.setStatus(status);
-					}
+					rr.setStatus(status);
 					
 					long idRR = rs.getLong("id");
 					rr.setId(idRR);
@@ -19083,138 +19081,165 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 
+			if(ServiceBinding.SOAP.equals(as)) {
 
-			// Controlli di stato
-			if(StatiAccordo.bozza.toString().equals(as.getStatoPackage()) == false){
-
-				// Validazione necessaria sia ad uno stato operativo che finale
-				if(utilizzoAzioniDiretteInAccordoAbilitato==false){
-					if(as.sizePortTypeList()==0){
-						erroreValidazione.addErroreValidazione("non sono definiti Servizi");
-					}
-					for(int j=0; j<as.sizePortTypeList(); j++){
-						if(as.getPortType(j).sizeAzioneList()==0){
-							erroreValidazione.addErroreValidazione("servizio["+as.getPortType(j).getNome()+"] non possiede azioni");
+				// Controlli di stato
+				if(StatiAccordo.bozza.toString().equals(as.getStatoPackage()) == false){
+	
+					// Validazione necessaria sia ad uno stato operativo che finale
+					if(utilizzoAzioniDiretteInAccordoAbilitato==false){
+						if(as.sizePortTypeList()==0){
+							erroreValidazione.addErroreValidazione("non sono definiti Servizi");
 						}
-					}
-				}else{
-					if(as.sizePortTypeList()==0 && as.sizeAzioneList()==0 && as.getUtilizzoSenzaAzione()==false){
-						erroreValidazione.addErroreValidazione("non sono definite ne Azioni (utilizzoSenzaAzione=false) ne Servizi");
-					}
-					if(as.sizePortTypeList()!=0){
 						for(int j=0; j<as.sizePortTypeList(); j++){
 							if(as.getPortType(j).sizeAzioneList()==0){
 								erroreValidazione.addErroreValidazione("servizio["+as.getPortType(j).getNome()+"] non possiede azioni");
 							}
 						}
-					}
-					if(as.sizePortTypeList()!=0){
-						for(int j=0; j<as.sizePortTypeList(); j++){
-							PortType pt = as.getPortType(j);
-							for(int k=0;k<pt.sizeAzioneList();k++){
-								Operation op = pt.getAzione(k);
-								ProfiloCollaborazione profiloCollaborazioneOP = op.getProfiloCollaborazione();
-								if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(op.getProfAzione())){
-									profiloCollaborazioneOP = pt.getProfiloCollaborazione();
-									if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(pt.getProfiloPT())){
-										profiloCollaborazioneOP = as.getProfiloCollaborazione();
-									}
+					}else{
+						if(as.sizePortTypeList()==0 && as.sizeAzioneList()==0 && as.getUtilizzoSenzaAzione()==false){
+							erroreValidazione.addErroreValidazione("non sono definite ne Azioni (utilizzoSenzaAzione=false) ne Servizi");
+						}
+						if(as.sizePortTypeList()!=0){
+							for(int j=0; j<as.sizePortTypeList(); j++){
+								if(as.getPortType(j).sizeAzioneList()==0){
+									erroreValidazione.addErroreValidazione("servizio["+as.getPortType(j).getNome()+"] non possiede azioni");
 								}
-								if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazioneOP) ||
-										CostantiRegistroServizi.ASINCRONO_SIMMETRICO.equals(profiloCollaborazioneOP)	){
-									if(op.getCorrelata()==null){
-										// Verifico che esista un altra azione correlata a questa.
-										boolean trovataCorrelazione = false;
-										for(int verificaPTIndex=0; verificaPTIndex<as.sizePortTypeList(); verificaPTIndex++){
-											PortType ptVerifica = as.getPortType(verificaPTIndex);
-											for(int verificaOPIndex=0; verificaOPIndex<ptVerifica.sizeAzioneList(); verificaOPIndex++){
-												Operation opVerifica = ptVerifica.getAzione(verificaOPIndex);
-												if(opVerifica.getCorrelata()!=null && opVerifica.getCorrelata().equals(op.getNome())){
-													// potenziale correlazione, verifico servizio
-													if(opVerifica.getCorrelataServizio()==null){
-														if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazioneOP) && ptVerifica.getNome().equals(pt.getNome())){
-															// la correlazione per l'asincrono asimmetrico puo' avvenire sullo stesso port type
+							}
+						}
+						if(as.sizePortTypeList()!=0){
+							for(int j=0; j<as.sizePortTypeList(); j++){
+								PortType pt = as.getPortType(j);
+								for(int k=0;k<pt.sizeAzioneList();k++){
+									Operation op = pt.getAzione(k);
+									ProfiloCollaborazione profiloCollaborazioneOP = op.getProfiloCollaborazione();
+									if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(op.getProfAzione())){
+										profiloCollaborazioneOP = pt.getProfiloCollaborazione();
+										if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(pt.getProfiloPT())){
+											profiloCollaborazioneOP = as.getProfiloCollaborazione();
+										}
+									}
+									if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazioneOP) ||
+											CostantiRegistroServizi.ASINCRONO_SIMMETRICO.equals(profiloCollaborazioneOP)	){
+										if(op.getCorrelata()==null){
+											// Verifico che esista un altra azione correlata a questa.
+											boolean trovataCorrelazione = false;
+											for(int verificaPTIndex=0; verificaPTIndex<as.sizePortTypeList(); verificaPTIndex++){
+												PortType ptVerifica = as.getPortType(verificaPTIndex);
+												for(int verificaOPIndex=0; verificaOPIndex<ptVerifica.sizeAzioneList(); verificaOPIndex++){
+													Operation opVerifica = ptVerifica.getAzione(verificaOPIndex);
+													if(opVerifica.getCorrelata()!=null && opVerifica.getCorrelata().equals(op.getNome())){
+														// potenziale correlazione, verifico servizio
+														if(opVerifica.getCorrelataServizio()==null){
+															if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazioneOP) && ptVerifica.getNome().equals(pt.getNome())){
+																// la correlazione per l'asincrono asimmetrico puo' avvenire sullo stesso port type
+																trovataCorrelazione = true;
+																break;
+															}
+														}
+														else if(opVerifica.getCorrelataServizio().equals(pt.getNome())){
 															trovataCorrelazione = true;
 															break;
 														}
 													}
-													else if(opVerifica.getCorrelataServizio().equals(pt.getNome())){
-														trovataCorrelazione = true;
-														break;
-													}
 												}
 											}
-										}
-										if(trovataCorrelazione==false){
-											erroreValidazione.addErroreValidazione("L'azione ["+op.getNome()+"] del servizio["+as.getPortType(j).getNome()+"] non risulta correlata da altre azioni");
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-
-				if(StatiAccordo.finale.toString().equals(as.getStatoPackage())){
-
-					String wsdlConcettuale = (as.getByteWsdlConcettuale()!=null ? new String(as.getByteWsdlConcettuale()) : null);
-					String wsdlLogicoErogatore = (as.getByteWsdlLogicoErogatore()!=null ? new String(as.getByteWsdlLogicoErogatore()) : null);
-					wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replaceAll("\n", "")) ? wsdlConcettuale : null;
-					wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replaceAll("\n", "")) ? wsdlLogicoErogatore : null;
-
-					if(	wsdlConcettuale == null){
-						erroreValidazione.addErroreValidazione("interfaccia WSDL Concettuale non definita");
-					}
-					if(	wsdlLogicoErogatore == null){
-						erroreValidazione.addErroreValidazione("interfaccia WSDL LogicoErogatore non definita");
-					}
-
-					if(as.getServizioComposto()!=null){
-						if(as.getServizioComposto().getIdAccordoCooperazione()<=0){
-							erroreValidazione.addErroreValidazione("accordo di cooperazione (id) non definito");
-						}else{
-							try{
-								AccordoCooperazione ac = this.getAccordoCooperazione(as.getServizioComposto().getIdAccordoCooperazione());
-								if(StatiAccordo.finale.toString().equals(ac.getStatoPackage())==false){
-									erroreValidazione.addErroreValidazione("accordo di cooperazione ["+this.idAccordoCooperazioneFactory.getUriFromAccordo(ac)+"] in uno stato non finale ["+ac.getStatoPackage()+"]");
-								}
-							}catch(DriverRegistroServiziNotFound dNot){
-								erroreValidazione.addErroreValidazione("accordo di cooperazione non definito");
-							}
-						}
-
-						if(as.getServizioComposto().sizeSpecificaCoordinamentoList()<=0){
-							erroreValidazione.addErroreValidazione("specifica di coordinamento non definita");
-						}
-
-
-						if(as.getServizioComposto().sizeServizioComponenteList()<=0){
-							erroreValidazione.addErroreValidazione("servizi componenti non definiti");	
-						}else{
-							if(as.getServizioComposto().sizeServizioComponenteList()<2){
-								erroreValidazione.addErroreValidazione("almeno 2 servizi componenti sono necessari per realizzare un servizio composto");	
-							}else{
-								for(int i=0; i<as.getServizioComposto().sizeServizioComponenteList(); i++){
-									if(as.getServizioComposto().getServizioComponente(i).getIdServizioComponente()<=0){
-										erroreValidazione.addErroreValidazione("servizio componente ["+i+"] (id) non definito");
-									}else{
-										try{
-											AccordoServizioParteSpecifica sc = this.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente(i).getIdServizioComponente());
-											if(StatiAccordo.finale.toString().equals(sc.getStatoPackage())==false){
-												String uriServizioComponente = this.idServizioFactory.getUriFromAccordo(sc);
-												erroreValidazione.addErroreValidazione("servizio componente ["+uriServizioComponente+"] in uno stato non finale ["+sc.getStatoPackage()+"]");
+											if(trovataCorrelazione==false){
+												erroreValidazione.addErroreValidazione("L'azione ["+op.getNome()+"] del servizio["+as.getPortType(j).getNome()+"] non risulta correlata da altre azioni");
 											}
-										}catch(DriverRegistroServiziNotFound dNot){
-											erroreValidazione.addErroreValidazione("servizio componente ["+i+"] non definito");
 										}
 									}
 								}
 							}
 						}
 					}
-
+	
+					if(StatiAccordo.finale.toString().equals(as.getStatoPackage())){
+	
+						String wsdlConcettuale = (as.getByteWsdlConcettuale()!=null ? new String(as.getByteWsdlConcettuale()) : null);
+						String wsdlLogicoErogatore = (as.getByteWsdlLogicoErogatore()!=null ? new String(as.getByteWsdlLogicoErogatore()) : null);
+						wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replaceAll("\n", "")) ? wsdlConcettuale : null;
+						wsdlLogicoErogatore = wsdlLogicoErogatore!=null && !"".equals(wsdlLogicoErogatore.trim().replaceAll("\n", "")) ? wsdlLogicoErogatore : null;
+	
+						if(	wsdlConcettuale == null){
+							erroreValidazione.addErroreValidazione("interfaccia WSDL Concettuale non definita");
+						}
+						if(	wsdlLogicoErogatore == null){
+							erroreValidazione.addErroreValidazione("interfaccia WSDL LogicoErogatore non definita");
+						}
+	
+						if(as.getServizioComposto()!=null){
+							if(as.getServizioComposto().getIdAccordoCooperazione()<=0){
+								erroreValidazione.addErroreValidazione("accordo di cooperazione (id) non definito");
+							}else{
+								try{
+									AccordoCooperazione ac = this.getAccordoCooperazione(as.getServizioComposto().getIdAccordoCooperazione());
+									if(StatiAccordo.finale.toString().equals(ac.getStatoPackage())==false){
+										erroreValidazione.addErroreValidazione("accordo di cooperazione ["+this.idAccordoCooperazioneFactory.getUriFromAccordo(ac)+"] in uno stato non finale ["+ac.getStatoPackage()+"]");
+									}
+								}catch(DriverRegistroServiziNotFound dNot){
+									erroreValidazione.addErroreValidazione("accordo di cooperazione non definito");
+								}
+							}
+	
+							if(as.getServizioComposto().sizeSpecificaCoordinamentoList()<=0){
+								erroreValidazione.addErroreValidazione("specifica di coordinamento non definita");
+							}
+	
+	
+							if(as.getServizioComposto().sizeServizioComponenteList()<=0){
+								erroreValidazione.addErroreValidazione("servizi componenti non definiti");	
+							}else{
+								if(as.getServizioComposto().sizeServizioComponenteList()<2){
+									erroreValidazione.addErroreValidazione("almeno 2 servizi componenti sono necessari per realizzare un servizio composto");	
+								}else{
+									for(int i=0; i<as.getServizioComposto().sizeServizioComponenteList(); i++){
+										if(as.getServizioComposto().getServizioComponente(i).getIdServizioComponente()<=0){
+											erroreValidazione.addErroreValidazione("servizio componente ["+i+"] (id) non definito");
+										}else{
+											try{
+												AccordoServizioParteSpecifica sc = this.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente(i).getIdServizioComponente());
+												if(StatiAccordo.finale.toString().equals(sc.getStatoPackage())==false){
+													String uriServizioComponente = this.idServizioFactory.getUriFromAccordo(sc);
+													erroreValidazione.addErroreValidazione("servizio componente ["+uriServizioComponente+"] in uno stato non finale ["+sc.getStatoPackage()+"]");
+												}
+											}catch(DriverRegistroServiziNotFound dNot){
+												erroreValidazione.addErroreValidazione("servizio componente ["+i+"] non definito");
+											}
+										}
+									}
+								}
+							}
+						}
+	
+					}
+	
 				}
-
+			}
+			else {
+				
+				// REST
+				
+				// Controlli di stato
+				if(StatiAccordo.bozza.toString().equals(as.getStatoPackage()) == false){
+					
+					if(as.sizeResourceList()==0){
+						erroreValidazione.addErroreValidazione("non sono definite alcune risorse");
+					}
+					
+				}
+				
+				if(StatiAccordo.finale.toString().equals(as.getStatoPackage())){
+					
+					String wsdlConcettuale = (as.getByteWsdlConcettuale()!=null ? new String(as.getByteWsdlConcettuale()) : null);
+					wsdlConcettuale = wsdlConcettuale!=null && !"".equals(wsdlConcettuale.trim().replaceAll("\n", "")) ? wsdlConcettuale : null;
+					
+					if(	wsdlConcettuale == null){
+						erroreValidazione.addErroreValidazione("Specifica di interfaccia non definita");
+					}
+					
+				}
+				
 			}
 
 		}catch(Exception e){

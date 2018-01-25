@@ -71,6 +71,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
+import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -5865,7 +5866,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, risposta.getStatus()+""),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
-					de.setValue(risposta.getStatus()+"");
+					if(ApiResponse.isDefaultHttpReturnCode(risposta.getStatus())) {
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT);	
+					}
+					else {
+						de.setValue(risposta.getStatus()+"");
+					}
 					de.setIdToRemove(risposta.getStatus()+"");
 					e.addElement(de);
 
@@ -5950,31 +5956,39 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	 
 		try{
 			// Campi obbligatori
-			// path
-			if (status.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
-				return false;
-			}
 			
 			// validazione del campo path, controllo solo che non ci siano spazi bianchi
-			if(status.contains(" ")){
+			if(status!=null && status.contains(" ")){
 				this.pd.setMessage("Il campo "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" non pu&ograve; contenere spazi bianchi");
 				return false;
 			}
 			
 			int httpStatus = -1;
-			try {
-				httpStatus = Integer.parseInt(status);
-			}catch(Exception e) {
-				this.pd.setMessage("Il formato del campo "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" non &egrave; valido, indicare un HTTP Status valido");
-				return false;				
+			if(status!=null && !"".equals(status)) {
+				try {
+					httpStatus = Integer.parseInt(status);
+				}catch(Exception e) {
+					this.pd.setMessage("Il formato del campo "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" non &egrave; valido, indicare un HTTP Status valido");
+					return false;				
+				}
+				if(httpStatus<200 || httpStatus>599) {
+					this.pd.setMessage("Il formato del campo "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" non &egrave; valido, indicare un HTTP Status compreso nell'intervallo [200-599]");
+					return false;		
+				}
+			}
+			else {
+				httpStatus = ApiResponse.getDefaultHttpReturnCode();
 			}
 			
 			// Se tipoOp = add, controllo che la risorsa non sia gia' stato registrata per l'accordo
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioResourceResponse(idRisorsa, httpStatus);
 				if (giaRegistrato) {
-					this.pd.setMessage("La Response con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS + " &egrave; gi&agrave; stata associata alla Risorsa " + nomeRisorsa);
+					String stato = httpStatus+"";
+					if(ApiResponse.isDefaultHttpReturnCode(httpStatus)) {
+						stato = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT;
+					}
+					this.pd.setMessage("Una risposta con " + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS + " '"+stato+"' &egrave; gi&agrave; stata associata alla Risorsa " + nomeRisorsa);
 					return false;
 				}
 			}
@@ -5994,13 +6008,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String uri = null;
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
 
-			String status = resourceResponse != null ? resourceResponse.getStatus()+ "" : "";
+			String statusS = resourceResponse != null ? resourceResponse.getStatus()+ "" : "";
+			int status = resourceResponse != null ? resourceResponse.getStatus() : -1;
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, isRequest+""),
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, statusS),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa));
 
 			int idLista = isRequest ? Liste.ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST : Liste.ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE;
@@ -6032,7 +6047,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME+"="+nomeRisorsa+"&"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));
-				labelOwner = status;
+				labelOwner = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" "+
+						(ApiResponse.isDefaultHttpReturnCode(status)? AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT : statusS);
 			} 
 			
 			// setto la barra del titolo
@@ -6046,7 +6062,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 												new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 												new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri),
 												new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, isRequest+""),
-												new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, status),
+												new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, statusS),
 												new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa)));
 				listaLinkPageDataTitle.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
@@ -6357,8 +6373,18 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
-			de.setValue(status);
+			int statoInt = -1;
+			try {
+				statoInt = Integer.parseInt(status);
+			}catch(Exception e) {}
+			if(ApiResponse.isDefaultHttpReturnCode(statoInt)) {
+				de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_DEFAULT);	
+			}
+			else {
+				de.setValue(status);
+			}
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
+				de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_NOTE);
 				de.setType(DataElementType.TEXT_EDIT);
 			} else {
 				de.setType(DataElementType.TEXT);

@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -527,7 +528,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 						apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo);
 						
 						// popolo gli allegati
-						if(fillXsd && enableAutoMapping_estraiXsdSchemiFromWsdlTypes){
+						if(fillXsd && enableAutoMapping_estraiXsdSchemiFromWsdlTypes && FormatoSpecifica.WSDL_11.equals(as.getFormatoSpecifica())){
 							apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, this.wsdl.getBytes(), tipo, new Hashtable<String, byte[]> ());
 							if(facilityUnicoWSDL_interfacciaStandard){
 								// è stato utilizzato il concettuale. Lo riporto nel logico

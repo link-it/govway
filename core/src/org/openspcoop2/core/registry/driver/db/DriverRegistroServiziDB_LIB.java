@@ -3803,12 +3803,7 @@ public class DriverRegistroServiziDB_LIB {
 					int index = 1;
 					updateStmt.setLong(index++, idResource);
 					updateStmt.setString(index++, resourceResponse.getDescrizione());
-					if(resourceResponse.getStatus()>=0) {
-						updateStmt.setInt(index++, resourceResponse.getStatus());
-					}
-					else {
-						updateStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
-					}
+					updateStmt.setInt(index++, resourceResponse.getStatus());
 					DriverRegistroServiziDB_LIB.log.debug("_CRUDResourceRequestResponse (RESPONSE) CREATE :\n"+updateQuery);
 					n = updateStmt.executeUpdate();
 					updateStmt.close();
@@ -3824,12 +3819,7 @@ public class DriverRegistroServiziDB_LIB {
 					selectQuery = sqlQueryObject.createSQLQuery();
 					selectStmt = con.prepareStatement(selectQuery);
 					selectStmt.setLong(index++, idResource);
-					if(resourceResponse.getStatus()>=0) {
-						selectStmt.setInt(index++, resourceResponse.getStatus());
-					}
-					else {
-						selectStmt.setInt(index++, CostantiDB.API_RESOURCE_DETAIL_STATUS_UNDEFINED);
-					}
+					selectStmt.setInt(index++, resourceResponse.getStatus());
 					selectRS = selectStmt.executeQuery();
 					if (selectRS.next()) {
 						idFK = selectRS.getLong("id");

@@ -398,6 +398,6 @@ public final class CostantiDB {
     public static final String API_RESOURCE_PATH_ALL_VALUE = "*";
     public static final String API_RESOURCE_DETAIL_REQUEST = "REQUEST";
     public static final String API_RESOURCE_DETAIL_RESPONSE = "RESPONSE";
-    public static final int API_RESOURCE_DETAIL_STATUS_UNDEFINED = -1;
+//    public static final int API_RESOURCE_DETAIL_STATUS_UNDEFINED = -1;
     
 }

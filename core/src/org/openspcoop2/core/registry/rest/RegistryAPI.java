@@ -88,7 +88,12 @@ public class RegistryAPI extends Api {
 					if(resource.sizeResponseList()>0) {
 						for (ResourceResponse response : resource.getResponseList()) {
 							ApiResponse apiResponse = new ApiResponse();
-							apiResponse.setHttpReturnCode(response.getStatus());
+							if(ApiResponse.isDefaultHttpReturnCode(response.getStatus())) {
+								apiResponse.setDefaultHttpReturnCode();
+							}
+							else {
+								apiResponse.setHttpReturnCode(response.getStatus());
+							}
 							apiResponse.setDescription(response.getDescrizione());
 							if(response.sizeParameterList()>0) {
 								initParameterList(response.getParameterList(), null, apiResponse);

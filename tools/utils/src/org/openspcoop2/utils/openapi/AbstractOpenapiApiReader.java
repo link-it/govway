@@ -414,13 +414,20 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 		int status = -1;
 		try{
-			status = Integer.parseInt(responseK);
-		} catch(NumberFormatException e) {}
-		if(status<=0) {
-			status = 200;
+			if("default".equals(responseK)) {
+				apiResponse.setDefaultHttpReturnCode();
+			}
+			else {
+				status = Integer.parseInt(responseK);
+				apiResponse.setHttpReturnCode(status);
+			}
+		} catch(NumberFormatException e) {
+			throw new RuntimeException("Stato non supportato ["+responseK+"]", e);
 		}
+//		if(status<=0) {
+//			status = 200;
+//		}
 		apiResponse.setDescription(response.getDescription());
-		apiResponse.setHttpReturnCode(status);
 
 		if(response.getHeaders() != null) {
 			for(String header: response.getHeaders().keySet()) {
