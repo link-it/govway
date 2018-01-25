@@ -78,7 +78,7 @@ public class Test {
 		String testConPetid = "/pets/2";
 		System.out.println("["+testName+"] API-Op ["+testConPetid+"]: "+
 				checkNotNull(api.findOperation(HttpRequestMethod.GET, testConPetid), f, "GET_pets_2"));
-		System.out.println("["+testName+"] API-Op PUT ["+testConPetid+"]: "+
+		System.out.println("["+testName+"] API-Op ["+testConPetid+"]: "+
 				checkNotNull(api.findOperation(HttpRequestMethod.PUT, testConPetid), f, "PUT_pets_2"));
 
 		String testConPetid2 = "/pets/2/uploadImage";
@@ -93,8 +93,37 @@ public class Test {
 		System.out.println("["+testName+"] API-Op ["+testConRequestConParametriInline+"]: "+
 				checkNotNull(api.findOperation(HttpRequestMethod.GET, testConRequestConParametriInline),f,"GET_pets_findByStatus"));
 
+		String testConRequestCompleta = "/pets/2/completa";
+		System.out.println("["+testName+"] API-Op ["+testConRequestCompleta+"]: "+
+				checkCompleta(api.findOperation(HttpRequestMethod.POST, testConRequestCompleta),f,"POST_pets_2_completa",format));
+
 	}
 	
+	private static String checkCompleta(ApiOperation api, File f, String nome, ApiFormats apiFormat) throws Exception {
+		String resp = checkNotNull(api, f, nome);
+		
+		if(api.getRequest().sizeBodyParameters() <=0)
+			throw new Exception("Resource "+nome+" non contiene body parameters");
+		
+		if(api.getRequest().sizeHeaderParameters() <=0)
+			throw new Exception("Resource "+nome+" non contiene header parameters");
+		
+		if(api.getRequest().sizeQueryParameters() <=0)
+			throw new Exception("Resource "+nome+" non contiene query parameters");
+		
+		if(!apiFormat.equals(ApiFormats.SWAGGER_2)) {
+			if(api.getRequest().sizeCookieParameters() <=0)
+				throw new Exception("Resource "+nome+" non contiene cookie parameters");
+		}
+		
+		if(api.getRequest().sizeDynamicPathParameters() <=0)
+			throw new Exception("Resource "+nome+" non contiene dynamic path parameters");
+		
+		
+		return resp;
+
+	}
+
 	private static String checkNull(ApiOperation api, File f, String nome) throws Exception {
 		if(api!=null) {
 			throw new Exception("Resource "+nome+" found ??");

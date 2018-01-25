@@ -291,6 +291,48 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
+  /pets/{petId}/completa:
+    post:
+      tags:
+        - pet
+      summary: operazione completa
+      description: ''
+      operationId: completa
+      parameters:
+        - name: petId
+          in: path
+          description: ID of pet
+          required: true
+          type: integer
+          format: int64
+        - name: petName
+          in: query
+          description: name of pet
+          required: true
+          type: integer
+          format: int64
+        - name: X-limit-Pets
+          in: header
+          description: limit of pets
+          required: true
+          type: integer
+          format: int64
+        - name: body
+          in: body
+          description: Pet
+          required: true
+          schema:
+            $ref:  '#/definitions/Pet'
+      responses:
+        '200':
+            description: successful operation
+            schema:
+             $ref: '#/definitions/Pet'
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
   /store/inventory:
     get:
       tags:
