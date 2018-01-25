@@ -25,6 +25,14 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -77,6 +85,85 @@ public class AS4Archive extends BasicArchive {
 	}
 	
 	
+	/**
+	 * Imposta per ogni portType e operation presente nell'accordo fornito come parametro 
+	 * le informazioni di protocollo analizzando i documenti interni agli archivi
+	 */
+	@Override
+	public void setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune) throws ProtocolException{
+		
+		super.setProtocolInfo(accordoServizioParteComune);
+		
+		try{
+			if(ServiceBinding.SOAP.equals(accordoServizioParteComune.getServiceBinding())) {
+				
+				for (Azione azione : accordoServizioParteComune.getAzioneList()) {
+					boolean found = false;
+					for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
+						if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
+							if(pp.getValue()==null || "".equals(pp.getValue())) {
+								pp.setValue(azione.getNome());
+							}
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						ProtocolProperty pp = new ProtocolProperty();
+						pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
+						pp.setValue(azione.getNome());
+						azione.addProtocolProperty(pp);
+					}
+				}
+				for (PortType pt : accordoServizioParteComune.getPortTypeList()) {
+					for (Operation azione : pt.getAzioneList()) {
+						boolean found = false;
+						for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
+							if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
+								if(pp.getValue()==null || "".equals(pp.getValue())) {
+									pp.setValue(azione.getNome());
+								}
+								found = true;
+								break;
+							}
+						}
+						if(!found) {
+							ProtocolProperty pp = new ProtocolProperty();
+							pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
+							pp.setValue(azione.getNome());
+							azione.addProtocolProperty(pp);
+						}
+					}
+				}
+				
+			}
+			else {
+			
+				for (Resource resource : accordoServizioParteComune.getResourceList()) {
+					boolean found = false;
+					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+						if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
+							if(pp.getValue()==null || "".equals(pp.getValue())) {
+								pp.setValue(resource.getNome());
+							}
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						ProtocolProperty pp = new ProtocolProperty();
+						pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
+						pp.setValue(resource.getNome());
+						resource.addProtocolProperty(pp);
+					}
+				}
+				
+			}
+			
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 		
 	
 	
