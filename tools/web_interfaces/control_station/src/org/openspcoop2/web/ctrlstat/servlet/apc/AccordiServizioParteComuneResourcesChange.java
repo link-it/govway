@@ -245,7 +245,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(nomeRisorsa, null)
+						new Parameter(oldNomeRisorsa, null)
 						);
 
 				// Prendo i dati dell'accordo
@@ -353,7 +353,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(nomeRisorsa, null)
+						new Parameter(oldNomeRisorsa, null)
 						);
 
 				// preparo i campi

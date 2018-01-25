@@ -248,7 +248,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, statusS),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa)));
 			
-			listaLinkPageDataTitle.add(new Parameter(mediaType, null));
+			listaLinkPageDataTitle.add(new Parameter(oldMediaType, null));
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati

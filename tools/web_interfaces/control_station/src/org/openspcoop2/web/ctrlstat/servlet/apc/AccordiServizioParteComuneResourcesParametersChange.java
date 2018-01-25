@@ -208,7 +208,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, statusS),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa)));
 			
-			listaLinkPageDataTitle.add(new Parameter(nome, null));
+			listaLinkPageDataTitle.add(new Parameter(oldNome, null));
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
