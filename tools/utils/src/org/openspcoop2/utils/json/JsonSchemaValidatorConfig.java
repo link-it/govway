@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Bussu Giovanni (bussu@link.it)
  * @author  $Author$
- * @version $ Rev: 12563 $, $Date$
+ * @version $Rev$, $Date$
  * 
  */
 public class JsonSchemaValidatorConfig {

@@ -27,7 +27,7 @@ import org.w3c.dom.Node;
 /**
  * @author Bussu Giovanni (bussu@link.it)
  * @author  $Author$
- * @version $ Rev: 12563 $, $Date$
+ * @version $Rev$, $Date$
  * 
  */
 public class Payload {

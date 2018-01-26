@@ -37,7 +37,7 @@ import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 /**
  * @author Bussu Giovanni (bussu@link.it)
  * @author  $Author$
- * @version $ Rev: 12563 $, $Date$
+ * @version $Rev$, $Date$
  * 
  */
 public class Soggetto  {

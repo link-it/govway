@@ -30,7 +30,7 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 /**
  * @author Bussu Giovanni (bussu@link.it)
  * @author  $Author$
- * @version $ Rev: 12563 $, $Date$
+ * @version $Rev$, $Date$
  * 
  */
 public class API {
