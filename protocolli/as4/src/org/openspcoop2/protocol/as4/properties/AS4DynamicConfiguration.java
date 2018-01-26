@@ -70,8 +70,8 @@ import eu.domibus.configuration.PayloadProfiles;
  * TrasparenteTestsuiteDynamicConfiguration
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13445 $, $Date: 2017-11-21 10:10:30 +0100 (Tue, 21 Nov 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AS4DynamicConfiguration extends BasicDynamicConfiguration implements org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration {
 

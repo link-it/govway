@@ -32,8 +32,8 @@ import org.openspcoop2.utils.threads.RunnableLogger;
  * RicezioneBusteConnector_GestoreThreads
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13384 $, $Date: 2017-10-26 12:24:53 +0200 (Thu, 26 Oct 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RicezioneBusteConnector_GestoreThreads implements IGestoreRunnableInstance{
 

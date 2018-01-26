@@ -52,8 +52,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * AS4Sbustamento
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13549 $, $Date: 2018-01-18 18:24:07 +0100 (Thu, 18 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AS4Sbustamento {
 

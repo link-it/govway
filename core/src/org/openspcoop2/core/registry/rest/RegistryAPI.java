@@ -47,8 +47,8 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * RegistryAPI
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 13269 $, $Date: 2017-09-13 16:11:02 +0200 (Wed, 13 Sep 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RegistryAPI extends Api {
 

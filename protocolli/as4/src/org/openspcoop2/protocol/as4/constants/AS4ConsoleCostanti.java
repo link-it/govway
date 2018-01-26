@@ -27,8 +27,8 @@ package org.openspcoop2.protocol.as4.constants;
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo AS4, 
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: bussu $
- * @version $Rev: 13422 $, $Date: 2017-11-13 18:51:25 +0100 (Mon, 13 Nov 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class AS4ConsoleCostanti {

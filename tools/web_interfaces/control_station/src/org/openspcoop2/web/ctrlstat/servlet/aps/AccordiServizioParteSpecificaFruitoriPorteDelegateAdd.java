@@ -83,8 +83,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: pintori $
- * @version $Rev: 13452 $, $Date: 2017-11-21 18:45:22 +0100 (Tue, 21 Nov 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends Action {

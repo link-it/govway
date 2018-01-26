@@ -29,8 +29,8 @@ import org.openspcoop2.pdd.core.ICore;
  * Interfaccia che definisce un processo di autorizzazione dei contenuti
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12942 $, $Date: 2017-05-02 13:01:02 +0200 (Tue, 02 May 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public interface IAutorizzazioneContenuto extends ICore {

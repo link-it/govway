@@ -26,8 +26,8 @@ package org.openspcoop2.pdd.core.autenticazione.pa;
  * Classe che implementa una autenticazione BASIC.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12942 $, $Date: 2017-05-02 13:01:02 +0200 (Tue, 02 May 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class AutenticazioneBasic_propagationHeaderAuthorization extends AutenticazioneBasic {

@@ -33,8 +33,8 @@ import io.swagger.v3.oas.models.media.Schema;
  * SwaggerApi
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13372 $, $Date: 2017-10-24 16:06:36 +0200(mar, 24 ott 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class OpenapiApi extends Api {

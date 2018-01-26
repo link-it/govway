@@ -27,8 +27,8 @@ import java.io.Serializable;
  * ApiFormats
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13423 $, $Date: 2017-11-14 09:52:01 +0100 (Tue, 14 Nov 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 

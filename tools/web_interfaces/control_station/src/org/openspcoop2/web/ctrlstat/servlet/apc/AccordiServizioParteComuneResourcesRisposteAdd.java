@@ -53,8 +53,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * AccordiServizioParteComuneResourcesRisposteAdd
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: pintori $
- * @version $Rev: 12608 $, $Date: 2017-01-18 16:42:09 +0100(mer, 18 gen 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action {

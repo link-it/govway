@@ -57,8 +57,8 @@ import io.swagger.v3.core.util.Json;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13412 $, $Date: 2017-11-08 17:52:14 +0100(mer, 08 nov 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class Validator extends AbstractApiValidator implements IApiValidator {
 

@@ -56,8 +56,8 @@ import org.slf4j.Logger;
  * DirectVMConnectorInMessage
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13353 $, $Date: 2017-10-11 14:15:51 +0200 (Wed, 11 Oct 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AS4ConnectorInMessage implements ConnectorInMessage {
 

@@ -31,8 +31,8 @@ import org.openspcoop2.core.id.IDServizio;
  * PortaDelegatedByUtils
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13507 $, $Date: 2017-12-13 16:55:45 +0100 (Wed, 13 Dec 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class PortaDelegatedByUtils {
 

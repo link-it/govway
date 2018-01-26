@@ -39,8 +39,8 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  * Test
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13435 $, $Date: 2017-11-15 17:02:49 +0100(mer, 15 nov 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class Test {

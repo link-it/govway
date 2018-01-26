@@ -64,8 +64,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12913 $, $Date: 2017-04-24 19:23:52 +0200 (Mon, 24 Apr 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class PorteApplicativeAzioneAdd extends Action {

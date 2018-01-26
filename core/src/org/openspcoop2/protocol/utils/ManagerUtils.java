@@ -27,8 +27,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  * ManagerUtils
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13525 $, $Date: 2018-01-09 14:34:45 +0100 (Tue, 09 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ManagerUtils {
 

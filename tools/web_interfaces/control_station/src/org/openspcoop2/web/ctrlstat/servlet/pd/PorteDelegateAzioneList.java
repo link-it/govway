@@ -46,8 +46,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12566 $, $Date: 2017-01-11 15:21:56 +0100(mer, 11 gen 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class PorteDelegateAzioneList extends Action {

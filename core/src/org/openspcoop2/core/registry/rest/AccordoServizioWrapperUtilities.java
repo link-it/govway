@@ -52,8 +52,8 @@ import org.slf4j.Logger;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13093 $, $Date: 2017-06-15 12:28:34 +0200 (Thu, 15 Jun 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 

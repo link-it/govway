@@ -58,8 +58,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * PorteDelegateControlloAccessi
  * 
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 13083 $, $Date: 2017-06-13 17:03:44 +0200 (Tue, 13 Jun 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class PorteDelegateControlloAccessi extends Action {
 

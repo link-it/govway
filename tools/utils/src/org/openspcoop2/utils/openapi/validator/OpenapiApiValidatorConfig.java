@@ -26,8 +26,8 @@ import org.openspcoop2.utils.rest.ApiValidatorConfig;
  * SwaggerApiValidatorConfig
  * 
  * @author Bussu Giovanni (bussu@link.it)
- * @author $Author: bussu $
- * @version $Rev: 13387 $, $Date: 2017-10-30 15:46:58 +0100(lun, 30 ott 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class OpenapiApiValidatorConfig extends ApiValidatorConfig {

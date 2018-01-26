@@ -25,8 +25,8 @@ package org.openspcoop2.utils.rest.api;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13343 $, $Date: 2017-10-09 14:13:31 +0200 (Mon, 09 Oct 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ApiBodyParameter extends AbstractApiParameter {
 

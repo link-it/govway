@@ -96,8 +96,8 @@ import org.slf4j.Logger;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13544 $, $Date: 2018-01-16 15:04:16 +0100 (Tue, 16 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class ZIPReadUtils  {
