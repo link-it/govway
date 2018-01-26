@@ -44,7 +44,7 @@ public class Costanti {
     /** Details */
     public static final String OPENSPCOOP2_DETAILS = "www.openspcoop2.org";
     /** Copyright */
-	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2017 Link.it srl";
+	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2018 Link.it srl";
 	 /** License */
 	public final static String OPENSPCOOP2_LICENSE = "This program is free software: you can redistribute it and/or modify\n"+
 	"it under the terms of the GNU General Public License version 3, as published by\n"+
