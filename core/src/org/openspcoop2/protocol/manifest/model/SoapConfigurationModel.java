@@ -40,6 +40,7 @@ public class SoapConfigurationModel extends AbstractModel<SoapConfiguration> {
 	
 		super();
 	
+		this.INTEGRATION = new org.openspcoop2.protocol.manifest.model.IntegrationModel(new Field("integration",org.openspcoop2.protocol.manifest.Integration.class,"SoapConfiguration",SoapConfiguration.class));
 		this.INTEGRATION_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel(new Field("integrationError",org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration.class,"SoapConfiguration",SoapConfiguration.class));
 		this.MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new Field("mediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"SoapConfiguration",SoapConfiguration.class));
 		this.INTERFACES = new org.openspcoop2.protocol.manifest.model.InterfacesConfigurationModel(new Field("interfaces",org.openspcoop2.protocol.manifest.InterfacesConfiguration.class,"SoapConfiguration",SoapConfiguration.class));
@@ -59,6 +60,7 @@ public class SoapConfigurationModel extends AbstractModel<SoapConfiguration> {
 	
 		super(father);
 	
+		this.INTEGRATION = new org.openspcoop2.protocol.manifest.model.IntegrationModel(new ComplexField(father,"integration",org.openspcoop2.protocol.manifest.Integration.class,"SoapConfiguration",SoapConfiguration.class));
 		this.INTEGRATION_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel(new ComplexField(father,"integrationError",org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration.class,"SoapConfiguration",SoapConfiguration.class));
 		this.MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new ComplexField(father,"mediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"SoapConfiguration",SoapConfiguration.class));
 		this.INTERFACES = new org.openspcoop2.protocol.manifest.model.InterfacesConfigurationModel(new ComplexField(father,"interfaces",org.openspcoop2.protocol.manifest.InterfacesConfiguration.class,"SoapConfiguration",SoapConfiguration.class));
@@ -76,6 +78,8 @@ public class SoapConfigurationModel extends AbstractModel<SoapConfiguration> {
 	
 	
 
+	public org.openspcoop2.protocol.manifest.model.IntegrationModel INTEGRATION = null;
+	 
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel INTEGRATION_ERROR = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel MEDIA_TYPE_COLLECTION = null;

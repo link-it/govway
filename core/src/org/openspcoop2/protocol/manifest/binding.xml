@@ -38,6 +38,65 @@
     <value name="file" field="file" usage="required"/>
     <value name="type" field="type" usage="required" enum-value-method="toString" style="attribute"/>
   </mapping>
+  <mapping name="integration" class="org.openspcoop2.protocol.manifest.Integration" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="implementation" field="implementation" usage="required" map-as="_IntegrationConfiguration_Type"/>
+    <structure name="subscription" field="subscription" usage="required" map-as="_IntegrationConfiguration_Type"/>
+  </mapping>
+
+  <mapping type-name="_Integration_Type" class="org.openspcoop2.protocol.manifest.Integration" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="implementation" field="implementation" usage="required" map-as="_IntegrationConfiguration_Type"/>
+    <structure name="subscription" field="subscription" usage="required" map-as="_IntegrationConfiguration_Type"/>
+  </mapping>
+  <mapping name="implementation" class="org.openspcoop2.protocol.manifest.IntegrationConfiguration" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="name" field="name" usage="required" map-as="_IntegrationConfigurationName_Type"/>
+    <structure field="resourceIdentification" usage="required" map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentification"/>
+  </mapping>
+
+  <mapping type-name="_IntegrationConfiguration_Type" class="org.openspcoop2.protocol.manifest.IntegrationConfiguration" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="name" field="name" usage="required" map-as="_IntegrationConfigurationName_Type"/>
+    <structure field="resourceIdentification" usage="required" map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentification"/>
+  </mapping>
+  <mapping name="name" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationName" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="param" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName"/>
+    </collection>
+  </mapping>
+
+  <mapping type-name="_IntegrationConfigurationName_Type" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationName" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="param" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName"/>
+    </collection>
+  </mapping>
+  <mapping name="param" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="prefix" field="prefix" usage="optional" style="attribute"/>
+    <value name="actor" field="actor" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="suffix" field="suffix" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="resourceIdentification" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentification">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure field="identificationModes" usage="required" map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationModes"/>
+    <structure name="identificationParameter" field="identificationParameter" usage="optional" map-as="_IntegrationConfigurationName_Type"/>
+    <structure field="specificResource" usage="required" map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationSpecificResource"/>
+  </mapping>
+  <mapping name="identificationModes" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationModes">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <collection field="mode" create-type="java.util.ArrayList">
+      <value name="mode" type="org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType" enum-value-method="toString" />
+    </collection>
+    <value name="default" field="_default" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="forceInterfaceMode" field="forceInterfaceMode" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="specificResource" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationSpecificResource">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="name" field="name" usage="required" map-as="_IntegrationConfigurationName_Type"/>
+  </mapping>
   <mapping name="integrationError" class="org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration" abstract="false">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure name="internal" field="internal" usage="required" map-as="_IntegrationErrorCollection_Type"/>
@@ -121,6 +180,7 @@
   </mapping>
   <mapping name="soap" class="org.openspcoop2.protocol.manifest.SoapConfiguration">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="integration" field="integration" usage="required" map-as="_Integration_Type"/>
     <structure name="integrationError" field="integrationError" usage="required" map-as="_IntegrationErrorConfiguration_Type"/>
     <structure name="mediaTypeCollection" field="mediaTypeCollection" usage="optional" map-as="_SoapMediaTypeCollection_Type"/>
     <structure name="interfaces" field="interfaces" usage="optional" map-as="_InterfacesConfiguration_Type"/>
@@ -178,6 +238,7 @@
   </mapping>
   <mapping name="rest" class="org.openspcoop2.protocol.manifest.RestConfiguration">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <structure name="integration" field="integration" usage="required" map-as="_Integration_Type"/>
     <structure name="integrationError" field="integrationError" usage="required" map-as="_IntegrationErrorConfiguration_Type"/>
     <structure name="mediaTypeCollection" field="mediaTypeCollection" usage="optional" map-as="_RestMediaTypeCollection_Type"/>
     <structure name="interfaces" field="interfaces" usage="optional" map-as="_InterfacesConfiguration_Type"/>

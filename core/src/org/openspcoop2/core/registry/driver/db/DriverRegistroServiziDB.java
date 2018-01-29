@@ -19081,7 +19081,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 
-			if(ServiceBinding.SOAP.equals(as)) {
+			if(ServiceBinding.SOAP.equals(as.getServiceBinding())) {
 
 				// Controlli di stato
 				if(StatiAccordo.bozza.toString().equals(as.getStatoPackage()) == false){

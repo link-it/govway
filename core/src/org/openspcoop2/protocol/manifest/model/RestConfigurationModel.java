@@ -40,6 +40,7 @@ public class RestConfigurationModel extends AbstractModel<RestConfiguration> {
 	
 		super();
 	
+		this.INTEGRATION = new org.openspcoop2.protocol.manifest.model.IntegrationModel(new Field("integration",org.openspcoop2.protocol.manifest.Integration.class,"RestConfiguration",RestConfiguration.class));
 		this.INTEGRATION_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel(new Field("integrationError",org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration.class,"RestConfiguration",RestConfiguration.class));
 		this.MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new Field("mediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"RestConfiguration",RestConfiguration.class));
 		this.INTERFACES = new org.openspcoop2.protocol.manifest.model.InterfacesConfigurationModel(new Field("interfaces",org.openspcoop2.protocol.manifest.InterfacesConfiguration.class,"RestConfiguration",RestConfiguration.class));
@@ -54,6 +55,7 @@ public class RestConfigurationModel extends AbstractModel<RestConfiguration> {
 	
 		super(father);
 	
+		this.INTEGRATION = new org.openspcoop2.protocol.manifest.model.IntegrationModel(new ComplexField(father,"integration",org.openspcoop2.protocol.manifest.Integration.class,"RestConfiguration",RestConfiguration.class));
 		this.INTEGRATION_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel(new ComplexField(father,"integrationError",org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration.class,"RestConfiguration",RestConfiguration.class));
 		this.MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new ComplexField(father,"mediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"RestConfiguration",RestConfiguration.class));
 		this.INTERFACES = new org.openspcoop2.protocol.manifest.model.InterfacesConfigurationModel(new ComplexField(father,"interfaces",org.openspcoop2.protocol.manifest.InterfacesConfiguration.class,"RestConfiguration",RestConfiguration.class));
@@ -66,6 +68,8 @@ public class RestConfigurationModel extends AbstractModel<RestConfiguration> {
 	
 	
 
+	public org.openspcoop2.protocol.manifest.model.IntegrationModel INTEGRATION = null;
+	 
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel INTEGRATION_ERROR = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel MEDIA_TYPE_COLLECTION = null;

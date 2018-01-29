@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.core.commons;
+package org.openspcoop2.core.mapping;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +26,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -40,8 +44,8 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * Funzioni di utilita utilizzate dai driver
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
  */
 public class DBMappingUtils {
 

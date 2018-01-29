@@ -8,6 +8,61 @@
 	<binding>
     	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
     		  soap12="false" soap12_withAttachments="false" soap12_mtom="false">
+			<integration>
+    		 	<implementation>
+    		 		<name>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes forceInterfaceMode="true">
+	    		 			<mode>protocol</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </implementation>
+	    		 <subscription>
+    		 		<name>
+    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberName" suffix="/"/>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+		    		 		<mode>soapAction</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource find="true">
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </subscription>
+    		</integration>
    			<integrationError>
     			<internal>
     				<default httpReturnCode="500" messageType="soap" />

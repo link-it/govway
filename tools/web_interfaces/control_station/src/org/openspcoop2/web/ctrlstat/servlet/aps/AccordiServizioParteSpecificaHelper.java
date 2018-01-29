@@ -32,8 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -47,6 +45,8 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
@@ -1323,6 +1323,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			Boolean generazioneAutomaticaPD = ServletUtils.getGenerazioneAutomaticaPDFromSession(this.session);
 
+			@SuppressWarnings("unused")
 			boolean isModalitaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
 
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
@@ -1400,7 +1401,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			//}
 			boolean showPoliticheSLA = false;
 			//if (!isModalitaAvanzata) {
-			if(generazioneAutomaticaPD && isModalitaAvanzata){
+			if(generazioneAutomaticaPD){
 				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 					String[] l = { labelFruitore , AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO ,
 							AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE};
@@ -1477,7 +1478,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				Parameter pIdSogg = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, fru.getIdSoggetto() + "");
 				// devo aggiungere le politiche di sicurezza come in
 				// accordiServizioApplicativoList
-				if(generazioneAutomaticaPD && isModalitaAvanzata){
+				if(generazioneAutomaticaPD){
 										
 					Soggetto fruitoreSogg = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(fru.getTipo(), fru.getNome()));
 					

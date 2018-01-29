@@ -34,31 +34,24 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.PortaDelegataAzione;
-import org.openspcoop2.core.config.PortaDelegataServizio;
-import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
-import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
-import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -371,100 +364,32 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 
-			PortaDelegata pde = null;
-			// porta delegante e' quella di default
-			PortaDelegata pdDefault = porteDelegateCore.getPortaDelegata(mappingDefault.getIdPortaDelegata());
-			String nomePortaDelegante = pdDefault.getNome();
-			String nomeNuovaPortaDelegata = pdDefault.getNome() + "/" + nome;
-						
-			// creo una nuova porta applicativa clonando quella selezionata 
+			PortaDelegata portaDelegataDefault = porteDelegateCore.getPortaDelegata(mappingDefault.getIdPortaDelegata());
+			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(idServizio2.getTipo());
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			Subscription subscription = null;
 			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
-				PortaDelegata pdSelezionata = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
-				pde = (PortaDelegata) pdSelezionata.clone();
-				// annullo il table id
-				pde.setId(null);
-				pde.setNome(nomeNuovaPortaDelegata);
-			
-			} else {
-				pde = new PortaDelegata();
-				pde.setIdSoggetto(idSoggFru);
-				pde.setNomeSoggettoProprietario(nomeSoggettoFruitore);
-				pde.setTipoSoggettoProprietario(tipoSoggettoFruitore);
-				
-				pde.setNome(nomeNuovaPortaDelegata);
-				String descr = "Invocazione servizio " + asps.getTipo()	+ asps.getNome() + ":"+asps.getVersione() +" erogato da " + asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore();
-				pde.setDescrizione(descr);
-
-				pde.setAutenticazione(fruizioneAutenticazione);
-				if(fruizioneAutenticazioneOpzionale != null){
-					if(ServletUtils.isCheckBoxEnabled(fruizioneAutenticazioneOpzionale))
-						pde.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
-					else 
-						pde.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
-				} else 
-					pde.setAutenticazioneOpzionale(null);
-				pde.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(fruizioneAutorizzazione, 
-						ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneRuoli), 
-						RuoloTipologia.toEnumConstant(fruizioneAutorizzazioneRuoliTipologia)));
-				
-				if(fruizioneAutorizzazioneRuoliMatch!=null && !"".equals(fruizioneAutorizzazioneRuoliMatch)){
-					RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(fruizioneAutorizzazioneRuoliMatch);
-					if(tipoRuoloMatch!=null){
-						if(pde.getRuoli()==null){
-							pde.setRuoli(new AutorizzazioneRuoli());
-						}
-						pde.getRuoli().setMatch(tipoRuoloMatch);
-					}
-				}
-
-				PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
-				pdSogg.setNome(asps.getNomeSoggettoErogatore());
-				pdSogg.setTipo(asps.getTipoSoggettoErogatore());
-				pde.setSoggettoErogatore(pdSogg);
-
-				PortaDelegataServizio pds = new PortaDelegataServizio();
-				pds.setTipo(asps.getTipo());
-				pds.setNome(asps.getNome());
-				pds.setVersione(asps.getVersione());
-				pde.setServizio(pds);
-				
-				// servizioApplicativo
-				if(fruizioneServizioApplicativo!=null && !"".equals(fruizioneServizioApplicativo) && !"-".equals(fruizioneServizioApplicativo)){
-					PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
-					sa.setNome(fruizioneServizioApplicativo);
-					pde.addServizioApplicativo(sa);
-				}
-
-				// ruolo
-				if(fruizioneRuolo!=null && !"".equals(fruizioneRuolo) && !"-".equals(fruizioneRuolo)){
-					if(pde.getRuoli()==null){
-						pde.setRuoli(new AutorizzazioneRuoli());
-					}
-					Ruolo ruolo = new Ruolo();
-					ruolo.setNome(fruizioneRuolo);
-					pde.getRuoli().addRuolo(ruolo);
-				}
-
+				PortaDelegata portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
+				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
+						portaDelegataDefault, portaDelegataDaCopiare, nome, azione);
 			}
-
-			if ((azione != null) && !azione.equals("") && !azione.equals("-")) {
-				PortaDelegataAzione pda = new PortaDelegataAzione();
-				pda.setIdentificazione(PortaDelegataAzioneIdentificazione.DELEGATED_BY); 
-				pda.setNomePortaDelegante(nomePortaDelegante);
-				pda.addAzioneDelegata(azione); 
-				pde.setAzione(pda);
+			else {
+				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
+						portaDelegataDefault, nome, azione);
 			}
 			
-			listaOggettiDaCreare.add(pde);
-
-			MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
-			IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
-			idPortaDelegata.setNome(pde.getNome());
-			mappingFruizione.setIdFruitore(idSoggettoFruitore);
-			mappingFruizione.setIdServizio(idServizio2);
-			mappingFruizione.setIdPortaDelegata(idPortaDelegata);
-			mappingFruizione.setDefault(false);
-			mappingFruizione.setNome(nome); 
+			PortaDelegata portaDelegata = subscription.getPortaDelegata();
+			MappingFruizionePortaDelegata mappingFruizione = subscription.getMapping();
+			portaDelegata.setIdSoggetto((long) idSoggFru);
+			
+			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
+				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
+						fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
+						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
+						fruizioneServizioApplicativo, fruizioneRuolo);
+			}
+			
+			listaOggettiDaCreare.add(portaDelegata);
 			listaOggettiDaCreare.add(mappingFruizione);
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());

@@ -19,22 +19,23 @@
  */
 
 
-package org.openspcoop2.core.commons;
+package org.openspcoop2.core.mapping;
 
 import java.io.Serializable;
 
-import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 
 /**
- * MappingErogazionePortaApplicativa
+ * MappingFruizionePortaDelegata
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
  * 
  */
-public class MappingErogazionePortaApplicativa implements Serializable {
+public class MappingFruizionePortaDelegata implements Serializable {
 
 	/**
 	 * 
@@ -44,29 +45,35 @@ public class MappingErogazionePortaApplicativa implements Serializable {
 	private long tableId;
 	
 	private IDServizio idServizio;
-	private IDPortaApplicativa idPortaApplicativa;
+	private IDSoggetto idFruitore;
+	private IDPortaDelegata idPortaDelegata;
 	private String nome;
 	private boolean isDefault;
-
-
+	
 	public long getTableId() {
 		return this.tableId;
 	}
 	public void setTableId(long tableId) {
 		this.tableId = tableId;
 	}
-	
-	public IDPortaApplicativa getIdPortaApplicativa() {
-		return this.idPortaApplicativa;
-	}
-	public void setIdPortaApplicativa(IDPortaApplicativa idPortaApplicativa) {
-		this.idPortaApplicativa = idPortaApplicativa;
-	}
+
 	public IDServizio getIdServizio() {
 		return this.idServizio;
 	}
 	public void setIdServizio(IDServizio idServizio) {
 		this.idServizio = idServizio;
+	}
+	public IDSoggetto getIdFruitore() {
+		return this.idFruitore;
+	}
+	public void setIdFruitore(IDSoggetto idFruitore) {
+		this.idFruitore = idFruitore;
+	}
+	public IDPortaDelegata getIdPortaDelegata() {
+		return this.idPortaDelegata;
+	}
+	public void setIdPortaDelegata(IDPortaDelegata idPortaDelegata) {
+		this.idPortaDelegata = idPortaDelegata;
 	}
 	public String getNome() {
 		return this.nome;

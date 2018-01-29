@@ -52,6 +52,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IntegrationConfigurationElementName }
+     */
+    public IntegrationConfigurationElementName createIntegrationConfigurationElementName() {
+        return new IntegrationConfigurationElementName();
+    }
+
+    /**
      * Create an instance of {@link Registry }
      */
     public Registry createRegistry() {
@@ -150,6 +157,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IntegrationConfigurationResourceIdentificationModes }
+     */
+    public IntegrationConfigurationResourceIdentificationModes createIntegrationConfigurationResourceIdentificationModes() {
+        return new IntegrationConfigurationResourceIdentificationModes();
+    }
+
+    /**
      * Create an instance of {@link SoapMediaTypeUndefinedMapping }
      */
     public SoapMediaTypeUndefinedMapping createSoapMediaTypeUndefinedMapping() {
@@ -175,6 +189,13 @@ public class ObjectFactory {
      */
     public IntegrationErrorCollection createIntegrationErrorCollection() {
         return new IntegrationErrorCollection();
+    }
+
+    /**
+     * Create an instance of {@link IntegrationConfiguration }
+     */
+    public IntegrationConfiguration createIntegrationConfiguration() {
+        return new IntegrationConfiguration();
     }
 
     /**
@@ -269,6 +290,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Integration }
+     */
+    public Integration createIntegration() {
+        return new Integration();
+    }
+
+    /**
+     * Create an instance of {@link IntegrationConfigurationResourceIdentification }
+     */
+    public IntegrationConfigurationResourceIdentification createIntegrationConfigurationResourceIdentification() {
+        return new IntegrationConfigurationResourceIdentification();
+    }
+
+    /**
      * Create an instance of {@link Versions }
      */
     public Versions createVersions() {
@@ -283,6 +318,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IntegrationConfigurationName }
+     */
+    public IntegrationConfigurationName createIntegrationConfigurationName() {
+        return new IntegrationConfigurationName();
+    }
+
+    /**
      * Create an instance of {@link WebEmptyContext }
      */
     public WebEmptyContext createWebEmptyContext() {
@@ -294,6 +336,13 @@ public class ObjectFactory {
      */
     public SoapConfiguration createSoapConfiguration() {
         return new SoapConfiguration();
+    }
+
+    /**
+     * Create an instance of {@link IntegrationConfigurationResourceIdentificationSpecificResource }
+     */
+    public IntegrationConfigurationResourceIdentificationSpecificResource createIntegrationConfigurationResourceIdentificationSpecificResource() {
+        return new IntegrationConfigurationResourceIdentificationSpecificResource();
     }
 
     /**

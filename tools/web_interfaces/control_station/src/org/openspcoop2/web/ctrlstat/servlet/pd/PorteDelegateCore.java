@@ -25,21 +25,28 @@ import java.util.List;
 
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ISearch;
-import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * PorteDelegateCore
@@ -58,6 +65,52 @@ public class PorteDelegateCore extends ControlStationCore {
 	}
 	
 
+	public void configureControlloAccessiPortaDelegata(PortaDelegata portaDelegata, 
+			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale,
+			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
+			String fruizioneServizioApplicativo, String fruizioneRuolo) {
+		
+		portaDelegata.setAutenticazione(fruizioneAutenticazione);
+		if(fruizioneAutenticazioneOpzionale != null){
+			if(ServletUtils.isCheckBoxEnabled(fruizioneAutenticazioneOpzionale))
+				portaDelegata.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+			else 
+				portaDelegata.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
+		} else 
+			portaDelegata.setAutenticazioneOpzionale(null);
+		portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(fruizioneAutorizzazione, 
+				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneRuoli), 
+				RuoloTipologia.toEnumConstant(fruizioneAutorizzazioneRuoliTipologia)));
+		
+		if(fruizioneAutorizzazioneRuoliMatch!=null && !"".equals(fruizioneAutorizzazioneRuoliMatch)){
+			RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(fruizioneAutorizzazioneRuoliMatch);
+			if(tipoRuoloMatch!=null){
+				if(portaDelegata.getRuoli()==null){
+					portaDelegata.setRuoli(new AutorizzazioneRuoli());
+				}
+				portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
+			}
+		}
+
+		// servizioApplicativo
+		if(fruizioneServizioApplicativo!=null && !"".equals(fruizioneServizioApplicativo) && !"-".equals(fruizioneServizioApplicativo)){
+			PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
+			sa.setNome(fruizioneServizioApplicativo);
+			portaDelegata.addServizioApplicativo(sa);
+		}
+
+		// ruolo
+		if(fruizioneRuolo!=null && !"".equals(fruizioneRuolo) && !"-".equals(fruizioneRuolo)){
+			if(portaDelegata.getRuoli()==null){
+				portaDelegata.setRuoli(new AutorizzazioneRuoli());
+			}
+			Ruolo ruolo = new Ruolo();
+			ruolo.setNome(fruizioneRuolo);
+			portaDelegata.getRuoli().addRuolo(ruolo);
+		}
+		
+	}
+	
 	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "getPorteDelegateWithServizio";

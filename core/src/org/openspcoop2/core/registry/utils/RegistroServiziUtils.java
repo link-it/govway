@@ -85,4 +85,29 @@ public class RegistroServiziUtils {
 		}
 	}
 	
+	public org.openspcoop2.core.registry.constants.ServiceBinding convertToRegistry(org.openspcoop2.message.constants.ServiceBinding serviceBinding){
+		if(serviceBinding==null) {
+			return null;
+		}
+		switch (serviceBinding) {
+		case SOAP:
+			return org.openspcoop2.core.registry.constants.ServiceBinding.SOAP;
+		case REST:
+			return org.openspcoop2.core.registry.constants.ServiceBinding.REST;
+		}
+		return null;
+	}
+	
+	public static org.openspcoop2.message.constants.ServiceBinding convertToMessage(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
+		if(serviceBinding==null) {
+			return null;
+		}
+		switch (serviceBinding) {
+		case SOAP:
+			return org.openspcoop2.message.constants.ServiceBinding.SOAP;
+		case REST:
+			return org.openspcoop2.message.constants.ServiceBinding.REST;
+		}
+		return null;
+	}
 }

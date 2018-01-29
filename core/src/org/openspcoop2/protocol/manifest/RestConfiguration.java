@@ -35,6 +35,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="RestConfiguration">
  * 		&lt;sequence>
+ * 			&lt;element name="integration" type="{http://www.openspcoop2.org/protocol/manifest}Integration" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="integrationError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorConfiguration" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="mediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeCollection" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="interfaces" type="{http://www.openspcoop2.org/protocol/manifest}InterfacesConfiguration" minOccurs="0" maxOccurs="1"/>
@@ -55,6 +56,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RestConfiguration", 
   propOrder = {
+  	"integration",
   	"integrationError",
   	"mediaTypeCollection",
   	"interfaces"
@@ -65,6 +67,14 @@ import java.io.Serializable;
 
 public class RestConfiguration extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public RestConfiguration() {
+  }
+
+  public Integration getIntegration() {
+    return this.integration;
+  }
+
+  public void setIntegration(Integration integration) {
+    this.integration = integration;
   }
 
   public IntegrationErrorConfiguration getIntegrationError() {
@@ -142,6 +152,9 @@ public class RestConfiguration extends org.openspcoop2.utils.beans.BaseBean impl
   private static final long serialVersionUID = 1L;
 
 
+
+  @XmlElement(name="integration",required=true,nillable=false)
+  protected Integration integration;
 
   @XmlElement(name="integrationError",required=true,nillable=false)
   protected IntegrationErrorConfiguration integrationError;

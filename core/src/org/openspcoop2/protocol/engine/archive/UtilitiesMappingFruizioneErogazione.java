@@ -25,28 +25,39 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openspcoop2.core.commons.DBMappingUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.DBMappingUtils;
+import org.openspcoop2.core.mapping.Implementation;
+import org.openspcoop2.core.mapping.ImplementationUtils;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.mapping.SubscriptionUtils;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.slf4j.Logger;
 
 
@@ -194,14 +205,8 @@ public class UtilitiesMappingFruizioneErogazione  {
 												String nomeMapping = null;
 												boolean isDefault = false;
 												PortaApplicativa pa = this.driverConfigurazione.getPortaApplicativa(idPortaApplicativa);
-												if( (pa.getAzione()==null) || 
-														( 
-																!PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(pa.getAzione().getIdentificazione()) 
-																&&
-																(pa.getAzione().getNome()==null || "".equals(pa.getAzione().getNome()))
-														)
-													){
-													nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+												if(ImplementationUtils.isPortaApplicativaUtilizzabileComeDefault(pa)) {
+													nomeMapping = ImplementationUtils.getDefaultMappingName();
 													isDefault = true;
 													if(nomePortaDefault!=null) {
 														// già trovato una pa di default, questa non la considero
@@ -239,9 +244,9 @@ public class UtilitiesMappingFruizioneErogazione  {
 														nomeMapping = nomeAzione;
 														
 														// modifico porta applicativa adeguandola alla nuova specifica
-														pa.getAzione().setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
-														pa.getAzione().addAzioneDelegata(nomeAzione);
-														pa.getAzione().setNome(null);
+														ImplementationUtils.setAzioneDelegate(pa, 
+																null, // nome porta delegante lo imposto dopo aver trovato la porta di default. 
+																pa.getAzione().getNome());
 														
 														listPAModificare.put(idPortaApplicativa, pa);
 													}
@@ -274,48 +279,36 @@ public class UtilitiesMappingFruizioneErogazione  {
 													
 													if(nomePortaDefault==null) {
 														// Creo una porta applicativa automaticamente simile a quella delegatedBy
-														IDPortaApplicativa idPAclone = new IDPortaApplicativa();
-														String nameDefault = idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome()+
-																"/"+
-																idServizio.getTipo()+idServizio.getNome();
-														idPAclone.setNome(nameDefault);
-														int index = 2;
-														while(this.driverConfigurazione.existsPortaApplicativa(idPAclone) && index<100) {
-															idPAclone.setNome(nameDefault+"_"+index);
-															index++;
-														}
-														if(index<100) {
-															
-															PortaApplicativa paClone = (PortaApplicativa) pa.clone();
-															paClone.setId(null);
-															paClone.setNome(idPAclone.getNome());
-															paClone.setAzione(null);
-															paClone.setRicercaPortaAzioneDelegata(StatoFunzionalita.ABILITATO);
-															nomePortaDefault = idPAclone.getNome();
-															
+														
+														org.openspcoop2.message.constants.ServiceBinding serviceBinding = readServiceBinding(idServizio);
+														IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByServiceType(idServizio.getTipo());
+														Implementation implementation = p.createProtocolIntegrationConfiguration().createDefaultImplementation(serviceBinding, idServizio);
+														PortaApplicativa paDefault = implementation.getPortaApplicativa();
+														MappingErogazionePortaApplicativa mapping = implementation.getMapping();
+														IDPortaApplicativa idPADefault = mapping.getIdPortaApplicativa();
+														nomePortaDefault = idPADefault.getNome();
+														if(this.driverConfigurazione.existsPortaApplicativa(idPADefault) == false) {
 															// creo porta applicativa standard
-															this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" creazione delegante in corso...");
-															this.driverConfigurazione.createPortaApplicativa(paClone);
-															this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" creazione delegante.");
-															
-															Connection con = null;
+															this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" creazione delegante ["+paDefault.getNome()+"] in corso...");
+															this.driverConfigurazione.createPortaApplicativa(paDefault);
+															this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" creazione delegante ["+paDefault.getNome()+"].");
+														}
+														
+														Connection con = null;
+														try{
+															con = this.driverConfigurazione.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione");
+															this.log.info("Creazione mapping di erogazione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta Applicativa ["+paDefault.getNome()+"] e servizio ["+idServizio+"] creazione delegante in corso...");
+															DBMappingUtils.createMappingErogazione(mapping.getNome(), mapping.isDefault(), idServizio, idPADefault, con, this.driverConfigurazione.getTipoDB());
+															this.log.info("Creazione mapping di erogazione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta Applicativa ["+paDefault.getNome()+"] e servizio ["+idServizio+"] creato delegante.");
+														}finally{
 															try{
-																con = this.driverConfigurazione.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione");
-																String nomeMapping = Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
-																boolean isDefault = true;
-																this.log.info("Creazione mapping di erogazione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+paClone.getNome()+"] e servizio ["+idServizio+"] creazione delegante in corso...");
-																DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPAclone, con, this.driverConfigurazione.getTipoDB());
-																this.log.info("Creazione mapping di erogazione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+paClone.getNome()+"] e servizio ["+idServizio+"] creato delegante.");
-															}finally{
-																try{
-																	if(this.driverConfigurazione.isAtomica()) {
-																		con.commit();
-																	}
-																}catch(Throwable t){}
-																try{
-																	this.driverRegistroServizi.releaseConnection(con);
-																}catch(Throwable t){}
-															}
+																if(this.driverConfigurazione.isAtomica()) {
+																	con.commit();
+																}
+															}catch(Throwable t){}
+															try{
+																this.driverRegistroServizi.releaseConnection(con);
+															}catch(Throwable t){}
 														}
 													}
 													
@@ -416,14 +409,8 @@ public class UtilitiesMappingFruizioneErogazione  {
 												String nomeMapping = null;
 												boolean isDefault = false;
 												PortaDelegata pd = this.driverConfigurazione.getPortaDelegata(idPortaDelegata);
-												if( (pd.getAzione()==null) || 
-														( 
-																!PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(pd.getAzione().getIdentificazione()) 
-																&&
-																(pd.getAzione().getNome()==null || "".equals(pd.getAzione().getNome()))
-														)
-													){
-													nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+												if(SubscriptionUtils.isPortaDelegataUtilizzabileComeDefault(pd)) {
+													nomeMapping = SubscriptionUtils.getDefaultMappingName();
 													isDefault = true;
 													if(nomePortaDefault!=null) {
 														// già trovato una pa di default, questa non la considero
@@ -463,9 +450,9 @@ public class UtilitiesMappingFruizioneErogazione  {
 														nomeMapping = nomeAzione;
 														
 														// modifico porta applicativa adeguandola alla nuova specifica
-														pd.getAzione().setIdentificazione(PortaDelegataAzioneIdentificazione.DELEGATED_BY); 
-														pd.getAzione().addAzioneDelegata(nomeAzione);
-														pd.getAzione().setNome(null);
+														SubscriptionUtils.setAzioneDelegate(pd, 
+																null, // nome porta delegante lo imposto dopo aver trovato la porta di default. 
+																pd.getAzione().getNome());
 														
 														listPDModificare.put(idPortaDelegata, pd);
 													}
@@ -498,52 +485,37 @@ public class UtilitiesMappingFruizioneErogazione  {
 													PortaDelegata pd = listPDModificare.get(idPortaDelegata);
 													
 													if(nomePortaDefault==null) {
-														// Creo una porta delegata automaticamente simile a quella delegatedBy
-														IDPortaDelegata idPDclone = new IDPortaDelegata();
-														String nameDefault = pd.getTipoSoggettoProprietario()+ pd.getNomeSoggettoProprietario()+
-																"/"+
-																idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome()+
-																"/"+
-																idServizio.getTipo()+idServizio.getNome();
-														idPDclone.setNome(nameDefault);
-														int index = 2;
-														while(this.driverConfigurazione.existsPortaDelegata(idPDclone) && index<100) {
-															idPDclone.setNome(nameDefault+"_"+index);
-															index++;
-														}
-														if(index<100) {
-															
-															PortaDelegata pdClone = (PortaDelegata) pd.clone();
-															pdClone.setId(null);
-															pdClone.setNome(idPDclone.getNome());
-															pdClone.setAzione(null);
-															pdClone.setRicercaPortaAzioneDelegata(StatoFunzionalita.ABILITATO);
-															nomePortaDefault = idPDclone.getNome();
-															
+														
+														IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+														org.openspcoop2.message.constants.ServiceBinding serviceBinding = readServiceBinding(idServizio);
+														IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByServiceType(idServizio.getTipo());
+														Subscription subcription = p.createProtocolIntegrationConfiguration().createDefaultSubscription(serviceBinding, idFruitore, idServizio);
+														PortaDelegata pdDefault = subcription.getPortaDelegata();
+														MappingFruizionePortaDelegata mapping = subcription.getMapping();
+														IDPortaDelegata idPDDefault = mapping.getIdPortaDelegata();
+														nomePortaDefault = idPDDefault.getNome();
+														if(this.driverConfigurazione.existsPortaDelegata(idPDDefault) == false) {
 															// creo porta delegata standard
-															this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+" creazione delegante in corso...");
-															this.driverConfigurazione.createPortaDelegata(pdClone);
-															this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+" creazione delegante.");
-															
-															Connection con = null;
+															this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+" creazione delegante ["+pdDefault.getNome()+"] in corso...");
+															this.driverConfigurazione.createPortaDelegata(pdDefault);
+															this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+" creazione delegante ["+pdDefault.getNome()+"].");
+														}
+														
+														Connection con = null;
+														try{
+															con = this.driverConfigurazione.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione");
+															this.log.info("Creazione mapping di fruizione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta delegata ["+pdDefault.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione delegante in corso...");
+															DBMappingUtils.createMappingFruizione(mapping.getNome(), mapping.isDefault(), idServizio, idFruitore, idPDDefault, con, this.driverConfigurazione.getTipoDB());
+															this.log.info("Creazione mapping di fruizione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta delegata ["+pdDefault.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato delegante.");
+														}finally{
 															try{
-																con = this.driverConfigurazione.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione");
-																String nomeMapping = Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
-																boolean isDefault = true;
-																IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
-																this.log.info("Creazione mapping di fruizione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pdClone.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione delegante in corso...");
-																DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idFruitore, idPDclone, con, this.driverConfigurazione.getTipoDB());
-																this.log.info("Creazione mapping di fruizione di default (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pdClone.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato delegante.");
-															}finally{
-																try{
-																	if(this.driverConfigurazione.isAtomica()) {
-																		con.commit();
-																	}
-																}catch(Throwable t){}
-																try{
-																	this.driverRegistroServizi.releaseConnection(con);
-																}catch(Throwable t){}
-															}
+																if(this.driverConfigurazione.isAtomica()) {
+																	con.commit();
+																}
+															}catch(Throwable t){}
+															try{
+																this.driverRegistroServizi.releaseConnection(con);
+															}catch(Throwable t){}
 														}
 													}
 													
@@ -579,6 +551,18 @@ public class UtilitiesMappingFruizioneErogazione  {
 			throw new ProtocolException(se.getMessage(),se);
 		} 
 		
+	}
+	
+	
+	private org.openspcoop2.message.constants.ServiceBinding readServiceBinding(IDServizio idServizio) throws ProtocolException{
+		try {
+			AccordoServizioParteSpecifica asps = this.driverRegistroServizi.getAccordoServizioParteSpecifica(idServizio, false);
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+			ServiceBinding sb = this.driverRegistroServizi.getAccordoServizioParteComune(idAccordo).getServiceBinding();
+			return RegistroServiziUtils.convertToMessage(sb);
+		} catch (Throwable se) {
+			throw new ProtocolException("Servizio ["+idServizio+"] non trovato: "+se.getMessage(),se);
+		} 
 	}
 	
 }

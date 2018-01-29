@@ -46,41 +46,33 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.PortaDelegataAzione;
-import org.openspcoop2.core.config.PortaDelegataServizio;
-import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
-import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
-import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
-import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
@@ -93,7 +85,6 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
-import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
@@ -103,7 +94,6 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -1026,96 +1016,26 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				
 				List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 				
-				String nomePD = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio + "/" + versioneservizio;
-				String descr = "Invocazione servizio " + tiposervizio + nomeservizio + ":"+versioneservizio+" erogato da " + mytipoprov + mynomeprov;
-
-
-				PortaDelegata portaDelegata = new PortaDelegata();
-				portaDelegata.setNome(nomePD);
-				portaDelegata.setDescrizione(descr);
-				portaDelegata.setAutenticazione(this.fruizioneAutenticazione);
-				if(this.fruizioneAutenticazioneOpzionale != null){
-					if(ServletUtils.isCheckBoxEnabled(this.fruizioneAutenticazioneOpzionale))
-						portaDelegata.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
-					else 
-						portaDelegata.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
-				} else 
-					portaDelegata.setAutenticazioneOpzionale(null);
-				portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(this.fruizioneAutorizzazione, 
-						ServletUtils.isCheckBoxEnabled(this.fruizioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(this.fruizioneAutorizzazioneRuoli), 
-						RuoloTipologia.toEnumConstant(this.fruizioneAutorizzazioneRuoliTipologia)));
+				IDSoggetto idFruitore = new IDSoggetto(tipoFruitore, nomeFruitore);
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservizio);
+				ServiceBinding serviceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding()) ?
+						ServiceBinding.REST : ServiceBinding.SOAP;
+				Subscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+						createDefaultSubscription(serviceBinding, idFruitore, idServizio);
 				
-				if(this.fruizioneAutorizzazioneRuoliMatch!=null && !"".equals(this.fruizioneAutorizzazioneRuoliMatch)){
-					RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(this.fruizioneAutorizzazioneRuoliMatch);
-					if(tipoRuoloMatch!=null){
-						if(portaDelegata.getRuoli()==null){
-							portaDelegata.setRuoli(new AutorizzazioneRuoli());
-						}
-						portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
-					}
-				}
+				PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();
+				MappingFruizionePortaDelegata mappingFruizione = subscriptionDefault.getMapping();
+				portaDelegata.setIdSoggetto((long) idProv);
 
-				PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
-				pdSogg.setNome(mynomeprov);
-				pdSogg.setTipo(mytipoprov);
-				portaDelegata.setSoggettoErogatore(pdSogg);
-
-				PortaDelegataServizio pdServizio = new PortaDelegataServizio();
-				pdServizio.setNome(nomeservizio);
-				pdServizio.setTipo(tiposervizio);
-				pdServizio.setVersione(versioneservizio);
-				portaDelegata.setServizio(pdServizio);
-
-				PortaDelegataAzione pdAzione = new PortaDelegataAzione();
-				pdAzione.setIdentificazione(PortaDelegataAzioneIdentificazione.URL_BASED);
-				String pattern = ".*" + nomePD + "/([^/|^?]*).*";
-				pdAzione.setPattern(pattern);
-
-				if(apsCore.isForceWsdlBasedAzione_generazioneAutomaticaPorteDelegate()){
-					pdAzione.setForceInterfaceBased(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
-				} else {
-					pdAzione.setForceInterfaceBased(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
-				}
-
-				portaDelegata.setAzione(pdAzione);
-
-				// soggetto proprietario
-				SoggettoCtrlStat soggetto = soggettiCore.getSoggettoCtrlStat(idProv);
-				portaDelegata.setIdSoggetto(soggetto.getId());
-				portaDelegata.setTipoSoggettoProprietario(soggetto.getTipo());
-				portaDelegata.setNomeSoggettoProprietario(soggetto.getNome());
-
-				// servizioApplicativo
-				if(this.fruizioneServizioApplicativo!=null && !"".equals(this.fruizioneServizioApplicativo) && !"-".equals(this.fruizioneServizioApplicativo)){
-					PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
-					sa.setNome(this.fruizioneServizioApplicativo);
-					portaDelegata.addServizioApplicativo(sa);
-				}
-
-				// ruolo
-				if(this.fruizioneRuolo!=null && !"".equals(this.fruizioneRuolo) && !"-".equals(this.fruizioneRuolo)){
-					if(portaDelegata.getRuoli()==null){
-						portaDelegata.setRuoli(new AutorizzazioneRuoli());
-					}
-					Ruolo ruolo = new Ruolo();
-					ruolo.setNome(this.fruizioneRuolo);
-					portaDelegata.getRuoli().addRuolo(ruolo);
-				}
-				
+				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
+						this.fruizioneAutenticazione, this.fruizioneAutenticazioneOpzionale,
+						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+						this.fruizioneServizioApplicativo, this.fruizioneRuolo);
+							
 				// Verifico prima che la porta delegata non esista già
-				IDPortaDelegata myidpd = new IDPortaDelegata();
-				myidpd.setNome(nomePD);
-				if (!porteDelegateCore.existsPortaDelegata(myidpd)){
+				if (!porteDelegateCore.existsPortaDelegata(mappingFruizione.getIdPortaDelegata())){
 					listaOggettiDaCreare.add(portaDelegata);
 				}
-				
-				MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
-				mappingFruizione.setIdFruitore(new IDSoggetto(tipoFruitore, nomeFruitore));
-				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservizio);
-				mappingFruizione.setIdServizio(idServizio);
-				mappingFruizione.setIdPortaDelegata(myidpd);
-				mappingFruizione.setDefault(true);
-				mappingFruizione.setNome(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME);
 				listaOggettiDaCreare.add(mappingFruizione);
 				
 				porteDelegateCore.performCreateOperation(superUser, apsHelper.smista(), listaOggettiDaCreare.toArray());

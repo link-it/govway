@@ -69,6 +69,54 @@
        </xsd:element>
 
 
+
+
+       <!-- Integration -->
+       
+       <xsd:complexType name="Integration">
+              <xsd:sequence>
+                     <xsd:element name="implementation" type="IntegrationConfiguration" />
+                     <xsd:element name="subscription" type="IntegrationConfiguration" />
+              </xsd:sequence>
+       </xsd:complexType>
+       <xsd:complexType name="IntegrationConfiguration">
+              <xsd:sequence>
+                     <xsd:element name="name" type="IntegrationConfigurationName" />
+                     <xsd:element name="resourceIdentification" type="IntegrationConfigurationResourceIdentification" />
+              </xsd:sequence>
+       </xsd:complexType>
+       <xsd:complexType name="IntegrationConfigurationName">
+              <xsd:sequence>
+                     <xsd:element name="param" type="IntegrationConfigurationElementName" maxOccurs="unbounded" />
+              </xsd:sequence>
+       </xsd:complexType>
+       <xsd:complexType name="IntegrationConfigurationElementName">
+              <xsd:attribute name="prefix" type="xsd:string" use="optional" />
+              <xsd:attribute name="actor" type="ActorType" use="optional" />
+              <xsd:attribute name="suffix" type="xsd:string" use="optional" />
+       </xsd:complexType>
+       <xsd:complexType name="IntegrationConfigurationResourceIdentification">
+              <xsd:sequence>
+                     <xsd:element name="identificationModes" type="IntegrationConfigurationResourceIdentificationModes" />
+                     <xsd:element name="identificationParameter" type="IntegrationConfigurationName" minOccurs="0" />
+                     <xsd:element name="specificResource" type="IntegrationConfigurationResourceIdentificationSpecificResource" />
+              </xsd:sequence>
+       </xsd:complexType>
+       <xsd:complexType name="IntegrationConfigurationResourceIdentificationModes">
+              <xsd:sequence>
+                     <xsd:element name="mode" type="ResourceIdentificationType" minOccurs="1" maxOccurs="unbounded"/>
+              </xsd:sequence>
+              <xsd:attribute name="default" type="ResourceIdentificationType" use="optional" />
+              <xsd:attribute name="forceInterfaceMode" type="xsd:boolean" use="required" />
+       </xsd:complexType>
+       <xsd:complexType name="IntegrationConfigurationResourceIdentificationSpecificResource">
+              <xsd:sequence>
+                     <xsd:element name="name" type="IntegrationConfigurationName" />
+              </xsd:sequence>
+       </xsd:complexType>
+
+
+
   
        <!-- Integration Error -->
        
@@ -142,6 +190,7 @@
        
        <xsd:complexType name="SoapConfiguration">
               <xsd:all>
+                     <xsd:element name="integration" type="Integration" />
                      <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
                      <xsd:element name="mediaTypeCollection" type="SoapMediaTypeCollection" minOccurs="0"/>
                      <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
@@ -201,6 +250,7 @@
       
        <xsd:complexType name="RestConfiguration">
               <xsd:all>
+                     <xsd:element name="integration" type="Integration" />
                      <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
                      <xsd:element name="mediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
                      <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
@@ -414,4 +464,31 @@
               </xsd:restriction>
        </xsd:simpleType>
        
+       <xsd:simpleType name="ActorType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="subscriberType"/>
+                     <xsd:enumeration value="subscriberName"/>
+                     <xsd:enumeration value="providerType"/>
+                     <xsd:enumeration value="providerName"/>
+                     <xsd:enumeration value="serviceType"/>
+                     <xsd:enumeration value="serviceName"/>
+                     <xsd:enumeration value="serviceVersion"/>
+                     <xsd:enumeration value="name"/> <!-- Nome Porta di Default -->
+                     <xsd:enumeration value="ruleName"/> <!-- Nome Regola Specifica per un set di azioni -->
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="ResourceIdentificationType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="protocol"/>
+                     <!-- non sembra avere senso: <xsd:enumeration value="registry"/> -->
+                     <xsd:enumeration value="interface"/>
+                     <xsd:enumeration value="header"/>
+                     <xsd:enumeration value="url"/>
+                     <xsd:enumeration value="content"/>
+                     <xsd:enumeration value="input"/>
+                     <xsd:enumeration value="soapAction"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+     
 </xsd:schema>

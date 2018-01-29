@@ -27,6 +27,7 @@ import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.basic.builder.ErroreApplicativoBuilder;
 import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
+import org.openspcoop2.protocol.basic.config.BasicProtocolIntegrationConfiguration;
 import org.openspcoop2.protocol.basic.config.BasicTraduttore;
 import org.openspcoop2.protocol.basic.diagnostica.DiagnosticSerializer;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
@@ -45,6 +46,7 @@ import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
+import org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -230,6 +232,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	@Override
 	public org.openspcoop2.protocol.sdk.config.ITraduttore createTraduttore()  throws ProtocolException{
 		return new BasicTraduttore(this);
+	}
+	
+	@Override
+	public IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration() throws ProtocolException{
+		return new BasicProtocolIntegrationConfiguration(this);
 	}
 
 	

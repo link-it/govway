@@ -10,6 +10,66 @@
     <binding default="rest">
     	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
     		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
+    		<integration>
+    		 	<implementation>
+    		 		<name>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+		    		 		<mode>soapAction</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </implementation>
+	    		 <subscription>
+    		 		<name>
+    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberName" suffix="/"/>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+		    		 		<mode>soapAction</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </subscription>
+    		</integration>
     		<integrationError>
     			<internal>
     				<default httpReturnCode="500" messageType="soap" />
@@ -29,6 +89,64 @@
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">
+    		  <integration>
+    		 	<implementation>
+    		 		<name>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </implementation>
+	    		 <subscription>
+    		 		<name>
+    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberName" suffix="/"/>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </subscription>
+    		</integration>
     		<integrationError>
     			<internal>
 	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
@@ -57,6 +175,12 @@
     			<mediaType messageType="json">application/x-json</mediaType>
     			<mediaType messageType="json" regExpr="true">.*\+json</mediaType>
     			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/related*</mediaType>
+    			<!-- rfc1341: mixed|alternative|digest|parallel -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(related|mixed|alternative|digest|parallel)+</mediaType>
+    			<!-- rfc2616: byteranges -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/byteranges*</mediaType>
+    			<!-- rfc1847: encrypted|signed -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(encrypted|signed)+</mediaType>
     			<default messageType="binary"/>
     			<undefined messageType="binary"/>
     		</mediaTypeCollection>

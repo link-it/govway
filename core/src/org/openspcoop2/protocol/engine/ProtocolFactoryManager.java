@@ -32,14 +32,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
+import org.openspcoop2.protocol.manifest.Integration;
+import org.openspcoop2.protocol.manifest.IntegrationConfiguration;
+import org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName;
 import org.openspcoop2.protocol.manifest.IntegrationError;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
 import org.openspcoop2.protocol.manifest.SoapConfiguration;
 import org.openspcoop2.protocol.manifest.SubContextMapping;
 import org.openspcoop2.protocol.manifest.Web;
+import org.openspcoop2.protocol.manifest.constants.ActorType;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.manifest.constants.MessageType;
+import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.manifest.utils.XMLUtils;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -802,6 +807,131 @@ public class ProtocolFactoryManager {
 			}
 		}
 		
+		// 7. controllo configurazione dei parametri di integrazione
+		protocolManifestEnum = tmp_manifests.keys();
+		while (protocolManifestEnum.hasMoreElements()) {
+			
+			String protocolManifest = protocolManifestEnum.nextElement();
+			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
+			
+			if(manifestOpenspcoop2.getBinding().getRest()!=null) {
+				if(manifestOpenspcoop2.getBinding().getRest().getIntegration()==null){
+					throw new Exception("BindingIntegrationRest not defined for protocol ["+protocolManifest+"]");
+				}
+				Integration integrationRestConfig = manifestOpenspcoop2.getBinding().getRest().getIntegration();
+				checkIntegration(integrationRestConfig, false, protocolManifest);
+			}
+			
+			if(manifestOpenspcoop2.getBinding().getSoap()!=null) {
+				if(manifestOpenspcoop2.getBinding().getSoap().getIntegration()==null){
+					throw new Exception("BindingIntegrationSoap not defined for protocol ["+protocolManifest+"]");
+				}
+				Integration integrationSoapConfig = manifestOpenspcoop2.getBinding().getSoap().getIntegration();
+				checkIntegration(integrationSoapConfig, true, protocolManifest);
+			}
+		}
+	}
+	private void checkIntegration(Integration integrationConfig, boolean soap, String protocolManifest) throws Exception {
+		String prefix = soap?"Soap":"Rest";
+		
+		if(integrationConfig.getImplementation()==null){
+			throw new Exception("BindingIntegration"+prefix+", implementation not defined for protocol ["+protocolManifest+"]");
+		}
+		IntegrationConfiguration integrationConfigImpl = integrationConfig.getImplementation();
+		checkIntegration(integrationConfigImpl, soap, true, protocolManifest);
+		
+		if(integrationConfig.getSubscription()==null){
+			throw new Exception("BindingIntegration"+prefix+", subscription not defined for protocol ["+protocolManifest+"]");
+		}
+		IntegrationConfiguration integrationConfigSub = integrationConfig.getSubscription();
+		checkIntegration(integrationConfigSub, soap, false, protocolManifest);
+	}
+	private void checkIntegration(IntegrationConfiguration integrationConfig, boolean soap, boolean impl, String protocolManifest) throws Exception {
+		
+		String prefix = soap?"Soap":"Rest";
+		prefix = prefix + (impl?"Implementation":"Subscription");
+		
+		if(integrationConfig.getName()==null || integrationConfig.getName().sizeParamList()<=0){
+			throw new Exception("BindingIntegration"+prefix+", name not defined for protocol ["+protocolManifest+"]");
+		}
+		this.checkIntegrationName(integrationConfig.getName().getParamList(), protocolManifest, prefix, "name", false, false);
+
+		if(integrationConfig.getResourceIdentification()==null) {
+			throw new Exception("BindingIntegration"+prefix+", resource identification not defined for protocol ["+protocolManifest+"]");
+		}
+		if(integrationConfig.getResourceIdentification().getIdentificationModes()==null || integrationConfig.getResourceIdentification().getIdentificationModes().sizeModeList()<=0) {
+			throw new Exception("BindingIntegration"+prefix+", resource identification modes not defined for protocol ["+protocolManifest+"]");
+		}
+		ResourceIdentificationType defaultR = integrationConfig.getResourceIdentification().getIdentificationModes().getDefault();
+		if(defaultR==null) {
+			if(integrationConfig.getResourceIdentification().getIdentificationModes().sizeModeList()>1) {
+				throw new Exception("BindingIntegration"+prefix+", resource identification default mode undefined for protocol ["+protocolManifest+"]");
+			}
+			else {
+				defaultR = integrationConfig.getResourceIdentification().getIdentificationModes().getMode(0);
+			}
+		}
+		boolean defaultFound = false;
+		for (ResourceIdentificationType mode : integrationConfig.getResourceIdentification().getIdentificationModes().getModeList()) {
+			if(!soap) {
+				if(ResourceIdentificationType.SOAP_ACTION.equals(mode)) {
+					throw new Exception("BindingIntegration"+prefix+", resource identification mode '"+mode+"' not permit in rest binding, founded in protocol ["+protocolManifest+"]");
+				}
+			}
+			if(!impl) {
+				if(ResourceIdentificationType.PROTOCOL.equals(mode)) {
+					throw new Exception("BindingIntegration"+prefix+", resource identification mode '"+mode+"' not permit in subscription binding, founded in protocol ["+protocolManifest+"]");
+				}
+			}
+			if(defaultR!=null) {
+				if(mode.equals(defaultR)) {
+					defaultFound = true;
+				}
+			}
+		}
+		if(!defaultFound) {
+			throw new Exception("BindingIntegration"+prefix+", resource identification default mode '"+defaultR+"' not found in supported modes for protocol ["+protocolManifest+"]");
+		}
+		if(ResourceIdentificationType.CONTENT.equals(defaultR) || 
+				ResourceIdentificationType.HEADER.equals(defaultR) || 
+				ResourceIdentificationType.URL.equals(defaultR)) {
+			if(integrationConfig.getResourceIdentification().getIdentificationParameter()==null ||
+					integrationConfig.getResourceIdentification().getIdentificationParameter().sizeParamList()<=0) {
+				throw new Exception("BindingIntegration"+prefix+", resource identification default mode '"+defaultR+"' require identification parameter for protocol ["+protocolManifest+"]");
+			}
+			this.checkIntegrationName(integrationConfig.getResourceIdentification().getIdentificationParameter().getParamList(), 
+					protocolManifest, prefix, "identificationParameter", true, false);
+		}
+		
+		if(integrationConfig.getResourceIdentification().getSpecificResource()==null) {
+			throw new Exception("BindingIntegration"+prefix+", specific resource config not defined for protocol ["+protocolManifest+"]");
+		}
+		if(integrationConfig.getResourceIdentification().getSpecificResource().getName()==null ||
+				integrationConfig.getResourceIdentification().getSpecificResource().getName().sizeParamList()<=0) {
+			throw new Exception("BindingIntegration"+prefix+", specific resource name undefined for protocol ["+protocolManifest+"]");
+		}
+		this.checkIntegrationName(integrationConfig.getResourceIdentification().getSpecificResource().getName().getParamList(), 
+				protocolManifest, prefix, "specific resource name", true, true);
+	}
+	private void checkIntegrationName(List<IntegrationConfigurationElementName> list, String protocolManifest, String prefix, String object,
+			boolean namePermit, boolean ruleNamePermit) throws Exception {
+		for (IntegrationConfigurationElementName name : list) {
+			if(name==null) {
+				throw new Exception("BindingIntegration"+prefix+", "+object+" not defined for protocol ["+protocolManifest+"]");
+			}
+			if( (name.getPrefix()==null || "".equals(name.getPrefix())) &&
+					(name.getActor()==null) &&
+					(name.getSuffix()==null || "".equals(name.getSuffix()))) {
+				throw new Exception("BindingIntegration"+prefix+", "+object+" with wrong param (prefix, actor and suffix undefined) for protocol ["+protocolManifest+"]");
+			}
+			if(ActorType.NAME.equals(name.getActor()) && !namePermit) {
+				throw new Exception("BindingIntegration"+prefix+", "+object+" with wrong param (actor '"+name.getActor()+"' not permit in this context) for protocol ["+protocolManifest+"]");
+			}
+			if(ActorType.RULE_NAME.equals(name.getActor()) && !ruleNamePermit) {
+				throw new Exception("BindingIntegration"+prefix+", "+object+" with wrong param (actor '"+name.getActor()+"' not permit in this context) for protocol ["+protocolManifest+"]");
+			}
+			
+		}
 	}
 	
 	private void checkHttpReturnCode(DefaultIntegrationError ir,String function) throws ProtocolException {

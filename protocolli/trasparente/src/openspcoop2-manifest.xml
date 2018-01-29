@@ -10,40 +10,66 @@
     <binding default="rest">
     	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
     		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
-    		  <!-- 
     		<integration>
-    		    <implementation>
-    		    	<default name="{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
-    		    	<rule name="${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
-    		    	<resource-identification default="urlBased" forceInterfaceMode="true" 
-    		    		pattern=".*{implementation.default.name}/([^/|^?]*).*"
-   		    			findSpecificResource="true">
-   		    			<identification-mode>registry</identification-mode>
-   		    			<identification-mode>interface</identification-mode>
-   		    			<identification-mode>header</identification-mode>
-   		    			<identification-mode>url</identification-mode>
-   		    			<identification-mode>content</identification-mode>
-   		    			<identification-mode>input</identification-mode>
-   		    			<identification-mode>soapAction</identification-mode>
-   		    		</resource-identification>
-    			</implementation>
-    			<subscrition>
-    			    <default name="{subscriber.type}{subscriber.name}/{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
-    		    	<rule name="{subscriber.type}{subscriber.name}/${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
-    		    	<resource-identification default="urlBased" forceInterfaceMode="true" 
-    		    		pattern=".*{subscrition.default.name}/([^/|^?]*).*"
-   		    			findSpecificResource="true">
-   		    			<identification-mode>registry</identification-mode>
-   		    			<identification-mode>interface</identification-mode>
-   		    			<identification-mode>header</identification-mode>
-   		    			<identification-mode>url</identification-mode>
-   		    			<identification-mode>content</identification-mode>
-   		    			<identification-mode>input</identification-mode>
-   		    			<identification-mode>soapAction</identification-mode>
-   		    		</resource-identification>
-    			</subscrition>
+    		 	<implementation>
+    		 		<name>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+		    		 		<mode>soapAction</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </implementation>
+	    		 <subscription>
+    		 		<name>
+    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberName" suffix="/"/>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+		    		 		<mode>soapAction</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </subscription>
     		</integration>
-    		 -->
     		<integrationError>
     			<internal>
     				<default httpReturnCode="500" messageType="soap" />
@@ -62,26 +88,64 @@
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">
-    		  <!-- 
-    		<integration>
-    		    <implementation>
-    		    	<default name="{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
-    		    	<rule name="${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
-    		    	<resource-identification default="interface" forceInterfaceMode="false" findSpecificResource="true">
-   		    			<identification-mode>registry</identification-mode>
-   		    			<identification-mode>interface</identification-mode>
-   		    		</resource-identification>
-    			</implementation>
-    			<subscrition>
-    			    <default name="{subscriber.type}{subscriber.name}/{provider.type}{provider.name}/{service.type}{service.name}/{service.version}"/>
-    		    	<rule name="{subscriber.type}{subscriber.name}/${provider.type}${provider.name}/${service.type}${service.name}/${service.version}/${implementation.rule.name}" />
-    		    	<resource-identification default="interface" forceInterfaceMode="false" findSpecificResource="true">
-   		    			<identification-mode>registry</identification-mode>
-   		    			<identification-mode>interface</identification-mode>
-   		    		</resource-identification>
-    			</subscrition>
+    		  <integration>
+    		 	<implementation>
+    		 		<name>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </implementation>
+	    		 <subscription>
+    		 		<name>
+    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberName" suffix="/"/>
+    		 			<param actor="providerType"/>
+    		 			<param actor="providerName" suffix="/"/>
+    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceName" suffix="/"/>
+    		 			<param actor="serviceVersion"/>
+    		 		</name>
+					<resourceIdentification>
+	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 			<mode>interface</mode>
+		    		 		<mode>header</mode>
+		    		 		<mode>url</mode>
+		    		 		<mode>content</mode>
+		    		 		<mode>input</mode>
+	    		 		</identificationModes>
+	    		 		<identificationParameter>
+	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 		</identificationParameter>
+						<specificResource>
+							<name>
+	    		 				<param prefix="__" actor="name" suffix="__"/>
+	    		 				<param actor="ruleName" />
+	    		 			</name>
+	    		 		</specificResource>
+	    		 	</resourceIdentification>
+	    		 </subscription>
     		</integration>
-    		 -->
     		<integrationError>
     			<internal>
 	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />

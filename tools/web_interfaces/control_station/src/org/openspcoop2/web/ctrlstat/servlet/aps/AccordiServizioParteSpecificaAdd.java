@@ -38,22 +38,16 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaServizio;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.TipiConnettore;
-import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
@@ -61,7 +55,6 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -71,6 +64,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.Implementation;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
@@ -89,7 +83,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -331,6 +325,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
@@ -1225,81 +1220,24 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 
 			// Creo Porta Applicativa (opzione??)
-			PortaApplicativa pa = null;
 			if(apsCore.isGenerazioneAutomaticaPorteApplicative() && generaPACheckSoggetto){
 
-				String nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.nomeservizio+"/"+this.versione;
-				pa = new PortaApplicativa();
-				pa.setNome(nomePA);
-
-				pa.setNomeSoggettoProprietario(this.nomeSoggettoErogatore);
-				pa.setTipoSoggettoProprietario(this.tipoSoggettoErogatore);
-				pa.setDescrizione("Servizio "+this.tiposervizio+this.nomeservizio+" erogato da "+this.tipoSoggettoErogatore+this.nomeSoggettoErogatore);
-				pa.setAutenticazione(this.erogazioneAutenticazione);
-				if(this.erogazioneAutenticazioneOpzionale != null){
-					if(ServletUtils.isCheckBoxEnabled(this.erogazioneAutenticazioneOpzionale))
-						pa.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
-					else 
-						pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
-				} else 
-					pa.setAutenticazioneOpzionale(null);
-				pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(this.erogazioneAutorizzazione, 
-						ServletUtils.isCheckBoxEnabled(this.erogazioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(this.erogazioneAutorizzazioneRuoli), 
-						RuoloTipologia.toEnumConstant(this.erogazioneAutorizzazioneRuoliTipologia)));
-				
-				if(this.erogazioneAutorizzazioneRuoliMatch!=null && !"".equals(this.erogazioneAutorizzazioneRuoliMatch)){
-					RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(this.erogazioneAutorizzazioneRuoliMatch);
-					if(tipoRuoloMatch!=null){
-						if(pa.getRuoli()==null){
-							pa.setRuoli(new AutorizzazioneRuoli());
-						}
-						pa.getRuoli().setMatch(tipoRuoloMatch);
-					}
-				}
-				
-				pa.setAllegaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-				pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-				// Devo lasciare a null !! pa.setGestioneManifest(CostantiConfigurazione.ABILITATO);
-				pa.setRicevutaAsincronaSimmetrica(CostantiConfigurazione.ABILITATO);
-				pa.setRicevutaAsincronaAsimmetrica(CostantiConfigurazione.ABILITATO);
-
-				PortaApplicativaServizio pas = new PortaApplicativaServizio();
-				pas.setTipo(this.tiposervizio);
-				pas.setNome(this.nomeservizio);
-				pa.setServizio(pas);
-
-				pa.setStatoMessageSecurity(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO);
-				pa.setIdSoggetto(idProv);
-
-				if(this.nomeSA!=null && !"".equals(this.nomeSA) && !"-".equals(this.nomeSA)){
-					PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
-					sa.setNome(this.nomeSA);
-					pa.addServizioApplicativo(sa);
-				}
-
-				// ruolo
-				if(this.erogazioneRuolo!=null && !"".equals(this.erogazioneRuolo) && !"-".equals(this.erogazioneRuolo)){
-					if(pa.getRuoli()==null){
-						pa.setRuoli(new AutorizzazioneRuoli());
-					}
-					Ruolo ruolo = new Ruolo();
-					ruolo.setNome(this.erogazioneRuolo);
-					pa.getRuoli().addRuolo(ruolo);
-				}
-				
-				listaOggettiDaCreare.add(pa);
-				
-				
-				MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
 				IDSoggetto soggettoErogatore = new IDSoggetto(this.tipoSoggettoErogatore,this.nomeSoggettoErogatore);
-				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
-				idPortaApplicativa.setNome(pa.getNome());
-				mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
-				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.tiposervizio, this.nomeservizio, soggettoErogatore, Integer.parseInt(this.versione));
-				mappingErogazione.setIdServizio(idServizio);
-				mappingErogazione.setDefault(true);
-				mappingErogazione.setNome(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME); 					
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.tiposervizio, this.nomeservizio, soggettoErogatore, 
+						Integer.parseInt(this.versione));
+				Implementation implementationDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+						createDefaultImplementation(this.serviceBinding, idServizio);
 				
+				PortaApplicativa portaApplicativa = implementationDefault.getPortaApplicativa();
+				MappingErogazionePortaApplicativa mappingErogazione = implementationDefault.getMapping();
+				portaApplicativa.setIdSoggetto((long) idProv);
+				
+				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
+						this.erogazioneAutenticazione, this.erogazioneAutenticazioneOpzionale,
+						this.erogazioneAutorizzazione, this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
+						this.nomeSA, this.erogazioneRuolo);
+
+				listaOggettiDaCreare.add(portaApplicativa);				
 				listaOggettiDaCreare.add(mappingErogazione);
 
 			}

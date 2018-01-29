@@ -31,6 +31,7 @@ import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
 import org.openspcoop2.protocol.sdk.builder.IEsitoBuilder;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
+import org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
@@ -115,6 +116,7 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	public IProtocolManager createProtocolManager() throws ProtocolException;
 	public ITraduttore createTraduttore() throws ProtocolException;
 	public IProtocolConfiguration createProtocolConfiguration() throws ProtocolException;
+	public IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration() throws ProtocolException;
 	
 	/* ** CONSOLE ** */
 	

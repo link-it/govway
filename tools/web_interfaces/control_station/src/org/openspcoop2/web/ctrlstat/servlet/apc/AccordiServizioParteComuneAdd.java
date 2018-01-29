@@ -310,6 +310,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.interfaceType = null;
 					this.messageType = null;
 				}
+				else if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING)){
+					this.interfaceType = null;
+					this.messageType = null;
+				}
 			}
 
 			org.openspcoop2.core.registry.Soggetto soggettoReferente = null;

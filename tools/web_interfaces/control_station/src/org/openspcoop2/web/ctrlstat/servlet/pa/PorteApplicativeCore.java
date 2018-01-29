@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.commons.ISearch;
-import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
@@ -32,15 +32,23 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * PorteApplicativeCore
@@ -56,6 +64,49 @@ public class PorteApplicativeCore extends ControlStationCore {
 	}
 	public PorteApplicativeCore(ControlStationCore core) throws Exception {
 		super(core);
+	}
+	
+	public void configureControlloAccessiPortaApplicativa(PortaApplicativa pa,
+			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
+			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
+			String nomeSA, String erogazioneRuolo) {
+		pa.setAutenticazione(erogazioneAutenticazione);
+		if(erogazioneAutenticazioneOpzionale != null){
+			if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
+				pa.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
+			else 
+				pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
+		} else 
+			pa.setAutenticazioneOpzionale(null);
+		pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(erogazioneAutorizzazione, 
+				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneRuoli), 
+				RuoloTipologia.toEnumConstant(erogazioneAutorizzazioneRuoliTipologia)));
+		
+		if(erogazioneAutorizzazioneRuoliMatch!=null && !"".equals(erogazioneAutorizzazioneRuoliMatch)){
+			RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(erogazioneAutorizzazioneRuoliMatch);
+			if(tipoRuoloMatch!=null){
+				if(pa.getRuoli()==null){
+					pa.setRuoli(new AutorizzazioneRuoli());
+				}
+				pa.getRuoli().setMatch(tipoRuoloMatch);
+			}
+		}
+		
+		if(nomeSA!=null && !"".equals(nomeSA) && !"-".equals(nomeSA)){
+			PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
+			sa.setNome(nomeSA);
+			pa.addServizioApplicativo(sa);
+		}
+
+		// ruolo
+		if(erogazioneRuolo!=null && !"".equals(erogazioneRuolo) && !"-".equals(erogazioneRuolo)){
+			if(pa.getRuoli()==null){
+				pa.setRuoli(new AutorizzazioneRuoli());
+			}
+			Ruolo ruolo = new Ruolo();
+			ruolo.setNome(erogazioneRuolo);
+			pa.getRuoli().addRuolo(ruolo);
+		}
 	}
 	
 	public List<PortaApplicativa> porteAppWithServizio(long idSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {

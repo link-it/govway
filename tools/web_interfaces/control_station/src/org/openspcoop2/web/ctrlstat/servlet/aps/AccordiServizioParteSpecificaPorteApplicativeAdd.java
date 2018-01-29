@@ -34,30 +34,25 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaApplicativaServizio;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.config.Implementation;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -66,6 +61,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -192,6 +188,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoNomeSoggettoProprietario = null;
 			String tipoSoggettoProprietario = null;
+			@SuppressWarnings("unused")
 			String nomeSoggettoProprietario = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
@@ -383,102 +380,33 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 
-			PortaApplicativa pa = null;
-			// porta delegante e' quella di default
-			PortaApplicativa paDefault = porteApplicativeCore.getPortaApplicativa(mappingDefault.getIdPortaApplicativa());
-			String nomePortaDelegante = paDefault.getNome();
-			String nomeNuovaPortaApplicativa = paDefault.getNome() + "/" + nome;
-						
-			// creo una nuova porta applicativa clonando quella selezionata 
+			PortaApplicativa portaApplicativaDefault = porteApplicativeCore.getPortaApplicativa(mappingDefault.getIdPortaApplicativa());
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			Implementation implementation = null;
 			if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
-				PortaApplicativa paSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-				pa = (PortaApplicativa) paSelezionata.clone();
-				// annullo il table id
-				pa.setId(null);
-				pa.setNome(nomeNuovaPortaApplicativa);
+				PortaApplicativa portaApplicativaDaCopiare = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+				implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
+						portaApplicativaDefault, portaApplicativaDaCopiare, nome, azione);
+			}
+			else {
+				implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
+						portaApplicativaDefault, nome, azione);
+			}
 			
-			} else {
-				pa = new PortaApplicativa();
-				pa.setNomeSoggettoProprietario(nomeSoggettoProprietario);
-				pa.setTipoSoggettoProprietario(tipoSoggettoProprietario);
-				pa.setDescrizione("Servizio "+asps.getTipo()+asps.getNome()+" erogato da "+tipoSoggettoProprietario+nomeSoggettoProprietario);
-				pa.setNome(nomeNuovaPortaApplicativa);
-
-				pa.setAutenticazione(erogazioneAutenticazione);
-				if(erogazioneAutenticazioneOpzionale != null){
-					if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
-						pa.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
-					else 
-						pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
-				} else 
-					pa.setAutenticazioneOpzionale(null);
-				pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(erogazioneAutorizzazione, 
-						ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneRuoli), 
-						RuoloTipologia.toEnumConstant(erogazioneAutorizzazioneRuoliTipologia)));
+			PortaApplicativa portaApplicativa = implementation.getPortaApplicativa();
+			MappingErogazionePortaApplicativa mappingErogazione = implementation.getMapping();
+			portaApplicativa.setIdSoggetto((long) soggInt);
+			
+			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				
-				if(erogazioneAutorizzazioneRuoliMatch!=null && !"".equals(erogazioneAutorizzazioneRuoliMatch)){
-					RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(erogazioneAutorizzazioneRuoliMatch);
-					if(tipoRuoloMatch!=null){
-						if(pa.getRuoli()==null){
-							pa.setRuoli(new AutorizzazioneRuoli());
-						}
-						pa.getRuoli().setMatch(tipoRuoloMatch);
-					}
-				}
+				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
+						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
+						erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
+						nomeSA, erogazioneRuolo);
 				
-				pa.setAllegaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-				pa.setScartaBody(StatoFunzionalita.toEnumConstant(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO));
-				// Devo lasciare a null !! pa.setGestioneManifest(CostantiConfigurazione.ABILITATO);
-				pa.setRicevutaAsincronaSimmetrica(CostantiConfigurazione.ABILITATO);
-				pa.setRicevutaAsincronaAsimmetrica(CostantiConfigurazione.ABILITATO);
-
-				PortaApplicativaServizio pas = new PortaApplicativaServizio();
-				pas.setTipo(asps.getTipo());
-				pas.setNome(asps.getNome());
-				pa.setServizio(pas);
-
-				pa.setStatoMessageSecurity(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO);
-				pa.setIdSoggetto((long) soggInt);
-
-				if(nomeSA!=null && !"".equals(nomeSA) && !"-".equals(nomeSA)){
-					PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
-					sa.setNome(nomeSA);
-					pa.addServizioApplicativo(sa);
-				}
-
-				// ruolo
-				if(erogazioneRuolo!=null && !"".equals(erogazioneRuolo) && !"-".equals(erogazioneRuolo)){
-					if(pa.getRuoli()==null){
-						pa.setRuoli(new AutorizzazioneRuoli());
-					}
-					Ruolo ruolo = new Ruolo();
-					ruolo.setNome(erogazioneRuolo);
-					pa.getRuoli().addRuolo(ruolo);
-				}
 			}
 
-			if ((azione != null) && !azione.equals("") && !azione.equals("-")) {
-				PortaApplicativaAzione paa = new PortaApplicativaAzione();
-
-				//paa.setNome(azione);
-
-				paa.setIdentificazione(PortaApplicativaAzioneIdentificazione.DELEGATED_BY); 
-				paa.setNomePortaDelegante(nomePortaDelegante);
-				paa.addAzioneDelegata(azione); 
-				pa.setAzione(paa);
-			}
-
-			listaOggettiDaCreare.add(pa);
-
-
-			MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
-			IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
-			idPortaApplicativa.setNome(pa.getNome());
-			mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
-			mappingErogazione.setIdServizio(idServizio2);
-			mappingErogazione.setDefault(false);
-			mappingErogazione.setNome(nome); 					
-
+			listaOggettiDaCreare.add(portaApplicativa);
 			listaOggettiDaCreare.add(mappingErogazione);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);		
