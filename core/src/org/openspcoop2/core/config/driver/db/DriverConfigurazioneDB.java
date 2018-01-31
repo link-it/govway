@@ -45,7 +45,6 @@ import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -10289,13 +10288,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+		String filterProtocolli = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLI);
 		List<String> tipoSoggettiProtocollo = null;
-		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
-			try {
-				tipoSoggettiProtocollo = ProtocolFactoryReflectionUtils.getOrganizationTypes(filterProtocollo);
-			}catch(Exception e) {
-				throw new DriverConfigurazioneException(e.getMessage(),e);
-			}
+		try {
+			tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filterProtocollo, filterProtocolli);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 
 		Connection con = null;

@@ -38,8 +38,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.Filtri;
-import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -370,32 +368,21 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							request, session, this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			// Tipi protocollo supportati
-			List<String> _listaTipiProtocollo = apcCore.getProtocolli(session);
-
-			// Verifico esistenza soggetti per i protocolli caricati
-			List<String> listaTipiProtocollo = new ArrayList<>();
-			for (String check : _listaTipiProtocollo) {
-				
-				Search s = new Search();
-				s.setPageSize(Liste.ACCORDI, 1); // serve solo per il count
-				s.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
-				List<org.openspcoop2.core.registry.Soggetto> lista = null;
-				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					lista = soggettiCore.soggettiRegistroList(null, s);
-				}else{
-					lista = soggettiCore.soggettiRegistroList(userLogin, s);
-				}
-				if(lista.size()>0) {
-					listaTipiProtocollo.add(check);	
-				}
-				
-			}
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, true);
 			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
 			if(listaTipiProtocollo.size()<=0) {
-				pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
+				
+				List<String> _listaTipiProtocolloSoloSoggetti = apcCore.getProtocolliByFilter(session, true, false);
+				
+				if(_listaTipiProtocolloSoloSoggetti.size()>0) {
+					pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
+				}
+				else {
+					pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+				}
 				pd.disableEditMode();
 
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -464,7 +451,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						// se ancora non ho scelto l'accordo da mostrare quando entro
 						if(accordoPrimoAccesso == -1){
 							//mostro il primo accordo che ha tipo che corrisponde a quello di default
-							if(apcCore.getProtocolloDefault(session).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(sRef.getTipo()))){
+							if(apcCore.getProtocolloDefault(session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(sRef.getTipo()))){
 								accordoPrimoAccesso = i;
 							}
 						}
@@ -599,7 +586,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			}
 			else{
-				protocollo = apsCore.getProtocolloDefault(session);
+				protocollo = apsCore.getProtocolloDefault(session,listaTipiProtocollo);
 			}
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);

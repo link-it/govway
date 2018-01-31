@@ -256,18 +256,17 @@ public final class AccordiServizioParteComuneChange extends Action {
 			used = asps != null && asps.size() > 0;
 
 			// lista dei protocolli supportati
-			listaTipiProtocollo = apcCore.getProtocolli(session);
+			listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, false);
 
-			// se il protocollo e' null (primo accesso ) lo ricavo dall'accordo di servizio
+			// primo accesso 
 			if(this.tipoProtocollo == null){
 				if(as!=null && as.getSoggettoReferente()!=null){
 					this.tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 				}
 				else{
-					this.tipoProtocollo = apsCore.getProtocolloDefault(session);
+					this.tipoProtocollo = apsCore.getProtocolloDefault(session, listaTipiProtocollo);
 				}
 			}
-
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 

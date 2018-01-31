@@ -164,13 +164,9 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 			String protocollo = null;
 			//calcolo del protocollo implementato dall'accordo
-			if(as != null){
-				IdSoggetto soggettoReferente = as.getSoggettoReferente();
-				String tipoSoggettoReferente = soggettoReferente.getTipo();
-				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
-			} else {
-				protocollo = apcCore.getProtocolloDefault(session);
-			}
+			IdSoggetto soggettoReferente = as.getSoggettoReferente();
+			String tipoSoggettoReferente = soggettoReferente.getTipo();
+			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
 
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
@@ -178,11 +174,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			
 			ServiceBinding serviceBinding = null;
 			//calcolo del serviceBinding dall'accordo
-			if(as != null){
-				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
-			} else {
-				serviceBinding = apcCore.getDefaultServiceBinding(this.protocolFactory);
-			}
+			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 
 			IDResource idRisorsa = new IDResource();
 			idRisorsa.setIdAccordo(idAs);

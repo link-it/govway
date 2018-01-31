@@ -175,13 +175,9 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 
 			String protocollo = null;
 			//calcolo del protocollo implementato dall'accordo
-			if(as != null){
-				IdSoggetto soggettoReferente = as.getSoggettoReferente();
-				String tipoSoggettoReferente = soggettoReferente.getTipo();
-				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
-			} else {
-				protocollo = apcCore.getProtocolloDefault(session);
-			}
+			IdSoggetto soggettoReferente = as.getSoggettoReferente();
+			String tipoSoggettoReferente = soggettoReferente.getTipo();
+			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
 
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();

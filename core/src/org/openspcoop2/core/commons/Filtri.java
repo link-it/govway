@@ -23,6 +23,10 @@
 
 package org.openspcoop2.core.commons;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  * Filtri
  * 
@@ -33,10 +37,80 @@ package org.openspcoop2.core.commons;
 
 public final class Filtri
 {
+
+	
 	public final static String FILTRO_PROTOCOLLO = "filtroProtocollo";
+	public final static String FILTRO_PROTOCOLLI = "filtroProtocolli";
+	
 	public final static String FILTRO_DOMINIO = "filtroDominio";
+	
 	public final static String FILTRO_SERVICE_BINDING = "filtroServiceBinding";
 	
 	public final static String FILTRO_UTENTE = "filtroUtente";
+	
+	
+	
+	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
+		List<String> tipoSoggettiProtocollo = null;
+		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
+			try {
+				tipoSoggettiProtocollo = ProtocolFactoryReflectionUtils.getOrganizationTypes(filterProtocollo);
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
+			}
+		}
+		else if(filterProtocolli!=null && !"".equals(filterProtocolli)) {
+			List<String> protocolli = Filtri.convertToList(filterProtocolli);
+			if(protocolli!=null && protocolli.size()>0) {
+				tipoSoggettiProtocollo = new ArrayList<>();
+				for (String protocollo : protocolli) {
+					try {
+						List<String> tipi = ProtocolFactoryReflectionUtils.getOrganizationTypes(protocollo);
+						if(tipi!=null && tipi.size()>0) {
+							tipoSoggettiProtocollo.addAll(tipi);
+						}
+					}catch(Exception e) {
+						throw new CoreException(e.getMessage(),e);
+					}
+				}
+				if(tipoSoggettiProtocollo.size()<=0) {
+					tipoSoggettiProtocollo = null;
+				}
+			}
+		}
+		return tipoSoggettiProtocollo;
+	}
+	
+	
+	
+	public static String convertToString(List<String> listSrc) {
+		if(listSrc==null || listSrc.size()<=0) {
+			return null;
+		}
+		StringBuffer bf = new StringBuffer();
+		for (String src : listSrc) {
+			if(bf.length()>0) {
+				bf.append(",");
+			}
+			bf.append(src);
+		}
+		return bf.toString();
+	}
+	public static List<String> convertToList(String src) {
+		if(src==null) {
+			return null;
+		}
+		List<String> l = new ArrayList<>();
+		if(src.contains(",")) {
+			String [] tmp = src.split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(tmp[i].trim());
+			}
+		}
+		else {
+			l.add(src);
+		}
+		return l;
+	}
 	
 }

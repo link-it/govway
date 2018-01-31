@@ -171,7 +171,7 @@ public final class SoggettiAdd extends Action {
 			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
 			// primo accesso
 			if(this.protocollo == null){
-				this.protocollo = soggettiCore.getProtocolloDefault(session);
+				this.protocollo = soggettiCore.getProtocolloDefault(session, null);
 			}
 			
 			if(soggettiCore.isRegistroServiziLocale()){

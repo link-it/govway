@@ -34,6 +34,9 @@ import java.util.Vector;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -300,7 +303,16 @@ public class ControlStationCore {
 	private String protocolloDefault = null;
 	private long jdbcSerializableAttesaAttiva = 0;
 	private int jdbcSerializableCheck = 0;
-	public String getProtocolloDefault(HttpSession session) throws DriverRegistroServiziException {
+	public String getProtocolloDefault(HttpSession session, List<String> listaProtocolliUtilizzabili) throws DriverRegistroServiziException {
+		if(listaProtocolliUtilizzabili!=null && listaProtocolliUtilizzabili.size()>0) {
+			// cerco prima il default
+			for (String protocolloUtilizzabile : listaProtocolliUtilizzabili) {
+				if(protocolloUtilizzabile.equals(this.protocolloDefault)) {
+					return this.protocolloDefault;
+				}
+			}
+			return listaProtocolliUtilizzabili.get(0); // torno il primo
+		}
 		List<String> protocolli = this.getProtocolli(session);
 		if(protocolli!=null && protocolli.size()==1) {
 			return protocolli.get(0); // si tratta del protocollo selezionato se ce ne sono piu' di uno
@@ -4524,7 +4536,110 @@ public class ControlStationCore {
 		
 		return protocolliList;
 	}
+	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
+		return getProtocolliByFilter(session, filtraSoggettiEsistenti, null, filtraAccordiEsistenti);
+	}
+	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
+		
+		List<String> _listaTipiProtocollo = this.getProtocolli(session);
+		
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
+		
+		if(filtraSoggettiEsistenti) {
+			
+			// Verifico esistenza soggetti per i protocolli caricati
+			List<String> listaTipiProtocollo = new ArrayList<>();
+			for (String check : _listaTipiProtocollo) {
+			
+				Search s = new Search();
+				s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
+				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
+				if(dominio!=null) {
+					s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, dominio.toString()); // imposto dominio
+				}
+				List<org.openspcoop2.core.registry.Soggetto> lista = null;
+				if(this.isVisioneOggettiGlobale(userLogin)){
+					lista = this.soggettiRegistroList(null, s);
+				}else{
+					lista = this.soggettiRegistroList(userLogin, s);
+				}
+				if(lista.size()>0) {
+					listaTipiProtocollo.add(check);	
+				}
+			}
+			_listaTipiProtocollo = listaTipiProtocollo;
+			
+		}
+		
+		if(filtraAccordiEsistenti) {
+			
+			// Verifico esistenza accordi per i protocolli caricati
+			List<String> listaTipiProtocollo = new ArrayList<>();
+			for (String check : _listaTipiProtocollo) {
+			
+				Search s = new Search();
+				s.setPageSize(Liste.ACCORDI, 1); // serve solo per il count
+				s.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
+				List<AccordoServizioParteComune> lista = null;
+				if(this.isVisioneOggettiGlobale(userLogin)){
+					lista = this.accordiList(null, s);
+				}else{
+					lista = this.accordiList(userLogin, s);
+				}
+				if(lista.size()>0) {
+					listaTipiProtocollo.add(check);	
+				}
+			}
+			_listaTipiProtocollo = listaTipiProtocollo;
+			
+		}
+		
+		return _listaTipiProtocollo;
+	}
 
+	public List<org.openspcoop2.core.registry.Soggetto> soggettiRegistroList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "soggettiRegistroList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().soggettiRegistroList(superuser, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<AccordoServizioParteComune> accordiList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "accordiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().accordiList(superuser, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
 	public String getVersioneDefault() throws  DriverRegistroServiziException {
 		String getVersioneDefault = "getVersioneDefault";
 		try{

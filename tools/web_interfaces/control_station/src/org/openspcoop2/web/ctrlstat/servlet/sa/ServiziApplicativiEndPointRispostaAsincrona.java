@@ -205,13 +205,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			List<Property> cp = connra.getPropertyList();
 			
 			String tipoENomeSoggetto = "";
-			String nomeProtocollo = soggettiCore.getProtocolloDefault(session);
+			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			if(provider == null){
 				provider = "";
 			}else {
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
 				tipoENomeSoggetto = soggetto.getTipo() + "/" + soggetto.getNome();
-				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 			}
 			
 			long soggLong = -1;

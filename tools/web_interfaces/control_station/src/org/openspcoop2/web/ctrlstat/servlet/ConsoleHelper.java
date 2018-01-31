@@ -3633,8 +3633,13 @@ public class ConsoleHelper {
 	
 	public void setFilterSelectedProtocol(ISearch ricerca, int idLista, int positionFilter) throws Exception{
 		List<String> protocolli = this.core.getProtocolli(this.session);
-		if(protocolli!=null && protocolli.size()==1) {
-			ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, protocolli.get(0));
+		if(protocolli!=null && protocolli.size()>0) {
+			if(protocolli.size()==1) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, protocolli.get(0));
+			}
+			else {
+				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLI, Filtri.convertToString(protocolli));
+			}
 		}
 	}
 	public void addFilterProtocol(ISearch ricerca, int idLista) throws Exception{

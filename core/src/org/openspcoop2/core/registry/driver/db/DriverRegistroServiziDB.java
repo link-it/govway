@@ -49,7 +49,6 @@ import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -10694,17 +10693,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		
 		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
-		String filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
-
+		String filterProtocolli = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLI);
 		List<String> tipoSoggettiProtocollo = null;
-		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
-			try {
-				tipoSoggettiProtocollo = ProtocolFactoryReflectionUtils.getOrganizationTypes(filterProtocollo);
-			}catch(Exception e) {
-				throw new DriverRegistroServiziException(e.getMessage(),e);
-			}
+		try {
+			tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filterProtocollo, filterProtocolli);
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0);
+		
+		String filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+		
 
 //		ricerca.getSearchString(idLista);
 
@@ -13305,17 +13304,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
-		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
-		
+		String filterProtocolli = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLI);
 		List<String> tipoSoggettiProtocollo = null;
-		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
-			try {
-				tipoSoggettiProtocollo = ProtocolFactoryReflectionUtils.getOrganizationTypes(filterProtocollo);
-			}catch(Exception e) {
-				throw new DriverRegistroServiziException(e.getMessage(),e);
-			}
+		try {
+			tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filterProtocollo, filterProtocolli);
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		
+		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
 		PddTipologia pddTipologia = null;
 		if(filterDominio!=null && !"".equals(filterDominio)) {
 			pddTipologia = PddTipologia.toPddTipologia(filterDominio);

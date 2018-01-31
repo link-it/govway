@@ -36,8 +36,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.Filtri;
-import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -236,10 +234,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 			String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
 			
-			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
+
+			// Tipi protocollo supportati
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, false);
+
 			// primo accesso 
+			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = apcCore.getProtocolloDefault(session);
+				this.tipoProtocollo = apcCore.getProtocolloDefault(session, listaTipiProtocollo);
 			}
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
@@ -262,27 +264,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
 			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
-			// Tipi protocollo supportati
-			List<String> _listaTipiProtocollo = apcCore.getProtocolli(session);
-
-			// Verifico esistenza soggetti per i protocolli caricati
-			List<String> listaTipiProtocollo = new ArrayList<>();
-			for (String check : _listaTipiProtocollo) {
-				
-				Search s = new Search();
-				s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
-				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
-				List<org.openspcoop2.core.registry.Soggetto> lista = null;
-				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					lista = soggettiCore.soggettiRegistroList(null, s);
-				}else{
-					lista = soggettiCore.soggettiRegistroList(userLogin, s);
-				}
-				if(lista.size()>0) {
-					listaTipiProtocollo.add(check);	
-				}
-				
-			}
+			
 			
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
@@ -444,7 +426,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.accordoCooperazione = "-1";
 					this.scadenza= "";
 					this.privato = false;
-					this.tipoProtocollo = apcCore.getProtocolloDefault(session);
+					if(this.tipoProtocollo == null){
+						this.tipoProtocollo = apcCore.getProtocolloDefault(session, listaTipiProtocollo);
+					}
 					this.referente= "";
 
 					if(this.tipoAccordo!=null){

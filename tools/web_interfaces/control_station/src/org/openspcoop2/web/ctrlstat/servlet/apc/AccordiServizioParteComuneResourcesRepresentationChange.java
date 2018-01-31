@@ -151,21 +151,13 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 
 			String protocollo = null;
 			//calcolo del protocollo implementato dall'accordo
-			if(as != null){
-				IdSoggetto soggettoReferente = as.getSoggettoReferente();
-				String tipoSoggettoReferente = soggettoReferente.getTipo();
-				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
-			} else {
-				protocollo = apcCore.getProtocolloDefault(session);
-			}
+			IdSoggetto soggettoReferente = as.getSoggettoReferente();
+			String tipoSoggettoReferente = soggettoReferente.getTipo();
+			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
 			
 			ServiceBinding serviceBinding;
 			//calcolo del serviceBinding dall'accordo
-			if(as != null){
-				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
-			} else {
-				serviceBinding = apcCore.getDefaultServiceBinding(this.protocolFactory);
-			}
+			serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 

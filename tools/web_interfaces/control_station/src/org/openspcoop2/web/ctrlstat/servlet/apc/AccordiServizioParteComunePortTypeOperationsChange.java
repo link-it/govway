@@ -211,13 +211,9 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 
 			String protocollo = null;
 			//calcolo del protocollo implementato dall'accordo
-			if(as != null){
-				IdSoggetto soggettoReferente = as.getSoggettoReferente();
-				String tipoSoggettoReferente = soggettoReferente.getTipo();
-				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
-			} else {
-				protocollo = apcCore.getProtocolloDefault(session);
-			}
+			IdSoggetto soggettoReferente = as.getSoggettoReferente();
+			String tipoSoggettoReferente = soggettoReferente.getTipo();
+			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
 
 			// Prendo il port-type
 			PortType pt = null;

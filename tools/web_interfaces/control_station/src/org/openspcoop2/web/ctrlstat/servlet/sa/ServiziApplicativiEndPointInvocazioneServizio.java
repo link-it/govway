@@ -211,13 +211,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			List<Property> cp = connis.getPropertyList();
 			
 			String tipoENomeSoggetto = "";
-			String nomeProtocollo = soggettiCore.getProtocolloDefault(session);
+			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			if(provider == null){
 				provider = "-1";
 			}else {
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
 				tipoENomeSoggetto = soggetto.getTipo() + "/" + soggetto.getNome();
-				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 			}
 			
 			long soggLong = -1;

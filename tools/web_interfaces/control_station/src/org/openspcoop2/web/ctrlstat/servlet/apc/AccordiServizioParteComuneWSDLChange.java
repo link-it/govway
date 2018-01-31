@@ -296,12 +296,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			// se il protocollo e' null (primo accesso ) lo ricavo dall'accordo di servizio
 			if(tipoProtocollo == null){
-				if(as!=null && as.getSoggettoReferente()!=null){
-					tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
-				}
-				else{
-					tipoProtocollo = apcCore.getProtocolloDefault(session);
-				}
+				tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			}
 
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);

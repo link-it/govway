@@ -143,10 +143,27 @@ public final class AccordiCooperazioneAdd extends Action {
 			acHelper.makeMenu();
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = acCore.getProtocolli(session);
+			List<String> listaTipiProtocollo = acCore.getProtocolliByFilter(session, true, false);
+			
 			// primo accesso inizializzo con il protocollo di default
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = acCore.getProtocolloDefault(session);
+				this.tipoProtocollo = acCore.getProtocolloDefault(session, listaTipiProtocollo);
+			}
+			
+			if(listaTipiProtocollo.size()<=0) {
+				pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+				pd.disableEditMode();
+
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE, 
+						ForwardParams.ADD());
 			}
 
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo

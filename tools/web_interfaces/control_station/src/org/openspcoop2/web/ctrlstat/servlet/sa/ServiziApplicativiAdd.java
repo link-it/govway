@@ -33,7 +33,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
@@ -262,8 +261,6 @@ public final class ServiziApplicativiAdd extends Action {
 					ServletExtendedConnettoreUtils.getExtendedConnettore(connisTmp, ConnettoreServletType.SERVIZIO_APPLICATIVO_ADD, saHelper, saCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
 			long soggLong = -1;
 			// se ho fatto la add 
 			if(useIdSogg)
@@ -272,28 +269,8 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			
 			// Tipi protocollo supportati
-			List<String> _listaTipiProtocollo = saCore.getProtocolli(session);
+			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
 
-			// Verifico esistenza soggetti per i protocolli caricati
-			List<String> listaTipiProtocollo = new ArrayList<>();
-			for (String check : _listaTipiProtocollo) {
-				
-				Search s = new Search();
-				s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
-				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
-				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
-				List<org.openspcoop2.core.registry.Soggetto> lista = null;
-				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					lista = soggettiCore.soggettiRegistroList(null, s);
-				}else{
-					lista = soggettiCore.soggettiRegistroList(userLogin, s);
-				}
-				if(lista.size()>0) {
-					listaTipiProtocollo.add(check);	
-				}
-				
-			}
-			
 			// Preparo il menu
 			saHelper.makeMenu();
 
@@ -324,7 +301,7 @@ public final class ServiziApplicativiAdd extends Action {
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 			
-			String protocollo = saCore.getProtocolloDefault(session);
+			String protocollo = saCore.getProtocolloDefault(session, listaTipiProtocollo);
 			List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			long providerTmp = -1;
 			
