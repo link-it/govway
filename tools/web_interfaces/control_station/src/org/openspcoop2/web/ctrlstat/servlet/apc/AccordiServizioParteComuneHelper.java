@@ -2501,7 +2501,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
 			de.setValue(""+validazioneDocumenti);
 			if (this.isModalitaAvanzata()) {
 				de.setType(DataElementType.CHECKBOX);
@@ -2565,7 +2565,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		else{
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
 			de.setValue(""+validazioneDocumenti);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
@@ -2925,19 +2925,60 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		dati.addElement(de);		
 
-		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
-		de.setValue(""+validazioneDocumenti);
-		//if ( tipoOperazione.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) ) {
-		if ( tipoOperazione.equals(TipoOperazione.ADD) ) {
-			de.setType(DataElementType.CHECKBOX);
-			de.setSelected(validazioneDocumenti);
-		}else{
-			de.setType(DataElementType.HIDDEN);
+		boolean showConversazioni = false;
+		boolean showWsdlDefinitorio = false;
+		boolean showWsdlAsincroni = false;
+		if(isInterfacciaAvanzata && serviceBinding.equals(ServiceBinding.SOAP)) {
+		
+			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
+				showConversazioni = this.apcCore.showConversazioni(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
+			}
+			else{
+				if(tipoProtocollo!=null){
+					showConversazioni = this.apcCore.showConversazioni(tipoProtocollo,serviceBinding,interfaceType);
+				}
+				else{
+					showConversazioni = false;
+				}
+			}
+			showConversazioni = showConversazioni && isInterfacciaAvanzata;
+		
+			showWsdlDefinitorio = this.core.isShowWsdlDefinitorioAccordoServizioParteComune();
+			if(showWsdlDefinitorio){
+				if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
+					showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
+				}
+				else{
+					if(tipoProtocollo!=null){
+						showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(tipoProtocollo,serviceBinding,interfaceType);
+					}
+				}
+			}
+			
+			showWsdlAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(tipoProtocollo,serviceBinding);
+			
 		}
-		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
-		de.setSize(this.getSize());
-		dati.addElement(de);
+		
+		DataElement deValidazione = new DataElement();
+		deValidazione.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
+		deValidazione.setValue(""+validazioneDocumenti);
+		//if ( tipoOperazione.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) ) {
+		if ( tipoOperazione.equals(TipoOperazione.ADD) && this.isModalitaAvanzata() ) {
+			deValidazione.setType(DataElementType.CHECKBOX);
+			deValidazione.setSelected(validazioneDocumenti);
+			
+			if(showConversazioni || showWsdlDefinitorio || showWsdlAsincroni) {
+				deValidazione.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICHE);
+			}
+			
+		}else{
+			deValidazione.setType(DataElementType.HIDDEN);
+		}
+		deValidazione.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
+		deValidazione.setSize(this.getSize());
+		if((!tipoOperazione.equals(TipoOperazione.ADD)) || showConversazioni) {
+			dati.addElement(deValidazione);
+		}
 
 		if (tipoOperazione.equals(TipoOperazione.ADD) == false) {
 
@@ -3111,23 +3152,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
-	
-			boolean showWsdlDefinitorio = this.core.isShowWsdlDefinitorioAccordoServizioParteComune();
-			if(showWsdlDefinitorio){
-				if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-					showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
-				}
-				else{
-					if(tipoProtocollo!=null){
-						showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(tipoProtocollo,serviceBinding,interfaceType);
-					}
-				}
-			}
-			
+				
 			// interfacetype
 			dati.addElement(deInterfaceType);
 			
-			
+			if((tipoOperazione.equals(TipoOperazione.ADD)) && !showConversazioni) {
+				dati.addElement(deValidazione);
+			}
 			
 			if(isInterfacciaAvanzata){
 				if (tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -3150,7 +3181,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 						//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
 		
-						if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(tipoProtocollo,serviceBinding)){
+						if(showWsdlAsincroni){
 							
 							dati.add(wsdlconc.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE, "", getSize()));
 							dati.addAll(wsdlconc.getFileNameDataElement());
@@ -3227,7 +3258,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 						//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
 		
-						if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(tipoProtocollo,serviceBinding)){
+						if(showWsdlAsincroni){
 		
 							de = new DataElement();
 							de.setType(DataElementType.LINK);
@@ -3378,21 +3409,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 		}
-
-		boolean showConversazioni = false;
-		if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-			showConversazioni = this.apcCore.showConversazioni(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
-		}
-		else{
-			if(tipoProtocollo!=null){
-				showConversazioni = this.apcCore.showConversazioni(tipoProtocollo,serviceBinding,interfaceType);
-			}
-			else{
-				showConversazioni = false;
-			}
-		}
-
-		showConversazioni = showConversazioni && isInterfacciaAvanzata;
 
 		if(showConversazioni){
 
@@ -3789,7 +3805,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);		
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
 		de.setValue(""+validazioneDocumenti);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
