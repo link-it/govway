@@ -33,6 +33,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
@@ -51,6 +52,7 @@ import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -260,6 +262,8 @@ public final class ServiziApplicativiAdd extends Action {
 					ServletExtendedConnettoreUtils.getExtendedConnettore(connisTmp, ConnettoreServletType.SERVIZIO_APPLICATIVO_ADD, saHelper, saCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
 			long soggLong = -1;
 			// se ho fatto la add 
 			if(useIdSogg)
@@ -267,9 +271,53 @@ public final class ServiziApplicativiAdd extends Action {
 				soggLong = Long.parseLong(provider);
 			}
 			
+			// Tipi protocollo supportati
+			List<String> _listaTipiProtocollo = saCore.getProtocolli(session);
+
+			// Verifico esistenza soggetti per i protocolli caricati
+			List<String> listaTipiProtocollo = new ArrayList<>();
+			for (String check : _listaTipiProtocollo) {
+				
+				Search s = new Search();
+				s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
+				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
+				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+				List<org.openspcoop2.core.registry.Soggetto> lista = null;
+				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+					lista = soggettiCore.soggettiRegistroList(null, s);
+				}else{
+					lista = soggettiCore.soggettiRegistroList(userLogin, s);
+				}
+				if(lista.size()>0) {
+					listaTipiProtocollo.add(check);	
+				}
+				
+			}
+			
 			// Preparo il menu
 			saHelper.makeMenu();
 
+			if(listaTipiProtocollo.size()<=0) {
+				if(saCore.isGestionePddAbilitata()) {
+					pd.setMessage("Non risultano registrati soggetti associati a porte di dominio di tipo operativo", Costanti.MESSAGE_TYPE_INFO);
+				}
+				else {
+					pd.setMessage("Non risultano registrati soggetti di dominio interno", Costanti.MESSAGE_TYPE_INFO);
+				}
+				pd.disableEditMode();
+
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
+						ForwardParams.ADD());
+			}
+			
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 
 			// Prendo la lista di soggetti e la metto in un array

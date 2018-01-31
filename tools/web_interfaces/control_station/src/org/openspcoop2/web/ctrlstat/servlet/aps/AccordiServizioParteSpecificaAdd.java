@@ -38,6 +38,8 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -367,9 +369,47 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsHelper, apsCore, 
 							request, session, this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
+			// Tipi protocollo supportati
+			List<String> _listaTipiProtocollo = apcCore.getProtocolli(session);
+
+			// Verifico esistenza soggetti per i protocolli caricati
+			List<String> listaTipiProtocollo = new ArrayList<>();
+			for (String check : _listaTipiProtocollo) {
+				
+				Search s = new Search();
+				s.setPageSize(Liste.ACCORDI, 1); // serve solo per il count
+				s.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
+				List<org.openspcoop2.core.registry.Soggetto> lista = null;
+				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+					lista = soggettiCore.soggettiRegistroList(null, s);
+				}else{
+					lista = soggettiCore.soggettiRegistroList(userLogin, s);
+				}
+				if(lista.size()>0) {
+					listaTipiProtocollo.add(check);	
+				}
+				
+			}
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
+			if(listaTipiProtocollo.size()<=0) {
+				pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
+				pd.disableEditMode();
+
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
+						ForwardParams.ADD());
+			}
+			
 			String[] ptList = null;
 			// Prendo la lista di soggetti e la metto in un array
 			// Prendo la lista di accordi e la metto in un array
