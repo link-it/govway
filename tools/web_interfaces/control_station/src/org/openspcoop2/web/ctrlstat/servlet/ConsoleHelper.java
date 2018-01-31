@@ -3689,6 +3689,16 @@ public class ConsoleHelper {
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getLabel();
 	}
 	
+	public String getDescrizioneProtocollo(String protocollo) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getDescription();
+	}
+	
+	public String getWebSiteProtocollo(String protocollo) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getWebSite();
+	}
+	
 	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		if(protocolFactoryManager.getOrganizationTypes().get(protocollo).size()>1) {

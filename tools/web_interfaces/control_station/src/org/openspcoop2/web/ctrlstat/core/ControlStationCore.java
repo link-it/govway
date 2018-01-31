@@ -4475,35 +4475,54 @@ public class ControlStationCore {
 	}
 
 	public int countProtocolli(HttpSession session) throws  DriverRegistroServiziException {
-		List<String> l = this.getProtocolli(session);
+		return this.countProtocolli(session, false);
+	}
+	public int countProtocolli(HttpSession session, boolean ignoreProtocolloSelezionato) throws  DriverRegistroServiziException {
+		List<String> l = this.getProtocolli(session, ignoreProtocolloSelezionato);
 		return l.size();
 	}
 	public List<String> getProtocolli(HttpSession session) throws  DriverRegistroServiziException {
+		return this.getProtocolli(session, false);
+	}
+	public List<String> getProtocolli(HttpSession session, boolean ignoreProtocolloSelezionato) throws  DriverRegistroServiziException {
 		String getProtocolli = "getProtocolli";
 		try{
 
 			List<String> protocolliList = new ArrayList<String>();
 			
 			User u =ServletUtils.getUserFromSession(session);
-			if(u.getProtocolloSelezionato()!=null) {
-				protocolliList.add(u.getProtocolloSelezionato());
-				return protocolliList;
+			
+			if(!ignoreProtocolloSelezionato) {
+				if(u.getProtocolloSelezionato()!=null) {
+					protocolliList.add(u.getProtocolloSelezionato());
+					return protocolliList;
+				}
 			}
 			
-			MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
-			Enumeration<String> protocolli = protocolFactories.keys();
-			while (protocolli.hasMoreElements()) {
-
-				String protocollo = protocolli.nextElement();
-				protocolliList.add(protocollo);
+			if(u.getProtocolliSupportati()!=null && u.getProtocolliSupportati().size()>0) {
+				return u.getProtocolliSupportati();
 			}
 			
-			return protocolliList;
+			return this.getProtocolli();
 
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + getProtocolli + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + getProtocolli + "] Error :" + e.getMessage(),e);
 		}
+	}
+	public List<String> getProtocolli(){
+		
+		List<String> protocolliList = new ArrayList<String>();
+		
+		MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
+		Enumeration<String> protocolli = protocolFactories.keys();
+		while (protocolli.hasMoreElements()) {
+
+			String protocollo = protocolli.nextElement();
+			protocolliList.add(protocollo);
+		}
+		
+		return protocolliList;
 	}
 
 	public String getVersioneDefault() throws  DriverRegistroServiziException {
