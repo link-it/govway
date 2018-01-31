@@ -194,6 +194,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
 				de.setValues(listaTipiProtocollo);
+				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(protocollo);
 				de.setType(DataElementType.SELECT);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
@@ -205,8 +206,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 		} else {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
+				
+				DataElement deLABEL = new DataElement();
+				deLABEL.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
+				deLABEL.setType(DataElementType.TEXT);
+				deLABEL.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO+"__label");
+				deLABEL.setValue(this.getLabelProtocollo(protocollo));
+				dati.addElement(deLABEL);
+				
 				de.setValue(protocollo);
-				de.setType(DataElementType.TEXT);
+				de.setType(DataElementType.HIDDEN);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
 			} else {
 				de.setValue(protocollo);

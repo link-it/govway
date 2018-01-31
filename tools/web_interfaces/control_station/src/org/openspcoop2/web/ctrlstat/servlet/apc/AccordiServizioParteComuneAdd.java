@@ -36,6 +36,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -261,13 +262,48 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = apcCore.getProtocolli(session);
+			List<String> _listaTipiProtocollo = apcCore.getProtocolli(session);
 
+			// Verifico esistenza soggetti per i protocolli caricati
+			List<String> listaTipiProtocollo = new ArrayList<>();
+			for (String check : _listaTipiProtocollo) {
+				
+				Search s = new Search();
+				s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
+				s.addFilter(Liste.SOGGETTI, check); // imposto protocollo
+				List<org.openspcoop2.core.registry.Soggetto> lista = null;
+				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+					lista = soggettiCore.soggettiRegistroList(null, s);
+				}else{
+					lista = soggettiCore.soggettiRegistroList(userLogin, s);
+				}
+				if(lista.size()>0) {
+					listaTipiProtocollo.add(check);	
+				}
+				
+			}
+			
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
 
 			// Preparo il menu
 			apcHelper.makeMenu();
+			
+			if(listaTipiProtocollo.size()<=0) {
+				pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+				pd.disableEditMode();
+
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, 
+						ForwardParams.ADD());
+			}
 
 			List<Soggetto> listaSoggetti=null;
 			if(apcCore.isVisioneOggettiGlobale(userLogin)){

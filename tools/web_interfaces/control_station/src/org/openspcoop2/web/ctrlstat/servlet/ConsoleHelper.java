@@ -3684,6 +3684,17 @@ public class ConsoleHelper {
 		return de;
 	}
 	
+	public List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
+		if(protocolli==null || protocolli.size()<=0) {
+			return null;
+		}
+		List<String> l = new ArrayList<>();
+		for (String protocollo : protocolli) {
+			l.add(this.getLabelProtocollo(protocollo));
+		}
+		return l;
+	}
+	
 	public String getLabelProtocollo(String protocollo) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getLabel();

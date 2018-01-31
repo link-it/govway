@@ -2701,12 +2701,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 				if(used){
+					
+					DataElement deLABEL = new DataElement();
+					deLABEL.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
+					deLABEL.setType(DataElementType.TEXT);
+					deLABEL.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO+"__label");
+					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
+					dati.addElement(deLABEL);
+					
 					de.setValue(tipoProtocollo);
-					de.setType(DataElementType.TEXT);
+					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 				}else {
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 					de.setValues(listaTipiProtocollo);
+					de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 					de.setSelected(tipoProtocollo);
 					de.setType(DataElementType.SELECT);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
@@ -2727,6 +2736,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 				de.setValues(listaTipiProtocollo);
+				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
