@@ -36,6 +36,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
@@ -270,7 +271,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				
 				Search s = new Search();
 				s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
-				s.addFilter(Liste.SOGGETTI, check); // imposto protocollo
+				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
 				List<org.openspcoop2.core.registry.Soggetto> lista = null;
 				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
 					lista = soggettiCore.soggettiRegistroList(null, s);

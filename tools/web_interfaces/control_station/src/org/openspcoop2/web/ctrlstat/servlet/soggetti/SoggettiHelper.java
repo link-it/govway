@@ -27,8 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -180,7 +182,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			else {
 				de.setType(DataElementType.SELECT);
-				de.setValues(SoggettiCostanti.SOGGETTI_DOMINI);
+				de.setValues(SoggettiCostanti.SOGGETTI_DOMINI_VALUE);
+				de.setLabels(SoggettiCostanti.SOGGETTI_DOMINI_LABEL);
 				de.setSelected(dominio);
 				de.setPostBack(isSupportatoAutenticazioneSoggetti);
 			}
@@ -746,7 +749,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
-			addFilterProtocol(ricerca, idLista, 0);
+			addFilterProtocol(ricerca, idLista);
+			if(this.core.isGestionePddAbilitata()==false) {
+				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
+				addFilterDominio(filterDominio, false);
+			}
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -864,9 +871,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 				else {
 					if(pddEsterna) {
-						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO);
+						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_LABEL);
 					}else {
-						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO);
+						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_LABEL);
 					}
 				}
 				e.addElement(de);
@@ -1027,7 +1034,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
-			addFilterProtocol(ricerca, idLista, 0);
+			addFilterProtocol(ricerca, idLista);
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -1308,5 +1315,28 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public void addFilterDominio(String dominio, boolean postBack) throws Exception{
+		try {
+			
+			String [] values = new String[SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length + 1];
+			String [] labels = new String[SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length + 1];
+			labels[0] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI;
+			values[0] = SoggettiCostanti.DEFAULT_VALUE_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI;
+			for (int i =0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length ; i ++) {
+				labels[i+1] = SoggettiCostanti.SOGGETTI_DOMINI_LABEL[i];
+				values[i+1] = SoggettiCostanti.SOGGETTI_DOMINI_VALUE[i];
+			}
+			
+			String selectedValue = dominio != null ? dominio : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			
+			this.pd.addFilter(Filtri.FILTRO_DOMINIO, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+
 	}
 }

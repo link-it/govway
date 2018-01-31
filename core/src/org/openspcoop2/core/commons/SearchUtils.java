@@ -33,11 +33,11 @@ package org.openspcoop2.core.commons;
  */
 public class SearchUtils
 {
-	public static String getFilter(ISearch ricerca, int idLista, int position) {
-		return SearchUtils.getFilter(ricerca, idLista, position, "");
+	public static String getFilter(ISearch ricerca, int idLista, String filterName) {
+		return SearchUtils.getFilter(ricerca, idLista, filterName, "");
 	}
-	public static String getFilter(ISearch ricerca, int idLista, int position, String defaultValue) {
-		String filter = ricerca.getFilter(idLista, position);
+	public static String getFilter(ISearch ricerca, int idLista, String filterName, String defaultValue) {
+		String filter = ricerca.getFilter(idLista, filterName);
 		filter = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filter) || (filter==null)) ? defaultValue : filter;
 		return filter;
 	}

@@ -22,9 +22,7 @@
 package org.openspcoop2.web.ctrlstat.core;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.commons.ISearch;
@@ -49,7 +47,7 @@ public class Search implements Serializable, ISearch {
 	private Map<Integer, Integer> indexIniziale = null;
 	private Map<Integer, String> searchString = null;
 	private Map<Integer, Integer> numEntries = null;
-	private Map<Integer, List<String>> filter = null;
+	private Map<Integer, HashMap<String,String>> filter = null;
 
 	private Integer PAGE_SIZE_DEFAULT = 20;
 	private Integer INDEX_DEFAULT = 0;
@@ -62,14 +60,14 @@ public class Search implements Serializable, ISearch {
 		this.indexIniziale = new HashMap<Integer, Integer>();
 		this.searchString = new HashMap<Integer, String>();
 		this.numEntries = new HashMap<Integer, Integer>();
-		this.filter = new HashMap<Integer, List<String>>();
+		this.filter = new HashMap<Integer, HashMap<String,String>>();
 
 		for (int i = 0; i < Liste.getTotaleListe(); i++) {
 			this.pageSize.put(i, this.PAGE_SIZE_DEFAULT);
 			this.indexIniziale.put(i, this.INDEX_DEFAULT);
 			this.searchString.put(i, this.SEARCH_DEFAULT);
 			this.numEntries.put(i, this.NUM_ENTRIES_DEFAULT);
-			this.filter.put(i, new ArrayList<String>());
+			this.filter.put(i, new HashMap<String,String>());
 		}
 
 	}
@@ -82,7 +80,7 @@ public class Search implements Serializable, ISearch {
 		this.indexIniziale = new HashMap<Integer, Integer>();
 		this.searchString = new HashMap<Integer, String>();
 		this.numEntries = new HashMap<Integer, Integer>();
-		this.filter = new HashMap<Integer, List<String>>();
+		this.filter = new HashMap<Integer, HashMap<String,String>>();
 
 		for (int i = 0; i < Liste.getTotaleListe(); i++) {
 			this.pageSize.put(i, initialLimit);// prendo
@@ -94,7 +92,7 @@ public class Search implements Serializable, ISearch {
 			this.indexIniziale.put(i, this.INDEX_DEFAULT);
 			this.searchString.put(i, this.SEARCH_DEFAULT);
 			this.numEntries.put(i, this.NUM_ENTRIES_DEFAULT);
-			this.filter.put(i, new ArrayList<String>());
+			this.filter.put(i, new HashMap<String,String>());
 		}
 
 	}
@@ -141,38 +139,38 @@ public class Search implements Serializable, ISearch {
 
 	@Override
 	public void clearFilters(int indexLista) {
-		List<String> l = this.filter.get(indexLista);
-		if(l!=null) {
-			l.clear();
+		HashMap<String,String> map = this.filter.get(indexLista);
+		if(map!=null) {
+			map.clear();
 		}
 	}
 	
 	@Override
-	public boolean existsFilter(int indexLista, int positionFilter) {
-		List<String> l = this.filter.get(indexLista);
-		if(l==null || l.size()<(positionFilter+1)) {
+	public boolean existsFilter(int indexLista, String filterName) {
+		HashMap<String,String> map = this.filter.get(indexLista);
+		if(map==null || map.size()<=0) {
 			return false;
 		}
-		return true;
+		return map.containsKey(filterName);
 	}
 	
 	@Override
-	public String getFilter(int indexLista, int positionFilter) {
-		List<String> l = this.filter.get(indexLista);
-		if(l==null || l.size()<(positionFilter+1)) {
+	public String getFilter(int indexLista, String filterName) {
+		HashMap<String,String> map = this.filter.get(indexLista);
+		if(map==null || map.size()<=0) {
 			return null;
 		}
-		return l.get(positionFilter);
+		return map.get(filterName);
 	}
 	
 	@Override
-	public void addFilter(int indexLista, String filterValue) {
-		List<String> l = this.filter.get(indexLista);
-		if(l==null) {
-			l = new ArrayList<>();
-			this.filter.put(indexLista, l);
+	public void addFilter(int indexLista, String filterName, String filterValue) {
+		HashMap<String,String> map = this.filter.get(indexLista);
+		if(map==null) {
+			map = new HashMap<>();
+			this.filter.put(indexLista, map);
 		}
-		l.add(filterValue);
+		map.put(filterName, filterValue);
 	}
 
 }

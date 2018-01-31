@@ -85,6 +85,7 @@ public final class AccordiServizioParteComuneList extends Action {
 			int idLista = Liste.ACCORDI;
 
 			ricerca = apcHelper.checkSearchParameters(idLista, ricerca);
+			apcHelper.setFilterSelectedProtocol(ricerca, idLista, 0);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);

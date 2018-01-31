@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -94,7 +95,7 @@ public class OperazioniCore extends ControlStationCore {
 
 		OperationStatus os = formBean.getTipoOperationStatus();
 		Vector<String> utenti = formBean.getUtenti();
-		ricerca.addFilter(this.getIdLista(formBean),formBean.getUtente());
+		ricerca.addFilter(this.getIdLista(formBean),Filtri.FILTRO_UTENTE, formBean.getUtente());
 		String hostname = formBean.getHostname() != null ? formBean.getHostname() : "";
 		String pezzoAny = formBean.getPezzoAny()!= null ? formBean.getPezzoAny() : "";
 		String daSql = formBean.getDataInizio()!= null ? formBean.getDataInizio() : "";

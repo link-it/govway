@@ -40,6 +40,7 @@ import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.naming.InitialContext;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
@@ -609,7 +610,7 @@ public class ClassQueue {
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		
-		filtroSel = SearchUtils.getFilter(ricerca, idLista, 0, "*");
+		filtroSel = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_UTENTE, "*");
 		
 		Vector<String> newUtenti = new Vector<String>();
 		if (filtroSel.equals("*")) {

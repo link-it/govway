@@ -342,14 +342,14 @@ public final class SoggettiChange extends Action {
 					if(pddCore.isGestionePddAbilitata()==false){
 						if(this.dominio==null) {
 							if(pddCore.isPddEsterna(this.pdd)) {
-								this.dominio = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO;
+								this.dominio = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE;
 							}
 							else {
-								this.dominio = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO;
+								this.dominio = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
 							}
 						}
 						else {
-							if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO.equals(this.dominio)) {
+							if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(this.dominio)) {
 								this.pdd = nomePddGestioneLocale;
 							}
 							else {
@@ -667,7 +667,7 @@ public final class SoggettiChange extends Action {
 			}
 		
 			if(pddCore.isGestionePddAbilitata()==false){
-				if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO.equals(this.dominio)) {
+				if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(this.dominio)) {
 					this.pdd = nomePddGestioneLocale;
 				}
 				else {

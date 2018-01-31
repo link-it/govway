@@ -44,6 +44,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
@@ -10686,21 +10687,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 		int offset;
 		int limit;
 		String search;
-		String filterProtocollo = null;
-		String filterTipoAPI = null;
 		String queryString;
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		
-		if(ricerca.existsFilter(idLista, 1)) {
-			filterProtocollo = SearchUtils.getFilter(ricerca, idLista, 0);
-			filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, 1);
-		}
-		else {
-			filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, 0);
-		}
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+		String filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
 
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
@@ -13310,7 +13304,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
-		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, 0);
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
+		
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
 			try {
@@ -13318,6 +13314,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}catch(Exception e) {
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
+		}
+		
+		PddTipologia pddTipologia = null;
+		if(filterDominio!=null && !"".equals(filterDominio)) {
+			pddTipologia = PddTipologia.toPddTipologia(filterDominio);
 		}
 		
 		Connection con = null;
@@ -13346,6 +13347,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				//query con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
 				sqlQueryObject.addSelectCountField("*", "cont");
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
@@ -13361,11 +13365,26 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
 				sqlQueryObject.addSelectCountField("*", "cont");
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
@@ -13373,6 +13392,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
 				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -13390,6 +13421,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(tipoSoggetto!=null) 
 					stmt.setString(index++, tipoSoggetto);
 			}
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -13403,10 +13437,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if (!search.equals("")) { // con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField("id");
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"id","identificativoSoggetto");
 				sqlQueryObject.addSelectField("nome_soggetto");
 				sqlQueryObject.addSelectField("tipo_soggetto");
-				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"descrizione","descrizioneSoggetto");
 				sqlQueryObject.addSelectField("identificativo_porta");
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
@@ -13425,6 +13462,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
@@ -13436,10 +13485,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// senza search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField("id");
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"id","identificativoSoggetto");
 				sqlQueryObject.addSelectField("nome_soggetto");
 				sqlQueryObject.addSelectField("tipo_soggetto");
-				sqlQueryObject.addSelectField("descrizione");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"descrizione","descrizioneSoggetto");
 				sqlQueryObject.addSelectField("identificativo_porta");
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
@@ -13450,6 +13502,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
 				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -13472,16 +13536,19 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(tipoSoggetto!=null) 
 					stmt.setString(index++, tipoSoggetto);
 			}
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			risultato = stmt.executeQuery();
 
 			Soggetto sog;
 			while (risultato.next()) {
 
 				sog = new Soggetto();
-				sog.setId(risultato.getLong("id"));
+				sog.setId(risultato.getLong("identificativoSoggetto"));
 				sog.setNome(risultato.getString("nome_soggetto"));
 				sog.setTipo(risultato.getString("tipo_soggetto"));
-				sog.setDescrizione(risultato.getString("descrizione"));
+				sog.setDescrizione(risultato.getString("descrizioneSoggetto"));
 				sog.setIdentificativoPorta(risultato.getString("identificativo_porta"));
 				sog.setPortaDominio(risultato.getString("server"));
 				sog.setCodiceIpa(risultato.getString("codice_ipa"));

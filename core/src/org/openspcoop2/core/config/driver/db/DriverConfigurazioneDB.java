@@ -39,6 +39,7 @@ import javax.sql.DataSource;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
@@ -10287,7 +10288,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
-		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, 0);
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
 			try {

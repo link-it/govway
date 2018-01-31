@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -109,7 +110,7 @@ public class SoggettiCostanti {
 	public final static String PARAMETRO_SOGGETTO_RUOLO_ID = "ruoloId";
 	
 	/* LABEL PARAMETRI */
-
+	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO = "Dominio";
 	public final static String LABEL_PARAMETRO_SOGGETTO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_SOGGETTO_TIPO = "Tipo";
@@ -127,6 +128,7 @@ public class SoggettiCostanti {
 
 	/* DEFAULT VALUE PARAMETRI */
 
+	public final static String DEFAULT_VALUE_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI = "";
 
 	public final static String SOGGETTO_RUOLO_ENTRAMBI = "Fruitore/Erogatore";
 	public final static String SOGGETTO_RUOLO_FRUITORE = "Fruitore";
@@ -134,9 +136,13 @@ public class SoggettiCostanti {
 	public final static String[] SOGGETTI_RUOLI = { SOGGETTO_RUOLO_EROGATORE, 
 		SOGGETTO_RUOLO_FRUITORE, SOGGETTO_RUOLO_ENTRAMBI };
 	
-	public final static String SOGGETTO_DOMINIO_OPERATIVO = "Interno";
-	public final static String SOGGETTO_DOMINIO_ESTERNO = "Esterno";
-	public final static String[] SOGGETTI_DOMINI = { SOGGETTO_DOMINIO_ESTERNO, 
-			SOGGETTO_DOMINIO_OPERATIVO };
+	public final static String SOGGETTO_DOMINIO_OPERATIVO_VALUE = PddTipologia.OPERATIVO.toString();
+	public final static String SOGGETTO_DOMINIO_ESTERNO_VALUE = PddTipologia.ESTERNO.toString();
+	public final static String SOGGETTO_DOMINIO_OPERATIVO_LABEL = "Interno";
+	public final static String SOGGETTO_DOMINIO_ESTERNO_LABEL = "Esterno";
+	public final static String[] SOGGETTI_DOMINI_LABEL = { SOGGETTO_DOMINIO_ESTERNO_LABEL, 
+			SOGGETTO_DOMINIO_OPERATIVO_LABEL };
+	public final static String[] SOGGETTI_DOMINI_VALUE = { SOGGETTO_DOMINIO_ESTERNO_VALUE, 
+			SOGGETTO_DOMINIO_OPERATIVO_VALUE};
 
 }

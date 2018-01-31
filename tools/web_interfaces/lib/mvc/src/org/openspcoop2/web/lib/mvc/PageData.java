@@ -59,7 +59,8 @@ public class PageData {
 	boolean addButton;
 	boolean removeButton;
 	boolean select;
-	List<DataElement> filter = null;
+	List<DataElement> filter_names = null;
+	List<DataElement> filter_values = null;
 	int pageSize, index, numEntries;
 
 	public PageData() {
@@ -259,17 +260,53 @@ public class PageData {
 		return this.removeButton;
 	}
 
-	public void setFilter(List<DataElement> d) {
-		this.filter = d;
+	private final static String PARAMETRO_FILTER_NAME = "filterName_";
+	public static String GET_PARAMETRO_FILTER_NAME (int position) {
+		return PARAMETRO_FILTER_NAME+position;
 	}
-	public void addFilter(DataElement d) {
-		if(this.filter == null) {
-			this.filter = new ArrayList<DataElement>();
+	private final static String PARAMETRO_FILTER_VALUE = "filterValue_";
+	public static String GET_PARAMETRO_FILTER_VALUE (int position) {
+		return PARAMETRO_FILTER_VALUE+position;
+	}
+	
+	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size) throws Exception{
+		if(this.filter_names == null) {
+			this.filter_names = new ArrayList<DataElement>();
+			this.filter_values = new ArrayList<DataElement>();
 		}
-		this.filter.add(d);
+		
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		if(name==null) {
+			throw new Exception("Name not found");
+		}
+		deName.setValue(name);
+		this.filter_names.add(deName);
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.SELECT);
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		if(label==null) {
+			throw new Exception("Label not found");
+		}
+		deValue.setLabel(label);
+		deValue.setSelected(valueSelected);
+		if(values==null || values.length<=0) {
+			throw new Exception("Values not found");
+		}
+		deValue.setValues(values);
+		deValue.setLabels(labels);
+		deValue.setSize(size);
+		deValue.setPostBack(postBack);
+		this.filter_values.add(deValue);
+		
 	}
-	public List<DataElement> getFilter() {
-		return this.filter;
+	public List<DataElement> getFilterNames() {
+		return this.filter_names;
+	}
+	public List<DataElement> getFilterValues() {
+		return this.filter_values;
 	}
 
 	public void setPageSize(int i) {

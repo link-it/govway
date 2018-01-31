@@ -63,7 +63,7 @@ if (hidden!=null) {
 <table class="tabella-ext">
 
 <%
-if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) || pd.getFilter() != null) {
+if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) || pd.getFilterNames() != null) {
 	
 	%>
 	<tr>
@@ -107,10 +107,13 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 						<% } %>
 	
 						<%
-						if (pd.getFilter() != null) {
-							for(int iPD=0; iPD<pd.getFilter().size(); iPD++){
-								DataElement filtro = pd.getFilter().get(iPD);
-								String filterName = "filter_"+iPD;
+						if (pd.getFilterValues() != null) {
+							for(int iPD=0; iPD<pd.getFilterValues().size(); iPD++){
+
+								DataElement filtroName = pd.getFilterNames().get(iPD);
+
+								DataElement filtro = pd.getFilterValues().get(iPD);
+								String filterName = filtro.getName();
 							  	String [] values = filtro.getValues();
 							  	String [] labels = filtro.getLabels();
 							  	String selezionato = filtro.getSelected();
@@ -121,6 +124,9 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 										<tr>
 											<td>
 												<div class="prop">
+
+													<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
+
 													<label><%= filtro.getLabel() %></label>
 												  	<select name="<%= filterName %>" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>">
 												  	<%

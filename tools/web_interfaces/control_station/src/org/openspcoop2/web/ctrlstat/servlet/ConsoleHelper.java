@@ -45,6 +45,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -1782,16 +1783,24 @@ public class ConsoleHelper {
 			ricerca.clearFilters(idLista);
 
 			int index=0;
-			String nameFilter = CostantiControlStation.PARAMETRO_FILTER+index;
+			String nameFilter = PageData.GET_PARAMETRO_FILTER_NAME(index);
 			while (this.request.getParameter(nameFilter) != null) {
-				String paramFilter = this.request.getParameter(nameFilter);
-				paramFilter = paramFilter.trim();
-				if (paramFilter.equals("")) {
-					paramFilter = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED;
+				String paramFilterName = this.request.getParameter(nameFilter);
+				paramFilterName = paramFilterName.trim();
+				
+				String paramFilterValue = this.request.getParameter( PageData.GET_PARAMETRO_FILTER_VALUE(index));
+				if(paramFilterValue==null) {
+					paramFilterValue = "";
 				}
-				ricerca.addFilter(idLista, paramFilter);
+				paramFilterValue = paramFilterValue.trim();
+				if (paramFilterValue.equals("")) {
+					paramFilterValue = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED;
+				}
+				
+				ricerca.addFilter(idLista, paramFilterName, paramFilterValue);
+				
 				index++;
-				nameFilter = CostantiControlStation.PARAMETRO_FILTER+index;
+				nameFilter = PageData.GET_PARAMETRO_FILTER_NAME(index);
 			}
 
 			return ricerca;
@@ -3581,25 +3590,12 @@ public class ConsoleHelper {
 	}
 	
 
-	public DataElement getFilterServiceBinding(String serviceBinding,int positionFilter, boolean postBack, boolean showAPISuffix) throws Exception{
-		DataElement de = null;
+	public void addFilterServiceBinding(String serviceBinding, boolean postBack, boolean showAPISuffix) throws Exception{
 		try {
 			ServiceBinding[] serviceBindings = ServiceBinding.values();
-			de = new DataElement();
-			de.setName(CostantiControlStation.PARAMETRO_FILTER+positionFilter);
-			if(showAPISuffix) {
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_API);
-			}
-			else {
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
-			}
-			de.setSelected(serviceBinding != null ? serviceBinding : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI);
-			de.setType(DataElementType.SELECT);
-			de.setPostBack(postBack);
-
+			
 			String [] values = new String[serviceBindings.length + 1];
 			String [] labels = new String[serviceBindings.length + 1];
-			
 			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
 			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
 			for (int i =0; i < serviceBindings.length ; i ++) {
@@ -3617,52 +3613,44 @@ public class ConsoleHelper {
 				}
 			}
 			
-			de.setValues(values);
-			de.setLabels(labels);
-			de.setSize(this.getSize());
+			String selectedValue = serviceBinding != null ? serviceBinding : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			
+			String label = null;
+			if(showAPISuffix) {
+				label = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_API;
+			}
+			else {
+				label = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
+			}
+			
+			this.pd.addFilter(Filtri.FILTRO_SERVICE_BINDING, label, selectedValue, values, labels, postBack, this.getSize());
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
-		return de;
 	}
 	
 	public void setFilterSelectedProtocol(ISearch ricerca, int idLista, int positionFilter) throws Exception{
 		List<String> protocolli = this.core.getProtocolli(this.session);
 		if(protocolli!=null && protocolli.size()==1) {
-			ricerca.addFilter(idLista, protocolli.get(0));
+			ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, protocolli.get(0));
 		}
 	}
-	public int addFilterProtocol(ISearch ricerca, int idLista, int positionFilter) throws Exception{
+	public void addFilterProtocol(ISearch ricerca, int idLista) throws Exception{
 		List<String> protocolli = this.core.getProtocolli(this.session);
 		if(protocolli!=null && protocolli.size()>1) {
-			String filterProtocol = SearchUtils.getFilter(ricerca, idLista, positionFilter);
-			DataElement filterProtocolli = this.getFilterProtocollo(protocolli, filterProtocol, positionFilter, false);
-			if(filterProtocolli!=null) {
-				positionFilter++;
-				this.pd.addFilter(filterProtocolli);
-			}
+			String filterProtocol = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+			this.addFilterProtocollo(protocolli, filterProtocol, false);
 		}
-		return positionFilter;
 	}
-	private DataElement getFilterProtocollo(List<String> protocolli, String protocolloSelected,int positionFilter,boolean postBack) throws Exception{
-		DataElement de = null;
+	private void addFilterProtocollo(List<String> protocolli, String protocolloSelected,boolean postBack) throws Exception{
 		try {
 			
 			if(protocolli!=null && protocolli.size()>1) {
-			
-				
-				
-				de = new DataElement();
-				de.setName(CostantiControlStation.PARAMETRO_FILTER+positionFilter);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO);
-				de.setSelected(protocolloSelected != null ? protocolloSelected : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);
-				de.setType(DataElementType.SELECT);
-				de.setPostBack(postBack);
-	
+
 				String [] values = new String[protocolli.size() + 1];
 				String [] labels = new String[protocolli.size() + 1];
-				
 				labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
 				values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
 				for (int i =0; i < protocolli.size() ; i ++) {
@@ -3671,9 +3659,9 @@ public class ConsoleHelper {
 					values[i+1] = protocollo;
 				}
 				
-				de.setValues(values);
-				de.setLabels(labels);
-				de.setSize(this.getSize());
+				String selectedValue = protocolloSelected != null ? protocolloSelected : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI;
+				
+				this.pd.addFilter(Filtri.FILTRO_PROTOCOLLO, CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO, selectedValue, values, labels, postBack, this.getSize());
 				
 			}
 				
@@ -3681,7 +3669,6 @@ public class ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
-		return de;
 	}
 	
 	public List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{

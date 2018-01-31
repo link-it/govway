@@ -29,6 +29,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
@@ -4295,11 +4296,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 			
-			int indexFilter = 0;
-			indexFilter = addFilterProtocol(ricerca, idLista, indexFilter);
+			addFilterProtocol(ricerca, idLista);
 			
-			String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, indexFilter);
-			this.pd.addFilter(this.getFilterServiceBinding(filterTipoAccordo,indexFilter,false,false));
+			String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+			this.addFilterServiceBinding(filterTipoAccordo,false,false);
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
