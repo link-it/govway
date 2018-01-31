@@ -22,7 +22,6 @@ package org.openspcoop2.generic_project.dao.jdbc.utils;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
-import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectCore;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
@@ -46,7 +45,33 @@ public class JDBC_SQLObjectFactory {
 	}
 
 	public ISQLQueryObject createSQLQueryObject(TipiDatabase tipoDatabase) throws SQLQueryObjectException{
-		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+		ISQLQueryObject sqlQueryObject = null;
+		switch (tipoDatabase) {
+		case POSTGRESQL:
+			sqlQueryObject = new JDBC_PostgreSQLQueryObject(this);
+			break;
+		case MYSQL:
+			sqlQueryObject = new JDBC_MySQLQueryObject(this);
+			break;
+		case ORACLE:
+			sqlQueryObject = new JDBC_OracleQueryObject(this);
+			break;
+		case HSQL:
+			sqlQueryObject = new JDBC_HyperQueryObject(this);
+			break;
+		case DERBY:
+			sqlQueryObject = new JDBC_DerbyQueryObject(this);
+			break;
+		case SQLSERVER:
+			sqlQueryObject = new JDBC_SQLServerQueryObject(this);
+			break;
+		case DB2:
+			sqlQueryObject = new JDBC_DB2SQLQueryObject(this);
+			break;
+		case DEFAULT:
+			throw new SQLQueryObjectException("Tipo database non gestito ["+tipoDatabase+"]");
+		}
+		
 		sqlQueryObject.setSelectForUpdate(this.selectForUpdate);
 		((SQLQueryObjectCore)sqlQueryObject).setForceSelectForUpdateDisabledForNotQueryMethod(true);
 		return sqlQueryObject;
