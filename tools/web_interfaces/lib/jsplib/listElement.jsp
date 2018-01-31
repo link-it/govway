@@ -235,8 +235,11 @@ function Reset(form) {
 	  nr = 1;
 	  
 	  document.form.reset();
-	  if(document.form.filter){
-		document.form.filter.selectedIndex = 0;
+ 	  for (var k=0; k<document.form.elements.length; k++) {
+		var tipo = document.form.elements[k].type;
+		if (tipo == "select-one" || tipo == "select-multiple") {
+			document.form.elements[k].selectedIndex = 0;
+		}
 	  }
 
 	  addHidden(form, 'index' , 0);
