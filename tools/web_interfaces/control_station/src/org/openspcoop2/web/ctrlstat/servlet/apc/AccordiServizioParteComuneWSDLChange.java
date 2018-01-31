@@ -292,7 +292,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			used = asps != null && asps.size() > 0;
 
 			// lista dei protocolli supportati
-			List<String> listaTipiProtocollo = apcCore.getProtocolli();
+			List<String> listaTipiProtocollo = apcCore.getProtocolli(session);
 
 			// se il protocollo e' null (primo accesso ) lo ricavo dall'accordo di servizio
 			if(tipoProtocollo == null){
@@ -300,7 +300,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 				}
 				else{
-					tipoProtocollo = apcCore.getProtocolloDefault();
+					tipoProtocollo = apcCore.getProtocolloDefault(session);
 				}
 			}
 
@@ -522,7 +522,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 						}
 
 						// Genero la nuova definizione di port-type e operation
-						apcCore.mappingAutomatico(tipoProtocollo, asNuovo);
+						apcCore.mappingAutomatico(tipoProtocollo, asNuovo, this.validazioneDocumenti);
 
 						// se l'aggiornamento ha creato nuovi porttype o aggiornato i vecchi aggiorno la configurazione
 						apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo);

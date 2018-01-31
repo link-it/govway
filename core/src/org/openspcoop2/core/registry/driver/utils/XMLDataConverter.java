@@ -42,6 +42,7 @@ import javax.net.ssl.TrustManagerFactory;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
+import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -57,14 +58,14 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Property;
-import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.Resource;
-import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -87,7 +88,6 @@ import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
@@ -281,7 +281,11 @@ public class XMLDataConverter {
 		}
 		
 		// Protocol initialize
-		initializeProtocolManager(protocolloDefault);
+		try {
+			ProtocolFactoryReflectionUtils.initializeProtocolManager(protocolloDefault, this.log);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
+		}
 		
 		
 	}
@@ -394,38 +398,15 @@ public class XMLDataConverter {
 		}
 		
 		// Protocol initialize
-		initializeProtocolManager(protocolloDefault);
-	}
-	
-	
-	private void initializeProtocolManager(String protocolloDefault) throws DriverRegistroServiziException{
-		// Protocol initialize
-		try{
-			Class<?> cProtocolFactoryManager = Class.forName("org.openspcoop2.protocol.engine.ProtocolFactoryManager");
-			Object protocolFactoryManager = null;
-			try{
-				protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
-			}catch(Exception pe){}
-			if(protocolFactoryManager==null){
-			
-				Class<?> cConfigurazionePdD = Class.forName("org.openspcoop2.protocol.sdk.ConfigurazionePdD");
-				Object configurazionePdD = cConfigurazionePdD.newInstance();
-				String confDir = null;
-				cConfigurazionePdD.getMethod("setConfigurationDir", String.class).invoke(configurazionePdD, confDir);
-				cConfigurazionePdD.getMethod("setAttesaAttivaJDBC", long.class).invoke(configurazionePdD, 60);
-				cConfigurazionePdD.getMethod("setCheckIntervalJDBC", int.class).invoke(configurazionePdD, 100);
-				cConfigurazionePdD.getMethod("setLoader", Loader.class).invoke(configurazionePdD, new Loader());
-				cConfigurazionePdD.getMethod("setLog", Logger.class).invoke(configurazionePdD, this.log);
-				
-				cProtocolFactoryManager.getMethod("initialize", Logger.class, cConfigurazionePdD, String.class).
-					invoke(null, this.log, configurazionePdD, protocolloDefault);
-				
-			}
-			
+		try {
+			ProtocolFactoryReflectionUtils.initializeProtocolManager(protocolloDefault, this.log);
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
 	
 	private void createSorgente(String sorgente)throws DriverRegistroServiziException{
 		// Istanziazione Sorgente
@@ -779,47 +760,7 @@ public class XMLDataConverter {
 
 	}
 	
-	private static String getCodiceIPADefault(IDSoggetto idSoggetto) throws DriverRegistroServiziException{
-		// Protocol initialize
-		try{
-			Class<?> cProtocolFactoryManager = Class.forName("org.openspcoop2.protocol.engine.ProtocolFactoryManager");
-			Object protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
-			
-			String protocollo = (String) cProtocolFactoryManager.getMethod("getProtocolByOrganizationType",String.class).invoke(protocolFactoryManager,idSoggetto.getTipo());
-			
-			Class<?> cProtocolFactory = Class.forName("org.openspcoop2.protocol.sdk.IProtocolFactory");
-			Object protocolFactory = cProtocolFactoryManager.getMethod("getProtocolFactoryByName",String.class).invoke(protocolFactoryManager, protocollo);
-			
-			Class<?> cProtocolTraduttore = Class.forName("org.openspcoop2.protocol.sdk.config.ITraduttore");
-			Object protocolTraduttore = cProtocolFactory.getMethod("createTraduttore").invoke(protocolFactory);
-			
-			return (String) cProtocolTraduttore.getMethod("getIdentificativoCodiceIPADefault", IDSoggetto.class, boolean.class).invoke(protocolTraduttore, idSoggetto, false);
-						
-		}catch(Exception e){
-			throw new DriverRegistroServiziException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
-		}
-	}
 	
-	private static String getIdentificativoPortaDefault(IDSoggetto idSoggetto) throws DriverRegistroServiziException{
-		// Protocol initialize
-		try{
-			Class<?> cProtocolFactoryManager = Class.forName("org.openspcoop2.protocol.engine.ProtocolFactoryManager");
-			Object protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
-			
-			String protocollo = (String) cProtocolFactoryManager.getMethod("getProtocolByOrganizationType",String.class).invoke(protocolFactoryManager,idSoggetto.getTipo());
-			
-			Class<?> cProtocolFactory = Class.forName("org.openspcoop2.protocol.sdk.IProtocolFactory");
-			Object protocolFactory = cProtocolFactoryManager.getMethod("getProtocolFactoryByName",String.class).invoke(protocolFactoryManager, protocollo);
-			
-			Class<?> cProtocolTraduttore = Class.forName("org.openspcoop2.protocol.sdk.config.ITraduttore");
-			Object protocolTraduttore = cProtocolFactory.getMethod("createTraduttore").invoke(protocolFactory);
-			
-			return (String) cProtocolTraduttore.getMethod("getIdentificativoPortaDefault", IDSoggetto.class).invoke(protocolTraduttore, idSoggetto);
-						
-		}catch(Exception e){
-			throw new DriverRegistroServiziException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
-		}
-	}
 	
 	private static void mantieniFruitori(AccordoServizioParteSpecifica old,AccordoServizioParteSpecifica servizio){
 		for(int fr=0; fr<old.sizeFruitoreList(); fr++){
@@ -1274,10 +1215,18 @@ public class XMLDataConverter {
 		}
 		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 		if( (soggetto.getIdentificativoPorta()==null) || ("".equals(soggetto.getIdentificativoPorta())) ) {
-			soggetto.setIdentificativoPorta(getIdentificativoPortaDefault(idSoggetto));
+			try {
+				soggetto.setIdentificativoPorta(ProtocolFactoryReflectionUtils.getIdentificativoPortaDefault(idSoggetto));
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
 		}
 		if( (soggetto.getCodiceIpa() == null) || ("".equals(soggetto.getCodiceIpa())) ){
-			soggetto.setCodiceIpa(getCodiceIPADefault(idSoggetto));
+			try {
+				soggetto.setCodiceIpa(ProtocolFactoryReflectionUtils.getCodiceIPADefault(idSoggetto));
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
 		}
 			
 		if(pddOperativaCtrlstatSinglePdd!=null && soggetto.getPortaDominio()==null){

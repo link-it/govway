@@ -20,6 +20,8 @@
 
 package org.openspcoop2.protocol.basic.registry;
 
+import java.util.List;
+
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -30,6 +32,9 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -145,6 +150,17 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	
+	@Override
+	public List<IDServizioApplicativo> findIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException{
+		try{
+			return this.driverConfigurazioneGET.getAllIdServiziApplicativi(filtroRicerca);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	
@@ -177,6 +193,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			return false;
 		}	
 	}
+	
 	@Override
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
 		try{
@@ -187,7 +204,22 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public List<IDPortaDelegata> findIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException{
+		try{
+			return this.driverConfigurazioneGET.getAllIdPorteDelegate(filtroRicerca);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 		
+	
+	
+	
+	
 		
 	// PORTA APPLICATIVA
 		
@@ -203,8 +235,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 
 	}
-	
-	
+		
 	@Override
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa){
 		try{
@@ -218,10 +249,22 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			return false;
 		}	
 	}
+	
 	@Override
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverConfigurazioneGET.getPortaApplicativa(idPortaApplicativa);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException{
+		try{
+			return this.driverConfigurazioneGET.getAllIdPorteApplicative(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocol name="spcoop">
+    <protocol name="spcoop" label="SPCoop"
+    	descrizione="Invio e Ricezione di Buste e-Gov previste dal Sistema Pubblico di Cooperazione (SPCoop)"
+    	webSite="http://www.agid.gov.it/agenda-digitale/infrastrutture-architetture/sistema-pubblico-connettivita/cooperazione-applicativa">
     	<factory>org.openspcoop2.protocol.spcoop.SPCoopFactory</factory>
     </protocol>
 
@@ -11,9 +13,9 @@
 			<integration>
     		 	<implementation>
     		 		<name>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -34,11 +36,11 @@
 	    		 </implementation>
 	    		 <subscription>
     		 		<name>
-    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberType" suffix="_"/>
     		 			<param actor="subscriberName" suffix="/"/>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -105,21 +107,21 @@
 
         <organization authentication="false" codeDomain="true" codeIPA="true">
             <types>
-            	<type name="SPC"/>
-            	<type name="TEST"/>
-            	<type name="AOO"/>
+            	<type name="spc" protocol="SPC"/>
+            	<type name="test" protocol="TEST"/>
+            	<type name="aoo" protocol="AOO"/>
             </types>
         </organization>
 
         <service>
             <types>
-                <type name="SPC"/>
-                <type name="TEST"/>
-                <type name="URL"/>
-                <type name="WSDL"/>
-                <type name="LDAP"/>
-                <type name="UDDI"/>
-                <type name="ebXMLRegistry"/>
+                <type name="spc" protocol="SPC"/>
+                <type name="test" protocol="TEST"/>
+                <type name="url" protocol="URL"/>
+                <type name="wsdl" protocol="WSDL"/>
+                <type name="ldap" protocol="LDAP"/>
+                <type name="uddi" protocol="UDDI"/>
+                <type name="ebXMLRegistry" protocol="ebXMLRegistry"/>
             </types>
         </service>
 

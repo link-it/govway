@@ -115,6 +115,7 @@ public class ProtocolFactoryManager {
 				
 				// INFO SERVIZIO
 				iProtocolFactory.getProtocol();
+				iProtocolFactory.getInformazioniProtocol();
 				Openspcoop2 manifest = iProtocolFactory.getManifest();
 				iProtocolFactory.getConfigurazionePdD();
 				
@@ -368,7 +369,7 @@ public class ProtocolFactoryManager {
 					protocolContextEmpty = protocolManifest;
 				}
 				else{
-					throw new Exception("Protocols ["+protocolContextEmpty+"] and ["+protocolManifest+"] with empty context. Only one is permitted");
+					throw new Exception("Protocol ["+protocolContextEmpty+"] and ["+protocolManifest+"] with empty context. Only one is permitted");
 				}
 			}
 			
@@ -388,8 +389,26 @@ public class ProtocolFactoryManager {
 					mappingContextToProtocol.put(context, protocolManifest);
 				}
 				else{
-					throw new Exception("Protocols ["+mappingContextToProtocol.get(context)+"] and ["+protocolManifest+"] with same context ["+context+"]");
+					throw new Exception("Protocol ["+mappingContextToProtocol.get(context)+"] and ["+protocolManifest+"] with same context ["+context+"]");
 				}
+			}
+			
+		}
+		
+		// 2.b. controllare che le label siano tutti diversi
+		Hashtable<String, String> mappinLabelToProtocol = new Hashtable<String, String>();
+		protocolManifestEnum = tmp_manifests.keys();
+		while (protocolManifestEnum.hasMoreElements()) {
+			
+			String protocolManifest = protocolManifestEnum.nextElement();
+			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
+			
+			String label = manifestOpenspcoop2.getProtocol().getLabel();
+			if(!mappinLabelToProtocol.containsKey(label)){
+				mappinLabelToProtocol.put(label, protocolManifest);
+			}
+			else{
+				throw new Exception("Protocol ["+mappinLabelToProtocol.get(label)+"] and ["+protocolManifest+"] with same label ["+label+"]");
 			}
 			
 		}
@@ -406,7 +425,7 @@ public class ProtocolFactoryManager {
 			if(size<=0){
 				throw new Exception("Organization type not defined for protocol ["+protocolManifest+"]");
 			}
-			
+						
 			for (int i = 0; i < size; i++) {
 				String tipo = manifestOpenspcoop2.getRegistry().getOrganization().getTypes().getType(i).getName();
 				if(!mappingTipiSoggettiToProtocol.containsKey(tipo)){
@@ -423,7 +442,25 @@ public class ProtocolFactoryManager {
 					tmp_tipiSoggettiValidi.put(protocolManifest, tipiSoggettiPerProtocollo);
 				}
 				else{
-					throw new Exception("Protocols ["+mappingTipiSoggettiToProtocol.get(tipo)+"] and ["+protocolManifest+"] with same subject type ["+tipo+"]");
+					throw new Exception("Protocol ["+mappingTipiSoggettiToProtocol.get(tipo)+"] and ["+protocolManifest+"] with same subject type ["+tipo+"]");
+				}
+			}
+			
+			for (int i = 0; i < size; i++) {
+				String protocolType = manifestOpenspcoop2.getRegistry().getOrganization().getTypes().getType(i).getProtocol();
+				if(protocolType!=null) {
+					int count = 0;
+					for (int j = 0; j < size; j++) {
+						String protocolTypeCheck = manifestOpenspcoop2.getRegistry().getOrganization().getTypes().getType(j).getProtocol();
+						if(protocolTypeCheck!=null) {
+							if(protocolTypeCheck.equals(protocolType)) {
+								count++;
+							}
+						}
+					}
+					if(count>1) {
+						throw new Exception("Protocol ["+protocolManifest+"] with same subject 'protocol conversion type' ["+protocolType+"]");
+					}
 				}
 			}
 			
@@ -490,7 +527,25 @@ public class ProtocolFactoryManager {
 					}
 				}
 				else{
-					throw new Exception("Protocols ["+mappingTipiServiziToProtocol.get(tipo)+"] and ["+protocolManifest+"] with same service type ["+tipo+"]");
+					throw new Exception("Protocol ["+mappingTipiServiziToProtocol.get(tipo)+"] and ["+protocolManifest+"] with same service type ["+tipo+"]");
+				}
+			}
+			
+			for (int i = 0; i < size; i++) {
+				String protocolType = manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getProtocol();
+				if(protocolType!=null) {
+					int count = 0;
+					for (int j = 0; j < size; j++) {
+						String protocolTypeCheck = manifestOpenspcoop2.getRegistry().getService().getTypes().getType(j).getProtocol();
+						if(protocolTypeCheck!=null) {
+							if(protocolTypeCheck.equals(protocolType)) {
+								count++;
+							}
+						}
+					}
+					if(count>1) {
+						throw new Exception("Protocol ["+protocolManifest+"] with same service 'protocol conversion type' ["+protocolType+"]");
+					}
 				}
 			}
 			

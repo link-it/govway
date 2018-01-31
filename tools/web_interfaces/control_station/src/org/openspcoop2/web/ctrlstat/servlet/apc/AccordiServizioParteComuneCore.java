@@ -128,7 +128,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public void validaStatoAccordoServizio(AccordoServizioParteComune as,boolean utilizzoAzioniDiretteInAccordoAbilitato) throws DriverRegistroServiziException,ValidazioneStatoPackageException{
+	public void validaStatoAccordoServizio(AccordoServizioParteComune as,boolean utilizzoAzioniDiretteInAccordoAbilitato, boolean logValidazioneError) throws DriverRegistroServiziException,ValidazioneStatoPackageException{
 		Connection con = null;
 		String nomeMetodo = "validaStatoAccordoServizio";
 		DriverRegistroServiziDB driver = null;
@@ -142,7 +142,9 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			driver.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato);
 
 		} catch (ValidazioneStatoPackageException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] ValidazioneStatoPackageException :" + e.getMessage(), e);
+			if(logValidazioneError) {
+				ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] ValidazioneStatoPackageException :" + e.getMessage(), e);
+			}
 			throw e;
 		}  catch (DriverRegistroServiziException e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] DriverRegistroServiziException :" + e.getMessage(), e);
@@ -1429,14 +1431,16 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	}
 
 
-	public void mappingAutomatico(String protocollo , AccordoServizioParteComune as) throws DriverRegistroServiziException {
+	public void mappingAutomatico(String protocollo , AccordoServizioParteComune as, boolean validazioneDocumenti) throws DriverRegistroServiziException {
 		String nomeMetodo = "mappingAutomatico";
 		try {
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			protocol.createArchive().setProtocolInfo(as);
 		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			if(validazioneDocumenti) {
+				ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+				throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			}
 		}
 	}
 

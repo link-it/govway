@@ -208,7 +208,7 @@ public final class SoggettiChange extends Action {
 			}
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = soggettiCore.getProtocolli();
+			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
 			//tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(versioneProtocollo); // all tipi soggetti gestiti
 			// Nella change non e' piu' possibile cambiare il protocollo
 			this.protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(this.tipoprov);

@@ -54,8 +54,9 @@ public interface ISearch
 	
 	public int getNumEntries(int indexLista);
 	public void setNumEntries(int indexLista, int numEntries);
-	
-	public String getFilter(int indexLista);
-	
-	public void setFilter(int indexLista, String valore);
+
+	public void clearFilters(int indexLista);
+	public boolean existsFilter(int indexLista, int positionFilter);
+	public String getFilter(int indexLista, int positionFilter);
+	public void addFilter(int indexLista, String filterValue);
 }

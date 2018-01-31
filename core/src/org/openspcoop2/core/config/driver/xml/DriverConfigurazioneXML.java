@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.BeanUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -63,7 +64,6 @@ import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDServizioUtils;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
-import org.openspcoop2.core.config.driver.PortaDelegatedByUtils;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -731,6 +731,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				String id = pd.getNome();
 				
 				if(filtroRicerca!=null){
+					
+					boolean porteDelegatePerAzioni = false;
+					if(filtroRicerca.getNomePortaDelegante()!=null) {
+						porteDelegatePerAzioni = true;
+					}
+					
 					// Filtro By Data
 					if(filtroRicerca.getMinDate()!=null){
 						if(pd.getOraRegistrazione()==null){
@@ -788,7 +794,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						}
 					}
 					// Filtro By azione
-					if(filtroRicerca.getAzione()!=null){
+					if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null){
 						if(pd.getAzione().getNome()==null){
 							continue;
 						}
@@ -822,6 +828,23 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						}				
 						else if(!pd.getStato().equals(filtroRicerca.getStato())){
 							continue;
+						}
+					}
+					// Filtro By NomePortaDelegante
+					if(porteDelegatePerAzioni) {
+						if(pd.getAzione()==null || pd.getAzione().getNomePortaDelegante()==null){
+							continue;
+						}				
+						else if(!pd.getAzione().getNomePortaDelegante().equals(filtroRicerca.getNomePortaDelegante())){
+							continue;
+						}
+						if(filtroRicerca.getAzione()!=null) {
+							if(pd.getAzione().getAzioneDelegataList().size()<=0){
+								continue;
+							}
+							if(pd.getAzione().getAzioneDelegataList().contains(filtroRicerca.getAzione()) == false){
+								continue;
+							}
 						}
 					}
 				}
@@ -1003,6 +1026,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				                           soggettoVirtuale.getTipo().equals(pa.getSoggettoVirtuale().getTipo()) &&
 				                           soggettoVirtuale.getNome().equals(pa.getSoggettoVirtuale().getNome());
 			}
+			if(paMatchaCriteriDiRicerca) {
+				if(pa.getAzione()!=null && PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(pa.getAzione().getIdentificazione())) {
+					paMatchaCriteriDiRicerca = false;
+				}
+			}
 				
 				
 			if(paMatchaCriteriDiRicerca){
@@ -1033,11 +1061,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		}  
 		
 		if(paList.size()>0){
-			return PortaDelegatedByUtils.filter(paList,service);
+			return paList;
 		}
 		
 		if(paSenzaAzioneList.size()>0 && ricercaPuntuale==false)
-			return PortaDelegatedByUtils.filter(paSenzaAzioneList,service);
+			return paSenzaAzioneList;
 
 		throw new DriverConfigurazioneNotFound("PorteApplicative non esistenti");
 	}
@@ -1140,6 +1168,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				String id = pa.getNome();
 				
 				if(filtroRicerca!=null){
+					
+					boolean porteDelegatePerAzioni = false;
+					if(filtroRicerca.getNomePortaDelegante()!=null) {
+						porteDelegatePerAzioni = true;
+					}
+					
 					// Filtro By Data
 					if(filtroRicerca.getMinDate()!=null){
 						if(pa.getOraRegistrazione()==null){
@@ -1183,7 +1217,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						}
 					}
 					// Filtro By azione
-					if(filtroRicerca.getAzione()!=null){
+					if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null){
 						if(pa.getAzione().getNome()==null){
 							continue;
 						}
@@ -1217,6 +1251,23 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						}				
 						else if(!pa.getStato().equals(filtroRicerca.getStato())){
 							continue;
+						}
+					}
+					// Filtro By NomePortaDelegante
+					if(porteDelegatePerAzioni) {
+						if(pa.getAzione()==null || pa.getAzione().getNomePortaDelegante()==null){
+							continue;
+						}				
+						else if(!pa.getAzione().getNomePortaDelegante().equals(filtroRicerca.getNomePortaDelegante())){
+							continue;
+						}
+						if(filtroRicerca.getAzione()!=null) {
+							if(pa.getAzione().getAzioneDelegataList().size()<=0){
+								continue;
+							}
+							if(pa.getAzione().getAzioneDelegataList().contains(filtroRicerca.getAzione()) == false){
+								continue;
+							}
 						}
 					}
 				}

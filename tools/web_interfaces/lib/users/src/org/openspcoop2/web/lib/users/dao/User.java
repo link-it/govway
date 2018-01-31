@@ -22,6 +22,8 @@
 package org.openspcoop2.web.lib.users.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -42,6 +44,65 @@ public class User implements Serializable {
 	protected String password;
 	private InterfaceType interfaceType;
 	private PermessiUtente permessi;
+	private List<String> protocolliSupportati;
+	private String protocolloSelezionato;
+	
+	public List<String> getProtocolliSupportati() {
+		return this.protocolliSupportati;
+	}
+	public String getProtocolliSupportatiAsString() {
+		if(this.protocolliSupportati==null || this.protocolliSupportati.size()<=0) {
+			return null;
+		}
+		else {
+			StringBuffer bf = new StringBuffer();
+			for (String p : this.protocolliSupportati) {
+				if(bf.length()>0) {
+					bf.append(",");
+				}
+				bf.append(p);
+			}
+			return bf.toString();
+		}
+	}
+
+	public void setProtocolliSupportati(List<String> protocolliSupportati) {
+		this.protocolliSupportati = protocolliSupportati;
+	}
+	public void addProtocolloSupportato(String protocolloSupportato) {
+		protocolloSupportato = protocolloSupportato.trim();
+		if(this.protocolliSupportati==null) {
+			this.protocolliSupportati = new ArrayList<>();
+		}
+		if(this.protocolliSupportati.contains(protocolloSupportato)==false) {
+			this.protocolliSupportati.add(protocolloSupportato);
+		}
+	}
+	public void setProtocolliSupportatiFromString(String v) {
+		if(v==null) {
+			this.protocolliSupportati=null;
+			return;
+		}
+		if(v.contains(",")) {
+			String [] tmp = v.split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				String p = tmp[i].trim();
+				this.addProtocolloSupportato(p);
+			}
+		}
+		else {
+			this.addProtocolloSupportato(v);
+		}
+	}
+	
+
+	public String getProtocolloSelezionato() {
+		return this.protocolloSelezionato;
+	}
+
+	public void setProtocolloSelezionato(String protocolloSelezionato) {
+		this.protocolloSelezionato = protocolloSelezionato;
+	}
 	
 	public InterfaceType getInterfaceType() {
 		return this.interfaceType;

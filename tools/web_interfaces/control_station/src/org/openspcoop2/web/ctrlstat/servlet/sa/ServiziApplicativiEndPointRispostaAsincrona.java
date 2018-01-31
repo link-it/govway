@@ -205,7 +205,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			List<Property> cp = connra.getPropertyList();
 			
 			String tipoENomeSoggetto = "";
-			String nomeProtocollo = soggettiCore.getProtocolloDefault();
+			String nomeProtocollo = soggettiCore.getProtocolloDefault(session);
 			if(provider == null){
 				provider = "";
 			}else {

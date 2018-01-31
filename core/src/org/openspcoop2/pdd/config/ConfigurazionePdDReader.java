@@ -76,6 +76,9 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.BeanUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -4582,4 +4585,21 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	
+	
+	
+	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
+	
+	public List<IDPortaDelegata> getAllIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getAllIdPorteDelegate(filtroRicerca,connectionPdD);
+	}
+	
+	public List<IDPortaApplicativa> getAllIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getAllIdPorteApplicative(filtroRicerca,connectionPdD);
+	}
+	
+	public List<IDServizioApplicativo> getAllIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getAllIdServiziApplicativi(filtroRicerca,connectionPdD);
+	}
+	
 }

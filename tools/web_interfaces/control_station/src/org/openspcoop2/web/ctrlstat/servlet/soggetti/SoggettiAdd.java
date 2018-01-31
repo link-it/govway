@@ -169,10 +169,10 @@ public final class SoggettiAdd extends Action {
 			PddCore pddCore = new PddCore(soggettiCore);
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = soggettiCore.getProtocolli();
+			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
 			// primo accesso
 			if(this.protocollo == null){
-				this.protocollo = soggettiCore.getProtocolloDefault();
+				this.protocollo = soggettiCore.getProtocolloDefault(session);
 			}
 			
 			if(soggettiCore.isRegistroServiziLocale()){

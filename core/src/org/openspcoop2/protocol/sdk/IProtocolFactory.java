@@ -71,6 +71,7 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	/* ** INFO SERVIZIO ** */
 	
 	public String getProtocol();
+	public InformazioniProtocollo getInformazioniProtocol();
 	public ConfigurazionePdD getConfigurazionePdD();
 	public Openspcoop2 getManifest();
 	

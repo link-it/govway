@@ -211,7 +211,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			List<Property> cp = connis.getPropertyList();
 			
 			String tipoENomeSoggetto = "";
-			String nomeProtocollo = soggettiCore.getProtocolloDefault();
+			String nomeProtocollo = soggettiCore.getProtocolloDefault(session);
 			if(provider == null){
 				provider = "-1";
 			}else {

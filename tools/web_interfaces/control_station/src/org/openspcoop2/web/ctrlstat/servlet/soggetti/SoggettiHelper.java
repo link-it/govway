@@ -240,7 +240,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setSelected(tipoprov);
 		}
 		else {
-			de.setType(DataElementType.TEXT);
+			//de.setType(DataElementType.TEXT);
+			de.setType(DataElementType.HIDDEN);
 			if( (tipoprov==null || "".equals(tipoprov)) && tipiLabel!=null && tipiLabel.length>0) {
 				tipoprov = tipiLabel[0];
 			}
@@ -360,7 +361,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
 		//if (!this.core.isSinglePdD() && !InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 		// Un router lo si puo' voler creare anche in singlePdD.
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (!InterfaceType.STANDARD.equals(user.getInterfaceType()) && this.core.isShowGestioneSoggettiRouter()) {
 			de.setType(DataElementType.CHECKBOX);
 			if (isRouter) {
 				de.setSelected(true);
@@ -739,6 +740,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			addFilterProtocol(ricerca, idLista, 0);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -757,12 +760,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 
 			// setto le label delle colonne
 			int totEl = this.isModalitaAvanzata() ? 7 : 5;
+			if( showProtocolli ) {
+				totEl++;
+			}
 			String[] labels = new String[totEl];
 			int i = 0;
-			labels[i++] = SoggettiCostanti.LABEL_SOGGETTO;
+			labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME;
+			if( showProtocolli ) {
+				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO;
+			}
 			if(this.pddCore.isGestionePddAbilitata()) {
 				labels[i++] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
 			}
@@ -807,16 +817,24 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 				Vector<DataElement> e = new Vector<DataElement>();
 
+				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo());
+									
 				DataElement de = new DataElement();
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
-				de.setValue(elem.getTipo() + "/" + elem.getNome());
+				de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
 				de.setIdToRemove(elem.getId().toString());
 				de.setToolTip(elem.getCodiceIpa());
 				e.addElement(de);
 
+				if(showProtocolli) {
+					de = new DataElement();
+					de.setValue(this.getLabelProtocollo(protocollo));
+					e.addElement(de);
+				}
+				
 				de = new DataElement();
 				if(this.core.isGestionePddAbilitata()) {
 					if (pdd != null && (!nomePdD.equals("-"))){
@@ -966,7 +984,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO)){
+					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -1003,6 +1021,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			addFilterProtocol(ricerca, idLista, 0);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -1021,11 +1041,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			
 			// setto le label delle colonne
 			int totEl = this.isModalitaAvanzata() ? 4 : 2;
+			if( showProtocolli ) {
+				totEl++;
+			}
 			String[] labels = new String[totEl];
 			int i = 0;
-			labels[i++] = SoggettiCostanti.LABEL_SOGGETTO;
+			labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME;
+			if( showProtocolli ) {
+				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO;
+			}
 			if(this.isModalitaAvanzata()) {
 				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
 				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
@@ -1047,7 +1075,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				org.openspcoop2.core.config.Soggetto elem = (org.openspcoop2.core.config.Soggetto) it.next();
 
 				Vector<DataElement> e = new Vector<DataElement>();
-
+				
 				//Soggetto
 				DataElement de = new DataElement();
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
@@ -1058,6 +1086,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setIdToRemove(elem.getId().toString());
 				e.addElement(de);
 
+				if(showProtocolli) {
+					de = new DataElement();
+					de.setValue(this.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo())));
+					e.addElement(de);
+				}
+				
 				if(this.isModalitaAvanzata()) {
 					//Porte Applicative
 					de = new DataElement();
@@ -1123,7 +1157,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO)){
+					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

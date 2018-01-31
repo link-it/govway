@@ -48,6 +48,8 @@ import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -10684,17 +10686,36 @@ IDriverWS ,IMonitoraggioRisorsa{
 		int offset;
 		int limit;
 		String search;
-		String filter;
+		String filterProtocollo = null;
+		String filterTipoAPI = null;
 		String queryString;
 
 		limit = ricerca.getPageSize(idLista);
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-		filter = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED.equals(ricerca.getFilter(idLista)) ? "" : ricerca.getFilter(idLista));
+		
+		if(ricerca.existsFilter(idLista, 1)) {
+			filterProtocollo = SearchUtils.getFilter(ricerca, idLista, 0);
+			filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, 1);
+		}
+		else {
+			filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, 0);
+		}
+
+		List<String> tipoSoggettiProtocollo = null;
+		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
+			try {
+				tipoSoggettiProtocollo = ProtocolFactoryReflectionUtils.getOrganizationTypes(filterProtocollo);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}
+		boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0);
+
 //		ricerca.getSearchString(idLista);
 
 		this.log.debug("search : " + search);
-		this.log.debug("filter : " + filter);
+		this.log.debug("filterTipoAPI : " + filterTipoAPI);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -10723,16 +10744,19 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			ISQLQueryObject sqlQueryObjectSoggetti = null;
-			if (!search.equals("")) {
+			if (!search.equals("") || searchByTipoSoggetto) {
 				sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObjectSoggetti.addFromTable(CostantiDB.SOGGETTI);
 				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
 				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
 				sqlQueryObjectSoggetti.setANDLogicOperator(true);
 				sqlQueryObjectSoggetti.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
-				sqlQueryObjectSoggetti.addWhereCondition(false,
-						sqlQueryObjectSoggetti.getWhereLikeCondition("tipo_soggetto", search, true, true),
-						sqlQueryObjectSoggetti.getWhereLikeCondition("nome_soggetto", search, true, true));
+				if(searchByTipoSoggetto) {
+					sqlQueryObjectSoggetti.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));				
+				}
+				if(!search.equals("")) {
+					sqlQueryObjectSoggetti.addWhereLikeCondition("nome_soggetto", search, true, true);
+				}
 			}
 
 
@@ -10757,6 +10781,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
 						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
 			}
+			else if (sqlQueryObjectSoggetti!=null) {
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+			}
 			
 			if(excludeASParteComune){
 				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectExclude);
@@ -10766,7 +10794,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			
 			//query con filter
-			if(!filter.equals("")) {
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
 				sqlQueryObject.addWhereCondition("service_binding = ?");
 			}
 			
@@ -10776,8 +10804,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			int index = 1;
 			if (superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
-			if(!filter.equals("")) {
-				stmt.setString(index++, filter);
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+				stmt.setString(index++, filterTipoAPI);
 			}
 			
 			risultato = stmt.executeQuery();
@@ -10808,8 +10836,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
 						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
 			}
+			else if (sqlQueryObjectSoggetti!=null) {
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+			}
 
-			if(!filter.equals("")) { // con filter
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) { // con filter
 				sqlQueryObject.addWhereCondition("service_binding = ?");
 			}
 			
@@ -10835,8 +10867,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			index = 1;
 			if (superuser!=null && (!superuser.equals("")))
 				stmt.setString(index++, superuser);
-			if(!filter.equals("")) {
-				stmt.setString(index++, filter);
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+				stmt.setString(index++, filterTipoAPI);
 			}
 			risultato = stmt.executeQuery();
 
@@ -13278,6 +13310,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, 0);
+		List<String> tipoSoggettiProtocollo = null;
+		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
+			try {
+				tipoSoggettiProtocollo = ProtocolFactoryReflectionUtils.getOrganizationTypes(filterProtocollo);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}
+		
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt = null;
@@ -13316,6 +13358,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 							sqlQueryObject.getWhereLikeCondition("tipo_soggetto", search, true, true),
 							sqlQueryObject.getWhereLikeCondition("nome_soggetto", search, true, true));
 				}
+				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -13326,6 +13371,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null)
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
+				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -13374,9 +13422,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 							sqlQueryObject.getWhereLikeCondition("tipo_soggetto", search, true, true),
 							sqlQueryObject.getWhereLikeCondition("nome_soggetto", search, true, true));
 				}
+				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.addOrderBy("nome_soggetto");
+				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -13397,9 +13448,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null)
 					sqlQueryObject.addWhereCondition("tipo_soggetto=?");
+				if(tipoSoggetto==null && tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.addOrderBy("nome_soggetto");
+				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);

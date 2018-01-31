@@ -26,6 +26,9 @@
                             <xsd:element name="factory" type="xsd:string"/>
                      </xsd:sequence>
                      <xsd:attribute name="name" type="xsd:string" use="required" />
+                     <xsd:attribute name="label" type="xsd:string" use="required" />
+                     <xsd:attribute name="descrizione" type="xsd:string" use="optional" />
+                     <xsd:attribute name="webSite" type="xsd:string" use="optional" />
                      <xsd:attribute name="logger" type="xsd:boolean" use="optional" default="false" />
               </xsd:complexType>
        </xsd:element>
@@ -349,6 +352,7 @@
        
        <xsd:complexType name="OrganizationType">
               <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="protocol" type="xsd:string" use="optional" /> <!-- Se il tipo serializzato nel protocollo risulta differente -->
        </xsd:complexType>
        
        
@@ -373,6 +377,7 @@
                      <xsd:element name="restMediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
               </xsd:sequence>
               <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="protocol" type="xsd:string" use="optional" /> <!-- Se il tipo serializzato nel protocollo risulta differente -->
               <xsd:attribute name="messageType" type="MessageType" use="optional"  />
               <xsd:attribute name="binding" type="ServiceBinding" use="optional" />
        </xsd:complexType>

@@ -121,7 +121,7 @@ public final class Tracciamento extends Action {
 			
 			List<String> protocolliP = new ArrayList<String>();
 			protocolliP.add("-");
-			protocolliP.addAll(archiviCore.getProtocolli());
+			protocolliP.addAll(archiviCore.getProtocolli(session));
 			String[]protocolli = protocolliP.toArray(new String[1]);
 			
 			// Prendo la lista di sorgenti dati e la metto in un array

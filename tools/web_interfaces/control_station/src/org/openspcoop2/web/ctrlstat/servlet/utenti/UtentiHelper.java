@@ -73,13 +73,13 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setValue(nomesu);
 		if(TipoOperazione.ADD.equals(tipoOperazione)){
 			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
 		}
 		else{
 			de.setType(DataElementType.TEXT);
 		}
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 		de.setSize(this.getSize());
-		de.setRequired(true);
 		dati.addElement(de);
 
 		de = new DataElement();

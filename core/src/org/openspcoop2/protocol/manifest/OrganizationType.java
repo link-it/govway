@@ -34,6 +34,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="OrganizationType">
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="protocol" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -60,6 +61,14 @@ public class OrganizationType extends org.openspcoop2.utils.beans.BaseBean imple
     this.name = name;
   }
 
+  public java.lang.String getProtocol() {
+    return this.protocol;
+  }
+
+  public void setProtocol(java.lang.String protocol) {
+    this.protocol = protocol;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -67,5 +76,9 @@ public class OrganizationType extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="protocol",required=false)
+  protected java.lang.String protocol;
 
 }

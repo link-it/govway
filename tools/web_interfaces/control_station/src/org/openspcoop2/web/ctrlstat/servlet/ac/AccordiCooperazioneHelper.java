@@ -390,7 +390,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 					
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.ACCORDO_COOPERAZIONE)){
+					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.ACCORDO_COOPERAZIONE, this.session)){
 					
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 	

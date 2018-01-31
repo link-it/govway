@@ -277,7 +277,7 @@ public final class ServiziApplicativiAdd extends Action {
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 			
-			String protocollo = saCore.getProtocolloDefault();
+			String protocollo = saCore.getProtocolloDefault(session);
 			List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			long providerTmp = -1;
 			

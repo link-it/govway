@@ -180,7 +180,7 @@ public final class Exporter extends Action {
 				break;
 			case CONFIGURAZIONE:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null);
-				protocolli = archiviCore.getProtocolli();
+				protocolli = archiviCore.getProtocolli(session);
 				if(tipoConfigurazione==null){
 					tipoConfigurazione = ArchiveType.ALL.toString();
 				}

@@ -216,7 +216,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 				String tipoSoggettoReferente = soggettoReferente.getTipo();
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
 			} else {
-				protocollo = apcCore.getProtocolloDefault();
+				protocollo = apcCore.getProtocolloDefault(session);
 			}
 
 			// Prendo il port-type

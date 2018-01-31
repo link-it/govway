@@ -8,6 +8,8 @@ CREATE TABLE users
 	password VARCHAR(255) NOT NULL,
 	tipo_interfaccia VARCHAR(255) NOT NULL,
 	permessi VARCHAR(255) NOT NULL,
+	protocolli TEXT,
+	protocollo VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_users') NOT NULL,
 	-- unique constraints

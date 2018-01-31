@@ -106,6 +106,12 @@ public class DriverUsersDB {
 
 				String perm =rs.getString("permessi");
 				user.setPermessi(PermessiUtente.toPermessiUtente(perm));
+				
+				String protocolli =rs.getString("protocolli");
+				user.setProtocolliSupportatiFromString(protocolli);
+				
+				String protocollo =rs.getString("protocollo");
+				user.setProtocolloSelezionato(protocollo);
 			}
 			rs.close();
 			stm.close();
@@ -219,6 +225,8 @@ public class DriverUsersDB {
 				sqlQueryObject.addSelectField("password");
 				sqlQueryObject.addSelectField("tipo_interfaccia");
 				sqlQueryObject.addSelectField("permessi");
+				sqlQueryObject.addSelectField("protocolli");
+				sqlQueryObject.addSelectField("protocollo");
 				sqlQueryObject.addWhereLikeCondition("login", search, true, true);
 				sqlQueryObject.addOrderBy("login");
 				sqlQueryObject.setSortType(true);
@@ -233,6 +241,8 @@ public class DriverUsersDB {
 				sqlQueryObject.addSelectField("password");
 				sqlQueryObject.addSelectField("tipo_interfaccia");
 				sqlQueryObject.addSelectField("permessi");
+				sqlQueryObject.addSelectField("protocolli");
+				sqlQueryObject.addSelectField("protocollo");
 				sqlQueryObject.addOrderBy("login");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -303,7 +313,7 @@ public class DriverUsersDB {
 		}
 	}
 
-	public List<String> getUsersWithType(String permesso) throws DriverUsersDBException {
+	public List<String> getUsersByPermesso(String permesso) throws DriverUsersDBException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -313,7 +323,46 @@ public class DriverUsersDB {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereLikeCondition("permessi", permesso, true, true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = this.connectionDB.prepareStatement(sqlQuery);
+			rs = stm.executeQuery();
+			while (rs.next())
+				userWithType.add(rs.getString("login"));
+			rs.close();
+			stm.close();
+
+			return userWithType;
+		} catch (Exception qe) {
+			throw new DriverUsersDBException(qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try {
+				if (rs != null)
+					rs.close();
+				if (stm != null)
+					stm.close();
+			} catch (Exception e) {
+				//ignore
+			}
+		}
+	}
+	
+	public List<String> getUsersByProtocolloSupportato(String protocollo) throws DriverUsersDBException {
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		try {
+			List<String> userWithType = new ArrayList<String>();
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.setANDLogicOperator(false);
+			sqlQueryObject.addWhereIsNullCondition("protocolli"); // significa che li supporta tutti
+			sqlQueryObject.addWhereLikeCondition("protocolli", protocollo, true, true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
@@ -357,12 +406,17 @@ public class DriverUsersDB {
 			sqlQueryObject.addInsertField("password", "?");
 			sqlQueryObject.addInsertField("tipo_interfaccia", "?");
 			sqlQueryObject.addInsertField("permessi", "?");
+			sqlQueryObject.addInsertField("protocolli", "?");
+			sqlQueryObject.addInsertField("protocollo", "?");
 			sqlQuery = sqlQueryObject.createSQLInsert();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
-			stm.setString(1, login);
-			stm.setString(2, user.getPassword());
-			stm.setString(3, user.getInterfaceType().toString());
-			stm.setString(4, user.getPermessi().toString());
+			int index = 1;
+			stm.setString(index++, login);
+			stm.setString(index++, user.getPassword());
+			stm.setString(index++, user.getInterfaceType().toString());
+			stm.setString(index++, user.getPermessi().toString());
+			stm.setString(index++, user.getProtocolliSupportatiAsString());
+			stm.setString(index++, user.getProtocolloSelezionato());
 			stm.executeUpdate();
 			stm.close();
 		} catch (Exception qe) {
@@ -396,13 +450,18 @@ public class DriverUsersDB {
 			sqlQueryObject.addUpdateField("password", "?");
 			sqlQueryObject.addUpdateField("tipo_interfaccia", "?");
 			sqlQueryObject.addUpdateField("permessi", "?");
+			sqlQueryObject.addUpdateField("protocolli", "?");
+			sqlQueryObject.addUpdateField("protocollo", "?");
 			sqlQueryObject.addWhereCondition("login=?");
 			sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
-			stm.setString(1, user.getPassword());
-			stm.setString(2,user.getInterfaceType().toString());
-			stm.setString(3,user.getPermessi().toString());
-			stm.setString(4, user.getLogin());
+			int index = 1;
+			stm.setString(index++, user.getPassword());
+			stm.setString(index++,user.getInterfaceType().toString());
+			stm.setString(index++,user.getPermessi().toString());
+			stm.setString(index++, user.getProtocolliSupportatiAsString());
+			stm.setString(index++, user.getProtocolloSelezionato());
+			stm.setString(index++, user.getLogin());
 			stm.executeUpdate();
 			stm.close();
 		} catch (Exception qe) {

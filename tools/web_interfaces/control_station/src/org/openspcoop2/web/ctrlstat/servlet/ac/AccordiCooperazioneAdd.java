@@ -143,10 +143,10 @@ public final class AccordiCooperazioneAdd extends Action {
 			acHelper.makeMenu();
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = acCore.getProtocolli();
+			List<String> listaTipiProtocollo = acCore.getProtocolli(session);
 			// primo accesso inizializzo con il protocollo di default
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = acCore.getProtocolloDefault();
+				this.tipoProtocollo = acCore.getProtocolloDefault(session);
 			}
 
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo

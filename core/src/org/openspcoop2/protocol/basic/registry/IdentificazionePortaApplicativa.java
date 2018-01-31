@@ -22,16 +22,23 @@
 
 package org.openspcoop2.protocol.basic.registry;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
@@ -49,6 +56,11 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 
     /* ---- Porta Applicativa ---- */
     private PortaApplicativa pa = null;
+    
+    /* ---- Porta Applicativa (Azione specifica) ---- */
+    private HashMap<String, PortaApplicativa> paDelegatedByAction = new HashMap<String, PortaApplicativa>();
+    private HashMap<String, IDPortaApplicativa> idPaDelegatedByAction = new HashMap<String, IDPortaApplicativa>();
+    
 	
 	/**
 	 * Costruttore
@@ -61,6 +73,10 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 			boolean portaUrlBased, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(urlProtocolContext, log, portaUrlBased, registryReader, configIntegrationReader, protocolFactory);
+	}
+    public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, IState state)
+			throws ProtocolException {
+		super(log, protocolFactory, state);
 	}
 
 	@Override
@@ -95,11 +111,20 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 				return false;
 			}
 			
-//			// tipo di Autenticazione
-//			this.tipoAutenticazione = this.pa.getAutenticazione();
-//
-//			// tipo di Autorizzazione
-//			this.tipoAutorizzazione = this.pa.getAutorizzazione();
+			
+			// Verifico che l'azione non sia in modalità delegatedBy
+			if(this.pa.getAzione()!=null && PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(this.pa.getAzione().getIdentificazione())) {
+				this.erroreIntegrazione = 
+						ErroriIntegrazione.ERRORE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE.
+							getErrore441_PortaNonInvocabileDirettamente(idPA.getNome(),this.urlCompleta);
+				return false;
+			}
+			
+			// tipo di Autenticazione
+			this.tipoAutenticazione = this.pa.getAutenticazione();
+
+			// tipo di Autorizzazione
+			this.tipoAutorizzazione = this.pa.getAutorizzazione();
 			
 			// tipo di Autorizzazione per contenuto
 			this.tipoAutorizzazioneContenuto = this.pa.getAutorizzazioneContenuto();
@@ -110,7 +135,7 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 			this.log.error("Identificazione porta applicativa non riuscita location["+this.location+"] urlInvocazione["+this.urlCompleta+"]",e);
 			try{
 				this.erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PORTA);
 			}catch(Exception eError){
 				throw new RuntimeException(eError.getMessage(), eError);
 			}
@@ -126,5 +151,71 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 		return this.pa;
 	} 
 
+	/**
+	 * Avvia il processo di identificazione della porta per l'azione specifica.
+	 *
+	 * @return true in caso di identificazione con successo, false altrimenti.
+	 * 
+	 */
+	public boolean find(String action) {
+		try {
+			
+			if(this.pa.getRicercaPortaAzioneDelegata()!=null && StatoFunzionalita.ABILITATO.equals(this.pa.getRicercaPortaAzioneDelegata())) {
+				
+				FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
+				filtroPA.setNomePortaDelegante(getIDPortaApplicativa().getNome());
+				filtroPA.setAzione(action);
+				List<IDPortaApplicativa> list = null;
+				IDPortaApplicativa idPA = null;
+				try {
+					list = this.configIntegrationReader.findIdPorteApplicative(filtroPA);
+				}catch(RegistryNotFound notFound) {}
+				if(list!=null && list.size()>0) {
+					if(list.size()>1) {
+						throw new Exception("Trovate più porte ("+list.size()+") che corrisponde al filtro?? ("+filtroPA+")");
+					}
+					idPA = list.get(0);
+					this.idPaDelegatedByAction.put(action, idPA);
+					
+					try{
+						PortaApplicativa pa = this.configIntegrationReader.getPortaApplicativa(idPA);
+						this.paDelegatedByAction.put(action, pa);
+					}catch(RegistryNotFound notFound){
+						this.erroreIntegrazione = 
+								ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+									getErrore401_PortaInesistente(notFound.getMessage(),idPA.getNome(),this.urlCompleta);
+						return false;
+					}
+				}
+				
+			}
+			
+			return true;
+			
+		}catch(Exception e){
+			this.log.error("Identificazione porta applicativa non riuscita per azione specifica ["+action+"], porta applicativa di base["+getIDPortaApplicativa().getNome()+"]",e);
+			try{
+				this.erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PORTA);
+			}catch(Exception eError){
+				throw new RuntimeException(eError.getMessage(), eError);
+			}
+			return false;
+		}
+	}
+	
+	public IDPortaApplicativa getIDPortaApplicativa(String action){
+		if(this.idPaDelegatedByAction.containsKey(action)) {
+			return this.idPaDelegatedByAction.get(action);
+		}
+		return null;
+	}
+
+	public PortaApplicativa getPortaApplicativa(String action) {
+		if(this.paDelegatedByAction.containsKey(action)) {
+			return this.paDelegatedByAction.get(action);
+		}
+		return null;
+	} 
 }
 

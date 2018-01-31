@@ -132,6 +132,7 @@ import org.openspcoop2.pdd.timers.TimerLock;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
 import org.openspcoop2.pdd.timers.TipoLock;
+import org.openspcoop2.protocol.basic.registry.IdentificazionePortaApplicativa;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -1358,6 +1359,42 @@ public class RicezioneBuste {
 					"identificazioneDinamicaAzionePortaAplicativa");
 			openspcoopstate.releaseResource();
 			return;
+		}
+		
+		
+		
+		
+		
+		
+		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Identificazione PA specifica per azione del servizio ...");
+		
+		msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
+		if(idServizio.getAzione()!=null) {
+			// verifico se esiste una porta delegata piu' specifica
+			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(logCore, protocolFactory, openspcoopstate.getStatoRichiesta());
+			String action = idServizio.getAzione();
+			if(identificazione.find(action)) {
+				IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(action);
+				if(idPA_action!=null) {
+					pa = identificazione.getPortaApplicativa(action);
+				}
+			}else {
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, identificazione.getErroreIntegrazione().getDescrizione(protocolFactory));
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
+				
+				// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
+				IntegrationError integrationError = null;
+				if(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE.equals(identificazione.getErroreIntegrazione().getCodiceErrore())){
+					integrationError = IntegrationError.NOT_FOUND;
+				}else{
+					integrationError = IntegrationError.INTERNAL_ERROR;
+				}
+				setSOAPFault_processamento(integrationError,logCore,null,
+						identificazione.getErroreIntegrazione(),null,
+						"comprensionePASpecificaPerAzione");
+				openspcoopstate.releaseResource();
+				return;
+			}
 		}
 		
 		

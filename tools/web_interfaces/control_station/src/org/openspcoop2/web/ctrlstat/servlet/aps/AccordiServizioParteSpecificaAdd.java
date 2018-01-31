@@ -425,7 +425,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						// se ancora non ho scelto l'accordo da mostrare quando entro
 						if(accordoPrimoAccesso == -1){
 							//mostro il primo accordo che ha tipo che corrisponde a quello di default
-							if(apcCore.getProtocolloDefault().equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(sRef.getTipo()))){
+							if(apcCore.getProtocolloDefault(session).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(sRef.getTipo()))){
 								accordoPrimoAccesso = i;
 							}
 						}
@@ -560,7 +560,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			}
 			else{
-				protocollo = apsCore.getProtocolloDefault();
+				protocollo = apsCore.getProtocolloDefault(session);
 			}
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);

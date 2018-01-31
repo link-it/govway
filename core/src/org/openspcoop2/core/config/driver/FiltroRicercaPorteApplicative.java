@@ -72,6 +72,9 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	/** Stato */
 	private StatoFunzionalita stato;
 	
+	/** Trova tutte le porte associate a quella indicata nel parametro con funzione DelegatedBy */
+	private String nomePortaDelegante;
+	
 
 	@Override
 	public String toString(){
@@ -95,6 +98,8 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 			bf.append(" [ruolo:"+this.idRuolo+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
+		if(this.nomePortaDelegante!=null)
+			bf.append(" [nomePortaDelegante:"+this.nomePortaDelegante+"]");
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();
@@ -179,5 +184,13 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 
 	public void setStato(StatoFunzionalita stato) {
 		this.stato = stato;
+	}
+	
+	public String getNomePortaDelegante() {
+		return this.nomePortaDelegante;
+	}
+
+	public void setNomePortaDelegante(String nomePortaDelegante) {
+		this.nomePortaDelegante = nomePortaDelegante;
 	}
 }

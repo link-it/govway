@@ -692,6 +692,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.gestioneSoggettiVirtuali");
 	}
 	
+	public Boolean isConsoleGestioneSoggettiRouter() throws UtilsException{
+		return this.readBooleanProperty(true, "console.gestioneSoggettiRouter");
+	}
+	
 	public Boolean isConsoleGestioneWorkflowStatoDocumenti() throws UtilsException{
 		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti");
 	}

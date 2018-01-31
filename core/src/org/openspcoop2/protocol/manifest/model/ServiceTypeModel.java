@@ -43,6 +43,7 @@ public class ServiceTypeModel extends AbstractModel<ServiceType> {
 		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new Field("soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"ServiceType",ServiceType.class));
 		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new Field("restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"ServiceType",ServiceType.class));
 		this.NAME = new Field("name",java.lang.String.class,"ServiceType",ServiceType.class);
+		this.PROTOCOL = new Field("protocol",java.lang.String.class,"ServiceType",ServiceType.class);
 		this.MESSAGE_TYPE = new Field("messageType",java.lang.String.class,"ServiceType",ServiceType.class);
 		this.BINDING = new Field("binding",java.lang.String.class,"ServiceType",ServiceType.class);
 	
@@ -55,6 +56,7 @@ public class ServiceTypeModel extends AbstractModel<ServiceType> {
 		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new ComplexField(father,"soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"ServiceType",ServiceType.class));
 		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new ComplexField(father,"restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"ServiceType",ServiceType.class));
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"ServiceType",ServiceType.class);
+		this.PROTOCOL = new ComplexField(father,"protocol",java.lang.String.class,"ServiceType",ServiceType.class);
 		this.MESSAGE_TYPE = new ComplexField(father,"messageType",java.lang.String.class,"ServiceType",ServiceType.class);
 		this.BINDING = new ComplexField(father,"binding",java.lang.String.class,"ServiceType",ServiceType.class);
 	
@@ -67,6 +69,8 @@ public class ServiceTypeModel extends AbstractModel<ServiceType> {
 	public org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel REST_MEDIA_TYPE_COLLECTION = null;
 	 
 	public IField NAME = null;
+	 
+	public IField PROTOCOL = null;
 	 
 	public IField MESSAGE_TYPE = null;
 	 

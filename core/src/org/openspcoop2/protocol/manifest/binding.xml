@@ -12,6 +12,9 @@
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <value name="factory" field="factory" usage="required"/>
     <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="label" field="label" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="webSite" field="webSite" usage="optional" style="attribute"/>
     <value name="logger" field="logger" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="binding" class="org.openspcoop2.protocol.manifest.Binding">
@@ -341,6 +344,7 @@
   <mapping name="type" class="org.openspcoop2.protocol.manifest.OrganizationType">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="protocol" field="protocol" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="service" class="org.openspcoop2.protocol.manifest.Service">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
@@ -357,6 +361,7 @@
     <structure name="soapMediaTypeCollection" field="soapMediaTypeCollection" usage="optional" map-as="_SoapMediaTypeCollection_Type"/>
     <structure name="restMediaTypeCollection" field="restMediaTypeCollection" usage="optional" map-as="_RestMediaTypeCollection_Type"/>
     <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="protocol" field="protocol" usage="optional" style="attribute"/>
     <value name="messageType" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="binding" field="binding" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>

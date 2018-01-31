@@ -42,6 +42,9 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 	
 		this.FACTORY = new Field("factory",java.lang.String.class,"protocol",Protocol.class);
 		this.NAME = new Field("name",java.lang.String.class,"protocol",Protocol.class);
+		this.LABEL = new Field("label",java.lang.String.class,"protocol",Protocol.class);
+		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"protocol",Protocol.class);
+		this.WEB_SITE = new Field("webSite",java.lang.String.class,"protocol",Protocol.class);
 		this.LOGGER = new Field("logger",boolean.class,"protocol",Protocol.class);
 	
 	}
@@ -52,6 +55,9 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 	
 		this.FACTORY = new ComplexField(father,"factory",java.lang.String.class,"protocol",Protocol.class);
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"protocol",Protocol.class);
+		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"protocol",Protocol.class);
+		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"protocol",Protocol.class);
+		this.WEB_SITE = new ComplexField(father,"webSite",java.lang.String.class,"protocol",Protocol.class);
 		this.LOGGER = new ComplexField(father,"logger",boolean.class,"protocol",Protocol.class);
 	
 	}
@@ -61,6 +67,12 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 	public IField FACTORY = null;
 	 
 	public IField NAME = null;
+	 
+	public IField LABEL = null;
+	 
+	public IField DESCRIZIONE = null;
+	 
+	public IField WEB_SITE = null;
 	 
 	public IField LOGGER = null;
 	 

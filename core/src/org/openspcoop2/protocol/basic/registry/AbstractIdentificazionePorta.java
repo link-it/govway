@@ -31,6 +31,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
@@ -93,6 +94,14 @@ public abstract class AbstractIdentificazionePorta {
 		this.log = log;
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
+	}
+	
+	public AbstractIdentificazionePorta(Logger log,
+			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException {
+		this.protocolFactory = protocolFactory;
+		this.log = log;
+		this.registryReader = this.protocolFactory.getCachedRegistryReader(state);
+		this.configIntegrationReader = this.protocolFactory.getCachedConfigIntegrationReader(state);
 	}
 
 
@@ -186,7 +195,7 @@ public abstract class AbstractIdentificazionePorta {
 			this.log.error("Identificazione porta non riuscita location["+this.location+"] urlInvocazione["+this.urlCompleta+"]",e);
 			try{
 				this.erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD);
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PORTA);
 			}catch(Exception eError){
 				throw new RuntimeException(eError.getMessage(), eError);
 			}

@@ -102,6 +102,7 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTE_TIPO_GUI = "tipo_gui";
 	public final static String PARAMETRO_UTENTE_CHANGE_GUI = "change_gui";
 	public final static String PARAMETRO_UTENTE_ESEGUI = "changePw";
+	public final static String PARAMETRO_UTENTE_PROTOCOLLO = "protocollo_";
 	
 	
 	/* LABEL PARAMETRI */

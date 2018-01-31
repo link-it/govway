@@ -44,6 +44,7 @@ import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
@@ -86,7 +87,6 @@ import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -272,7 +272,11 @@ public class XMLDataConverter {
 		this.xmlUtils = XMLUtils.getInstance();
 		
 		// Protocol initialize
-		initializeProtocolManager(protocolloDefault);
+		try {
+			ProtocolFactoryReflectionUtils.initializeProtocolManager(protocolloDefault, this.log);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
+		}
 	}
 	
 	
@@ -414,33 +418,8 @@ public class XMLDataConverter {
 		this.xmlUtils = XMLUtils.getInstance();
 		
 		// Protocol initialize
-		initializeProtocolManager(protocolloDefault);
-	}
-	
-	private void initializeProtocolManager(String protocolloDefault) throws DriverConfigurazioneException{
-		// Protocol initialize
-		try{
-			Class<?> cProtocolFactoryManager = Class.forName("org.openspcoop2.protocol.engine.ProtocolFactoryManager");
-			Object protocolFactoryManager = null;
-			try{
-				protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
-			}catch(Exception pe){}
-			if(protocolFactoryManager==null){
-			
-				Class<?> cConfigurazionePdD = Class.forName("org.openspcoop2.protocol.sdk.ConfigurazionePdD");
-				Object configurazionePdD = cConfigurazionePdD.newInstance();
-				String confDir = null;
-				cConfigurazionePdD.getMethod("setConfigurationDir", String.class).invoke(configurazionePdD, confDir);
-				cConfigurazionePdD.getMethod("setAttesaAttivaJDBC", long.class).invoke(configurazionePdD, 60);
-				cConfigurazionePdD.getMethod("setCheckIntervalJDBC", int.class).invoke(configurazionePdD, 100);
-				cConfigurazionePdD.getMethod("setLoader", Loader.class).invoke(configurazionePdD, new Loader());
-				cConfigurazionePdD.getMethod("setLog", Logger.class).invoke(configurazionePdD, this.log);
-				
-				cProtocolFactoryManager.getMethod("initialize", Logger.class, cConfigurazionePdD, String.class).
-					invoke(null, this.log, configurazionePdD, protocolloDefault);
-				
-			}
-			
+		try {
+			ProtocolFactoryReflectionUtils.initializeProtocolManager(protocolloDefault, this.log);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
 		}

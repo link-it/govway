@@ -108,29 +108,32 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 	
 						<%
 						if (pd.getFilter() != null) {
-							DataElement filtro = pd.getFilter();
-						  	String [] values = filtro.getValues();
-						  	String [] labels = filtro.getLabels();
-						  	String selezionato = filtro.getSelected();
-						  	String selSubType = !filtro.getSubType().equals("") ? (" size='"+filtro.getRows()+"' " + filtro.getSubType() + " ") : " ";
-							String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\"Change(document.form,'filter')\" " ) : " ";
-							String classInput = filtro.getStyleClass();
-						  	%>
-									<tr>
-										<td>
-											<div class="prop">
-												<label><%= filtro.getLabel() %></label>
-											  	<select name="filter" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>">
-											  	<%
-											  	for (int i = 0; i < values.length; i++) {
-											  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
-											  		%><option value="<%= values[i]  %>" <%=optionSel %> ><%= labels[i] %></option><%
-											  	}
-											  	%></select>
-											</div>
-										</td>
-									</tr>	
-						<% } %>
+							for(int iPD=0; iPD<pd.getFilter().size(); iPD++){
+								DataElement filtro = pd.getFilter().get(iPD);
+								String filterName = "filter_"+iPD;
+							  	String [] values = filtro.getValues();
+							  	String [] labels = filtro.getLabels();
+							  	String selezionato = filtro.getSelected();
+							  	String selSubType = !filtro.getSubType().equals("") ? (" size='"+filtro.getRows()+"' " + filtro.getSubType() + " ") : " ";
+								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\"Change(document.form,'"+filterName+"')\" " ) : " ";
+								String classInput = filtro.getStyleClass();
+							  	%>
+										<tr>
+											<td>
+												<div class="prop">
+													<label><%= filtro.getLabel() %></label>
+												  	<select name="<%= filterName %>" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>">
+												  	<%
+												  	for (int i = 0; i < values.length; i++) {
+												  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
+												  		%><option value="<%= values[i]  %>" <%=optionSel %> ><%= labels[i] %></option><%
+												  	}
+												  	%></select>
+												</div>
+											</td>
+										</tr>	
+						<%	}
+						} %>
 						
 								<tr>
 									<td class="buttonrow">

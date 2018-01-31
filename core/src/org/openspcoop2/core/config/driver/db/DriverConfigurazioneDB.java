@@ -44,6 +44,8 @@ import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -140,7 +142,6 @@ import org.openspcoop2.core.config.driver.IDServizioUtils;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneSearch;
-import org.openspcoop2.core.config.driver.PortaDelegatedByUtils;
 import org.openspcoop2.core.config.driver.TipologiaServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -2080,6 +2081,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition("servizio = ?");
 					sqlQueryObject.addWhereCondition("versione_servizio = ?");
+					sqlQueryObject.addWhereCondition(false, "mode_azione IS NULL", "mode_azione<>?");
 					sqlQueryObject.addWhereCondition(false, "azione IS NULL", "azione = ?", "azione = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -2092,6 +2094,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition("servizio = ?");
 					sqlQueryObject.addWhereCondition("versione_servizio = ?");
+					sqlQueryObject.addWhereCondition(false, "mode_azione IS NULL", "mode_azione<>?");
 					sqlQueryObject.addWhereCondition(false, "azione IS NULL", "azione = ?", "azione = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -2105,6 +2108,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					stm.setString(index++, tipoServizio);
 					stm.setString(index++, servizio);
 					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, PortaApplicativaAzioneIdentificazione.DELEGATED_BY.getValue());
 					stm.setString(index++, "");
 					stm.setString(index++, "-");
 					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio,versioneServizio,"","-"));
@@ -2117,6 +2121,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					stm.setString(index++, tipoServizio);
 					stm.setString(index++, servizio);
 					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, PortaApplicativaAzioneIdentificazione.DELEGATED_BY.getValue());
 					stm.setString(index++, "");
 					stm.setString(index++, "-");
 					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, soggettoErogatore.getTipo(),soggettoErogatore.getNome(),
@@ -2135,6 +2140,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("tipo_servizio=?");
 					sqlQueryObject.addWhereCondition("servizio=?");
 					sqlQueryObject.addWhereCondition("versione_servizio = ?");
+					sqlQueryObject.addWhereCondition(false, "mode_azione IS NULL", "mode_azione<>?");
 					sqlQueryObject.addWhereCondition("azione=?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -2147,6 +2153,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition("servizio = ?");
 					sqlQueryObject.addWhereCondition("versione_servizio = ?");
+					sqlQueryObject.addWhereCondition(false, "mode_azione IS NULL", "mode_azione<>?");
 					sqlQueryObject.addWhereCondition("azione = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -2160,6 +2167,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					stm.setString(index++, tipoServizio);
 					stm.setString(index++, servizio);
 					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, PortaApplicativaAzioneIdentificazione.DELEGATED_BY.getValue());
 					stm.setString(index++, azione);
 					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio, versioneServizio, azione));
 				}else
@@ -2172,6 +2180,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					stm.setString(index++, tipoServizio);
 					stm.setString(index++, servizio);
 					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, PortaApplicativaAzioneIdentificazione.DELEGATED_BY.getValue());
 					stm.setString(index++, azione);
 					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio, versioneServizio, azione));
 				}
@@ -2202,6 +2211,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 						sqlQueryObject.addWhereCondition("id_soggetto = ?");
 						sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 						sqlQueryObject.addWhereCondition("servizio = ?");
+						sqlQueryObject.addWhereCondition("versione_servizio = ?");
+						sqlQueryObject.addWhereCondition(false, "mode_azione IS NULL", "mode_azione<>?");
 						sqlQueryObject.addWhereCondition(false, "azione IS NULL", "azione = ?", "azione = ?");
 						sqlQueryObject.setANDLogicOperator(true);
 						sqlQuery = sqlQueryObject.createSQLQuery();
@@ -2213,6 +2224,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 						sqlQueryObject.addWhereCondition(false, "id_soggetto_virtuale = ?", "tipo_soggetto_virtuale = ? AND nome_soggetto_virtuale = ?");
 						sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 						sqlQueryObject.addWhereCondition("servizio = ?");
+						sqlQueryObject.addWhereCondition("versione_servizio = ?");
+						sqlQueryObject.addWhereCondition(false, "mode_azione IS NULL", "mode_azione<>?");
 						sqlQueryObject.addWhereCondition(false, "azione IS NULL", "azione = ?", "azione = ?");
 						sqlQueryObject.setANDLogicOperator(true);
 						sqlQuery = sqlQueryObject.createSQLQuery();
@@ -2220,21 +2233,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 					stm = con.prepareStatement(sqlQuery,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
+					int index = 1;
 					if(soggettoVirtuale==null){
-						stm.setLong(1, idSoggErog);
-						stm.setString(2, tipoServizio);
-						stm.setString(3, servizio);
-						stm.setString(4, "");
-						stm.setString(5, "-");
+						stm.setLong(index++, idSoggErog);
+						stm.setString(index++, tipoServizio);
+						stm.setString(index++, servizio);
+						stm.setInt(index++, versioneServizio);
+						stm.setString(index++, PortaApplicativaAzioneIdentificazione.DELEGATED_BY.getValue());
+						stm.setString(index++, "");
+						stm.setString(index++, "-");
 					}else{
-						stm.setLong(1, idSoggErog);
-						stm.setLong(2, idSoggVirtuale);
-						stm.setString(3, soggettoVirtuale.getTipo());
-						stm.setString(4, soggettoVirtuale.getNome());
-						stm.setString(5, tipoServizio);
-						stm.setString(6, servizio);
-						stm.setString(7, "");
-						stm.setString(8, "-");
+						stm.setLong(index++, idSoggErog);
+						stm.setLong(index++, idSoggVirtuale);
+						stm.setString(index++, soggettoVirtuale.getTipo());
+						stm.setString(index++, soggettoVirtuale.getNome());
+						stm.setString(index++, tipoServizio);
+						stm.setString(index++, servizio);
+						stm.setInt(index++, versioneServizio);
+						stm.setString(index++, PortaApplicativaAzioneIdentificazione.DELEGATED_BY.getValue());
+						stm.setString(index++, "");
+						stm.setString(index++, "-");
 					}
 
 
@@ -2282,7 +2300,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			pa.add(this.getPortaApplicativa(idPA));
 		}
 
-		return PortaDelegatedByUtils.filter(pa,service);
+		return pa;
 	}
 
 	@Override
@@ -10269,6 +10287,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, 0);
+		List<String> tipoSoggettiProtocollo = null;
+		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
+			try {
+				tipoSoggettiProtocollo = ProtocolFactoryReflectionUtils.getOrganizationTypes(filterProtocollo);
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
 
 		Connection con = null;
 		boolean error = false;
@@ -10297,6 +10324,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(this.tabellaSoggetti);
 				sqlQueryObject.addSelectCountField("*", "cont");
+				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				if (superuser!=null && !superuser.equals(""))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome_soggetto", search, true, true);
@@ -10307,6 +10337,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(this.tabellaSoggetti);
 				sqlQueryObject.addSelectCountField("*", "cont");
+				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				if (superuser!=null && !superuser.equals(""))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				queryString = sqlQueryObject.createSQLQuery();
@@ -10332,13 +10365,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				sqlQueryObject.addSelectField("descrizione");
 				sqlQueryObject.addSelectField("identificativo_porta");
 				sqlQueryObject.addSelectField("is_router");
+				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				if (superuser!=null && !superuser.equals(""))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome_soggetto", search, true, true);
 				if (superuser!=null && !superuser.equals(""))
 					sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.addOrderBy("nome_soggetto");
+				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -10353,10 +10389,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				sqlQueryObject.addSelectField("descrizione");
 				sqlQueryObject.addSelectField("identificativo_porta");
 				sqlQueryObject.addSelectField("is_router");
+				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+					sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
 				if (superuser!=null && !superuser.equals(""))
 					sqlQueryObject.addWhereCondition("superuser = ?");
-				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.addOrderBy("nome_soggetto");
+				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -13089,7 +13128,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 * existsPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale) con il parametro ricercaPuntuale a true
 	 * @param idPA id della porta applicativa da verificare
 	 * @return true se la porta applicativa esiste, false altrimenti
-	 * @throws DriverRegistroServiziException 
+	 * @throws DriverConfigurazioneException 
 	 */    
 	@Override
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException {
@@ -13931,7 +13970,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 *
 	 * @param idServizioApplicativo id del servizio applicativo
 	 * @return true se il servizio applicativo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException
+	 * @throws DriverConfigurazioneException
 	 */    
 	@Override
 	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException{
@@ -16627,6 +16666,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
 				}
 			}
+			boolean porteDelegatePerAzioni = false;
+			if(filtroRicerca!=null && filtroRicerca.getNomePortaDelegante()!=null) {
+				porteDelegatePerAzioni = true;
+				if(filtroRicerca.getAzione()!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+				}
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -16646,7 +16693,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_servizio = ?");
 				if(filtroRicerca.getNomeServizio()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_servizio = ?");
-				if(filtroRicerca.getAzione()!=null)
+				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_azione = ?");
 				if(filtroRicerca.getNome()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta = ?");
@@ -16654,6 +16701,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo = ?");
 				if(filtroRicerca.getStato()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".stato = ?");
+				if(porteDelegatePerAzioni) {
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta_delegante_azione = ?");
+					if(filtroRicerca.getAzione()!=null)
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".azione = ?");
+				}
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -16702,7 +16754,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					stm.setString(indexStmt, filtroRicerca.getNomeServizio());
 					indexStmt++;
 				}	
-				if(filtroRicerca.getAzione()!=null){
+				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null){
 					this.log.debug("azione stmt.setString("+filtroRicerca.getAzione()+")");
 					stm.setString(indexStmt, filtroRicerca.getAzione());
 					indexStmt++;
@@ -16718,9 +16770,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					indexStmt++;
 				}
 				if(filtroRicerca.getStato()!=null){
-					this.log.debug("ruolo stmt.setString("+filtroRicerca.getStato().getValue()+")");
+					this.log.debug("stato stmt.setString("+filtroRicerca.getStato().getValue()+")");
 					stm.setString(indexStmt, filtroRicerca.getStato().getValue());
 					indexStmt++;
+				}
+				if(porteDelegatePerAzioni) {
+					this.log.debug("nomePortaDelegata stmt.setString("+filtroRicerca.getNomePortaDelegante()+")");
+					stm.setString(indexStmt, filtroRicerca.getNomePortaDelegante());
+					indexStmt++;
+					if(filtroRicerca.getAzione()!=null) {
+						this.log.debug("azione stmt.setString("+filtroRicerca.getAzione()+")");
+						stm.setString(indexStmt, filtroRicerca.getAzione());
+						indexStmt++;
+					}
 				}
 			}
 			rs = stm.executeQuery();
@@ -16812,6 +16874,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
 				}
 			}
+			boolean porteDelegatePerAzioni = false;
+			if(filtroRicerca!=null && filtroRicerca.getNomePortaDelegante()!=null) {
+				porteDelegatePerAzioni = true;
+				if(filtroRicerca.getAzione()!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+				}
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -16831,7 +16901,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_servizio = ?");
 				if(filtroRicerca.getNomeServizio()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".servizio = ?");
-				if(filtroRicerca.getAzione()!=null)
+				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione = ?");
 				if(filtroRicerca.getNome()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta = ?");
@@ -16839,6 +16909,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo = ?");
 				if(filtroRicerca.getStato()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".stato = ?");
+				if(porteDelegatePerAzioni) {
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta_delegante_azione = ?");
+					if(filtroRicerca.getAzione()!=null)
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione = ?");
+				}
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -16887,7 +16962,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					stm.setString(indexStmt, filtroRicerca.getNomeServizio());
 					indexStmt++;
 				}	
-				if(filtroRicerca.getAzione()!=null){
+				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null){
 					this.log.debug("azione stmt.setString("+filtroRicerca.getAzione()+")");
 					stm.setString(indexStmt, filtroRicerca.getAzione());
 					indexStmt++;
@@ -16903,9 +16978,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					indexStmt++;
 				}
 				if(filtroRicerca.getStato()!=null){
-					this.log.debug("ruolo stmt.setString("+filtroRicerca.getStato().getValue()+")");
+					this.log.debug("stato stmt.setString("+filtroRicerca.getStato().getValue()+")");
 					stm.setString(indexStmt, filtroRicerca.getStato().getValue());
 					indexStmt++;
+				}
+				if(porteDelegatePerAzioni) {
+					this.log.debug("nomePortaDelegata stmt.setString("+filtroRicerca.getNomePortaDelegante()+")");
+					stm.setString(indexStmt, filtroRicerca.getNomePortaDelegante());
+					indexStmt++;
+					if(filtroRicerca.getAzione()!=null) {
+						this.log.debug("azione stmt.setString("+filtroRicerca.getAzione()+")");
+						stm.setString(indexStmt, filtroRicerca.getAzione());
+						indexStmt++;
+					}
 				}
 			}
 			rs = stm.executeQuery();

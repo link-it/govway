@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -59,6 +61,7 @@ public class ExporterUtils {
 	@SuppressWarnings("unused")
 	private AccordiServizioParteSpecificaCore aspsCore;
 	private AccordiCooperazioneCore acCore;
+	
 	
 	public ExporterUtils(ArchiviCore archiviCore) throws Exception{
 		this.archiviCore = archiviCore;
@@ -126,8 +129,8 @@ public class ExporterUtils {
 	}
 
 	
-	public boolean existsAtLeastOneExportMpde(ArchiveType archiveType) throws ProtocolException, DriverRegistroServiziException{
-		List<String> protocolli = this.archiviCore.getProtocolli();
+	public boolean existsAtLeastOneExportMpde(ArchiveType archiveType, HttpSession session) throws ProtocolException, DriverRegistroServiziException{
+		List<String> protocolli = this.archiviCore.getProtocolli(session);
 		return this.getExportModesWithProtocol(protocolli, archiveType).size()>0;
 	}
 

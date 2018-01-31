@@ -26,6 +26,8 @@ import java.util.Date;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.manifest.OrganizationType;
+import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -268,5 +270,59 @@ public class BasicTraduttore extends BasicComponentFactory implements org.opensp
 		return ContestoCodificaEccezione.toContestoCodificaEccezione(contestoCodificaEccezione);
 	}
 
+	
+	@Override
+	public String toProtocolOrganizationType(String type) throws ProtocolException{
+		for (OrganizationType organization : this.getProtocolFactory().getManifest().getRegistry().getOrganization().getTypes().getTypeList()) {
+			if(organization.getName().equals(type)) {
+				return organization.getProtocol()!=null ? organization.getProtocol() : organization.getName();
+			}
+		}
+		throw new ProtocolException("Organization Type '"+type+"' not found");
+	}
+	
+	@Override
+	public String toProtocolServiceType(String type) throws ProtocolException{
+		for (ServiceType service : this.getProtocolFactory().getManifest().getRegistry().getService().getTypes().getTypeList()) {
+			if(service.getName().equals(type)) {
+				return service.getProtocol()!=null ? service.getProtocol() : service.getName();
+			}
+		}
+		throw new ProtocolException("Service Type '"+type+"' not found");
+	}
+	
+	@Override
+	public String toRegistryOrganizationType(String type) throws ProtocolException{
+		for (OrganizationType organization : this.getProtocolFactory().getManifest().getRegistry().getOrganization().getTypes().getTypeList()) {
+			if(organization.getProtocol()==null) {
+				if(organization.getName().equals(type)) {
+					return organization.getName();
+				}
+			}
+			else {
+				if(organization.getProtocol().equals(type)) {
+					return organization.getName();
+				}
+			}
+		}
+		throw new ProtocolException("Protocol Organization Type '"+type+"' not found");
+	}
+	
+	@Override
+	public String toRegistryServiceType(String type) throws ProtocolException{
+		for (ServiceType service : this.getProtocolFactory().getManifest().getRegistry().getService().getTypes().getTypeList()) {
+			if(service.getProtocol()==null) {
+				if(service.getName().equals(type)) {
+					return service.getName();
+				}
+			}
+			else {
+				if(service.getProtocol().equals(type)) {
+					return service.getName();
+				}
+			}
+		}
+		throw new ProtocolException("Protocol Service Type '"+type+"' not found");
+	}
 
 }

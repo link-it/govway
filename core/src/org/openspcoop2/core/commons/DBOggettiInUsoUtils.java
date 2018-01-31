@@ -1045,6 +1045,10 @@ public class DBOggettiInUsoUtils  {
 				mappingErogazionePA_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
 			}
+			if (mappingFruizionePD_list == null) {
+				mappingFruizionePD_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
+			}
 
 			
 			

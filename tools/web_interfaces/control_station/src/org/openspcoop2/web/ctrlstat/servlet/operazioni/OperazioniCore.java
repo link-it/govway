@@ -94,7 +94,7 @@ public class OperazioniCore extends ControlStationCore {
 
 		OperationStatus os = formBean.getTipoOperationStatus();
 		Vector<String> utenti = formBean.getUtenti();
-		ricerca.setFilter(this.getIdLista(formBean),formBean.getUtente());
+		ricerca.addFilter(this.getIdLista(formBean),formBean.getUtente());
 		String hostname = formBean.getHostname() != null ? formBean.getHostname() : "";
 		String pezzoAny = formBean.getPezzoAny()!= null ? formBean.getPezzoAny() : "";
 		String daSql = formBean.getDataInizio()!= null ? formBean.getDataInizio() : "";

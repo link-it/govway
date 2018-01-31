@@ -42,7 +42,6 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -98,8 +97,8 @@ public class SPCoopImbustamento {
 	private Logger log;
 	private SPCoopProperties spcoopProperties = null;
 	@SuppressWarnings("unused")
-	private List<String> tipiSoggetti = null;
-	private List<String> tipiServizi = null;
+	//private List<String> tipiSoggetti = null;
+	//private List<String> tipiServizi = null;
 	private SPCoopValidazioneSemantica validazioneSemantica = null;
 	private SPCoopValidazioneSintattica validazioneSintattica = null;
 	private AbstractXMLUtils xmlUtils = null;
@@ -112,8 +111,8 @@ public class SPCoopImbustamento {
 		this.log = factory.getLogger();
 		this.spcoopProperties = SPCoopProperties.getInstance(this.log);
 		
-		this.tipiSoggetti = this.factory.createProtocolConfiguration().getTipiSoggetti();
-		this.tipiServizi = this.factory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP);
+		//this.tipiSoggetti = this.factory.createProtocolConfiguration().getTipiSoggetti();
+		//this.tipiServizi = this.factory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP);
 		
 		this.state = state;
 		
@@ -344,7 +343,7 @@ public class SPCoopImbustamento {
 				eGovIDParteMitt.setValue(eGov.getMittente());
 			}
 			if(eGov.getTipoMittente()!=null){
-				eGovIDParteMitt.setAttribute("tipo",eGov.getTipoMittente());
+				eGovIDParteMitt.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(eGov.getTipoMittente()));
 			}
 			if(eGov.getIndirizzoMittente() != null){
 				eGovIDParteMitt.setAttribute("indirizzoTelematico",eGov.getIndirizzoMittente());
@@ -366,7 +365,7 @@ public class SPCoopImbustamento {
 				eGovIDParteDest.setValue(eGov.getDestinatario());
 			}
 			if(eGov.getTipoDestinatario()!=null){
-				eGovIDParteDest.setAttribute("tipo",eGov.getTipoDestinatario());
+				eGovIDParteDest.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(eGov.getTipoDestinatario()));
 			}
 			if(eGov.getIndirizzoDestinatario() != null){
 				eGovIDParteDest.setAttribute("indirizzoTelematico",eGov.getIndirizzoDestinatario());
@@ -420,7 +419,12 @@ public class SPCoopImbustamento {
 						boolean generazioneAttributo = true;
 						if(!forzaValidazioneXSDElementiDisabilitata){
 							if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
-								generazioneAttributo = this.tipiServizi.contains(eGov.getTipoServizioCorrelato());
+								//generazioneAttributo = this.tipiServizi.contains(eGov.getTipoServizioCorrelato());
+								try {
+									this.traduttore.toProtocolServiceType(eGov.getTipoServizioCorrelato());
+								}catch(Exception e) {
+									generazioneAttributo = false;
+								}
 							}
 						}
 						if(generazioneAttributo){
@@ -451,7 +455,7 @@ public class SPCoopImbustamento {
 				SOAPElement eGovServizio = eGovIntestazioneMsg.addChildElement("Servizio",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				eGovServizio.setValue(eGov.getServizio());
 				if(eGov.getTipoServizio() != null){
-					eGovServizio.setAttribute("tipo",eGov.getTipoServizio());
+					eGovServizio.setAttribute("tipo",this.traduttore.toProtocolServiceType(eGov.getTipoServizio()));
 				}
 			}
 
@@ -665,7 +669,7 @@ public class SPCoopImbustamento {
 						SOAPElement orig = Trasmissione.addChildElement("Origine",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						SOAPElement IDParteOrigine = orig.addChildElement("IdentificativoParte",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						IDParteOrigine.setValue(tr.getOrigine());
-						IDParteOrigine.setAttribute("tipo",tr.getTipoOrigine());
+						IDParteOrigine.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(tr.getTipoOrigine()));
 						if(tr.getIndirizzoOrigine() != null){
 							IDParteOrigine.setAttribute("indirizzoTelematico",tr.getIndirizzoOrigine());
 						}
@@ -673,7 +677,7 @@ public class SPCoopImbustamento {
 						SOAPElement dest = Trasmissione.addChildElement("Destinazione",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						SOAPElement IDParteDest = dest.addChildElement("IdentificativoParte",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						IDParteDest.setValue(tr.getDestinazione());
-						IDParteDest.setAttribute("tipo",tr.getTipoDestinazione());
+						IDParteDest.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(tr.getTipoDestinazione()));
 						if(tr.getIndirizzoDestinazione() != null){
 							IDParteDest.setAttribute("indirizzoTelematico",tr.getIndirizzoDestinazione());
 						}

@@ -38,6 +38,9 @@ import java.io.Serializable;
  * 			&lt;element name="factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="webSite" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="logger" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
@@ -77,6 +80,30 @@ public class Protocol extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.name = name;
   }
 
+  public java.lang.String getLabel() {
+    return this.label;
+  }
+
+  public void setLabel(java.lang.String label) {
+    this.label = label;
+  }
+
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
+  }
+
+  public void setDescrizione(java.lang.String descrizione) {
+    this.descrizione = descrizione;
+  }
+
+  public java.lang.String getWebSite() {
+    return this.webSite;
+  }
+
+  public void setWebSite(java.lang.String webSite) {
+    this.webSite = webSite;
+  }
+
   public boolean isLogger() {
     return this.logger;
   }
@@ -100,6 +127,18 @@ public class Protocol extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="label",required=true)
+  protected java.lang.String label;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="descrizione",required=false)
+  protected java.lang.String descrizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="webSite",required=false)
+  protected java.lang.String webSite;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="logger",required=false)

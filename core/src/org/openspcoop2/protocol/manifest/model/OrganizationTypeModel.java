@@ -41,6 +41,7 @@ public class OrganizationTypeModel extends AbstractModel<OrganizationType> {
 		super();
 	
 		this.NAME = new Field("name",java.lang.String.class,"OrganizationType",OrganizationType.class);
+		this.PROTOCOL = new Field("protocol",java.lang.String.class,"OrganizationType",OrganizationType.class);
 	
 	}
 	
@@ -49,12 +50,15 @@ public class OrganizationTypeModel extends AbstractModel<OrganizationType> {
 		super(father);
 	
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"OrganizationType",OrganizationType.class);
+		this.PROTOCOL = new ComplexField(father,"protocol",java.lang.String.class,"OrganizationType",OrganizationType.class);
 	
 	}
 	
 	
 
 	public IField NAME = null;
+	 
+	public IField PROTOCOL = null;
 	 
 
 	@Override

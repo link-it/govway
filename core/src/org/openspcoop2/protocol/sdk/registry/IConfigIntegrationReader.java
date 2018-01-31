@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk.registry;
 
+import java.util.List;
+
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -50,6 +52,7 @@ public interface IConfigIntegrationReader {
 	public boolean existsServizioApplicativoByCredenzialiPrincipal(String principal);
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException;
 	
+	public List<IDServizioApplicativo> findIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException;
 	
 	// PORTA DELEGATA
 	
@@ -57,12 +60,15 @@ public interface IConfigIntegrationReader {
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata); 
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException; 
 	
+	public List<IDPortaDelegata> findIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException;
 	
 	// PORTA APPLICATIVA
 	
 	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound,RegistryException;
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa); 
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException; 
+	
+	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException;
 	
 	
 }

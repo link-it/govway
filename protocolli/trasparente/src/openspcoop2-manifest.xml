@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocol name="trasparente">
+    <protocol name="gateway" label="API Gateway"
+    	descrizione="API gateway in grado di adattarsi alla modalità di trasmissione prevista dallo specifico servizio (SOAP o REST)"
+    	webSite="http://www.openspcoop.org">
     	<factory>org.openspcoop2.protocol.trasparente.TrasparenteFactory</factory>
     </protocol>
     
@@ -13,9 +15,9 @@
     		<integration>
     		 	<implementation>
     		 		<name>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -41,11 +43,11 @@
 	    		 </implementation>
 	    		 <subscription>
     		 		<name>
-    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberType" suffix="_"/>
     		 			<param actor="subscriberName" suffix="/"/>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -91,9 +93,9 @@
     		  <integration>
     		 	<implementation>
     		 		<name>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -118,11 +120,11 @@
 	    		 </implementation>
 	    		 <subscription>
     		 		<name>
-    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberType" suffix="_"/>
     		 			<param actor="subscriberName" suffix="/"/>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -193,45 +195,55 @@
 
     <web>
     
-		<!-- Contesto api supporta sia soap che rest 
+		<!-- Contesto proxy supporta sia soap che rest 
 		     con il mapping definito a livello generare di binding -->
-	    <context name="api"/>
+	    <context name="gw"/>
 	
 		<!-- Contesto soap supporta solamente il service binding soap 
 	 	     (Controllo Runtime) -->
-	    <context name="soap" binding="soap"/>
+	    <!-- 
+	    	<context name="soap" binding="soap"/>
+	    -->
 	
 		<!-- Contesto soap11 supporta solamente il service binding soap 
 		     (Controllo Runtime) e forza la conversione del content type
 			in message type soap11 qualsiasi sia il content type presente -->
+	    <!-- 
 	    <context name="soap11" binding="soap">
 	        	<soapMediaTypeCollection>
 	    			<default messageType="soap11"/>
 	    		</soapMediaTypeCollection>
 	    </context>
+	    -->
 	
 		<!-- Contesto soap12 supporta solamente il service binding soap 
 		     (Controllo Runtime) e forza la conversione del content type
 			in message type soap12 qualsiasi sia il content type presente -->
+	    <!-- 
 	    <context name="soap12" binding="soap">
 	        	<soapMediaTypeCollection>
 	    			<default messageType="soap12"/>
 	    		</soapMediaTypeCollection>
 	    </context>
+	    -->
 	
 		<!-- Contesto rest supporta solamente il service binding rest
 	 	     (Controllo Runtime) -->
+	    <!-- 
 	    <context name="rest" binding="rest"/>
+	    -->
 	 		
 		<!-- Contesto binary supporta solamente il service binding rest
 		     (Controllo Runtime) e forza la conversione del content type
 			in message type binary qualsiasi sia il content type presente -->
-		<context name="binary" binding="rest">
+		<!-- 
+	    <context name="binary" binding="rest">
 	 			<restMediaTypeCollection>
 	 				<default messageType="binary"/>
 	 				<undefined messageType="binary"/>
 	 			</restMediaTypeCollection>
 	 	</context>
+	    -->
 
     </web>
 
@@ -239,82 +251,98 @@
 
         <organization>
             <types>
-            	<type name="API"/>
+            	<type name="gw"/>
             </types>
         </organization>
 
         <service>
             <types>
             
-                <!-- Il tipo API supporta sia soap che rest 
+                <!-- Il tipo proxy supporta sia soap che rest 
 		     		con il mapping definito a livello generare di binding -->
-                <type name="API" binding="soap"/>
+                <type name="gw" />
             
             	<!-- Il tipo SOAP è compatibile solamente 
 			   		 con il service binding soap -->
-                <type name="SOAP" binding="soap"/>
+			    <!-- 
+                <type name="soap" binding="soap"/>
+                -->
                 
                 <!-- Il tipo SOAP11 è compatibile solamente 
 			   		 con il service binding soap e forza la conversione del content type
 					in message type soap11 qualsiasi sia il content type presente -->
-                <type name="SOAP11" binding="soap">
+                <!-- 
+                <type name="soap11" binding="soap">
 	                <soapMediaTypeCollection>
 		    			<default messageType="soap11"/>
 		    		</soapMediaTypeCollection>
                 </type>
+                -->
                 
                 <!-- Il tipo SOAP12 è compatibile solamente 
 			   		 con il service binding soap e forza la conversione del content type
 					in message type soap12 qualsiasi sia il content type presente -->
-                <type name="SOAP12" binding="soap">
+                <!-- 
+                <type name="soap12" binding="soap">
 	                <soapMediaTypeCollection>
 		    			<default messageType="soap12"/>
 		    		</soapMediaTypeCollection>
                 </type>
+                -->
                 
                 <!-- Il tipo REST è compatibile solamente 
 			   		 con il service binding rest -->
-                <type name="REST" binding="rest"/>
+                <!-- 
+                <type name="rest" binding="rest"/>
+                -->
                 
-               <!-- Il tipo XML è compatibile solamente 
+                <!-- Il tipo XML è compatibile solamente 
 			   		con il service binding rest e forza la conversione del content type
 					in message type xml qualsiasi sia il content type presente -->
-                <type name="XML" binding="rest">
+                <!-- 
+                <type name="xml" binding="rest">
                 	<restMediaTypeCollection>
  						<default messageType="xml"/>
  						<undefined messageType="xml"/>
  					</restMediaTypeCollection>
                 </type>
+                -->
                 
                 <!-- Il tipo JSON è compatibile solamente 
 			   		con il service binding rest e forza la conversione del content type
 					in message type json qualsiasi sia il content type presente -->
-                <type name="JSON" binding="rest">
+                <!-- 
+                <type name="json" binding="rest">
                 	<restMediaTypeCollection>
  						<default messageType="json"/>
  						<undefined messageType="json"/>
  					</restMediaTypeCollection>
                 </type>
+                -->
                 
                 <!-- Il tipo BINARY è compatibile solamente 
 			   		con il service binding rest e forza la conversione del content type
 					in message type binary qualsiasi sia il content type presente -->
-				<type name="BINARY" binding="rest">
+				<!-- 
+                <type name="binary" binding="rest">
                 	<restMediaTypeCollection>
  						<default messageType="binary"/>
  						<undefined messageType="binary"/>
  					</restMediaTypeCollection>
                 </type>
+                -->
                 
                 <!-- Il tipo BINARY è compatibile solamente 
 			   		con il service binding rest e forza la conversione del content type
 					in message type mimeMultipart qualsiasi sia il content type presente -->
-				<type name="MULTIPART" binding="rest">
+				<!-- 
+                <type name="mutipart" binding="rest">
                 	<restMediaTypeCollection>
  						<default messageType="mimeMultipart"/>
  						<undefined messageType="mimeMultipart"/>
  					</restMediaTypeCollection>
                 </type>
+                -->
             </types>
         </service>
 

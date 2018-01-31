@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocol name="sdi">
+    <protocol name="sdi" label="Fattura PA (SdI)"
+    	descrizione="Invio e Ricezione di Fatture verso il Sistema di Interscambio (SdI) "
+    	webSite="http://www.fatturapa.gov.it/">
     	<factory>org.openspcoop2.protocol.sdi.SDIFactory</factory>
     </protocol>
 
@@ -11,9 +13,9 @@
 			<integration>
     		 	<implementation>
     		 		<name>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -34,11 +36,11 @@
 	    		 </implementation>
 	    		 <subscription>
     		 		<name>
-    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberType" suffix="_"/>
     		 			<param actor="subscriberName" suffix="/"/>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -54,7 +56,7 @@
 	    		 		<identificationParameter>
 	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
 	    		 		</identificationParameter>
-						<specificResource find="true">
+						<specificResource>
 							<name>
 	    		 				<param prefix="__" actor="name" suffix="__"/>
 	    		 				<param actor="ruleName" />
@@ -85,13 +87,13 @@
 
         <organization authentication="false">
             <types>
-            	<type name="SDI"/>
+            	<type name="sdi"/>
             </types>
         </organization>
 
         <service>
             <types>
-                <type name="SDI"/>
+                <type name="sdi"/>
             </types>
         </service>
 

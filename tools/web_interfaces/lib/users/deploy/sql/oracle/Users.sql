@@ -8,6 +8,8 @@ CREATE TABLE users
 	password VARCHAR2(255) NOT NULL,
 	tipo_interfaccia VARCHAR2(255) NOT NULL,
 	permessi VARCHAR2(255) NOT NULL,
+	protocolli CLOB,
+	protocollo VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

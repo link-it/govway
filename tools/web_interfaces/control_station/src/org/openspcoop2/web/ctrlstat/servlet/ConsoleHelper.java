@@ -45,6 +45,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -71,6 +73,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -1201,7 +1204,7 @@ public class ConsoleHelper {
 					}
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1251,7 +1254,7 @@ public class ConsoleHelper {
 						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
@@ -1301,7 +1304,7 @@ public class ConsoleHelper {
 					String[][] entriesUtenti = null;
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1346,7 +1349,7 @@ public class ConsoleHelper {
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
-							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
@@ -1463,7 +1466,7 @@ public class ConsoleHelper {
 					int dimensioneEntries = 1; //  audit
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1505,7 +1508,7 @@ public class ConsoleHelper {
 						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
@@ -1553,7 +1556,7 @@ public class ConsoleHelper {
 					String[][] entriesUtenti = null;
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1598,7 +1601,7 @@ public class ConsoleHelper {
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
-							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE)){
+							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
@@ -1744,7 +1747,6 @@ public class ConsoleHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 
 			String search = ricerca.getSearchString(idLista);
-			String filter = ricerca.getFilter(idLista);
 
 			if (this.request.getParameter("index") != null) {
 				offset = Integer.parseInt(this.request.getParameter("index"));
@@ -1764,14 +1766,19 @@ public class ConsoleHelper {
 				}
 			}
 			
-			if (this.request.getParameter("filter") != null) {
-				filter = this.request.getParameter("filter");
-				filter = filter.trim();
-				if (filter.equals("")) {
-					ricerca.setFilter(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED);
-				} else {
-					ricerca.setFilter(idLista, filter);
+			ricerca.clearFilters(idLista);
+
+			int index=0;
+			String nameFilter = CostantiControlStation.PARAMETRO_FILTER+index;
+			while (this.request.getParameter(nameFilter) != null) {
+				String paramFilter = this.request.getParameter(nameFilter);
+				paramFilter = paramFilter.trim();
+				if (paramFilter.equals("")) {
+					paramFilter = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED;
 				}
+				ricerca.addFilter(idLista, paramFilter);
+				index++;
+				nameFilter = CostantiControlStation.PARAMETRO_FILTER+index;
 			}
 
 			return ricerca;
@@ -3557,6 +3564,125 @@ public class ConsoleHelper {
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
+		}
+	}
+	
+
+	public DataElement getFilterServiceBinding(String serviceBinding,int positionFilter, boolean postBack, boolean showAPISuffix) throws Exception{
+		DataElement de = null;
+		try {
+			ServiceBinding[] serviceBindings = ServiceBinding.values();
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_FILTER+positionFilter);
+			if(showAPISuffix) {
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_API);
+			}
+			else {
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
+			}
+			de.setSelected(serviceBinding != null ? serviceBinding : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(postBack);
+
+			String [] values = new String[serviceBindings.length + 1];
+			String [] labels = new String[serviceBindings.length + 1];
+			
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			for (int i =0; i < serviceBindings.length ; i ++) {
+				ServiceBinding serviceBinding2 = serviceBindings[i];
+				switch (serviceBinding2) {
+				case REST:
+					labels[i+1] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST;
+					values[i+1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST.toLowerCase();
+					break;
+				case SOAP:
+				default:
+					labels[i+1] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
+					values[i+1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP.toLowerCase();
+					break;
+				}
+			}
+			
+			de.setValues(values);
+			de.setLabels(labels);
+			de.setSize(this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return de;
+	}
+	
+	public void setFilterSelectedProtocol(ISearch ricerca, int idLista, int positionFilter) throws Exception{
+		List<String> protocolli = this.core.getProtocolli(this.session);
+		if(protocolli!=null && protocolli.size()==1) {
+			ricerca.addFilter(idLista, protocolli.get(0));
+		}
+	}
+	public int addFilterProtocol(ISearch ricerca, int idLista, int positionFilter) throws Exception{
+		List<String> protocolli = this.core.getProtocolli(this.session);
+		if(protocolli!=null && protocolli.size()>1) {
+			String filterProtocol = SearchUtils.getFilter(ricerca, idLista, positionFilter);
+			DataElement filterProtocolli = this.getFilterProtocollo(protocolli, filterProtocol, positionFilter, false);
+			if(filterProtocolli!=null) {
+				positionFilter++;
+				this.pd.addFilter(filterProtocolli);
+			}
+		}
+		return positionFilter;
+	}
+	private DataElement getFilterProtocollo(List<String> protocolli, String protocolloSelected,int positionFilter,boolean postBack) throws Exception{
+		DataElement de = null;
+		try {
+			
+			if(protocolli!=null && protocolli.size()>1) {
+			
+				
+				
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_FILTER+positionFilter);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO);
+				de.setSelected(protocolloSelected != null ? protocolloSelected : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(postBack);
+	
+				String [] values = new String[protocolli.size() + 1];
+				String [] labels = new String[protocolli.size() + 1];
+				
+				labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+				values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+				for (int i =0; i < protocolli.size() ; i ++) {
+					String protocollo = protocolli.get(i);
+					labels[i+1] = getLabelProtocollo(protocollo);
+					values[i+1] = protocollo;
+				}
+				
+				de.setValues(values);
+				de.setLabels(labels);
+				de.setSize(this.getSize());
+				
+			}
+				
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return de;
+	}
+	
+	public String getLabelProtocollo(String protocollo) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getLabel();
+	}
+	
+	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		if(protocolFactoryManager.getOrganizationTypes().get(protocollo).size()>1) {
+			return tipoSoggetto+"/"+nomeSoggetto;
+		}
+		else {
+			return nomeSoggetto;
 		}
 	}
 }

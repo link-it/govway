@@ -24,7 +24,9 @@
 package org.openspcoop2.web.lib.mvc;
 
 import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * PageData
@@ -38,109 +40,109 @@ import java.util.Hashtable;
  */
 public class PageData {
 
-    String pageDescription;
-    String search;
-    String searchDescription;
-    String mode;
-    String message;
-    String messageType;
-    Vector<GeneralLink> titlelist;
-    Vector<?> dati;
-    Vector<?> menu;
-    Vector<?> areaBottoni;
-    Hashtable<String,String> hidden;
-    String page;
-    String op;
-    String [] labels;
-    String [][] bottoni = null; // x info-page
-    boolean inserisciBottoni;
-    boolean addButton;
-    boolean removeButton;
-    boolean select;
-    DataElement filter = null;
-    int pageSize, index, numEntries;
+	String pageDescription;
+	String search;
+	String searchDescription;
+	String mode;
+	String message;
+	String messageType;
+	Vector<GeneralLink> titlelist;
+	Vector<?> dati;
+	Vector<?> menu;
+	Vector<?> areaBottoni;
+	Hashtable<String,String> hidden;
+	String page;
+	String op;
+	String [] labels;
+	String [][] bottoni = null; // x info-page
+	boolean inserisciBottoni;
+	boolean addButton;
+	boolean removeButton;
+	boolean select;
+	List<DataElement> filter = null;
+	int pageSize, index, numEntries;
 
-    public PageData() {
-    	this.pageDescription = "";
-    	this.search = "auto";
-    	this.searchDescription = "";
-    	this.mode = "";
-    	this.message = "";
-    	this.messageType = MessageType.ERROR.toString();
-    	this.page = "";
-    	this.op = "";
-    	this.titlelist = new Vector<GeneralLink>();
-    	this.dati = new Vector<Object>();
-    	this.menu = new Vector<Object>();
-    	this.areaBottoni = new Vector<Object>();
-    	this.hidden = new Hashtable<String,String>();
-    	this.inserisciBottoni = true;
-    	this.addButton = true;
-    	this.removeButton = true;
-    	this.select = true;
-    	this.pageSize = 20;
-    	this.index = 0;
-    	this.numEntries = 0;
-    }
+	public PageData() {
+		this.pageDescription = "";
+		this.search = "auto";
+		this.searchDescription = "";
+		this.mode = "";
+		this.message = "";
+		this.messageType = MessageType.ERROR.toString();
+		this.page = "";
+		this.op = "";
+		this.titlelist = new Vector<GeneralLink>();
+		this.dati = new Vector<Object>();
+		this.menu = new Vector<Object>();
+		this.areaBottoni = new Vector<Object>();
+		this.hidden = new Hashtable<String,String>();
+		this.inserisciBottoni = true;
+		this.addButton = true;
+		this.removeButton = true;
+		this.select = true;
+		this.pageSize = 20;
+		this.index = 0;
+		this.numEntries = 0;
+	}
 
-    public void setPageDescription(String s) {
-    	this.pageDescription = s;
-    }
-    public String getPageDescription() {
-	return this.pageDescription;
-    }
+	public void setPageDescription(String s) {
+		this.pageDescription = s;
+	}
+	public String getPageDescription() {
+		return this.pageDescription;
+	}
 
-    public void setSearch(String s) {
-    	this.search = s;
-    }
-    public String getSearch() {
-	return this.search;
-    }
+	public void setSearch(String s) {
+		this.search = s;
+	}
+	public String getSearch() {
+		return this.search;
+	}
 
-    public void setSearchDescription(String s) {
-    	this.searchDescription = s;
-    }
-    public String getSearchDescription() {
-    	if(this.searchDescription != null && !this.searchDescription.equals("")){
-    		int idx1 = this.searchDescription.indexOf("'");
-    		int idx2 = this.searchDescription.lastIndexOf("'");
-    		
-    		if(idx1 > -1 && idx2 > -1){
-    			// elimino ' di destra
-    			String s = this.searchDescription.substring(0, idx2);
-    			// elimino ' di sinistra
-    			return s.substring(idx1 +1);    			 
-    		}
-    	}
-    	return this.searchDescription;
-    }
+	public void setSearchDescription(String s) {
+		this.searchDescription = s;
+	}
+	public String getSearchDescription() {
+		if(this.searchDescription != null && !this.searchDescription.equals("")){
+			int idx1 = this.searchDescription.indexOf("'");
+			int idx2 = this.searchDescription.lastIndexOf("'");
 
-    public void setMode(String s) {
-    	this.mode = s;
-    }
-    public void disableEditMode() {
-    	this.mode = Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME;
-    }
-    public void disableOnlyButton() {
-    	this.mode = Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON;
-    }
-    public String getMode() {
-	return this.mode;
-    }
+			if(idx1 > -1 && idx2 > -1){
+				// elimino ' di destra
+				String s = this.searchDescription.substring(0, idx2);
+				// elimino ' di sinistra
+				return s.substring(idx1 +1);    			 
+			}
+		}
+		return this.searchDescription;
+	}
 
-    public void setMessage(String s) {
-    	this.setMessage(s, MessageType.ERROR); 
-    }
-    public void setMessage(String s,MessageType type) {
-    	this.message = s;
-    	this.messageType = type.toString();
-    }
-    
-    public String getMessage() {
-	return this.message;
-    }
+	public void setMode(String s) {
+		this.mode = s;
+	}
+	public void disableEditMode() {
+		this.mode = Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME;
+	}
+	public void disableOnlyButton() {
+		this.mode = Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON;
+	}
+	public String getMode() {
+		return this.mode;
+	}
 
-    public String getMessageType() {
+	public void setMessage(String s) {
+		this.setMessage(s, MessageType.ERROR); 
+	}
+	public void setMessage(String s,MessageType type) {
+		this.message = s;
+		this.messageType = type.toString();
+	}
+
+	public String getMessage() {
+		return this.message;
+	}
+
+	public String getMessageType() {
 		return this.messageType;
 	}
 
@@ -149,67 +151,67 @@ public class PageData {
 	}
 
 	public void setPage(String s) {
-    	this.page = s;
-    }
-    public String getPage() {
-	return this.page;
-    }
+		this.page = s;
+	}
+	public String getPage() {
+		return this.page;
+	}
 
-    public void setOp(String s) {
-    	this.op = s;
-    }
-    public String getOp() {
-	return this.op;
-    }
+	public void setOp(String s) {
+		this.op = s;
+	}
+	public String getOp() {
+		return this.op;
+	}
 
-    public void setTitleList(Vector<GeneralLink> v) {
-    	this.titlelist = v;
-    }
-    public Vector<GeneralLink> getTitleList() {
-	return this.titlelist;
-    }
+	public void setTitleList(Vector<GeneralLink> v) {
+		this.titlelist = v;
+	}
+	public Vector<GeneralLink> getTitleList() {
+		return this.titlelist;
+	}
 
-    public void setDati(Vector<?> v) {
-    	this.dati = v;
-    }
-    public Vector<?> getDati() {
-	return this.dati;
-    }
+	public void setDati(Vector<?> v) {
+		this.dati = v;
+	}
+	public Vector<?> getDati() {
+		return this.dati;
+	}
 
-    public void setMenu(Vector<?> v) {
-    	this.menu = v;
-    }
-    public Vector<?> getMenu() {
-	return this.menu;
-    }
+	public void setMenu(Vector<?> v) {
+		this.menu = v;
+	}
+	public Vector<?> getMenu() {
+		return this.menu;
+	}
 
-    public void setAreaBottoni(Vector<?> v) {
-    	this.areaBottoni = v;
-    }
-    public Vector<?> getAreaBottoni() {
-	return this.areaBottoni;
-    }
+	public void setAreaBottoni(Vector<?> v) {
+		this.areaBottoni = v;
+	}
+	public Vector<?> getAreaBottoni() {
+		return this.areaBottoni;
+	}
 
-    /* hidden */
-    public void setHidden(Hashtable<String,String> v) {
-    	this.hidden = v;
-    }
-    public Hashtable<String,String> getHidden() {
-        return this.hidden;
-    }
-    public void addHidden(String name, String value) {
-    	this.hidden.put(name,value);
-    }
-    public String getHidden(String name) {
-	String value = this.hidden.get(name);
-	return value;
-    }
-    public void clearHidden() {
-    	this.hidden.clear();
-    }
+	/* hidden */
+	public void setHidden(Hashtable<String,String> v) {
+		this.hidden = v;
+	}
+	public Hashtable<String,String> getHidden() {
+		return this.hidden;
+	}
+	public void addHidden(String name, String value) {
+		this.hidden.put(name,value);
+	}
+	public String getHidden(String name) {
+		String value = this.hidden.get(name);
+		return value;
+	}
+	public void clearHidden() {
+		this.hidden.clear();
+	}
 
-    public void setLabels(String [] s) {
-    	if( s != null && s.length > 0){
+	public void setLabels(String [] s) {
+		if( s != null && s.length > 0){
 			this.labels = new String[ s.length];
 			for (int i = 0; i < s.length; i++) {
 				this.labels[i] = DataElement.getEscapedValue( s[i]);
@@ -217,94 +219,100 @@ public class PageData {
 		}else {
 			this.labels = s;
 		}
-    }
-    public String [] getLabels() {
-	return this.labels;
-    }
+	}
+	public String [] getLabels() {
+		return this.labels;
+	}
 
-    public void setBottoni(String [][] s) {
-    	this.bottoni = s;
-    }
-    public String [][] getBottoni() {
-	return this.bottoni;
-    }
+	public void setBottoni(String [][] s) {
+		this.bottoni = s;
+	}
+	public String [][] getBottoni() {
+		return this.bottoni;
+	}
 
-    public void setInserisciBottoni(boolean b) {
-    	this.inserisciBottoni = b;
-    }
-    public boolean getInserisciBottoni() {
-	return this.inserisciBottoni;
-    }
+	public void setInserisciBottoni(boolean b) {
+		this.inserisciBottoni = b;
+	}
+	public boolean getInserisciBottoni() {
+		return this.inserisciBottoni;
+	}
 
-    public void setAddButton(boolean b) {
-    	this.addButton = b;
-    }
-    public boolean getAddButton() {
-	return this.addButton;
-    }
+	public void setAddButton(boolean b) {
+		this.addButton = b;
+	}
+	public boolean getAddButton() {
+		return this.addButton;
+	}
 
-    public void setSelect(boolean b) {
-    	this.select = b;
-    }
-    public boolean getSelect() {
-	return this.select;
-    }
+	public void setSelect(boolean b) {
+		this.select = b;
+	}
+	public boolean getSelect() {
+		return this.select;
+	}
 
-    public void setRemoveButton(boolean b) {
-    	this.removeButton = b;
-    }
-    public boolean getRemoveButton() {
-	return this.removeButton;
-    }
+	public void setRemoveButton(boolean b) {
+		this.removeButton = b;
+	}
+	public boolean getRemoveButton() {
+		return this.removeButton;
+	}
 
-    public void setFilter(DataElement d) {
-    	this.filter = d;
-    }
-    public DataElement getFilter() {
-	return this.filter;
-    }
-    
-    public void setPageSize(int i) {
-    	this.pageSize = i;
-    }
-    public int getPageSize() {
-	return this.pageSize;
-    }
+	public void setFilter(List<DataElement> d) {
+		this.filter = d;
+	}
+	public void addFilter(DataElement d) {
+		if(this.filter == null) {
+			this.filter = new ArrayList<DataElement>();
+		}
+		this.filter.add(d);
+	}
+	public List<DataElement> getFilter() {
+		return this.filter;
+	}
 
-    public void setIndex(int i) {
-    	this.index = i;
-    }
-    public int getIndex() {
-	return this.index;
-    }
+	public void setPageSize(int i) {
+		this.pageSize = i;
+	}
+	public int getPageSize() {
+		return this.pageSize;
+	}
 
-    public void setNumEntries(int i) {
-    	this.numEntries = i;
-    }
-    public int getNumEntries() {
-	return this.numEntries;
-    }
-    
-    public boolean isPageBodyEmpty(){
-    	if(this.dati.size() > 0) {
-    		// conto i campi non hidden
-    		int nonHidden = 0;
-    		for(int i = 0; i < this.dati.size(); i++){
-    			DataElement de = (DataElement) this.dati.get(i);
-    			if(!de.getType().equals(DataElementType.HIDDEN.toString()))
-    				nonHidden ++;
-    		}
-    			
-    		return nonHidden == 0; // dati presenti se c'e' almeno un elemento non hidden.
-    	}
+	public void setIndex(int i) {
+		this.index = i;
+	}
+	public int getIndex() {
+		return this.index;
+	}
 
-   		if(this.mode.equals(Costanti.DATA_ELEMENT_VIEW_NAME))
-    		return false; // c'e' sempre qualcosa o bottoni o tasto edit
-    	
-   		if(this.mode.equals(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME) || this.mode.equals(Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON)){
-    		return true;
-   		}	else{ 
-   			return false; // bottoni invia/cancella
-    	}
-    }
+	public void setNumEntries(int i) {
+		this.numEntries = i;
+	}
+	public int getNumEntries() {
+		return this.numEntries;
+	}
+
+	public boolean isPageBodyEmpty(){
+		if(this.dati.size() > 0) {
+			// conto i campi non hidden
+			int nonHidden = 0;
+			for(int i = 0; i < this.dati.size(); i++){
+				DataElement de = (DataElement) this.dati.get(i);
+				if(!de.getType().equals(DataElementType.HIDDEN.toString()))
+					nonHidden ++;
+			}
+
+			return nonHidden == 0; // dati presenti se c'e' almeno un elemento non hidden.
+		}
+
+		if(this.mode.equals(Costanti.DATA_ELEMENT_VIEW_NAME))
+			return false; // c'e' sempre qualcosa o bottoni o tasto edit
+
+		if(this.mode.equals(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME) || this.mode.equals(Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON)){
+			return true;
+		}	else{ 
+			return false; // bottoni invia/cancella
+		}
+	}
 }

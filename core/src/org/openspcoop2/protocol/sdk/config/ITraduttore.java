@@ -223,4 +223,42 @@ public interface ITraduttore extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	public String getIdentificativoCodiceIPADefault(IDSoggetto soggetto,boolean createURI) throws ProtocolException;
+	
+	/**
+	 * Restituisce il valore da utilizzare nel protocollo per il tipo indicato sul registro
+	 * 
+	 * @param type tipo
+	 * @return valore da utilizzare nel protocollo per il tipo indicato sul registro
+	 * @throws ProtocolException
+	 */
+	public String toProtocolOrganizationType(String type) throws ProtocolException;
+	
+	/**
+	 * Restituisce il valore da utilizzare nel protocollo per il tipo indicato sul registro
+	 * 
+	 * @param type tipo
+	 * @return valore da utilizzare nel protocollo per il tipo indicato sul registro
+	 * @throws ProtocolException
+	 */
+	public String toProtocolServiceType(String type) throws ProtocolException;
+	
+	/**
+	 * Restituisce il tipo conosciuto sul registro convertendolo dal valore trovato nel protocollo
+	 * 
+	 * @param type tipo
+	 * @return tipo conosciuto sul registro convertendolo dal valore trovato nel protocollo
+	 * @throws ProtocolException
+	 */
+	public String toRegistryOrganizationType(String type) throws ProtocolException;
+	
+	/**
+	 * Restituisce il tipo conosciuto sul registro convertendolo dal valore trovato nel protocollo
+	 * 
+	 * @param type tipo
+	 * @return tipo conosciuto sul registro convertendolo dal valore trovato nel protocollo
+	 * @throws ProtocolException
+	 */
+	public String toRegistryServiceType(String type) throws ProtocolException;
+	
+
 }

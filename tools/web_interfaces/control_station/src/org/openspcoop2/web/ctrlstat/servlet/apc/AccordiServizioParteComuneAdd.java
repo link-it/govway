@@ -237,7 +237,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			// primo accesso 
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = apcCore.getProtocolloDefault();
+				this.tipoProtocollo = apcCore.getProtocolloDefault(session);
 			}
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
@@ -261,7 +261,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = apcCore.getProtocolli();
+			List<String> listaTipiProtocollo = apcCore.getProtocolli(session);
 
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
@@ -287,7 +287,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				for (Soggetto soggetto : listaSoggetti) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 						soggettiListTmp.add(soggetto.getId().toString());
-						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						//soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						soggettiListLabelTmp.add(apcHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome() ));
 					}
 				}
 			}
@@ -406,7 +407,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.accordoCooperazione = "-1";
 					this.scadenza= "";
 					this.privato = false;
-					this.tipoProtocollo = apcCore.getProtocolloDefault();
+					this.tipoProtocollo = apcCore.getProtocolloDefault(session);
 					this.referente= "";
 
 					if(this.tipoAccordo!=null){
@@ -629,7 +630,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 				try{
 					boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
-					apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato);
+					apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, true);
 				}catch(ValidazioneStatoPackageException validazioneException){
 
 					// Setto messaggio di errore
@@ -674,7 +675,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			// Automapping
 			if(enableAutoMapping){
 				if(as.getByteWsdlConcettuale() != null || as.getByteWsdlLogicoErogatore() != null || as.getByteWsdlLogicoFruitore() != null) {
-					apcCore.mappingAutomatico(this.tipoProtocollo, as);
+					apcCore.mappingAutomatico(this.tipoProtocollo, as, this.validazioneDocumenti);
 					if(enableAutoMapping_estraiXsdSchemiFromWsdlTypes && InterfaceType.WSDL_11.equals(this.interfaceType)){
 						Hashtable<String, byte[]> schemiAggiuntiInQuestaOperazione = new Hashtable<String, byte[]>();
 						if(as.getByteWsdlConcettuale() != null){ 
@@ -699,7 +700,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						// Se ho fatto il mapping controllo la validita' di quanto prodotto
 						as.setStatoPackage(StatiAccordo.operativo.toString());
 						boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
-						apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato);
+						apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
 					}catch(ValidazioneStatoPackageException validazioneException){
 						// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
 						as.setStatoPackage(StatiAccordo.bozza.toString());

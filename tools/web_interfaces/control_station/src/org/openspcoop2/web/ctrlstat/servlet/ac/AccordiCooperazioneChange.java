@@ -199,7 +199,7 @@ public final class AccordiCooperazioneChange extends Action {
 			}
 
 			// lista dei protocolli supportati
-			listaTipiProtocollo = acCore.getProtocolli();
+			listaTipiProtocollo = acCore.getProtocolli(session);
 
 			// se il protocollo e' null (primo accesso ) lo ricavo dall'accordo di servizio
 			if(tipoProtocollo == null){
@@ -207,7 +207,7 @@ public final class AccordiCooperazioneChange extends Action {
 					tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo());
 				}
 				else{
-					tipoProtocollo = acCore.getProtocolloDefault();
+					tipoProtocollo = acCore.getProtocolloDefault(session);
 				}
 			}
 

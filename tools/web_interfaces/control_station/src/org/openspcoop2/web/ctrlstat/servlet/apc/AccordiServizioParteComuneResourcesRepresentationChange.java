@@ -156,7 +156,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				String tipoSoggettoReferente = soggettoReferente.getTipo();
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoReferente);
 			} else {
-				protocollo = apcCore.getProtocolloDefault();
+				protocollo = apcCore.getProtocolloDefault(session);
 			}
 			
 			ServiceBinding serviceBinding;

@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.servlet.http.HttpSession;
+
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -135,6 +137,7 @@ import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.audit.dao.Appender;
 import org.openspcoop2.web.lib.audit.dao.AppenderProperty;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -297,7 +300,11 @@ public class ControlStationCore {
 	private String protocolloDefault = null;
 	private long jdbcSerializableAttesaAttiva = 0;
 	private int jdbcSerializableCheck = 0;
-	public String getProtocolloDefault() {
+	public String getProtocolloDefault(HttpSession session) throws DriverRegistroServiziException {
+		List<String> protocolli = this.getProtocolli(session);
+		if(protocolli!=null && protocolli.size()==1) {
+			return protocolli.get(0); // si tratta del protocollo selezionato se ce ne sono piu' di uno
+		}
 		return this.protocolloDefault;
 	}
 	public long getJdbcSerializableAttesaAttiva() {
@@ -461,6 +468,7 @@ public class ControlStationCore {
 	private boolean showAccordiColonnaServizi = false;
 	private boolean showAccordiInformazioniProtocollo = false;
 	private boolean showConfigurazioniPersonalizzate = false;
+	private boolean showGestioneSoggettiRouter = false;
 	private boolean showGestioneSoggettiVirtuali = false;
 	private boolean showGestioneWorkflowStatoDocumenti = false;
 	private boolean gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = false;
@@ -516,6 +524,9 @@ public class ControlStationCore {
 	}
 	public boolean isShowConfigurazioniPersonalizzate() {
 		return this.showConfigurazioniPersonalizzate;
+	}
+	public boolean isShowGestioneSoggettiRouter() {
+		return this.showGestioneSoggettiRouter;
 	}
 	public boolean isShowGestioneSoggettiVirtuali() {
 		return this.showGestioneSoggettiVirtuali;
@@ -1307,6 +1318,7 @@ public class ControlStationCore {
 		this.showAccordiColonnaServizi = core.showAccordiColonnaServizi;
 		this.showAccordiInformazioniProtocollo = core.showAccordiInformazioniProtocollo;
 		this.showConfigurazioniPersonalizzate = core.showConfigurazioniPersonalizzate;
+		this.showGestioneSoggettiRouter = core.showGestioneSoggettiRouter;
 		this.showGestioneSoggettiVirtuali = core.showGestioneSoggettiVirtuali;
 		this.showGestioneWorkflowStatoDocumenti = core.showGestioneWorkflowStatoDocumenti;
 		this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
@@ -1537,6 +1549,7 @@ public class ControlStationCore {
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();
 			this.passwordVerifierConfiguration = consoleProperties.getConsolePasswordVerifier();
 			this.showConfigurazioniPersonalizzate = consoleProperties.isConsoleConfigurazioniPersonalizzate();
+			this.showGestioneSoggettiRouter = consoleProperties.isConsoleGestioneSoggettiRouter();
 			this.showGestioneSoggettiVirtuali = consoleProperties.isConsoleGestioneSoggettiVirtuali();
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
 			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
@@ -4461,12 +4474,22 @@ public class ControlStationCore {
 		}
 	}
 
-	public List<String> getProtocolli() throws  DriverRegistroServiziException {
+	public int countProtocolli(HttpSession session) throws  DriverRegistroServiziException {
+		List<String> l = this.getProtocolli(session);
+		return l.size();
+	}
+	public List<String> getProtocolli(HttpSession session) throws  DriverRegistroServiziException {
 		String getProtocolli = "getProtocolli";
 		try{
 
 			List<String> protocolliList = new ArrayList<String>();
-
+			
+			User u =ServletUtils.getUserFromSession(session);
+			if(u.getProtocolloSelezionato()!=null) {
+				protocolliList.add(u.getProtocolloSelezionato());
+				return protocolliList;
+			}
+			
 			MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
 			Enumeration<String> protocolli = protocolFactories.keys();
 			while (protocolli.hasMoreElements()) {
@@ -4474,7 +4497,7 @@ public class ControlStationCore {
 				String protocollo = protocolli.nextElement();
 				protocolliList.add(protocollo);
 			}
-
+			
 			return protocolliList;
 
 		}catch (Exception e) {

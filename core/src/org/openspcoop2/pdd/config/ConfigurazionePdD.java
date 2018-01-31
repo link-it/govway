@@ -2741,4 +2741,62 @@ public class ConfigurazionePdD  {
 
 	}
 
+	
+	
+	
+	
+	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
+	
+	@SuppressWarnings("unchecked")
+	public List<IDPortaDelegata> getAllIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return (List<IDPortaDelegata>) _getAllIdEngine(connectionPdD, filtroRicerca, "getAllIdPorteDelegate");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDPortaApplicativa> getAllIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return (List<IDPortaApplicativa>) _getAllIdEngine(connectionPdD, filtroRicerca, "getAllIdPorteApplicative");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDServizioApplicativo> getAllIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return (List<IDServizioApplicativo>) _getAllIdEngine(connectionPdD, filtroRicerca, "getAllIdServiziApplicativi");
+	}
+	
+	private List<?> _getAllIdEngine(Connection connectionPdD,Object filtroRicerca,String nomeMetodo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		// Raccolta dati
+		if(filtroRicerca == null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"]: Parametro non definito");	
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = nomeMetodo+"_" + filtroRicerca.toString();   
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((List<?>) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		List<?> list = null;
+		if(this.cache!=null){
+			list = (List<?>) this.getObjectCache(key,nomeMetodo,connectionPdD,filtroRicerca);
+		}else{
+			list = (List<?>) this.getObject(nomeMetodo,connectionPdD,filtroRicerca);
+		}
+
+		if(list!=null)
+			return list;
+		else
+			throw new DriverConfigurazioneException("["+nomeMetodo+"] Elementi non trovati");
+	}
 }

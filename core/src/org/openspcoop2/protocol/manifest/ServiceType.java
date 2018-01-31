@@ -41,6 +41,7 @@ import java.io.Serializable;
  * 			&lt;element name="restMediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeCollection" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="protocol" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}MessageType" use="optional"/>
  * 		&lt;attribute name="binding" type="{http://www.openspcoop2.org/protocol/manifest}ServiceBinding" use="optional"/>
  * &lt;/complexType>
@@ -88,6 +89,14 @@ public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setName(java.lang.String name) {
     this.name = name;
+  }
+
+  public java.lang.String getProtocol() {
+    return this.protocol;
+  }
+
+  public void setProtocol(java.lang.String protocol) {
+    this.protocol = protocol;
   }
 
   public void set_value_messageType(String value) {
@@ -143,6 +152,10 @@ public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="protocol",required=false)
+  protected java.lang.String protocol;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_messageType;

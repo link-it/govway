@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration;
@@ -71,6 +72,7 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	private static final long serialVersionUID = 1L;
 	
 	private String protocol;
+	private InformazioniProtocollo informazioniProtocollo;
 	protected Logger log;
 	protected Logger logProtocol;
 	private ConfigurazionePdD configPdD;
@@ -84,6 +86,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		this.log = log;
 		this.configPdD = configPdD;
 		this.manifest = manifest;
+		this.informazioniProtocollo = new InformazioniProtocollo();
+		this.informazioniProtocollo.setName(this.protocol);
+		this.informazioniProtocollo.setLabel(manifest.getProtocol().getLabel());
+		this.informazioniProtocollo.setWebSite(manifest.getProtocol().getWebSite());
+		this.informazioniProtocollo.setDescription(manifest.getProtocol().getDescrizione());
 	}
 	
 	@Override
@@ -117,6 +124,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		return this.protocol;
 	}
 		
+	@Override
+	public InformazioniProtocollo getInformazioniProtocol() {
+		return this.informazioniProtocollo;
+	}
+	
 	@Override
 	public ConfigurazionePdD getConfigurazionePdD() {
 		return this.configPdD;

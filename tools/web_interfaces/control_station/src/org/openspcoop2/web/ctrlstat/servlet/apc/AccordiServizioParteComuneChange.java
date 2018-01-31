@@ -256,7 +256,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			used = asps != null && asps.size() > 0;
 
 			// lista dei protocolli supportati
-			listaTipiProtocollo = apcCore.getProtocolli();
+			listaTipiProtocollo = apcCore.getProtocolli(session);
 
 			// se il protocollo e' null (primo accesso ) lo ricavo dall'accordo di servizio
 			if(this.tipoProtocollo == null){
@@ -264,7 +264,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 				}
 				else{
-					this.tipoProtocollo = apsCore.getProtocolloDefault();
+					this.tipoProtocollo = apsCore.getProtocolloDefault(session);
 				}
 			}
 
@@ -307,7 +307,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						for (Soggetto soggetto : listaSoggetti) {
 							if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 								soggettiListTmp.add(soggetto.getId().toString());
-								soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+								//soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+								soggettiListLabelTmp.add(apcHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome() ));
 							}
 						}
 					}
@@ -757,7 +758,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 			try{
 				boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
-				apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato);
+				apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, true);
 			}catch(ValidazioneStatoPackageException validazioneException){
 
 				// Setto messaggio di errore

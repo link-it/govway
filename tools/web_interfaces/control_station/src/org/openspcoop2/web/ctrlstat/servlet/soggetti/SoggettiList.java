@@ -81,6 +81,7 @@ public final class SoggettiList extends Action {
 
 			int idLista = Liste.SOGGETTI;
 			ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
+			soggettiHelper.setFilterSelectedProtocol(ricerca, idLista, 0);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			if(soggettiCore.isRegistroServiziLocale()){
 				List<Soggetto> lista = null;

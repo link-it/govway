@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocol name="as4" logger="true">
+    <protocol name="as4" label="eDelivery" 
+    	descrizione="Scambio sicuro ed affidabile di dati e documenti tramite il profilo 'AS4' della specifica OASIS ebMS 3.0" 
+    	webSite="https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eDelivery" logger="true">
     	<factory>org.openspcoop2.protocol.as4.AS4Factory</factory>
     </protocol>
     
@@ -13,9 +15,9 @@
     		<integration>
     		 	<implementation>
     		 		<name>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -41,11 +43,11 @@
 	    		 </implementation>
 	    		 <subscription>
     		 		<name>
-    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberType" suffix="_"/>
     		 			<param actor="subscriberName" suffix="/"/>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -92,9 +94,9 @@
     		  <integration>
     		 	<implementation>
     		 		<name>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -119,11 +121,11 @@
 	    		 </implementation>
 	    		 <subscription>
     		 		<name>
-    		 			<param actor="subscriberType"/>
+    		 			<param actor="subscriberType" suffix="_"/>
     		 			<param actor="subscriberName" suffix="/"/>
-    		 			<param actor="providerType"/>
+    		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
-    		 			<param actor="serviceType"/>
+    		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
     		 			<param actor="serviceVersion"/>
     		 		</name>
@@ -206,7 +208,7 @@
 
         <organization authentication="false">
             <types>
-            	<type name="AS4"/>
+            	<type name="as4"/>
             </types>
         </organization>
 
@@ -214,7 +216,7 @@
             <types>
 
                 <!-- Il tipo AS4 è compatibile sia con soap che con rest -->
-                <type name="AS4"/>
+                <type name="as4"/>
                 
             </types>
         </service>

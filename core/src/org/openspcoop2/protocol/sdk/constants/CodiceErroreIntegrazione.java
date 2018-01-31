@@ -45,8 +45,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_500_ERRORE_INTERNO(500),
     /** String che contiene un codice di errore OpenSPCoop: OpenSPCoop non inizializzato, 501*/
     CODICE_501_PDD_NON_INIZIALIZZATA(501),
-    /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento durante l'individuazione della PortaDelegata, 502*/
-    CODICE_502_IDENTIFICAZIONE_PD(502),
+    /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento durante l'individuazione della Porta, 502*/
+    CODICE_502_IDENTIFICAZIONE_PORTA(502),
     /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento durante il processo di autenticazione, 503*/
     CODICE_503_AUTENTICAZIONE(503), 
     /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento durante il processo di autorizzazione, 504*/
@@ -355,7 +355,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				
 				case 500: return CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO;
 				case 501: return CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA;
-				case 502: return CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD;
+				case 502: return CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PORTA;
 				case 503: return CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE;
 				case 504: return CodiceErroreIntegrazione.CODICE_504_AUTORIZZAZIONE;
 				case 505: return CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION;

@@ -70,14 +70,15 @@ public class RicezioneContenutiApplicativiServiceUtils {
 		try{
 			idPD = serviceIdentificationReader.findPortaDelegata(protocolContext, true);
 		}catch(RegistryNotFound notFound){
-			if(bindingConfig.existsContextUrlMapping()==false){
-				logCore.error("Porta Delegata non trovata: "+notFound.getMessage(),notFound);
-				msgDiag.addKeywordErroreProcessamento(notFound);
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
-				ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
-						IntegrationError.NOT_FOUND, notFound, null, res, logCore);
-				return false;
-			}
+			// Non ha senso nel contesto di porta delegata
+			//if(bindingConfig.existsContextUrlMapping()==false){
+			logCore.error("Porta Delegata non trovata: "+notFound.getMessage(),notFound);
+			msgDiag.addKeywordErroreProcessamento(notFound);
+			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
+			ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
+					IntegrationError.NOT_FOUND, notFound, null, res, logCore);
+			return false;
+			//}
 		}
 		if(idPD!=null){
 			
