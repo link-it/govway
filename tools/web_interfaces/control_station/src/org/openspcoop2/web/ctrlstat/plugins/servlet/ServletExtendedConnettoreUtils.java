@@ -39,10 +39,10 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettoreConverter;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettoreItem;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**     
  * ServletExtendedConnettoreUtils
@@ -54,12 +54,12 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
 public class ServletExtendedConnettoreUtils {
 
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.config.Connettore connettore,
-			ConnettoreServletType servletType, ControlStationCore core, HttpServletRequest request, HttpSession session, 
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, 
 			boolean first,String endpointType) throws ExtendedException{
-		return getExtendedConnettore(connettore, servletType, core, request, session, null, first, endpointType);
+		return getExtendedConnettore(connettore, servletType, consoleHelper, core, request, session, null, first, endpointType);
 	}
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.config.Connettore connettore,
-			ConnettoreServletType servletType, ControlStationCore core, HttpServletRequest request, HttpSession session, Properties parametersPOST,
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, Properties parametersPOST,
 			boolean first,String endpointType) throws ExtendedException{
 		
 		boolean connettoreDisabilitato = true;
@@ -80,7 +80,7 @@ public class ServletExtendedConnettoreUtils {
 			tipoConnettore = endpointType;
 		}
 		
-		List<ExtendedConnettore> l = getExtendedConnettore(servletType, core, session, connettoreDisabilitato, tipoConnettore);
+		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, core, session, connettoreDisabilitato, tipoConnettore);
 		if(l!=null && l.size()>0){
 			if(first)
 				ExtendedConnettoreConverter.readExtendedInfoFromConnettore(l, connettore);
@@ -92,12 +92,12 @@ public class ServletExtendedConnettoreUtils {
 	}
 	
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.registry.Connettore connettore,
-			ConnettoreServletType servletType, ControlStationCore core, HttpServletRequest request, HttpSession session, 
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, 
 			boolean first,String endpointType) throws ExtendedException{
-		return getExtendedConnettore(connettore, servletType, core, request, session, null, first, endpointType);
+		return getExtendedConnettore(connettore, servletType, consoleHelper, core, request, session, null, first, endpointType);
 	}
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.registry.Connettore connettore,
-			ConnettoreServletType servletType, ControlStationCore core, HttpServletRequest request, HttpSession session, Properties parametersPOST, 
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, Properties parametersPOST, 
 			boolean first,String endpointType) throws ExtendedException{
 		
 		boolean connettoreDisabilitato = true;
@@ -113,7 +113,7 @@ public class ServletExtendedConnettoreUtils {
 			tipoConnettore = endpointType;
 		}
 					
-		List<ExtendedConnettore> l = getExtendedConnettore(servletType, core, session,connettoreDisabilitato, tipoConnettore);
+		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, core, session,connettoreDisabilitato, tipoConnettore);
 		if(l!=null && l.size()>0){
 			if(first)
 				ExtendedConnettoreConverter.readExtendedInfoFromConnettore(l, connettore);
@@ -123,12 +123,12 @@ public class ServletExtendedConnettoreUtils {
 		return l;
 		
 	}
-	private static List<ExtendedConnettore> getExtendedConnettore(ConnettoreServletType servletType, ControlStationCore core, HttpSession session, 
+	private static List<ExtendedConnettore> getExtendedConnettore(ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpSession session, 
 			boolean connettoreDisabilitato, String tipoConnettore) throws ExtendedException{
 		List<ExtendedConnettore> list = new ArrayList<ExtendedConnettore>();
 		if(core.getExtendedConnettore()!=null && core.getExtendedConnettore().size()>0){
 		
-			boolean interfacciaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType());
+			boolean interfacciaAvanzata =consoleHelper.isModalitaAvanzata();
 			
 			for (IExtendedConnettore ext : core.getExtendedConnettore()) {
 				

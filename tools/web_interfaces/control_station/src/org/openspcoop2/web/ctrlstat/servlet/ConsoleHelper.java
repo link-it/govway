@@ -249,13 +249,27 @@ public class ConsoleHelper {
 	public InterfaceType getTipoInterfaccia() {
 		return this.tipoInterfaccia;
 	}
-	protected boolean modalitaAvanzata = false;
+	public void setTipoInterfaccia(InterfaceType tipoInterfaccia) {
+		this.tipoInterfaccia = tipoInterfaccia;
+	}
+	public void updateTipoInterfaccia() {
+		User user = ServletUtils.getUserFromSession(this.session);
+		this.tipoInterfaccia = user.getInterfaceType();
+	}
+	public boolean isModalitaCompleta() {
+		return InterfaceType.equals(this.tipoInterfaccia, 
+				InterfaceType.COMPLETA); 
+	}
 	public boolean isModalitaAvanzata() {
-		return this.modalitaAvanzata;
+		// considero anche l'interfaccia completa
+		return InterfaceType.equals(this.tipoInterfaccia, 
+				InterfaceType.AVANZATA,InterfaceType.COMPLETA); 
 	}
 	public boolean isModalitaStandard() {
-		return !this.isModalitaAvanzata();
+		return InterfaceType.equals(this.tipoInterfaccia, 
+				InterfaceType.STANDARD); 
 	}
+
 
 	public ConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
@@ -267,7 +281,6 @@ public class ConsoleHelper {
 			User user = ServletUtils.getUserFromSession(this.session);
 			if(user != null) {
 				this.tipoInterfaccia = user.getInterfaceType();
-				this.modalitaAvanzata = InterfaceType.AVANZATA.equals(user.getInterfaceType());
 			}
 			
 			this.core = new ControlStationCore();
@@ -772,7 +785,7 @@ public class ConsoleHelper {
 
 			Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 
-			Boolean isModalitaAvanzata = u.getInterfaceType().equals(InterfaceType.AVANZATA);
+			Boolean isModalitaAvanzata = this.isModalitaAvanzata();
 			Boolean isVisualizzazioneCompattaElementiRegistro = this.core.isShowMenuAggregatoOggettiRegistro();
 
 			List<IExtendedMenu> extendedMenu = this.core.getExtendedMenu();
@@ -3140,7 +3153,7 @@ public class ConsoleHelper {
 		
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
-		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) 
+		if (this.isModalitaStandard()) 
 			de.setType(DataElementType.HIDDEN);
 		else
 			de.setType(DataElementType.TEXT_EDIT);
@@ -3684,5 +3697,16 @@ public class ConsoleHelper {
 		else {
 			return nomeSoggetto;
 		}
+	}
+	public String getLabelIdAccordo(String protocollo, IDAccordo idAccordo) throws Exception{
+		StringBuffer bf = new StringBuffer();
+		if(idAccordo.getSoggettoReferente()!=null){
+			bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
+			bf.append(":");
+		}
+		bf.append(idAccordo.getNome());
+		bf.append(":");
+		bf.append(idAccordo.getVersione());
+		return bf.toString();
 	}
 }

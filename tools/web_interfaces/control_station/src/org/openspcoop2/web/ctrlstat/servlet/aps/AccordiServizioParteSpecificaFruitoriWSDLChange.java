@@ -114,8 +114,9 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 		try {
 
 			this.consoleOperationType = ConsoleOperationType.CHANGE;
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
+			
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 			
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);

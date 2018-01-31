@@ -86,7 +86,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -194,7 +193,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 
-		boolean isModalitaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		try{
 
@@ -699,8 +698,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idInt);
 			
-			User userLogin = ServletUtils.getUserFromSession(this.session);
-			
 			
 			// Se il connettore e' disabilitato devo controllare che il
 			// connettore del soggetto non sia disabilitato se è di tipo operativo
@@ -729,7 +726,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
 							}
 							else{
-								if(InterfaceType.AVANZATA.equals(userLogin.getInterfaceType())){
+								if(this.isModalitaAvanzata()){
 									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE);
 								}
 								else{
@@ -807,7 +804,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 
 				// Validazione Documenti
-				if(validazioneDocumenti && tipoOp.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(userLogin.getInterfaceType()) ){
+				if(validazioneDocumenti && tipoOp.equals(TipoOperazione.ADD) && this.isModalitaAvanzata() ){
 					
 					String wsdlimplerS = wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : null; 
 					byte [] wsdlImplementativoErogatore = wsdlimplerS != null && !wsdlimplerS.trim().replaceAll("\n", "").equals("") ? wsdlimplerS.trim().getBytes() : null;
@@ -1322,9 +1319,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			Boolean generazioneAutomaticaPD = ServletUtils.getGenerazioneAutomaticaPDFromSession(this.session);
-
-			@SuppressWarnings("unused")
-			boolean isModalitaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
 
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
@@ -1869,9 +1863,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione));
-
-			@SuppressWarnings("unused")
-			boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
 			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaDelegata();
 			
@@ -2435,7 +2426,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		boolean modificaAbilitata = ( (this.core.isShowGestioneWorkflowStatoDocumenti()==false) || (StatiAccordo.finale.toString().equals(oldStato)==false) );
 
-		boolean isModalitaAvanzata = user.getInterfaceType().equals(InterfaceType.AVANZATA);
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 
@@ -3267,11 +3258,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			versioniValues[i+1] = tmp;
 		}
 
-		User user = ServletUtils.getUserFromSession(this.session);
-
 		boolean modificaAbilitata = ( (this.core.isShowGestioneWorkflowStatoDocumenti()==false) || (StatiAccordo.finale.toString().equals(oldStato)==false) );
 
-		boolean isModalitaAvanzata = user.getInterfaceType().equals(InterfaceType.AVANZATA);
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		// accordo di servizio parte comune 
 		DataElement de = new DataElement();
@@ -3511,7 +3500,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Vector<DataElement> dati,
 			String tipologiaDocumentoScaricare, String label) {
 
-		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		DataElement de = new DataElement();
 		if(label.contains(" di ")){
@@ -3674,7 +3663,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String id, String tipologiaDocumentoScaricare,
 			boolean finished, String label) {
 
-		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		DataElement de = new DataElement();
 		if(label.contains(" di ")){
@@ -4260,7 +4249,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String nomeservizio, String tiposervizio, String correlato, String stato, String oldStato, String statoServizio,
 			String tipoAccordo, boolean validazioneDocumenti) throws Exception {
 
-		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		if (tipoOp.equals(TipoOperazione.ADD)) {
 			// in caso di add allora visualizzo la lista dei soggetti
@@ -4351,7 +4340,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String nomeservizio, String tiposervizio, Integer versioneservizio, String idSoggettoFruitore,
 			AccordoServizioParteSpecifica asps, Fruitore fruitore) throws Exception{
 
-		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
@@ -4472,7 +4461,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String oldStatoPackage, String idServizio, String idServizioFruitore, String idSoggettoErogatoreDelServizio,
 			String nomeservizio, String tiposervizio, String idSoggettoFruitore){
 
-		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
+		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
 			DataElement de = new DataElement();

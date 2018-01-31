@@ -533,11 +533,13 @@ public class UtentiHelper extends ConsoleHelper {
 			//		}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!tipoGui.equals(InterfaceType.AVANZATA.toString()) && !tipoGui.equals(InterfaceType.STANDARD.toString())) {
-				this.pd.setMessage("Tipo dev'essere " + InterfaceType.AVANZATA.toString() + " o " + InterfaceType.STANDARD.toString());
+			try {
+				InterfaceType.convert(tipoGui, true);
+			}catch(Exception e) {
+				this.pd.setMessage("Tipo dev'essere uno dei seguenti valori: "+InterfaceType.values());
 				return false;
 			}
-
+			
 			// Controllo che le password corrispondano
 			boolean checkPassword = true;
 			if(TipoOperazione.CHANGE.equals(tipoOperazione) && !ServletUtils.isCheckBoxEnabled(changepwd)){
@@ -748,11 +750,7 @@ public class UtentiHelper extends ConsoleHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					if(InterfaceType.AVANZATA.toString().equals(mySU.getInterfaceType().toString())){
-						de.setValue(InterfaceType.AVANZATA.toString().toLowerCase());
-					}else{
-						de.setValue(InterfaceType.STANDARD.toString().toLowerCase());
-					}
+					de.setValue(mySU.getInterfaceType().toString().toLowerCase());
 					e.addElement(de);
 
 					de = new DataElement();

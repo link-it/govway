@@ -68,20 +68,20 @@ public class LoginSessionUtilities {
 		InterfaceType gui = user.getInterfaceType();
 		switch (gui) {
 			case AVANZATA:
+			case COMPLETA:
 				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO, gestioneInfoProtocol);
 				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI, showAccordiAzioni);
 				Utilities.readTipologiaConnettori(core);
 				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI, soggVirt);
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA, InterfaceType.AVANZATA.toString() );
 				break;
 			case STANDARD:
 				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO, false);
 				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI, false);
 				Utilities.setTipologiaConnettori(TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP);
 				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI, false);
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA, InterfaceType.STANDARD.toString() );
 				break;
 		}
+		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA, gui.toString() );
 
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_PORT_TYPES, showAccordiPortTypes);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, singlePdD);

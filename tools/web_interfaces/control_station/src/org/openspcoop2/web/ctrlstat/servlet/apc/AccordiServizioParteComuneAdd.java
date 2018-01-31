@@ -135,8 +135,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.ADD;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
+		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
 
@@ -145,6 +144,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 		try {
 
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apcHelper); 
 
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);

@@ -69,7 +69,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * configurazione
@@ -106,8 +105,6 @@ public final class ConfigurazioneGenerale extends Action {
 
 			List<IExtendedFormServlet> extendedServletList = confCore.getExtendedServletConfigurazione();
 			
-			User user = ServletUtils.getUserFromSession(session);
-
 			String inoltromin = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
 			String stato = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO);
 			String controllo = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO);
@@ -218,7 +215,7 @@ public final class ConfigurazioneGenerale extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
+					dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 							connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
 							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
@@ -428,7 +425,7 @@ public final class ConfigurazioneGenerale extends Action {
 
 				Vector<DataElement> dati = new Vector<DataElement>();
 
-				dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
+				dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
 						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 
@@ -579,7 +576,7 @@ public final class ConfigurazioneGenerale extends Action {
 
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-			dati = confHelper.addConfigurazioneToDati(  user,  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
+			dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
 					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
 

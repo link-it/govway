@@ -30,6 +30,6 @@ package org.openspcoop2.protocol.sdk.constants;
  */
 public enum ConsoleInterfaceType {
 
-	STANDARD, AVANZATA;
+	STANDARD, AVANZATA, COMPLETA;
 	
 }

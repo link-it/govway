@@ -89,7 +89,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**
  * serviziFruitoriChange
@@ -131,8 +130,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.CHANGE;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
+		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.CHANGE;
 		List<ProtocolProperty> oldProtocolPropertyList = null;
@@ -143,6 +141,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			pd.setHidden(pdOld.getHidden());
 
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
@@ -295,7 +294,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			Boolean isConnettoreCustomUltimaImmagineSalvata = servFru.getConnettore().getCustom();
 
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(servFru.getConnettore(), ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(servFru.getConnettore(), ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsHelper, apsCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			// Prendo il soggetto erogatore del servizio
@@ -672,7 +671,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
 
-					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+					if (apsHelper.isModalitaAvanzata()) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 								url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
@@ -787,7 +786,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 						asps, servFru);
 
-				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+				if (apsHelper.isModalitaAvanzata()) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
@@ -854,7 +853,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addFruitoreToDatiAsHidden(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, idSoggettoFruitore);
 
-					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+					if (apsHelper.isModalitaAvanzata()) {
 						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
 								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
@@ -902,7 +901,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			// Modifico i dati del fruitore nel db
 			Connettore connettoreNew = null;
-			if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+			if (apsHelper.isModalitaAvanzata()) {
 				connettoreNew = new Connettore();
 				connettoreNew.setNome("CNT_SF_" + fruitoreLabel + "_" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore + "_" + tiposervizio + "/" + nomeservizio);
 				connettoreNew.setId(connettore.getId());
@@ -1008,7 +1007,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
 
-					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+					if (apsHelper.isModalitaAvanzata()) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 								url,
 								nome, tipo, user, password, initcont, urlpgk,

@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.servlet.http.HttpSession;
-
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -40,13 +38,12 @@ import org.openspcoop2.protocol.sdk.properties.BooleanConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.NumberConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 
 /**
@@ -144,11 +141,14 @@ public class ProtocolPropertiesUtilities {
 	//		}
 	//	}
 
-	public static ConsoleInterfaceType getTipoInterfaccia(HttpSession session){
-		if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType()))
-			return ConsoleInterfaceType.AVANZATA;
-		else 
+	public static ConsoleInterfaceType getTipoInterfaccia(ConsoleHelper consoleHelper){
+		if(consoleHelper.isModalitaStandard()) {
 			return ConsoleInterfaceType.STANDARD;
+		}
+		if(consoleHelper.isModalitaCompleta()) {
+			return ConsoleInterfaceType.COMPLETA;
+		}
+		return ConsoleInterfaceType.AVANZATA;
 	}
 
 	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,BaseConsoleItem item, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {

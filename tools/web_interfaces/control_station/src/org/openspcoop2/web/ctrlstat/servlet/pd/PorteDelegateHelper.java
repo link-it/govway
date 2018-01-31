@@ -71,7 +71,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**
  * PorteDelegateHelper
@@ -225,7 +224,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SP);
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
-			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			if (this.isModalitaStandard()) {
 				if(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modesp) ){
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(modesp);
@@ -278,7 +277,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				dati.addElement(de);
 			} else {
 	
-				if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+				if (this.isModalitaStandard()) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
 					de.setValue(this.soggettiCore.getTipoSoggettoDefault());
@@ -344,7 +343,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO);
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
-			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			if (this.isModalitaStandard()) {
 				if(!configurazioneStandardNonApplicabile && PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modeservizio) ){
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(modeservizio);
@@ -406,7 +405,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				dati.addElement(de);
 			} else {
 	
-				if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+				if (this.isModalitaStandard()) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
 					de.setValue(this.apsCore.getTipoServizioDefault(serviceBinding));
@@ -479,7 +478,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED,
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED
 		};
-		if(TipoOperazione.CHANGE.equals(tipoOp) && InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) ){
+		if(TipoOperazione.CHANGE.equals(tipoOp) && this.isModalitaStandard() ){
 			if ( !configurazioneStandardNonApplicabile && 
 					(modeaz != null) && 
 					(
@@ -696,7 +695,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
-					if( InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) &&
+					if( this.isModalitaAvanzata() &&
 							modeaz!= null && (
 								!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT) &&
 								!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
@@ -787,7 +786,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			de.setValue(integrazione);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
 			de.setSize(alternativeSize);
-			if(InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+			if(this.isModalitaStandard()){
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 			}else{
@@ -841,7 +840,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		else if (modesp != null && modesp.equals(IdentificazioneView.USER_INPUT.toString()) ) {
 			try{
 				String tipoSoggetto = null;
-				if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+				if (this.isModalitaStandard()) {
 					tipoSoggetto = this.soggettiCore.getTipoSoggettoDefault();
 				} else {
 					tipoSoggetto = tiposp;
@@ -883,7 +882,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
 		de.setSize(alternativeSize);
-		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) || localForwardShow==false) {
+		if (this.isModalitaStandard() || localForwardShow==false) {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(localForward);
 			dati.addElement(de);
@@ -1087,7 +1086,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		// *************** Asincroni *********************
 		
-		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
@@ -1142,7 +1141,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		// ***************  SOAP With Attachments *********************
 
-		if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 		
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);

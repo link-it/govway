@@ -44,6 +44,8 @@ import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -55,8 +57,6 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
-import org.openspcoop2.core.registry.constants.CredenzialeTipo;
-import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -76,8 +76,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-//import org.openspcoop2.core.registry.driver.SICAtoOpenSPCoopUtilities;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**
  * soggettiChange
@@ -126,13 +124,13 @@ public final class SoggettiChange extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.CHANGE;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
+		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.CHANGE; 
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(soggettiHelper); 
 
 			this.id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idSogg = Integer.parseInt(this.id);
@@ -214,7 +212,7 @@ public final class SoggettiChange extends Action {
 			this.protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(this.tipoprov);
 			tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(this.protocollo);
 
-			if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType())){
+			if(soggettiHelper.isModalitaAvanzata()){
 				versioniProtocollo = soggettiCore.getVersioniProtocollo(this.protocollo);
 			}else {
 				versioniProtocollo = new ArrayList<String>();

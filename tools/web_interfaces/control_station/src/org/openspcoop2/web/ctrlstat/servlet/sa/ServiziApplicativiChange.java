@@ -73,8 +73,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * servizioApplicativoChange
@@ -109,6 +107,9 @@ public final class ServiziApplicativiChange extends Action {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			boolean interfacciaAvanzata = saHelper.isModalitaAvanzata();
+			boolean interfacciaStandard = saHelper.isModalitaStandard();
 			
 			String id = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
@@ -279,7 +280,7 @@ public final class ServiziApplicativiChange extends Action {
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connis.getCustom();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_CHANGE, saCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_CHANGE, saHelper, saCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			if (endpointtype == null) {
@@ -760,8 +761,6 @@ public final class ServiziApplicativiChange extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.CHANGE());
 			}
 
-			User userSession = ServletUtils.getUserFromSession(session);
-			
 			if(ruoloFruitore==null){
 				ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
 			}
@@ -777,7 +776,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			
 			// *** Invocazione Porta ***
-			if(InterfaceType.AVANZATA.equals(userSession.getInterfaceType()) ||
+			if(interfacciaAvanzata ||
 					!TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore)){
 			
 				if (ipge == null)
@@ -811,7 +810,7 @@ public final class ServiziApplicativiChange extends Action {
 				} 
 				ip.addCredenziali(credenziali);
 				
-				if(InterfaceType.AVANZATA.equals(userSession.getInterfaceType())) {
+				if(interfacciaAvanzata) {
 					if(credenziali.getTipo()!=null){
 						sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
 					}
@@ -827,7 +826,7 @@ public final class ServiziApplicativiChange extends Action {
 				sa.setInvocazionePorta(ip);
 
 			}
-			else if(InterfaceType.STANDARD.equals(userSession.getInterfaceType()) &&
+			else if(interfacciaStandard &&
 					TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore)){
 				
 				InvocazionePorta invocazionePorta = new InvocazionePorta();
@@ -866,7 +865,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			
 			// *** Invocazione Servizio ***
-			if(InterfaceType.STANDARD.equals(userSession.getInterfaceType()) &&
+			if(interfacciaStandard &&
 					!TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore)){
 			
 				if(sbustamento==null){
@@ -930,7 +929,7 @@ public final class ServiziApplicativiChange extends Action {
 				
 				sa.setInvocazioneServizio(is);
 			}
-			else if(InterfaceType.STANDARD.equals(userSession.getInterfaceType()) &&
+			else if(interfacciaStandard &&
 					TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore)){
 				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 				is.setCredenziali(cis);

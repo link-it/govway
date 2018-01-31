@@ -569,7 +569,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					
 					String endpointtype = this.readEndPointType();
 					List<ExtendedConnettore> listExtendedConnettore = 
-							ServletExtendedConnettoreUtils.getExtendedConnettore(is.getConnettore(), ConnettoreServletType.WIZARD_CONFIG, this.core, 
+							ServletExtendedConnettoreUtils.getExtendedConnettore(is.getConnettore(), ConnettoreServletType.WIZARD_CONFIG, this, this.core, 
 									this.request, this.session, false, endpointtype);
 					
 					boolean isOk = saHelper.servizioApplicativoEndPointCheckData(listExtendedConnettore);
@@ -600,7 +600,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					
 					String endpointtype = this.readEndPointType();
 					List<ExtendedConnettore> listExtendedConnettore = 
-							ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.WIZARD_REGISTRY, this.core, 
+							ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.WIZARD_REGISTRY, this, this.core, 
 									this.request, this.session, false, endpointtype);
 					
 					boolean isOk = this.endPointCheckData(listExtendedConnettore);
@@ -655,8 +655,6 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
-		User user = ServletUtils.getUserFromSession(this.session);
-
 		DataElement de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO);
 		if(protocolliSelectList.size()>2){
@@ -715,7 +713,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
 		de.setValue(""+validazioneDocumenti);
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(validazioneDocumenti);
 		}
@@ -1050,7 +1048,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String oldConnT = TipiConnettore.DISABILITATO.getNome();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.WIZARD_CONFIG, this.core, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.WIZARD_CONFIG, this, this.core, 
 							this.request, this.session, false, endpointtype);
 			
 			this.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
@@ -1170,7 +1168,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			org.openspcoop2.core.registry.Connettore connettore = new org.openspcoop2.core.registry.Connettore();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.WIZARD_REGISTRY, this.core, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.WIZARD_REGISTRY, this, this.core, 
 							this.request, this.session, false, endpointtype);
 			
 			String oldConnT = TipiConnettore.DISABILITATO.getNome();
@@ -1776,6 +1774,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
 				userSession.setInterfaceType(InterfaceType.STANDARD);
+				this.setTipoInterfaccia(InterfaceType.STANDARD);
 			
 				String sbustamento = null;
 				String sbustamentoInformazioniProtocolloRichiesta = null;
@@ -1846,6 +1845,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
 				userSession.setInterfaceType(InterfaceType.STANDARD);
+				this.setTipoInterfaccia(InterfaceType.STANDARD);
 			
 				addDatiConnettore(dati, readedDatiConnettori, showSection, ConnettoreServletType.WIZARD_REGISTRY);
 			}
@@ -1869,6 +1869,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
 				userSession.setInterfaceType(InterfaceType.STANDARD);
+				this.setTipoInterfaccia(InterfaceType.STANDARD);
 			
 				this.addDatiCredenzialiAccesso(dati, readedDatiConnettori, showSection);
 			}
@@ -2079,7 +2080,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, connettoreServletType, this.core, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, connettoreServletType, this, this.core, 
 							this.request, this.session, false, endpointtype);
 			
 			dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
@@ -2167,9 +2168,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String datainizio,String datafine, String [] protocolli, String profcoll,
 			String [] tipiLabel, String [] tipiServiziLabel, String indexValue){
 
-		User user = ServletUtils.getUserFromSession(this.session);
-
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 			if (this.core.isTracce_showSorgentiDatiDatabase()) {
 				// Sorgente dati
 				DataElement de = new DataElement();
@@ -2537,7 +2536,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				}
 			}
 
-			if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			if (this.isModalitaAvanzata()) {
 				if (this.core.isMsgDiagnostici_showSorgentiDatiDatabase()) {
 					if(nomeDs==null || "".equals(nomeDs)){
 						this.pd.setMessage("E' necessario selezionare una sorgente dati.");
@@ -3050,9 +3049,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String datainizio,String datafine, String severita, String idfunzione,
 			String[] protocolli,String [] tipiLabel, String [] tipiServiziLabel, String indexValue){
 
-		User user = ServletUtils.getUserFromSession(this.session);
-
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 			if (this.core.isMsgDiagnostici_showSorgentiDatiDatabase()) {
 				// Sorgente dati
 				DataElement de = new DataElement();
@@ -3436,7 +3433,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				}
 			}
 
-			if(!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			if(this.isModalitaAvanzata()) {
 				if (this.core.isMsgDiagnostici_showSorgentiDatiDatabase()) {
 					if(nomeDs==null || "".equals(nomeDs)){
 						this.pd.setMessage("E' necessario selezionare una sorgente dati.");

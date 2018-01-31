@@ -49,7 +49,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**
  * porteAppWS
@@ -99,7 +98,7 @@ public final class PorteApplicativeWS extends Action {
 			porteApplicativeHelper.makeMenu();
 
 			// modalitaInterfaccia
-			boolean isModalitaAvanzata = ServletUtils.getUserFromSession(session).getInterfaceType().equals(InterfaceType.AVANZATA);
+			boolean isModalitaAvanzata = porteApplicativeHelper.isModalitaAvanzata();
 			
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();

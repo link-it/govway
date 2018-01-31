@@ -107,7 +107,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**
  * serviziFruitoriAdd
@@ -190,13 +189,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.ADD;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
+		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD;
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 
 			this.parametersPOST = null;
 
@@ -318,7 +317,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
-				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+				if (apsHelper.isModalitaAvanzata()) {
 					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(tmpValidazioneDocumenti!=null){
 						if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
@@ -352,7 +351,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsHelper, apsCore, 
 							request, session, this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			// prendo l'id del soggetto erogatore lo propago
@@ -684,7 +683,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
-					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+					if (apsHelper.isModalitaAvanzata()) {
 						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
 								this.url, this.nome,
 								tipoJms, this.user,
@@ -805,7 +804,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						dati,null
 						,null,null,null,null,null,null,null,null,null);
 
-				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+				if (apsHelper.isModalitaAvanzata()) {
 					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
@@ -943,7 +942,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
 
-					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+					if (apsHelper.isModalitaAvanzata()) {
 						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 								this.url, this.nome, this.tipo, this.user,
 								this.password, this.initcont, this.urlpgk,

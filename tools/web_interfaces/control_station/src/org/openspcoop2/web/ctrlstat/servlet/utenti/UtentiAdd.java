@@ -86,10 +86,15 @@ public final class UtentiAdd extends Action {
 			String pwsu = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
 			String confpwsu = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-			InterfaceType interfaceType = InterfaceType.STANDARD;
-			if(InterfaceType.AVANZATA.toString().equals(tipoGui)){
-				interfaceType = InterfaceType.AVANZATA;
+			
+			InterfaceType interfaceType = null;
+			if(tipoGui==null) {
+				interfaceType = utentiHelper.getTipoInterfaccia();
 			}
+			else {
+				interfaceType = InterfaceType.convert(tipoGui, true);
+			}
+			
 			String isServizi = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
 			String isSistema = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);

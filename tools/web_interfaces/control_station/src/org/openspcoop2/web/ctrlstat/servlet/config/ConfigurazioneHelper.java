@@ -59,8 +59,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * ConfigurazioneHelper
@@ -131,9 +129,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String nomeParametroIdleCache, String idlecache,
 			String nomeParametroLifeCache, String lifecache){
 		
-		User user = ServletUtils.getUserFromSession(this.session);
-		
-		boolean view = InterfaceType.AVANZATA.equals(user.getInterfaceType());
+		boolean view = this.isModalitaAvanzata();
 		
 		if(view){
 			DataElement de = new DataElement();
@@ -253,8 +249,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_REGISTRY,idlecache,
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_REGISTRY,lifecache);
 
-		User user = ServletUtils.getUserFromSession(this.session);
-		if(! InterfaceType.AVANZATA.equals(user.getInterfaceType())){
+		if(this.isModalitaStandard()){
 			this.pd.disableEditMode();
 		}
 		
@@ -2586,7 +2581,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 
 
-	public Vector<DataElement> addConfigurazioneToDati(  User user,
+	public Vector<DataElement> addConfigurazioneToDati(  
 			String inoltromin, String stato,
 			String controllo, String severita, String severita_log4j,
 			String integman, String nomeintegman, String profcoll,
@@ -2597,7 +2592,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-		if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
 			de.setValue(inoltromin);
@@ -2739,7 +2734,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 			if (this.confCore.isMsgDiagnostici_showConfigurazioneCustomAppender()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
@@ -2770,7 +2765,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() || !InterfaceType.STANDARD.equals(user.getInterfaceType())){
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() || this.isModalitaAvanzata()){
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO);
 			de.setType(DataElementType.TITLE);
@@ -2820,7 +2815,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		if(!InterfaceType.STANDARD.equals(user.getInterfaceType())){
+		if(this.isModalitaAvanzata()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoDumpConnettorePD);
 			de.setSelected(dumpPD);
@@ -2838,7 +2833,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-		if(!InterfaceType.STANDARD.equals(user.getInterfaceType())){
+		if(this.isModalitaAvanzata()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoDumpConnettorePA);
 			de.setSelected(dumpPA);
@@ -2849,7 +2844,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
@@ -2916,7 +2911,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(nomeintegman);
 		dati.addElement(de);
 
-		if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
 			de.setType(DataElementType.HIDDEN);
@@ -2983,7 +2978,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM);
 
 				
-				if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+				if(this.isModalitaAvanzata()){
 					de.setType(DataElementType.CHECKBOX);
 					if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
 						de.setSelected(true);

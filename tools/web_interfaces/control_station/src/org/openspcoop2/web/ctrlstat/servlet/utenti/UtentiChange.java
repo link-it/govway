@@ -124,10 +124,8 @@ public final class UtentiChange extends Action {
 			User user = utentiCore.getUser(nomesu);
 			//Prendo i vecchi dati dell'utente
 			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
-			InterfaceType interfaceType = InterfaceType.STANDARD;
-			if(InterfaceType.AVANZATA.toString().equals(tipoGui)){
-				interfaceType = InterfaceType.AVANZATA;
-			}
+			InterfaceType interfaceType = InterfaceType.convert(tipoGui, true);
+			
 			// Preparo il menu
 			utentiHelper.makeMenu();
 

@@ -90,8 +90,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * AccordiServizioParteComuneHelper
@@ -1125,18 +1123,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			dati.addElement(de);
 
-			User user = ServletUtils.getUserFromSession(this.session);
-			InterfaceType gui = user.getInterfaceType();
-
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(deffiltrodupop);
-			} else if (InterfaceType.STANDARD.equals(gui) && AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} else if (this.isModalitaStandard() && 
+					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(Costanti.CHECK_BOX_ENABLED);
-			} else if (InterfaceType.AVANZATA.equals(gui) &&
+			} else if (this.isModalitaAvanzata() &&
 					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
 					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI)) {
 				de.setType(DataElementType.HIDDEN);
@@ -1164,10 +1160,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconfricop);
-			} else if (InterfaceType.STANDARD.equals(gui) && AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} else if (this.isModalitaStandard() && 
+					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}else if (InterfaceType.AVANZATA.equals(gui) &&
+			}else if (this.isModalitaAvanzata() &&
 					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
 					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE)) {
 				de.setType(DataElementType.HIDDEN);
@@ -1195,10 +1192,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defidcollop);
-			} else if (InterfaceType.STANDARD.equals(gui) && AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} else if (this.isModalitaStandard() && 
+					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}else if (InterfaceType.AVANZATA.equals(gui) &&
+			}else if (this.isModalitaAvanzata() &&
 					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
 					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE)) {
 				de.setType(DataElementType.HIDDEN);
@@ -1226,10 +1224,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconsordop);
-			} else if (InterfaceType.STANDARD.equals(gui) && AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} else if (this.isModalitaStandard() && 
+					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			} else if (InterfaceType.AVANZATA.equals(gui) &&
+			} else if (this.isModalitaAvanzata() &&
 					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
 					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)) {
 				de.setType(DataElementType.HIDDEN);
@@ -1258,11 +1257,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defscadenzaop);
-			}  else if (InterfaceType.STANDARD.equals(gui) &&
+			}  else if (this.isModalitaStandard() &&
 					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defscadenzaop);
-			}else if (InterfaceType.AVANZATA.equals(gui) &&
+			}else if (this.isModalitaAvanzata() &&
 					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
 					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA)) {
 				de.setType(DataElementType.HIDDEN);
@@ -1290,7 +1289,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			boolean isStrutturaMSG = this.core.isShowAccordoParteComuneInformazioniStrutturaMessaggiWsdl();
 
-			if(InterfaceType.AVANZATA.equals(gui) && isStrutturaMSG){
+			if(this.isModalitaAvanzata() && isStrutturaMSG){
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL);
@@ -1659,17 +1658,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 
-			User user = ServletUtils.getUserFromSession(this.session);
-			InterfaceType gui = user.getInterfaceType();
-
-			if (InterfaceType.STANDARD.equals(gui)) {
+			if (this.isModalitaStandard()) {
 				profProtocollo = AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO;
 			}
 
 
 
 
-			if (InterfaceType.STANDARD.equals(gui)) {
+			if (this.isModalitaStandard()) {
 
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
@@ -2507,7 +2503,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 			de.setValue(""+validazioneDocumenti);
-			if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			if (this.isModalitaAvanzata()) {
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(validazioneDocumenti);
 			}else{
@@ -2658,7 +2654,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute("ShowAccordiAzioni");
 		Boolean showAccordiPortTypes = (Boolean) this.session.getAttribute("ShowAccordiPortTypes");
 		Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute("ShowAccordiCooperazione");
-		boolean isInterfacciaAvanzata = !InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
+		boolean isInterfacciaAvanzata = this.isModalitaAvanzata();
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 
 		boolean modificheAbilitate = false;
@@ -4427,8 +4423,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoServizio.getId()+""),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-					String uriAccordo = this.idAccordoFactory.getUriFromAccordo(accordoServizio);
-					de.setValue(uriAccordo);
+					IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(accordoServizio);
+					de.setValue(getLabelIdAccordo(protocollo, idAccordo));
 					de.setIdToRemove("" + accordoServizio.getId());
 					de.setToolTip(accordoServizio.getDescrizione());
 					e.addElement(de);
@@ -5466,11 +5462,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType));
 			
-			User user = ServletUtils.getUserFromSession(this.session);
-			InterfaceType gui = user.getInterfaceType();
 
-			
-			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RICHIESTA);
@@ -5519,7 +5511,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 				
 				
-				if (InterfaceType.AVANZATA.equals(gui)) {
+				if (this.isModalitaAvanzata()) {
 					 // link parametri
 					de = new DataElement();
 					de.setType(DataElementType.LINK);
@@ -6060,15 +6052,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				this.pd.setSearch("on");
 			}
 
-			User user = ServletUtils.getUserFromSession(this.session);
-			InterfaceType gui = user.getInterfaceType();
-			
 			// setto le label delle colonne nome, descrizione, tipo
 			List<String> labelList = new ArrayList<>();
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
-			if(InterfaceType.AVANZATA.equals(gui))
+			if(this.isModalitaAvanzata())
 				labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
 			
 			String[] labels = labelList.toArray(new String[labelList.size()]);
@@ -6107,7 +6096,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					de.setValue(representation.getDescrizione());
 					e.addElement(de);
 					
-					if(InterfaceType.AVANZATA.equals(gui)) {
+					if(this.isModalitaAvanzata()) {
 						de = new DataElement();
 						if(representation.getRepresentationType() != null) {
 							switch (representation.getRepresentationType()) {
@@ -6388,9 +6377,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 
-			User user = ServletUtils.getUserFromSession(this.session);
-			InterfaceType gui = user.getInterfaceType();
-
 			Long idRisorsa = null;
 			Long idResponse = null;
 			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
@@ -6440,7 +6426,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 				
 				
-				if (InterfaceType.AVANZATA.equals(gui)) {
+				if (this.isModalitaAvanzata()) {
 					 // link parametri
 					de = new DataElement();
 					de.setType(DataElementType.LINK);
@@ -6482,8 +6468,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String descrizione, MessageType messageType, RepresentationType tipo, String tipoJson, String nomeXml, String namespaceXml,
 			RepresentationXmlType xmlType)  throws Exception{
 		try {
-			User user = ServletUtils.getUserFromSession(this.session);
-			InterfaceType gui = user.getInterfaceType();
+
 			boolean modificheAbilitate = false;
 			if( tipoOperazione.equals(TipoOperazione.ADD) ){
 				modificheAbilitate = true;
@@ -6569,7 +6554,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType));
 			
-			if (InterfaceType.AVANZATA.equals(gui)) {
+			if (this.isModalitaAvanzata()) {
 				
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);

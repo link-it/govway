@@ -186,7 +186,7 @@ public final class SoggettiEndPoint extends Action {
 			Boolean isConnettoreCustomUltimaImmagineSalvata = c.getCustom();
 
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(c, ConnettoreServletType.SOGGETTO, soggettiCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(c, ConnettoreServletType.SOGGETTO, soggettiHelper, soggettiCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			// Se idhid = null, devo visualizzare la pagina per la

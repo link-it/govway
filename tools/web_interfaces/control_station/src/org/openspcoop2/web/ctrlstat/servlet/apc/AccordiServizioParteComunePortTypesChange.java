@@ -112,8 +112,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.CHANGE;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
+		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.CHANGE;
 		List<ProtocolProperty> oldProtocolPropertyList = null;
@@ -123,6 +122,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apcHelper); 
 
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);

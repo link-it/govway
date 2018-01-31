@@ -224,7 +224,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connra.getCustom();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connra, ConnettoreServletType.SERVIZIO_APPLICATIVO_RISPOSTA_ASINCRONA, saCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connra, ConnettoreServletType.SERVIZIO_APPLICATIVO_RISPOSTA_ASINCRONA, saHelper, saCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			// Se nomehid = null, devo visualizzare la pagina per la

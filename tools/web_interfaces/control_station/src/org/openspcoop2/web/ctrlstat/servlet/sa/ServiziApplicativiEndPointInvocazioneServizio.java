@@ -230,7 +230,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connis.getCustom();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_INVOCAZIONE_SERVIZIO, saCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_INVOCAZIONE_SERVIZIO, saHelper, saCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			// Se nomehid = null, devo visualizzare la pagina per la

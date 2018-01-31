@@ -76,8 +76,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * ConnettoriHelper
@@ -593,7 +591,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	public Vector<DataElement> addOpzioniAvanzateHttpToDati(Vector<DataElement> dati,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop){
 		
-		boolean showOpzioniAvanzate = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())
+		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
 				&& ServletUtils.isCheckBoxEnabled(opzioniAvanzate);
 		
 		if(showOpzioniAvanzate){
@@ -603,7 +601,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.addElement(de);
 		}
 		else{
-			if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) &&
+			if(this.isModalitaAvanzata() &&
 					!ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){
 				transfer_mode=null;
 				transfer_mode_chunk_size=null;
@@ -733,8 +731,6 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata) {
 
-		User user = ServletUtils.getUserFromSession(this.session);
-		
 		DataElement de = null;
 
 		if(prefix==null){
@@ -766,7 +762,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				boolean autenticazioneNessuna = autenticazioneNessunaAbilitata;
 				if (! (SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD.equals(toCall) || 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE.equals(toCall)) ) {
-					if (!InterfaceType.AVANZATA.equals(user.getInterfaceType())){
+					if (this.isModalitaStandard()){
 						autenticazioneNessuna = false;
 					}
 				}
@@ -1130,7 +1126,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-				if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+				if (this.isModalitaAvanzata()) {
 					de.setType(DataElementType.CHECKBOX);
 					de.setValue(opzioniAvanzate);
 					if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
@@ -1312,7 +1308,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-				if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+				if (this.isModalitaAvanzata()) {
 					de.setType(DataElementType.CHECKBOX);
 					de.setValue(opzioniAvanzate);
 					if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
@@ -1531,7 +1527,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		// se standard allora la tipologia connettori e' sempre http
 		// indipendentemente
 		// dalla proprieta settata
-		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 			tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP;
 		}
 

@@ -62,8 +62,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * ServiziApplicativiHelper
@@ -208,8 +206,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		boolean configurazioneStandardNonApplicabile = false;
 		
-		User user = ServletUtils.getUserFromSession(this.session);
-
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , this.session);
 
@@ -246,7 +242,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		
 		
-		if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 //			
 //			de = new DataElement();
 //			de.setLabel(ServiziApplicativiCostanti.LABEL_FRUITORE);
@@ -409,10 +405,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		// ************ FRUITORE ********************
 		
-		if (InterfaceType.AVANZATA.equals(user.getInterfaceType()) || 
+		if (this.isModalitaAvanzata() || 
 				!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) ) {
 				
-//			if(InterfaceType.STANDARD.equals(user.getInterfaceType())){
+//			if(this.isModalitaStandard()){
 //				de = new DataElement();
 //				de.setLabel(ServiziApplicativiCostanti.LABEL_FRUITORE);
 //				de.setType(DataElementType.TITLE);
@@ -487,7 +483,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		
 
-		if (InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+		if (this.isModalitaAvanzata()) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_ERRORE_APPLICATIVO);
 			de.setType(DataElementType.TITLE);
@@ -498,7 +494,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
-			if (InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+			if (this.isModalitaAvanzata()) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT);
 				de.setSelected(fault);
@@ -513,7 +509,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
-			if (InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+			if (this.isModalitaAvanzata()) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT);
 				de.setSelected(fault);
@@ -530,7 +526,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_ACTOR);
 				de.setValue(faultactor);
-				if (InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+				if (this.isModalitaAvanzata()) {
 					de.setType(DataElementType.TEXT_EDIT);
 				}
 				else{
@@ -545,7 +541,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
-			if (InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+			if (this.isModalitaAvanzata()) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
 				de.setSelected(genericfault);
@@ -559,7 +555,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_PREFIX);
 			de.setValue(prefixfault);
-			if (InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
+			if (this.isModalitaAvanzata()) {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else{
@@ -571,7 +567,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 
 		
-		if(InterfaceType.AVANZATA.equals(user.getInterfaceType()) || 
+		if(this.isModalitaAvanzata() || 
 			!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore)){
 		
 			de = new DataElement();
@@ -590,7 +586,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 			
 
-		if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
 			de.setType(DataElementType.HIDDEN);
@@ -621,7 +617,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		// se operazione change visualizzo i link per invocazione servizio,
 		// risposta asincrona
 		// e ruoli
-		if (TipoOperazione.CHANGE.equals(tipoOperazione) && InterfaceType.AVANZATA.equals(user.getInterfaceType()) && !this.pddCore.isPddEsterna(nomePdd)) {
+		if (TipoOperazione.CHANGE.equals(tipoOperazione) && this.isModalitaAvanzata() && !this.pddCore.isPddEsterna(nomePdd)) {
 
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_INFO_INTEGRAZIONE);
@@ -696,7 +692,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		// ************ EROGATORE ********************
 		
-		if(InterfaceType.STANDARD.equals(user.getInterfaceType())){
+		if(this.isModalitaStandard()){
 			
 			if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
 						
@@ -773,8 +769,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(ruoloErogatore==null){
 				ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 			}
-			
-			User user = ServletUtils.getUserFromSession(this.session);
 			
 			String nome = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			String provider = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
@@ -1138,7 +1132,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			} 
 
 			// erogatore
-			if(InterfaceType.STANDARD.equals(user.getInterfaceType())){
+			if(this.isModalitaStandard()){
 				if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
 					boolean isOk = this.servizioApplicativoEndPointCheckData(listExtendedConnettore);
 					if (!isOk) {
@@ -1179,9 +1173,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
 
-
-			User user = ServletUtils.getUserFromSession(this.session);
-
 			// Prendo il soggetto
 			String tmpTitle = null;
 			String protocollo = null;
@@ -1204,7 +1195,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 				
 				if(supportAsincroni==false){
-					if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
+					if (this.isModalitaAvanzata()){
 						supportAsincroni = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 					}
 				}
@@ -1263,7 +1254,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			labels.add(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
-			if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
+			if (this.isModalitaAvanzata()){
 				labels.add(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
 			}
 			if(supportAsincroni){
@@ -1316,7 +1307,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue(this.getTipologia(sa));
 					e.addElement(de);
 					
-					if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
+					if (this.isModalitaAvanzata()){
 						de = new DataElement();
 						// se la pdd e' esterna non e' possibile modificare il
 						// connettore invocazione servizio
@@ -1365,7 +1356,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							}
 
 							if(supportoAsincronoPuntualeSoggetto==false){
-								if (InterfaceType.AVANZATA.equals(user.getInterfaceType())){
+								if (this.isModalitaAvanzata()){
 									supportoAsincronoPuntualeSoggetto = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 								}
 							}
@@ -1479,8 +1470,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String getmsg,String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio){
 
-		User user = ServletUtils.getUserFromSession(this.session);
-		
 		DataElement de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 		de.setValue(idsil);
@@ -1541,7 +1530,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 		dati.addElement(de);
 
-		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+		if (this.isModalitaStandard()) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
 			de.setType(DataElementType.HIDDEN);
@@ -1594,7 +1583,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setType(DataElementType.SELECT);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 		de.setValues(tipoGM);
-		if (InterfaceType.STANDARD.equals(user.getInterfaceType()) && isInvocazioneServizio) {
+		if (this.isModalitaStandard() && isInvocazioneServizio) {
 			de.setPostBack(true);
 		}
 		if(getmsg==null){

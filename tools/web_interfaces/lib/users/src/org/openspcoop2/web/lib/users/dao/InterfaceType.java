@@ -20,6 +20,8 @@
 
 
 package org.openspcoop2.web.lib.users.dao;
+
+
 /**
  * InterfaceType
  * 
@@ -31,7 +33,55 @@ package org.openspcoop2.web.lib.users.dao;
  * 
  */
 public enum InterfaceType {
-	AVANZATA,STANDARD;
+	COMPLETA,AVANZATA,STANDARD;
+	
+	public static InterfaceType convert(String type, boolean throwNotFound) throws Exception {
+		if(InterfaceType.AVANZATA.toString().equals(type)){
+			return InterfaceType.AVANZATA;
+		}
+		else if(InterfaceType.STANDARD.toString().equals(type)){
+			return InterfaceType.STANDARD;
+		}
+		else if(InterfaceType.COMPLETA.toString().equals(type)){
+			return InterfaceType.COMPLETA;
+		}
+		if(throwNotFound) {
+			throw new Exception("Tipo ["+type+"] sconosciuto");
+		}
+		return null;
+	}
+	
+	public static boolean equals(InterfaceType src, InterfaceType ... check) {
+		if(src==null) {
+			return false;
+		}
+		return src.equalsOr(check);
+	}
+		
+	public boolean equalsOr(InterfaceType ... check) {
+		if(check==null || check.length<0) {
+			return false;
+		}
+		for (int i = 0; i < check.length; i++) {
+			if(this.equals(check[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean equals(InterfaceType object){
+		if(object==null)
+			return false;
+		if(object.name()==null)
+			return false;
+		return object.name().equals(this.name());	
+	}
+	public boolean equals(String object){
+		if(object==null)
+			return false;
+		return object.equals(this.name());	
+	}
 }
 
 

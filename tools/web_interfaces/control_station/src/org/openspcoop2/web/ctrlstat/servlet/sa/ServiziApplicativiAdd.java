@@ -71,8 +71,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * servizioApplicativoAdd
@@ -113,6 +111,8 @@ public final class ServiziApplicativiAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			boolean interfacciaAvanzata = saHelper.isModalitaAvanzata();
 			
 			String ruoloFruitore = null; //request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
 			String ruoloErogatore = null; //request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
@@ -170,7 +170,6 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			String endpointtype = saHelper.readEndPointType();
 			if(endpointtype==null){
-				boolean interfacciaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType());
 				if(interfacciaAvanzata){
 					endpointtype = TipiConnettore.DISABILITATO.toString();
 				}
@@ -258,7 +257,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			Connettore connisTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connisTmp, ConnettoreServletType.SERVIZIO_APPLICATIVO_ADD, saCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connisTmp, ConnettoreServletType.SERVIZIO_APPLICATIVO_ADD, saHelper, saCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			long soggLong = -1;
@@ -505,8 +504,6 @@ public final class ServiziApplicativiAdd extends Action {
 					soggettoConfig = soggettiCore.getSoggetto(idProv);
 				}
 
-				User userSession = ServletUtils.getUserFromSession(session);
-				
 				InvocazioneCredenziali credenzialiInvocazione = new InvocazioneCredenziali();
 				credenzialiInvocazione.setUser("");
 				credenzialiInvocazione.setPassword("");
@@ -543,7 +540,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 				// *** Invocazione servizio ***
 				InvocazioneServizio invServizio = new InvocazioneServizio();
-				if(InterfaceType.AVANZATA.equals(userSession.getInterfaceType()) || 
+				if(interfacciaAvanzata || 
 						TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore)){
 					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 					invServizio.setCredenziali(credenzialiInvocazione);
@@ -633,7 +630,7 @@ public final class ServiziApplicativiAdd extends Action {
 				credenziali.setSubject(subjectSA);
 				invocazionePorta.addCredenziali(credenziali);
 				
-				if(InterfaceType.AVANZATA.equals(userSession.getInterfaceType())) {
+				if(interfacciaAvanzata) {
 					if(credenziali.getTipo()!=null){
 						sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
 					}

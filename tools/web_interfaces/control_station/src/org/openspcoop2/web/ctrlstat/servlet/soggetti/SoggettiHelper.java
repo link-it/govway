@@ -56,8 +56,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * SoggettiHelper
@@ -291,7 +289,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		if (!isSupportatoIdentificativoPorta) {
 			de.setType(DataElementType.HIDDEN);
 		}else{
-			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			if (this.isModalitaStandard()) {
 				de.setType(DataElementType.HIDDEN);
 			}else{
 				de.setType(DataElementType.TEXT_EDIT);
@@ -326,12 +324,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 
-		User user = ServletUtils.getUserFromSession(this.session);
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
 
-		if(this.core.isRegistroServiziLocale() && InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+		if(this.core.isRegistroServiziLocale() && this.isModalitaAvanzata()){
 			de.setValues(versioniLabel);
 			de.setSelected(profilo);
 			de.setType(DataElementType.SELECT);
@@ -346,7 +343,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_PRIVATO);
-		if (this.core.isShowFlagPrivato() && !InterfaceType.STANDARD.equals(user.getInterfaceType()) && this.core.isRegistroServiziLocale() ) {
+		if (this.core.isShowFlagPrivato() && this.isModalitaAvanzata() && this.core.isRegistroServiziLocale() ) {
 			de.setType(DataElementType.CHECKBOX);
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -361,7 +358,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
 		//if (!this.core.isSinglePdD() && !InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 		// Un router lo si puo' voler creare anche in singlePdD.
-		if (!InterfaceType.STANDARD.equals(user.getInterfaceType()) && this.core.isShowGestioneSoggettiRouter()) {
+		if (this.isModalitaAvanzata() && this.core.isShowGestioneSoggettiRouter()) {
 			de.setType(DataElementType.CHECKBOX);
 			if (isRouter) {
 				de.setSelected(true);
@@ -427,7 +424,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			else{
 				if(TipoOperazione.ADD.equals(tipoOp)){
-					showCredenziali = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
+					showCredenziali = this.isModalitaAvanzata();
 				}
 			}
 			

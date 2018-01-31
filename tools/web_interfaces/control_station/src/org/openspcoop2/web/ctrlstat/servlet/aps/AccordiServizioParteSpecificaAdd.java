@@ -97,7 +97,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
@@ -191,13 +190,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.ADD;
-		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
+		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD;
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 
 			this.parametersPOST = null;
 
@@ -333,7 +332,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
-				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+				if (apsHelper.isModalitaAvanzata()) {
 					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(tmpValidazioneDocumenti!=null){
 						if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
@@ -365,7 +364,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsHelper, apsCore, 
 							request, session, this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			// Preparo il menu
@@ -536,7 +535,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Fix per bug che accadeva in modalita' standard quando si seleziona un servizio di un accordo operativo, poi si cambia idea e si seleziona un accordo bozza.
 			// lo stato del package rimaneva operativo.
-			if(this.statoPackage!=null && InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())){
+			if(this.statoPackage!=null && apsHelper.isModalitaStandard()){
 				if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
 					if(StatiAccordo.operativo.toString().equals(this.statoPackage) || StatiAccordo.finale.toString().equals(this.statoPackage)){
 						if(as!=null && as.getStatoPackage().equals(StatiAccordo.bozza.toString()) ){
@@ -928,7 +927,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						ForwardParams.ADD());
 			}
 
-			if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
+			if (apsHelper.isModalitaStandard()) {
 				switch (this.serviceBinding) {
 				case REST:
 					// il nome del servizio e' quello dell'accordo

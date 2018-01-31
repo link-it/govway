@@ -131,10 +131,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 		try {
 			
 			this.consoleOperationType = ConsoleOperationType.CHANGE;
-			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
-
-			
+						
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
@@ -602,7 +601,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connettore.getCustom();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsHelper, apsCore, 
 							request, session, true, null);
 			
 			// Lista port-type associati all'accordo di servizio

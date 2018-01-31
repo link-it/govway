@@ -51,7 +51,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
 
 /**
  * AccordiCooperazioneHelper
@@ -634,7 +633,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
 		de.setValue(privato ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setSelected(privato ? Costanti.CHECK_BOX_ENABLED : "");
-		if (this.core.isShowFlagPrivato() && modificheAbilitate && !InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+		if (this.core.isShowFlagPrivato() && modificheAbilitate && this.isModalitaAvanzata()) {
 			de.setType(DataElementType.CHECKBOX);
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -643,7 +642,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setSize(getSize());
 		dati.addElement(de);
 
-		if(this.core.isShowFlagPrivato() && !modificheAbilitate && !InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+		if(this.core.isShowFlagPrivato() && !modificheAbilitate && this.isModalitaAvanzata()){
 			de = new DataElement();
 			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO);
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO_LABEL);

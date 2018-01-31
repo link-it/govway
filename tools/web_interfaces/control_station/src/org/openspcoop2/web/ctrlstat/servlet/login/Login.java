@@ -104,6 +104,7 @@ public final class Login extends Action {
 			LoginCore loginCore = new LoginCore();
 			
 			LoginSessionUtilities.setLoginParametersSession(session, loginCore, login);
+			loginHelper.updateTipoInterfaccia();
 			
 			loginCore.performAuditLogin(login);
 			

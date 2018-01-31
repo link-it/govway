@@ -83,11 +83,12 @@ public final class UtenteChange extends Action {
 
 			UtentiCore utentiCore = new UtentiCore();
 
-			tipogui = tipogui==null ? ServletUtils.getUserFromSession(session).getInterfaceType().toString() : tipogui;
-
-			InterfaceType interfaceType = InterfaceType.STANDARD;
-			if(InterfaceType.AVANZATA.toString().equals(tipogui)){
-				interfaceType = InterfaceType.AVANZATA;
+			InterfaceType interfaceType = null;
+			if(tipogui==null) {
+				interfaceType = utentiHelper.getTipoInterfaccia();
+			}
+			else {
+				interfaceType = InterfaceType.convert(tipogui, true);
 			}
 
 			// Preparo il menu
@@ -151,6 +152,7 @@ public final class UtenteChange extends Action {
 				LoginSessionUtilities.cleanLoginParametersSession(session);
 
 				ServletUtils.setUserIntoSession(session, myS); // update in sessione.
+				utentiHelper.setTipoInterfaccia(myS.getInterfaceType()); // update InterfaceType
 				LoginSessionUtilities.setLoginParametersSession(session, utentiCore, userLogin);
 
 				pd.setMessage("Modifiche effettuate con successo", Costanti.MESSAGE_TYPE_INFO);
