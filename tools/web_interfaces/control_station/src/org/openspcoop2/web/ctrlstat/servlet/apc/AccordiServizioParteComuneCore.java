@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -1430,6 +1431,42 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
+	
+	public void popolaResourceDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente) throws Exception{
+		String nomeMetodo = "popolaResourceDaUnAltroASPC";
+		try {
+			if(aspcSorgente.sizeResourceList() > 0){
+				for (Resource nuovoResource : aspcSorgente.getResourceList()) {
+					Resource vecchioResource = null;
+					for (Resource vecchioResourceTMP : aspcDestinazione.getResourceList()) {
+						if(vecchioResourceTMP.getNome().equals(nuovoResource.getNome())){
+							vecchioResource = vecchioResourceTMP;
+							break;
+						}
+					}
+					
+					// non ho trovato l'elemento corrente nel aspc destinazione
+					if(vecchioResource == null){
+						aspcDestinazione.addResource(nuovoResource);
+					} else {
+						// ho trovato l'elemento, aggiorno i valori  rimpiazzando la risorsa
+						for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
+							if(aspcDestinazione.getResource(i).getNome().equals(vecchioResource.getNome())) {
+								aspcDestinazione.removeResource(i);
+								break;
+							}
+						}
+						aspcDestinazione.addResource(nuovoResource);
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw e;
+		}
+	}
+	
 	public void popolaPorttypeOperationDaUnAltroASPC(AccordoServizioParteComune aspcDestinazione, AccordoServizioParteComune aspcSorgente) throws Exception{
 		String nomeMetodo = "popolaPorttypeOperationDaUnAltroASPC";
 		try {
@@ -1447,47 +1484,34 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 					if(vecchioPortType == null){
 						aspcDestinazione.addPortType(nuovoPortType);
 					} else {
-						// ho trovato l'elemento, aggiorno i valori 
-						vecchioPortType.setNome(nuovoPortType.getNome());
-						vecchioPortType.setConfermaRicezione(nuovoPortType.getConfermaRicezione());
-						vecchioPortType.setConsegnaInOrdine(nuovoPortType.getConsegnaInOrdine());
-						vecchioPortType.setDescrizione(nuovoPortType.getDescrizione());
-						vecchioPortType.setFiltroDuplicati(nuovoPortType.getFiltroDuplicati());
-						vecchioPortType.setProfiloCollaborazione(nuovoPortType.getProfiloCollaborazione());
-						vecchioPortType.setProfiloPT(nuovoPortType.getProfiloPT());
-						vecchioPortType.setScadenza(nuovoPortType.getScadenza());
-						vecchioPortType.setStyle(nuovoPortType.getStyle());
+						// ho trovato l'elemento, aggiorno i valori  rimpiazzando la risorsa
+						for (int i = 0; i < aspcDestinazione.sizePortTypeList(); i++) {
+							if(aspcDestinazione.getPortType(i).getNome().equals(vecchioPortType.getNome())) {
+								aspcDestinazione.removePortType(i);
+								break;
+							}
+						}
+						aspcDestinazione.addPortType(nuovoPortType);
 						
 						// analisi delle azioni presenti
 						if(nuovoPortType.sizeAzioneList() > 0){
-							for (Operation nuovaAzione : nuovoPortType.getAzioneList()) {
-								Operation oldAzione = null;
-								for (Operation oldAzioneTMP : vecchioPortType.getAzioneList()) {
-									if(oldAzioneTMP.getNome().equals(nuovaAzione.getNome())){
-										oldAzione = oldAzioneTMP ;
+							for (Operation vecchiaAzione : vecchioPortType.getAzioneList()) {
+								boolean find = false;
+								for (Operation nuovaAzione : nuovoPortType.getAzioneList()) {
+									if(nuovaAzione.getNome().equals(vecchiaAzione.getNome())) {
+										find = true;
 										break;
 									}
 								}
-								
-								// se non esiste una azione con lo stesso nome la aggiungo
-								if(oldAzione == null){
-									vecchioPortType.addAzione(nuovaAzione);
-								}else {
-									// aggiorno la vecchia aazione
-									oldAzione.setNome(nuovaAzione.getNome());
-									oldAzione.setConfermaRicezione(nuovaAzione.getConfermaRicezione());
-									oldAzione.setConsegnaInOrdine(nuovaAzione.getConsegnaInOrdine());
-									oldAzione.setCorrelata(nuovaAzione.getCorrelata());
-									oldAzione.setCorrelataServizio(nuovaAzione.getCorrelataServizio());
-									oldAzione.setFiltroDuplicati(nuovaAzione.getFiltroDuplicati());
-									oldAzione.setIdCollaborazione(nuovaAzione.getIdCollaborazione());
-									oldAzione.setMessageInput(nuovaAzione.getMessageInput());
-									oldAzione.setMessageOutput(nuovaAzione.getMessageOutput());
-									oldAzione.setProfAzione(nuovaAzione.getProfAzione());
-									oldAzione.setProfiloCollaborazione(nuovaAzione.getProfiloCollaborazione());
-									oldAzione.setScadenza(nuovaAzione.getScadenza());
-									oldAzione.setSoapAction(nuovaAzione.getSoapAction());
-									oldAzione.setStyle(nuovaAzione.getStyle());
+								if(!find) {
+									nuovoPortType.addAzione(vecchiaAzione);
+								}
+							}
+						}
+						else {
+							if(vecchioPortType.sizeAzioneList()>0) {
+								for (Operation op : vecchioPortType.getAzioneList()) {
+									nuovoPortType.addAzione(op);
 								}
 							}
 						}

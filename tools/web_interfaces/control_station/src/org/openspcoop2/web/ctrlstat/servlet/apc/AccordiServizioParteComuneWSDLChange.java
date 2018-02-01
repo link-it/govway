@@ -388,7 +388,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				// e se non e' un reset
 				if(enableAutoMapping && (this.wsdl != null) && !this.wsdl.trim().replaceAll("\n", "").equals("") ){
 					if(actionConfirm == null){
-						if(as.sizePortTypeList() > 0  ){
+						if(as.sizePortTypeList() > 0 || as.sizeResourceList()>0 ){
 							
 							// salvo il wsdl che ha inviato l'utente
 							ServletUtils.setObjectIntoSession(session, this.wsdl, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
@@ -416,8 +416,18 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							pd.setDati(dati);
 
 							String uriAccordo = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
-							String msg = "Attenzione, l'accordo ["+uriAccordo+"] contiene la definizione di "+as.sizePortTypeList()+" servizi e "+(as.sizeAllegatoList()+as.sizeSpecificaSemiformaleList())+" allegati. <BR/>"+
-									"Il caricamento del wsdl comporter&agrave; l'aggiornamento dei servizi/allegati esistenti e/o la creazione di nuovi servizi/allegati. Procedere?";
+							String oggetto = null;
+							String updateOggetti = null;
+							if(as.sizePortTypeList() > 0) {
+								oggetto = as.sizePortTypeList()+" servizi";
+								updateOggetti = "servizi";
+							}
+							else {
+								oggetto = as.sizeResourceList()+" risorse";
+								updateOggetti = "risorse";
+							}
+							String msg = "Attenzione, l'accordo ["+uriAccordo+"] contiene la definizione di "+oggetto+" e "+(as.sizeAllegatoList()+as.sizeSpecificaSemiformaleList())+" allegati. <BR/>"+
+									"Il caricamento della specifica comporter&agrave; l'aggiornamento dei "+updateOggetti+"/allegati esistenti e/o la creazione di nuovi "+updateOggetti+"/allegati. Procedere?";
 								
 							pd.setMessage(msg, Costanti.MESSAGE_TYPE_INFO);
 
@@ -439,14 +449,14 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							return ServletUtils.getStrutsForwardEditModeConfirm(mapping, 
 									AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 						}
-					} else {
-						
-					}
+					} 
 
 					// Arrivo qui quando l'utente ha schiacciato Ok nella maschera di conferma, oppure l'accordo non aveva servizi 
 
 					if((this.wsdl != null) && !this.wsdl.trim().replaceAll("\n", "").equals("") ){
 						AccordoServizioParteComune asNuovo = new AccordoServizioParteComune();
+						asNuovo.setFormatoSpecifica(as.getFormatoSpecifica());
+						asNuovo.setServiceBinding(as.getServiceBinding());
 
 						boolean fillXsd = false;
 						String tipo = null;
@@ -516,11 +526,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							asNuovo.setByteWsdlLogicoFruitore(as.getByteWsdlLogicoFruitore());
 						}
 
-						// Genero la nuova definizione di port-type e operation
+						// Genero la nuova definizione
 						apcCore.mappingAutomatico(tipoProtocollo, asNuovo, this.validazioneDocumenti);
 
-						// se l'aggiornamento ha creato nuovi porttype o aggiornato i vecchi aggiorno la configurazione
-						apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo);
+						// se l'aggiornamento ha creato nuovi oggetti o aggiornato i vecchi aggiorno la configurazione
+						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
+							apcCore.popolaResourceDaUnAltroASPC(as,asNuovo);
+						}
+						else {
+							apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo);
+						}
 						
 						// popolo gli allegati
 						if(fillXsd && enableAutoMapping_estraiXsdSchemiFromWsdlTypes && FormatoSpecifica.WSDL_11.equals(as.getFormatoSpecifica())){
