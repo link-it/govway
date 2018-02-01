@@ -603,7 +603,15 @@ div.messages-errors {
 }
 
 div.messages-errors a {
+	cursor: pointer;
+	font-family: 'Roboto';
+	text-decoration: underline;
 	color: ${messages.error.color};
+}
+
+div.messages-errors a:hover {
+	color: ${messages.error.color};
+	text-decoration: none;
 }
 
 div.messages-info {
@@ -616,7 +624,15 @@ div.messages-info {
 }
 
 div.messages-info a {
+	cursor: pointer;
+	font-family: 'Roboto';
+	text-decoration: underline;
 	color: ${messages.info.color};
+}
+
+div.messages-info a:hover {
+	color: ${a.hover.color};
+	text-decoration: none;
 }
 
 
