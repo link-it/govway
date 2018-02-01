@@ -7,6 +7,7 @@ CREATE TABLE users
 	login VARCHAR2(255) NOT NULL,
 	password VARCHAR2(255) NOT NULL,
 	tipo_interfaccia VARCHAR2(255) NOT NULL,
+	interfaccia_completa NUMBER,
 	permessi VARCHAR2(255) NOT NULL,
 	protocolli CLOB,
 	protocollo VARCHAR2(255),

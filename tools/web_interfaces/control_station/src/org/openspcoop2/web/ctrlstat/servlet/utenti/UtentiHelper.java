@@ -39,6 +39,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
@@ -61,7 +62,7 @@ public class UtentiHelper extends ConsoleHelper {
 	public Vector<DataElement> addUtentiToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
-			String changepwd){
+			String changepwd) throws DriverUsersDBException{
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_INFORMAZIONI_UTENTE);
@@ -135,8 +136,28 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
 		de.setType(DataElementType.SELECT);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-		String[] tipiInterfacce={InterfaceType.STANDARD.toString(),InterfaceType.AVANZATA.toString()};
-		String[] tipiInterfacceLabel={InterfaceType.STANDARD.toString().toLowerCase(),InterfaceType.AVANZATA.toString().toLowerCase()};
+		boolean permitInterfaceComplete = false;
+		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+			User user = this.utentiCore.getUser(nomesu);
+			permitInterfaceComplete = user.isPermitInterfaceComplete();
+		}
+		String[] tipiInterfacce=null;
+		String[] tipiInterfacceLabel=null;
+		if(permitInterfaceComplete) {
+			tipiInterfacce = new String[3];			
+		}
+		else {
+			tipiInterfacce = new String[2];
+		}
+		tipiInterfacce[0]=InterfaceType.STANDARD.toString();
+		tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
+		if(permitInterfaceComplete) {
+			tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
+		}
+		tipiInterfacceLabel = new String[tipiInterfacce.length];
+		for (int i = 0; i < tipiInterfacce.length; i++) {
+			tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
+		}
 		de.setValues(tipiInterfacce);
 		de.setLabels(tipiInterfacceLabel);
 		de.setSelected(interfaceType.toString());
@@ -386,8 +407,24 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
 		de.setType(DataElementType.SELECT);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-		String[] tipiInterfacce={InterfaceType.STANDARD.toString(),InterfaceType.AVANZATA.toString()};
-		String[] tipiInterfacceLabel={InterfaceType.STANDARD.toString().toLowerCase(),InterfaceType.AVANZATA.toString().toLowerCase()};
+		User user = ServletUtils.getUserFromSession(this.session);
+		String[] tipiInterfacce=null;
+		String[] tipiInterfacceLabel=null;
+		if(user.isPermitInterfaceComplete()) {
+			tipiInterfacce = new String[3];			
+		}
+		else {
+			tipiInterfacce = new String[2];
+		}
+		tipiInterfacce[0]=InterfaceType.STANDARD.toString();
+		tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
+		if(user.isPermitInterfaceComplete()) {
+			tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
+		}
+		tipiInterfacceLabel = new String[tipiInterfacce.length];
+		for (int i = 0; i < tipiInterfacce.length; i++) {
+			tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
+		}
 		de.setValues(tipiInterfacce);
 		de.setLabels(tipiInterfacceLabel);
 		de.setSelected(interfaceType.toString());

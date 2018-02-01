@@ -104,6 +104,14 @@ public class DriverUsersDB {
 				else
 					user.setInterfaceType(InterfaceType.valueOf(gui.toUpperCase()));
 
+				int interfaceCompletePermit = rs.getInt("interfaccia_completa");
+				if(CostantiDB.TRUE == interfaceCompletePermit) {
+					user.setPermitInterfaceComplete(true);
+				}
+				else {
+					user.setPermitInterfaceComplete(false);
+				}
+				
 				String perm =rs.getString("permessi");
 				user.setPermessi(PermessiUtente.toPermessiUtente(perm));
 				
@@ -112,6 +120,7 @@ public class DriverUsersDB {
 				
 				String protocollo =rs.getString("protocollo");
 				user.setProtocolloSelezionato(protocollo);
+				
 			}
 			rs.close();
 			stm.close();
@@ -222,11 +231,6 @@ public class DriverUsersDB {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.USERS);
 				sqlQueryObject.addSelectField("login");
-				sqlQueryObject.addSelectField("password");
-				sqlQueryObject.addSelectField("tipo_interfaccia");
-				sqlQueryObject.addSelectField("permessi");
-				sqlQueryObject.addSelectField("protocolli");
-				sqlQueryObject.addSelectField("protocollo");
 				sqlQueryObject.addWhereLikeCondition("login", search, true, true);
 				sqlQueryObject.addOrderBy("login");
 				sqlQueryObject.setSortType(true);
@@ -238,11 +242,6 @@ public class DriverUsersDB {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.USERS);
 				sqlQueryObject.addSelectField("login");
-				sqlQueryObject.addSelectField("password");
-				sqlQueryObject.addSelectField("tipo_interfaccia");
-				sqlQueryObject.addSelectField("permessi");
-				sqlQueryObject.addSelectField("protocolli");
-				sqlQueryObject.addSelectField("protocollo");
 				sqlQueryObject.addOrderBy("login");
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -405,6 +404,7 @@ public class DriverUsersDB {
 			sqlQueryObject.addInsertField("login", "?");
 			sqlQueryObject.addInsertField("password", "?");
 			sqlQueryObject.addInsertField("tipo_interfaccia", "?");
+			sqlQueryObject.addInsertField("interfaccia_completa", "?");
 			sqlQueryObject.addInsertField("permessi", "?");
 			sqlQueryObject.addInsertField("protocolli", "?");
 			sqlQueryObject.addInsertField("protocollo", "?");
@@ -414,6 +414,7 @@ public class DriverUsersDB {
 			stm.setString(index++, login);
 			stm.setString(index++, user.getPassword());
 			stm.setString(index++, user.getInterfaceType().toString());
+			stm.setInt(index++, user.isPermitInterfaceComplete()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++, user.getPermessi().toString());
 			stm.setString(index++, user.getProtocolliSupportatiAsString());
 			stm.setString(index++, user.getProtocolloSelezionato());
@@ -449,6 +450,7 @@ public class DriverUsersDB {
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
 			sqlQueryObject.addUpdateField("password", "?");
 			sqlQueryObject.addUpdateField("tipo_interfaccia", "?");
+			sqlQueryObject.addUpdateField("interfaccia_completa", "?");
 			sqlQueryObject.addUpdateField("permessi", "?");
 			sqlQueryObject.addUpdateField("protocolli", "?");
 			sqlQueryObject.addUpdateField("protocollo", "?");
@@ -458,6 +460,7 @@ public class DriverUsersDB {
 			int index = 1;
 			stm.setString(index++, user.getPassword());
 			stm.setString(index++,user.getInterfaceType().toString());
+			stm.setInt(index++, user.isPermitInterfaceComplete()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++,user.getPermessi().toString());
 			stm.setString(index++, user.getProtocolliSupportatiAsString());
 			stm.setString(index++, user.getProtocolloSelezionato());
@@ -512,33 +515,4 @@ public class DriverUsersDB {
 		}
 	}
 
-	/**
-	 * Reset delle tabelle del db gestito da questo driver
-	 */
-	public void reset() throws DriverUsersDBException {
-		PreparedStatement stmt = null;
-		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addDeleteTable("users");
-			sqlQueryObject.addWhereCondition("login <> ?");
-			sqlQueryObject.addWhereCondition("login <> ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String updateString = sqlQueryObject.createSQLDelete();
-			stmt = this.connectionDB.prepareStatement(updateString);
-			stmt.setString(1, "super");
-			stmt.setString(2, "amministratore");
-			stmt.executeUpdate();
-			stmt.close();
-		} catch (Exception qe) {
-			throw new DriverUsersDBException(qe.getMessage(),qe);
-		} finally {
-			//Chiudo statement and resultset
-			try {
-				if (stmt != null)
-					stmt.close();
-			} catch (Exception e) {
-				//ignore
-			}
-		}
-	}
 }

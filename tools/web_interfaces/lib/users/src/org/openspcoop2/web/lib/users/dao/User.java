@@ -43,6 +43,7 @@ public class User implements Serializable {
 	protected String login;
 	protected String password;
 	private InterfaceType interfaceType;
+	private boolean permitInterfaceComplete = false;
 	private PermessiUtente permessi;
 	private List<String> protocolliSupportati;
 	private String protocolloSelezionato;
@@ -102,6 +103,13 @@ public class User implements Serializable {
 
 	public void setProtocolloSelezionato(String protocolloSelezionato) {
 		this.protocolloSelezionato = protocolloSelezionato;
+	}
+	
+	public boolean isPermitInterfaceComplete() {
+		return this.permitInterfaceComplete;
+	}
+	public void setPermitInterfaceComplete(boolean permitInterfaceComplete) {
+		this.permitInterfaceComplete = permitInterfaceComplete;
 	}
 	
 	public InterfaceType getInterfaceType() {

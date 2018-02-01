@@ -78,7 +78,19 @@
                                 <linkit:sql-column-mapping name="tipo_interfaccia"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Indicazione sulla modalità di utilizzo dell'interfaccia:
 - 'standard': l'utente dovrà fornire solamente le informazioni minime per configurare fruizioni e/o erogazioni
-- 'avanzata': l'utente potrà beneficiare di funzionalità avanzate della console]]></linkit:sql-ddl-column-comment>
+- 'avanzata': l'utente potrà beneficiare di funzionalità avanzate della console
+- 'completa': l'utente potrà beneficare di tutte le funzionalità della console]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="interfaccia_completa" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="interfaccia_completa" />
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se l'utenza puo' abilitare la modalita' completa di visualizzazione dell'interfaccia.]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
