@@ -602,6 +602,10 @@ div.messages-errors {
 	border-radius: 8px;
 }
 
+div.messages-errors a {
+	color: ${messages.error.color};
+}
+
 div.messages-info {
 	margin: 0 40px 20px 40px;
 	padding: 10px 20px;
@@ -609,6 +613,10 @@ div.messages-info {
 	background-color: ${messages.info.background.color};
 	color: ${messages.info.color};
 	border-radius: 8px;
+}
+
+div.messages-info a {
+	color: ${messages.info.color};
 }
 
 
