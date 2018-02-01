@@ -358,18 +358,32 @@ public class UtentiHelper extends ConsoleHelper {
 
 	}
 
-	public void addUtenteChangeToDato(Vector<DataElement> dati,InterfaceType interfaceType,
-			String changepw){
+	public void addUtenteChangeToDati(Vector<DataElement> dati,InterfaceType interfaceType,
+			String changepw, String nomeUtente, String modalitaDisponibili){
 
 		DataElement de = new DataElement();
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+		de.setLabel(UtentiCostanti.LABEL_INFO_UTENTE);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
-
+		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
+		de.setType(DataElementType.TEXT);
+		de.setValue(nomeUtente);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_MODALITA_GATEWAY);
+		de.setType(DataElementType.TEXT);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_LIST);
+		de.setValue(modalitaDisponibili);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
 		de.setType(DataElementType.SELECT);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 		String[] tipiInterfacce={InterfaceType.STANDARD.toString(),InterfaceType.AVANZATA.toString()};
@@ -379,7 +393,7 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setSelected(interfaceType.toString());
 		dati.addElement(de);
 
-
+		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
 		de.setType(DataElementType.TITLE);

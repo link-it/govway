@@ -66,10 +66,12 @@ public class UtentiCostanti {
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_UTENTI = "Utenti";
+	public final static String LABEL_INFO_UTENTE = "Utente";
 	public final static String LABEL_UTENTE = "Profilo Utente";
 	public final static String LABEL_INFORMAZIONI_UTENTE = "Informazioni Utente";
 	public final static String LABEL_PASSWORD = "Password";
-	public final static String LABEL_MODALITA_INTERFACCIA = "Modalità Interfaccia";
+	public final static String LABEL_MODALITA_INTERFACCIA = "Modalit&agrave; Interfaccia";
+	public final static String LABEL_MODALITA_GATEWAY = "Modalit&agrave; Gateway";
 	public final static String LABEL_PERMESSI_GESTIONE = "Permessi di Gestione";
 	public final static String LABEL_CAMBIA_IDENTITA = "Cambia identità";
 	public final static String LABEL_ACCEDI = "Accedi";
@@ -103,6 +105,9 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTE_CHANGE_GUI = "change_gui";
 	public final static String PARAMETRO_UTENTE_ESEGUI = "changePw";
 	public final static String PARAMETRO_UTENTE_PROTOCOLLO = "protocollo_";
+	public final static String PARAMETRO_UTENTE_TIPO_MODALITA = "tipo_mod";
+	public final static String PARAMETRO_UTENTE_TIPO_MODALITA_LIST = "tipo_mod_list";
+	public final static String PARAMETRO_UTENTE_CHANGE_MODALITA = "change_mod";
 	
 	
 	/* LABEL PARAMETRI */
@@ -129,5 +134,8 @@ public class UtentiCostanti {
 	public final static String LABEL_UTENTE_PERMESSI_SERVIZI_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_SERVIZI+"'";
 	public final static String LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE+"'";
 	
+	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Qualsiasi";
 	
+	/* VALORI PARAMETRI */
+	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";
 }

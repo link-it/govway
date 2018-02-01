@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
@@ -72,6 +74,7 @@ public final class UtenteChange extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
+		String modalitaGatewayDisponibili = "";
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
@@ -80,6 +83,8 @@ public final class UtenteChange extends Action {
 			String tipogui = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI);
 			String changeGui = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI);
 			String changepw = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
+			String changeModalita = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA);
+			String tipoModalita = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 
 			UtentiCore utentiCore = new UtentiCore();
 
@@ -90,20 +95,44 @@ public final class UtenteChange extends Action {
 			else {
 				interfaceType = InterfaceType.convert(tipogui, true);
 			}
+			
+			String protocolloSelezionatoUtente = null;
+			
+			if(tipoModalita == null) {
+				// prelevo il vecchio valore del protocollo
+				protocolloSelezionatoUtente = ServletUtils.getUserFromSession(session).getProtocolloSelezionato();
+			} else {
+				// il caso all viene gestito impostando il valore del protocollo selezionato = null;
+				if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL))
+					protocolloSelezionatoUtente  = tipoModalita;
+			}
+			
 
 			// Preparo il menu
 			utentiHelper.makeMenu();
+			
+			List<String> protocolliDisponibli = utentiCore.getProtocolli(session, true);
+			StringBuilder sb= new StringBuilder();
+			for (String protocollo : protocolliDisponibli) {
+				if(sb.length() > 0)
+					sb.append(", ");
+				
+				sb.append(ConsoleHelper.getLabelProtocollo(protocollo));
+			}
+			
+			modalitaGatewayDisponibili = sb.toString();
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 
 					new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 					new Parameter(UtentiCostanti.LABEL_UTENTE, null));
 
+			User myS = null;
 			// Se idhid != null, modifico i dati della porta di dominio nel db
 			if(ServletUtils.isEditModeInProgress(request) == false){
 
 				//se e' richiesta la modifica pwd allora controllo dati inseriti per modifica pwd
-				User myS = null;
+				
 				if(ServletUtils.isCheckBoxEnabled(changepw)){
 
 					// Controlli sui campi immessi
@@ -114,7 +143,7 @@ public final class UtenteChange extends Action {
 
 						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-						utentiHelper.addUtenteChangeToDato(dati, interfaceType, changepw);
+						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili);
 
 						pd.setDati(dati);
 
@@ -142,11 +171,12 @@ public final class UtenteChange extends Action {
 				}
 
 
-				// modifica interface type
+				// modifica interface type oppure modalita gateway
 				if(myS==null){
 					myS = utentiCore.getUser(userLogin);
 				}
-				myS.setInterfaceType(InterfaceType.valueOf(tipogui));
+				myS.setInterfaceType(interfaceType);
+				myS.setProtocolloSelezionato(protocolloSelezionatoUtente);
 				utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
 
 				LoginSessionUtilities.cleanLoginParametersSession(session);
@@ -158,20 +188,10 @@ public final class UtenteChange extends Action {
 				pd.setMessage("Modifiche effettuate con successo", Costanti.MESSAGE_TYPE_INFO);
 
 			}//fine modifica user interface
-
-			// provengo dalla maschera di modifica utente
-			if(changeGui == null){
-				// preparo i campi
-				Vector<DataElement> dati = new Vector<DataElement>();
-
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-				utentiHelper.addUtenteChangeToDato(dati, interfaceType, changepw);
-
-				pd.setDati(dati);
-
-
-			} else {
+			
+			
+			// se ho cliccato sul link cambia modalita interfaccia
+			if(changeGui != null) {
 				// provengo dal link presente nell'header della pagina a dx.
 				pd.setMessage("Passaggio all'interfaccia '"+interfaceType.toString().toLowerCase()+"' effettuato con successo.", Costanti.MESSAGE_TYPE_INFO);
 
@@ -180,7 +200,54 @@ public final class UtenteChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			} else if(changeModalita != null) { // click sul link cambia modalita gateway 
+				// messaggio di cambiamento del protocollo:
+				List<String> protocolli = utentiCore.getProtocolli(session);
+				StringBuilder sbProtocolli = new StringBuilder();
+				for (String protocollo : protocolli) {
+					String descrizioneProtocollo = ConsoleHelper.getDescrizioneProtocollo(protocollo);
+					String webSiteProtocollo = ConsoleHelper.getWebSiteProtocollo(protocollo);
+					String labelProtocollo = ConsoleHelper.getLabelProtocollo(protocollo); 
+					
+//					if(sbProtocolli.length() > 0)
+//						sbProtocolli.append("<br/>");
+					
+					sbProtocolli.append("<p>");
+					
+					if(protocolloSelezionatoUtente == null) {
+						sbProtocolli.append(labelProtocollo).append(": ");
+					}
+					sbProtocolli.append(descrizioneProtocollo).append("&nbsp;(").append(webSiteProtocollo).append(")"); 
+//					.append("&nbsp;( <a href=\"").append(webSiteProtocollo).append("\">").append(webSiteProtocollo).append("</a>)"); 
+					
+					sbProtocolli.append("<p/>");
+				}
+				
+				String labelProt = protocolloSelezionatoUtente != null ?  ConsoleHelper.getLabelProtocollo(protocolloSelezionatoUtente) : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
+				String pdMsg = "";
+				if(protocolloSelezionatoUtente == null) {
+					pdMsg = "<p>Passaggio alla modalit&agrave; '"+labelProt+"' effettuato con successo, sono abilitate le seguenti modalit&agrave;:<p/>" + sbProtocolli.toString();
+				} else {
+					pdMsg = "<p>Passaggio alla modalit&agrave; '"+labelProt+"' effettuato con successo:<p/>" + sbProtocolli.toString();
+				}
+				
+				pd.setMessage(pdMsg, Costanti.MESSAGE_TYPE_INFO);
+				
+				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			} else {
+				// provengo dalla maschera di modifica utente
+				// preparo i campi
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili);
+
+				pd.setDati(dati);
 			}
 
 			// Reinit general data per aggiornare lo stato della barra dell'header a dx.

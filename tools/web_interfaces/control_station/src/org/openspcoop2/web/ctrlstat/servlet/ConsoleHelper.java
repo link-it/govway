@@ -3676,28 +3676,28 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
+	public static List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
 		if(protocolli==null || protocolli.size()<=0) {
 			return null;
 		}
 		List<String> l = new ArrayList<>();
 		for (String protocollo : protocolli) {
-			l.add(this.getLabelProtocollo(protocollo));
+			l.add(ConsoleHelper.getLabelProtocollo(protocollo));
 		}
 		return l;
 	}
 	
-	public String getLabelProtocollo(String protocollo) throws Exception{
+	public static String getLabelProtocollo(String protocollo) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getLabel();
 	}
 	
-	public String getDescrizioneProtocollo(String protocollo) throws Exception{
+	public static String getDescrizioneProtocollo(String protocollo) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getDescription();
 	}
 	
-	public String getWebSiteProtocollo(String protocollo) throws Exception{
+	public static String getWebSiteProtocollo(String protocollo) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getWebSite();
 	}

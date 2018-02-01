@@ -77,6 +77,82 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 				 		<table>
 				 			<tbody>
 				 				<tr>
+				 					<%
+										Vector<GeneralLink> modalita = gd.getModalitaLinks();
+							 			if(modalita!= null && modalita.size() > 1) {
+							 				GeneralLink modalitaTitoloLink = modalita.get(0);
+									 		%>
+									 		<td>
+										 		<div id="menuModalita" class="ddmenu-label">
+													<div class="text-decor"> 
+														<span class="modalita"><%=modalitaTitoloLink.getLabel() %></span>
+														<span class="modalitaImg"></span>
+													</div>
+													<div style="margin: 0px; padding: 0px; border: 0px; position: absolute; z-index: 100;">
+														<div id="menuModalita_menu">
+										 				<% 
+												  		GeneralLink l;
+												  		for (int i = 1; i < modalita.size(); i++) {
+															l = (GeneralLink) modalita.elementAt(i);
+															String icon = l.getIcon();
+															String spanLabelClass= "item-label";
+															String itemClass= "menu-item";
+															if(icon!= null && icon.length() > 0){
+																icon = "icon-" + icon;	
+																spanLabelClass = "item-label-with-icon";
+																itemClass ="menu-item-with-icon";
+															}
+															
+															if(l.getUrl().equals("")){
+																itemClass += " menu-no-pointer";
+															}
+															
+															if (!l.getLabel().equals("")) {							
+												  				%>
+												    			<div class="<%=itemClass %>">
+												    				<span class="item-icon <%=icon %>"></span>
+												    				<span class="<%=spanLabelClass %>">
+															    		<% 
+															    		if (!l.getUrl().equals("")) {
+															      			if (!l.getTarget().equals("")) {
+															        		//url+target
+																				if (l.getTarget().equals("_blank")) {
+															          			%>
+															          				<a class="td2PageHeader" onClick="var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;" 
+															          					target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+															          			<%
+																				}else if("new".equals(l.getTarget())){
+																				%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																				}else {
+															          			%><a class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																				}
+															      			} else {
+															        		//solo url
+															        		%><a class="td2PageHeader" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+															      			}
+																		} else {
+															      			if (!l.getOnClick().equals("")) {
+															        		//onClick
+															        		%><a class="td2PageHeader" href="" onClick="<%= l.getOnClick() %>; return false;"><%= l.getLabel() %></a><%
+															      			} else {
+																			//solo stringa
+															        		%><span class="td2PageHeader"><%= l.getLabel() %></span><%
+															      			}
+															    		}
+															    		%>
+														    		</span>					    					    
+													    		</div>
+														    	<%
+															}
+												  		}
+												    	%>
+										 				</div>
+												  	</div>
+												</div>
+									 		</td>
+				 						<%
+							 			}
+										%>
 				 					<td>
 								 		<%
 										Vector<GeneralLink> v = gd.getHeaderLinks();
@@ -85,8 +161,9 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 									 		%>
 											<div id="menuUtente" class="ddmenu-label">
 												<div class="text-decor"> 
-													<span class="nomeUtente"><%=userNameLink.getLabel() %></span>
-													<span class="nomeUtenteImg"></span>
+													<span class="nomeUtenteImg">
+													
+													</span>
 												</div>
 												<div style="margin: 0px; padding: 0px; border: 0px; position: absolute; z-index: 100;">
 													<div id="menuUtente_menu">

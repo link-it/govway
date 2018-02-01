@@ -35,6 +35,8 @@ else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
 Vector<GeneralLink> v = gd.getHeaderLinks();
+
+Vector<GeneralLink> modalitaLinks = gd.getModalitaLinks();
 	if(v!= null && v.size() > 1) {
 		
 %>
@@ -104,6 +106,27 @@ $(document).ready(function(){
 		var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
 		window.location = destinazione;
 	});
+	
+<% if(modalitaLinks!= null && modalitaLinks.size() > 1) { %>
+		// menu modalita
+		$('#menuModalita').hover(
+		        function () {
+		            //mostra sottomenu
+		            // $('ul', this).stop(true, true).delay(50).slideDown(100); versione jquery > 1.3
+		            //.animate({top: 0}, 50)
+		            $('#menuModalita_menu', this).stop(true, true).delay(50).slideDown(100);
+		        }, 
+		        function () {
+		            //nascondi sottomenu
+		            $('#menuModalita_menu', this).stop(true, true).delay(150).slideUp(200);        
+		        }
+		    );
+		
+		$('#menuModalita_menu span[class*="icon-check"]').click(function() {
+			var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
+			window.location = destinazione;
+		});
+<% } %>
 	
 	if(isIE()){
 		if(IEVersione() == 10){

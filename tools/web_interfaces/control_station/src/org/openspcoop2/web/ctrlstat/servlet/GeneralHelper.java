@@ -21,6 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet;
 
+import java.text.MessageFormat;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -164,7 +166,7 @@ public class GeneralHelper {
 				InterfaceType tipoInterfaccia = u.getInterfaceType();
 				if(tipoInterfaccia.equals(InterfaceType.STANDARD)){
 					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
-					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_MODALITA_STANDARD);
+					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
 					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
 							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
@@ -173,12 +175,13 @@ public class GeneralHelper {
 
 				} else {
 					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
-					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_MODALITA_AVANZATA);
+					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_CHECKED);
 					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.STANDARD.toString()),
 							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
 				}
+				// [TODO] aggiungere completa
 				link.addElement(glUtente);
 
 				// 3. informazioni/about
@@ -205,6 +208,8 @@ public class GeneralHelper {
 			}
 
 			gd.setHeaderLinks(link);
+
+			gd.setModalitaLinks(this.caricaMenuProtocolliUtente(u)); 
 		}
 
 		return gd;
@@ -254,7 +259,56 @@ public class GeneralHelper {
 		return 50;
 	}
 
+	public Vector<GeneralLink> caricaMenuProtocolliUtente(User u){
+		Vector<GeneralLink> link = new Vector<GeneralLink>();
 
+		// 1. controllo se ho piu' di un protocollo disponibile per l'utente
+		try {
+			List<String> protocolliDispondibili = this.core.getProtocolli(this.session,true);
+
+			if(protocolliDispondibili != null && protocolliDispondibili.size() > 1) {
+				// prelevo l'eventuale protocollo selezionato
+				String protocolloSelezionato = u.getProtocolloSelezionato();
+				
+				GeneralLink glModalitaCorrente = new GeneralLink();
+ 				String labelSelezionato = protocolloSelezionato == null ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper.getLabelProtocollo(protocolloSelezionato);
+				glModalitaCorrente.setLabel(MessageFormat.format(LoginCostanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato)); 
+				glModalitaCorrente.setUrl("");
+				link.addElement(glModalitaCorrente);
+
+				// popolo la tendina con i protocolli disponibili
+				for (String protocolloDisponibile : protocolliDispondibili) {
+					GeneralLink glProt = new GeneralLink();
+					
+					String labelProt = ConsoleHelper.getLabelProtocollo(protocolloDisponibile);
+					glProt.setLabel(labelProt);
+					String iconProt = protocolloSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(protocolloSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+					glProt.setIcon(iconProt);
+					glProt.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA, protocolloDisponibile),
+							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA,Costanti.CHECK_BOX_ENABLED)
+							);
+					
+					link.addElement(glProt);
+				}
+
+				// seleziona tutti 
+				GeneralLink glAll = new GeneralLink();
+				glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+				glAll.setIcon((protocolloSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+				glAll.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+						new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA, UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL),
+						new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+						new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA,Costanti.CHECK_BOX_ENABLED)
+						);
+				link.addElement(glAll);
+			}
+		} catch (Exception e) {
+		}
+
+		return link;
+	}
 
 
 }

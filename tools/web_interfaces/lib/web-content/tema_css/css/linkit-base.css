@@ -623,6 +623,23 @@ span.nomeUtente {
 span.nomeUtenteImg {
 	vertical-align: middle;
 	cursor: pointer;
+	background-image: url(../images/tema_link/face_20.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 20px;
+    height: 20px;
+    padding: 6px 12px 2px 12px;
+}
+
+span.modalita {
+/* 	padding-left: 4px; */
+/*     padding-right: 4px; */
+    font-size: 14px;
+}
+
+span.modalitaImg {
+	vertical-align: middle;
+	cursor: pointer;
 	background-image: url(../images/tema_link/down_white.png) ! important;
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -648,8 +665,8 @@ span.nomeUtenteImg {
    	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-	min-width: 140px;
-	padding-right: 8px;
+/* 	min-width: 140px; */
+	padding-right: 12px;
 	cursor: pointer;
 }  
 
@@ -662,6 +679,28 @@ span.nomeUtenteImg {
 	color: ${page.header.text.color};
 	top: 20px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+	right: -28px;
+} 
+
+#menuModalita {
+   	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	color: ${page.header.text.color};
+	min-width: 140px;
+	padding-right: 12px;
+	cursor: pointer;
+}  
+
+#menuModalita_menu {
+	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	min-width: 140px;
+	display:none;
+	position:absolute;
+	color: ${page.header.text.color};
+	top: 20px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+	left: 0px;
 } 
 
 .menu-separator {
