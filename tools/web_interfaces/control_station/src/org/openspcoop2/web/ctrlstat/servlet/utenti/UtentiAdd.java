@@ -80,6 +80,7 @@ public final class UtentiAdd extends Action {
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		try {
+			UtentiCore utentiCore = new UtentiCore();
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
 	
 			String nomesu = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
@@ -105,6 +106,14 @@ public final class UtentiAdd extends Action {
 	
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
+			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
+		
+			String [] modalitaScelte = new String[protocolliRegistratiConsole.size()]; 
+			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+				String protocolloName = protocolliRegistratiConsole.get(i);
+				modalitaScelte[i] = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+			}
+			
 			// Preparo il menu
 			utentiHelper.makeMenu();
 	
@@ -116,7 +125,7 @@ public final class UtentiAdd extends Action {
 				
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
-						new Parameter(UtentiCostanti.LABEL_UTENTI,null), 
+						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
 	
 				// preparo i campi
@@ -137,7 +146,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null);
+						null,modalitaScelte);
 				
 				pd.setDati(dati);
 		
@@ -156,7 +165,7 @@ public final class UtentiAdd extends Action {
 				
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
-						new Parameter(UtentiCostanti.LABEL_UTENTI,null), 
+						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
 	
 				// preparo i campi
@@ -167,7 +176,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null);
+						null,modalitaScelte);
 				
 				pd.setDati(dati);
 	
@@ -225,8 +234,16 @@ public final class UtentiAdd extends Action {
 					puString = puString+","+Permessi.ACCORDI_COOPERAZIONE.toString();
 			}
 			newU.setPermessi(PermessiUtente.toPermessiUtente(puString));
-	
-			UtentiCore utentiCore = new UtentiCore();
+			
+			newU.clearProtocolliSupportati();
+			// modalita gateway
+			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+				String protocolloName = protocolliRegistratiConsole.get(i);
+				if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
+					newU.addProtocolloSupportato(protocolloName);
+				} 
+			}
+			
 			utentiCore.performCreateOperation(userLogin, utentiHelper.smista(), newU);
 	
 			// Preparo la lista

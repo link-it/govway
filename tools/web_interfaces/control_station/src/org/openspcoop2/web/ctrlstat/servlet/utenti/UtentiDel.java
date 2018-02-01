@@ -42,11 +42,11 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
@@ -110,25 +110,90 @@ public final class UtentiDel extends Action {
 			// Elimino i superutenti dal db
 			StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
 			int[] idToRemove = new int[objTok.countTokens()];
-			Vector<String> utentiDaRimuovere = new Vector<String>();
+			List<User> utentiDaRimuovere = new ArrayList<User>();
+			List<String> nomiUtentiDaRimuovere = new ArrayList<String>();
 	
 			int k = 0;
 			while (objTok.hasMoreElements()) {
 				String id = objTok.nextToken();
 				idToRemove[k++] = Integer.parseInt(id);
-				utentiDaRimuovere.add(utentiCore.getUser(Long.parseLong(id)).getLogin());
+				User user = utentiCore.getUser(Long.parseLong(id));
+				utentiDaRimuovere.add(user);
+				nomiUtentiDaRimuovere.add(user.getLogin());
 			}
+			
+			// controllo protocolli associati agli utenti che provo ad eliminare
+			String msgErroreModalita = null;
+			List<String> utentiDaNonEliminare = new ArrayList<String>();
+			for (User user : utentiDaRimuovere) {
+				List<String> protocolliSupportati = user.getProtocolliSupportati();
+				if(protocolliSupportati != null && protocolliSupportati.size() > 0 && !user.hasOnlyPermessiUtenti()) {
+					for (String protocollo : protocolliSupportati) {
+						boolean existsAlmostOneOrganization = utentiCore.existsAlmostOneOrganization(null, user.getLogin(), protocollo);
+						if(existsAlmostOneOrganization) {
+							List<String> usersByProtocolloSupportato = utentiCore.getUsersByProtocolloSupportato(protocollo);
+							if(usersByProtocolloSupportato.size() < 2) {
+								if(!utentiDaNonEliminare.contains(user.getLogin()))
+									utentiDaNonEliminare.add(user.getLogin());
+							}
+						}
+					}
+				}
+			}
+			
+			if(utentiDaNonEliminare.size()> 0) {
+				if(utentiDaNonEliminare.size()> 1) {
+					StringBuilder sbUL = new StringBuilder();
+					for (String userL : utentiDaNonEliminare) {
+						if(sbUL.length() >0 )
+							sbUL.append(", ");
+						sbUL.append(userL);
+					}
+					msgErroreModalita = "Gli utenti "+sbUL.toString()+" non sono stati eliminati poich&egrave; sono stati rilevati oggetti appartenenti a delle Modalit&agrave; Gateway non assegnate a nessun altro utente";
+				} else {
+					msgErroreModalita = "L'utente " +utentiDaNonEliminare.get(0) +" non &egrave; stato eliminato poich&egrave; sono stati rilevati oggetti appartenenti a delle Modalit&agrave; Gateway non assegnate a nessun altro utente";
+				}
+
+				List<String> newList = new ArrayList<>();
+				for (String uDE : nomiUtentiDaRimuovere) {
+					if(utentiDaNonEliminare.contains(uDE) == false) {
+						newList.add(uDE);
+					}
+				}
+				if(newList.isEmpty()) {
+					Vector<DataElement> dati = new Vector<DataElement>();
+					
+					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					
+					pd.disableEditMode();
+					
+					pd.setDati(dati);
+					
+					// Preparo il menu
+					pd.setMessage(msgErroreModalita);
+
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					
+					return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL());	
+				}
+				else {
+					nomiUtentiDaRimuovere = newList;
+				}
+			}
+			
+			
+			
 			
 		    List<String> usersWithU = utentiCore.getUsersWithType(Permessi.UTENTI.toString());
 		    List<String> usersWithS = utentiCore.getUsersWithType(Permessi.SERVIZI.toString());
 		    
 		    String[] uws = null;
 		    if (usersWithS != null && usersWithS.size() > 0) {
-		    	Vector<String> usersWithPermessoS = new Vector<String>();
+		    	List<String> usersWithPermessoS = new Vector<String>();
 		    	Iterator<String> itUWS = usersWithS.iterator();
 		    	while (itUWS.hasNext()) {
 		    		String singleUWS = itUWS.next();
-		    		if (utentiDaRimuovere.contains(singleUWS) == false) {
+		    		if (nomiUtentiDaRimuovere.contains(singleUWS) == false) {
 		    			usersWithPermessoS.add(singleUWS);
 		    		}
 		    	}
@@ -143,11 +208,11 @@ public final class UtentiDel extends Action {
 		    
 		    String[] uwp = null;
 		    if (usersWithP != null && usersWithP.size() > 0) {
-		    	Vector<String> usersWithPermessoP = new Vector<String>();
+		    	List<String> usersWithPermessoP = new Vector<String>();
 		    	Iterator<String> itUWS = usersWithP.iterator();
 		    	while (itUWS.hasNext()) {
 		    		String singleUWP = itUWS.next();
-		    		if (utentiDaRimuovere.contains(singleUWP) == false) {
+		    		if (nomiUtentiDaRimuovere.contains(singleUWP) == false) {
 		    			usersWithPermessoP.add(singleUWP);
 		    		}
 		    	}
@@ -198,14 +263,14 @@ public final class UtentiDel extends Action {
 							
 						}else{
 							paginaSuServizi = true;
-							if(utentiDaRimuovere.size()==1){
-								msgServizi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Servizi' appartenenti all'utente '"+utentiDaRimuovere.get(0)+"'<br>";
+							if(nomiUtentiDaRimuovere.size()==1){
+								msgServizi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Servizi' appartenenti all'utente '"+nomiUtentiDaRimuovere.get(0)+"'<br>";
 							}else{
 								StringBuffer bf = new StringBuffer();
-								for(int j=0; j<utentiDaRimuovere.size(); j++){
+								for(int j=0; j<nomiUtentiDaRimuovere.size(); j++){
 									if(j>0)
 										bf.append("','");
-									bf.append(utentiDaRimuovere.get(j));
+									bf.append(nomiUtentiDaRimuovere.get(j));
 								}
 								msgServizi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Servizi' appartenenti agli utenti '"+bf.toString()+"'<br>";
 							}
@@ -236,14 +301,14 @@ public final class UtentiDel extends Action {
 							checkOggettiAccordi = true;
 						}else{
 							paginaSuAccordi = true;
-							if(utentiDaRimuovere.size()==1){
-								msgAccordi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Accordi Cooperazione' appartenenti all'utente '"+utentiDaRimuovere.get(0)+"'<br>";
+							if(nomiUtentiDaRimuovere.size()==1){
+								msgAccordi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Accordi Cooperazione' appartenenti all'utente '"+nomiUtentiDaRimuovere.get(0)+"'<br>";
 							}else{
 								StringBuffer bf = new StringBuffer();
-								for(int j=0; j<utentiDaRimuovere.size(); j++){
+								for(int j=0; j<nomiUtentiDaRimuovere.size(); j++){
 									if(j>0)
 										bf.append("','");
-									bf.append(utentiDaRimuovere.get(j));
+									bf.append(nomiUtentiDaRimuovere.get(j));
 								}
 								msgAccordi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Accordi Cooperazione' appartenenti agli utenti '"+bf.toString()+"'<br>";
 							}
@@ -273,7 +338,7 @@ public final class UtentiDel extends Action {
 //						UtentiCostanti.SERVLET_NAME_UTENTI_LIST,
 //						Costanti.PAGE_DATA_TITLE_LABEL_ELIMINA);
 				
-				ServletUtils.	setPageDataTitle(pd, 
+				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELIMINA,null));
@@ -426,6 +491,16 @@ public final class UtentiDel extends Action {
 							if (usersWithU.contains(nomesu))
 								usersWithU.remove(nomesu);
 					    }
+					}
+				}
+				
+				if(msgErroreModalita!=null) {
+					if (!msg.equals("")) {
+						msg += "<br>";
+						msg += msgErroreModalita;
+					}
+					else {
+						msg = msgErroreModalita;
 					}
 				}
 				

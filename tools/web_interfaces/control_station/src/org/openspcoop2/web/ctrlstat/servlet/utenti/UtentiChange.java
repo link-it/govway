@@ -119,6 +119,14 @@ public final class UtentiChange extends Action {
 			String changepwd = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
 
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			
+			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
+			
+			String [] modalitaScelte = new String[protocolliRegistratiConsole.size()]; 
+			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+				String protocolloName = protocolliRegistratiConsole.get(i);
+				modalitaScelte[i] = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+			}
 
 			// Prendo l'utente
 			User user = utentiCore.getUser(nomesu);
@@ -137,7 +145,7 @@ public final class UtentiChange extends Action {
 				//						UtentiCostanti.SERVLET_NAME_UTENTI_LIST,
 				//						nomesu);
 
-				ServletUtils.	setPageDataTitle(pd, 
+				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(nomesu,null));
@@ -152,6 +160,18 @@ public final class UtentiChange extends Action {
 				isUtenti = (isUtenti==null) ? (pu.isUtenti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isUtenti;
 				isAuditing = (isAuditing==null) ? (pu.isAuditing() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isAuditing;
 				isAccordiCooperazione = (isAccordiCooperazione==null) ? (pu.isAccordiCooperazione() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isAccordiCooperazione;
+				
+				List<String> protocolliSupportati = user.getProtocolliSupportati();
+				if(protocolliSupportati == null) protocolliSupportati= new ArrayList<String>();
+				
+				for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+					String protocolloName = protocolliRegistratiConsole.get(i);
+					if(modalitaScelte[i] == null) {
+						if(protocolliSupportati.contains(protocolloName)) {
+							modalitaScelte[i] = Costanti.CHECK_BOX_ENABLED;
+						} 
+					} 
+				}
 
 
 				// preparo i campi
@@ -162,7 +182,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd);
+						changepwd,modalitaScelte);
 
 				pd.setDati(dati);
 
@@ -194,7 +214,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd);
+						changepwd,modalitaScelte);
 
 				pd.setDati(dati);
 
@@ -335,7 +355,7 @@ public final class UtentiChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, confpwsu, interfaceType, 
-						isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi,  uws, paginaSuAccordi, uwp);
+						isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi,  uws, paginaSuAccordi, uwp,modalitaScelte);
 
 				pd.setDati(dati);
 				pd.setMessage(msg,Costanti.MESSAGE_TYPE_INFO);
@@ -406,6 +426,15 @@ public final class UtentiChange extends Action {
 				}
 
 				user.setPermessi(PermessiUtente.toPermessiUtente(puString));
+				
+				user.clearProtocolliSupportati();
+				// modalita gateway
+				for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+					String protocolloName = protocolliRegistratiConsole.get(i);
+					if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
+						user.addProtocolloSupportato(protocolloName);
+					} 
+				}
 
 				// Se singleSu != null, devo recuperare gli oggetti
 				// dell'utente ed assegnarli a singleSu

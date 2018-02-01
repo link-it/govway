@@ -95,7 +95,12 @@ public class User implements Serializable {
 			this.addProtocolloSupportato(v);
 		}
 	}
-	
+	public void clearProtocolliSupportati() {
+		if(this.protocolliSupportati==null) {
+			this.protocolliSupportati = new ArrayList<>();
+		} else 
+			this.protocolliSupportati.clear();
+	}
 
 	public String getProtocolloSelezionato() {
 		return this.protocolloSelezionato;
@@ -164,6 +169,13 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public boolean hasOnlyPermessiUtenti() {
+		if(this.permessi != null)
+			return (this.permessi.isUtenti() && !this.permessi.isAccordiCooperazione() && !this.permessi.isAuditing() && !this.permessi.isCodeMessaggi() && !this.permessi.isDiagnostica() && !this.permessi.isServizi() && !this.permessi.isSistema());
+		else
+			return false;
 	}
 
 	private static final long serialVersionUID = 1L;

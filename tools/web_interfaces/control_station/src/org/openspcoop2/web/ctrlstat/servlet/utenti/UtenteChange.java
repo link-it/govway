@@ -200,7 +200,7 @@ public final class UtenteChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-			} else if(changeModalita != null) { // click sul link cambia modalita gateway 
+			} else if(changeModalita != null) { // clic sul link cambia modalita gateway 
 				// messaggio di cambiamento del protocollo:
 				List<String> protocolli = utentiCore.getProtocolli(session);
 				StringBuilder sbProtocolli = new StringBuilder();

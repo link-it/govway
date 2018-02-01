@@ -94,6 +94,7 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE = "isAccordiCooperazione";
 	public final static String PARAMETRO_UTENTI_SINGLE_SU_SERVIZI = "singleSuS";
 	public final static String PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE = "singleSuAC";
+	public final static String PARAMETRO_UTENTI_MODALITA_PREFIX = "mod_";
 	
 	public final static String PARAMETRO_UTENTE_LOGIN = "login";
 	public final static String PARAMETRO_UTENTE_PASSWORD = "password";

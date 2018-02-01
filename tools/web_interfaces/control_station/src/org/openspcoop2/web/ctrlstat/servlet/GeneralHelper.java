@@ -181,7 +181,6 @@ public class GeneralHelper {
 							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
 				}
-				// [TODO] aggiungere completa
 				link.addElement(glUtente);
 
 				// 3. informazioni/about
@@ -199,7 +198,7 @@ public class GeneralHelper {
 				}
 			}
 
-			// 5. logout
+			// 5. logoutsetModalitaLinks
 			if (displayLogout) {
 				GeneralLink gl2 = new GeneralLink();
 				gl2.setLabel(LoginCostanti.LABEL_MENU_UTENTE_LOGOUT);
@@ -209,7 +208,8 @@ public class GeneralHelper {
 
 			gd.setHeaderLinks(link);
 
-			gd.setModalitaLinks(this.caricaMenuProtocolliUtente(u)); 
+			if(!u.hasOnlyPermessiUtenti())  
+				gd.setModalitaLinks(this.caricaMenuProtocolliUtente(u));
 		}
 
 		return gd;

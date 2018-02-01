@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -39,7 +41,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
@@ -62,7 +63,7 @@ public class UtentiHelper extends ConsoleHelper {
 	public Vector<DataElement> addUtentiToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
-			String changepwd) throws DriverUsersDBException{
+			String changepwd, String [] modalitaGateway) throws Exception{
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_INFORMAZIONI_UTENTE);
@@ -125,6 +126,22 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 			dati.addElement(de);
 			
+		}
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_MODALITA_GATEWAY);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		List<String> protocolliRegistratiConsole = this.core.getProtocolli();
+		for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+			String protocolloName = protocolliRegistratiConsole.get(i);
+			de = new DataElement();
+			de.setLabel(ConsoleHelper.getLabelProtocollo(protocolloName));
+			de.setType(DataElementType.CHECKBOX);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+			ServletUtils.setCheckBox(de, modalitaGateway[i]);
+			dati.addElement(de);
 		}
 
 		de = new DataElement();
@@ -222,8 +239,6 @@ public class UtentiHelper extends ConsoleHelper {
 		ServletUtils.setCheckBox(de, isAuditing);
 		dati.addElement(de);
 
-	
-
 		return dati;
 
 	}
@@ -233,7 +248,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String nomesu,String changepwd,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			boolean scegliSuServizi,
-			String [] uws, boolean scegliSuAccordi,String [] uwp){
+			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway) throws Exception{ 
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
@@ -340,6 +355,17 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			de.setValues(uwp);
+			dati.addElement(de);
+		}
+		
+		List<String> protocolliRegistratiConsole = this.core.getProtocolli();
+		for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+			String protocolloName = protocolliRegistratiConsole.get(i);
+			de = new DataElement();
+			de.setLabel(ConsoleHelper.getLabelProtocollo(protocolloName));
+			de.setType(DataElementType.HIDDEN);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+			de.setValue(modalitaGateway[i]);
 			dati.addElement(de);
 		}
 	}
@@ -510,6 +536,13 @@ public class UtentiHelper extends ConsoleHelper {
 			String isAuditing = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
 			String changepwd = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
 
+			List<String> protocolliRegistratiConsole = this.utentiCore.getProtocolli();
+			
+			String [] modalitaScelte = new String[protocolliRegistratiConsole.size()]; 
+			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+				String protocolloName = protocolliRegistratiConsole.get(i);
+				modalitaScelte[i] = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+			}
 
 			// Campi obbligatori
 			if (TipoOperazione.ADD.equals(tipoOperazione) || ServletUtils.isCheckBoxEnabled(changepwd) ) {
@@ -582,6 +615,31 @@ public class UtentiHelper extends ConsoleHelper {
 			//			this.pd.setMessage("Accordi Cooperazione dev'essere selezionato o deselezionato");
 			//			return false;
 			//		}
+
+			// se l'utenza che sto creando e' solo Utenti ignoro la modalita gateway
+			if (!(((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
+					(!singlePdD || (singlePdD && ((isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)))) &&
+					((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
+					((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
+					((isUtenti != null) || ServletUtils.isCheckBoxEnabled(isUtenti)) &&
+					((isAuditing == null) || !ServletUtils.isCheckBoxEnabled(isAuditing)) &&
+					((isAccordiCooperazione == null) || !ServletUtils.isCheckBoxEnabled(isAccordiCooperazione)))) {
+			
+			
+				boolean modalitaPresenti = false;
+				// controllo che abbia selezionato almeno una modalita gateway	
+				for (int i = 0; i < modalitaScelte.length; i++) {
+					modalitaPresenti  = ((modalitaScelte[i] != null) && ServletUtils.isCheckBoxEnabled(modalitaScelte[i]));
+					
+					if(modalitaPresenti)
+						break;
+				}
+				
+				if(!modalitaPresenti) {
+					this.pd.setMessage("Selezionare almeno una Modalit&agrave; Gateway");
+					return false;
+				}
+			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			try {
@@ -779,7 +837,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// setto le label delle colonne
-			String[] labels = { UtentiCostanti.LABEL_UTENTE, UtentiCostanti.LABEL_MODALITA_INTERFACCIA, 
+			String[] labels = { UtentiCostanti.LABEL_UTENTE, UtentiCostanti.LABEL_MODALITA_INTERFACCIA, UtentiCostanti.LABEL_MODALITA_GATEWAY, 
 					UtentiCostanti.LABEL_PERMESSI_GESTIONE, UtentiCostanti.LABEL_CAMBIA_IDENTITA };
 			this.pd.setLabels(labels);
 
@@ -793,6 +851,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
+					// nome utente
 					DataElement de = new DataElement();
 					de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE,
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, mySU.getLogin()));
@@ -800,10 +859,59 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setValue(mySU.getLogin());
 					e.addElement(de);
 
+					// modalita interfaccia
 					de = new DataElement();
 					de.setValue(mySU.getInterfaceType().toString().toLowerCase());
 					e.addElement(de);
+					
+					// modalita gateway
+					de = new DataElement();
+					
+					List<String> protocolliSupportati = mySU.getProtocolliSupportati();
+					if(protocolliSupportati == null)
+						protocolliSupportati = new ArrayList<String>();
+					
+					if(protocolliSupportati.size() > 0) {
+						Collections.sort(protocolliSupportati);
+						List<String> protocolliInstallati = this.core.getProtocolli();
+						Collections.sort(protocolliInstallati);
+						
+						String labelProtocolli = null;
+						if(protocolliSupportati.size() == protocolliInstallati.size()) {
+							boolean all = true;
+							for (int i = 0; i < protocolliInstallati.size(); i++) {
+								String pI = protocolliInstallati.get(i);
+								String pS = protocolliSupportati.get(i);
+								
+								if(!pI.equals(pS)) {
+									all=false;
+									break;
+								}
+							}
+							
+							if(all)
+								labelProtocolli = UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
+						}
+						
+						if(labelProtocolli == null) {
+							StringBuilder sb = new StringBuilder();
+							for (int i = 0; i < protocolliSupportati.size(); i++) {
+								String pS = protocolliSupportati.get(i);
+								if(sb.length() > 0)
+									sb.append(", ");
+								
+								sb.append(ConsoleHelper.getLabelProtocollo(pS));
+							}
+							labelProtocolli = sb.toString();
+						}
+						
+						de.setValue(labelProtocolli);
+					} else {
+						de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+					}
+					e.addElement(de);
 
+					// permessi utente
 					de = new DataElement();
 					if(singlePdD){
 						de.setValue(mySU.getPermessi().toString(","));
@@ -819,6 +927,7 @@ public class UtentiHelper extends ConsoleHelper {
 					}
 					e.addElement(de);
 
+					// login as su
 					de = new DataElement();
 					if (!userLogin.equals(mySU.getLogin())) {
 						de.setUrl(LoginCostanti.SERVLET_NAME_LOGIN_AS_SU,
