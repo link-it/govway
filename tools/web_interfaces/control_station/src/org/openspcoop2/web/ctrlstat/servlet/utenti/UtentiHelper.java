@@ -796,7 +796,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(this.core.isShowPulsanteAggiungiElenchi());
+			this.pd.setAddButton(true);
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

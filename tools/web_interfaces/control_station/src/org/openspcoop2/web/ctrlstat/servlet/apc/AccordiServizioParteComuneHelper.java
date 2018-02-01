@@ -2955,15 +2955,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			showConversazioni = showConversazioni && isInterfacciaAvanzata;
 		
-			showWsdlDefinitorio = this.core.isShowWsdlDefinitorioAccordoServizioParteComune();
-			if(showWsdlDefinitorio){
-				if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-					showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
-				}
-				else{
-					if(tipoProtocollo!=null){
-						showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(tipoProtocollo,serviceBinding,interfaceType);
-					}
+			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
+				showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
+			}
+			else{
+				if(tipoProtocollo!=null){
+					showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(tipoProtocollo,serviceBinding,interfaceType);
 				}
 			}
 			
@@ -4330,7 +4327,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			Boolean gestioneInfoProtocollo = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
 			Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
-			Boolean showAccordiPortTypes = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_PORT_TYPES);
 			Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 			Boolean showColonnaAccordiCooperazione = tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO);
 
@@ -4361,8 +4357,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			if (gestioneInfoProtocollo && showAccordiAzioni)
 				totEl++;
-			if (showAccordiPortTypes)
-				totEl++;
+			totEl++; // portTypes
 			if (showAccordiCooperazione && showColonnaServizioComponenti)
 				totEl++;
 			
@@ -4405,16 +4400,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (gestioneInfoProtocollo && showAccordiAzioni) {
 				labels[index] = AccordiServizioParteComuneCostanti.LABEL_AZIONI;
 				index++;
-				if (showAccordiPortTypes){
-					labels[index] = AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES;
-					index++;
-				}
-			} else {
-				if (showAccordiPortTypes){
-					labels[index] = AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES;
-					index++;
-				}
 			}
+			// portTypes
+			labels[index] = AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES;
+			index++;
 			
 			labels[index] = AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI;
 			index++;
@@ -4565,32 +4554,31 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						e.addElement(de);
 					}
 
-					if (showAccordiPortTypes) {
-						de = new DataElement();
-						switch (serviceBinding) {
-						case REST:
-							de.setValue(CostantiControlStation.LABEL_LIST_VALORE_NON_PRESENTE);
-							break;
-						case SOAP:
-						default:
-							de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST,
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoServizio.getId()+""),
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-							if (contaListe) {
-								// BugFix OP-674
-								//List<PortType> tmpLista = this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), new Search(true));
-								Search searchForCount = new Search(true,1);
-								this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), searchForCount);
-								//int num = tmpLista.size();
-								int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
-								ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
-							} else
-								ServletUtils.setDataElementVisualizzaLabel(de);
+					// PortTypes
+					de = new DataElement();
+					switch (serviceBinding) {
+					case REST:
+						de.setValue(CostantiControlStation.LABEL_LIST_VALORE_NON_PRESENTE);
 						break;
-						}
-						e.addElement(de);
+					case SOAP:
+					default:
+						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST,
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoServizio.getId()+""),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
+						if (contaListe) {
+							// BugFix OP-674
+							//List<PortType> tmpLista = this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), new Search(true));
+							Search searchForCount = new Search(true,1);
+							this.apcCore.accordiPorttypeList(accordoServizio.getId().intValue(), searchForCount);
+							//int num = tmpLista.size();
+							int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+					break;
 					}
+					e.addElement(de);
 					
 					// erogatori
 					de = new DataElement();
@@ -4651,7 +4639,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(this.core.isShowPulsanteAggiungiElenchi());
+			this.pd.setAddButton(true);
 
 			// preparo bottoni
 			if(lista!=null && lista.size()>0){

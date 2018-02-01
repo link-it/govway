@@ -1120,7 +1120,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			asps.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 			
 			// Versione
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()){
+			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo)){
 				if(versione!=null){
 					asps.setVersione(Integer.parseInt(versione));
 				}

@@ -21,6 +21,7 @@ package org.openspcoop2.protocol.manifest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -36,6 +37,8 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}ServiceTypes" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="apiReferent" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -66,11 +69,43 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.types = types;
   }
 
+  public boolean isApiReferent() {
+    return this.apiReferent;
+  }
+
+  public boolean getApiReferent() {
+    return this.apiReferent;
+  }
+
+  public void setApiReferent(boolean apiReferent) {
+    this.apiReferent = apiReferent;
+  }
+
+  public boolean isVersion() {
+    return this.version;
+  }
+
+  public boolean getVersion() {
+    return this.version;
+  }
+
+  public void setVersion(boolean version) {
+    this.version = version;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
 
   @XmlElement(name="types",required=true,nillable=false)
   protected ServiceTypes types;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="apiReferent",required=false)
+  protected boolean apiReferent = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="version",required=false)
+  protected boolean version = true;
 
 }

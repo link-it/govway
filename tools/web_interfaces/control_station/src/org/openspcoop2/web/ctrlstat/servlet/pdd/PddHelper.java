@@ -584,7 +584,7 @@ public class PddHelper extends ConsoleHelper {
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(this.core.isShowPulsanteAggiungiElenchi());
+			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -711,7 +711,7 @@ public class PddHelper extends ConsoleHelper {
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(this.core.isShowPulsanteAggiungiElenchi());
+			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

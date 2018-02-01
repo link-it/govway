@@ -716,14 +716,6 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.pa.protocolProperties.visualizzaListaValoriPredefiniti");
 	}
 	
-	public Boolean isMenuVisualizzazioneAggregataOggettiRegistro() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.visualizzazioneAggregataOggettiRegistro");
-	}
-	
-	public Boolean isMenuVisualizzazioneLinkAggiungi() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.visualizzazioneLinkAggiungi");
-	}
-	
 	public Boolean isMenuVisualizzaFlagPrivato() throws UtilsException{
 		return this.readBooleanProperty(true, "menu.visualizzaFlagPrivato");
 	}
@@ -744,14 +736,6 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.accordi.visualizzazioneGestioneInformazioniProtocollo");
 	}
 	
-	public Boolean isMenuAccordiServizioParteComuneVisualizzazioneWSDLDefinitorio() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.accordiServizioParteComune.visualizzazioneWSDLDefinitorio");
-	}
-	
-	public Boolean isMenuAccordiServizioParteSpecificaVisualizzazioneVersione() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.accordiServizioParteSpecifica.visualizzazioneVersione");
-	}
-	
 	public Boolean isMenuMTOMVisualizzazioneCompleta() throws UtilsException{
 		return this.readBooleanProperty(true, "menu.mtom.visualizzazioneCompleta");
 	}
@@ -768,20 +752,12 @@ public class ConsoleProperties {
 		return Boolean.parseBoolean(tmp);
 	}
 	
-	public Boolean isElenchiVisualizzaPulsanteAggiungi() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi.visualizzaPulsanteAggiungi");
-	}
-	
 	public Boolean isElenchiVisualizzaCountElementi() throws UtilsException{
 		return this.readBooleanProperty(true, "elenchi.visualizzaCountElementi");
 	}
 	
 	public Boolean isElenchiAccordiVisualizzaColonnaAzioni() throws UtilsException{
 		return this.readBooleanProperty(true, "elenchi.accordi.visualizzaColonnaAzioni");
-	}
-	
-	public Boolean isElenchiAccordiVisualizzaColonnaServizi() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi.accordi.visualizzaColonnaServizi");
 	}
 	
 	public Boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() throws UtilsException{

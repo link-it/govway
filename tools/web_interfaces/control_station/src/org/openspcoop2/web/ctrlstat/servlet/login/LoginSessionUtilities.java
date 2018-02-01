@@ -45,7 +45,6 @@ public class LoginSessionUtilities {
 		
 		Boolean contaListe = core.isShowCountElementInLinkList();
 		Boolean showAccordiAzioni = core.isShowAccordiColonnaAzioni();
-		Boolean showAccordiPortTypes = core.isShowAccordiColonnaServizi();
 		Boolean gestioneInfoProtocol = core.isShowAccordiInformazioniProtocollo();
 		Boolean soggVirt = core.isShowGestioneSoggettiVirtuali();
 		Boolean confPers = core.isShowConfigurazioniPersonalizzate();
@@ -83,7 +82,6 @@ public class LoginSessionUtilities {
 		}
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA, gui.toString() );
 
-		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_PORT_TYPES, showAccordiPortTypes);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, singlePdD);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GENERAZIONE_AUTOMATICA_PORTE_DELEGATE, generazioneAutomaticaPD);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE, showAccordiCooperazione);
@@ -104,7 +102,6 @@ public class LoginSessionUtilities {
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_PORT_TYPES);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GENERAZIONE_AUTOMATICA_PORTE_DELEGATE);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);

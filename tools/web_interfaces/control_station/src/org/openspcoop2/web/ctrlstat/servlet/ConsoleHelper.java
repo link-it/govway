@@ -785,345 +785,192 @@ public class ConsoleHelper {
 
 			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
-			Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
-
 			Boolean isModalitaAvanzata = this.isModalitaAvanzata();
-			Boolean isVisualizzazioneCompattaElementiRegistro = this.core.isShowMenuAggregatoOggettiRegistro();
 
 			List<IExtendedMenu> extendedMenu = this.core.getExtendedMenu();
 
 			Vector<MenuEntry> menu = new Vector<MenuEntry>();
 
-			// Vecchia Grafica
-			if(!isVisualizzazioneCompattaElementiRegistro){
-				if (pu.isServizi()) {
+			if(pu.isServizi() || pu.isAccordiCooperazione()){
+				// Oggetti del registro compatti
+				MenuEntry me = new MenuEntry();
+				String[][] entries = null;
+				me.setTitle(Costanti.PAGE_DATA_TITLE_LABEL_REGISTRO);
+
+				//Calcolo del numero di entries
+				int totEntries = 0;
+				// PdD, Soggetti, SA, ASPC e ASPS con permessi S
+				if(pu.isServizi()){
+					// Link PdD
 					if(this.core.isRegistroServiziLocale()){
-						if (singlePdD == false) {
-							MenuEntry me = new MenuEntry();
-							me.setTitle(PddCostanti.LABEL_PORTE_DI_DOMINIO);
-							String[][] entries = null;
-							if(this.core.isShowPulsanteAggiungiMenu()){
-								entries = new String[2][2];
-							}else{
-								entries = new String[1][2];
-							}
-							entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-							entries[0][1] = PddCostanti.SERVLET_NAME_PDD_LIST;
-							if(this.core.isShowPulsanteAggiungiMenu()){
-								entries[1][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-								entries[1][1] = PddCostanti.SERVLET_NAME_PDD_ADD;
-							}
-							me.setEntries(entries);
-							menu.addElement(me);
-						} else {
-							MenuEntry me = new MenuEntry();
-							me.setTitle(PddCostanti.LABEL_PORTE_DI_DOMINIO);
-							String[][] entries = null;
-							if(this.core.isShowPulsanteAggiungiMenu()){
-								entries = new String[2][2];
-							}else{
-								entries = new String[1][2];
-							}
-							entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-							entries[0][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
-							if(this.core.isShowPulsanteAggiungiMenu()){
-								entries[1][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-								entries[1][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_ADD;
-							}
-							me.setEntries(entries);
-							menu.addElement(me);
+						if(this.core.isGestionePddAbilitata()) {
+							totEntries ++;
 						}
 					}
 
-					MenuEntry me = new MenuEntry();
-					me.setTitle(SoggettiCostanti.LABEL_SOGGETTI);
-					String[][] entries = null;
-					if(this.core.isShowPulsanteAggiungiMenu()){
-						entries = new String[2][2];
-					}else{
-						entries = new String[1][2];
-					}
-					entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-					entries[0][1] = SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST;
-					if(this.core.isShowPulsanteAggiungiMenu()){
-						entries[1][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-						entries[1][1] = SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD;
-					}
-					me.setEntries(entries);
-					menu.addElement(me);
+					// Soggetti ed SA
+					totEntries += 2;
 
-					me = new MenuEntry();
-					me.setTitle(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI);
-					if(this.core.isShowPulsanteAggiungiMenu()){
-						entries = new String[2][2];
-					}else{
-						entries = new String[1][2];
-					}
-					entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-					entries[0][1] = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST;
-					if(this.core.isShowPulsanteAggiungiMenu()){
-						entries[1][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-						entries[1][1] = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD;
-					}
-					me.setEntries(entries);
-					menu.addElement(me);
-
+					// ASPC e ASPS
 					if(this.core.isRegistroServiziLocale()){
-
-						me = new MenuEntry();
-						me.setTitle(AccordiServizioParteComuneCostanti.LABEL_APC);
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries = new String[2][2];
-						}else{
-							entries = new String[1][2];
-						}
-						entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-						entries[0][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-								AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
-						int index = 1;
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries[index][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-							entries[index][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ADD+"?"+
-									AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-									AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE; 
-							index++;
-						}
-						me.setEntries(entries);
-						menu.addElement(me);
-
-						me = new MenuEntry();
-						me.setTitle(AccordiServizioParteSpecificaCostanti.LABEL_APS);
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries = new String[2][2];
-						}else{
-							entries = new String[1][2];
-						}
-						entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-						entries[0][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
-						index = 1;
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries[index][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-							entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD;
-							index++;
-						}
-						me.setEntries(entries);
-						menu.addElement(me);
-
-					}
-				}
-
-				// Accordi di cooperazione 
-				if(showAccordiCooperazione){
-					if(this.core.isRegistroServiziLocale()){
-						MenuEntry me = new MenuEntry();
-						String[][] entries = null;
-
-
-						me.setTitle(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE);
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries = new String[2][2];
-						}else{
-							entries = new String[1][2];
-						}
-						entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-						entries[0][1] = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST;
-						int index = 1;
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries[index][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-							entries[index][1] = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_ADD;
-							index++;
-						}
-						me.setEntries(entries);
-						menu.addElement(me);
-
-						me = new MenuEntry();
-						me.setTitle(AccordiServizioParteComuneCostanti.LABEL_ASC);
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries = new String[2][2];
-						}else{
-							entries = new String[1][2];
-						}
-						entries[0][0] = Costanti.PAGE_DATA_TITLE_LABEL_VISUALIZZA;
-						entries[0][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-								AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
-						index = 1;
-						if(this.core.isShowPulsanteAggiungiMenu()){
-							entries[index][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-							entries[index][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ADD+"?"+
-									AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-									AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
-							index++;
-						}
-						me.setEntries(entries);
-						menu.addElement(me);
-					}
-				}
-			}else {
-
-				/**** INIZIO SEZIONE VISUALIZZAZIONE COMPATTA *****/
-
-				if(pu.isServizi() || pu.isAccordiCooperazione()){
-					// Oggetti del registro compatti
-					MenuEntry me = new MenuEntry();
-					String[][] entries = null;
-					me.setTitle(Costanti.PAGE_DATA_TITLE_LABEL_REGISTRO);
-
-					//Calcolo del numero di entries
-					int totEntries = 0;
-					// PdD, Soggetti, SA, ASPC e ASPS con permessi S
-					if(pu.isServizi()){
-						// Link PdD
-						if(this.core.isRegistroServiziLocale()){
-							if(this.core.isGestionePddAbilitata()) {
-								totEntries ++;
-							}
-						}
-
-						// Soggetti ed SA
-						totEntries += 2;
-
-						// ASPC e ASPS
-						if(this.core.isRegistroServiziLocale()){
-							totEntries +=2;
-						}
-					}
-
-					// Cooperazione e Accordi Composti con permessi P
-					if(pu.isAccordiCooperazione()){
-						if(this.core.isRegistroServiziLocale()){
-							totEntries +=2;
-						}
-					}
-	
-					// Ruoli
-					if(pu.isServizi()){
-						if(this.core.isRegistroServiziLocale()){
-							totEntries +=1;
-						}
-					}
-					
-					// PA e PD con permessi S e interfaccia avanzata
-					if(pu.isServizi() && isModalitaAvanzata){
 						totEntries +=2;
 					}
+				}
 
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuRegistro(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								totEntries +=list.size();
+				// Cooperazione e Accordi Composti con permessi P
+				if(pu.isAccordiCooperazione()){
+					if(this.core.isRegistroServiziLocale()){
+						totEntries +=2;
+					}
+				}
+
+				// Ruoli
+				if(pu.isServizi()){
+					if(this.core.isRegistroServiziLocale()){
+						totEntries +=1;
+					}
+				}
+				
+				// PA e PD con permessi S e interfaccia avanzata
+				if(pu.isServizi() && isModalitaAvanzata){
+					totEntries +=2;
+				}
+
+				// Extended Menu
+				if(extendedMenu!=null){
+					for (IExtendedMenu extMenu : extendedMenu) {
+						List<ExtendedMenuItem> list = 
+								extMenu.getExtendedItemsMenuRegistro(isModalitaAvanzata, 
+										this.core.isRegistroServiziLocale(), singlePdD, pu);
+						if(list!=null && list.size()>0){
+							totEntries +=list.size();
+						}
+					}
+				}
+
+				// Creo le entries e le valorizzo
+				entries = new String[totEntries][2];
+
+				int index = 0;
+				boolean pddVisualizzate = false;
+				// PdD, Soggetti, SA, ASPC e ASPS con permessi S
+				if(pu.isServizi()){
+					
+					//Link PdD
+					if(this.core.isRegistroServiziLocale()){
+						if(this.core.isGestionePddAbilitata()) {
+							pddVisualizzate = true;
+							entries[index][0] = PddCostanti.LABEL_PDD_MENU_VISUALE_AGGREGATA;
+							if (singlePdD == false) {
+								entries[index][1] = PddCostanti.SERVLET_NAME_PDD_LIST;
+							}else {
+								entries[index][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
 							}
+							index++;
 						}
 					}
 
-					// Creo le entries e le valorizzo
-					entries = new String[totEntries][2];
-
-					int index = 0;
-					// PdD, Soggetti, SA, ASPC e ASPS con permessi S
-					if(pu.isServizi()){
-						//Link PdD
-						if(this.core.isRegistroServiziLocale()){
-							if(this.core.isGestionePddAbilitata()) {
-								entries[index][0] = PddCostanti.LABEL_PDD_MENU_VISUALE_AGGREGATA;
-								if (singlePdD == false) {
-									entries[index][1] = PddCostanti.SERVLET_NAME_PDD_LIST;
-								}else {
-									entries[index][1] = PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST;
-								}
-								index++;
-							}
-						}
-
+					if(pddVisualizzate) {
+					
 						// Soggetti 
 						entries[index][0] = SoggettiCostanti.LABEL_SOGGETTI_MENU_VISUALE_AGGREGATA;
 						entries[index][1] = SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST;
 						index++;
-
+	
 						//SA
 						entries[index][0] = ServiziApplicativiCostanti.LABEL_SA_MENU_VISUALE_AGGREGATA;
 						entries[index][1] = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST;
 						index++;
-
-						// ASPC e ASPS
-						if(this.core.isRegistroServiziLocale()){
-							//ASPC
-							entries[index][0] = AccordiServizioParteComuneCostanti.LABEL_APC_MENU_VISUALE_AGGREGATA;
-							entries[index][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-									AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-									AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
-							index++;
-
-							//ASPS
-							entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
-							entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
-							index++;
-						}
+						
 					}
 
-					// Cooperazione e Accordi Composti con permessi P
-					if(pu.isAccordiCooperazione()){
-						if(this.core.isRegistroServiziLocale()){
-							//COOPERAZIONE
-							entries[index][0] = AccordiCooperazioneCostanti.LABEL_AC_MENU_VISUALE_AGGREGATA;
-							entries[index][1] = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST;
-							index++;
+					// ASPC e ASPS
+					if(this.core.isRegistroServiziLocale()){
+						//ASPC
+						entries[index][0] = AccordiServizioParteComuneCostanti.LABEL_APC_MENU_VISUALE_AGGREGATA;
+						entries[index][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+								AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
+								AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
+						index++;
 
-							// COMPOSTO
-							entries[index][0] = AccordiServizioParteComuneCostanti.LABEL_ASC_MENU_VISUALE_AGGREGATA;
-							entries[index][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-									AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-									AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
-							index++;
-						}
+						//ASPS
+						entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
+						entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
+						index++;
 					}
+				}
+
+				// Cooperazione e Accordi Composti con permessi P
+				if(pu.isAccordiCooperazione()){
+					if(this.core.isRegistroServiziLocale()){
+						//COOPERAZIONE
+						entries[index][0] = AccordiCooperazioneCostanti.LABEL_AC_MENU_VISUALE_AGGREGATA;
+						entries[index][1] = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST;
+						index++;
+
+						// COMPOSTO
+						entries[index][0] = AccordiServizioParteComuneCostanti.LABEL_ASC_MENU_VISUALE_AGGREGATA;
+						entries[index][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+								AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
+								AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
+						index++;
+					}
+				}
+				
+				if(!pddVisualizzate) {
 					
-					// Ruoli
-					if(pu.isServizi()){
-						if(this.core.isRegistroServiziLocale()){
-							entries[index][0] = RuoliCostanti.LABEL_RUOLI;
-							entries[index][1] = RuoliCostanti.SERVLET_NAME_RUOLI_LIST;
-							index++;
-						}
-					}
+					// Soggetti 
+					entries[index][0] = SoggettiCostanti.LABEL_SOGGETTI_MENU_VISUALE_AGGREGATA;
+					entries[index][1] = SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST;
+					index++;
 
-					// PA e PD con permessi S e interfaccia avanzata
-					if(pu.isServizi() && isModalitaAvanzata){
-						//PD
-						entries[index][0] = PorteDelegateCostanti.LABEL_PD_MENU_VISUALE_AGGREGATA;
-						entries[index][1] = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST;
-						index++;
-
-						//PA
-						entries[index][0] = PorteApplicativeCostanti.LABEL_PA_MENU_VISUALE_AGGREGATA;
-						entries[index][1] = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST;
+					//SA
+					entries[index][0] = ServiziApplicativiCostanti.LABEL_SA_MENU_VISUALE_AGGREGATA;
+					entries[index][1] = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST;
+					index++;
+					
+				}
+				
+				// Ruoli
+				if(pu.isServizi()){
+					if(this.core.isRegistroServiziLocale()){
+						entries[index][0] = RuoliCostanti.LABEL_RUOLI;
+						entries[index][1] = RuoliCostanti.SERVLET_NAME_RUOLI_LIST;
 						index++;
 					}
+				}
 
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuRegistro(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null){
-								for (ExtendedMenuItem extendedMenuItem : list) {
-									entries[index][0] = extendedMenuItem.getLabel();
-									entries[index][1] = extendedMenuItem.getUrl();
-									index++;
-								}
+				// PA e PD con permessi S e interfaccia avanzata
+				if(pu.isServizi() && isModalitaAvanzata){
+					//PD
+					entries[index][0] = PorteDelegateCostanti.LABEL_PD_MENU_VISUALE_AGGREGATA;
+					entries[index][1] = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST;
+					index++;
+
+					//PA
+					entries[index][0] = PorteApplicativeCostanti.LABEL_PA_MENU_VISUALE_AGGREGATA;
+					entries[index][1] = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST;
+					index++;
+				}
+
+				// Extended Menu
+				if(extendedMenu!=null){
+					for (IExtendedMenu extMenu : extendedMenu) {
+						List<ExtendedMenuItem> list = 
+								extMenu.getExtendedItemsMenuRegistro(isModalitaAvanzata, 
+										this.core.isRegistroServiziLocale(), singlePdD, pu);
+						if(list!=null){
+							for (ExtendedMenuItem extendedMenuItem : list) {
+								entries[index][0] = extendedMenuItem.getLabel();
+								entries[index][1] = extendedMenuItem.getUrl();
+								index++;
 							}
 						}
 					}
-
-					me.setEntries(entries);
-					menu.addElement(me);
 				}
+
+				me.setEntries(entries);
+				menu.addElement(me);
 			}
 
 
@@ -1734,18 +1581,9 @@ public class ConsoleHelper {
 	}
 
 	private String[][] getVoceMenuUtenti() {
-		String[][] entries = null;
-		if(this.core.isShowPulsanteAggiungiMenu()){
-			entries = new String[2][2];
-		}else{
-			entries = new String[1][2];
-		}
+		String[][] entries = new String[1][2];
 		entries[0][0] = UtentiCostanti.LABEL_UTENTI;
 		entries[0][1] = UtentiCostanti.SERVLET_NAME_UTENTI_LIST;
-		if(this.core.isShowPulsanteAggiungiMenu()){
-			entries[1][0] = Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI;
-			entries[1][1] = UtentiCostanti.SERVLET_NAME_UTENTI_ADD;
-		}
 		return entries;
 	}
 

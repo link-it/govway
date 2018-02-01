@@ -349,6 +349,8 @@
   <mapping name="service" class="org.openspcoop2.protocol.manifest.Service">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure field="types" usage="required" map-as="org.openspcoop2.protocol.manifest.ServiceTypes"/>
+    <value name="apiReferent" field="apiReferent" default="false" usage="optional" style="attribute"/>
+    <value name="version" field="version" default="true" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="types" class="org.openspcoop2.protocol.manifest.ServiceTypes">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>

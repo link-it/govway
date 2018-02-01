@@ -467,24 +467,18 @@ public class ControlStationCore {
 	/** Opzioni di visualizzazione */
 	private boolean showSelectList_PA_ProtocolProperties = true;
 	private boolean showCorrelazioneAsincronaInAccordi = false;
-	private boolean showWsdlDefinitorioAccordoServizioParteComune = false;
-	private boolean showVersioneAccordoServizioParteSpecifica = false;
 	private boolean showFlagPrivato = false;
 	private boolean showAllConnettori = false;
 	private boolean showDebugOptionConnettore = true;
-	private boolean showPulsanteAggiungiMenu = false;
-	private boolean showPulsanteAggiungiElenchi = false;
 	private boolean showPulsantiImportExport = false;
 	private boolean showCountElementInLinkList = false;
 	private boolean showAccordiColonnaAzioni = false;
-	private boolean showAccordiColonnaServizi = false;
 	private boolean showAccordiInformazioniProtocollo = false;
 	private boolean showConfigurazioniPersonalizzate = false;
 	private boolean showGestioneSoggettiRouter = false;
 	private boolean showGestioneSoggettiVirtuali = false;
 	private boolean showGestioneWorkflowStatoDocumenti = false;
 	private boolean gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = false;
-	private boolean showMenuAggregatoOggettiRegistro = false;
 	private boolean enableAutoMappingWsdlIntoAccordo = false;
 	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
 	private boolean showMTOMVisualizzazioneCompleta = false;
@@ -498,12 +492,6 @@ public class ControlStationCore {
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
 	}
-	public boolean isShowWsdlDefinitorioAccordoServizioParteComune() {
-		return this.showWsdlDefinitorioAccordoServizioParteComune;
-	}
-	public boolean isShowVersioneAccordoServizioParteSpecifica() {
-		return this.showVersioneAccordoServizioParteSpecifica;
-	}
 	public boolean isShowFlagPrivato() {
 		return this.showFlagPrivato;
 	}
@@ -512,13 +500,7 @@ public class ControlStationCore {
 	}
 	public boolean isShowDebugOptionConnettore() {
 		return this.showDebugOptionConnettore;
-	}
-	public boolean isShowPulsanteAggiungiMenu() {
-		return this.showPulsanteAggiungiMenu;
 	}	
-	public boolean isShowPulsanteAggiungiElenchi() {
-		return this.showPulsanteAggiungiElenchi;
-	}
 	public boolean isShowPulsantiImportExport() {
 		return this.showPulsantiImportExport;
 	}
@@ -527,9 +509,6 @@ public class ControlStationCore {
 	}
 	public boolean isShowAccordiColonnaAzioni() {
 		return this.showAccordiColonnaAzioni;
-	}
-	public boolean isShowAccordiColonnaServizi() {
-		return this.showAccordiColonnaServizi;
 	}
 	public boolean isShowAccordiInformazioniProtocollo() {
 		return this.showAccordiInformazioniProtocollo;
@@ -548,9 +527,6 @@ public class ControlStationCore {
 	}
 	public boolean isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() {
 		return this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
-	}
-	public boolean isShowMenuAggregatoOggettiRegistro() {
-		return this.showMenuAggregatoOggettiRegistro;
 	}
 	public boolean isEnableAutoMappingWsdlIntoAccordo() {
 		return this.enableAutoMappingWsdlIntoAccordo;
@@ -1317,24 +1293,18 @@ public class ControlStationCore {
 		/** Opzioni di visualizzazione */
 		this.showSelectList_PA_ProtocolProperties = core.showSelectList_PA_ProtocolProperties;
 		this.showCorrelazioneAsincronaInAccordi = core.showCorrelazioneAsincronaInAccordi;
-		this.showWsdlDefinitorioAccordoServizioParteComune = core.showWsdlDefinitorioAccordoServizioParteComune;
-		this.showVersioneAccordoServizioParteSpecifica = core.showVersioneAccordoServizioParteSpecifica;
 		this.showFlagPrivato = core.showFlagPrivato;
 		this.showAllConnettori = core.showAllConnettori;
 		this.showDebugOptionConnettore = core.showDebugOptionConnettore;
-		this.showPulsanteAggiungiMenu = core.showPulsanteAggiungiMenu;
-		this.showPulsanteAggiungiElenchi = core.showPulsanteAggiungiElenchi;
 		this.showPulsantiImportExport = core.showPulsantiImportExport;
 		this.showCountElementInLinkList = core.showCountElementInLinkList;
 		this.showAccordiColonnaAzioni = core.showAccordiColonnaAzioni;
-		this.showAccordiColonnaServizi = core.showAccordiColonnaServizi;
 		this.showAccordiInformazioniProtocollo = core.showAccordiInformazioniProtocollo;
 		this.showConfigurazioniPersonalizzate = core.showConfigurazioniPersonalizzate;
 		this.showGestioneSoggettiRouter = core.showGestioneSoggettiRouter;
 		this.showGestioneSoggettiVirtuali = core.showGestioneSoggettiVirtuali;
 		this.showGestioneWorkflowStatoDocumenti = core.showGestioneWorkflowStatoDocumenti;
 		this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
-		this.showMenuAggregatoOggettiRegistro = core.showMenuAggregatoOggettiRegistro;
 		this.enableAutoMappingWsdlIntoAccordo = core.enableAutoMappingWsdlIntoAccordo;
 		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
@@ -1566,20 +1536,14 @@ public class ControlStationCore {
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
 			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 			this.showSelectList_PA_ProtocolProperties = consoleProperties.isMenuPorteApplicative_ProtocolProperties_VisualizzaListaValoriPredefiniti();
-			this.showPulsanteAggiungiMenu = consoleProperties.isMenuVisualizzazioneLinkAggiungi();
 			this.showFlagPrivato = consoleProperties.isMenuVisualizzaFlagPrivato();
 			this.showAllConnettori = consoleProperties.isMenuVisualizzaListaCompletaConnettori();
 			this.showDebugOptionConnettore = consoleProperties.isMenuVisualizzaOpzioneDebugConnettore();
 			this.showCorrelazioneAsincronaInAccordi = consoleProperties.isMenuAccordiVisualizzaCorrelazioneAsincrona();
 			this.showAccordiInformazioniProtocollo = consoleProperties.isMenuAccordiVisualizzazioneGestioneInformazioniProtocollo();
-			this.showWsdlDefinitorioAccordoServizioParteComune = consoleProperties.isMenuAccordiServizioParteComuneVisualizzazioneWSDLDefinitorio();
-			this.showVersioneAccordoServizioParteSpecifica = consoleProperties.isMenuAccordiServizioParteSpecificaVisualizzazioneVersione();
-			this.showPulsanteAggiungiElenchi = consoleProperties.isElenchiVisualizzaPulsanteAggiungi();
 			this.showCountElementInLinkList = consoleProperties.isElenchiVisualizzaCountElementi();
 			this.showAccordiColonnaAzioni = consoleProperties.isElenchiAccordiVisualizzaColonnaAzioni();
-			this.showAccordiColonnaServizi = consoleProperties.isElenchiAccordiVisualizzaColonnaServizi();
 			this.showPulsantiImportExport = consoleProperties.isElenchiMenuVisualizzazionePulsantiImportExportPackage();
-			this.showMenuAggregatoOggettiRegistro = consoleProperties.isMenuVisualizzazioneAggregataOggettiRegistro();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
 			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();

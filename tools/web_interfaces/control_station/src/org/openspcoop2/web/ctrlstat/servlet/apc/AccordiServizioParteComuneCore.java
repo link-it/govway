@@ -91,6 +91,18 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		super(core);
 	}
 
+	public boolean isSupportatoSoggettoReferente(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String nomeMetodo = "isSupportatoSoggettoReferente";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
 	public long getIdAccordoServizio(IDAccordo idAccordo) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getIdAccordoServizio";

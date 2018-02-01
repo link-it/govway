@@ -194,7 +194,17 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	public boolean isSupportoIndirizzoRisposta(){
 		return this.registroManifest.getOrganization().isReplyToAddress();
 	}
-			
+	
+	@Override
+	public boolean isSupportoSoggettoReferenteAccordiParteComune() {
+		return this.registroManifest.getService().isApiReferent();
+	}
+	
+	@Override
+	public boolean isSupportoVersionamentoAccordiParteSpecifica() {
+		return this.registroManifest.getService().isVersion();
+	}
+	
 	@Override
 	public List<String> getTipiSoggetti() throws ProtocolException {
 		List<String> tipi = new ArrayList<String>();

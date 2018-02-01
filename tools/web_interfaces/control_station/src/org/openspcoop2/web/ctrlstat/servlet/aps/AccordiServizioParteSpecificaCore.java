@@ -93,6 +93,19 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 
 	
+	
+	public boolean isSupportatoVersionamentoAccordiServizioParteSpecifica(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String nomeMetodo = "isSupportatoVersionamentoAccordiServizioParteSpecifica";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoVersionamentoAccordiParteSpecifica();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
 	public String getTipoServizioDefault(ServiceBinding serviceBinding) throws  DriverRegistroServiziException {
 		String getTipoServizioDefault = "getTipoServizioDefault";
 		try{

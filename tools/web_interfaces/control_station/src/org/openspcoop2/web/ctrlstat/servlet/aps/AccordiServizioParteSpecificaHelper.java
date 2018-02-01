@@ -512,11 +512,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoErogatore);
 
 			// Controllo che non esistano altri accordi di servizio parte specifica con stesso nome, versione e soggetto
 			if (tipoOp.equals(TipoOperazione.ADD)){
 				if(this.apsCore.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
-					if(this.core.isShowVersioneAccordoServizioParteSpecifica())
+					if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
 						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 					else
 						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
@@ -528,7 +529,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					AccordoServizioParteSpecifica servizio =  this.apsCore.getServizio(idAccordoServizioParteSpecifica);
 					if(servizio!=null){
 						if (idInt != servizio.getId()) {
-							if(this.core.isShowVersioneAccordoServizioParteSpecifica())
+							if(this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo))
 								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
 							else
 								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO);
@@ -561,8 +562,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			aps.setTipoSoggettoErogatore(tipoErogatore);
 			aps.setNomeSoggettoErogatore(nomeErogatore);
-
-			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoErogatore);
 
 			ValidazioneResult v = this.apsCore.validazione(aps, this.soggettiCore);
 			if(v.isEsito()==false){
@@ -1281,7 +1280,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(this.core.isShowPulsanteAggiungiElenchi());
+			this.pd.setAddButton(true);
 
 			// preparo bottoni
 			// String gestioneWSBL = (String) this.session
@@ -2424,7 +2423,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		User user = ServletUtils.getUserFromSession(this.session);
 
-		boolean visualizzaVersione = this.core.isShowVersioneAccordoServizioParteSpecifica();
+		boolean visualizzaVersione = this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo);
 
 		boolean modificaAbilitata = ( (this.core.isShowGestioneWorkflowStatoDocumenti()==false) || (StatiAccordo.finale.toString().equals(oldStato)==false) );
 
@@ -4958,4 +4957,5 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		return dati;
 	}
+
 }

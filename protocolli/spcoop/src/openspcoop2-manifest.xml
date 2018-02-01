@@ -113,7 +113,7 @@
             </types>
         </organization>
 
-        <service>
+        <service apiReferent="true" version="false">
             <types>
                 <type name="spc" protocol="SPC"/>
                 <type name="test" protocol="TEST"/>

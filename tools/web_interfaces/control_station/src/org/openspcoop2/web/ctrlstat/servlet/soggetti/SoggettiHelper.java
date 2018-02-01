@@ -991,7 +991,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(this.core.isShowPulsanteAggiungiElenchi());
+			this.pd.setAddButton(true);
 
 			// preparo bottoni
 			if(lista!=null && lista.size()>0){
@@ -1164,7 +1164,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 			this.pd.setDati(dati);
-			this.pd.setAddButton(this.core.isShowPulsanteAggiungiElenchi());
+			this.pd.setAddButton(true);
 
 			// preparo bottoni
 			if(lista!=null && lista.size()>0){

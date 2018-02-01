@@ -195,10 +195,25 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportoIndirizzoRisposta();
 			
 	/**
+	 * Ritorna l'indicazione se il soggetto referente degli accordi di servizio parte comune viene supportata dal protocollo
+	 * 
+	 * @return True se il soggetto referente degli accordi di servizio parte comune viene supportata dal protocollo
+	 */
+	public boolean isSupportoSoggettoReferenteAccordiParteComune();
+	
+	/**
+	 * Ritorna l'indicazione se il versionamento degli accordi di servizio parte specifica viene supportata dal protocollo
+	 * 
+	 * @return True se il versionamento degli accordi di servizio parte specifica viene supportata dal protocollo
+	 */
+	public boolean isSupportoVersionamentoAccordiParteSpecifica();
+	
+	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo
 	 * 
 	 * @return lista di BypassMustUnderstandCheck
 	 */
 	public List<BypassMustUnderstandCheck> getBypassMustUnderstandCheck();
+	
 	
 }

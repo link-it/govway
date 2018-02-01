@@ -1154,7 +1154,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			asps.getConfigurazioneServizio().setConnettore(connettore);
 
 			// Versione
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()){
+			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo)){
 				if(this.versione!=null)
 					asps.setVersione(Integer.parseInt(this.versione));
 				else
