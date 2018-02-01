@@ -91,13 +91,12 @@ public final class ServiziApplicativiList extends Action {
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
 			
 
 			
 
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-
+			
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
 			List<ServizioApplicativo> lista = null;
@@ -113,11 +112,10 @@ public final class ServiziApplicativiList extends Action {
 			}else {
 				int idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				
 				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
 			}
 
-			saHelper.prepareServizioApplicativoList(ricerca, lista);
+			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

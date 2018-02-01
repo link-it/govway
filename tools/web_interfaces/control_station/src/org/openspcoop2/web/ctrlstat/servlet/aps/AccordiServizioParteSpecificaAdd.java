@@ -38,6 +38,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -426,8 +427,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
+			Search searchAccordi = new Search(true);
+			apsHelper.setFilterSelectedProtocol(searchAccordi, Liste.ACCORDI);
 			List<AccordoServizioParteComune> lista =  
-					AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, new Search(true), permessi);
+					AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, permessi);
 
 			int accordoPrimoAccesso = -1;
 

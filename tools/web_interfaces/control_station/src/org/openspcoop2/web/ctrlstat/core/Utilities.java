@@ -41,7 +41,7 @@ import org.openspcoop2.web.lib.mvc.DataElement;
  */
 public class Utilities {
 
-	
+
 	public static boolean contains(String value,String [] listaValoriPossibili){
 		if(value==null)
 			return false;

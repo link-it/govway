@@ -47,6 +47,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
@@ -1754,6 +1755,14 @@ public class ConsoleHelper {
 
 	// *** Utilities generiche ***
 
+	public void initializeFilter(Search ricerca) throws Exception {
+		this.setFilterSelectedProtocol(ricerca, Liste.SOGGETTI);
+		this.setFilterSelectedProtocol(ricerca, Liste.SERVIZIO_APPLICATIVO);
+		this.setFilterSelectedProtocol(ricerca, Liste.ACCORDI);
+		this.setFilterSelectedProtocol(ricerca, Liste.ACCORDI_COOPERAZIONE);
+		this.setFilterSelectedProtocol(ricerca, Liste.SERVIZI);
+	}
+	
 	public Search checkSearchParameters(int idLista, Search ricerca)
 			throws Exception {
 		try {
@@ -1781,6 +1790,7 @@ public class ConsoleHelper {
 			}
 			
 			ricerca.clearFilters(idLista);
+			this.initializeFilter(ricerca);
 
 			int index=0;
 			String nameFilter = PageData.GET_PARAMETRO_FILTER_NAME(index);
@@ -3631,7 +3641,7 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public void setFilterSelectedProtocol(ISearch ricerca, int idLista, int positionFilter) throws Exception{
+	public void setFilterSelectedProtocol(ISearch ricerca, int idLista) throws Exception{
 		List<String> protocolli = this.core.getProtocolli(this.session);
 		if(protocolli!=null && protocolli.size()>0) {
 			if(protocolli.size()==1) {
@@ -3640,7 +3650,7 @@ public class ConsoleHelper {
 			else {
 				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLI, Filtri.convertToString(protocolli));
 			}
-		}
+		}		
 	}
 	public void addFilterProtocol(ISearch ricerca, int idLista) throws Exception{
 		List<String> protocolli = this.core.getProtocolli(this.session);

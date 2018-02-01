@@ -305,12 +305,15 @@ public final class ServiziApplicativiAdd extends Action {
 			List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			long providerTmp = -1;
 			
+			Search searchSoggetti = new Search(true);
+			saHelper.setFilterSelectedProtocol(searchSoggetti, Liste.SOGGETTI);
+			
 			if(saCore.isRegistroServiziLocale()){
 				List<Soggetto> list = null;
 				if(saCore.isVisioneOggettiGlobale(superUser)){
-					list = soggettiCore.soggettiRegistroList(null,new Search(true));
+					list = soggettiCore.soggettiRegistroList(null,searchSoggetti);
 				}else{
-					list = soggettiCore.soggettiRegistroList(superUser,new Search(true)); 
+					list = soggettiCore.soggettiRegistroList(superUser,searchSoggetti); 
 				}
 				
 				
@@ -343,9 +346,9 @@ public final class ServiziApplicativiAdd extends Action {
 			else{
 				List<org.openspcoop2.core.config.Soggetto> list = null;
 				if(saCore.isVisioneOggettiGlobale(superUser)){
-					list = soggettiCore.soggettiList(null,new Search(true));
+					list = soggettiCore.soggettiList(null,searchSoggetti);
 				}else{
-					list = soggettiCore.soggettiList(superUser,new Search(true)); 
+					list = soggettiCore.soggettiList(superUser,searchSoggetti); 
 				}
 				
 				soggettiList = new String[list.size()];
@@ -696,7 +699,7 @@ public final class ServiziApplicativiAdd extends Action {
 				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
 			}
 
-			saHelper.prepareServizioApplicativoList(ricerca, lista);
+			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

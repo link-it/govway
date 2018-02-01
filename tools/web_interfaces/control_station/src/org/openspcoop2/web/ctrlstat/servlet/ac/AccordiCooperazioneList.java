@@ -85,7 +85,6 @@ public final class AccordiCooperazioneList extends Action {
 			int idLista = Liste.ACCORDI_COOPERAZIONE;
 
 			ricerca = acHelper.checkSearchParameters(idLista, ricerca);
-
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 			List<AccordoCooperazione> lista = null;
 			if(acCore.isVisioneOggettiGlobale(superUser)){

@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -111,6 +112,10 @@ public final class Login extends Action {
 			// Preparo il menu
 			loginHelper.makeMenu();
 	
+			// Inizializzo parametri di ricerca
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			loginHelper.initializeFilter(ricerca);
+			
 			if(GestoreConsistenzaDati.gestoreConsistenzaDatiEseguitoConErrore){
 				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli",Costanti.MESSAGE_TYPE_INFO);
 			}

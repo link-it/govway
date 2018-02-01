@@ -241,6 +241,8 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			addFilterProtocol(ricerca, idLista);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -519,11 +521,20 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1 && modificheAbilitate){
 				de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
 				de.setValues(listaTipiProtocollo);
+				de.setLabels(ConsoleHelper.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
 				de.setPostBack(true);
 			}else {
+				
+				DataElement deLABEL = new DataElement();
+				deLABEL.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
+				deLABEL.setType(DataElementType.TEXT);
+				deLABEL.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO+"__label");
+				deLABEL.setValue(ConsoleHelper.getLabelProtocollo(tipoProtocollo));
+				dati.addElement(deLABEL);
+				
 				de.setValue(tipoProtocollo);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO );

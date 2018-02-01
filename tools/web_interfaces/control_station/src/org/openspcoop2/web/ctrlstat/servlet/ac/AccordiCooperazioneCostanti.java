@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.ac;
 import java.util.Vector;
 
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -143,7 +144,7 @@ public class AccordiCooperazioneCostanti {
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE = "Soggetto";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "Documento";
-	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = "Protocollo";
+	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
 	
 	
 	/* DEFAULT VALUE PARAMETRI */

@@ -968,7 +968,7 @@ public final class ServiziApplicativiChange extends Action {
 				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
 			}
 
-			saHelper.prepareServizioApplicativoList(ricerca, lista);
+			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

@@ -212,23 +212,24 @@ public final class UtenteChange extends Action {
 //					if(sbProtocolli.length() > 0)
 //						sbProtocolli.append("<br/>");
 					
+					sbProtocolli.append("</br>");
 					sbProtocolli.append("<p>");
 					
-					if(protocolloSelezionatoUtente == null) {
-						sbProtocolli.append(labelProtocollo).append(": ");
-					}
-					sbProtocolli.append(descrizioneProtocollo).append("&nbsp;(").append(webSiteProtocollo).append(")"); 
-//					.append("&nbsp;( <a href=\"").append(webSiteProtocollo).append("\">").append(webSiteProtocollo).append("</a>)"); 
+					sbProtocolli.append(""+labelProtocollo+": ");
+					sbProtocolli.append(descrizioneProtocollo);
+					sbProtocolli.append("</br>");
+					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\">"+webSiteProtocollo+"</a>";
+					sbProtocolli.append("Sito: ").append(linkSito).append(""); 
 					
 					sbProtocolli.append("<p/>");
 				}
 				
-				String labelProt = protocolloSelezionatoUtente != null ?  ConsoleHelper.getLabelProtocollo(protocolloSelezionatoUtente) : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
+				//String labelProt = protocolloSelezionatoUtente != null ?  ConsoleHelper.getLabelProtocollo(protocolloSelezionatoUtente) : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
 				String pdMsg = "";
 				if(protocolloSelezionatoUtente == null) {
-					pdMsg = "<p>Passaggio alla modalit&agrave; '"+labelProt+"' effettuato con successo, sono abilitate le seguenti modalit&agrave;:<p/>" + sbProtocolli.toString();
+					pdMsg = "<p>Passaggio alla Modalit&agrave; Gateway selezionata effettuato con successo.<p/>" + sbProtocolli.toString();
 				} else {
-					pdMsg = "<p>Passaggio alla modalit&agrave; '"+labelProt+"' effettuato con successo:<p/>" + sbProtocolli.toString();
+					pdMsg = "<p>Passaggio alla Modalit&agrave; Gateway selezionata effettuato con successo.<p/>" + sbProtocolli.toString();
 				}
 				
 				pd.setMessage(pdMsg, Costanti.MESSAGE_TYPE_INFO);

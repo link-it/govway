@@ -111,7 +111,7 @@ public class Costanti {
 	protected final static String SESSION_ATTRIBUTE_USER = "User";
 	protected final static String SESSION_ATTRIBUTE_GENERAL_DATA = "GeneralData";
 	protected final static String SESSION_ATTRIBUTE_PAGE_DATA = "PageData";
-	protected final static String SESSION_ATTRIBUTE_RICERCA = "Ricerca";
+	public final static String SESSION_ATTRIBUTE_RICERCA = "Ricerca";
 	protected final static String SESSION_ATTRIBUTE_CONTA_LISTE = "contaListe";
 	protected final static String SESSION_ATTRIBUTE_LIST_ELEMENT ="ListElement";
 	protected final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;

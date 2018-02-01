@@ -21,6 +21,7 @@
 
 package org.openspcoop2.core.commons;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDSoggetto;
@@ -131,7 +132,7 @@ public class ProtocolFactoryReflectionUtils
 			Object protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
 			
 			@SuppressWarnings("unchecked")
-			MapReader<String, List<String>> map = (MapReader<String, List<String>>) cProtocolFactoryManager.getMethod("getServiceTypes").invoke(protocolFactoryManager);
+			HashMap<String, List<String>> map = (HashMap<String, List<String>>) cProtocolFactoryManager.getMethod("_getServiceTypes").invoke(protocolFactoryManager);
 			
 			return map.get(protocollo);
 			

@@ -81,6 +81,37 @@ public final class Filtri
 		return tipoSoggettiProtocollo;
 	}
 	
+	public static List<String> convertToTipiServizi(String filterProtocollo, String filterProtocolli) throws CoreException {
+		List<String> tipoServiziProtocollo = null;
+		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {
+			try {
+				tipoServiziProtocollo = ProtocolFactoryReflectionUtils.getServiceTypes(filterProtocollo);
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
+			}
+		}
+		else if(filterProtocolli!=null && !"".equals(filterProtocolli)) {
+			List<String> protocolli = Filtri.convertToList(filterProtocolli);
+			if(protocolli!=null && protocolli.size()>0) {
+				tipoServiziProtocollo = new ArrayList<>();
+				for (String protocollo : protocolli) {
+					try {
+						List<String> tipi = ProtocolFactoryReflectionUtils.getServiceTypes(protocollo);
+						if(tipi!=null && tipi.size()>0) {
+							tipoServiziProtocollo.addAll(tipi);
+						}
+					}catch(Exception e) {
+						throw new CoreException(e.getMessage(),e);
+					}
+				}
+				if(tipoServiziProtocollo.size()<=0) {
+					tipoServiziProtocollo = null;
+				}
+			}
+		}
+		return tipoServiziProtocollo;
+	}
+	
 	
 	
 	public static String convertToString(List<String> listSrc) {

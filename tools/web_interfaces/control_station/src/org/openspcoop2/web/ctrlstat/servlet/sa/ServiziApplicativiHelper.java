@@ -1153,7 +1153,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 
 
-	public void prepareServizioApplicativoList(ISearch ricerca, List<ServizioApplicativo> lista)
+	public void prepareServizioApplicativoList(ISearch ricerca, List<ServizioApplicativo> lista, boolean useIdSoggetto)
 			throws Exception {
 		try {
 			String idProvider = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
@@ -1206,6 +1206,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			if(!useIdSogg) {
+				addFilterProtocol(ricerca, idLista);
+			}
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));

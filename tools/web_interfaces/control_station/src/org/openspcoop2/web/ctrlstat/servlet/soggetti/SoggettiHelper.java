@@ -42,6 +42,7 @@ import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -197,7 +198,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
 				de.setValues(listaTipiProtocollo);
-				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
+				de.setLabels(ConsoleHelper.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(protocollo);
 				de.setType(DataElementType.SELECT);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
@@ -214,7 +215,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				deLABEL.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
 				deLABEL.setType(DataElementType.TEXT);
 				deLABEL.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO+"__label");
-				deLABEL.setValue(this.getLabelProtocollo(protocollo));
+				deLABEL.setValue(ConsoleHelper.getLabelProtocollo(protocollo));
 				dati.addElement(deLABEL);
 				
 				de.setValue(protocollo);
@@ -844,7 +845,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 				if(showProtocolli) {
 					de = new DataElement();
-					de.setValue(this.getLabelProtocollo(protocollo));
+					de.setValue(ConsoleHelper.getLabelProtocollo(protocollo));
 					e.addElement(de);
 				}
 				
@@ -1101,7 +1102,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 				if(showProtocolli) {
 					de = new DataElement();
-					de.setValue(this.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo())));
+					de.setValue(ConsoleHelper.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(elem.getTipo())));
 					e.addElement(de);
 				}
 				

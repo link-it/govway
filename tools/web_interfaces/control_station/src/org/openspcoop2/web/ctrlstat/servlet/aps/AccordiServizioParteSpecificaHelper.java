@@ -1030,6 +1030,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			addFilterProtocol(ricerca, idLista);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -1209,6 +1210,40 @@ public class ProtocolFactoryManager {
 	}
 	
 	
+	public HashMap<String, List<String>> _getServiceTypes() {
+		HashMap<String, List<String>> map = new HashMap<>();
+		
+		MapReader<String, List<String>> rest = this.getServiceTypes(ServiceBinding.REST);
+		if(rest!=null && rest.size()>0) {
+			Enumeration<String> en = rest.keys();
+			while (en.hasMoreElements()) {
+				String protocollo = (String) en.nextElement();
+				map.put(protocollo, rest.get(protocollo));
+			}
+		}
+		
+		MapReader<String, List<String>> soap = this.getServiceTypes(ServiceBinding.SOAP);
+		if(soap!=null && soap.size()>0) {
+			Enumeration<String> en = rest.keys();
+			while (en.hasMoreElements()) {
+				String protocollo = (String) en.nextElement();
+				if(map.containsKey(protocollo)) {
+					List<String> restP = map.get(protocollo);
+					List<String> soapP = soap.get(protocollo);
+					for (String tipo : soapP) {
+						if(restP.contains(tipo)==false) {
+							restP.add(tipo);
+						}
+					}
+				}
+				else {
+					map.put(protocollo, soap.get(protocollo));
+				}
+			}
+		}
+		
+		return map;
+	}
 	public MapReader<String, List<String>> getServiceTypes(ServiceBinding serviceBinding) {
 		if(ServiceBinding.SOAP.equals(serviceBinding)){
 			return this.tipiServiziValidi_soap;
