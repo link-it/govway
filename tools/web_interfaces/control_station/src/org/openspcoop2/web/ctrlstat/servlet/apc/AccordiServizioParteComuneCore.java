@@ -169,10 +169,9 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public boolean showWsdlDefinitorio(String tipoSoggetto,SoggettiCore soggettiCore, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
+	public boolean showWsdlDefinitorio(String protocollo,SoggettiCore soggettiCore, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
 		String nomeMetodo = "showWsdlDefinitorio";
 		try {
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
 			return this.showWsdlDefinitorio(protocollo,serviceBinding, interfaceType);
 
 		}catch (Exception e) {
@@ -194,11 +193,10 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean showConversazioni(String tipoSoggetto,SoggettiCore soggettiCore, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
+	public boolean showConversazioni(String protocollo,SoggettiCore soggettiCore, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
 		String nomeMetodo = "showConversazioni";
 		try {
 
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
 			return this.showConversazioni(protocollo,serviceBinding,interfaceType);
 
 		}catch (Exception e) {
@@ -220,10 +218,9 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public ValidazioneResult validazione(AccordoServizioParteComune as,SoggettiCore soggettiCore) throws DriverRegistroServiziException {
+	public ValidazioneResult validazione(AccordoServizioParteComune as,SoggettiCore soggettiCore, String protocollo) throws DriverRegistroServiziException {
 		String nomeMetodo = "validazione";
 		try {
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneAccordi().valida(as);
 		}catch (Exception e) {
@@ -232,10 +229,9 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public ValidazioneResult validaInterfacciaWsdlParteComune(AccordoServizioParteComune as,SoggettiCore soggettiCore) throws DriverRegistroServiziException {
+	public ValidazioneResult validaInterfacciaWsdlParteComune(AccordoServizioParteComune as,SoggettiCore soggettiCore, String protocollo) throws DriverRegistroServiziException {
 		String nomeMetodo = "validaInterfacciaWsdlParteComune";
 		try {
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(as);
 		}catch (Exception e) {
@@ -244,10 +240,9 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public ValidazioneResult validaSpecificaConversazione(AccordoServizioParteComune as,SoggettiCore soggettiCore) throws DriverRegistroServiziException {
+	public ValidazioneResult validaSpecificaConversazione(AccordoServizioParteComune as,SoggettiCore soggettiCore, String protocollo) throws DriverRegistroServiziException {
 		String nomeMetodo = "validaSpecificaConversazione";
 		try {
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaConversazione(as);
 		}catch (Exception e) {

@@ -38,10 +38,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
@@ -236,7 +238,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, false);
+			// Controllo comunque quelli operativi, almeno uno deve esistere
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
 
 			// primo accesso 
 			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
@@ -271,9 +274,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// Preparo il menu
 			apcHelper.makeMenu();
-			
+				
 			if(listaTipiProtocollo.size()<=0) {
-				pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+				if(soggettiCore.isGestionePddAbilitata()) {
+					pd.setMessage("Non risultano registrati soggetti associati a porte di dominio di tipo operativo", Costanti.MESSAGE_TYPE_INFO);
+				}
+				else {
+					pd.setMessage("Non risultano registrati soggetti di dominio interno", Costanti.MESSAGE_TYPE_INFO);
+				}
 				pd.disableEditMode();
 
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -628,7 +636,18 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					as.setSoggettoReferente(assr);
 				}
 			}else{
-				as.setSoggettoReferente(null);
+				if(apcCore.isSupportatoSoggettoReferente(this.tipoProtocollo)==false) {
+					// Recupero Soggetto Default
+					IDSoggetto idSoggetto = apcCore.getSoggettoOperativo(userLogin, this.tipoProtocollo);
+					Soggetto s = soggettiCore.getSoggetto(idSoggetto);
+					IdSoggetto assr = new IdSoggetto();
+					assr.setTipo(s.getTipo());
+					assr.setNome(s.getNome());
+					as.setSoggettoReferente(assr);
+				}
+				else {
+					as.setSoggettoReferente(null);
+				}
 			}
 			if(this.versione!=null){
 				as.setVersione(Integer.parseInt(this.versione));

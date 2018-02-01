@@ -3561,13 +3561,15 @@ public class ConsoleHelper {
 	}
 	public String getLabelIdAccordo(String protocollo, IDAccordo idAccordo) throws Exception{
 		StringBuffer bf = new StringBuffer();
-		if(idAccordo.getSoggettoReferente()!=null){
-			bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
-			bf.append(":");
-		}
 		bf.append(idAccordo.getNome());
 		bf.append(":");
 		bf.append(idAccordo.getVersione());
+		if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
+			if(idAccordo.getSoggettoReferente()!=null){
+				bf.append(":");
+				bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
+			}
+		}
 		return bf.toString();
 	}
 }

@@ -2576,7 +2576,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	// Controlla i dati dei WSDL degli Accordi e dei Servizi
-	public boolean accordiWSDLCheckData(PageData pd,String tipo, String wsdl, AccordoServizioParteComune as,boolean validazioneDocumenti) throws Exception {
+	public boolean accordiWSDLCheckData(PageData pd,String tipo, String wsdl, AccordoServizioParteComune as,boolean validazioneDocumenti, String protocollo) throws Exception {
 
 		if(validazioneDocumenti){
 
@@ -2621,14 +2621,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			if(validazioneParteComune){
-				ValidazioneResult result = this.apcCore.validaInterfacciaWsdlParteComune(as, this.soggettiCore);
+				ValidazioneResult result = this.apcCore.validaInterfacciaWsdlParteComune(as, this.soggettiCore, protocollo);
 				if(result.isEsito()==false){
 					pd.setMessage(result.getMessaggioErrore());
 				}
 				return result.isEsito();
 			}
 			if(validazioneSpecificaConversazione){
-				ValidazioneResult result = this.apcCore.validaSpecificaConversazione(as, this.soggettiCore);
+				ValidazioneResult result = this.apcCore.validaSpecificaConversazione(as, this.soggettiCore, protocollo);
 				if(result.isEsito()==false){
 					pd.setMessage(result.getMessaggioErrore());
 				}
@@ -2653,9 +2653,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType
 			) throws Exception {
 
-		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute("ShowAccordiAzioni");
-		Boolean showAccordiPortTypes = (Boolean) this.session.getAttribute("ShowAccordiPortTypes");
-		Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute("ShowAccordiCooperazione");
+		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
+		Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 		boolean isInterfacciaAvanzata = this.isModalitaAvanzata();
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 
@@ -2767,41 +2766,47 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
-		de.setPostBack(true);
-		Soggetto sogg = null;
-		if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-			if(Integer.parseInt(referente)>0){
-				sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
-			}
-		}
-		if( modificheAbilitate && modificaAbilitataServizioComposto ){
-
-			de.setType(DataElementType.SELECT);
-			de.setValues(providersList);
-			de.setLabels(providersListLabel);
+		if(this.apcCore.isSupportatoSoggettoReferente(protocolFactory.getProtocol())) {
+			de.setPostBack(true);
+			Soggetto sogg = null;
 			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-				de.setSelected(referente);
-			}else{
-				de.setSelected("-");
+				if(Integer.parseInt(referente)>0){
+					sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
+				}
 			}
-			//if(this.core.isBackwardCompatibilityAccordo11()==false){
-			de.setRequired(true);
-
-		}else{
+			if( modificheAbilitate && modificaAbilitataServizioComposto ){
+	
+				de.setType(DataElementType.SELECT);
+				de.setValues(providersList);
+				de.setLabels(providersListLabel);
+				if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
+					de.setSelected(referente);
+				}else{
+					de.setSelected("-");
+				}
+				//if(this.core.isBackwardCompatibilityAccordo11()==false){
+				de.setRequired(true);
+	
+			}else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(referente);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE_1_2);
+				de.setType(DataElementType.TEXT);
+				if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
+					de.setValue(sogg.getTipo()+"/"+sogg.getNome());
+				}else{
+					de.setValue("-");
+				}
+			}	
+		}
+		else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(referente);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
-			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE_1_2);
-			de.setType(DataElementType.TEXT);
-			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-				de.setValue(sogg.getTipo()+"/"+sogg.getNome());
-			}else{
-				de.setValue("-");
-			}
-		}	
+		}
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -2942,27 +2947,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		boolean showWsdlAsincroni = false;
 		if(isInterfacciaAvanzata && serviceBinding.equals(ServiceBinding.SOAP)) {
 		
-			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-				showConversazioni = this.apcCore.showConversazioni(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
+			if(tipoProtocollo!=null){
+				showConversazioni = this.apcCore.showConversazioni(tipoProtocollo,serviceBinding,interfaceType);
 			}
 			else{
-				if(tipoProtocollo!=null){
-					showConversazioni = this.apcCore.showConversazioni(tipoProtocollo,serviceBinding,interfaceType);
-				}
-				else{
-					showConversazioni = false;
-				}
+				showConversazioni = false;
 			}
 			showConversazioni = showConversazioni && isInterfacciaAvanzata;
 		
-			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-				showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(sogg.getTipo(),this.soggettiCore,serviceBinding,interfaceType);
-			}
-			else{
-				if(tipoProtocollo!=null){
-					showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(tipoProtocollo,serviceBinding,interfaceType);
-				}
-			}
+			showWsdlDefinitorio = this.apcCore.showWsdlDefinitorio(tipoProtocollo,serviceBinding,interfaceType);
 			
 			showWsdlAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(tipoProtocollo,serviceBinding);
 			
@@ -3035,25 +3028,24 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					dati.addElement(de);
 				}
 
-				if (showAccordiPortTypes) {
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-					if(contaListe){
-						// BugFix OP-674
-						//int num = this.apcCore.accordiPorttypeList(Integer.parseInt(id), new Search(true)).size();
-						Search searchForCount = new Search(true,1);
-						this.apcCore.accordiPorttypeList(Integer.parseInt(id), searchForCount);
-						int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES+" ("+num+")");
-					}else{
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES);
-					}
-					dati.addElement(de);
+				// PortType
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
+						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
+				if(contaListe){
+					// BugFix OP-674
+					//int num = this.apcCore.accordiPorttypeList(Integer.parseInt(id), new Search(true)).size();
+					Search searchForCount = new Search(true,1);
+					this.apcCore.accordiPorttypeList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE);
+					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES+" ("+num+")");
+				}else{
+					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES);
 				}
+				dati.addElement(de);
 				break;
 			
 			}
@@ -4007,8 +3999,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return false;
 			}
 			if(referente==null || referente.equals("") || referente.equals("-")){
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto Referente");
-				return false;
+				if(!TipoOperazione.ADD.equals(tipoOperazione) || this.apcCore.isSupportatoSoggettoReferente(tipoProtocollo)) {
+					this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto Referente");
+					return false;
+				}
 			}
 			//}
 			
@@ -4178,15 +4172,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			accordoServizioParteComune.setMessageType(this.apcCore.fromMessageMessageType(messageType));
 			accordoServizioParteComune.setFormatoSpecifica(this.apcCore.interfaceType2FormatoSpecifica(formatoSpecifica));
 			
-			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(accordoServizioParteComune.getSoggettoReferente().getTipo());
-
-			ValidazioneResult v = this.apcCore.validazione(accordoServizioParteComune, this.soggettiCore);
+			ValidazioneResult v = this.apcCore.validazione(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
 			if(v.isEsito()==false){
-				this.pd.setMessage("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+				this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 				if(v.getException()!=null)
-					this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore(),v.getException());
+					this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
 				else
-					this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+					this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 				return false;
 			}	
 
@@ -4225,23 +4217,23 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				accordoServizioParteComune.setByteSpecificaConversazioneErogatore(wsblLogicoErogatore);
 				accordoServizioParteComune.setByteSpecificaConversazioneFruitore(wsblLogicoFruitore);
 
-				v = this.apcCore.validaInterfacciaWsdlParteComune(accordoServizioParteComune, this.soggettiCore);
+				v = this.apcCore.validaInterfacciaWsdlParteComune(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
 				if(v.isEsito()==false){
-					this.pd.setMessage("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 					if(v.getException()!=null)
-						this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore(),v.getException());
+						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
 					else
-						this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 					return false;
 				}
 
-				v = this.apcCore.validaSpecificaConversazione(accordoServizioParteComune, this.soggettiCore);
+				v = this.apcCore.validaSpecificaConversazione(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
 				if(v.isEsito()==false){
-					this.pd.setMessage("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 					if(v.getException()!=null)
-						this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore(),v.getException());
+						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
 					else
-						this.log.error("[validazione-"+protocollo+"] "+v.getMessaggioErrore());
+						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 					return false;
 				}
 

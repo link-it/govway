@@ -338,7 +338,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiWSDLCheckData(pd,this.tipo, this.wsdl,as,this.validazioneDocumenti);
+			boolean isOk = apcHelper.accordiWSDLCheckData(pd,this.tipo, this.wsdl,as,this.validazioneDocumenti, protocollo);
 			if (!isOk) {
 
 				// setto la barra del titolo

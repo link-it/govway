@@ -4514,20 +4514,7 @@ public class ControlStationCore {
 			// Verifico esistenza soggetti per i protocolli caricati
 			List<String> listaTipiProtocollo = new ArrayList<>();
 			for (String check : _listaTipiProtocollo) {
-			
-				Search s = new Search();
-				s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
-				s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
-				if(dominio!=null) {
-					s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, dominio.toString()); // imposto dominio
-				}
-				List<org.openspcoop2.core.registry.Soggetto> lista = null;
-				if(this.isVisioneOggettiGlobale(userLogin)){
-					lista = this.soggettiRegistroList(null, s);
-				}else{
-					lista = this.soggettiRegistroList(userLogin, s);
-				}
-				if(lista.size()>0) {
+				if(this.existsAlmostOneOrganization(dominio, userLogin, check)) {
 					listaTipiProtocollo.add(check);	
 				}
 			}
@@ -4541,16 +4528,7 @@ public class ControlStationCore {
 			List<String> listaTipiProtocollo = new ArrayList<>();
 			for (String check : _listaTipiProtocollo) {
 			
-				Search s = new Search();
-				s.setPageSize(Liste.ACCORDI, 1); // serve solo per il count
-				s.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, check); // imposto protocollo
-				List<AccordoServizioParteComune> lista = null;
-				if(this.isVisioneOggettiGlobale(userLogin)){
-					lista = this.accordiList(null, s);
-				}else{
-					lista = this.accordiList(userLogin, s);
-				}
-				if(lista.size()>0) {
+				if(this.existsAlmostOneAPI(userLogin, check)) {
 					listaTipiProtocollo.add(check);	
 				}
 			}
@@ -4560,7 +4538,63 @@ public class ControlStationCore {
 		
 		return _listaTipiProtocollo;
 	}
+	public boolean existsAlmostOneOrganization(PddTipologia dominio, String userLogin, String protocollo) throws DriverRegistroServiziException{
+		Search s = new Search();
+		s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+		if(dominio!=null) {
+			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, dominio.toString()); // imposto dominio
+		}
+		List<org.openspcoop2.core.registry.Soggetto> lista = null;
+		if(this.isVisioneOggettiGlobale(userLogin)){
+			lista = this.soggettiRegistroList(null, s);
+		}else{
+			lista = this.soggettiRegistroList(userLogin, s);
+		}
+		if(lista!=null && lista.size()>0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public boolean existsAlmostOneAPI(String userLogin, String protocollo) throws DriverRegistroServiziException{
+		Search s = new Search();
+		s.setPageSize(Liste.ACCORDI, 1); // serve solo per il count
+		s.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+		List<AccordoServizioParteComune> lista = null;
+		if(this.isVisioneOggettiGlobale(userLogin)){
+			lista = this.accordiList(null, s);
+		}else{
+			lista = this.accordiList(userLogin, s);
+		}
+		if(lista!=null && lista.size()>0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
+	public IDSoggetto getSoggettoOperativo(String userLogin, String protocollo) throws DriverRegistroServiziException{
+		Search s = new Search();
+		s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+		List<org.openspcoop2.core.registry.Soggetto> lista = null;
+		if(this.isVisioneOggettiGlobale(userLogin)){
+			lista = this.soggettiRegistroList(null, s);
+		}else{
+			lista = this.soggettiRegistroList(userLogin, s);
+		}
+		if(lista!=null && lista.size()>0) {
+			return new IDSoggetto(lista.get(0).getTipo(), lista.get(0).getNome());
+		}
+		else {
+			return null;
+		}
+	}
+	
 	public List<org.openspcoop2.core.registry.Soggetto> soggettiRegistroList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "soggettiRegistroList";
