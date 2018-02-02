@@ -1034,8 +1034,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			addFilterProtocol(ricerca, idLista);
 			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
-				this.addFilterStatoAccordo(filterStatoAccordo,false);
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+					this.addFilterStatoAccordo(filterStatoAccordo,false);
+				}
 			}
 			
 			this.pd.setIndex(offset);
@@ -1112,8 +1114,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			if(showRuoli)
 				listaLabelTabella.add(correlatoLabel);
-			if(this.core.isShowGestioneWorkflowStatoDocumenti())
-				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO);
+			if(this.core.isShowGestioneWorkflowStatoDocumenti()) {
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO);
+				}
+			}
 			listaLabelTabella.add(fruitoriLabel);
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI);
 
@@ -1235,9 +1240,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 
 				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-					de = new DataElement();
-					de.setValue(StatiAccordo.upper(asps.getStatoPackage()));
-					e.addElement(de);
+					if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+						de = new DataElement();
+						de.setValue(StatiAccordo.upper(asps.getStatoPackage()));
+						e.addElement(de);
+					}
 				}
 
 				de = new DataElement();
@@ -1337,8 +1344,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
-				this.addFilterStatoAccordo(filterStatoAccordo,false);
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+					this.addFilterStatoAccordo(filterStatoAccordo,false);
+				}
 			}
 			
 			this.pd.setIndex(offset);
@@ -1409,7 +1418,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean showPoliticheSLA = false;
 			//if (!isModalitaAvanzata) {
 			if(generazioneAutomaticaPD){
-				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+				if(this.core.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()){
 					String[] l = { labelFruitore , AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO ,
 							AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE};
 					labels = l;
@@ -1419,7 +1428,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					labels = l;
 				}
 			}else{
-				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+				if(this.core.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()){
 					String[] l = { labelFruitore, AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO };
 					labels = l;
 				}
@@ -1477,9 +1486,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				e.addElement(de);
 
 				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-					de = new DataElement();
-					de.setValue(StatiAccordo.upper(fru.getStatoPackage()));
-					e.addElement(de);
+					if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+						de = new DataElement();
+						de.setValue(StatiAccordo.upper(fru.getStatoPackage()));
+						e.addElement(de);
+					}
 				}
 
 				Parameter pIdSogg = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, fru.getIdSoggetto() + "");

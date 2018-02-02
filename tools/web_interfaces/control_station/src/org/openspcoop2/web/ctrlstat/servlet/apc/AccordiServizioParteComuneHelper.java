@@ -4300,8 +4300,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.addFilterServiceBinding(filterTipoAccordo,false,false);
 			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
-				this.addFilterStatoAccordo(filterStatoAccordo,false);
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+					this.addFilterStatoAccordo(filterStatoAccordo,false);
+				}
 			}
 									
 			this.pd.setIndex(offset);
@@ -4359,8 +4361,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			//Colonna ServiceBinding
 			totEl++;
 
-			if(this.core.isShowGestioneWorkflowStatoDocumenti())
-				totEl++;
+			if(this.core.isShowGestioneWorkflowStatoDocumenti()) {
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					totEl++;
+				}
+			}
 						
 			if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter)) {
 				// colonna risorse
@@ -4405,8 +4410,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			index++;
 
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE;
-				index++;
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE;
+					index++;
+				}
 			}
 
 			if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter)) {
@@ -4507,9 +4514,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-						de = new DataElement();
-						de.setValue(StatiAccordo.upper(accordoServizio.getStatoPackage()));
-						e.addElement(de);
+						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+							de = new DataElement();
+							de.setValue(StatiAccordo.upper(accordoServizio.getStatoPackage()));
+							e.addElement(de);
+						}
 					}
 					
 					if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter)) {

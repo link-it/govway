@@ -246,8 +246,10 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			addFilterProtocol(ricerca, idLista);
 			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
-				this.addFilterStatoAccordo(filterStatoAccordo,false);
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+					this.addFilterStatoAccordo(filterStatoAccordo,false);
+				}
 			}
 			
 			this.pd.setIndex(offset);
@@ -281,8 +283,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 			// setto le label delle colonne
 			int totEl = 3;
-			if(this.core.isShowGestioneWorkflowStatoDocumenti())
-				totEl++;
+			if(this.core.isShowGestioneWorkflowStatoDocumenti()) {
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					totEl++;
+				}
+			}
 //			if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED))
 				totEl++;
 
@@ -298,8 +303,10 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 //			}
 
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO;
-				index++;
+				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+					labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO;
+					index++;
+				}
 			}
 
 			labels[index] = AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI;
@@ -344,9 +351,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 //					}
 
 					if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-						de = new DataElement();
-						de.setValue(StatiAccordo.upper(accordoCooperazione.getStatoPackage()));
-						e.addElement(de);
+						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
+							de = new DataElement();
+							de.setValue(StatiAccordo.upper(accordoCooperazione.getStatoPackage()));
+							e.addElement(de);
+						}
 					}
 
 					de = new DataElement();

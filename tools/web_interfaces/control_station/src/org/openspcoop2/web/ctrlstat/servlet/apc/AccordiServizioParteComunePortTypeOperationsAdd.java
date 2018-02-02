@@ -47,7 +47,9 @@ import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
+import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -623,9 +625,31 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			
 			//imposto properties custom
 			newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
-
-			// effettuo le operazioni
-			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);
+			
+			boolean updateAccordo = false;
+			try{
+				if(apcCore.isEnableAutoMappingWsdlIntoAccordo()) {
+					if(StatiAccordo.bozza.toString().equals(as.getStatoPackage())) {
+						// Se ho aggiunto la prima operazione
+						if(pt.sizeAzioneList()==1) {
+							as.setStatoPackage(StatiAccordo.operativo.toString());
+							boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
+							apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
+							updateAccordo = true;
+						}
+					}
+				}
+			}catch(ValidazioneStatoPackageException validazioneException){
+			}
+			
+			if(updateAccordo) {			
+				// effettuo le operazioni
+				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);			
+			}		
+			else {				
+				// effettuo le operazioni
+				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);				
+			}
 			
 			// cancello i file temporanei
 			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);

@@ -46,9 +46,11 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -544,6 +546,18 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 								// è stato utilizzato il concettuale. Lo riporto nel logico
 								as.setByteWsdlLogicoErogatore(as.getByteWsdlConcettuale());
 							}
+						}
+						
+						try{
+							if(StatiAccordo.bozza.toString().equals(as.getStatoPackage())) {
+								// Se ho fatto il mapping controllo la validita' di quanto prodotto
+								as.setStatoPackage(StatiAccordo.operativo.toString());
+								boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
+								apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
+							}
+						}catch(ValidazioneStatoPackageException validazioneException){
+							// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
+							as.setStatoPackage(StatiAccordo.bozza.toString());
 						}
 						
 					}
