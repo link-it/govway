@@ -10976,8 +10976,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition("versione", search, true, true));
+						sqlQueryObject.getWhereLikeCondition("nome", search, true, true));
+						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true)); // e' un intero
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 					sqlQueryObject.addWhereCondition("id_referente = "+CostantiDB.SOGGETTI+".id");
@@ -11033,8 +11033,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition("versione", search, true, true));
+						sqlQueryObject.getWhereLikeCondition("nome", search, true, true));
+						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true));  // e' un intero
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 					sqlQueryObject.addWhereCondition("id_referente = "+CostantiDB.SOGGETTI+".id");

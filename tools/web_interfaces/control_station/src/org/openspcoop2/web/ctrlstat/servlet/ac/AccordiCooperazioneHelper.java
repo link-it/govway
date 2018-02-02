@@ -271,11 +271,14 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
 				this.pd.setSearchDescription("Accordi cooperazione contenenti la stringa '" + search + "'");
 			}
 
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			
 //			String gestioneWSBL = ServletUtils.getGestioneWSBLFromSession(this.session);
 //			if(gestioneWSBL == null){
 //				gestioneWSBL = Costanti.CHECK_BOX_DISABLED;
@@ -291,17 +294,22 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 //			if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED))
 				totEl++;
 
+			// protocolli
+			if( showProtocolli ) {
+				totEl++;
+			}
+				
 			String[] labels = new String[totEl];
 			labels[0] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME;
 			//labels[1] = "Descrizione";
 
 			int index = 1;
 
-//			if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED)) {
-				labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE;
+			if( showProtocolli ) {
+				labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO;
 				index++;
-//			}
-
+			}
+			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 					labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO;
@@ -326,14 +334,16 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					accordoCooperazione = it.next();
 					Vector<DataElement> e = new Vector<DataElement>();
 
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(accordoCooperazione.getSoggettoReferente().getTipo());
+					
 					DataElement de = new DataElement();
 					de.setUrl(
 							AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE,
 							new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, accordoCooperazione.getId() + ""),
 							new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, accordoCooperazione.getNome())
 							);
-					String uriAccordo = this.idAccordoCooperazioneFactory.getUriFromAccordo(accordoCooperazione);
-					de.setValue(uriAccordo);
+					//String uriAccordo = this.idAccordoCooperazioneFactory.getUriFromAccordo(accordoCooperazione);
+					de.setValue(this.getLabelIdAccordo(accordoCooperazione));
 					de.setIdToRemove("" + accordoCooperazione.getId());
 					de.setToolTip(accordoCooperazione.getDescrizione());
 					e.addElement(de);
@@ -342,13 +352,12 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 						de.setValue(accordoCooperazione.getDescrizione());
 						e.addElement(de);*/
 
-//					if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED)) {
+					if(showProtocolli) {
 						de = new DataElement();
-						IdSoggetto acsr = accordoCooperazione.getSoggettoReferente();
-						if (acsr != null)
-							de.setValue(acsr.getTipo() + "/" + acsr.getNome());
+						de.setValue(ConsoleHelper.getLabelProtocollo(protocollo));
 						e.addElement(de);
-//					}
+					}
+					
 
 					if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -622,7 +631,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			de.setType(DataElementType.TEXT);
 			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
 				Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
-				de.setValue(sogg.getTipo()+"/"+sogg.getNome());
+				de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, sogg.getTipo(), sogg.getNome()));
 			}else{
 				de.setValue("-");
 			}
@@ -925,6 +934,8 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
+			String titleAS = this.getLabelIdAccordo(ac);
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
@@ -932,10 +943,10 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + this.idAccordoCooperazioneFactory.getUriFromAccordo(ac), null));
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + titleAS, null));
 			}
 			else{
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + this.idAccordoCooperazioneFactory.getUriFromAccordo(ac), 
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + titleAS, 
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
@@ -962,7 +973,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				Vector<DataElement> e = new Vector<DataElement>();
 
 				DataElement de = new DataElement();
-				de.setValue(idSO.getTipo()+"/"+idSO.getNome());
+				de.setValue(this.getLabelNomeSoggetto(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSO.getTipo()), idSO.getTipo(),idSO.getNome()));
 				de.setIdToRemove(""+idSO.getTipo()+"/"+idSO.getNome());
 				e.addElement(de);
 
@@ -1002,6 +1013,8 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
+			String titleAS = this.getLabelIdAccordo(ac);
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
@@ -1011,10 +1024,10 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI  
-						+ this.idAccordoCooperazioneFactory.getUriFromAccordo(ac), null));
+						+ titleAS, null));
 			} else {
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI  
-						+ this.idAccordoCooperazioneFactory.getUriFromAccordo(ac),
+						+ titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST, 
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, ac.getId()+ "")
 						));
@@ -1253,7 +1266,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 	}
 
 	public Vector<DataElement> addPartecipanteToDati(TipoOperazione tipoOp, String id,
-			String[] partecipantiNonInseriti, Vector<DataElement> dati) {
+			String[] partecipantiNonInseriti,String[] partecipantiNonInseritiLabels, Vector<DataElement> dati) {
 		
 		DataElement de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE);
@@ -1269,6 +1282,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 		de.setValues(partecipantiNonInseriti );
+		de.setLabels(partecipantiNonInseritiLabels );
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 		de.setSize(getSize());

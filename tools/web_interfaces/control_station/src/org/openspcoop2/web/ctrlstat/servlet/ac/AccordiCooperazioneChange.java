@@ -169,6 +169,7 @@ public final class AccordiCooperazioneChange extends Action {
 			IDAccordoCooperazione idAccordoOLD = idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),
 					BeanUtilities.getSoggettoReferenteID(ac.getSoggettoReferente()),ac.getVersione());
 			String uriAS = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoOLD);
+			String titleAS = acHelper.getLabelIdAccordo(ac);
 			String oldStatoPackage = ac.getStatoPackage();	
 
 			// Prendo il nome dell'accordo
@@ -264,7 +265,7 @@ public final class AccordiCooperazioneChange extends Action {
 				for (Soggetto soggetto : lista) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 						soggettiListTmp.add(soggetto.getId().toString());
-						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						soggettiListLabelTmp.add(acHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
 					}
 				}
 			}
@@ -317,7 +318,7 @@ public final class AccordiCooperazioneChange extends Action {
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-				lstParam.add(new Parameter(uriAS, null));
+				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
@@ -391,7 +392,7 @@ public final class AccordiCooperazioneChange extends Action {
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-				lstParam.add(new Parameter(uriAS, null));
+				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				// preparo i campi
@@ -428,7 +429,7 @@ public final class AccordiCooperazioneChange extends Action {
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-				lstParam.add(new Parameter(uriAS, null));
+				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				// preparo i campi
@@ -520,7 +521,7 @@ public final class AccordiCooperazioneChange extends Action {
 					lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 							AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-					lstParam.add(new Parameter(uriAS, null));
+					lstParam.add(new Parameter(titleAS, null));
 
 					ServletUtils.setPageDataTitle(pd, lstParam);
 

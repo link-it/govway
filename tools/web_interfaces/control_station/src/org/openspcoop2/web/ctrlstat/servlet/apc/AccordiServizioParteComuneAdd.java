@@ -47,7 +47,6 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
-import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -140,8 +139,6 @@ public final class AccordiServizioParteComuneAdd extends Action {
 		
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
-
-		IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 
 		try {
 
@@ -397,7 +394,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					while (itL.hasNext()) {
 						AccordoCooperazione singleAC = itL.next();
 						accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
-						accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
+						accordiCooperazioneEsistentiLabel[i] = apcHelper.getLabelIdAccordo(acCore.getAccordoCooperazione(singleAC.getId())); 
 						i++;
 					}
 				} else {

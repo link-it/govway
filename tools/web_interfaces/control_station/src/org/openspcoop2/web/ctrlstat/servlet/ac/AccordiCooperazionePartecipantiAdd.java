@@ -38,7 +38,6 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -83,9 +82,6 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
-
-
 
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
@@ -104,7 +100,8 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 			acHelper.makeMenu();
 
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(this.idAccordoCoop));
-
+			String titleAS = acHelper.getLabelIdAccordo(ac);
+			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo());
 			//String profiloSoggettoReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(ac.getSoggettoReferente().getTipo(), ac.getSoggettoReferente().getNome())).getVersioneProtocollo();
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
@@ -123,7 +120,9 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 
 			//lista partecipanti non inseriti
 			ArrayList<String> partecipantiNonInseriti = new ArrayList<String>();
+			ArrayList<String> partecipantiNonInseritiLabels = new ArrayList<String>();
 			partecipantiNonInseriti.add("-");
+			partecipantiNonInseritiLabels.add("-");
 
 			List<Soggetto> soggetti = null;
 			if(acCore.isVisioneOggettiGlobale(userLogin)){
@@ -134,8 +133,11 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 			for (Soggetto sogg : soggetti) {
 				String s = sogg.getTipo()+"/"+sogg.getNome();
 				if(!tmpInseriti.contains(s)){
-					if(tipiSoggettiCompatibiliAccordo.contains(sogg.getTipo()))
+					if(tipiSoggettiCompatibiliAccordo.contains(sogg.getTipo())) {
 						partecipantiNonInseriti.add(s);
+						partecipantiNonInseritiLabels.add(acHelper.getLabelNomeSoggetto(soggettiCore.getProtocolloAssociatoTipoSoggetto(sogg.getTipo()), 
+								 sogg.getTipo(), sogg.getNome()));
+					}
 				}
 			}
 
@@ -148,7 +150,7 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + idAccordoCooperazioneFactory.getUriFromAccordo(ac),
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_PARTECIPANTI_LIST, 
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, ac.getId() + ""),
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, ac.getNome())
@@ -164,7 +166,9 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = acHelper.addPartecipanteToDati(TipoOperazione.ADD, this.idAccordoCoop,
-						partecipantiNonInseriti.toArray(new String[partecipantiNonInseriti.size()]), dati);
+						partecipantiNonInseriti.toArray(new String[partecipantiNonInseriti.size()]),
+						partecipantiNonInseritiLabels.toArray(new String[partecipantiNonInseritiLabels.size()]),
+						dati);
 
 				pd.setDati(dati);
 
@@ -182,7 +186,7 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + idAccordoCooperazioneFactory.getUriFromAccordo(ac),
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI_DI + titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_PARTECIPANTI_LIST, 
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, ac.getId() + ""),
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, ac.getNome())
@@ -199,7 +203,9 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = acHelper.addPartecipanteToDati(TipoOperazione.ADD, this.idAccordoCoop,
-						partecipantiNonInseriti.toArray(new String[partecipantiNonInseriti.size()]), dati);
+						partecipantiNonInseriti.toArray(new String[partecipantiNonInseriti.size()]), 
+						partecipantiNonInseritiLabels.toArray(new String[partecipantiNonInseritiLabels.size()]),
+						dati);
 				
 				pd.setDati(dati);
 

@@ -220,7 +220,7 @@ public final class AccordiCooperazioneAdd extends Action {
 				for (Soggetto soggetto : lista) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
 						soggettiListTmp.add(soggetto.getId().toString());
-						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						soggettiListLabelTmp.add(acHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
 					}
 				}
 			}

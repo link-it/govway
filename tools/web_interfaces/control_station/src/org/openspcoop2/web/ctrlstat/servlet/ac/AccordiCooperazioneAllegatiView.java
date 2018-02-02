@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -73,8 +72,6 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
-
 		try {
 
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
@@ -97,7 +94,7 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 
 			// Prendo il nome
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(new Long(idAccordoInt));
-			String uriAS = idAccordoCooperazioneFactory.getUriFromAccordo(ac);
+			String titleAS = acHelper.getLabelIdAccordo(ac);
 
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
 
@@ -109,7 +106,7 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 					AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ uriAS,
+			lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 					AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, idAccordo),
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, ac.getNome())));

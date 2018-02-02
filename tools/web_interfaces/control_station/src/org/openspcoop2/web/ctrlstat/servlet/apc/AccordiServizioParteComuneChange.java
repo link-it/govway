@@ -55,7 +55,6 @@ import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
-import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
@@ -138,7 +137,6 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
@@ -331,7 +329,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					while (itL.hasNext()) {
 						AccordoCooperazione singleAC = itL.next();
 						accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
-						accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
+						accordiCooperazioneEsistentiLabel[i] = apcHelper.getLabelIdAccordo(acCore.getAccordoCooperazione(singleAC.getId())); 
 						i++;
 					}
 				} else {

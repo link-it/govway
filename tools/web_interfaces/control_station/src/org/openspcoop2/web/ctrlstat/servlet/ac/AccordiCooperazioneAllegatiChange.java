@@ -40,7 +40,6 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
-import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
@@ -84,8 +83,6 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 		
-		IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
-
 		try {
 			
 			FileUploadForm fileUpload = (FileUploadForm) form;
@@ -114,7 +111,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 
 			// Prendo il nome
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(new Long(idAccordoInt));
-			String uriAS = idAccordoCooperazioneFactory.getUriFromAccordo(ac);
+			String titleAS = acHelper.getLabelIdAccordo(ac);
 			
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);
 			
@@ -126,7 +123,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ uriAS,
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, idAccordo),
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, ac.getNome())));
@@ -173,7 +170,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ uriAS,
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI_DI+ titleAS,
 						AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_LIST,
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, idAccordo),
 						new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, ac.getNome())));

@@ -2811,7 +2811,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE_1_2);
 				de.setType(DataElementType.TEXT);
 				if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
-					de.setValue(sogg.getTipo()+"/"+sogg.getNome());
+					de.setValue(this.getLabelNomeSoggetto(tipoProtocollo,sogg.getTipo(),sogg.getNome()));
 				}else{
 					de.setValue("-");
 				}
@@ -4760,7 +4760,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public void prepareAccordiComponentiList(AccordoServizioParteComune as, ISearch ricerca, List<AccordoServizioParteComuneServizioCompostoServizioComponente> lista,String tipoAccordo) throws Exception {
+	public void prepareAccordiComponentiList(AccordoServizioParteComune as, ISearch ricerca, List<AccordoServizioParteComuneServizioCompostoServizioComponente> lista,
+			String tipoAccordo) throws Exception {
 		try {
 
 			String labelASTitle = this.getLabelIdAccordo(as); 
@@ -4778,6 +4779,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
@@ -4836,12 +4839,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 //					e.addElement(de);
 
 					DataElement de = new DataElement();
-					de.setValue(componente.getTipo()+"/"+componente.getNome());
+					de.setValue( this.getLabelNomeServizio(protocollo, componente.getTipo(), componente.getNome(), componente.getVersione()));
 					de.setIdToRemove(""+componente.getIdServizioComponente());
 					e.addElement(de);
 					
 					de = new DataElement();
-					de.setValue(componente.getTipoSoggetto()+"/"+componente.getNomeSoggetto());
+					de.setValue(this.getLabelNomeSoggetto(protocollo, componente.getTipoSoggetto(), componente.getNomeSoggetto()));
 					e.addElement(de);
 
 					dati.addElement(e);

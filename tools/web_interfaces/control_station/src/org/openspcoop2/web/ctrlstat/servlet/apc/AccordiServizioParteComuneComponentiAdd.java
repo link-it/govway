@@ -119,7 +119,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			String[] serviziList = null;
 			String[] serviziListLabel = null;
 			//String[] ptList = null;
-			List<String[]> lst = apcCore.getAccordiServizioCompostoLabels(as, idAccordoInt, userLogin, tipiServiziCompatibili, tipiSoggettiCompatibili);
+			List<String[]> lst = apcCore.getAccordiServizioCompostoLabels(as, idAccordoInt, userLogin, tipiServiziCompatibili, tipiSoggettiCompatibili, apcHelper);
 
 			serviziList = lst.get(0);
 			serviziListLabel = lst.get(1);

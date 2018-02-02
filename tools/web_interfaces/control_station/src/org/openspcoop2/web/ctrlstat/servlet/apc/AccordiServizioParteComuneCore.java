@@ -50,7 +50,6 @@ import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -69,6 +68,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UtilitiesSQLQuery;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -1281,7 +1281,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	}
 
 	public List<String[]> getAccordiServizioCompostoLabels(AccordoServizioParteComune as, int idAccordoInt, String userLogin, 
-			List<String> tipiServiziCompatibili, List<String> tipiSoggettiCompatibili){
+			List<String> tipiServiziCompatibili, List<String> tipiSoggettiCompatibili, ConsoleHelper helper){
 		String[] serviziList = null;
 		String[] serviziListLabel = null;
 		Connection con = null;
@@ -1393,7 +1393,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 					
 					if(tipiServiziCompatibili.contains(asps.getTipo()) && tipiSoggettiCompatibili.contains(asps.getTipoSoggettoErogatore())){
 						serviziL.add(""+idServizio);
-						serviziLabelL.add(IDServizioFactory.getInstance().getUriFromAccordo(asps));
+						serviziLabelL.add(helper.getLabelIdAccordo(asps));
 					}
 
 					//i++;

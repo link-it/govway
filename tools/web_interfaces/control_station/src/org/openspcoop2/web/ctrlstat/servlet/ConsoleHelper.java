@@ -66,6 +66,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -3612,6 +3613,33 @@ public class ConsoleHelper {
 				bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
 			}
 		}
+		return bf.toString();
+	}
+	public String getLabelNomeServizio(String protocollo, String tipoServizio, String nomeServizio, Integer versioneInt) throws Exception{
+		
+		String versione = "";
+		if(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoVersionamentoAccordiParteSpecifica()) {
+			versione = ":"+versioneInt;
+		}
+		
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		if(protocolFactoryManager._getServiceTypes().get(protocollo).size()>1) {
+			return tipoServizio+"/"+nomeServizio+versione;
+		}
+		else {
+			return nomeServizio+versione;
+		}
+	}
+	public String getLabelIdAccordo(AccordoServizioParteSpecifica as) throws Exception{
+		return this.getLabelIdAccordo(
+				this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getTipoSoggettoErogatore()), 
+				this.idServizioFactory.getIDServizioFromAccordo(as));
+	}
+	public String getLabelIdAccordo(String protocollo, IDServizio idServizio) throws Exception{
+		StringBuffer bf = new StringBuffer();
+		bf.append(this.getLabelNomeServizio(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione()));
+		bf.append(":");
+		bf.append(this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome()));
 		return bf.toString();
 	}
 	public String getLabelIdAccordo(AccordoCooperazione ac) throws Exception{

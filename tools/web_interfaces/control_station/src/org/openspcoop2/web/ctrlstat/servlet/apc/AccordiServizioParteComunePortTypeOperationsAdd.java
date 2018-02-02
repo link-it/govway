@@ -658,7 +658,16 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			List<Operation> lista = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), ricerca);
+			int idPT = pt.getId().intValue();
+			if(updateAccordo) {			
+				for (PortType ptCheck : as.getPortTypeList()) {
+					if(ptCheck.getNome().equals(pt.getNome())) {
+						idPT = ptCheck.getId().intValue();
+					}
+				}
+			}
+			
+			List<Operation> lista = apcCore.accordiPorttypeOperationList(idPT, ricerca);
 
 			apcHelper.prepareAccordiPorttypeOperationsList(ricerca, lista, id, as,tipoAccordo,pt.getNome());
 
