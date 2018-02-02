@@ -178,7 +178,7 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 
 !! Pre-requisiti!!
 a. Aggiunta di connettori https specifici per i test nella configurazione web (in jboss in server.xml del tomcat integrato)
-- Un connettore HTTPS che non esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8443)
+- Un connettore HTTPS che non esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8445)
   Esempio in ./protocolli/trasparente/testsuite/deploy/https_examples/ConnettoreHTTPS_noClientAuth.xml
   La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/openspcoop2/keys
 - un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)

@@ -42,16 +42,18 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly10" property="antinstaller_as" displayText="Application Server">
-        
-		<!-- il valore viene mappato sempre in wildfly 8 -->
+        <large-select defaultValue="wildfly11" property="antinstaller_as" displayText="Application Server">
+       
+		<option value="wildfly11" text="WildFly 11.x"/> 
 		<option value="wildfly10" text="WildFly 10.x"/>
-		<option value="wildfly9" text="WildFly 9.x"/>
-		<option value="wildfly8" text="WildFly 8.x"/>
-
-		<option value="jboss7" text="JBoss 7.x"/>
 		<!--
-			 Deprecati 
+			Deprecati
+			<option value="wildfly9" text="WildFly 9.x"/>
+			<option value="wildfly8" text="WildFly 8.x"/>
+		-->
+		<!--
+			Deprecati 
+			<option value="jboss7" text="JBoss 7.x"/>
 			<option value="jboss6" text="JBoss 6.x"/>
 			<option value="jboss5" text="JBoss 5.x"/>
 	    		<option value="jboss4" text="JBoss 4.x"/>
@@ -61,9 +63,9 @@
             	<option value="tomcat9" text="Apache Tomcat 9.x"/>
             	<option value="tomcat8" text="Apache Tomcat 8.x"/>
             	<option value="tomcat7" text="Apache Tomcat 7.x"/>
-            	<option value="tomcat6" text="Apache Tomcat 6.x"/>
             	<!-- 
 			Deprecati
+			<option value="tomcat6" text="Apache Tomcat 6.x"/>
 			<option value="tomcat5" text="Apache Tomcat 5.x"/> 
 		-->
         </large-select>

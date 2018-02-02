@@ -178,6 +178,7 @@ public class Client {
 					args[0].equals("wildfly8") ||
 					args[0].equals("wildfly9") ||
 					args[0].equals("wildfly10") ||
+					args[0].equals("wildfly11") ||
 					args[0].startsWith("tomcat")){
 				JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);  
 				Hashtable<String, Object> env = null;

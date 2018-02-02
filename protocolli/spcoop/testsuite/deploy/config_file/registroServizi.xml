@@ -977,7 +977,7 @@
                 </configurazione-azione>
                 <configurazione-azione nome="https_without_client_auth">
                     <connettore tipo="https" nome="https_without_client_auth">
-                        <property nome="location" valore="https://127.0.0.1:8443/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/openspcoop2/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -986,7 +986,7 @@
                 </configurazione-azione>
                 <configurazione-azione nome="https_ca_non_presente">
                     <connettore tipo="https" nome="https_ca_non_presente">
-                        <property nome="location" valore="https://127.0.0.1:8443/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/openspcoop2/keys/soggetto1_senzaCA.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -995,7 +995,7 @@
                 </configurazione-azione>
                 <configurazione-azione nome="https_hostname_verify">
                     <connettore tipo="https" nome="https_hostname_verify">
-                        <property nome="location" valore="https://127.0.0.1:8443/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/openspcoop2/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>

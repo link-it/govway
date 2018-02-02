@@ -1,7 +1,9 @@
 #AS_VERSION=jboss4,jboss5,jboss6,jboss7,wildfly8,wildfly9,wildfly10,tomcat6
 # Gli application server jboss4, jboss5 e jboss6 sono stati deprecati dalla versione 2.3
-AS_VERSION=jboss7,wildfly8,wildfly9,wildfly10,tomcat6
-# Per tomcat qualsiasi versione venga generata è uguale.
+# L'application server jboss7 è stato deprecato dalla versione 3.0 per motivi di jdk minimo (v8) non supportato da jboss7
+# L'application server tomcat6, wildfly8 e wildfly9 sono stati deprecati dalla versione 3.0 per motivi di test non più verificati su tali versioni
+AS_VERSION=wildfly10,wildfly11,tomcat7,tomcat8,tomcat9
+# Per tomcat qualsiasi versione venga generata è uguale (a meno del datasource).
 # L'importante che anche il build.xml del setup associ poi lo stesso valore per qualsiasi scelta di tomcat venga fatta
 
 ROOT=../../

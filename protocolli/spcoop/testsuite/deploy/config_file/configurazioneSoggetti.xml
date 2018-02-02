@@ -7937,7 +7937,7 @@
         <servizio-applicativo nome="OpenSPCoop2TestSuiteHTTPS" > 
             <invocazione-servizio>
                 <connettore tipo="https" nome="testSuiteOpenSPCoopHTTPS">   
-                    <property nome="location" valore="https://localhost:8443/OpenSPCoop2TestSuite/server" />
+                    <property nome="location" valore="https://localhost:8445/OpenSPCoop2TestSuite/server" />
                     <property nome="trustStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks" />
                     <property nome="trustStorePassword" valore="openspcoopjks" />
                     <property nome="keyStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks" />

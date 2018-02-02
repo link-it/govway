@@ -1,6 +1,6 @@
 Esempio di connettore da impostare in apache tomcat 5.x, 6.x, 7.x e 8.x (per tomcat8 solamente versioni inferiori a 8.5.x):
 
-<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+<Connector port="8445" protocol="HTTP/1.1" SSLEnabled="true"
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
            emptySessionPath="true"
            scheme="https" secure="true" clientAuth="false" sslProtocol = "TLS"
@@ -10,7 +10,7 @@ Esempio di connettore da impostare in apache tomcat 5.x, 6.x, 7.x e 8.x (per tom
 
 Esempio di connettore da impostare in apache tomcat 8.5.x e 9.x (viene aggiunto l'attributo keyAlias):
 
-<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+<Connector port="8445" protocol="HTTP/1.1" SSLEnabled="true"
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
            emptySessionPath="true"
            scheme="https" secure="true" clientAuth="false" sslProtocol = "TLS"
@@ -21,7 +21,7 @@ Esempio di connettore da impostare in apache tomcat 8.5.x e 9.x (viene aggiunto 
 
 Esempio di connettore da impostare nel file server.xml del Tomcat presente nelle versioni 4.x, 5.x e 6.x di JBoss:
 
-<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true" 
+<Connector port="8445" protocol="HTTP/1.1" SSLEnabled="true" 
            address="${jboss.bind.address}"
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
            emptySessionPath="true"
@@ -48,7 +48,7 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
     ....
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
         ...
-        <socket-binding name="https" port="8443"/>
+        <socket-binding name="https" port="8445"/>
         ...
     </socket-binding-group>
 
@@ -77,7 +77,7 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
 	<subsystem xmlns="urn:jboss:domain:undertow:1.0">
 		<http-listener name="default" socket-binding="http"/>
                 ...
-		<https-listener name="https" socket-binding="https" security-realm="openspcoop2noClientAuth"/>   
+		<https-listener name="httpsNoClientAuth" socket-binding="httpsNoClientAuth" security-realm="openspcoop2noClientAuth"/>   
             	...
 		<host ...>
 			...
@@ -88,7 +88,7 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
     ....
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
         ...
-        <socket-binding name="https" port="${jboss.https.port:8443}"/>
+        <socket-binding name="httpsNoClientAuth" port="${jboss.https.port:8445}"/>
         ...
     </socket-binding-group>
 

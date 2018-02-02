@@ -103,7 +103,7 @@
 			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="build_for_as" value="tomcat6"/>
+			<var name="build_for_as" value="tomcat7"/>
 		</then>
 		<else>
 			<var name="build_for_as" value="${antinstaller_as}"/>
