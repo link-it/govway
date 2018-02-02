@@ -157,7 +157,7 @@ public final class UtentiAdd extends Action {
 			}
 	
 			// Controlli sui campi immessi
-			boolean isOk = utentiHelper.utentiCheckData(TipoOperazione.ADD,singlePdD);
+			boolean isOk = utentiHelper.utentiCheckData(TipoOperazione.ADD,singlePdD,null,false);
 			if (!isOk) {
 				
 				// setto la barra del titolo

@@ -46,16 +46,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
-import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDFruizione;
-import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -92,7 +89,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
@@ -310,7 +306,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			PddCore pddCore = new PddCore(apsCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
@@ -392,71 +387,18 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 
-			// Prendo il nome e il tipo del soggetto erogatore del servizio
-			Soggetto soggErogatore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
-			//			String tipoSoggettoErogatore = soggErogatore.getTipo();
-			//			String nomesoggettoErogatore = soggErogatore.getNome();
-			boolean erogatoreEsterno = pddCore.isPddEsterna(soggErogatore.getPortaDominio());
-			
 			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
-			// Se viene supportata l'autenticazione dei soggetti capire quale sia il tipo di autenticazione richiesto.
-			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
-			org.openspcoop2.core.registry.constants.CredenzialeTipo credenzialeTipo = null;
-			if(isSupportatoAutenticazioneSoggetti){
-				if(apsCore.filterFruitoriRispettoAutenticazione(asps)){
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
-							asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getVersione());
-					IDPortaApplicativa idPA = porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
-					PortaApplicativa pa = null;
-					if(idPA!=null){
-						pa = porteApplicativeCore.getPortaApplicativa(idPA);
-					}
-					if(pa!=null){
-						if(pa.getAutenticazione()!=null && !TipoAutenticazione.DISABILITATO.equals(pa.getAutenticazione())){
-							// devo escludere custom
-							if(TipoAutenticazione.BASIC.equals(pa.getAutenticazione())){
-								credenzialeTipo = org.openspcoop2.core.registry.constants.CredenzialeTipo.BASIC;
-							}
-							else if(TipoAutenticazione.SSL.equals(pa.getAutenticazione())){
-								credenzialeTipo = org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL;
-							}
-							else if(TipoAutenticazione.PRINCIPAL.equals(pa.getAutenticazione())){
-								credenzialeTipo = org.openspcoop2.core.registry.constants.CredenzialeTipo.PRINCIPAL;
-							}
-						}
-					}
-				}
-			}
-			
 			// Soggetti fruitori
 			// tutti i soggetti anche il soggetto attuale
 			// tranne quelli già registrati come fruitori
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
-			boolean escludiSoggettiEsterni = erogatoreEsterno;
-			List<Fruitore> fruList1 = apsCore.getSoggettiWithServizioNotFruitori(idInt,escludiSoggettiEsterni,credenzialeTipo);
-			List<Fruitore> fruList2 = null; 
+			List<Fruitore> fruList1 = apsCore.getSoggettiWithServizioNotFruitori(idInt,true,null);
 			Hashtable<String, Fruitore> mapFruitori = new Hashtable<>();
 			List<String> keyFruitori = new ArrayList<>();
-			if(credenzialeTipo!=null){
-				// sono stati filtrati i soggetti che hanno solo le credenziali richieste dall'erogazione
-				// per' l'utente potrebbe anche voler aggiungere una fruizione operativa per creare la porta delegata
-				// in questo caso il soggetto non ha le credenziali (o può non averle)
-				// recupero i soggetti quindi operativi senza guardare le credenziali
-				fruList2 = apsCore.getSoggettiWithServizioNotFruitori(idInt,true,null);
-			}
 			if(fruList1!=null && fruList1.size()>0){
 				for (Fruitore fr : fruList1) {
-					String key = fr.getTipo()+""+fr.getNome();
-					if(keyFruitori.contains(key)==false){
-						keyFruitori.add(key);
-						mapFruitori.put(key, fr);
-					}
-				}
-			}
-			if(fruList2!=null && fruList2.size()>0){
-				for (Fruitore fr : fruList2) {
 					String key = fr.getTipo()+""+fr.getNome();
 					if(keyFruitori.contains(key)==false){
 						keyFruitori.add(key);

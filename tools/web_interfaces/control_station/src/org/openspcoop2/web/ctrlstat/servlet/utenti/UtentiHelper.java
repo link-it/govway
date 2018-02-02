@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
@@ -41,6 +42,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
@@ -521,7 +523,7 @@ public class UtentiHelper extends ConsoleHelper {
 	}
 
 
-	public boolean utentiCheckData(TipoOperazione tipoOperazione,boolean singlePdD) throws Exception {
+	public boolean utentiCheckData(TipoOperazione tipoOperazione,boolean singlePdD,List<String> oldProtocolliSupportati, boolean oldUserHasOnlyPermessiUtenti) throws Exception {
 		try {
 			String nomesu = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
@@ -539,9 +541,13 @@ public class UtentiHelper extends ConsoleHelper {
 			List<String> protocolliRegistratiConsole = this.utentiCore.getProtocolli();
 			
 			String [] modalitaScelte = new String[protocolliRegistratiConsole.size()]; 
+			List<String> nuoviProtocolliSupportati = new ArrayList<String>();
 			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 				String protocolloName = protocolliRegistratiConsole.get(i);
 				modalitaScelte[i] = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+				if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
+					nuoviProtocolliSupportati.add(protocolloName);
+				}
 			}
 
 			// Campi obbligatori
@@ -640,6 +646,54 @@ public class UtentiHelper extends ConsoleHelper {
 					return false;
 				}
 			}
+			
+			// in modalita change devo controllare che se ho cambiato le modalita' all'utente ci sia almeno un altro utente che puo' gestire le modalita' che lascio
+			if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+				// se l'utente aveva solo il controllo degli utenti, questo controllo non importa tanto non ha modalita' associate
+				if(!oldUserHasOnlyPermessiUtenti) {
+					Collections.sort(oldProtocolliSupportati);
+					Collections.sort(nuoviProtocolliSupportati);
+					
+					List<String> protocolliEliminati = new ArrayList<String>(); 
+					for (String vecchioProtocollo : oldProtocolliSupportati) {
+						boolean protocolloEliminato = !nuoviProtocolliSupportati.contains(vecchioProtocollo);
+						
+						if(protocolloEliminato)
+							protocolliEliminati.add(vecchioProtocollo);
+					}
+					
+					if(protocolliEliminati.size() > 0) {
+						List<String> nomiUtentiDaRimuovere = new ArrayList<String>();
+						nomiUtentiDaRimuovere.add(nomesu);
+						List<String> utentiDaNonEliminare = new ArrayList<String>();
+						List<String> protocolliNonValidi = new ArrayList<String>();
+						for (String protocolloDaControllare : protocolliEliminati) {
+							boolean protocolloNonPiuAssociato = this.controllaEsistenzaUtentePerAssociareIlProtocollo(nomiUtentiDaRimuovere, utentiDaNonEliminare, nomesu, protocolloDaControllare);
+							if(protocolloNonPiuAssociato)
+								protocolliNonValidi.add(ConsoleHelper.getLabelProtocollo(protocolloDaControllare));
+						}
+						
+						if(utentiDaNonEliminare.size() > 0) {
+							if(protocolliNonValidi.size() > 1) {
+								StringBuilder sbPnV = new StringBuilder();
+								for (String protNonVal : protocolliNonValidi) {
+									if(sbPnV.length() >0 )
+										sbPnV.append(", ");
+									sbPnV.append(protNonVal);
+								}
+								
+								this.pd.setMessage("L'utente " +utentiDaNonEliminare.get(0) +
+									" non pu&ograve; essere modificato poich&egrave; sono stati rilevati oggetti appartenenti alle Modalit&agrave; '"+ sbPnV.toString() +"' non assegnate a nessun altro utente");
+							} else {
+								this.pd.setMessage("L'utente " +utentiDaNonEliminare.get(0) +
+										" non pu&ograve; essere modificato poich&egrave; sono stati rilevati oggetti appartenenti alla Modalit&agrave; '"+ protocolliNonValidi.get(0) +"' non assegnata a nessun altro utente");
+							}
+							return false;
+						}
+					}
+				}
+			}
+			
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			try {
@@ -947,5 +1001,111 @@ public class UtentiHelper extends ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public List<String> controlloModalitaUtenteDaEliminare(List<String> nomiUtentiDaRimuovere, List<String> utentiDaNonEliminare, User user) throws DriverRegistroServiziException, DriverUsersDBException {
+		return controlloModalitaUtenteDaEliminare(nomiUtentiDaRimuovere, utentiDaNonEliminare, user, user.getProtocolliSupportati());
+	}
+	
+	public List<String> controlloModalitaUtenteDaEliminare(List<String> nomiUtentiDaRimuovere, List<String> utentiDaNonEliminare, User user, List<String> protocolliSupportati) throws DriverRegistroServiziException, DriverUsersDBException {
+		List<String> protocolliNonPiuAssociati = new ArrayList<>();
+		if(protocolliSupportati != null && protocolliSupportati.size() > 0) {
+			for (String protocollo : protocolliSupportati) {
+				boolean protocolloNonPiuAssociato = controllaEsistenzaUtentePerAssociareIlProtocollo(nomiUtentiDaRimuovere, utentiDaNonEliminare, user.getLogin(), protocollo);
+				if(protocolloNonPiuAssociato)
+				protocolliNonPiuAssociati.add(protocollo);
+			}
+		}
+		
+		return protocolliNonPiuAssociati;
+	}
+
+	public boolean controllaEsistenzaUtentePerAssociareIlProtocollo(List<String> nomiUtentiDaRimuovere, List<String> utentiDaNonEliminare, String userLogin,
+			String protocollo) throws DriverRegistroServiziException, DriverUsersDBException {
+		boolean protocolloNonPiuAssociato = false;
+		boolean existsAlmostOneOrganization = this.utentiCore.existsAlmostOneOrganization(null, userLogin, protocollo);
+		if(existsAlmostOneOrganization) {
+			List<String> usersByProtocolloSupportatoTmp = this.utentiCore.getUsersByProtocolloSupportato(protocollo,true);
+			
+			List<String> usersByProtocolloSupportato = new ArrayList<>();
+			for (String uDE : usersByProtocolloSupportatoTmp) {
+				if(nomiUtentiDaRimuovere.contains(uDE) == false) {
+					usersByProtocolloSupportato.add(uDE);
+				}
+			}
+			
+			if(usersByProtocolloSupportato.size() < 2) {
+				protocolloNonPiuAssociato = true;
+				if(!utentiDaNonEliminare.contains(userLogin))
+					utentiDaNonEliminare.add(userLogin);
+			}
+		}
+		
+		return protocolloNonPiuAssociato;
+	}
+	
+	
+	/***
+	 * Restituisce true se l'utente User puo' gestire tutte le modalita' dell'utente userToCheck
+	 * 
+	 * @param userLoginToCheck
+	 * @param userLogin
+	 * @return
+	 * @throws DriverUsersDBException 
+	 */
+	public boolean checkUsersModalitaGatewayCompatibili(String userLoginToCheck, String userLogin) throws DriverUsersDBException {
+		User userToCheck = this.utentiCore.getUser(userLoginToCheck);
+		User user = this.utentiCore.getUser(userLogin);
+		return checkUsersModalitaGatewayCompatibili(userToCheck, user);
+	}
+	
+	/***
+	 * Restituisce true se l'utente User puo' gestire tutte le modalita' dell'utente userToCheck
+	 * 
+	 * @param userToCheck
+	 * @param user
+	 * @return
+	 */
+	public boolean checkUsersModalitaGatewayCompatibili(User userToCheck, User user) {
+		// utente che sto controllando e' un utente che gestisce solo utenti, non ci sono controlli da effettuare
+		if(userToCheck.hasOnlyPermessiUtenti()) return true;
+		
+		// se l'utente destinazione possiede tutti i protocolli allora non ci sono controlli da fare
+		List<String> protocolliRegistratiConsole = this.utentiCore.getProtocolli();
+		if(user.getProtocolliSupportati() == null) return true;
+		
+		boolean userHasAll= true;
+		for (String protocolloConsole : protocolliRegistratiConsole) {
+			if(!user.getProtocolliSupportati().contains(protocolloConsole)) {
+				userHasAll = false;
+				break;
+			}
+		}
+		
+		// se l'utente li ha tutti il controllo e' ok
+		if(userHasAll) return true;
+		
+		// l'utente destinazione non gestisce tutti i protocolli, se userTocheck li aveva tutti allora user non puo' gestire tutte le modalita di userTocheck
+		if(userToCheck.getProtocolliSupportati() == null) return false;
+		
+		boolean usertoCheckHasAll= true;
+		for (String protocolloConsole : protocolliRegistratiConsole) {
+			if(!userToCheck.getProtocolliSupportati().contains(protocolloConsole)) {
+				usertoCheckHasAll = false;
+				break;
+			}
+		}
+		
+		if(usertoCheckHasAll) return false;
+		
+		// a questo punto nessuno dei due utenti possiede tutte le modalita' 
+		// cerco semplicemente la prima modalita' posseduta da userToCheck che non puo' essere gestita da user.
+		for (String protocolloUserToCheck : userToCheck.getProtocolliSupportati()) {
+			if(!user.getProtocolliSupportati().contains(protocolloUserToCheck))
+				return false;
+		}
+		
+		return true;
+		
 	}
 }

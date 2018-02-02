@@ -159,6 +159,10 @@ public class UtentiCore extends ControlStationCore {
 	}
 	
 	public List<String> getUsersByProtocolloSupportato(String protocollo) throws DriverUsersDBException {
+		return getUsersByProtocolloSupportato(protocollo, false);
+	}
+	
+	public List<String> getUsersByProtocolloSupportato(String protocollo, boolean esclusiUtentiConSoloPermessoUtente) throws DriverUsersDBException {
 		Connection con = null;
 		String nomeMetodo = "getUsersByProtocolloSupportato";
 		DriverControlStationDB driver = null;
@@ -169,7 +173,7 @@ public class UtentiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverUsersDB().getUsersByProtocolloSupportato(protocollo);
+			return driver.getDriverUsersDB().getUsersByProtocolloSupportato(protocollo,esclusiUtentiConSoloPermessoUtente);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);

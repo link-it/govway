@@ -350,6 +350,10 @@ public class DriverUsersDB {
 	}
 	
 	public List<String> getUsersByProtocolloSupportato(String protocollo) throws DriverUsersDBException {
+		return getUsersByProtocolloSupportato(protocollo, false);
+	}
+	
+	public List<String> getUsersByProtocolloSupportato(String protocollo, boolean esclusiUtentiConSoloPermessoUtente) throws DriverUsersDBException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -359,11 +363,22 @@ public class DriverUsersDB {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.setANDLogicOperator(false);
-			sqlQueryObject.addWhereIsNullCondition("protocolli"); // significa che li supporta tutti
-			sqlQueryObject.addWhereLikeCondition("protocolli", protocollo, true, true);
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			ISQLQueryObject sqlQueryObjectPermit = sqlQueryObject.newSQLQueryObject();
+			sqlQueryObjectPermit.addWhereIsNullCondition("protocolli"); // significa che li supporta tutti
+			sqlQueryObjectPermit.addWhereLikeCondition("protocolli", protocollo, true, true);
+			sqlQueryObjectPermit.setANDLogicOperator(false);
+			sqlQueryObject.addWhereCondition(sqlQueryObjectPermit.createSQLConditions());
+			if(esclusiUtentiConSoloPermessoUtente)
+				sqlQueryObject.addWhereCondition("permessi <> ?");
+			
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
+			
+			if(esclusiUtentiConSoloPermessoUtente)
+				stm.setString(1, "U");
+			
 			rs = stm.executeQuery();
 			while (rs.next())
 				userWithType.add(rs.getString("login"));

@@ -126,19 +126,8 @@ public final class UtentiDel extends Action {
 			String msgErroreModalita = null;
 			List<String> utentiDaNonEliminare = new ArrayList<String>();
 			for (User user : utentiDaRimuovere) {
-				List<String> protocolliSupportati = user.getProtocolliSupportati();
-				if(protocolliSupportati != null && protocolliSupportati.size() > 0 && !user.hasOnlyPermessiUtenti()) {
-					for (String protocollo : protocolliSupportati) {
-						boolean existsAlmostOneOrganization = utentiCore.existsAlmostOneOrganization(null, user.getLogin(), protocollo);
-						if(existsAlmostOneOrganization) {
-							List<String> usersByProtocolloSupportato = utentiCore.getUsersByProtocolloSupportato(protocollo);
-							if(usersByProtocolloSupportato.size() < 2) {
-								if(!utentiDaNonEliminare.contains(user.getLogin()))
-									utentiDaNonEliminare.add(user.getLogin());
-							}
-						}
-					}
-				}
+				if(!user.hasOnlyPermessiUtenti())
+					utentiHelper.controlloModalitaUtenteDaEliminare(nomiUtentiDaRimuovere, utentiDaNonEliminare, user);
 			}
 			
 			if(utentiDaNonEliminare.size()> 0) {
@@ -194,7 +183,16 @@ public final class UtentiDel extends Action {
 		    	while (itUWS.hasNext()) {
 		    		String singleUWS = itUWS.next();
 		    		if (nomiUtentiDaRimuovere.contains(singleUWS) == false) {
-		    			usersWithPermessoS.add(singleUWS);
+		    			// controllo compatibilita
+		    			boolean compatibile = true;
+		    			for (String user : nomiUtentiDaRimuovere) {
+							compatibile = utentiHelper.checkUsersModalitaGatewayCompatibili(user,singleUWS);
+							
+							if(!compatibile)
+								break;
+						}
+		    			if(compatibile)
+		    				usersWithPermessoS.add(singleUWS);
 		    		}
 		    	}
 		    	if(usersWithPermessoS.size()>0){
@@ -213,7 +211,16 @@ public final class UtentiDel extends Action {
 		    	while (itUWS.hasNext()) {
 		    		String singleUWP = itUWS.next();
 		    		if (nomiUtentiDaRimuovere.contains(singleUWP) == false) {
-		    			usersWithPermessoP.add(singleUWP);
+		    			// controllo compatibilita
+		    			boolean compatibile = true;
+		    			for (String user : nomiUtentiDaRimuovere) {
+							compatibile = utentiHelper.checkUsersModalitaGatewayCompatibili(user,singleUWP);
+							if(!compatibile)
+								break;
+						}
+		    			
+		    			if(compatibile)
+		    				usersWithPermessoP.add(singleUWP);
 		    		}
 		    	}
 		    	if(usersWithPermessoP.size()>0){
@@ -232,8 +239,8 @@ public final class UtentiDel extends Action {
 			boolean paginaSuServizi = false;
 			
 			if (singleSuServizi != null) {
-				for (int i = 0; i < idToRemove.length; i++) {
-					nomesu = utentiCore.getUser(idToRemove[i]).getLogin();
+				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
+					nomesu = nomiUtentiDaRimuovere.get(i);
 					if (nomesu.equals(singleSuServizi)) {
 						paginaSuServizi = true;
 						msgServizi = "Scegliere un utente che non &egrave; stato chiesto di eliminare<br>";
@@ -241,8 +248,8 @@ public final class UtentiDel extends Action {
 					}
 				}
 			} else {
-				for (int i = 0; i < idToRemove.length; i++) {
-					nomesu = utentiCore.getUser(idToRemove[i]).getLogin();
+				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
+					nomesu = nomiUtentiDaRimuovere.get(i);
 					if (usersWithS.contains(nomesu)) {
 						if(uws==null){
 							
@@ -284,8 +291,8 @@ public final class UtentiDel extends Action {
 			boolean paginaSuAccordi = false;
 			boolean checkOggettiAccordi = false;
 			if (singleSuAccordiCooperazione  != null) {
-				for (int i = 0; i < idToRemove.length; i++) {
-					nomesu = utentiCore.getUser(idToRemove[i]).getLogin();
+				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
+					nomesu = nomiUtentiDaRimuovere.get(i);
 					if (nomesu.equals(singleSuAccordiCooperazione)) {
 						paginaSuAccordi = true;
 						msgAccordi = "Scegliere un utente che non &egrave; stato chiesto di eliminare<br>";
@@ -293,8 +300,8 @@ public final class UtentiDel extends Action {
 					}
 				}
 			} else {
-				for (int i = 0; i < idToRemove.length; i++) {
-					nomesu = utentiCore.getUser(idToRemove[i]).getLogin();
+				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
+					nomesu = nomiUtentiDaRimuovere.get(i);
 					if (usersWithP.contains(nomesu)) {
 						if(uwp==null){
 							// controllare che l'utente possieda degli oggetti
@@ -359,9 +366,8 @@ public final class UtentiDel extends Action {
 			} else {
 	
 				// Elimino gli utenti e ritorno la pagina a lista
-				for (int i = 0; i < idToRemove.length; i++) {
-		
-					nomesu = utentiCore.getUser(idToRemove[i]).getLogin();
+				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
+					nomesu = nomiUtentiDaRimuovere.get(i);
 					
 					// Non posso rimuovere me stesso
 					if (nomesu.equals(userLogin))
@@ -528,4 +534,5 @@ public final class UtentiDel extends Action {
 					UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL());
 		} 
 	}
+	
 }

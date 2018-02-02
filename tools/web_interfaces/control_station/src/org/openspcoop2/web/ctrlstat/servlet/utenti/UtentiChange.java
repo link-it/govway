@@ -131,7 +131,34 @@ public final class UtentiChange extends Action {
 			// Prendo l'utente
 			User user = utentiCore.getUser(nomesu);
 			//Prendo i vecchi dati dell'utente
-			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
+			
+			List<String> oldProtocolliSupportati = user.getProtocolliSupportati();
+			boolean oldHasOnlyPermessiUtenti = user.hasOnlyPermessiUtenti();
+			List<String> protocolliSupportati = null;
+			boolean first = false;
+			if(tipoGui == null) {
+				tipoGui = user.getInterfaceType().toString();
+				
+				if(!oldHasOnlyPermessiUtenti) {
+					oldProtocolliSupportati = user.getProtocolliSupportati();
+					// dal db ho letto un utente che non ha associato nessun protocollo, glieli associo tutti di default
+					if(oldProtocolliSupportati == null) {
+						oldProtocolliSupportati = new ArrayList<String>();
+						for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+							String protocolloName = protocolliRegistratiConsole.get(i);
+							oldProtocolliSupportati.add(protocolloName);
+							modalitaScelte[i] = Costanti.CHECK_BOX_ENABLED;
+						}
+					}
+				} else {
+					// utente configurato solo per gestire gli utenti
+					oldProtocolliSupportati = new ArrayList<String>();
+				}
+				protocolliSupportati  = oldProtocolliSupportati;
+				first = true;
+			}
+			
+//			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
 			InterfaceType interfaceType = InterfaceType.convert(tipoGui, true);
 			
 			// Preparo il menu
@@ -161,16 +188,15 @@ public final class UtentiChange extends Action {
 				isAuditing = (isAuditing==null) ? (pu.isAuditing() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isAuditing;
 				isAccordiCooperazione = (isAccordiCooperazione==null) ? (pu.isAccordiCooperazione() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isAccordiCooperazione;
 				
-				List<String> protocolliSupportati = user.getProtocolliSupportati();
-				if(protocolliSupportati == null) protocolliSupportati= new ArrayList<String>();
-				
-				for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
-					String protocolloName = protocolliRegistratiConsole.get(i);
-					if(modalitaScelte[i] == null) {
-						if(protocolliSupportati.contains(protocolloName)) {
-							modalitaScelte[i] = Costanti.CHECK_BOX_ENABLED;
+				if(first) {
+					for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+						String protocolloName = protocolliRegistratiConsole.get(i);
+						if(modalitaScelte[i] == null) {
+							if(protocolliSupportati.contains(protocolloName)) {
+								modalitaScelte[i] = Costanti.CHECK_BOX_ENABLED;
+							} 
 						} 
-					} 
+					}
 				}
 
 
@@ -193,7 +219,7 @@ public final class UtentiChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = utentiHelper.utentiCheckData(TipoOperazione.CHANGE,singlePdD);
+			boolean isOk = utentiHelper.utentiCheckData(TipoOperazione.CHANGE,singlePdD,oldProtocolliSupportati,oldHasOnlyPermessiUtenti);
 			if (!isOk) {
 
 				// setto la barra del titolo
@@ -222,6 +248,7 @@ public final class UtentiChange extends Action {
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 			}
+			
 
 			// Se singleSuServizi != null, controllo che il superutente non sia
 			// quello che sto modificando

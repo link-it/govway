@@ -37,13 +37,11 @@ import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -135,18 +133,9 @@ public class PorteDelegateControlloAccessi extends Action {
 				numRuoli = portaDelegata.getRuoli().sizeRuoloList();
 			}
 			
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
-			AccordoServizioParteSpecifica asps = null;
-			
-			if(!idAsps.isEmpty())
-				asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			else {
-				// [TODO] calcola l'accordo dalla PD
-			}
-			
-			int sizeFruitori = 0;
-			if(asps!=null){
-				sizeFruitori = asps.sizeFruitoreList();
+			int sizeFruitori = 0; 
+			if(portaDelegata.getServizioApplicativoList() !=null){
+				sizeFruitori = portaDelegata.sizeServizioApplicativoList();
 			}
 
 			boolean isSupportatoAutenticazione = true; // sempre nelle porte delegate
