@@ -175,29 +175,6 @@ public class AccordiCooperazioneCore extends ControlStationCore {
 		}
 	}
 
-	public List<AccordoCooperazione> accordiCooperazioneList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "accordiCooperazioneList";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().accordiCooperazioneList(superuser, ricerca);
-		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw e;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-	
 	
 	
 	public boolean existsAccordoCooperazione(IDAccordoCooperazione idAccordo) throws DriverRegistroServiziException {

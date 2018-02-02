@@ -218,10 +218,10 @@ public class AccordiServizioParteComuneCostanti {
 
 	public final static String LABEL_APC = "API";
 	public final static String LABEL_ASC = "API (Servizio Composto)";
-	public final static String LABEL_ACCORDI_EROGATORI_DI = "Erogatori di ";
-	public final static String LABEL_ACCORDI_EROGATORI = "Erogatori";
-	public final static String LABEL_ACCORDI_FRUITORI_DI = "Fruitori di ";
-	public final static String LABEL_ACCORDI_FRUITORI = "Fruitori";
+	public final static String LABEL_ACCORDI_EROGATORI_DI = "Erogazioni di ";
+	public final static String LABEL_ACCORDI_EROGATORI = "Erogazioni";
+	public final static String LABEL_ACCORDI_FRUITORI_DI = "Fruizioni di ";
+	public final static String LABEL_ACCORDI_FRUITORI = "Fruizioni";
 	public final static String LABEL_AZIONI = "Azioni";
 	public final static String LABEL_AZIONE = "Azione";
 	public final static String LABEL_PORT_TYPES = "Servizi";

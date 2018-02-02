@@ -239,7 +239,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// Tipi protocollo supportati
 			// Controllo comunque quelli operativi, almeno uno deve esistere
-			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false, this.isServizioComposto);
 
 			// primo accesso 
 			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
@@ -255,6 +255,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				this.serviceBinding  = soggettiCore.getDefaultServiceBinding(this.protocolFactory);
 			}
 
+			boolean showReferente = false;
+			if(this.isServizioComposto){
+				showReferente = true;
+			}
+			else {
+				showReferente = apcCore.isSupportatoSoggettoReferente(this.tipoProtocollo);
+			}
+			
 			// ID Accordo Null per default
 			IDAccordo idApc = null;
 			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
@@ -276,11 +284,21 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			apcHelper.makeMenu();
 				
 			if(listaTipiProtocollo.size()<=0) {
-				if(soggettiCore.isGestionePddAbilitata()) {
-					pd.setMessage("Non risultano registrati soggetti associati a porte di dominio di tipo operativo", Costanti.MESSAGE_TYPE_INFO);
+				boolean msg = true;
+				if(this.isServizioComposto) {
+					List<String> listaTipiProtocolloSenzaAccordiCooperazione = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false, false);
+					if(listaTipiProtocolloSenzaAccordiCooperazione.size()>0) {
+						pd.setMessage("Non risultano registrati accordi di cooperazione", Costanti.MESSAGE_TYPE_INFO);
+						msg = false;
+					}
 				}
-				else {
-					pd.setMessage("Non risultano registrati soggetti di dominio interno", Costanti.MESSAGE_TYPE_INFO);
+				if(msg) {
+					if(soggettiCore.isGestionePddAbilitata()) {
+						pd.setMessage("Non risultano registrati soggetti associati a porte di dominio di tipo operativo", Costanti.MESSAGE_TYPE_INFO);
+					}
+					else {
+						pd.setMessage("Non risultano registrati soggetti di dominio interno", Costanti.MESSAGE_TYPE_INFO);
+					}
 				}
 				pd.disableEditMode();
 
@@ -295,7 +313,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, 
 						ForwardParams.ADD());
 			}
-
+			
 			List<Soggetto> listaSoggetti=null;
 			if(apcCore.isVisioneOggettiGlobale(userLogin)){
 				listaSoggetti = soggettiCore.soggettiList(null, new Search(true));
@@ -354,38 +372,40 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				tipiSoggettiCompatibili = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			}
 
-			List<AccordoCooperazione> listaTmp = null;
-			if(apcCore.isVisioneOggettiGlobale(userLogin)){
-				listaTmp = acCore.accordiCooperazioneList(null, new Search(true));
-			}else{
-				listaTmp = acCore.accordiCooperazioneList(userLogin, new Search(true));
-			}
-			List<AccordoCooperazione> listaAccordoCooperazione = new ArrayList<AccordoCooperazione>();
-			for (AccordoCooperazione accordoCooperazione : listaTmp) {
-				if(accordoCooperazione.getSoggettoReferente()!=null){
-					if(tipiSoggettiCompatibili!=null && tipiSoggettiCompatibili.contains(accordoCooperazione.getSoggettoReferente().getTipo())){
-						listaAccordoCooperazione.add(accordoCooperazione);
+			if(this.isServizioComposto) {
+				List<AccordoCooperazione> listaTmp = null;
+				if(apcCore.isVisioneOggettiGlobale(userLogin)){
+					listaTmp = acCore.accordiCooperazioneList(null, new Search(true));
+				}else{
+					listaTmp = acCore.accordiCooperazioneList(userLogin, new Search(true));
+				}
+				List<AccordoCooperazione> listaAccordoCooperazione = new ArrayList<AccordoCooperazione>();
+				for (AccordoCooperazione accordoCooperazione : listaTmp) {
+					if(accordoCooperazione.getSoggettoReferente()!=null){
+						if(tipiSoggettiCompatibili!=null && tipiSoggettiCompatibili.contains(accordoCooperazione.getSoggettoReferente().getTipo())){
+							listaAccordoCooperazione.add(accordoCooperazione);
+						}
 					}
 				}
-			}
-			if (listaAccordoCooperazione != null && listaAccordoCooperazione.size() > 0) {
-				accordiCooperazioneEsistenti = new String[listaAccordoCooperazione.size()+1];
-				accordiCooperazioneEsistentiLabel = new String[listaAccordoCooperazione.size()+1];
-				int i = 1;
-				accordiCooperazioneEsistenti[0]="-";
-				accordiCooperazioneEsistentiLabel[0]="-";
-				Iterator<AccordoCooperazione> itL = listaAccordoCooperazione.iterator();
-				while (itL.hasNext()) {
-					AccordoCooperazione singleAC = itL.next();
-					accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
-					accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
-					i++;
+				if (listaAccordoCooperazione != null && listaAccordoCooperazione.size() > 0) {
+					accordiCooperazioneEsistenti = new String[listaAccordoCooperazione.size()+1];
+					accordiCooperazioneEsistentiLabel = new String[listaAccordoCooperazione.size()+1];
+					int i = 1;
+					accordiCooperazioneEsistenti[0]="-";
+					accordiCooperazioneEsistentiLabel[0]="-";
+					Iterator<AccordoCooperazione> itL = listaAccordoCooperazione.iterator();
+					while (itL.hasNext()) {
+						AccordoCooperazione singleAC = itL.next();
+						accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
+						accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
+						i++;
+					}
+				} else {
+					accordiCooperazioneEsistenti = new String[1];
+					accordiCooperazioneEsistentiLabel = new String[1];
+					accordiCooperazioneEsistenti[0]="-";
+					accordiCooperazioneEsistentiLabel[0]="-";
 				}
-			} else {
-				accordiCooperazioneEsistenti = new String[1];
-				accordiCooperazioneEsistentiLabel = new String[1];
-				accordiCooperazioneEsistenti[0]="-";
-				accordiCooperazioneEsistentiLabel[0]="-";
 			}
 			
 			// message type resta null
@@ -506,7 +526,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, 
 					this.filtrodup, this.confric, this.idcoll, this.consord, 
 					this.scadenza, "0",this.referente, this.versione,this.accordoCooperazione,this.privato,visibilitaAccordoCooperazione,null,
-					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null,this.serviceBinding,this.messageType,this.interfaceType);
+					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null,this.serviceBinding,this.messageType,this.interfaceType,
+					showReferente);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -635,8 +656,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					assr.setNome(s.getNome());
 					as.setSoggettoReferente(assr);
 				}
-			}else{
-				if(apcCore.isSupportatoSoggettoReferente(this.tipoProtocollo)==false) {
+			}else{				
+				if(!showReferente) {
 					// Recupero Soggetto Default
 					IDSoggetto idSoggetto = apcCore.getSoggettoOperativo(userLogin, this.tipoProtocollo);
 					Soggetto s = soggettiCore.getSoggetto(idSoggetto);

@@ -274,71 +274,73 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD)
 					: this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD);
 
-					this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
-					// se this.initProtocolPropertiesFromDb = true allora leggo le properties dal db... 
+			// se this.initProtocolPropertiesFromDb = true allora leggo le properties dal db... 
 
-					try{
-						AccordoServizioParteComune apcOLD = this.registryReader.getAccordoServizioParteComune(idAccordoOLD);
-						oldProtocolPropertyList = apcOLD.getProtocolPropertyList(); 
+			try{
+				AccordoServizioParteComune apcOLD = this.registryReader.getAccordoServizioParteComune(idAccordoOLD);
+				oldProtocolPropertyList = apcOLD.getProtocolPropertyList(); 
 
-					}catch(RegistryNotFound r){}
+			}catch(RegistryNotFound r){}
 
-					if(this.protocolPropertiesSet == null){
-						ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			if(this.protocolPropertiesSet == null){
+				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			}
+
+			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
+			List<Soggetto> listaSoggetti=null;
+
+			if(apcCore.isVisioneOggettiGlobale(userLogin)){
+				listaSoggetti = soggettiCore.soggettiList(null, new Search(true));
+			}else{
+				listaSoggetti = soggettiCore.soggettiList(userLogin, new Search(true));
+			}
+
+			List<String> soggettiListTmp = new ArrayList<String>();
+			List<String> soggettiListLabelTmp = new ArrayList<String>();
+			soggettiListTmp.add("-");
+			soggettiListLabelTmp.add("-");
+
+			if (listaSoggetti.size() > 0) {
+				for (Soggetto soggetto : listaSoggetti) {
+					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
+						soggettiListTmp.add(soggetto.getId().toString());
+						//soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						soggettiListLabelTmp.add(apcHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome() ));
 					}
+				}
+			}
+			providersList = soggettiListTmp.toArray(new String[1]);
+			providersListLabel = soggettiListLabelTmp.toArray(new String[1]);
 
-					List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
-					List<Soggetto> listaSoggetti=null;
-
-					if(apcCore.isVisioneOggettiGlobale(userLogin)){
-						listaSoggetti = soggettiCore.soggettiList(null, new Search(true));
-					}else{
-						listaSoggetti = soggettiCore.soggettiList(userLogin, new Search(true));
+			if(this.isServizioComposto) {
+				List<AccordoCooperazione> lista = null;
+				if(apcCore.isVisioneOggettiGlobale(userLogin)){
+					lista = acCore.accordiCooperazioneList(null, new Search(true));
+				}else{
+					lista = acCore.accordiCooperazioneList(userLogin, new Search(true));
+				}
+				if (lista != null && lista.size() > 0) {
+					accordiCooperazioneEsistenti = new String[lista.size()+1];
+					accordiCooperazioneEsistentiLabel = new String[lista.size()+1];
+					int i = 1;
+					accordiCooperazioneEsistenti[0]="-";
+					accordiCooperazioneEsistentiLabel[0]="-";
+					Iterator<AccordoCooperazione> itL = lista.iterator();
+					while (itL.hasNext()) {
+						AccordoCooperazione singleAC = itL.next();
+						accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
+						accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
+						i++;
 					}
-
-					List<String> soggettiListTmp = new ArrayList<String>();
-					List<String> soggettiListLabelTmp = new ArrayList<String>();
-					soggettiListTmp.add("-");
-					soggettiListLabelTmp.add("-");
-
-					if (listaSoggetti.size() > 0) {
-						for (Soggetto soggetto : listaSoggetti) {
-							if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
-								soggettiListTmp.add(soggetto.getId().toString());
-								//soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
-								soggettiListLabelTmp.add(apcHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome() ));
-							}
-						}
-					}
-					providersList = soggettiListTmp.toArray(new String[1]);
-					providersListLabel = soggettiListLabelTmp.toArray(new String[1]);
-
-					List<AccordoCooperazione> lista = null;
-					if(apcCore.isVisioneOggettiGlobale(userLogin)){
-						lista = acCore.accordiCooperazioneList(null, new Search(true));
-					}else{
-						lista = acCore.accordiCooperazioneList(userLogin, new Search(true));
-					}
-					if (lista != null && lista.size() > 0) {
-						accordiCooperazioneEsistenti = new String[lista.size()+1];
-						accordiCooperazioneEsistentiLabel = new String[lista.size()+1];
-						int i = 1;
-						accordiCooperazioneEsistenti[0]="-";
-						accordiCooperazioneEsistentiLabel[0]="-";
-						Iterator<AccordoCooperazione> itL = lista.iterator();
-						while (itL.hasNext()) {
-							AccordoCooperazione singleAC = itL.next();
-							accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
-							accordiCooperazioneEsistentiLabel[i] = idAccordoCooperazioneFactory.getUriFromAccordo(acCore.getAccordoCooperazione(singleAC.getId()));
-							i++;
-						}
-					} else {
-						accordiCooperazioneEsistenti = new String[1];
-						accordiCooperazioneEsistentiLabel = new String[1];
-						accordiCooperazioneEsistenti[0]="-";
-						accordiCooperazioneEsistentiLabel[0]="-";
-					}
+				} else {
+					accordiCooperazioneEsistenti = new String[1];
+					accordiCooperazioneEsistentiLabel = new String[1];
+					accordiCooperazioneEsistenti[0]="-";
+					accordiCooperazioneEsistentiLabel[0]="-";
+				}
+			}
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
@@ -569,7 +571,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 				this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,  
 				this.filtrodup, this.confric, this.idcoll, this.consord, 
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
-				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.interfaceType);
+				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.interfaceType,
+				true);
 
 		// Validazione base dei parametri custom 
 		if(isOk){

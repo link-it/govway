@@ -65,7 +65,6 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -2766,12 +2765,22 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType,nascondiMessageType);
 		dati.addElement(de);
 
+		
+		
 		// Referente
 
+		boolean showReferente = false;
+		if(showAccordiCooperazione && isServizioComposto){
+			showReferente = true;
+		}
+		else {
+			showReferente = this.apcCore.isSupportatoSoggettoReferente(protocolFactory.getProtocol());
+		}
+		
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
-		if(this.apcCore.isSupportatoSoggettoReferente(protocolFactory.getProtocol())) {
+		if(showReferente) {
 			de.setPostBack(true);
 			Soggetto sogg = null;
 			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
@@ -2813,6 +2822,43 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setValue(referente);
 		}
 		dati.addElement(de);
+		
+		
+		
+		if(showAccordiCooperazione && isServizioComposto){
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+			if( modificheAbilitate && modificaAbilitataServizioComposto ){
+				de.setType(DataElementType.SELECT);
+				de.setValues(accordiCooperazioneEsistenti);
+				de.setLabels(accordiCooperazioneEsistentiLabel);
+				de.setSelected(accordoCooperazione!=null ? accordoCooperazione : "-");
+				de.setRequired(true);
+				de.setPostBack(true);
+			}else{
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(accordoCooperazione);
+				dati.addElement(de);
+
+
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+				de.setType(DataElementType.TEXT);
+				for(int i=0;i<accordiCooperazioneEsistenti.length;i++){
+					if(accordiCooperazioneEsistenti[i].equals(accordoCooperazione)){
+						de.setValue(accordiCooperazioneEsistentiLabel[i]);
+						break;
+					}
+				}
+			}
+			dati.addElement(de);
+		}
+		
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
@@ -2995,9 +3041,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(deValidazione);
 		}
 
+		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+		
 		if (tipoOperazione.equals(TipoOperazione.ADD) == false) {
-
-			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			switch(serviceBinding) {
 			case REST:
@@ -3065,24 +3111,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST, 
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
-					AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-			if(contaListe){
-				// BugFix OP-674
-				//int num = this.apcCore.accordiErogatoriList(Integer.parseInt(id), new Search(true)).size();
-				Search searchForCount = new Search(true,1);
-				this.apcCore.accordiErogatoriList(Integer.parseInt(id), searchForCount);
-				int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
-				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI+" ("+num+")");
-			}else{
-				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI);
-			}
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
 			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, 
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
@@ -3119,37 +3147,23 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 		}
-
-		if(showAccordiCooperazione && isServizioComposto){
-
+		
+		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
-			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
-			if( modificheAbilitate && modificaAbilitataServizioComposto ){
-				de.setType(DataElementType.SELECT);
-				de.setValues(accordiCooperazioneEsistenti);
-				de.setLabels(accordiCooperazioneEsistentiLabel);
-				de.setSelected(accordoCooperazione!=null ? accordoCooperazione : "-");
-				de.setRequired(true);
-				de.setPostBack(true);
+			de.setType(DataElementType.LINK);
+			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST, 
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,nome),
+					AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
+			if (tipoOperazione.equals(TipoOperazione.ADD) == false) {
+				// BugFix OP-674
+				//int num = this.apcCore.accordiErogatoriList(Integer.parseInt(id), new Search(true)).size();
+				Search searchForCount = new Search(true,1);
+				this.apcCore.accordiErogatoriList(Integer.parseInt(id), searchForCount);
+				int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
+				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI+" ("+num+")");
 			}else{
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(accordoCooperazione);
-				dati.addElement(de);
-
-
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
-				de.setType(DataElementType.TEXT);
-				for(int i=0;i<accordiCooperazioneEsistenti.length;i++){
-					if(accordiCooperazioneEsistenti[i].equals(accordoCooperazione)){
-						de.setValue(accordiCooperazioneEsistentiLabel[i]);
-						break;
-					}
-				}
+				de.setValue(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI);
 			}
 			dati.addElement(de);
 		}
@@ -3985,7 +3999,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			boolean visibilitaAccordoServizio,boolean visibilitaAccordoCooperazione,
 			IDAccordo idAccordoOLD, BinaryParameter wsblconc, BinaryParameter wsblserv, BinaryParameter wsblservcorr,boolean validazioneDocumenti,
 			String tipoProtocollo, String backToStato,
-			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica)
+			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica,
+			boolean checkReferente)
 					throws Exception {
 		try {
 			int idInt = 0;
@@ -4012,7 +4027,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return false;
 			}
 			if(referente==null || referente.equals("") || referente.equals("-")){
-				if(!TipoOperazione.ADD.equals(tipoOperazione) || this.apcCore.isSupportatoSoggettoReferente(tipoProtocollo)) {
+				if(!TipoOperazione.ADD.equals(tipoOperazione) || checkReferente) {
 					this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto Referente");
 					return false;
 				}
@@ -4140,7 +4155,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				idAcc = as.getId().intValue();
 			}
 			if ((idAcc != 0) && (tipoOperazione.equals(TipoOperazione.ADD) || (tipoOperazione.equals(TipoOperazione.CHANGE) && (idInt != idAcc)))) {
-				this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome+" del soggetto referente "+soggettoReferente.toString());
+				if(soggettoReferente!=null) {
+					this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome+" del soggetto referente "+soggettoReferente.toString());
+				}
+				else {
+					this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome);
+				}
 				return false;
 			}
 
@@ -4349,8 +4369,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Boolean showColonnaAccordiCooperazione = tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO);
 
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
-			
-			IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
@@ -4496,12 +4514,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						if(servizioComposto  != null){
 							AccordoCooperazione accordoCooperazione = this.acCore.getAccordoCooperazione(servizioComposto.getIdAccordoCooperazione());
 
-							String uriAccordoCooperazione = idAccordoCooperazioneFactory.getUriFromAccordo(accordoCooperazione);
 							de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_CHANGE,
 									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoCooperazione.getId()+""),
 									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoCooperazione.getNome()));
 
-							de.setValue(uriAccordoCooperazione);
+							de.setValue(this.getLabelIdAccordo(accordoCooperazione));
 						}
 						e.addElement(de);
 					}

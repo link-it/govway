@@ -4518,10 +4518,22 @@ public class ControlStationCore {
 		
 		return protocolliList;
 	}
-	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
-		return getProtocolliByFilter(session, filtraSoggettiEsistenti, null, filtraAccordiEsistenti);
+	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, 
+			boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
+		return this.getProtocolliByFilter(session, filtraSoggettiEsistenti, filtraAccordiEsistenti, false);
 	}
-	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
+	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, 
+			boolean filtraAccordiEsistenti, boolean filtraAccordiCooperazioneEsistenti) throws  DriverRegistroServiziException {
+		return getProtocolliByFilter(session, filtraSoggettiEsistenti, null, 
+				filtraAccordiEsistenti, filtraAccordiCooperazioneEsistenti);
+	}
+	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
+			boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
+		return getProtocolliByFilter(session, filtraSoggettiEsistenti, dominio, 
+				filtraAccordiEsistenti, false);
+	}
+	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
+			boolean filtraAccordiEsistenti, boolean filtraAccordiCooperazioneEsistenti) throws  DriverRegistroServiziException {
 		
 		List<String> _listaTipiProtocollo = this.getProtocolli(session);
 		
@@ -4547,6 +4559,20 @@ public class ControlStationCore {
 			for (String check : _listaTipiProtocollo) {
 			
 				if(this.existsAlmostOneAPI(userLogin, check)) {
+					listaTipiProtocollo.add(check);	
+				}
+			}
+			_listaTipiProtocollo = listaTipiProtocollo;
+			
+		}
+		
+		if(filtraAccordiCooperazioneEsistenti) {
+			
+			// Verifico esistenza accordi cooperazione per i protocolli caricati
+			List<String> listaTipiProtocollo = new ArrayList<>();
+			for (String check : _listaTipiProtocollo) {
+			
+				if(this.existsAlmostOneAccordoCooperazione(userLogin, check)) {
 					listaTipiProtocollo.add(check);	
 				}
 			}
@@ -4585,6 +4611,23 @@ public class ControlStationCore {
 			lista = this.accordiList(null, s);
 		}else{
 			lista = this.accordiList(userLogin, s);
+		}
+		if(lista!=null && lista.size()>0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public boolean existsAlmostOneAccordoCooperazione(String userLogin, String protocollo) throws DriverRegistroServiziException{
+		Search s = new Search();
+		s.setPageSize(Liste.ACCORDI_COOPERAZIONE, 1); // serve solo per il count
+		s.addFilter(Liste.ACCORDI_COOPERAZIONE, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+		List<AccordoCooperazione> lista = null;
+		if(this.isVisioneOggettiGlobale(userLogin)){
+			lista = this.accordiCooperazioneList(null, s);
+		}else{
+			lista = this.accordiCooperazioneList(userLogin, s);
 		}
 		if(lista!=null && lista.size()>0) {
 			return true;
@@ -4654,6 +4697,29 @@ public class ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
+	}
+	
+	public List<AccordoCooperazione> accordiCooperazioneList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "accordiCooperazioneList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().accordiCooperazioneList(superuser, ricerca);
+		} catch (DriverRegistroServiziException e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
 	}
 	
 	public String getVersioneDefault() throws  DriverRegistroServiziException {

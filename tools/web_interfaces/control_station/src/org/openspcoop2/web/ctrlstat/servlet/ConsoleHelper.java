@@ -61,8 +61,10 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Ruolo;
@@ -3610,6 +3612,23 @@ public class ConsoleHelper {
 				bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
 			}
 		}
+		return bf.toString();
+	}
+	public String getLabelIdAccordo(AccordoCooperazione ac) throws Exception{
+		return this.getLabelIdAccordo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo()), 
+				this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac));
+	}
+	public String getLabelIdAccordo(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
+		StringBuffer bf = new StringBuffer();
+		bf.append(idAccordo.getNome());
+		bf.append(":");
+		bf.append(idAccordo.getVersione());
+		//if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
+		if(idAccordo.getSoggettoReferente()!=null){
+			bf.append(":");
+			bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
+		}
+		//}
 		return bf.toString();
 	}
 }
