@@ -175,6 +175,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordo));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			IDAccordo idAs = idAccordoFactory.getIDAccordoFromAccordo(as);
 
 			String protocollo = null;
@@ -257,7 +258,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + uriAS, 
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_LIST+"?"+
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+uriAS+"&"+
@@ -356,7 +357,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + uriAS, 
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_LIST+"?"+
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+uriAS+"&"+

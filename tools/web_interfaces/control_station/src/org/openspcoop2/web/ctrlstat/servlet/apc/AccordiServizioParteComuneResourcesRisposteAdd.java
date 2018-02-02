@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -76,8 +75,6 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
 
@@ -116,7 +113,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
-			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
@@ -129,7 +126,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST+"?"+
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
@@ -177,7 +174,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST+"?"+
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+

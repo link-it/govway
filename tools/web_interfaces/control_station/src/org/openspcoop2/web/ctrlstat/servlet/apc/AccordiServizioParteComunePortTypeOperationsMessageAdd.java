@@ -36,7 +36,6 @@ import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -73,8 +72,6 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
@@ -101,7 +98,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 
 			// Prendo il nome dal db
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idInt);
-			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			// Prendo il port-type e l'operation
 			PortType pt = null;
@@ -141,7 +138,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 			listaParametri.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST , AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)));
 
-			listaParametri.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + uriAS,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST,
+			listaParametri.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST,
 					pIdAccordo,pNomeAccordo,AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)));
 
 			listaParametri.add(	new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + nomept,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST,

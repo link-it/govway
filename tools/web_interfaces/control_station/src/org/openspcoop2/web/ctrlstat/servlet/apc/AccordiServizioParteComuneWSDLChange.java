@@ -194,6 +194,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAcc));
 			boolean asWithAllegati = (as.sizeAllegatoList()>0 || as.sizeSpecificaSemiformaleList()>0 || as.getByteWsdlDefinitorio()!=null);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
 			IdSoggetto idSoggettoReferente = as.getSoggettoReferente();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggettoReferente.getTipo());
@@ -227,17 +228,17 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			boolean facilityUnicoWSDL_interfacciaStandard = false;
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				wsdlbyte = as.getByteWsdlDefinitorio();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO+" di " + uriAS;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO+" di " + labelASTitle;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_DEFINITORIO;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
 				wsdlbyte = as.getByteWsdlConcettuale();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE+" di " + uriAS;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE+" di " + labelASTitle;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE;
 				
 				switch (serviceBinding) {
 				case REST:
-					label = apcHelper.getLabelWSDLFromFormatoSpecifica(formatoSpecifica) +" di " + uriAS;
+					label = apcHelper.getLabelWSDLFromFormatoSpecifica(formatoSpecifica) +" di " + labelASTitle;
 					break;
 				case SOAP:
 				default:
@@ -250,33 +251,33 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				wsdlbyte = as.getByteWsdlLogicoErogatore();
 				if(isModalitaAvanzata){
 					if(isSupportoProfiloAsincrono)
-						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE+" di " + uriAS;
+						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE+" di " + labelASTitle;
 					else 
-						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO+" di " + uriAS;
+						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO+" di " + labelASTitle;
 				} else {
-					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL+" di " + uriAS;
+					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL+" di " + labelASTitle;
 					facilityUnicoWSDL_interfacciaStandard = true;
 				}
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
 				wsdlbyte = as.getByteWsdlLogicoFruitore();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE+" di " + uriAS;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE+" di " + labelASTitle;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_FRUITORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneConcettuale();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE+" di " + uriAS;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE+" di " + labelASTitle;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_CONCETTUALE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneErogatore();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE+" di " + uriAS;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE+" di " + labelASTitle;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_EROGATORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneFruitore();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE+" di " + uriAS;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE+" di " + labelASTitle;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_FRUITORE;
 			}
 			if (wsdlbyte != null) {

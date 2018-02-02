@@ -128,6 +128,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
 			Resource risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
@@ -162,7 +163,7 @@ public final class AccordiServizioParteComuneResourcesParametersAdd extends Acti
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));
-			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST,
 								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),

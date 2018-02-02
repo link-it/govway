@@ -41,11 +41,10 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -84,8 +83,6 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-
 		try {
 			
 			FileUploadForm fileUpload = (FileUploadForm) form;
@@ -115,7 +112,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordoInt));
-			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);
 			
@@ -130,7 +127,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + uriAS, 
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST+"?"+
 								AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idAccordo+"&"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
@@ -185,7 +182,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + uriAS, 
+						new Parameter(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST+"?"+
 								AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idAccordo+"&"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+

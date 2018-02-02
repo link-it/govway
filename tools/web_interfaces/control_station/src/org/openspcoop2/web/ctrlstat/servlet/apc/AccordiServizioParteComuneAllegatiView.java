@@ -33,7 +33,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -70,8 +69,6 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 						
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
@@ -94,7 +91,7 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordoInt));
-			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
 
@@ -108,7 +105,7 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 							AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-					new Parameter(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + uriAS, 
+					new Parameter(AccordiServizioParteComuneCostanti.LABEL_ALLEGATI + " di " + labelASTitle, 
 							AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST+"?"+
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idAccordo+"&"+
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+

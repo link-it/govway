@@ -148,6 +148,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
 			String protocollo = null;
 			//calcolo del protocollo implementato dall'accordo
@@ -213,7 +214,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));
-			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + uriAS, 
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_RISORSE + " di " + labelASTitle, 
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST,
 								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),

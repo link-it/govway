@@ -350,6 +350,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			this.statoPackage = this.backToStato;
 
 		String uriAS = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
+		String labelASTitle = apcHelper.getLabelIdAccordo(this.tipoProtocollo, idAccordoOLD); 
 		String oldStatoPackage = as.getStatoPackage();			
 
 		Properties propertiesProprietario = new Properties();
@@ -370,7 +371,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-								uriAS);
+								labelASTitle);
 
 				if(this.descr==null){
 					//inizializzazione default
@@ -603,7 +604,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-							uriAS);
+							labelASTitle);
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -644,7 +645,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-								uriAS);
+								labelASTitle);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -768,7 +769,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-								uriAS);
+								labelASTitle);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -873,7 +874,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 									AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-											uriAS);
+											labelASTitle);
 
 							// preparo i campi
 							Vector<DataElement> dati = new Vector<DataElement>();

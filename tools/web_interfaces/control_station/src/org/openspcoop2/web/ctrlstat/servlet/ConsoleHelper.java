@@ -63,6 +63,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -3593,6 +3594,10 @@ public class ConsoleHelper {
 		else {
 			return nomeSoggetto;
 		}
+	}
+	public String getLabelIdAccordo(AccordoServizioParteComune as) throws Exception{
+		return this.getLabelIdAccordo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()), 
+				this.idAccordoFactory.getIDAccordoFromAccordo(as));
 	}
 	public String getLabelIdAccordo(String protocollo, IDAccordo idAccordo) throws Exception{
 		StringBuffer bf = new StringBuffer();

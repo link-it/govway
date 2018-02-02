@@ -37,7 +37,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -82,7 +81,6 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
 
 		try {
@@ -107,7 +105,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordoInt));
-			String uriAS = idAccordoFactory.getUriFromAccordo(as);		
+			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			ServiceBinding serviceBinding = org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding());
 
 
@@ -161,7 +159,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						));
-				lstParam.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_COMPONENTI + " di " + uriAS,
+				lstParam.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_COMPONENTI + " di " + labelASTitle,
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_COMPONENTI_LIST,
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, "" + idAccordo),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
@@ -209,7 +207,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						));
-				lstParam.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_COMPONENTI + " di " + uriAS,
+				lstParam.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_COMPONENTI + " di " + labelASTitle,
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_COMPONENTI_LIST,
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, "" + idAccordo),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
