@@ -700,6 +700,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti");
 	}
 	
+	public Boolean isConsoleGestioneWorkflowStatoDocumenti_visualizzaStatoLista() throws UtilsException{
+		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti.visualizzaStatoLista");
+	}
+	
 	public Boolean isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() throws UtilsException{
 		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti.finale.ripristinoStatoOperativo");
 	}
@@ -754,6 +758,10 @@ public class ConsoleProperties {
 	
 	public Boolean isElenchiVisualizzaCountElementi() throws UtilsException{
 		return this.readBooleanProperty(true, "elenchi.visualizzaCountElementi");
+	}
+	
+	public Boolean isElenchiRicercaConservaCriteri() throws UtilsException{
+		return this.readBooleanProperty(true, "elenchi.ricerca.conservaCriteri");
 	}
 	
 	public Boolean isElenchiAccordiVisualizzaColonnaAzioni() throws UtilsException{

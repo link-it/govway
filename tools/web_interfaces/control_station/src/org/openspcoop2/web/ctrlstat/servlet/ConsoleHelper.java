@@ -1595,11 +1595,14 @@ public class ConsoleHelper {
 	// *** Utilities generiche ***
 
 	public void initializeFilter(Search ricerca) throws Exception {
-		this.setFilterSelectedProtocol(ricerca, Liste.SOGGETTI);
-		this.setFilterSelectedProtocol(ricerca, Liste.SERVIZIO_APPLICATIVO);
-		this.setFilterSelectedProtocol(ricerca, Liste.ACCORDI);
-		this.setFilterSelectedProtocol(ricerca, Liste.ACCORDI_COOPERAZIONE);
-		this.setFilterSelectedProtocol(ricerca, Liste.SERVIZI);
+		initializeFilter(ricerca, Liste.SOGGETTI);
+		initializeFilter(ricerca, Liste.SERVIZIO_APPLICATIVO);
+		initializeFilter(ricerca, Liste.ACCORDI);
+		initializeFilter(ricerca, Liste.ACCORDI_COOPERAZIONE);
+		initializeFilter(ricerca, Liste.SERVIZI);
+	}
+	public void initializeFilter(Search ricerca, int idLista) throws Exception {
+		this.setFilterSelectedProtocol(ricerca, idLista);
 	}
 	
 	public Search checkSearchParameters(int idLista, Search ricerca)
@@ -1627,12 +1630,18 @@ public class ConsoleHelper {
 					ricerca.setSearchString(idLista, search);
 				}
 			}
+			else {
+				if(this.core.isConservaRisultatiRicerca()==false) {
+					ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
+				}
+			}
 			
-			ricerca.clearFilters(idLista);
-			this.initializeFilter(ricerca);
-
 			int index=0;
 			String nameFilter = PageData.GET_PARAMETRO_FILTER_NAME(index);
+			if(this.core.isConservaRisultatiRicerca()==false) {
+				ricerca.clearFilters(idLista);
+				this.initializeFilter(ricerca,idLista);	
+			}
 			while (this.request.getParameter(nameFilter) != null) {
 				String paramFilterName = this.request.getParameter(nameFilter);
 				paramFilterName = paramFilterName.trim();

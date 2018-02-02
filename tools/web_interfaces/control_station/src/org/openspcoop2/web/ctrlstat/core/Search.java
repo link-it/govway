@@ -170,6 +170,9 @@ public class Search implements Serializable, ISearch {
 			map = new HashMap<>();
 			this.filter.put(indexLista, map);
 		}
+		if(map.containsKey(filterName)) {
+			map.remove(filterName);
+		}
 		map.put(filterName, filterValue);
 	}
 

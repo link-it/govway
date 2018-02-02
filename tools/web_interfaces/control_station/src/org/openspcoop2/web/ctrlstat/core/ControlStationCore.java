@@ -472,12 +472,14 @@ public class ControlStationCore {
 	private boolean showDebugOptionConnettore = true;
 	private boolean showPulsantiImportExport = false;
 	private boolean showCountElementInLinkList = false;
+	private boolean conservaRisultatiRicerca = false;
 	private boolean showAccordiColonnaAzioni = false;
 	private boolean showAccordiInformazioniProtocollo = false;
 	private boolean showConfigurazioniPersonalizzate = false;
 	private boolean showGestioneSoggettiRouter = false;
 	private boolean showGestioneSoggettiVirtuali = false;
 	private boolean showGestioneWorkflowStatoDocumenti = false;
+	private boolean gestioneWorkflowStatoDocumenti_visualizzaStatoLista = false;
 	private boolean gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = false;
 	private boolean enableAutoMappingWsdlIntoAccordo = false;
 	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
@@ -507,6 +509,9 @@ public class ControlStationCore {
 	public boolean isShowCountElementInLinkList() {
 		return this.showCountElementInLinkList;
 	}
+	public boolean isConservaRisultatiRicerca() {
+		return this.conservaRisultatiRicerca;
+	}
 	public boolean isShowAccordiColonnaAzioni() {
 		return this.showAccordiColonnaAzioni;
 	}
@@ -524,6 +529,9 @@ public class ControlStationCore {
 	}
 	public boolean isShowGestioneWorkflowStatoDocumenti() {
 		return this.showGestioneWorkflowStatoDocumenti;
+	}
+	public boolean isGestioneWorkflowStatoDocumenti_visualizzaStatoLista() {
+		return this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista;
 	}
 	public boolean isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() {
 		return this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
@@ -1298,12 +1306,14 @@ public class ControlStationCore {
 		this.showDebugOptionConnettore = core.showDebugOptionConnettore;
 		this.showPulsantiImportExport = core.showPulsantiImportExport;
 		this.showCountElementInLinkList = core.showCountElementInLinkList;
+		this.conservaRisultatiRicerca = core.conservaRisultatiRicerca;
 		this.showAccordiColonnaAzioni = core.showAccordiColonnaAzioni;
 		this.showAccordiInformazioniProtocollo = core.showAccordiInformazioniProtocollo;
 		this.showConfigurazioniPersonalizzate = core.showConfigurazioniPersonalizzate;
 		this.showGestioneSoggettiRouter = core.showGestioneSoggettiRouter;
 		this.showGestioneSoggettiVirtuali = core.showGestioneSoggettiVirtuali;
 		this.showGestioneWorkflowStatoDocumenti = core.showGestioneWorkflowStatoDocumenti;
+		this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = core.gestioneWorkflowStatoDocumenti_visualizzaStatoLista;
 		this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
 		this.enableAutoMappingWsdlIntoAccordo = core.enableAutoMappingWsdlIntoAccordo;
 		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
@@ -1534,6 +1544,7 @@ public class ControlStationCore {
 			this.showGestioneSoggettiRouter = consoleProperties.isConsoleGestioneSoggettiRouter();
 			this.showGestioneSoggettiVirtuali = consoleProperties.isConsoleGestioneSoggettiVirtuali();
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
+			this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_visualizzaStatoLista();
 			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 			this.showSelectList_PA_ProtocolProperties = consoleProperties.isMenuPorteApplicative_ProtocolProperties_VisualizzaListaValoriPredefiniti();
 			this.showFlagPrivato = consoleProperties.isMenuVisualizzaFlagPrivato();
@@ -1542,6 +1553,7 @@ public class ControlStationCore {
 			this.showCorrelazioneAsincronaInAccordi = consoleProperties.isMenuAccordiVisualizzaCorrelazioneAsincrona();
 			this.showAccordiInformazioniProtocollo = consoleProperties.isMenuAccordiVisualizzazioneGestioneInformazioniProtocollo();
 			this.showCountElementInLinkList = consoleProperties.isElenchiVisualizzaCountElementi();
+			this.conservaRisultatiRicerca = consoleProperties.isElenchiRicercaConservaCriteri();
 			this.showAccordiColonnaAzioni = consoleProperties.isElenchiAccordiVisualizzaColonnaAzioni();
 			this.showPulsantiImportExport = consoleProperties.isElenchiMenuVisualizzazionePulsantiImportExportPackage();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
