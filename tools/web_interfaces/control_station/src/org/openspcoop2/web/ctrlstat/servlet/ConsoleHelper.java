@@ -68,6 +68,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -3472,6 +3473,31 @@ public class ConsoleHelper {
 			}
 			
 			this.pd.addFilter(Filtri.FILTRO_SERVICE_BINDING, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterStatoAccordo(String statoAccordo, boolean postBack) throws Exception{
+		try {
+			String [] stati = StatiAccordo.toArray();
+			String [] statiLabel = StatiAccordo.toLabel();
+			String [] values = new String[stati.length + 1];
+			String [] labels = new String[stati.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			for (int i =0; i < stati.length ; i ++) {
+				labels[i+1] = statiLabel[i];
+				values[i+1] = stati[i];
+			}
+			
+			String selectedValue = statoAccordo != null ? statoAccordo : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_STATO_PACKAGE;
+			
+			this.pd.addFilter(Filtri.FILTRO_STATO_ACCORDO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

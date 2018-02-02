@@ -429,7 +429,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_PRIVATO = "Privato";
 	public final static String LABEL_PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA = "Visibilità accordo";
 	public final static String LABEL_PARAMETRO_APC_IS_SERVIZIO_COMPOSTO = "Servizio Composto";
-	public final static String LABEL_PARAMETRO_APC_STATO_PACKAGE = "Stato";
+	public final static String LABEL_PARAMETRO_APC_STATO_PACKAGE = CostantiControlStation.LABEL_PARAMETRO_STATO_PACKAGE;
 	public final static String LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA = "Validazione Specifica";
 	public final static String LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICHE = "Validazione Specifiche";
 	public final static String LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE = "Accordo Cooperazione";

@@ -27,8 +27,10 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -243,6 +245,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 			addFilterProtocol(ricerca, idLista);
 			
+			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+				this.addFilterStatoAccordo(filterStatoAccordo,false);
+			}
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -338,7 +345,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 					if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 						de = new DataElement();
-						de.setValue(accordoCooperazione.getStatoPackage());
+						de.setValue(StatiAccordo.upper(accordoCooperazione.getStatoPackage()));
 						e.addElement(de);
 					}
 
@@ -669,16 +676,32 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 		if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-			String[] stati = StatiAccordo.toArray();
 			if( tipoOp.equals(TipoOperazione.ADD)){
-				de.setType(DataElementType.TEXT);
+				
+				DataElement deLabel = new DataElement();
+				deLabel.setType(DataElementType.TEXT);
+				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
+				deLabel.setValue(StatiAccordo.upper(StatiAccordo.bozza.toString()));
+				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
+				dati.addElement(deLabel);
+				
+				de.setType(DataElementType.HIDDEN);
 				de.setValue(StatiAccordo.bozza.toString());
 			} else if(StatiAccordo.finale.toString().equals(oldStato)==false ){
 				de.setType(DataElementType.SELECT);
-				de.setValues(stati);
+				de.setValues(StatiAccordo.toArray());
+				de.setLabels(StatiAccordo.toLabel());
 				de.setSelected(stato);
 			}else{
-				de.setType(DataElementType.TEXT);
+				
+				DataElement deLabel = new DataElement();
+				deLabel.setType(DataElementType.TEXT);
+				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
+				deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
+				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
+				dati.addElement(deLabel);
+				
+				de.setType(DataElementType.HIDDEN);
 				de.setValue(StatiAccordo.finale.toString());
 			}
 		}else{

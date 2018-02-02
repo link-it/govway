@@ -30,8 +30,10 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -1031,6 +1033,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			addFilterProtocol(ricerca, idLista);
 			
+			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+				this.addFilterStatoAccordo(filterStatoAccordo,false);
+			}
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -1229,7 +1236,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 					de = new DataElement();
-					de.setValue(asps.getStatoPackage());
+					de.setValue(StatiAccordo.upper(asps.getStatoPackage()));
 					e.addElement(de);
 				}
 
@@ -1329,6 +1336,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+				String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+				this.addFilterStatoAccordo(filterStatoAccordo,false);
+			}
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -1466,7 +1478,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 					de = new DataElement();
-					de.setValue(fru.getStatoPackage());
+					de.setValue(StatiAccordo.upper(fru.getStatoPackage()));
 					e.addElement(de);
 				}
 
@@ -2866,14 +2878,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				String[] stati = StatiAccordo.toArray();
 				if( tipoOp.equals(TipoOperazione.ADD) || StatiAccordo.finale.toString().equals(oldStato)==false ){
 					de.setType(DataElementType.SELECT);
-					de.setValues(stati);
+					de.setValues(StatiAccordo.toArray());
+					de.setLabels(StatiAccordo.toLabel());
 					de.setSelected(statoPackage);
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 				}else{
-					de.setType(DataElementType.TEXT);
+					
+					DataElement deLabel = new DataElement();
+					deLabel.setType(DataElementType.TEXT);
+					deLabel.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
+					deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
+					deLabel.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE+"__label");
+					dati.addElement(deLabel);
+					
+					de.setType(DataElementType.HIDDEN);
 					de.setValue(StatiAccordo.finale.toString());
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 
@@ -2915,12 +2935,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(statoPackage);
 				}else if( StatiAccordo.finale.toString().equals(oldStato)==false ){
-					String[] stati = StatiAccordo.toArray();
 					de.setType(DataElementType.SELECT);
-					de.setValues(stati);
+					de.setValues(StatiAccordo.toArray());
+					de.setLabels(StatiAccordo.toLabel());
 					de.setSelected(statoPackage);
 				}else{
-					de.setType(DataElementType.TEXT);
+					
+					DataElement deLabel = new DataElement();
+					deLabel.setType(DataElementType.TEXT);
+					deLabel.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
+					deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
+					deLabel.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE+"__label");
+					dati.addElement(deLabel);
+					
+					de.setType(DataElementType.HIDDEN);
 					de.setValue(StatiAccordo.finale.toString());
 
 					if(ripristinoStatoOperativo){
@@ -3857,7 +3885,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				String[] stati = StatiAccordo.toArray();
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
 				if (this.isModalitaStandard()) {
@@ -3865,7 +3892,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setValue(statoServizio);
 				}else{
 					de.setType(DataElementType.SELECT);
-					de.setValues(stati);
+					de.setValues(StatiAccordo.toArray());
+					de.setLabels(StatiAccordo.toLabel());
 					de.setSelected(stato);
 				}
 				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_STATO);
@@ -4061,10 +4089,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				String[] stati = StatiAccordo.toArray();
 				if(StatiAccordo.finale.toString().equals(oldStato)==false ){
 					de.setType(DataElementType.SELECT);
-					de.setValues(stati);
+					de.setValues(StatiAccordo.toArray());
+					de.setLabels(StatiAccordo.toLabel());
 					de.setSelected(stato);
 					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_STATO);
 				}else{
@@ -4073,6 +4101,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //						de.setValue(StatiAccordo.finale.toString());
 //						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_STATO);
 //					}else{
+					
+					DataElement deLabel = new DataElement();
+					deLabel.setType(DataElementType.TEXT);
+					deLabel.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
+					deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
+					deLabel.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_STATO+"__label");
+					dati.addElement(deLabel);
+					
+					de.setType(DataElementType.HIDDEN);
 					de.setValue(StatiAccordo.finale.toString());
 					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_STATO);
 

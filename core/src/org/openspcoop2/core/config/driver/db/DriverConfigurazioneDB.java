@@ -10296,6 +10296,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 
+		this.log.debug("search : " + search);
+		this.log.debug("filterProtocollo : " + filterProtocollo);
+		this.log.debug("filterProtocolli : " + filterProtocolli);
+		
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -10781,6 +10785,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 		
+		this.log.debug("search : " + search);
+		this.log.debug("filterProtocollo : " + filterProtocollo);
+		this.log.debug("filterProtocolli : " + filterProtocolli);
+		
 		Connection con = null;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
@@ -10956,6 +10964,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
 		}
+		
+		this.log.debug("search : " + search);
+		this.log.debug("filterProtocollo : " + filterProtocollo);
+		this.log.debug("filterProtocolli : " + filterProtocolli);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;

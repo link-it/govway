@@ -39,6 +39,18 @@ public enum StatiAccordo {
 		t[2] = finale.toString();
 		return t;
 	}
+	
+	public static String[] toLabel(){
+		String[] t = new String[3];
+		t[0] = upper(bozza.toString());
+		t[1] = upper(operativo.toString());
+		t[2] = upper(finale.toString());
+		return t;
+	}
+	
+	public static String upper(String s) {
+		return (s.charAt(0)+"").toUpperCase()+s.substring(1);
+	}
 }
 
 

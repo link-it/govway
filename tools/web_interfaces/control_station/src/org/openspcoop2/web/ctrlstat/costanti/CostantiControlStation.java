@@ -154,6 +154,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL = "Scadenza (minuti)";
 	public final static String LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE = "Definisce una scadenza per il riuso del solito ID Protocollo";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_API = "Tipo API";
+	public final static String LABEL_PARAMETRO_STATO_PACKAGE = "Stato";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING = "Tipo";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_SOAP = "Soap";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_REST = "Rest";
