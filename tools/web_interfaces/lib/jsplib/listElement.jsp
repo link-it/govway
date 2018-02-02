@@ -236,6 +236,10 @@ function Reset(form) {
 	  
 	  document.form.reset();
  	  for (var k=0; k<document.form.elements.length; k++) {
+		var name = document.form.elements[k].name;
+		if (name == "search"){
+			document.form.elements[k].value="";
+		}
 		var tipo = document.form.elements[k].type;
 		if (tipo == "select-one" || tipo == "select-multiple") {
 			document.form.elements[k].selectedIndex = 0;

@@ -178,7 +178,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 		HttpSession session = request.getSession(true);
 
 		// Inizializzo PageData
-		PageData pd = new PageData(org.openspcoop2.web.ctrlstat.core.ControlStationCore.conservaRisultatiRicerca_staticInfo);
+		PageData pd = new PageData();
 
 		GeneralHelper generalHelper = new GeneralHelper(session);
 

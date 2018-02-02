@@ -761,6 +761,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo
+			this.pd.setSearchLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME);
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 

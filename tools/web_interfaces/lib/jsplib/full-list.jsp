@@ -126,7 +126,7 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 
 
 						<%
-						if (pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) {
+						if (pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()) )) {
 							String searchDescription = pd.getSearchDescription();
 							String searchLabelName = pd.getSearchLabel();
 							boolean searchNote = pd.isSearchNote();
@@ -135,7 +135,7 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 										<td>
 											<div class="prop">
 												<label><%=searchLabelName %></label>
-												<input type="text" name="search" class="inputLinkLong" />
+												<input type="text" name="search" class="inputLinkLong" value="<%=searchDescription %>"/>
 												<% if(searchNote && !searchDescription.equals("")){ %>
 								      				<p class="note-ricerca">Attenzione! &Egrave; attualmente impostato il filtro di ricerca con la stringa '<%=searchDescription %>'</p>
 								      			<% } %>

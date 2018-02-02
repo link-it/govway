@@ -45,6 +45,7 @@ public class PageData {
 	String searchDescription;
 	boolean searchNote = false;
 	String searchLabel;
+	int searchNumEntries;
 	String mode;
 	String message;
 	String messageType;
@@ -66,14 +67,12 @@ public class PageData {
 	int pageSize, index, numEntries;
 
 	public PageData() {
-		this(false);
-	}
-	public PageData(boolean searchNote) {
 		this.pageDescription = "";
 		this.search = "auto";
 		this.searchDescription = "";
 		this.searchLabel = "Ricerca";
-		this.searchNote = searchNote;
+		this.searchNote = false;
+		this.searchNumEntries = 10;
 		this.mode = "";
 		this.message = "";
 		this.messageType = MessageType.ERROR.toString();
@@ -100,6 +99,13 @@ public class PageData {
 		return this.pageDescription;
 	}
 
+	public int getSearchNumEntries() {
+		return this.searchNumEntries;
+	}
+	public void setSearchNumEntries(int searchNumEntries) {
+		this.searchNumEntries = searchNumEntries;
+	}
+	
 	public String getSearchLabel() {
 		return this.searchLabel;
 	}
