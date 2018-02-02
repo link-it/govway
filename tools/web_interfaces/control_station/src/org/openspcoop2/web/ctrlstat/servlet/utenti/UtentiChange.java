@@ -462,6 +462,10 @@ public final class UtentiChange extends Action {
 						user.addProtocolloSupportato(protocolloName);
 					} 
 				}
+				if(user.getProtocolloSelezionato() != null) {
+					if(!user.getProtocolliSupportati().contains(user.getProtocolloSelezionato()))
+						user.setProtocolloSelezionato(null); 
+				}
 
 				// Se singleSu != null, devo recuperare gli oggetti
 				// dell'utente ed assegnarli a singleSu
