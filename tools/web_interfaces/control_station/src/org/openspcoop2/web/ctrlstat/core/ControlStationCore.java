@@ -473,6 +473,8 @@ public class ControlStationCore {
 	private boolean showPulsantiImportExport = false;
 	private boolean showCountElementInLinkList = false;
 	private boolean conservaRisultatiRicerca = false;
+	public static Boolean conservaRisultatiRicerca_staticInfo_read = null;
+	public static boolean conservaRisultatiRicerca_staticInfo = false;
 	private boolean showAccordiColonnaAzioni = false;
 	private boolean showAccordiInformazioniProtocollo = false;
 	private boolean showConfigurazioniPersonalizzate = false;
@@ -1554,6 +1556,10 @@ public class ControlStationCore {
 			this.showAccordiInformazioniProtocollo = consoleProperties.isMenuAccordiVisualizzazioneGestioneInformazioniProtocollo();
 			this.showCountElementInLinkList = consoleProperties.isElenchiVisualizzaCountElementi();
 			this.conservaRisultatiRicerca = consoleProperties.isElenchiRicercaConservaCriteri();
+			if(conservaRisultatiRicerca_staticInfo_read==null) {
+				conservaRisultatiRicerca_staticInfo_read = true;
+				conservaRisultatiRicerca_staticInfo = this.conservaRisultatiRicerca;
+			}
 			this.showAccordiColonnaAzioni = consoleProperties.isElenchiAccordiVisualizzaColonnaAzioni();
 			this.showPulsantiImportExport = consoleProperties.isElenchiMenuVisualizzazionePulsantiImportExportPackage();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();

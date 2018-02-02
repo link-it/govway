@@ -88,23 +88,6 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 								<span>&nbsp;</span>
 							</td>
 						</tr>
-						<%
-						if (pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) {
-							String searchDescription = pd.getSearchDescription();
-							%>
-									<tr>
-										<td>
-											<div class="prop">
-												<label>Ricerca</label>
-												<input type="text" name="search" class="inputLinkLong" />
-												<% if(!searchDescription.equals("")){ %>
-								      				<p class="note-ricerca">Attenzione! &Egrave; attualmente impostato il filtro di ricerca con la stringa '<%=searchDescription %>'</p>
-								      			<% } %>
-											</div>
-										</td>
-									</tr>	
-						
-						<% } %>
 	
 						<%
 						if (pd.getFilterValues() != null) {
@@ -140,6 +123,27 @@ if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumE
 										</tr>	
 						<%	}
 						} %>
+
+
+						<%
+						if (pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) {
+							String searchDescription = pd.getSearchDescription();
+							String searchLabelName = pd.getSearchLabel();
+							boolean searchNote = pd.isSearchNote();
+							%>
+									<tr>
+										<td>
+											<div class="prop">
+												<label><%=searchLabelName %></label>
+												<input type="text" name="search" class="inputLinkLong" />
+												<% if(searchNote && !searchDescription.equals("")){ %>
+								      				<p class="note-ricerca">Attenzione! &Egrave; attualmente impostato il filtro di ricerca con la stringa '<%=searchDescription %>'</p>
+								      			<% } %>
+											</div>
+										</td>
+									</tr>	
+						
+						<% } %>
 						
 								<tr>
 									<td class="buttonrow">
