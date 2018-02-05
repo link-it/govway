@@ -340,6 +340,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 						AccordoServizioParteSpecifica asps = listaServizi.get(i);
 
+						String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sog.getTipo());
+						
 						Vector<DataElement> e = new Vector<DataElement>();
 
 						DataElement de = new DataElement();
@@ -348,7 +350,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,tmpSog.getId()+""),
 								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sog.getNome()),
 								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sog.getTipo()));
-						de.setValue(sog.getTipo() + "/" + sog.getNome());
+						de.setValue(this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome()));
 						e.addElement(de);
 
 						boolean isServizioCorrelato = TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio());
@@ -361,7 +363,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO,asps.getNome()),
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO,asps.getTipo()));
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE,asps.getVersione().intValue()+"");
-						de.setValue(IDServizioFactory.getInstance().getUriFromAccordo(asps) + (isServizioCorrelato ? " ["+AccordiServizioParteSpecificaCostanti.LABEL_APS_CORRELATO+"]" : ""));
+						//de.setValue(IDServizioFactory.getInstance().getUriFromAccordo(asps) + (isServizioCorrelato ? " ["+AccordiServizioParteSpecificaCostanti.LABEL_APS_CORRELATO+"]" : ""));
+						String correlato = (isServizioCorrelato ? " ["+AccordiServizioParteSpecificaCostanti.LABEL_APS_CORRELATO+"]" : "");
+						de.setValue(this.getLabelNomeServizio(protocollo, asps.getTipo(), asps.getNome(), asps.getVersione())+correlato);
 						e.addElement(de);
 
 						de = new DataElement();
@@ -1611,7 +1615,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String filtroduppt, String deffiltroduppt, String confricpt, String defconfricpt, String idcollpt, String defidcollpt, 
 			String consordpt, String defconsordpt, String scadenzapt, String defscadenzapt, 
 			TipoOperazione tipoOperazione, String defProfiloCollaborazionePT, String profiloCollaborazionePT, 
-			String descr, String stato, String tipoAccordo,String protocollo,String servizioStyle,ServiceBinding serviceBinding)
+			String descr, String stato, String tipoAccordo,String protocollo,String servizioStyle,ServiceBinding serviceBinding,
+			IProtocolFactory<?> protocolFactory, MessageType messageType)
 					throws Exception {
 		try {
 			boolean modificheAbilitate = false;
@@ -1662,7 +1667,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
 			de.setSize(this.getSize());
 			dati.addElement(de);
-
+			
+			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_MESSAGE_TYPE,
+					protocolFactory, serviceBinding, messageType));
+			
 			if (this.isModalitaStandard()) {
 				profProtocollo = AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO;
 			}
@@ -5537,15 +5545,20 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 
-			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType));
+			boolean hiddenMessageType = this.isModalitaStandard();
 			
-
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RICHIESTA);
-			dati.addElement(de);
+			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE,
+					protocolFactory, serviceBinding, messageType, hiddenMessageType));
+						
+			if(TipoOperazione.CHANGE.equals(tipoOperazione) || !hiddenMessageType) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RICHIESTA);
+				dati.addElement(de);
+			}
 			
-			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST,protocolFactory, serviceBinding, messageTypeRichiesta));
+			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST,
+					protocolFactory, serviceBinding, messageTypeRichiesta, hiddenMessageType));
 			
 			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
 				de = new DataElement();
@@ -5614,12 +5627,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 			
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RISPOSTA);
-			dati.addElement(de);
+			if(TipoOperazione.CHANGE.equals(tipoOperazione) || !hiddenMessageType) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RISPOSTA);
+				dati.addElement(de);
+			}
 			
-			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE,protocolFactory, serviceBinding, messageTypeRisposta));
+			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE,
+					protocolFactory, serviceBinding, messageTypeRisposta, hiddenMessageType));
 			
 			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
 				// link risposta
@@ -6704,7 +6720,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						
 						de = new DataElement();
 						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
-						de.setValue(xmlType.getValue());
+						if(xmlType!=null) {
+							de.setValue(xmlType.getValue());
+						}
 						de.setType(DataElementType.HIDDEN);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
 						de.setSize(this.getSize());
@@ -6722,7 +6740,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						
 						de = new DataElement();
 						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
-						de.setSelected(xmlType.getValue());
+						if(xmlType!=null) {
+							de.setSelected(xmlType.getValue());
+						}
 						de.setType(DataElementType.SELECT);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
 						de.setSize(this.getSize());

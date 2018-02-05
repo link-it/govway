@@ -305,12 +305,14 @@ public abstract class BeanUtilities implements IDriverRegistroServiziGet {
 			if(TipiDocumentoSemiformale.HTML.toString().equals(tipo)==false &&
 					TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString().equals(tipo)==false &&
 					TipiDocumentoSemiformale.UML.toString().equals(tipo)==false &&
-					TipiDocumentoSemiformale.XML.toString().equals(tipo)==false){
+					TipiDocumentoSemiformale.XML.toString().equals(tipo)==false &&
+					TipiDocumentoSemiformale.JSON.toString().equals(tipo)==false){
 				throw new DriverRegistroServiziException("Tipo["+tipo+"] non accettato per il Ruolo["+ruolo+"], valori ammessi sono: "+
 						TipiDocumentoSemiformale.HTML.toString()+","
 						+TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()+","
 						+TipiDocumentoSemiformale.UML.toString()+","
-						+TipiDocumentoSemiformale.XML.toString());
+						+TipiDocumentoSemiformale.XML.toString()+","
+						+TipiDocumentoSemiformale.JSON.toString());
 			}
 		}else if(RuoliDocumento.specificaLivelloServizio.toString().equals(ruolo)){
 			if(TipiDocumentoLivelloServizio.WSAGREEMENT.toString().equals(tipo)==false &&

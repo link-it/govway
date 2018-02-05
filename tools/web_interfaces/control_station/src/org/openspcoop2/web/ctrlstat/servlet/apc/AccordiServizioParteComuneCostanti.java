@@ -329,6 +329,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_AZIONI_SCADENZA = "scadenzaaz";
 
 	public final static String PARAMETRO_APC_PORT_TYPES_NOME = "nomept";
+	public final static String PARAMETRO_APC_PORT_TYPES_MESSAGE_TYPE = "messageTypePT";
 	public final static String PARAMETRO_APC_PORT_TYPES_PROFILO_BUSTA = "profBusta";
 	public final static String PARAMETRO_APC_PORT_TYPES_PROFILO_COLLABORAZIONE = "profcollpt";
 	public final static String PARAMETRO_APC_PORT_TYPES_FILTRO_DUPLICATI = "filtroduppt";
@@ -486,7 +487,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS = "Namespace";
 	
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE = "Se non viene definito verr&agrave; automaticamente generato un identificativo univoco";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE = "Se non definito verr&agrave; automaticamente generato un identificativo univoco";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PATH = "Path";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD = "HTTP Method";
@@ -533,7 +534,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO = "Tipo Parametro";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "Required";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "Obbligatorio";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "Tipo";
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_COOKIE = "Cookie";
 	public static final String LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO_DYNAMIC_PATH = "Dynamic Path";

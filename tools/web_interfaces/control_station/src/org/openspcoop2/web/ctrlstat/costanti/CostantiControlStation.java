@@ -161,8 +161,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT = "Default";
-	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "Soap-1.1";
-	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_12 = "Soap-1.2";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "Soap 1.1";
+	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_12 = "Soap 1.2";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_XML = "Xml";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_JSON = "Json";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_BINARY = "Binary";

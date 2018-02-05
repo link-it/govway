@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -133,6 +135,10 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				nomept = "";
 			}
 			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
+			
+			String messageProcessorS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_MESSAGE_TYPE);
+			MessageType messageType = (StringUtils.isNotEmpty(messageProcessorS) && !messageProcessorS.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_MESSAGE_TYPE_DEFAULT)) ? MessageType.valueOf(messageProcessorS) : null;
+					
 			String profProtocollo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_BUSTA);
 			String profcollpt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_COLLABORAZIONE);
 			if(profcollpt == null)
@@ -252,6 +258,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 						profProtocollo = ptOLD.getProfiloPT();
 					}
 					descr = ptOLD.getDescrizione();
+					messageType = apcCore.toMessageMessageType(ptOLD.getMessageType());
 					servizioStyle = ptOLD.getStyle() != null ? ptOLD.getStyle().getValue() : AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPES_STYLE;
 				}
 
@@ -275,7 +282,8 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, deffiltroduppt, confricpt, defconfricpt, idcollpt, defidcollpt, consordpt, defconsordpt, scadenzapt, 
 						defscadenzapt, tipoOp, defprofcollpt, profcollpt, descr, as.getStatoPackage(),
-						tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()));
+						tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()),
+						this.protocolFactory, messageType);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -344,7 +352,8 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, consordpt, consordpt, scadenzapt, scadenzapt, 
 						tipoOp, profcollpt, profcollpt, descr, as.getStatoPackage(),
-						tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()));
+						tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()),
+						this.protocolFactory, messageType);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -400,6 +409,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			PortType newPT = new PortType();
 			newPT.setNome(nomept);
 			newPT.setDescrizione(descr);
+			newPT.setMessageType(apcCore.fromMessageMessageType(messageType));
 			if(ServletUtils.isCheckBoxEnabled(filtroduppt)){
 				newPT.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);
 			} else {
