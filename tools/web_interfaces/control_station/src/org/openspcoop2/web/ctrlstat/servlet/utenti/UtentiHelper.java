@@ -62,6 +62,17 @@ public class UtentiHelper extends ConsoleHelper {
 		super(request, pd, session);
 	}
 
+	private boolean hasOnlyPermessiUtenti(String isServizi,String isDiagnostica,String isSistema,String isMessaggi,
+			String isUtenti,String isAuditing, String isAccordiCooperazione,boolean singlePdD) {
+		return (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
+				(!singlePdD || (singlePdD && ((isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)))) &&
+				((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
+				((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
+				((isUtenti != null) || ServletUtils.isCheckBoxEnabled(isUtenti)) &&
+				((isAuditing == null) || !ServletUtils.isCheckBoxEnabled(isAuditing)) &&
+				((isAccordiCooperazione == null) || !ServletUtils.isCheckBoxEnabled(isAccordiCooperazione)));
+	}
+	
 	public Vector<DataElement> addUtentiToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
@@ -408,7 +419,7 @@ public class UtentiHelper extends ConsoleHelper {
 	}
 
 	public void addUtenteChangeToDati(Vector<DataElement> dati,InterfaceType interfaceType,
-			String changepw, String nomeUtente, String modalitaDisponibili){
+			String changepw, String nomeUtente, String modalitaDisponibili) throws DriverUsersDBException{
 
 		DataElement de = new DataElement();
 
@@ -424,38 +435,51 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setValue(nomeUtente);
 		dati.addElement(de);
 		
+		User utente = this.utentiCore.getUser(nomeUtente);
+		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_MODALITA_GATEWAY);
-		de.setType(DataElementType.TEXT);
+		if(utente.hasOnlyPermessiUtenti()) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.TEXT);
+		}
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_LIST);
 		de.setValue(modalitaDisponibili);
 		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
-		de.setType(DataElementType.SELECT);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-		User user = ServletUtils.getUserFromSession(this.session);
-		String[] tipiInterfacce=null;
-		String[] tipiInterfacceLabel=null;
-		if(user.isPermitInterfaceComplete()) {
-			tipiInterfacce = new String[3];			
+		if(utente.hasOnlyPermessiUtenti()) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(interfaceType.toString());
 		}
 		else {
-			tipiInterfacce = new String[2];
+			de.setType(DataElementType.SELECT);		
+			User user = ServletUtils.getUserFromSession(this.session);
+			String[] tipiInterfacce=null;
+			String[] tipiInterfacceLabel=null;
+			if(user.isPermitInterfaceComplete()) {
+				tipiInterfacce = new String[3];			
+			}
+			else {
+				tipiInterfacce = new String[2];
+			}
+			tipiInterfacce[0]=InterfaceType.STANDARD.toString();
+			tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
+			if(user.isPermitInterfaceComplete()) {
+				tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
+			}
+			tipiInterfacceLabel = new String[tipiInterfacce.length];
+			for (int i = 0; i < tipiInterfacce.length; i++) {
+				tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
+			}
+			de.setValues(tipiInterfacce);
+			de.setLabels(tipiInterfacceLabel);
+			de.setSelected(interfaceType.toString());
 		}
-		tipiInterfacce[0]=InterfaceType.STANDARD.toString();
-		tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
-		if(user.isPermitInterfaceComplete()) {
-			tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
-		}
-		tipiInterfacceLabel = new String[tipiInterfacce.length];
-		for (int i = 0; i < tipiInterfacce.length; i++) {
-			tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
-		}
-		de.setValues(tipiInterfacce);
-		de.setLabels(tipiInterfacceLabel);
-		de.setSelected(interfaceType.toString());
 		dati.addElement(de);
 
 		
@@ -621,36 +645,16 @@ public class UtentiHelper extends ConsoleHelper {
 			//			this.pd.setMessage("Accordi Cooperazione dev'essere selezionato o deselezionato");
 			//			return false;
 			//		}
-
-			// se l'utenza che sto creando e' solo Utenti ignoro la modalita gateway
-			if (!(((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
-					(!singlePdD || (singlePdD && ((isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)))) &&
-					((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
-					((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
-					((isUtenti != null) || ServletUtils.isCheckBoxEnabled(isUtenti)) &&
-					((isAuditing == null) || !ServletUtils.isCheckBoxEnabled(isAuditing)) &&
-					((isAccordiCooperazione == null) || !ServletUtils.isCheckBoxEnabled(isAccordiCooperazione)))) {
-			
-			
-				boolean modalitaPresenti = false;
-				// controllo che abbia selezionato almeno una modalita gateway	
-				for (int i = 0; i < modalitaScelte.length; i++) {
-					modalitaPresenti  = ((modalitaScelte[i] != null) && ServletUtils.isCheckBoxEnabled(modalitaScelte[i]));
-					
-					if(modalitaPresenti)
-						break;
-				}
-				
-				if(!modalitaPresenti) {
-					this.pd.setMessage("Selezionare almeno una Modalit&agrave; Gateway");
-					return false;
-				}
-			}
 			
 			// in modalita change devo controllare che se ho cambiato le modalita' all'utente ci sia almeno un altro utente che puo' gestire le modalita' che lascio
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
 				// se l'utente aveva solo il controllo degli utenti, questo controllo non importa tanto non ha modalita' associate
 				if(!oldUserHasOnlyPermessiUtenti) {
+					
+					if(oldProtocolliSupportati==null) {
+						oldProtocolliSupportati = this.utentiCore.getProtocolli();
+					}
+					
 					Collections.sort(oldProtocolliSupportati);
 					Collections.sort(nuoviProtocolliSupportati);
 					
@@ -739,6 +743,30 @@ public class UtentiHelper extends ConsoleHelper {
 				return false;
 			}
 
+			boolean modalitaPresenti = false;
+			// controllo che abbia selezionato almeno una modalita gateway	
+			for (int i = 0; i < modalitaScelte.length; i++) {
+				modalitaPresenti  = ((modalitaScelte[i] != null) && ServletUtils.isCheckBoxEnabled(modalitaScelte[i]));
+				
+				if(modalitaPresenti)
+					break;
+			}
+			
+			// se l'utenza che sto creando e' solo Utenti ignoro la modalita gateway
+			if(hasOnlyPermessiUtenti(isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)==false) {
+							
+				if(!modalitaPresenti) {
+					this.pd.setMessage("Selezionare almeno una Modalit&agrave; Gateway");
+					return false;
+				}
+			}
+			else {
+				if(modalitaPresenti) {
+					this.pd.setMessage("Se all'utente viene assegnato solamente il Permesso 'U' non deve essere selezionata alcuna Modalit&agrave; Gateway");
+					return false;
+				}
+			}
+			
 			// Se è stato selezionato solo la configurazione senza il permesso dei servizi non ha senso.
 			if(!singlePdD){
 				/*if( ((isServizi == null) || !isServizi.equals("yes")) &&
@@ -915,7 +943,12 @@ public class UtentiHelper extends ConsoleHelper {
 
 					// modalita interfaccia
 					de = new DataElement();
-					de.setValue(mySU.getInterfaceType().toString().toLowerCase());
+					if(mySU.hasOnlyPermessiUtenti()) {
+						de.setValue("-");
+					}
+					else {
+						de.setValue(mySU.getInterfaceType().toString().toLowerCase());
+					}
 					e.addElement(de);
 					
 					// modalita gateway
@@ -925,43 +958,48 @@ public class UtentiHelper extends ConsoleHelper {
 					if(protocolliSupportati == null)
 						protocolliSupportati = new ArrayList<String>();
 					
-					if(protocolliSupportati.size() > 0) {
-						Collections.sort(protocolliSupportati);
-						List<String> protocolliInstallati = this.core.getProtocolli();
-						Collections.sort(protocolliInstallati);
-						
-						String labelProtocolli = null;
-						if(protocolliSupportati.size() == protocolliInstallati.size()) {
-							boolean all = true;
-							for (int i = 0; i < protocolliInstallati.size(); i++) {
-								String pI = protocolliInstallati.get(i);
-								String pS = protocolliSupportati.get(i);
-								
-								if(!pI.equals(pS)) {
-									all=false;
-									break;
+					if(mySU.hasOnlyPermessiUtenti()) {
+						de.setValue("-");
+					}
+					else {
+						if(protocolliSupportati.size() > 0) {
+							Collections.sort(protocolliSupportati);
+							List<String> protocolliInstallati = this.core.getProtocolli();
+							Collections.sort(protocolliInstallati);
+							
+							String labelProtocolli = null;
+							if(protocolliSupportati.size() == protocolliInstallati.size()) {
+								boolean all = true;
+								for (int i = 0; i < protocolliInstallati.size(); i++) {
+									String pI = protocolliInstallati.get(i);
+									String pS = protocolliSupportati.get(i);
+									
+									if(!pI.equals(pS)) {
+										all=false;
+										break;
+									}
 								}
+								
+								if(all)
+									labelProtocolli = UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
 							}
 							
-							if(all)
-								labelProtocolli = UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
-						}
-						
-						if(labelProtocolli == null) {
-							StringBuilder sb = new StringBuilder();
-							for (int i = 0; i < protocolliSupportati.size(); i++) {
-								String pS = protocolliSupportati.get(i);
-								if(sb.length() > 0)
-									sb.append(", ");
-								
-								sb.append(ConsoleHelper.getLabelProtocollo(pS));
+							if(labelProtocolli == null) {
+								StringBuilder sb = new StringBuilder();
+								for (int i = 0; i < protocolliSupportati.size(); i++) {
+									String pS = protocolliSupportati.get(i);
+									if(sb.length() > 0)
+										sb.append(", ");
+									
+									sb.append(ConsoleHelper.getLabelProtocollo(pS));
+								}
+								labelProtocolli = sb.toString();
 							}
-							labelProtocolli = sb.toString();
+							
+							de.setValue(labelProtocolli);
+						} else {
+							de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
 						}
-						
-						de.setValue(labelProtocolli);
-					} else {
-						de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
 					}
 					e.addElement(de);
 
@@ -1034,7 +1072,7 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 			}
 			
-			if(usersByProtocolloSupportato.size() < 2) {
+			if(usersByProtocolloSupportato.size() < 1) {
 				protocolloNonPiuAssociato = true;
 				if(!utentiDaNonEliminare.contains(userLogin))
 					utentiDaNonEliminare.add(userLogin);
@@ -1050,7 +1088,7 @@ public class UtentiHelper extends ConsoleHelper {
 	 * 
 	 * @param userLoginToCheck
 	 * @param userLogin
-	 * @return
+	 * @return true se l'utente User puo' gestire tutte le modalita' dell'utente userToCheck
 	 * @throws DriverUsersDBException 
 	 */
 	public boolean checkUsersModalitaGatewayCompatibili(String userLoginToCheck, String userLogin) throws DriverUsersDBException {
@@ -1064,7 +1102,7 @@ public class UtentiHelper extends ConsoleHelper {
 	 * 
 	 * @param userToCheck
 	 * @param user
-	 * @return
+	 * @return true se l'utente User puo' gestire tutte le modalita' dell'utente userToCheck
 	 */
 	public boolean checkUsersModalitaGatewayCompatibili(User userToCheck, User user) {
 		// utente che sto controllando e' un utente che gestisce solo utenti, non ci sono controlli da effettuare

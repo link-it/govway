@@ -455,16 +455,22 @@ public final class UtentiChange extends Action {
 				user.setPermessi(PermessiUtente.toPermessiUtente(puString));
 				
 				user.clearProtocolliSupportati();
-				// modalita gateway
-				for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
-					String protocolloName = protocolliRegistratiConsole.get(i);
-					if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
-						user.addProtocolloSupportato(protocolloName);
-					} 
+				if(user.hasOnlyPermessiUtenti()) {
+					user.setProtocolloSelezionato(null); 
+					user.setInterfaceType(InterfaceType.STANDARD);
 				}
-				if(user.getProtocolloSelezionato() != null) {
-					if(!user.getProtocolliSupportati().contains(user.getProtocolloSelezionato()))
-						user.setProtocolloSelezionato(null); 
+				else {
+					// modalita gateway
+					for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+						String protocolloName = protocolliRegistratiConsole.get(i);
+						if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
+							user.addProtocolloSupportato(protocolloName);
+						} 
+					}
+					if(user.getProtocolloSelezionato() != null) {
+						if(!user.getProtocolliSupportati().contains(user.getProtocolloSelezionato()))
+							user.setProtocolloSelezionato(null); 
+					}
 				}
 
 				// Se singleSu != null, devo recuperare gli oggetti
