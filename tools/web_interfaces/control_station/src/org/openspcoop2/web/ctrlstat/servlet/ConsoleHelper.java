@@ -3563,40 +3563,52 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public static List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
+	public List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
 		if(protocolli==null || protocolli.size()<=0) {
 			return null;
 		}
 		List<String> l = new ArrayList<>();
 		for (String protocollo : protocolli) {
-			l.add(ConsoleHelper.getLabelProtocollo(protocollo));
+			l.add(this.getLabelProtocollo(protocollo));
 		}
 		return l;
 	}
 	
-	public static String getLabelProtocollo(String protocollo) throws Exception{
+	public String getLabelProtocollo(String protocollo) throws Exception{
+		return _getLabelProtocollo(protocollo);
+	}
+		
+	public static String _getLabelProtocollo(String protocollo) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getLabel();
 	}
 	
-	public static String getDescrizioneProtocollo(String protocollo) throws Exception{
+	public String getDescrizioneProtocollo(String protocollo) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getDescription();
 	}
 	
-	public static String getWebSiteProtocollo(String protocollo) throws Exception{
+	public String getWebSiteProtocollo(String protocollo) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getWebSite();
 	}
 	
 	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
+		StringBuffer bf = new StringBuffer();
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		if(protocolFactoryManager.getOrganizationTypes().get(protocollo).size()>1) {
-			return tipoSoggetto+"/"+nomeSoggetto;
+			IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocollo);
+			if(tipoSoggetto.equals(protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault())) {
+				bf.append(nomeSoggetto);
+			}
+			else{
+				bf.append(tipoSoggetto).append("/").append(nomeSoggetto);
+			}
 		}
 		else {
-			return nomeSoggetto;
+			bf.append(nomeSoggetto);
 		}
+		return bf.toString();
 	}
 	public String getLabelIdAccordo(AccordoServizioParteComune as) throws Exception{
 		return this.getLabelIdAccordo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()), 
@@ -3624,7 +3636,13 @@ public class ConsoleHelper {
 		
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		if(protocolFactoryManager._getServiceTypes().get(protocollo).size()>1) {
-			return tipoServizio+"/"+nomeServizio+versione;
+			IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocollo);
+			if(tipoServizio.equals(protocolFactory.createProtocolConfiguration().getTipoServizioDefault(null))) {
+				return nomeServizio+versione;
+			}
+			else {
+				return tipoServizio+"/"+nomeServizio+versione;	
+			}
 		}
 		else {
 			return nomeServizio+versione;

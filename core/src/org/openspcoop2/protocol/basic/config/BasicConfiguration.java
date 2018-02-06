@@ -233,13 +233,16 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	@Override
 	public List<String> getTipiServizi(ServiceBinding serviceBinding) throws ProtocolException {
 		
-		org.openspcoop2.protocol.manifest.constants.ServiceBinding sb = this.convert(serviceBinding);
+		org.openspcoop2.protocol.manifest.constants.ServiceBinding sb = null;
+		if(serviceBinding!=null) {
+			sb = this.convert(serviceBinding);
+		}
 		
 		List<String> tipi = new ArrayList<String>();
 		List<ServiceType> l = this.registroManifest.getService().getTypes().getTypeList();
 		for (int i = 0; i < l.size(); i++) {
 			org.openspcoop2.protocol.manifest.constants.ServiceBinding serviceBindingTmp = l.get(i).getBinding();
-			if(serviceBindingTmp==null || serviceBindingTmp.equals(sb)){
+			if(serviceBindingTmp==null || (sb!=null && serviceBindingTmp.equals(sb))){
 				tipi.add(l.get(i).getName());	
 			}
 		}

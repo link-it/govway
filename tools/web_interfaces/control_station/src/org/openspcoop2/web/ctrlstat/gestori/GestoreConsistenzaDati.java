@@ -40,8 +40,6 @@ public class GestoreConsistenzaDati implements Runnable {
 	
 	private Logger log = null;
 
-	private boolean generazioneAutomaticaPorteApplicative;
-	private boolean generazioneAutomaticaPorteDelegate;
 	private boolean initForceMapping;
 	
 	private boolean stop = false;
@@ -49,10 +47,8 @@ public class GestoreConsistenzaDati implements Runnable {
 		this.stop = stop;
 	}
 
-	public GestoreConsistenzaDati(boolean generazioneAutomaticaPorteApplicative, boolean generazioneAutomaticaPorteDelegate, boolean initForceMapping) {
+	public GestoreConsistenzaDati(boolean initForceMapping) {
 		this.log = ControlStationLogger.getPddConsoleCoreLogger();
-		this.generazioneAutomaticaPorteApplicative = generazioneAutomaticaPorteApplicative;
-		this.generazioneAutomaticaPorteDelegate = generazioneAutomaticaPorteDelegate;
 		this.initForceMapping = initForceMapping;
 	}
 
@@ -78,28 +74,18 @@ public class GestoreConsistenzaDati implements Runnable {
 
 			// Mapping Erogazione
 			if(!this.stop){
-				if(this.generazioneAutomaticaPorteApplicative){
-					statoOperazione = "[Inizializzazione Mapping Erogazione] ";
-					this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA ....");
-					core.initMappingErogazione(this.initForceMapping,this.log);
-					this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA completato con successo");
-				}
-				else{
-					this.log.debug("Consistenza Dati Mapping Erogazione-PA non effettuato (generazione automatica PA disabilitata)");
-				}
+				statoOperazione = "[Inizializzazione Mapping Erogazione] ";
+				this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA ....");
+				core.initMappingErogazione(this.initForceMapping,this.log);
+				this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA completato con successo");
 			}
 
 			// Mapping Fruizione
 			if(!this.stop){
-				if(this.generazioneAutomaticaPorteDelegate){
-					statoOperazione = "[Inizializzazione Mapping Fruizione] ";
-					this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD ....");
-					core.initMappingFruizione(this.initForceMapping,this.log);
-					this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD completato con successo");
-				}
-				else{
-					this.log.debug("Consistenza Dati Mapping Fruizione-PD non effettuato (generazione automatica PD disabilitata)");
-				}
+				statoOperazione = "[Inizializzazione Mapping Fruizione] ";
+				this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD ....");
+				core.initMappingFruizione(this.initForceMapping,this.log);
+				this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD completato con successo");
 			}
 			
 			this.log.info("Attività di Controllo Consistenza Dati completato con successo.");

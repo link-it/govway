@@ -150,7 +150,7 @@ public class UtentiHelper extends ConsoleHelper {
 		for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 			String protocolloName = protocolliRegistratiConsole.get(i);
 			de = new DataElement();
-			de.setLabel(ConsoleHelper.getLabelProtocollo(protocolloName));
+			de.setLabel(this.getLabelProtocollo(protocolloName));
 			de.setType(DataElementType.CHECKBOX);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			ServletUtils.setCheckBox(de, modalitaGateway[i]);
@@ -375,7 +375,7 @@ public class UtentiHelper extends ConsoleHelper {
 		for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 			String protocolloName = protocolliRegistratiConsole.get(i);
 			de = new DataElement();
-			de.setLabel(ConsoleHelper.getLabelProtocollo(protocolloName));
+			de.setLabel(this.getLabelProtocollo(protocolloName));
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			de.setValue(modalitaGateway[i]);
@@ -674,7 +674,7 @@ public class UtentiHelper extends ConsoleHelper {
 						for (String protocolloDaControllare : protocolliEliminati) {
 							boolean protocolloNonPiuAssociato = this.controllaEsistenzaUtentePerAssociareIlProtocollo(nomiUtentiDaRimuovere, utentiDaNonEliminare, nomesu, protocolloDaControllare);
 							if(protocolloNonPiuAssociato)
-								protocolliNonValidi.add(ConsoleHelper.getLabelProtocollo(protocolloDaControllare));
+								protocolliNonValidi.add(this.getLabelProtocollo(protocolloDaControllare));
 						}
 						
 						if(utentiDaNonEliminare.size() > 0) {
@@ -991,7 +991,7 @@ public class UtentiHelper extends ConsoleHelper {
 									if(sb.length() > 0)
 										sb.append(", ");
 									
-									sb.append(ConsoleHelper.getLabelProtocollo(pS));
+									sb.append(this.getLabelProtocollo(pS));
 								}
 								labelProtocolli = sb.toString();
 							}

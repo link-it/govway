@@ -76,7 +76,6 @@ import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -2719,7 +2718,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					deLABEL.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 					deLABEL.setType(DataElementType.TEXT);
 					deLABEL.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO+"__label");
-					deLABEL.setValue(ConsoleHelper.getLabelProtocollo(tipoProtocollo));
+					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
 					dati.addElement(deLABEL);
 					
 					de.setValue(tipoProtocollo);
@@ -2728,7 +2727,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}else {
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 					de.setValues(listaTipiProtocollo);
-					de.setLabels(ConsoleHelper.getLabelsProtocolli(listaTipiProtocollo));
+					de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 					de.setSelected(tipoProtocollo);
 					de.setType(DataElementType.SELECT);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
@@ -2749,7 +2748,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 				de.setValues(listaTipiProtocollo);
-				de.setLabels(ConsoleHelper.getLabelsProtocolli(listaTipiProtocollo));
+				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
@@ -4506,7 +4505,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					if(showProtocolli) {
 						de = new DataElement();
-						de.setValue(ConsoleHelper.getLabelProtocollo(protocollo));
+						de.setValue(this.getLabelProtocollo(protocollo));
 						e.addElement(de);
 					}
 					

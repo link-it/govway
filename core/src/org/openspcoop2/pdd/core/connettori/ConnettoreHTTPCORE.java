@@ -470,9 +470,13 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				for (int i = 0; i < hdrRisposta.length; i++) {
 					if(hdrRisposta[i].getName()==null){
 						// Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
+						if(this.debug)
+							this.logger.debug("HTTP risposta ["+HttpConstants.RETURN_CODE+"] ["+hdrRisposta[i].getValue()+"]...");
 						this.propertiesTrasportoRisposta.put(HttpConstants.RETURN_CODE, hdrRisposta[i].getValue());
 					}
 					else{
+						if(this.debug)
+							this.logger.debug("HTTP risposta ["+hdrRisposta[i].getName()+"] ["+hdrRisposta[i].getValue()+"]...");
 						this.propertiesTrasportoRisposta.put(hdrRisposta[i].getName(), hdrRisposta[i].getValue());
 					}
 				}

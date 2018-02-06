@@ -27,8 +27,10 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -195,7 +197,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			List<ExtendedConnettore> listExtendedConnettore) throws Exception {
+			String tipoProtocollo, List<String> listaTipiProtocollo, List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 
 		if(ruoloFruitore==null){
 			ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
@@ -225,6 +227,41 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 
+		if(useIdSogg!=null && !useIdSogg) {
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+	
+			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
+				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+					
+					DataElement deLABEL = new DataElement();
+					deLABEL.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+					deLABEL.setType(DataElementType.TEXT);
+					deLABEL.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO+"__label");
+					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
+					dati.addElement(deLABEL);
+					
+					de.setValue(tipoProtocollo);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+				}else {
+					de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+					de.setValues(listaTipiProtocollo);
+					de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
+					de.setSelected(tipoProtocollo);
+					de.setType(DataElementType.SELECT);
+					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+					de.setPostBack(true);
+				}
+			} else {
+				de.setValue(tipoProtocollo);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+			}
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
 				
 		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
@@ -242,7 +279,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		
 		
-		if (this.isModalitaStandard()) {
+		if (!this.isModalitaCompleta()) {
 //			
 //			de = new DataElement();
 //			de.setLabel(ServiziApplicativiCostanti.LABEL_FRUITORE);
@@ -295,15 +332,25 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 			else{
-				de.setSelected(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
+				// VECCHIO DEFAULT
+//				de.setSelected(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
+//				// forzo default
+//				ruoloErogatore = TipologiaErogazione.TRASPARENTE.getValue();
+//				// forzo connettoreAbilitato
+//				endpointtype = TipiConnettore.HTTP.getNome();
+
+				de.setValue(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
 				// forzo default
-				ruoloErogatore = TipologiaErogazione.TRASPARENTE.getValue();
-				// forzo connettoreAbilitato
-				endpointtype = TipiConnettore.HTTP.getNome();
+				ruoloFruitore = TipologiaFruizione.NORMALE.getValue();
+				if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
+					tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+				} 
+				de.setType(DataElementType.HIDDEN);
+				
 			}
 			dati.addElement(de);
 			
-		}
+		}// fine !modalitàCompleta
 		
 		
 		
@@ -380,15 +427,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 
 				// Aggiunta di un servizio applicativo passando dalla schermata soggetti
+				org.openspcoop2.core.config.Soggetto sog = this.soggettiCore.getSoggetto(Integer.parseInt(provider));
+				
 				de.setType(DataElementType.TEXT);
-				int find = -1;
-				for(int i= 0 ; i < soggettiList.length ; i++)
-					if(Integer.parseInt(soggettiList[i]) == Integer.parseInt(provider)){
-						find = i;
-						break;
-					}
-
-				de.setValue(soggettiListLabel[find]);
+				de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, sog.getTipo(), sog.getNome()));
 				de.setSize(this.getSize());
 
 			}
@@ -1149,7 +1191,30 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 
+	private void addFilterRuoloServizioApplicativo(String ruoloSA, boolean postBack) throws Exception{
+		try {
+			String [] tmp = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO;
+			
+			String [] values = new String[tmp.length + 1];
+			String [] labels = new String[tmp.length + 1];
+			labels[0] = ServiziApplicativiCostanti.LABEL_PARAMETRO_FILTRO_RUOLO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			for (int i =0; i < tmp.length ; i ++) {
+				labels[i+1] = tmp[i];
+				values[i+1] = tmp[i];
+			}
+			
+			String selectedValue = ruoloSA != null ? ruoloSA : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			
+			String label = ServiziApplicativiCostanti.LABEL_TIPOLOGIA;
 
+			this.pd.addFilter(Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 
 
 
@@ -1175,23 +1240,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			// Prendo il soggetto
 			String tmpTitle = null;
-			String protocollo = null;
+			String protocolloSoggetto = null;
 			boolean supportAsincroni = true;
 			if(useIdSogg){
 				if(this.core.isRegistroServiziLocale()){
 					Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
-					tmpTitle = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
-					protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					protocolloSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = this.getLabelNomeSoggetto(protocolloSoggetto, tmpSogg.getTipo() , tmpSogg.getNome());
 				}else{
 					org.openspcoop2.core.config.Soggetto tmpSogg = this.soggettiCore.getSoggetto(Integer.parseInt(idProvider));
-					tmpTitle = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
-					protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					protocolloSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = this.getLabelNomeSoggetto(protocolloSoggetto, tmpSogg.getTipo() , tmpSogg.getNome());
 				}
 				
-				List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
+				List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocolloSoggetto);
 				for (ServiceBinding serviceBinding : serviceBindingListProtocollo) {
-					supportAsincroni = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
-							|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocollo, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+					supportAsincroni = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+							|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
 				}
 				
 				if(supportAsincroni==false){
@@ -1210,6 +1275,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				addFilterProtocol(ricerca, idLista);
 			}
 			
+			String filterRuoloSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO);
+			this.addFilterRuoloServizioApplicativo(filterRuoloSA,false);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -1217,6 +1285,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			// setto la barra del titolo
 			if(!useIdSogg){
+				this.pd.setSearchLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 				if (search.equals("")) {
 					this.pd.setSearchDescription("");
 					ServletUtils.setPageDataTitle(this.pd, 
@@ -1235,6 +1304,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 
+				this.pd.setSearchLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 				if(search.equals("")){
 					this.pd.setSearchDescription("");
 					lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tmpTitle,null));
@@ -1253,10 +1323,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI, search);
 			}
 
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			
 			// setto le label delle colonne
 			List<String> labels = new ArrayList<String>();
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
-			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			if(!useIdSogg) {
+				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			}
+			if( showProtocolli ) {
+				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+			}
 			labels.add(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
 			if (this.isModalitaAvanzata()){
 				labels.add(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
@@ -1281,6 +1358,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setValue("" + sa.getId());
 					e.addElement(de);
 
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
+					
 					de = new DataElement();
 					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, 
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+""),
@@ -1289,14 +1368,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setIdToRemove(sa.getId().toString());
 					e.addElement(de);
 
-					de = new DataElement();
-					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, sa.getIdSoggetto()+""),
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, sa.getNomeSoggettoProprietario()),
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, sa.getTipoSoggettoProprietario()));
-					de.setValue(sa.getTipoSoggettoProprietario() + "/" + sa.getNomeSoggettoProprietario());
-					e.addElement(de);
+					if(!useIdSogg) {
+						de = new DataElement();
+						de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, sa.getIdSoggetto()+""),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, sa.getNomeSoggettoProprietario()),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, sa.getTipoSoggettoProprietario()));
+						de.setValue(this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario()));
+						e.addElement(de);
+					}
 
+					if( showProtocolli ) {
+						de = new DataElement();
+						de.setValue(this.getLabelProtocollo(protocollo));
+						e.addElement(de);
+					}
+					
 					boolean pddEsterna = false;
 					if(this.core.isRegistroServiziLocale()){
 						IDSoggetto tmpIDS = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
@@ -1644,13 +1731,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			// Prendo il soggetto
 			String tipoENomeSoggetto = null;
+			String nomeProtocollo = null;
 			if(useIdSogg){
 				if(this.core.isRegistroServiziLocale()){
 					Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
-					tipoENomeSoggetto = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
+					nomeProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tipoENomeSoggetto = this.getLabelNomeSoggetto(nomeProtocollo, tmpSogg.getTipo() , tmpSogg.getNome());
 				}else{
 					org.openspcoop2.core.config.Soggetto tmpSogg = this.soggettiCore.getSoggetto(Integer.parseInt(idProvider));
-					tipoENomeSoggetto = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
+					nomeProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tipoENomeSoggetto = this.getLabelNomeSoggetto(nomeProtocollo, tmpSogg.getTipo() , tmpSogg.getNome());
 				}
 			}
 		

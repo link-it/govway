@@ -640,6 +640,8 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					if(keyHttpResponse==null){ // Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
 						keyHttpResponse=HttpConstants.RETURN_CODE;
 					}
+					if(this.debug)
+						this.logger.debug("HTTP risposta ["+keyHttpResponse+"] ["+bfHttpResponse.toString()+"]...");
 					this.propertiesTrasportoRisposta.put(keyHttpResponse, bfHttpResponse.toString());
 				}
 			}

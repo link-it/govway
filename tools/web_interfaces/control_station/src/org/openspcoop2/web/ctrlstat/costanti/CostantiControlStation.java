@@ -97,7 +97,6 @@ public class CostantiControlStation {
 	public final static String SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI = "SoggettoVirtuale";
 	public final static String SESSION_PARAMETRO_MODALITA_INTERFACCIA = "ModalitaInterfaccia";
 	public final static String SESSION_PARAMETRO_SINGLE_PDD = "singlePdD";
-	public final static String SESSION_PARAMETRO_GENERAZIONE_AUTOMATICA_PORTE_DELEGATE = "generazioneAutomaticaPD";
 	public final static String SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE = "ConfigurazioniPersonalizzate";
 	public final static String SESSION_PARAMETRO_SAME_DB_WEBUI = "sameDBWebUI";
 	public final static String SESSION_PARAMETRO_TIPO_DB = "tipoDB";

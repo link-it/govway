@@ -270,6 +270,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
+			
 
 			// Preparo il menu
 			saHelper.makeMenu();
@@ -301,80 +302,103 @@ public final class ServiziApplicativiAdd extends Action {
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 			
-			String protocollo = saCore.getProtocolloDefault(session, listaTipiProtocollo);
-			List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			long providerTmp = -1;
-			
-			Search searchSoggetti = new Search(true);
-			saHelper.setFilterSelectedProtocol(searchSoggetti, Liste.SOGGETTI);
-			
-			if(saCore.isRegistroServiziLocale()){
-				List<Soggetto> list = null;
-				if(saCore.isVisioneOggettiGlobale(superUser)){
-					list = soggettiCore.soggettiRegistroList(null,searchSoggetti);
-				}else{
-					list = soggettiCore.soggettiRegistroList(superUser,searchSoggetti); 
+			String tipoProtocollo = null;
+			String tipoENomeSoggetto = "";
+			if(useIdSogg) {
+				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
+				if(tipoProtocollo == null){
+					tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				}
+				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
+			}
+			else {
+				tipoProtocollo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+				if(tipoProtocollo == null){
+					tipoProtocollo = saCore.getProtocolloDefault(session, listaTipiProtocollo);
+				}
+			
+				List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
+				long providerTmp = -1;
 				
+				Search searchSoggetti = new Search(true);
+				saHelper.setFilterSelectedProtocol(searchSoggetti, Liste.SOGGETTI);
 				
-				// Filtro per pdd esterne
-				if(singlePdD){
-					List<Soggetto> listFiltrata = new ArrayList<Soggetto>();
-					for (Soggetto soggetto : list) {
-						boolean pddEsterna = pddCore.isPddEsterna(soggetto.getPortaDominio());
-						if(!pddEsterna){
-							listFiltrata.add(soggetto);
+				if(saCore.isRegistroServiziLocale()){
+					List<Soggetto> list = null;
+					if(saCore.isVisioneOggettiGlobale(superUser)){
+						list = soggettiCore.soggettiRegistroList(null,searchSoggetti);
+					}else{
+						list = soggettiCore.soggettiRegistroList(superUser,searchSoggetti); 
+					}
+					
+					
+					// Filtro per pdd esterne
+					if(singlePdD){
+						List<Soggetto> listFiltrata = new ArrayList<Soggetto>();
+						for (Soggetto soggetto : list) {
+							boolean pddEsterna = pddCore.isPddEsterna(soggetto.getPortaDominio());
+							if(!pddEsterna){
+								listFiltrata.add(soggetto);
+							}
+						}
+						list = listFiltrata;
+					}
+					if (list.size() > 0) {
+						List<Soggetto> listFiltrataCompatibileProtocollo =  new ArrayList<Soggetto>();
+						for (Soggetto soggetto : list) {
+							if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
+								listFiltrataCompatibileProtocollo.add(soggetto);
+								if(providerTmp < 0)
+									providerTmp = soggetto.getId();
+							}
+						}
+						if (listFiltrataCompatibileProtocollo.size() > 0) {
+							soggettiList = new String[listFiltrataCompatibileProtocollo.size()];
+							soggettiListLabel = new String[listFiltrataCompatibileProtocollo.size()];
+							int i = 0;
+							for (Soggetto soggetto : listFiltrataCompatibileProtocollo) {
+								soggettiList[i] = soggetto.getId().toString();
+								soggettiListLabel[i] =saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
+								i++;
+							}
 						}
 					}
-					list = listFiltrata;
 				}
-				if (list.size() > 0) {
-					soggettiList = new String[list.size()];
-					soggettiListLabel = new String[list.size()];
-					int i = 0;
-					for (Soggetto soggetto : list) {
+				else{
+					List<org.openspcoop2.core.config.Soggetto> list = null;
+					if(saCore.isVisioneOggettiGlobale(superUser)){
+						list = soggettiCore.soggettiList(null,searchSoggetti);
+					}else{
+						list = soggettiCore.soggettiList(superUser,searchSoggetti); 
+					}
+					
+					List<org.openspcoop2.core.config.Soggetto> listFiltrataCompatibileProtocollo =  new ArrayList<org.openspcoop2.core.config.Soggetto>();
+					for (org.openspcoop2.core.config.Soggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
+							listFiltrataCompatibileProtocollo.add(soggetto);
 							if(providerTmp < 0)
 								providerTmp = soggetto.getId();
 						}
-						soggettiList[i] = soggetto.getId().toString();
-						soggettiListLabel[i] = soggetto.getTipo() + "/" + soggetto.getNome();
-						i++;
 					}
-				}
-			}
-			else{
-				List<org.openspcoop2.core.config.Soggetto> list = null;
-				if(saCore.isVisioneOggettiGlobale(superUser)){
-					list = soggettiCore.soggettiList(null,searchSoggetti);
-				}else{
-					list = soggettiCore.soggettiList(superUser,searchSoggetti); 
+					
+					if (listFiltrataCompatibileProtocollo.size() > 0) {
+						soggettiList = new String[listFiltrataCompatibileProtocollo.size()];
+						soggettiListLabel = new String[listFiltrataCompatibileProtocollo.size()];
+						int i = 0;
+						for (org.openspcoop2.core.config.Soggetto soggetto : listFiltrataCompatibileProtocollo) {
+							soggettiList[i] = soggetto.getId().toString();
+							soggettiListLabel[i] =saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
+							i++;
+						}
+					}
 				}
 				
-				soggettiList = new String[list.size()];
-				soggettiListLabel = new String[list.size()];
-				int i = 0;
-				for (org.openspcoop2.core.config.Soggetto soggetto : list) {
-					if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
-						if(providerTmp < 0)
-							providerTmp = soggetto.getId();
-					}
-					soggettiList[i] = soggetto.getId().toString();
-					soggettiListLabel[i] = soggetto.getTipo() + "/" + soggetto.getNome();
-					i++;
+				if(provider == null){
+					provider = providerTmp +"";
 				}
 			}
 			
-			// se il provider non e' stato scelto seleziono il primo nella lista che appartiene al protocollo di default della console.
-			String tipoENomeSoggetto = "";
-			String nomeProtocollo = protocollo;
-			if(provider == null){
-				provider = providerTmp +"";
-			}else {
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
-				tipoENomeSoggetto = soggetto.getTipo() + "/" + soggetto.getNome();
-				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
-			}
+
 			
 			
 			
@@ -414,7 +438,7 @@ public final class ServiziApplicativiAdd extends Action {
 				dati = saHelper.addServizioApplicativoToDati(dati, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP), 
 						TipoOperazione.ADD, 0, contaListe,soggettiList,
 						soggettiListLabel,provider,utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
-						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,nomeProtocollo,
+						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,tipoProtocollo,
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
 						invrifRichiesta, risprif,
@@ -433,7 +457,7 @@ public final class ServiziApplicativiAdd extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
+						tipoProtocollo, listaTipiProtocollo, listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -469,7 +493,7 @@ public final class ServiziApplicativiAdd extends Action {
 				dati = saHelper.addServizioApplicativoToDati(dati, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP),
 						TipoOperazione.ADD, 0, contaListe,soggettiList,
 						soggettiListLabel,provider,utenteSA,passwordSA,subjectSA,principalSA, tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
-						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,nomeProtocollo,
+						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,tipoProtocollo,
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
 						invrifRichiesta, risprif,
@@ -488,7 +512,7 @@ public final class ServiziApplicativiAdd extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
+						tipoProtocollo, listaTipiProtocollo, listExtendedConnettore);
 
 				pd.setDati(dati);
 

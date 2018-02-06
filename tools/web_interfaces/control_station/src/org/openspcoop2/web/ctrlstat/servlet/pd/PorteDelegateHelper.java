@@ -488,21 +488,11 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					)
 				) {
 				if( modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) ){
-					if(this.porteDelegateCore.isForceWsdlBasedAzione_generazioneAutomaticaPorteDelegate()){
-						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
-							configurazioneStandardAzione = true;
-						}
-						else{
-							configurazioneStandardNonApplicabile = true;
-						}
+					if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
+						configurazioneStandardAzione = true;
 					}
 					else{
-						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) == false ){
-							configurazioneStandardAzione = true;
-						}
-						else{
-							configurazioneStandardNonApplicabile = true;
-						}
+						configurazioneStandardNonApplicabile = true;
 					}
 				}
 				else{

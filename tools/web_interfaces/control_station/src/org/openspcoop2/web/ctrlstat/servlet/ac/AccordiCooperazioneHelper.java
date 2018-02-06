@@ -354,7 +354,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 					if(showProtocolli) {
 						de = new DataElement();
-						de.setValue(ConsoleHelper.getLabelProtocollo(protocollo));
+						de.setValue(this.getLabelProtocollo(protocollo));
 						e.addElement(de);
 					}
 					
@@ -546,7 +546,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1 && modificheAbilitate){
 				de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
 				de.setValues(listaTipiProtocollo);
-				de.setLabels(ConsoleHelper.getLabelsProtocolli(listaTipiProtocollo));
+				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
@@ -557,7 +557,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				deLABEL.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
 				deLABEL.setType(DataElementType.TEXT);
 				deLABEL.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO+"__label");
-				deLABEL.setValue(ConsoleHelper.getLabelProtocollo(tipoProtocollo));
+				deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
 				dati.addElement(deLABEL);
 				
 				de.setValue(tipoProtocollo);

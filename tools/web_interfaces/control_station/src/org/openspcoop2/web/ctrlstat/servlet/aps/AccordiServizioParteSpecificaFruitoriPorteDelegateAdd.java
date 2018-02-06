@@ -237,7 +237,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			// ServiziApplicativi
 			List<String> saList = new ArrayList<String>();
 			saList.add("-");
-			if(apsCore.isGenerazioneAutomaticaPorteDelegate() && idSoggettoFruitore!=null){
+			if(idSoggettoFruitore!=null){
 				try{
 					String auth = fruizioneAutenticazione;
 					if(auth==null || "".equals(auth)){

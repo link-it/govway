@@ -2990,7 +2990,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 
 		// Porta Applicativa e Servizio Applicativo Erogatore
-		if (tipoOp.equals(TipoOperazione.ADD) && this.core.isGenerazioneAutomaticaPorteApplicative() && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
+		if (tipoOp.equals(TipoOperazione.ADD) && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
 
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE );
@@ -3481,7 +3481,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 		// Porta Applicativa e Servizio Applicativo Erogatore
-		if (tipoOp.equals(TipoOperazione.ADD) && this.core.isGenerazioneAutomaticaPorteApplicative() && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
+		if (tipoOp.equals(TipoOperazione.ADD) && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
 
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE);
@@ -3889,9 +3889,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setValues(soggettiList);
 			de.setLabels(soggettiListLabel);
 			de.setSelected(idSoggettoFruitore);
-			if(this.core.isGenerazioneAutomaticaPorteDelegate()){
-				de.setPostBack(true);
-			}
+			de.setPostBack(true);
 			dati.addElement(de);
 
 			
@@ -3943,7 +3941,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 
-			if(this.core.isGenerazioneAutomaticaPorteDelegate() && isSoggettoGestitoPorta){
+			if(isSoggettoGestitoPorta){
 				
 				this.controlloAccessi(dati);
 				

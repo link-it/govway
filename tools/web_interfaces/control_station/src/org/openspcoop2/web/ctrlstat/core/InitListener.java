@@ -220,8 +220,7 @@ public class InitListener implements ServletContextListener {
 		
 		try{
 			if(consoleProperties.isGestoreConsistenzaDatiEnabled()){
-				this.gestoreConsistenzaDati = new GestoreConsistenzaDati(consoleProperties.isGenerazioneAutomaticaPorteApplicative(), 
-						consoleProperties.isGenerazioneAutomaticaPorteDelegate(), consoleProperties.isGestoreConsistenzaDati_forceCheckMapping());
+				this.gestoreConsistenzaDati = new GestoreConsistenzaDati(consoleProperties.isGestoreConsistenzaDati_forceCheckMapping());
                 new Thread(this.gestoreConsistenzaDati).start();
                 InitListener.log.info("Gestore Controllo Consistenza Dati avviato con successo.");
 			}

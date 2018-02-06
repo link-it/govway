@@ -48,6 +48,10 @@ public final class Filtri
 	
 	public final static String FILTRO_SERVICE_BINDING = "filtroServiceBinding";
 	
+	public final static String FILTRO_RUOLO_SERVIZIO_APPLICATIVO = "filtroRuoloSA";
+	public final static String VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE = "Erogatore";
+	public final static String VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE = "Fruitore";
+	
 	public final static String FILTRO_UTENTE = "filtroUtente";
 	
 	

@@ -456,7 +456,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// ServiziApplicativi
 			List<String> saList = new ArrayList<String>();
 			saList.add("-");
-			if(apsCore.isGenerazioneAutomaticaPorteDelegate() && idSoggettoSelected!=null){
+			if(idSoggettoSelected!=null){
 				try{
 					String auth = this.fruizioneAutenticazione;
 					if(auth==null || "".equals(auth)){
@@ -937,7 +937,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// String nomeSoggettoErogatore = (String)
 			// session.getAttribute("nomeSoggettoErogatore");
 
-			boolean generazionePortaDelegata = apsCore.isGenerazioneAutomaticaPorteDelegate();
+			boolean generazionePortaDelegata = true;
 			/*
 			 * bug-fix #61 Se il soggetto (fruitore) afferisce a una porta di
 			 * dominio di tipo 'esterno', la porta delegata non deve essere

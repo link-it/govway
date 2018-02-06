@@ -203,24 +203,12 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "singlePdD");
 	}
 	
-	public Boolean isGenerazioneAutomaticaPorteDelegate() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate");
-	}
-	
-	public Boolean isForceWsdlBasedAzione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate.azione.forceWsdlBased");
-	}
-	
 	public String getAutenticazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autenticazione");
 	}
 	
 	public String getAutorizzazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autorizzazione");
-	}
-	
-	public Boolean isGenerazioneAutomaticaPorteApplicative() throws UtilsException{
-		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative");
 	}
 	
 	public String getAutenticazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{

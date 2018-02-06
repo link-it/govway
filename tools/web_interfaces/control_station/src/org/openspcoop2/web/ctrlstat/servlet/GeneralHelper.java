@@ -271,7 +271,7 @@ public class GeneralHelper {
 				String protocolloSelezionato = u.getProtocolloSelezionato();
 				
 				GeneralLink glModalitaCorrente = new GeneralLink();
- 				String labelSelezionato = protocolloSelezionato == null ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper.getLabelProtocollo(protocolloSelezionato);
+ 				String labelSelezionato = protocolloSelezionato == null ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelProtocollo(protocolloSelezionato);
 				glModalitaCorrente.setLabel(MessageFormat.format(LoginCostanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato)); 
 				glModalitaCorrente.setUrl("");
 				link.addElement(glModalitaCorrente);
@@ -280,7 +280,7 @@ public class GeneralHelper {
 				for (String protocolloDisponibile : protocolliDispondibili) {
 					GeneralLink glProt = new GeneralLink();
 					
-					String labelProt = ConsoleHelper.getLabelProtocollo(protocolloDisponibile);
+					String labelProt = ConsoleHelper._getLabelProtocollo(protocolloDisponibile);
 					glProt.setLabel(labelProt);
 					String iconProt = protocolloSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(protocolloSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
 					glProt.setIcon(iconProt);

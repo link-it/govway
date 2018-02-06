@@ -10785,6 +10785,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 		
+		String filterRuoloServizioApplicativo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO);
+		TipologiaFruizione tipologiaFruizione = null;
+		TipologiaErogazione tipologiaErogazione = null;
+		if(filterRuoloServizioApplicativo!=null && !"".equals(filterRuoloServizioApplicativo)) {
+			if(Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE.equals(filterRuoloServizioApplicativo)) {
+				tipologiaErogazione = TipologiaErogazione.DISABILITATO;
+			}
+			else if(Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE.equals(filterRuoloServizioApplicativo)) {
+				tipologiaFruizione = TipologiaFruizione.DISABILITATO;
+			}
+		}
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
@@ -10824,6 +10836,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -10837,12 +10855,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			if (superuser!=null && !superuser.equals(""))
-				stmt.setString(1, superuser);
+			int index = 1;
+			if (superuser!=null && !superuser.equals("")) {
+				stmt.setString(index++, superuser);
+			}
+			if(tipologiaFruizione!=null) {
+				stmt.setString(index++, tipologiaFruizione.getValue());
+			}
+			else if(tipologiaErogazione!=null) {
+				stmt.setString(index++, tipologiaErogazione.getValue());
+			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -10866,6 +10898,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -10888,6 +10926,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -10898,8 +10942,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			if(superuser!=null && (!"".equals(superuser)))
-				stmt.setString(1, superuser);
+			index = 1;
+			if(superuser!=null && (!"".equals(superuser))) {
+				stmt.setString(index++, superuser);
+			}
+			if(tipologiaFruizione!=null) {
+				stmt.setString(index++, tipologiaFruizione.getValue());
+			}
+			else if(tipologiaErogazione!=null) {
+				stmt.setString(index++, tipologiaErogazione.getValue());
+			}
 			risultato = stmt.executeQuery();
 
 			while (risultato.next()) {
@@ -10965,6 +11017,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 		
+		String filterRuoloServizioApplicativo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO);
+		TipologiaFruizione tipologiaFruizione = null;
+		TipologiaErogazione tipologiaErogazione = null;
+		if(filterRuoloServizioApplicativo!=null && !"".equals(filterRuoloServizioApplicativo)) {
+			if(Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE.equals(filterRuoloServizioApplicativo)) {
+				tipologiaErogazione = TipologiaErogazione.DISABILITATO;
+			}
+			else if(Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE.equals(filterRuoloServizioApplicativo)) {
+				tipologiaFruizione = TipologiaFruizione.DISABILITATO;
+			}
+		}
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
@@ -11003,6 +11067,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
+				}
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -11017,12 +11087,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			if (idSoggetto!=null)
-				stmt.setLong(1, idSoggetto);
+			int index = 1;
+			if (idSoggetto!=null) {
+				stmt.setLong(index++, idSoggetto);
+			}
+			if(tipologiaFruizione!=null) {
+				stmt.setString(index++, tipologiaFruizione.getValue());
+			}
+			else if(tipologiaErogazione!=null) {
+				stmt.setString(index++, tipologiaErogazione.getValue());
+			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -11045,6 +11129,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 					sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
@@ -11070,6 +11160,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 					sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
 				}
+				if(tipologiaFruizione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_fruizione is not null", "tipologia_fruizione<>?");
+				}
+				else if(tipologiaErogazione!=null) {
+					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
@@ -11082,8 +11178,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			if (idSoggetto!=null)
-				stmt.setLong(1, idSoggetto);
+			index = 1;
+			if (idSoggetto!=null) {
+				stmt.setLong(index++, idSoggetto);
+			}
+			if(tipologiaFruizione!=null) {
+				stmt.setString(index++, tipologiaFruizione.getValue());
+			}
+			else if(tipologiaErogazione!=null) {
+				stmt.setString(index++, tipologiaErogazione.getValue());
+			}
 			risultato = stmt.executeQuery();
 
 			while (risultato.next()) {

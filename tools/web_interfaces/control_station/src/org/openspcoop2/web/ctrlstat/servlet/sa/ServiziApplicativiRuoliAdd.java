@@ -111,11 +111,12 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			}
 
 			String tipoENomeSoggetto = "";
+			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			if(provider == null){
 				provider = "-1";
 			}else {
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
-				tipoENomeSoggetto = soggetto.getTipo() + "/" + soggetto.getNome();
+				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 			
 			@SuppressWarnings("unused")

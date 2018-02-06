@@ -690,39 +690,37 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Lista dei servizi applicativi per la creazione automatica
 			String [] saSoggetti = null;	
-			if(saCore.isGenerazioneAutomaticaPorteApplicative()){
-				if ((this.provider != null) && !this.provider.equals("")) {
-					int idErogatore = Integer.parseInt(this.provider);
+			if ((this.provider != null) && !this.provider.equals("")) {
+				int idErogatore = Integer.parseInt(this.provider);
 
-					List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(new Long(idErogatore));
+				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(new Long(idErogatore));
 
-					// rif bug #45
-					// I servizi applicativi da visualizzare sono quelli che hanno
-					// -Integration Manager (getMessage abilitato)
-					// -connettore != disabilitato
-					ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-					for (ServizioApplicativo sa : listaSA) {
-						InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-						org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-						StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+				// rif bug #45
+				// I servizi applicativi da visualizzare sono quelli che hanno
+				// -Integration Manager (getMessage abilitato)
+				// -connettore != disabilitato
+				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
+				for (ServizioApplicativo sa : listaSA) {
+					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
+					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
+					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
 
-						if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-							// il connettore non e' disabilitato oppure il get
-							// message e' abilitato
-							// Lo aggiungo solo se gia' non esiste tra quelli
-							// aggiunti
-							validSA.add(sa);
-						}
+					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
+						// il connettore non e' disabilitato oppure il get
+						// message e' abilitato
+						// Lo aggiungo solo se gia' non esiste tra quelli
+						// aggiunti
+						validSA.add(sa);
 					}
+				}
 
-					// Prendo la lista di servizioApplicativo associati al soggetto
-					// e la metto in un array
-					saSoggetti = new String[validSA.size()+1];
-					saSoggetti[0] = "-"; // elemento nullo di default
-					for (int i = 0; i < validSA.size(); i++) {
-						ServizioApplicativo sa = validSA.get(i);
-						saSoggetti[i+1] = sa.getNome();
-					}
+				// Prendo la lista di servizioApplicativo associati al soggetto
+				// e la metto in un array
+				saSoggetti = new String[validSA.size()+1];
+				saSoggetti[0] = "-"; // elemento nullo di default
+				for (int i = 0; i < validSA.size(); i++) {
+					ServizioApplicativo sa = validSA.get(i);
+					saSoggetti[i+1] = sa.getNome();
 				}
 			}
 
@@ -1249,7 +1247,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 
 			// Creo Porta Applicativa (opzione??)
-			if(apsCore.isGenerazioneAutomaticaPorteApplicative() && generaPACheckSoggetto){
+			if(generaPACheckSoggetto){
 
 				IDSoggetto soggettoErogatore = new IDSoggetto(this.tipoSoggettoErogatore,this.nomeSoggettoErogatore);
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.tiposervizio, this.nomeservizio, soggettoErogatore, 

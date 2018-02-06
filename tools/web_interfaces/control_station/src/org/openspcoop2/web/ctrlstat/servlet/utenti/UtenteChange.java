@@ -34,7 +34,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
@@ -117,7 +116,7 @@ public final class UtenteChange extends Action {
 				if(sb.length() > 0)
 					sb.append(", ");
 				
-				sb.append(ConsoleHelper.getLabelProtocollo(protocollo));
+				sb.append(utentiHelper.getLabelProtocollo(protocollo));
 			}
 			
 			modalitaGatewayDisponibili = sb.toString();
@@ -205,9 +204,9 @@ public final class UtenteChange extends Action {
 				List<String> protocolli = utentiCore.getProtocolli(session);
 				StringBuilder sbProtocolli = new StringBuilder();
 				for (String protocollo : protocolli) {
-					String descrizioneProtocollo = ConsoleHelper.getDescrizioneProtocollo(protocollo);
-					String webSiteProtocollo = ConsoleHelper.getWebSiteProtocollo(protocollo);
-					String labelProtocollo = ConsoleHelper.getLabelProtocollo(protocollo); 
+					String descrizioneProtocollo = utentiHelper.getDescrizioneProtocollo(protocollo);
+					String webSiteProtocollo = utentiHelper.getWebSiteProtocollo(protocollo);
+					String labelProtocollo = utentiHelper.getLabelProtocollo(protocollo); 
 					
 //					if(sbProtocolli.length() > 0)
 //						sbProtocolli.append("<br/>");

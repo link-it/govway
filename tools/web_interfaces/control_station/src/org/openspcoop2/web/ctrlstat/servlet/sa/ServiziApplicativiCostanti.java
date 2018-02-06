@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -104,6 +105,7 @@ public class ServiziApplicativiCostanti {
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO = "tipoprov";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO = "nomeprov";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER = "provider";
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_ID_PROVIDER_SERVIZIO_APPLICATIVO = "idprovidersa";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP = "sbustamento";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX = "getmsg";
@@ -136,6 +138,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER = "Soggetto";
+	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_VISUALIZZA_DATI_PROVIDER = "Visualizza Dati Soggetto";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP = "Sbustamento SOAP";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO = "Sbustamento";
@@ -174,9 +177,10 @@ public class ServiziApplicativiCostanti {
 	public final static String[] SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO = { SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_ABILITATO, 
 		SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_DISABILITATO };
 		
+	public final static String LABEL_PARAMETRO_FILTRO_RUOLO_QUALSIASI = "Qualsiasi";
 	public final static String SERVIZI_APPLICATIVI_RUOLO_NON_CONFIGURATO = "Non Configurato";
-	public final static String SERVIZI_APPLICATIVI_RUOLO_FRUITORE = "Fruitore";
-	public final static String SERVIZI_APPLICATIVI_RUOLO_EROGATORE = "Erogatore";
+	public final static String SERVIZI_APPLICATIVI_RUOLO_FRUITORE = Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE;
+	public final static String SERVIZI_APPLICATIVI_RUOLO_EROGATORE = Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE;
 	public final static String[] SERVIZI_APPLICATIVI_RUOLO = { SERVIZI_APPLICATIVI_RUOLO_FRUITORE, 
 		SERVIZI_APPLICATIVI_RUOLO_EROGATORE };
 	

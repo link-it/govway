@@ -302,13 +302,13 @@ public final class ServiziApplicativiChange extends Action {
 			String tipoENomeSoggetto = null;
 			if(saCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(idProv);
-				tipoENomeSoggetto = soggetto.getTipo() + "/" + soggetto.getNome();
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 			else{
 				Soggetto soggetto = soggettiCore.getSoggetto(idProv);
-				tipoENomeSoggetto = soggetto.getTipo() + "/" + soggetto.getNome();
 				nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 
 			// Se nomehid = null, devo visualizzare la pagina per la modifica
@@ -689,7 +689,7 @@ public final class ServiziApplicativiChange extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
+						nomeProtocollo, null, listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -752,7 +752,7 @@ public final class ServiziApplicativiChange extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
+						nomeProtocollo, null, listExtendedConnettore);
 
 				pd.setDati(dati);
 

@@ -210,7 +210,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				provider = "";
 			}else {
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
-				tipoENomeSoggetto = soggetto.getTipo() + "/" + soggetto.getNome();
+				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 			
 			long soggLong = -1;

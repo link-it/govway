@@ -607,11 +607,8 @@ public class ControlStationCore {
 
 	/** Altro */
 	private String suffissoConnettoreAutomatico;
-	private boolean generazioneAutomaticaPorteDelegate;
-	private boolean forceWsdlBasedAzione_generazioneAutomaticaPorteDelegate;
 	private String autenticazione_generazioneAutomaticaPorteDelegate;
 	private String autorizzazione_generazioneAutomaticaPorteDelegate;
-	private boolean generazioneAutomaticaPorteApplicative;
 	private String autenticazione_generazioneAutomaticaPorteApplicative;
 	private String autorizzazione_generazioneAutomaticaPorteApplicative;
 	private boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
@@ -619,20 +616,11 @@ public class ControlStationCore {
 	public String getSuffissoConnettoreAutomatico() {
 		return this.suffissoConnettoreAutomatico;
 	}
-	public boolean isGenerazioneAutomaticaPorteDelegate() {
-		return this.generazioneAutomaticaPorteDelegate;
-	}
-	public boolean isForceWsdlBasedAzione_generazioneAutomaticaPorteDelegate() {
-		return this.forceWsdlBasedAzione_generazioneAutomaticaPorteDelegate;
-	}
 	public String getAutenticazione_generazioneAutomaticaPorteDelegate() {
 		return this.autenticazione_generazioneAutomaticaPorteDelegate;
 	}
 	public String getAutorizzazione_generazioneAutomaticaPorteDelegate() {
 		return this.autorizzazione_generazioneAutomaticaPorteDelegate;
-	}
-	public boolean isGenerazioneAutomaticaPorteApplicative() {
-		return this.generazioneAutomaticaPorteApplicative;
 	}
 	public String getAutenticazione_generazioneAutomaticaPorteApplicative() {
 		return this.autenticazione_generazioneAutomaticaPorteApplicative;
@@ -1341,11 +1329,8 @@ public class ControlStationCore {
 		
 		/** Altro */
 		this.suffissoConnettoreAutomatico = core.suffissoConnettoreAutomatico;
-		this.generazioneAutomaticaPorteDelegate = core.generazioneAutomaticaPorteDelegate;
-		this.forceWsdlBasedAzione_generazioneAutomaticaPorteDelegate = core.forceWsdlBasedAzione_generazioneAutomaticaPorteDelegate;
 		this.autenticazione_generazioneAutomaticaPorteDelegate = core.autenticazione_generazioneAutomaticaPorteDelegate;
 		this.autorizzazione_generazioneAutomaticaPorteDelegate = core.autorizzazione_generazioneAutomaticaPorteDelegate;
-		this.generazioneAutomaticaPorteApplicative = core.generazioneAutomaticaPorteApplicative;
 		this.autenticazione_generazioneAutomaticaPorteApplicative = core.autenticazione_generazioneAutomaticaPorteApplicative;
 		this.autorizzazione_generazioneAutomaticaPorteApplicative = core.autorizzazione_generazioneAutomaticaPorteApplicative;
 		this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = core.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
@@ -1518,11 +1503,8 @@ public class ControlStationCore {
 			this.jdbcSerializableAttesaAttiva = consoleProperties.getGestioneSerializableDB_AttesaAttiva();
 			this.jdbcSerializableCheck = consoleProperties.getGestioneSerializableDB_CheckInterval();
 			this.singlePdD = consoleProperties.isSinglePdD();
-			this.generazioneAutomaticaPorteDelegate = consoleProperties.isGenerazioneAutomaticaPorteDelegate();
-			this.forceWsdlBasedAzione_generazioneAutomaticaPorteDelegate = consoleProperties.isForceWsdlBasedAzione_GenerazioneAutomaticaPorteDelegate();
 			this.autenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteDelegate();
 			this.autorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteDelegate();
-			this.generazioneAutomaticaPorteApplicative = consoleProperties.isGenerazioneAutomaticaPorteApplicative();
 			this.autenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteApplicative();
 			this.autorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteApplicative();
 			this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
