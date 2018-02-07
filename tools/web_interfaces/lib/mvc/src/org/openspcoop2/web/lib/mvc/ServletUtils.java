@@ -389,11 +389,6 @@ public class ServletUtils {
 		session.removeAttribute(Costanti.SESSION_ATTRIBUTE_CONTA_LISTE);
 	}
 
-	public static Boolean getGenerazioneAutomaticaPDFromSession(
-			HttpSession session) {
-		return(Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_GENERAZIONE_AUTOMATICA_PD);
-	}
-
 	public static Boolean getConfigurazioniPersonalizzateFromSession(
 			HttpSession session) {
 		return(Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE);

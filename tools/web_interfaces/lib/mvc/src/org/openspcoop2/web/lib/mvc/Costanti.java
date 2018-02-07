@@ -116,7 +116,6 @@ public class Costanti {
 	protected final static String SESSION_ATTRIBUTE_LIST_ELEMENT ="ListElement";
 	protected final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
 	protected final static String SESSION_ATTRIBUTE_VALUE_SOGGETTO_VIRTUALE_YES ="yes";
-	protected final static String SESSION_ATTRIBUTE_GENERAZIONE_AUTOMATICA_PD ="generazioneAutomaticaPD";
 	protected final static String SESSION_ATTRIBUTE_GESTIONE_WSBL ="GestioneWSBL";
 	protected final static String SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE ="ConfigurazioniPersonalizzate";
 	

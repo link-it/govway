@@ -588,6 +588,7 @@ public final class UtentiChange extends Action {
 					LoginSessionUtilities.cleanLoginParametersSession(session);
 
 					ServletUtils.setUserIntoSession(session, user); // update in sessione.
+					utentiHelper.setTipoInterfaccia(user.getInterfaceType()); // update InterfaceType
 					LoginSessionUtilities.setLoginParametersSession(session, utentiCore, userLogin);
 
 				}

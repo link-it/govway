@@ -790,8 +790,8 @@ public class ConsoleHelper {
 
 			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
-			Boolean isModalitaAvanzata = this.isModalitaAvanzata();
-
+			boolean isModalitaAvanzata = this.isModalitaAvanzata();
+			
 			List<IExtendedMenu> extendedMenu = this.core.getExtendedMenu();
 
 			Vector<MenuEntry> menu = new Vector<MenuEntry>();
@@ -837,7 +837,7 @@ public class ConsoleHelper {
 				}
 				
 				// PA e PD con permessi S e interfaccia avanzata
-				if(pu.isServizi() && isModalitaAvanzata){
+				if(pu.isServizi() && this.isModalitaCompleta()){
 					totEntries +=2;
 				}
 
@@ -946,7 +946,7 @@ public class ConsoleHelper {
 				}
 
 				// PA e PD con permessi S e interfaccia avanzata
-				if(pu.isServizi() && isModalitaAvanzata){
+				if(pu.isServizi() && this.isModalitaCompleta()){
 					//PD
 					entries[index][0] = PorteDelegateCostanti.LABEL_PD_MENU_VISUALE_AGGREGATA;
 					entries[index][1] = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST;
@@ -1604,6 +1604,8 @@ public class ConsoleHelper {
 		initializeFilter(ricerca, Liste.ACCORDI);
 		initializeFilter(ricerca, Liste.ACCORDI_COOPERAZIONE);
 		initializeFilter(ricerca, Liste.SERVIZI);
+		initializeFilter(ricerca, Liste.PORTE_DELEGATE);
+		initializeFilter(ricerca, Liste.PORTE_APPLICATIVE);
 	}
 	public void initializeFilter(Search ricerca, int idLista) throws Exception {
 		this.setFilterSelectedProtocol(ricerca, idLista);

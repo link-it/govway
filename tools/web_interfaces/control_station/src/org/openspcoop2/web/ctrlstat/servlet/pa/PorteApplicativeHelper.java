@@ -1550,12 +1550,15 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				break;
 			}
 			
-			
+			if(useIdSogg==false){
+				addFilterProtocol(ricerca, idLista);
+			}
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
 				this.pd.setSearchDescription("Porte Applicative contenenti la stringa '" + search + "'");

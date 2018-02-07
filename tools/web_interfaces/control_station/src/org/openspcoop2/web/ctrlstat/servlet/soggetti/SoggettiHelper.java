@@ -474,7 +474,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOp) && !this.pddCore.isPddEsterna(pdd)){
 			
-			if (this.isModalitaAvanzata()) {	
+			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
 				de.setLabel(SoggettiCostanti.LABEL_CLIENT);
 				de.setType(DataElementType.TITLE);
@@ -483,7 +483,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			if (this.isModalitaAvanzata()) {	
+			if (this.isModalitaCompleta()) {	
 				de.setType(DataElementType.TEXT_EDIT);
 			}else{
 				de.setType(DataElementType.HIDDEN);
@@ -493,7 +493,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 			
-			if (this.isModalitaAvanzata()) {	
+			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
@@ -507,7 +507,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}
 
-			if (this.isModalitaAvanzata()) {	
+			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
 				de.setLabel(SoggettiCostanti.LABEL_SERVER);
 				de.setType(DataElementType.TITLE);
@@ -516,7 +516,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
-			if (this.isModalitaAvanzata()) {	
+			if (this.isModalitaCompleta()) {	
 				de.setType(DataElementType.TEXT_EDIT);
 			}else{
 				de.setType(DataElementType.HIDDEN);
@@ -526,7 +526,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 			
-			if (this.isModalitaAvanzata()) {	
+			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,
@@ -777,7 +777,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 
 			// setto le label delle colonne
-			int totEl = this.isModalitaAvanzata() ? 7 : 5;
+			int totEl = this.isModalitaCompleta() ? 7 : 5;
 			if( showProtocolli ) {
 				totEl++;
 			}
@@ -796,7 +796,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
 			labels[i++] = RuoliCostanti.LABEL_RUOLI;
 			labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
-			if(this.isModalitaAvanzata()) {
+			if(this.isModalitaCompleta()) {
 				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
 				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
 			}
@@ -937,7 +937,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 				e.addElement(de);
 				
-				if(this.isModalitaAvanzata()) {
+				if(this.isModalitaCompleta()) {
 					de = new DataElement();
 					if (pddEsterna) {
 						// se la pdd e' esterna non e' possibile
@@ -1059,7 +1059,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 			
 			// setto le label delle colonne
-			int totEl = this.isModalitaAvanzata() ? 4 : 2;
+			int totEl = this.isModalitaCompleta() ? 4 : 2;
 			if( showProtocolli ) {
 				totEl++;
 			}
@@ -1069,7 +1069,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if( showProtocolli ) {
 				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO;
 			}
-			if(this.isModalitaAvanzata()) {
+			if(this.isModalitaCompleta()) {
 				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
 				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
 			}
@@ -1107,7 +1107,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					e.addElement(de);
 				}
 				
-				if(this.isModalitaAvanzata()) {
+				if(this.isModalitaCompleta()) {
 					//Porte Applicative
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST,

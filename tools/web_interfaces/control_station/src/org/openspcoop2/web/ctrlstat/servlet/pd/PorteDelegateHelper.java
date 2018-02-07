@@ -1934,7 +1934,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
-
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -1992,7 +1992,12 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
+			if(useIdSogg==false){
+				addFilterProtocol(ricerca, idLista);
+			}
+						
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
 				this.pd.setSearchDescription("Porte Delegate contenenti la stringa '" + search + "'");

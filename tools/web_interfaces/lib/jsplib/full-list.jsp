@@ -63,7 +63,16 @@ if (hidden!=null) {
 <table class="tabella-ext">
 
 <%
-if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) || pd.getFilterNames() != null) {
+if ( 
+	(
+		pd.getSearch().equals("on") || 
+		(pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()))
+	) || 
+	(
+		pd.getFilterNames() != null &&
+		pd.getFilterValues().size()>0
+	)
+) {
 	
 	%>
 	<tr>

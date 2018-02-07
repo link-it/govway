@@ -1333,8 +1333,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			Boolean generazioneAutomaticaPD = ServletUtils.getGenerazioneAutomaticaPDFromSession(this.session);
-
+			
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
 
@@ -1417,37 +1416,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			//}
 			boolean showPoliticheSLA = false;
 			//if (!isModalitaAvanzata) {
-			if(generazioneAutomaticaPD){
-				if(this.core.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()){
-					String[] l = { labelFruitore , AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO ,
-							AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE};
-					labels = l;
-				}else{
-					String[] l = { labelFruitore , 
-							AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE};
-					labels = l;
-				}
+			if(this.core.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()){
+				String[] l = { labelFruitore , AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO ,
+						AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE};
+				labels = l;
 			}else{
-				if(this.core.isShowGestioneWorkflowStatoDocumenti() && this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()){
-					String[] l = { labelFruitore, AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO };
-					labels = l;
-				}
-				else{
-					String[] l = { labelFruitore };
-					labels = l;
-				}
+				String[] l = { labelFruitore , 
+						AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE};
+				labels = l;
 			}
-			//			} else {
-			//				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-			//					String[] l = { labelFruitore,"Stato", "Servizi Applicativi Autorizzati", "Politiche SLA" };
-			//					labels = l;
-			//				}else{
-			//					String[] l = { labelFruitore, "Servizi Applicativi Autorizzati", "Politiche SLA" };
-			//					labels = l;
-			//				}
-			//				showPoliticheSicurezza = true;
-			//				showPoliticheSLA = true;
-			//			}
 			this.pd.setLabels(labels);
 
 
@@ -1496,39 +1473,38 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				Parameter pIdSogg = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, fru.getIdSoggetto() + "");
 				// devo aggiungere le politiche di sicurezza come in
 				// accordiServizioApplicativoList
-				if(generazioneAutomaticaPD){
 										
-					Soggetto fruitoreSogg = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(fru.getTipo(), fru.getNome()));
-					
-					boolean esterno = this.pddCore.isPddEsterna(fruitoreSogg.getPortaDominio());
+				Soggetto fruitoreSogg = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(fru.getTipo(), fru.getNome()));
+				
+				boolean esterno = this.pddCore.isPddEsterna(fruitoreSogg.getPortaDominio());
 
-					de = new DataElement();
-					if(esterno){
-						de.setValue("-");
-					}
-					else{
-						de.setUrl(
-								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,
-								pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pMyId);
-						if (contaListe) {
-							// BugFix OP-674
+				de = new DataElement();
+				if(esterno){
+					de.setValue("-");
+				}
+				else{
+					de.setUrl(
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,
+							pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pMyId);
+					if (contaListe) {
+						// BugFix OP-674
 //							List<PortaDelegata> fruLista = this.apsCore.serviziFruitoriPorteDelegateList(this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo()), 
 //									serv.getTipo(), serv.getNome(), asps.getId(), 
 //									serv.getTipoSoggettoErogatore(), serv.getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
 //									ricerca);
-							Search searchForCount = new Search(true,1);
-							IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-							//long idSoggetto = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
-							IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getNome(), fru.getTipo());
-							this.apsCore.serviziFruitoriMappingList(fru.getId(), idSoggettoFruitore , idServizioFromAccordo, searchForCount);
-							//int numPD = fruLista.size();
-							int numPD = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_FRUIZIONE);
-							ServletUtils.setDataElementVisualizzaLabel(de, (long) numPD );
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					e.addElement(de);
+						Search searchForCount = new Search(true,1);
+						IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+						//long idSoggetto = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
+						IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getNome(), fru.getTipo());
+						this.apsCore.serviziFruitoriMappingList(fru.getId(), idSoggettoFruitore , idServizioFromAccordo, searchForCount);
+						//int numPD = fruLista.size();
+						int numPD = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_FRUIZIONE);
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) numPD );
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
 				}
+				e.addElement(de);
+				
 				if(showPoliticheSLA){
 					de = new DataElement();
 					de.setValue(Costanti.LABEL_NON_DISPONIBILE);
