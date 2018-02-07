@@ -365,6 +365,8 @@
               </xsd:sequence>
               <xsd:attribute name="apiReferent" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="version" type="xsd:boolean" use="optional" default="true"/>
+              <xsd:attribute name="protocolEnvelopeManagement" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="faultChoice" type="xsd:boolean" use="optional" default="false"/>
        </xsd:complexType>
        
        <xsd:complexType name="ServiceTypes">
@@ -397,7 +399,6 @@
        <xsd:complexType name="Version">
               <xsd:attribute name="name" type="xsd:string" use="required" />
        </xsd:complexType>
-       
 
 
        <!-- Enumeration -->

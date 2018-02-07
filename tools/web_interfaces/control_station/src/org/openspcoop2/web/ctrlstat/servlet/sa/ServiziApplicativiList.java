@@ -100,7 +100,7 @@ public final class ServiziApplicativiList extends Action {
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
 			List<ServizioApplicativo> lista = null;
-
+			
 			if(!useIdSogg){
 				int idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);

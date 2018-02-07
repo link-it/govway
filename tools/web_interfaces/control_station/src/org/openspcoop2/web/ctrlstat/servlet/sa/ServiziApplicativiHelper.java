@@ -48,6 +48,9 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -212,6 +215,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , this.session);
 
 
+		IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+		IProtocolConfiguration config = p.createProtocolConfiguration();
+		
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			DataElement de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
@@ -304,9 +310,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA);
-			de.setPostBack(true);
-			de.setType(DataElementType.SELECT);
-			de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO);
+			//de.setPostBack(true);
+			//de.setType(DataElementType.SELECT);
+			//de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO);
+			
+			// forzo HIDDEN sempre a meno che non e' in modalita' completa
+			de.setType(DataElementType.HIDDEN);
+			
 			if(!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
 				de.setLabel(null);
 				de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
@@ -348,6 +358,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.HIDDEN);
 				
 			}
+						
 			dati.addElement(de);
 			
 		}// fine !modalitàCompleta
@@ -447,7 +458,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		// ************ FRUITORE ********************
 		
-		if (this.isModalitaAvanzata() || 
+		if (this.isModalitaCompleta() || 
 				!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) ) {
 				
 //			if(this.isModalitaStandard()){
@@ -522,10 +533,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 
 
-		
-		
 
-		if (this.isModalitaAvanzata()) {
+		boolean avanzatoFruitore = this.isModalitaAvanzata() &&
+				!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore);
+		
+		boolean faultChoice = avanzatoFruitore && config.isSupportoSceltaFault();
+		if (faultChoice) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_ERRORE_APPLICATIVO);
 			de.setType(DataElementType.TITLE);
@@ -536,7 +549,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
-			if (this.isModalitaAvanzata()) {
+			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT);
 				de.setSelected(fault);
@@ -551,7 +564,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
-			if (this.isModalitaAvanzata()) {
+			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT);
 				de.setSelected(fault);
@@ -568,7 +581,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_ACTOR);
 				de.setValue(faultactor);
-				if (this.isModalitaAvanzata()) {
+				if (faultChoice) {
 					de.setType(DataElementType.TEXT_EDIT);
 				}
 				else{
@@ -583,7 +596,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
-			if (this.isModalitaAvanzata()) {
+			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
 				de.setSelected(genericfault);
@@ -597,7 +610,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_PREFIX);
 			de.setValue(prefixfault);
-			if (this.isModalitaAvanzata()) {
+			if (faultChoice) {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else{
@@ -609,26 +622,32 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 
 		
-		if(this.isModalitaAvanzata() || 
-			!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore)){
-		
+		if( (this.isModalitaCompleta() && !TipoOperazione.ADD.equals(tipoOperazione))  || 
+				(avanzatoFruitore && config.isSupportoSbustamentoProtocollo()) ) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO + " '" + nomeProtocollo + "'");
+		}
+		
+		
+		de = new DataElement();
+		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
+		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO + " '" + nomeProtocollo + "'"); // non uso label perch' troppo grande
+		if(avanzatoFruitore && config.isSupportoSbustamentoProtocollo()){
 			de.setType(DataElementType.SELECT);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 			de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_SBUSTAMENTO_PROTOCOLLO);
 			de.setSelected(sbustamentoInformazioniProtocolloRisposta);
-			dati.addElement(de);
-			
 		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(sbustamentoInformazioniProtocolloRisposta);
+		}
+		dati.addElement(de);
 			
+					
 
-		if (this.isModalitaStandard()) {
+		if (this.isModalitaCompleta()==false) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
 			de.setType(DataElementType.HIDDEN);
@@ -659,7 +678,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		// se operazione change visualizzo i link per invocazione servizio,
 		// risposta asincrona
 		// e ruoli
-		if (TipoOperazione.CHANGE.equals(tipoOperazione) && this.isModalitaAvanzata() && !this.pddCore.isPddEsterna(nomePdd)) {
+		if (TipoOperazione.CHANGE.equals(tipoOperazione) && this.isModalitaCompleta() && !this.pddCore.isPddEsterna(nomePdd)) {
 
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_INFO_INTEGRAZIONE);
@@ -1275,8 +1294,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				addFilterProtocol(ricerca, idLista);
 			}
 			
-			String filterRuoloSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO);
-			this.addFilterRuoloServizioApplicativo(filterRuoloSA,false);
+			if(this.isModalitaCompleta()) {
+				String filterRuoloSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO);
+				this.addFilterRuoloServizioApplicativo(filterRuoloSA,false);
+			}
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -1334,11 +1355,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if( showProtocolli ) {
 				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 			}
-			labels.add(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
-			if (this.isModalitaAvanzata()){
+			if(!this.isModalitaCompleta()) {
+				labels.add(RuoliCostanti.LABEL_RUOLI);
+			}
+			if(this.isModalitaCompleta()) {
+				labels.add(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
+			}
+			if (this.isModalitaCompleta()){
 				labels.add(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
 			}
-			if(supportAsincroni){
+			if(supportAsincroni && this.isModalitaCompleta()){
 				labels.add(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
 			}
 			this.pd.setLabels(labels.toArray(new String[1]));
@@ -1394,11 +1420,37 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						}
 					}
 
-					de = new DataElement();
-					de.setValue(this.getTipologia(sa));
-					e.addElement(de);
+					if(!this.isModalitaCompleta()) {
+						de = new DataElement();
+						if(useIdSogg){
+							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
+						}
+						else{
+							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+						}
+						if (contaListe) {
+							// BugFix OP-674
+							//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
+							Search searchForCount = new Search(true,1);
+							this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
+							//int numRuoli = lista1.size();
+							int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+					}
 					
-					if (this.isModalitaAvanzata()){
+					if (this.isModalitaCompleta()){
+						de = new DataElement();
+						de.setValue(this.getTipologia(sa));
+						e.addElement(de);
+					}
+					
+					if (this.isModalitaCompleta()){
 						de = new DataElement();
 						// se la pdd e' esterna non e' possibile modificare il
 						// connettore invocazione servizio
@@ -1432,7 +1484,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						e.addElement(de);
 					}
 
-					if(supportAsincroni){
+					if(supportAsincroni && this.isModalitaCompleta()){
 						de = new DataElement();
 						// se la pdd e' esterna non e' possibile modificare il
 						// connettore risposta asincrona

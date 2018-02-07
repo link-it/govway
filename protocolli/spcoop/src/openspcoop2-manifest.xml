@@ -113,7 +113,7 @@
             </types>
         </organization>
 
-        <service apiReferent="true" version="false">
+        <service apiReferent="true" version="false" protocolEnvelopeManagement="true" faultChoice="true">
             <types>
                 <type name="spc" protocol="SPC"/>
                 <type name="test" protocol="TEST"/>
@@ -129,7 +129,7 @@
             <version name="eGov1.1-lineeGuida1.1"/>
         	<version name="eGov1.1"/>
         </versions>
-
+        
     </registry>
 
     <urlMapping type="PROPERTIES">

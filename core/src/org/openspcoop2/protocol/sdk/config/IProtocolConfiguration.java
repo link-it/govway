@@ -209,6 +209,20 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportoVersionamentoAccordiParteSpecifica();
 	
 	/**
+	 * Ritorna l'indicazione se lo sbustamento del protocollo è supportato
+	 * 
+	 * @return True se lo sbustamento del protocollo è supportato
+	 */
+	public boolean isSupportoSbustamentoProtocollo();
+	
+	/**
+	 * Ritorna l'indicazione se il protocollo, per la tipologia SOAP, supporta la scelta del fault
+	 * 
+	 * @return True se se il protocollo, per la tipologia SOAP, supporta la scelta del fault
+	 */
+	public boolean isSupportoSceltaFault();
+	
+	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo
 	 * 
 	 * @return lista di BypassMustUnderstandCheck

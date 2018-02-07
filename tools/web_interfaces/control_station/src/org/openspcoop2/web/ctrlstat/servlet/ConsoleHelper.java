@@ -1607,6 +1607,7 @@ public class ConsoleHelper {
 	}
 	public void initializeFilter(Search ricerca, int idLista) throws Exception {
 		this.setFilterSelectedProtocol(ricerca, idLista);
+		this.setFilterRuoloServizioApplicativo(ricerca, idLista);
 	}
 	
 	public Search checkSearchParameters(int idLista, Search ricerca)
@@ -3515,6 +3516,13 @@ public class ConsoleHelper {
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
+		}
+	}
+	
+	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
+		if( (this.isModalitaCompleta()==false) && 
+				(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {
+			ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
 		}
 	}
 	

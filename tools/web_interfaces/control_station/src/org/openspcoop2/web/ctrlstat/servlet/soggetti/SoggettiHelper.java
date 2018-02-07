@@ -927,6 +927,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						// BugFix OP-674
 						//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
 						Search searchForCount = new Search(true,1);
+						this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
 						this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
 						//int numSA = lista1.size();
 						int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
@@ -1152,6 +1153,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					// BugFix OP-674
 					//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
 					Search searchForCount = new Search(true,1);
+					this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
 					this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
 					//int numSA = lista1.size();
 					int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);

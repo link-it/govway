@@ -43,6 +43,8 @@ public class ServiceModel extends AbstractModel<Service> {
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.ServiceTypesModel(new Field("types",org.openspcoop2.protocol.manifest.ServiceTypes.class,"Service",Service.class));
 		this.API_REFERENT = new Field("apiReferent",boolean.class,"Service",Service.class);
 		this.VERSION = new Field("version",boolean.class,"Service",Service.class);
+		this.PROTOCOL_ENVELOPE_MANAGEMENT = new Field("protocolEnvelopeManagement",boolean.class,"Service",Service.class);
+		this.FAULT_CHOICE = new Field("faultChoice",boolean.class,"Service",Service.class);
 	
 	}
 	
@@ -53,6 +55,8 @@ public class ServiceModel extends AbstractModel<Service> {
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.ServiceTypesModel(new ComplexField(father,"types",org.openspcoop2.protocol.manifest.ServiceTypes.class,"Service",Service.class));
 		this.API_REFERENT = new ComplexField(father,"apiReferent",boolean.class,"Service",Service.class);
 		this.VERSION = new ComplexField(father,"version",boolean.class,"Service",Service.class);
+		this.PROTOCOL_ENVELOPE_MANAGEMENT = new ComplexField(father,"protocolEnvelopeManagement",boolean.class,"Service",Service.class);
+		this.FAULT_CHOICE = new ComplexField(father,"faultChoice",boolean.class,"Service",Service.class);
 	
 	}
 	
@@ -63,6 +67,10 @@ public class ServiceModel extends AbstractModel<Service> {
 	public IField API_REFERENT = null;
 	 
 	public IField VERSION = null;
+	 
+	public IField PROTOCOL_ENVELOPE_MANAGEMENT = null;
+	 
+	public IField FAULT_CHOICE = null;
 	 
 
 	@Override

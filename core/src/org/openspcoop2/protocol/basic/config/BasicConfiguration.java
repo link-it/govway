@@ -206,6 +206,16 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isSupportoSbustamentoProtocollo() {
+		return this.registroManifest.getService().isProtocolEnvelopeManagement();
+	}
+	
+	@Override
+	public boolean isSupportoSceltaFault() {
+		return this.registroManifest.getService().isFaultChoice();
+	}
+	
+	@Override
 	public List<String> getTipiSoggetti() throws ProtocolException {
 		List<String> tipi = new ArrayList<String>();
 		List<OrganizationType> l = this.registroManifest.getOrganization().getTypes().getTypeList();

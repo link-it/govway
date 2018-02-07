@@ -39,6 +39,8 @@ import java.io.Serializable;
  * 		&lt;/sequence>
  * 		&lt;attribute name="apiReferent" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
+ * 		&lt;attribute name="protocolEnvelopeManagement" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="faultChoice" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -93,6 +95,30 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.version = version;
   }
 
+  public boolean isProtocolEnvelopeManagement() {
+    return this.protocolEnvelopeManagement;
+  }
+
+  public boolean getProtocolEnvelopeManagement() {
+    return this.protocolEnvelopeManagement;
+  }
+
+  public void setProtocolEnvelopeManagement(boolean protocolEnvelopeManagement) {
+    this.protocolEnvelopeManagement = protocolEnvelopeManagement;
+  }
+
+  public boolean isFaultChoice() {
+    return this.faultChoice;
+  }
+
+  public boolean getFaultChoice() {
+    return this.faultChoice;
+  }
+
+  public void setFaultChoice(boolean faultChoice) {
+    this.faultChoice = faultChoice;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -107,5 +133,13 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="version",required=false)
   protected boolean version = true;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="protocolEnvelopeManagement",required=false)
+  protected boolean protocolEnvelopeManagement = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="faultChoice",required=false)
+  protected boolean faultChoice = false;
 
 }
