@@ -276,6 +276,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_SOGGETTO);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI, search);
 			}
@@ -462,6 +463,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_ALLEGATI, search);
 			}
@@ -755,6 +757,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_AZIONI, search);
 			}
@@ -1459,6 +1462,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES, search);
 				this.pd.setSearch("on");
@@ -2019,6 +2023,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_AZIONI, search);
 			}
@@ -4980,7 +4985,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				labelMessage = AccordiServizioParteComuneCostanti.LABEL_OPERATION_MESSAGE_OUTPUT;
 			}
 
-			// setto la barra del titolo			
+			// setto la barra del titolo	
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				listaParametri.add(	new Parameter(labelMessage + " di " + nomeOp, null));
@@ -5257,6 +5263,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			String filterHttpMethod = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_HTTP_METHOD);
+			this.addFilterHttpMethod(filterHttpMethod, false);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -5290,6 +5299,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_RISORSE, search);
 				this.pd.setSearch("on");
@@ -6123,6 +6133,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			} 
 			
 			// setto la barra del titolo
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION + " di " + labelOwner, null));
@@ -6298,6 +6309,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, listaLinkPageDataTitle );
 			
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_PARAMETERS, search);
 				this.pd.setSearch("on");

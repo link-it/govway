@@ -69,8 +69,6 @@ public class DBUtils {
 		return tipoDatabase;
 	}
 	
-
-	
 	
 	public static List<List<Object>> readCustom(Logger log, Connection connection, String tipoDB,
 			ISQLQueryObject sqlQueryObject, List<Class<?>> returnTypes, List<JDBCObject> paramTypes) throws CoreException

@@ -490,7 +490,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE = "Se non definito verr&agrave; automaticamente generato un identificativo univoco";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PATH = "Path";
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD = "HTTP Method";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD = CostantiControlStation.LABEL_PARAMETRO_HTTP_METHOD;
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST = "Tipo Messaggio Richiesta";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE = "Tipo Messaggio Risposta";

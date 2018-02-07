@@ -2003,12 +2003,17 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				this.pd.setSearchDescription("Porte Delegate contenenti la stringa '" + search + "'");
 			}
 
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			
 			// setto le label delle colonne
 			List<String> labelsList= new ArrayList<String>();
 
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME); 
 			if(useIdSogg==false){
 				labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO);
+				if( showProtocolli ) {
+					labelsList.add(CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO);
+				}
 			}
 			//labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE); 
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI); 
@@ -2038,6 +2043,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				while (it.hasNext()) {
 					PortaDelegata pd = it.next();
 
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(pd.getTipoSoggettoProprietario());
+					
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
@@ -2060,8 +2067,14 @@ public class PorteDelegateHelper extends ConsoleHelper {
 						de = new DataElement();
 						de.setValue(pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario());
 						e.addElement(de);
+											
+						if( showProtocolli ) {
+							de = new DataElement();
+							de.setValue(this.getLabelProtocollo(protocollo));
+							e.addElement(de);
+						}
 					}
-										
+					
 //					de = new DataElement();
 //					de.setValue(pd.getDescrizione());
 //					e.addElement(de);

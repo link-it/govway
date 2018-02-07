@@ -459,8 +459,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				accordoCooperazione.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
 
 				// Soggetto referente
-				if(rs.getInt("id_referente")>0) {
-					Soggetto soggRef = getSoggetto(new Long(rs.getInt("id_referente")),con);
+				if(rs.getLong("id_referente")>0) {
+					Soggetto soggRef = getSoggetto(rs.getLong("id_referente"),con);
 					IdSoggetto assr = new IdSoggetto();
 					assr.setTipo(soggRef.getTipo());
 					assr.setNome(soggRef.getNome());
@@ -1361,8 +1361,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 
 				// Soggetto referente
-				if(rs.getInt("id_referente")>0) {
-					Soggetto soggRef = getSoggetto(new Long(rs.getInt("id_referente")),con);
+				if(rs.getLong("id_referente")>0) {
+					Soggetto soggRef = getSoggetto(rs.getLong("id_referente"),con);
 					IdSoggetto assr = new IdSoggetto();
 					assr.setTipo(soggRef.getTipo());
 					assr.setNome(soggRef.getNome());
@@ -8407,7 +8407,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * Verifica l'esistenza di un servizio con un certo soggetto
 	 * accordo e servizio correlato
 	 */
-	public int getServizioWithSoggettoAccordoServCorr(long idSoggetto, long idAccordo, String servizioCorrelato) throws DriverRegistroServiziException {
+	public long getServizioWithSoggettoAccordoServCorr(long idSoggetto, long idAccordo, String servizioCorrelato) throws DriverRegistroServiziException {
 		return _getServizioWithSoggettoAccordoServCorrPT(idSoggetto, idAccordo, servizioCorrelato, null);
 	}
 
@@ -8415,9 +8415,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * Verifica l'esistenza di un servizio con un certo soggetto e port-type
 	 * accordo e servizio correlato
 	 */
-	private int _getServizioWithSoggettoAccordoServCorrPT(long idSoggetto, long idAccordo, String servizioCorrelato,String portType) throws DriverRegistroServiziException {
+	private long _getServizioWithSoggettoAccordoServCorrPT(long idSoggetto, long idAccordo, String servizioCorrelato,String portType) throws DriverRegistroServiziException {
 
-		int idServ = 0;
+		long idServ = 0;
 		Connection connection;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -8454,7 +8454,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(portType!=null) stm.setString(4, portType);
 			rs = stm.executeQuery();
 			if (rs.next())
-				idServ = rs.getInt("id");
+				idServ = rs.getLong("id");
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
@@ -8485,7 +8485,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * Verifica l'esistenza di un servizio con un certo soggetto,
 	 * accordo e servizio correlato
 	 */
-	public int getServizioWithSoggettoAccordoServCorrPt(long idSoggetto, long idAccordo, String servizioCorrelato,String portType) throws DriverRegistroServiziException {
+	public long getServizioWithSoggettoAccordoServCorrPt(long idSoggetto, long idAccordo, String servizioCorrelato,String portType) throws DriverRegistroServiziException {
 		return _getServizioWithSoggettoAccordoServCorrPT(idSoggetto, idAccordo, servizioCorrelato, portType);
 	}
 
@@ -8493,9 +8493,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * Verifica l'esistenza di un fruitore con un certo soggetto,
 	 * ed un certo servizio
 	 */
-	public int getServizioFruitore(IDServizio idServizio, long idSogg) throws DriverRegistroServiziException {
+	public long getServizioFruitore(IDServizio idServizio, long idSogg) throws DriverRegistroServiziException {
 
-		int idFru = 0;
+		long idFru = 0;
 		Connection connection;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -8513,7 +8513,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		this.log.debug("operazione atomica = " + this.atomica);
 		try {
-			int idServ = 0;
+			long idServ = 0;
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -8534,7 +8534,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(5, idServizio.getSoggettoErogatore().getTipo());
 			rs = stm.executeQuery();
 			if (rs.next())
-				idServ = rs.getInt("id");
+				idServ = rs.getLong("id");
 			rs.close();
 			stm.close();
 
@@ -8550,7 +8550,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setLong(2, idSogg);
 			rs = stm.executeQuery();
 			if (rs.next())
-				idFru = rs.getInt("id");
+				idFru = rs.getLong("id");
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
@@ -8584,9 +8584,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 *                del servizio fruitore
 	 * @return l'id del soggetto fruitore
 	 */
-	public int getServizioFruitoreSoggettoFruitoreID(int idServizioFruitore) throws DriverRegistroServiziException {
+	public long getServizioFruitoreSoggettoFruitoreID(long idServizioFruitore) throws DriverRegistroServiziException {
 
-		int idSoggFru = 0;
+		long idSoggFru = 0;
 		Connection connection;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -8610,10 +8610,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
-			stm.setInt(1, idServizioFruitore);
+			stm.setLong(1, idServizioFruitore);
 			rs = stm.executeQuery();
 			if (rs.next())
-				idSoggFru = rs.getInt("id_soggetto");
+				idSoggFru = rs.getLong("id_soggetto");
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
@@ -8647,9 +8647,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 *                del servizio fruitore
 	 * @return l'id del servizio
 	 */
-	public int getServizioFruitoreServizioID(int idServizioFruitore) throws DriverRegistroServiziException {
+	public long getServizioFruitoreServizioID(long idServizioFruitore) throws DriverRegistroServiziException {
 
-		int idServ = 0;
+		long idServ = 0;
 		Connection connection;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -8673,10 +8673,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
-			stm.setInt(1, idServizioFruitore);
+			stm.setLong(1, idServizioFruitore);
 			rs = stm.executeQuery();
 			if (rs.next())
-				idServ = rs.getInt("id_servizio");
+				idServ = rs.getLong("id_servizio");
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
@@ -10042,7 +10042,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	public List<Azione> accordiAzioniList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException{
+	public List<Azione> accordiAzioniList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException{
 		String nomeMetodo = "accordiAzioniList";
 		int idLista = Liste.ACCORDI_AZIONI;
 		int offset;
@@ -10094,7 +10094,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -10148,7 +10148,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			risultato = stmt.executeQuery();
 
 			Azione az;
@@ -10217,7 +10217,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @return Lista di {@link Azione} dell'accordo idAccordo con profilo di collaborazione 'profiloCollaborazione' se specificato altrimenti tutte.
 	 * @throws DriverRegistroServiziException
 	 */
-	public List<Azione> accordiAzioniList(int idAccordo,String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Azione> accordiAzioniList(long idAccordo,String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiAzioniList";
 		int idLista = Liste.ACCORDI_AZIONI;
 		int offset;
@@ -10278,7 +10278,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			stmt.setString(2, profiloCollaborazione);
 			stmt.setString(3, CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 			stmt.setString(4, profiloCollaborazione);
@@ -10329,7 +10329,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			stmt.setString(2, profiloCollaborazione);
 			stmt.setString(3, CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 			stmt.setString(4, profiloCollaborazione);
@@ -11648,7 +11648,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	public List<Soggetto> accordiErogatoriList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Soggetto> accordiErogatoriList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiErogatoriList";
 		int idLista = Liste.ACCORDI_EROGATORI;
 		int offset;
@@ -11708,7 +11708,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			stmt.setLong(1,idAccordo);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -11775,7 +11775,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			risultato = stmt.executeQuery();
 
 			Soggetto sog = null;
@@ -12123,161 +12123,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	public List<Fruitore> serviziFruitoriList(long idServizio, ISearch ricerca) throws DriverRegistroServiziException {
-		String nomeMetodo = "serviziFruitoriList";
-		int idLista = Liste.SERVIZI_FRUITORI;
-		int offset;
-		int limit;
-		String search;
-		String queryString;
-
-		limit = ricerca.getPageSize(idLista);
-		offset = ricerca.getIndexIniziale(idLista);
-		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-		ricerca.getSearchString(idLista);
-
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-
-		ArrayList<Fruitore> lista = new ArrayList<Fruitore>();
-
-		if (this.atomica) {
-			try {
-				con = this.getConnectionFromDatasource("serviziFruitoriList");
-
-			} catch (Exception e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-
-			if (!search.equals("")) {
-				//query con search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectCountField("*", "cont");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".nome_soggetto",search,true,true),
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".tipo_soggetto",search,true,true));
-				sqlQueryObject.setANDLogicOperator(true);
-				queryString = sqlQueryObject.createSQLQuery();
-			} else {
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectCountField("*", "cont");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
-				sqlQueryObject.setANDLogicOperator(true);
-				queryString = sqlQueryObject.createSQLQuery();
-			}
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idServizio);
-			risultato = stmt.executeQuery();
-			if (risultato.next())
-				ricerca.setNumEntries(idLista,risultato.getInt(1));
-			risultato.close();
-			stmt.close();
-
-			// ricavo le entries
-			if (limit == 0) // con limit
-				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
-			if (!search.equals("")) { // con search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_servizio");
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".nome_soggetto",search,true,true), 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".tipo_soggetto",search,true,true));
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".tipo_soggetto");
-				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".nome_soggetto");
-				sqlQueryObject.setSortType(true);
-				sqlQueryObject.setLimit(limit);
-				sqlQueryObject.setOffset(offset);
-				queryString = sqlQueryObject.createSQLQuery();
-			} else {
-				// senza search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_servizio");
-				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio = ?");
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".tipo_soggetto");
-				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".nome_soggetto");
-				sqlQueryObject.setSortType(true);
-				sqlQueryObject.setLimit(limit);
-				sqlQueryObject.setOffset(offset);
-				queryString = sqlQueryObject.createSQLQuery();
-			}
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idServizio);
-			risultato = stmt.executeQuery();
-
-			Fruitore f = null;
-			while (risultato.next()) {
-
-				f = new Fruitore();
-
-				f.setId(risultato.getLong("id"));
-				f.setNome(risultato.getString("nome_soggetto"));
-				f.setTipo(risultato.getString("tipo_soggetto"));
-				f.setIdSoggetto(risultato.getLong("id_soggetto"));
-				f.setIdServizio(risultato.getLong("id_servizio"));
-
-				lista.add(f);
-
-			}
-
-			return lista;
-
-		} catch (Exception se) {
-
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
-		} finally {
-			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-	}
-
-	public Fruitore getServizioFruitore(int idServFru) throws DriverRegistroServiziException {
+	public Fruitore getServizioFruitore(long idServFru) throws DriverRegistroServiziException {
 		String nomeMetodo = "getServizioFruitore";
 		String queryString;
 
@@ -14475,7 +14321,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 
 
-	public List<Fruitore> serviziFruitoriList(int idServizi, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Fruitore> serviziFruitoriList(long idServizi, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "serviziFruitoriList";
 		int idLista = Liste.SERVIZI_FRUITORI;
 		int offset;
@@ -14546,7 +14392,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			} 
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
-			stmt.setInt(index++, idServizi);
+			stmt.setLong(index++, idServizi);
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
 			}
@@ -14613,7 +14459,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			index = 1;
-			stmt.setInt(index++, idServizi);
+			stmt.setLong(index++, idServizi);
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
 			}
@@ -14742,8 +14588,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @return L'id del servizio fruitore
 	 * @throws DriverRegistroServiziException
 	 */
-	public int getIdServizioFruitore(int idServizio, int idSoggetto) throws DriverRegistroServiziException {
-		int idFru = 0;
+	public long getIdServizioFruitore(long idServizio, long idSoggetto) throws DriverRegistroServiziException {
+		long idFru = 0;
 		Connection connection;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -14769,11 +14615,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
-			stm.setInt(1, idServizio);
-			stm.setInt(2, idSoggetto);
+			stm.setLong(1, idServizio);
+			stm.setLong(2, idSoggetto);
 			rs = stm.executeQuery();
 			if (rs.next())
-				idFru = rs.getInt("id");
+				idFru = rs.getLong("id");
 			rs.close();
 			stm.close();
 		} catch (Exception e) {
@@ -14800,7 +14646,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return idFru;
 	}
 
-	public List<Fruitore> getServiziFruitoriWithServizio(int idServizio) throws DriverRegistroServiziException {
+	public List<Fruitore> getServiziFruitoriWithServizio(long idServizio) throws DriverRegistroServiziException {
 		String nomeMetodo = "getServiziFruitoriWithServizio";
 		String queryString;
 
@@ -14838,7 +14684,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idServizio);
+			stmt.setLong(1, idServizio);
 			risultato = stmt.executeQuery();
 
 			Fruitore f;
@@ -15081,7 +14927,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 	}
 
-	public List<Fruitore> getSoggettiWithServizioNotFruitori(int idServizio, boolean escludiSoggettiEsterni, CredenzialeTipo credenzialeTipo) throws DriverRegistroServiziException {
+	public List<Fruitore> getSoggettiWithServizioNotFruitori(long idServizio, boolean escludiSoggettiEsterni, CredenzialeTipo credenzialeTipo) throws DriverRegistroServiziException {
 		String nomeMetodo = "getSoggettiWithServizioNotFruitori";
 		String queryString;
 
@@ -15148,7 +14994,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(credenzialeTipo!=null){
 				stmt.setString(index++, credenzialeTipo.getValue());
 			}
-			stmt.setInt(index++, idServizio);
+			stmt.setLong(index++, idServizio);
 			risultato = stmt.executeQuery();
 
 			Fruitore f;
@@ -15191,7 +15037,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 	}
 
-	public List<PortType> accordiPorttypeList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<PortType> accordiPorttypeList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiPorttypeList";
 		int idLista = Liste.ACCORDI_PORTTYPE;
 		int offset;
@@ -15243,7 +15089,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			stmt.setLong(1,idAccordo);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -15300,7 +15146,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			risultato = stmt.executeQuery();
 
 			PortType pt;
@@ -15361,7 +15207,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<PortType> accordiPorttypeList(int idAccordo, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<PortType> accordiPorttypeList(long idAccordo, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiPorttypeList";
 		int idLista = Liste.ACCORDI_PORTTYPE;
 		int offset;
@@ -15414,7 +15260,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			stmt.setLong(1,idAccordo);
 			if(profiloCollaborazione!=null){
 				stmt.setString(2,profiloCollaborazione);
 				stmt.setString(3,profiloCollaborazione);
@@ -15462,7 +15308,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.setOffset(offset);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			if(profiloCollaborazione!=null){
 				stmt.setString(2,profiloCollaborazione);
 				stmt.setString(3,profiloCollaborazione);
@@ -15528,7 +15374,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<Documento> accordiAllegatiList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Documento> accordiAllegatiList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiAllegatiList";
 		int idLista = Liste.ACCORDI_ALLEGATI;
 		int offset;
@@ -15568,7 +15414,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_proprietario = ?");
 				sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition("roulo",search,true,true),sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						//sqlQueryObject.getWhereLikeCondition("ruolo",search,true,true),
+						sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -15582,7 +15430,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			stmt.setLong(1,idAccordo);
 			stmt.setString(2, ProprietariDocumento.accordoServizio.toString());
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -15606,7 +15454,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 
 			if (!search.equals("")) { // con search
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition("roulo",search,true,true),sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						//sqlQueryObject.getWhereLikeCondition("ruolo",search,true,true),
+						sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
 			} 
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -15617,7 +15467,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			stmt.setString(2, ProprietariDocumento.accordoServizio.toString());
 			risultato = stmt.executeQuery();
 
@@ -15651,7 +15501,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<AccordoServizioParteComuneServizioCompostoServizioComponente> accordiComponentiList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComuneServizioCompostoServizioComponente> accordiComponentiList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiComponentiList";
 		int idLista = Liste.ACCORDI_COMPONENTI;
 		int offset;
@@ -15723,7 +15573,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			stmt.setLong(1,idAccordo);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -15772,7 +15622,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			risultato = stmt.executeQuery();
 
 			while(risultato.next()){
@@ -15816,7 +15666,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<Documento> accordiCoopAllegatiList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Documento> accordiCoopAllegatiList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiCoopAllegatiList";
 		int idLista = Liste.ACCORDI_COOP_ALLEGATI;
 		int offset;
@@ -15856,7 +15706,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_proprietario = ?");
 				sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition("roulo",search,true,true),sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						//sqlQueryObject.getWhereLikeCondition("ruolo",search,true,true),
+						sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -15870,7 +15722,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			stmt.setLong(1,idAccordo);
 			stmt.setString(2, ProprietariDocumento.accordoCooperazione.toString());
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -15894,7 +15746,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 
 			if (!search.equals("")) { // con search
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition("roulo",search,true,true),sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						//sqlQueryObject.getWhereLikeCondition("ruolo",search,true,true),
+						sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
 			} 
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -15905,7 +15759,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			stmt.setString(2, ProprietariDocumento.accordoCooperazione.toString());
 			risultato = stmt.executeQuery();
 
@@ -15939,7 +15793,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<Operation> accordiPorttypeOperationList(int idPortType,String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Operation> accordiPorttypeOperationList(long idPortType,String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiPorttypeOperationsList";
 		int idLista = Liste.ACCORDI_PORTTYPE_AZIONI;
 		int offset;
@@ -16009,7 +15863,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idPortType);
+			stmt.setLong(1,idPortType);
 			stmt.setString(2,profiloCollaborazione);
 			stmt.setString(3,profiloCollaborazione);
 			stmt.setString(4,CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
@@ -16070,7 +15924,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("Query: "+queryString);
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idPortType);
+			stmt.setLong(1,idPortType);
 			stmt.setString(2,profiloCollaborazione);
 			stmt.setString(3,profiloCollaborazione);
 			stmt.setString(4,CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
@@ -16137,7 +15991,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	public List<Operation> accordiPorttypeOperationList(int idPortType, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Operation> accordiPorttypeOperationList(long idPortType, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiPorttypeOperationsList";
 		int idLista = Liste.ACCORDI_PORTTYPE_AZIONI;
 		int offset;
@@ -16189,7 +16043,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idPortType);
+			stmt.setLong(1,idPortType);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -16242,7 +16096,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortType);
+			stmt.setLong(1, idPortType);
 			risultato = stmt.executeQuery();
 
 			Operation op;
@@ -16299,7 +16153,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 	
-	public List<MessagePart> accordiPorttypeOperationMessagePartList(int idOperation, boolean isInput, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<MessagePart> accordiPorttypeOperationMessagePartList(long idOperation, boolean isInput, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiPorttypeOperationMessagePartList";
 		int idLista = Liste.ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT;
 		if(!isInput)
@@ -16363,7 +16217,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idOperation);
+			stmt.setLong(1,idOperation);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -16417,7 +16271,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idOperation);
+			stmt.setLong(1, idOperation);
 			risultato = stmt.executeQuery();
 
 			
@@ -16466,7 +16320,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<Resource> accordiResourceList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Resource> accordiResourceList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiResourceList";
 		int idLista = Liste.ACCORDI_API_RESOURCES;
 		int offset;
@@ -16479,6 +16333,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 		ricerca.getSearchString(idLista);
 
+		String filterHttpMethod = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_HTTP_METHOD);
+		org.openspcoop2.core.registry.constants.HttpMethod httpMethod = null;
+		if(filterHttpMethod!=null) {
+			httpMethod = org.openspcoop2.core.registry.constants.HttpMethod.toEnumConstant(filterHttpMethod);
+		}
+		
+		this.log.debug("search : " + search);
+		this.log.debug("filterHttpMethod : " + filterHttpMethod);
+		
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
@@ -16508,9 +16371,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition("http_method", search, true, true),
+						//sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
+						//sqlQueryObject.getWhereLikeCondition("http_method", search, true, true),
 						sqlQueryObject.getWhereLikeCondition("path", search, true, true));
+				if(httpMethod!=null) {
+					sqlQueryObject.addWhereCondition("http_method = ?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -16518,10 +16384,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addFromTable(CostantiDB.API_RESOURCES);
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
+				if(httpMethod!=null) {
+					sqlQueryObject.addWhereCondition("http_method = ?");
+				}
+				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			int index = 1;
+			stmt.setLong(index++,idAccordo);
+			if(httpMethod!=null) {
+				stmt.setString(index++,httpMethod.name());
+			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -16543,9 +16417,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition("http_method", search, true, true),
+						//sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
+						//sqlQueryObject.getWhereLikeCondition("http_method", search, true, true),
 						sqlQueryObject.getWhereLikeCondition("path", search, true, true));
+				if(httpMethod!=null) {
+					sqlQueryObject.addWhereCondition("http_method = ?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("path");
 				sqlQueryObject.addOrderBy("http_method");
@@ -16565,6 +16442,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("message_type");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
+				if(httpMethod!=null) {
+					sqlQueryObject.addWhereCondition("http_method = ?");
+				}
+				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("path");
 				sqlQueryObject.addOrderBy("http_method");
 				sqlQueryObject.setSortType(true);
@@ -16573,7 +16454,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			index = 1;
+			stmt.setLong(index++, idAccordo);
+			if(httpMethod!=null) {
+				stmt.setString(index++,httpMethod.name());
+			}
 			risultato = stmt.executeQuery();
 
 			while (risultato.next()) {
@@ -16632,7 +16517,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 	
-	public List<ResourceResponse> accordiResourceResponseList(int idRisorsa, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<ResourceResponse> accordiResourceResponseList(long idRisorsa, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiResourceResponseList";
 		int idLista = Liste.ACCORDI_API_RESOURCES_RESPONSE;
 		int offset;
@@ -16686,7 +16571,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idRisorsa);
+			stmt.setLong(1,idRisorsa);
 			if (!search.equals("")) {
 				try {
 					stmt.setInt(2,Integer.parseInt(search));
@@ -16736,7 +16621,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idRisorsa);
+			stmt.setLong(1, idRisorsa);
 			if (!search.equals("")) {
 				try {
 					stmt.setInt(2,Integer.parseInt(search));
@@ -16834,7 +16719,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("id_resource_media = ?");
 				else
 					sqlQueryObject.addWhereCondition("id_resource_response_media = ?");
-				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.addWhereLikeCondition("media_type", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -16851,9 +16736,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt = con.prepareStatement(queryString);
 			
 			if(isRequest)
-				stmt.setInt(1,idRisorsa.intValue());
+				stmt.setLong(1,idRisorsa);
 			else 
-				stmt.setInt(1,idRisposta.intValue());
+				stmt.setLong(1,idRisposta);
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -16883,7 +16768,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("id_resource_media = ?");
 				else
 					sqlQueryObject.addWhereCondition("id_resource_response_media = ?");
-				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				sqlQueryObject.addWhereLikeCondition("media_type", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -16919,9 +16804,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			if(isRequest)
-				stmt.setInt(1,idRisorsa.intValue());
+				stmt.setLong(1,idRisorsa);
 			else 
-				stmt.setInt(1,idRisposta.intValue());
+				stmt.setLong(1,idRisposta);
 			risultato = stmt.executeQuery();
 			
 			while (risultato.next()) {
@@ -17068,9 +16953,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt = con.prepareStatement(queryString);
 			
 			if(isRequest)
-				stmt.setInt(1,idRisorsa.intValue());
+				stmt.setLong(1,idRisorsa);
 			else 
-				stmt.setInt(1,idRisposta.intValue());
+				stmt.setLong(1,idRisposta);
 			
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -17130,9 +17015,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			if(isRequest)
-				stmt.setInt(1,idRisorsa.intValue());
+				stmt.setLong(1,idRisorsa);
 			else 
-				stmt.setInt(1,idRisposta.intValue());
+				stmt.setLong(1,idRisposta);
 			risultato = stmt.executeQuery();
 			
 			while (risultato.next()) {
@@ -17191,7 +17076,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @return true se se l'azione e' usata come Azione correlata in qualche azione dell'accordo con id idAccordo 
 	 * @throws DriverRegistroServiziException
 	 */
-	public boolean isCorrelata(int idAccordo,String nomeAzione,String owner) throws DriverRegistroServiziException {
+	public boolean isCorrelata(long idAccordo,String nomeAzione,String owner) throws DriverRegistroServiziException {
 		String nomeMetodo = "isCorrelata";
 
 		String queryString;
@@ -17231,7 +17116,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			stmt.setString(2, nomeAzione);
 			stmt.setString(3, owner);
 
@@ -17276,7 +17161,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @return true se l'azione e' usata come Azione correlata in qualche azione dell'accordo con id idAccordo 
 	 * @throws DriverRegistroServiziException
 	 */
-	public boolean isOperationCorrelata(int idPortType,String nomeCorrelata,String owner) throws DriverRegistroServiziException {
+	public boolean isOperationCorrelata(long idPortType,String nomeCorrelata,String owner) throws DriverRegistroServiziException {
 		String nomeMetodo = "isOperationCorrelata";
 
 		String queryString;
@@ -17316,7 +17201,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortType);
+			stmt.setLong(1, idPortType);
 			stmt.setString(2, nomeCorrelata);
 			stmt.setString(3, owner);
 
@@ -18362,7 +18247,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<Soggetto> pddSoggettiList(int idPdd, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Soggetto> pddSoggettiList(long idPdd, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "pddSoggettiList";
 		int idLista = Liste.PDD_SOGGETTI;
 		int offset;
@@ -18410,7 +18295,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject
 					.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPdd);
+			stmt.setLong(1, idPdd);
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
 				nomePdd = risultato.getString("nome");
@@ -19173,7 +19058,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public List<Documento> serviziAllegatiList(int idServizio, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Documento> serviziAllegatiList(long idServizio, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "serviziAllegatiList";
 		int idLista = Liste.SERVIZI_ALLEGATI;
 		int offset;
@@ -19213,7 +19098,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_proprietario = ?");
 				sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition("roulo",search,true,true),sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						//sqlQueryObject.getWhereLikeCondition("ruolo",search,true,true),
+						sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -19227,7 +19114,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idServizio);
+			stmt.setLong(1,idServizio);
 			stmt.setString(2,ProprietariDocumento.servizio.toString());
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -19251,7 +19138,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 
 			if (!search.equals("")) { // con search
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition("roulo",search,true,true),sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						//sqlQueryObject.getWhereLikeCondition("ruolo",search,true,true),
+						sqlQueryObject.getWhereLikeCondition("nome",search,true,true));
 			} 
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -19262,7 +19151,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			queryString = sqlQueryObject.createSQLQuery();
 
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idServizio);
+			stmt.setLong(1, idServizio);
 			stmt.setString(2,ProprietariDocumento.servizio.toString());
 			risultato = stmt.executeQuery();
 
@@ -19762,7 +19651,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// accordo e servizio correlato
 				// Se tipoOp = change, devo fare attenzione a non escludere il servizio selezionato
 
-				int idAccordoServizioParteSpecificaAlreadyExists = 
+				long idAccordoServizioParteSpecificaAlreadyExists = 
 						this.getServizioWithSoggettoAccordoServCorr(idSoggettoErogatoreLong, idAccordoServizioParteComuneLong, 
 								tmpServCorr);
 
@@ -19787,7 +19676,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// Controllo che non esistano 2 servizi con stesso soggetto,
 				// accordo e servizio correlato e port-type
 
-				int idAccordoServizioParteSpecificaAlreadyExists =  
+				long idAccordoServizioParteSpecificaAlreadyExists =  
 						this.getServizioWithSoggettoAccordoServCorrPt(idSoggettoErogatoreLong, idAccordoServizioParteComuneLong, 
 								tmpServCorr, portType);
 
@@ -19950,8 +19839,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				accordo.setVersione(risultato.getInt("versione"));
 
 				// Soggetto referente
-				if(risultato.getInt("id_referente")>0) {
-					Soggetto soggRef = getSoggetto(new Long(risultato.getInt("id_referente")),con);
+				if(risultato.getLong("id_referente")>0) {
+					Soggetto soggRef = getSoggetto(risultato.getLong("id_referente"),con);
 					IdSoggetto assr = new IdSoggetto();
 					assr.setTipo(soggRef.getTipo());
 					assr.setNome(soggRef.getNome());
@@ -19989,7 +19878,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return lista;
 	}
 
-	public List<PortType> accordiPorttypeCompatibiliList(int idAccordo,boolean isErogazione, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<PortType> accordiPorttypeCompatibiliList(long idAccordo,boolean isErogazione, ISearch ricerca) throws DriverRegistroServiziException {
 		String nomeMetodo = "accordiPorttypeCompatibiliList";
 		int idLista = Liste.ACCORDI_PORTTYPE;
 		int offset;
@@ -20037,7 +19926,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlquery.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1,idAccordo);
+			stmt.setLong(1,idAccordo);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt("cont"));
@@ -20095,7 +19984,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				queryString = sqlquery.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idAccordo);
+			stmt.setLong(1, idAccordo);
 			risultato = stmt.executeQuery();
 
 			PortType pt;

@@ -3521,6 +3521,31 @@ public class ConsoleHelper {
 		}
 	}
 	
+	public void addFilterHttpMethod(String httpMethod, boolean postBack) throws Exception{
+		try {
+			String [] metodi = org.openspcoop2.core.registry.constants.HttpMethod.toArray();
+			String [] metodiLabel = metodi;
+			String [] values = new String[metodi.length + 1];
+			String [] labels = new String[metodi.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_HTTP_METHOD_QUALSIASI;
+			for (int i =0; i < metodi.length ; i ++) {
+				labels[i+1] = metodiLabel[i];
+				values[i+1] = metodi[i];
+			}
+			
+			String selectedValue = httpMethod != null ? httpMethod : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_HTTP_METHOD_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_HTTP_METHOD;
+			
+			this.pd.addFilter(Filtri.FILTRO_HTTP_METHOD, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
 		if( (this.isModalitaCompleta()==false) && 
 				(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {

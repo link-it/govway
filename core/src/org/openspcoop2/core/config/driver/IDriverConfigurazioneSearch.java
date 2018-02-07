@@ -61,70 +61,70 @@ public interface IDriverConfigurazioneSearch {
 	 * Restituisce le porte applicative associate al soggetto e che soddisfano i criteri di ricerca
 	 * settati
 	 */
-	public List<PortaApplicativa> porteAppList(int idSoggetto, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<PortaApplicativa> porteAppList(long idSoggetto, ISearch ricerca) throws DriverConfigurazioneException;
 
 	/**
 	 * Ritorna la liste delle proprieta associate alla porta applicativa di un soggetto
 	 * tiene conto dei criteri di ricerca settati
 	 */
-	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
 
 	/**
 	 * Ritorna la lista di Servizi Applicativi di una Porta Applicativa associata ad un Soggetto
 	 * Tiene conto dei criteri di ricerca settati
 	 */
-	public List<ServizioApplicativo> porteAppServizioApplicativoList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<ServizioApplicativo> porteAppServizioApplicativoList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
 
 	/**
 	 * Ritorna la lista di RequestFlow di una PortaApplicativa associata ad un Soggetto
 	 * Tiene conto dei Criteri di ricerca settati 
 	 */
-	public List<MessageSecurityFlowParameter> porteAppMessageSecurityRequestList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<MessageSecurityFlowParameter> porteAppMessageSecurityRequestList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
 
 	/**
 	 * Ritorna la lista di ResponseFlow di una PortaApplicativa associata ad un Soggetto
 	 * Tiene conto dei Criteri di ricerca settati
 	 */
-	public List<MessageSecurityFlowParameter> porteAppMessageSecurityResponseList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<MessageSecurityFlowParameter> porteAppMessageSecurityResponseList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
 
 	/**
 	 * Ritorna la lista delle Porte Delegate di un Soggetto
 	 */
-	public List<PortaDelegata> porteDelegateList(int idSoggetto, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<PortaDelegata> porteDelegateList(long idSoggetto, ISearch ricerca) throws DriverConfigurazioneException;
 
 
 	/**
 	 * Ritorna la lista di Servizi Applicativi di una Porta Delegata associata ad un Soggetto
 	 * Tiene conto dei criteri di ricerca settati
 	 */
-	public List<ServizioApplicativo> porteDelegateServizioApplicativoList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<ServizioApplicativo> porteDelegateServizioApplicativoList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
 
 	
-	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityRequestList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityRequestList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
 
 	
-	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityResponseList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityResponseList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
 	
 	/***
 	 * Porte Delegate: Ritorna la lista dei parametri MTOM della richiesta 
 	 */
-	public List<MtomProcessorFlowParameter> porteDelegateMTOMRequestList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<MtomProcessorFlowParameter> porteDelegateMTOMRequestList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException;
 	
 	/***
 	 * Porte Delegate: Ritorna la lista dei parametri MTOM della risposta 
 	 */
-	public List<MtomProcessorFlowParameter> porteDelegateMTOMResponseList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException ;
+	public List<MtomProcessorFlowParameter> porteDelegateMTOMResponseList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException ;
 
 	
 	/***
 	 * Porte Applicative: Ritorna la lista dei parametri MTOM della richiesta 
 	 */
-	public List<MtomProcessorFlowParameter> porteApplicativeMTOMRequestList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<MtomProcessorFlowParameter> porteApplicativeMTOMRequestList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
 	
 	/***
 	 * Porte Applicative: Ritorna la lista dei parametri MTOM della risposta 
 	 */
-	public List<MtomProcessorFlowParameter> porteApplicativeMTOMResponseList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException ;
+	public List<MtomProcessorFlowParameter> porteApplicativeMTOMResponseList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException ;
 
 	
 	/**

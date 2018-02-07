@@ -1564,11 +1564,16 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				this.pd.setSearchDescription("Porte Applicative contenenti la stringa '" + search + "'");
 			}
 
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			
 			List<String> listaLabel = new ArrayList<String>();
 
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(useIdSogg==false){
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+				if( showProtocolli ) {
+					listaLabel.add(CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO);
+				}
 			}
 
 			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
@@ -1612,6 +1617,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+pa.getId());
 					Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
 
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+					
 					DataElement de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setValue("" + pa.getId());
@@ -1628,6 +1635,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						de = new DataElement();
 						de.setValue(pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario());
 						e.addElement(de);
+						
+						if( showProtocolli ) {
+							de = new DataElement();
+							de.setValue(this.getLabelProtocollo(protocollo));
+							e.addElement(de);
+						}
 					}
 					
 //					de = new DataElement();

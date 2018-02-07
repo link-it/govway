@@ -45,8 +45,10 @@ public final class Filtri
 	public final static String FILTRO_DOMINIO = "filtroDominio";
 	
 	public final static String FILTRO_STATO_ACCORDO = "filtroStatoAccordo";
-	
+		
 	public final static String FILTRO_SERVICE_BINDING = "filtroServiceBinding";
+	
+	public final static String FILTRO_HTTP_METHOD = "filtroHttpMethod";
 	
 	public final static String FILTRO_RUOLO_SERVIZIO_APPLICATIVO = "filtroRuoloSA";
 	public final static String VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE = "Erogatore";

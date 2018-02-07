@@ -148,7 +148,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			int idServizioInt = Integer.parseInt(idServizio);
 			String idServizioFruitore = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id della fruizione
-			int idServizioFruitoreInt = Integer.parseInt(idServizioFruitore);
+			long idServizioFruitoreInt = Long.parseLong(idServizioFruitore);
 
 			// NOTA PARAMETRO_APS_MY_ID e' l'id della fruizoione, mentre PARAMETRO_APS_PROVIDER_FRUITORE e' l'id del soggetto fruitore 
 			String idSoggettoFruitore = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE); 

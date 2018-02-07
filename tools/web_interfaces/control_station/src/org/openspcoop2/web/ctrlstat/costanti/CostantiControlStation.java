@@ -158,6 +158,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_SOAP = "Soap";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_REST = "Rest";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_HTTP_METHOD = "HTTP Method";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT = "Default";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "Soap 1.1";
@@ -255,6 +257,8 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP = "SOAP";
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST = "REST";
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI = "";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_HTTP_METHOD_QUALSIASI = "";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI = "";
 	

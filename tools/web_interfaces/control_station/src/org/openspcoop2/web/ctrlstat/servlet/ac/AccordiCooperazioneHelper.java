@@ -954,6 +954,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
 				this.pd.setSearchDescription("Soggetti Partecipanti contenenti la stringa '" + search + "'");
@@ -1037,6 +1038,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
 				this.pd.setSearchDescription("Allegati contenenti la stringa '" + search + "'");

@@ -242,7 +242,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 				// accordo e servizio correlato
 				// Se tipoOp = change, devo fare attenzione a non escludere il servizio selezionato
 
-				int idAccordoServizioParteSpecificaAlreadyExists = 
+				long idAccordoServizioParteSpecificaAlreadyExists = 
 						this.getServizioWithSoggettoAccordoServCorr(idSoggettoErogatoreLong, idAccordoServizioParteComuneLong, 
 								tmpServCorr);
 
@@ -266,7 +266,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 				// Controllo che non esistano 2 servizi con stesso soggetto,
 				// accordo e servizio correlato e port-type
 
-				int idAccordoServizioParteSpecificaAlreadyExists =  
+				long idAccordoServizioParteSpecificaAlreadyExists =  
 						this.getServizioWithSoggettoAccordoServCorrPt(idSoggettoErogatoreLong, idAccordoServizioParteComuneLong, 
 								tmpServCorr, portType);
 
@@ -595,7 +595,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public int getServizioWithSoggettoAccordoServCorr(long idSoggetto, long idAccordo, String servizioCorrelato) throws DriverRegistroServiziException {
+	public long getServizioWithSoggettoAccordoServCorr(long idSoggetto, long idAccordo, String servizioCorrelato) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioWithSoggettoAccordoServCorr";
 		DriverControlStationDB driver = null;
@@ -616,7 +616,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public int getServizioWithSoggettoAccordoServCorrPt(long idSoggetto, long idAccordo, String servizioCorrelato, String portType) throws DriverRegistroServiziException {
+	public long getServizioWithSoggettoAccordoServCorrPt(long idSoggetto, long idAccordo, String servizioCorrelato, String portType) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioWithSoggettoAccordoServCorrPt";
 		DriverControlStationDB driver = null;
@@ -637,7 +637,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public Fruitore getServizioFruitore(int idServFru) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public Fruitore getServizioFruitore(long idServFru) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioFruitore";
 		DriverControlStationDB driver = null;
@@ -658,7 +658,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public int getServizioFruitore(IDServizio idServizio, long idSogg) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public long getServizioFruitore(IDServizio idServizio, long idSogg) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioFruitore";
 		DriverControlStationDB driver = null;
@@ -679,7 +679,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public int getServizioFruitoreSoggettoFruitoreID(int idServFru) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public long getServizioFruitoreSoggettoFruitoreID(long idServFru) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioFruitoreSoggettoFruitoreID";
 		DriverControlStationDB driver = null;
@@ -700,7 +700,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public int getServizioFruitoreServizioID(int idServFru) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public long getServizioFruitoreServizioID(long idServFru) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioFruitoreServizioID";
 		DriverControlStationDB driver = null;

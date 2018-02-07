@@ -786,7 +786,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				int idProv = mySogg.getId().intValue();
 
 				IDServizio idserv = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-				int idFru = this.apsCore.getServizioFruitore(idserv, idProv);
+				long idFru = this.apsCore.getServizioFruitore(idserv, idProv);
 				if ((idFru != 0) && (tipoOp.equals(TipoOperazione.ADD) || ((tipoOp.equals(TipoOperazione.CHANGE)) && (myIdInt != idFru)))) {
 					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO);
 					return false;
@@ -942,6 +942,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParm );
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
 				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_ALLEGATI_CONTENENTI_LA_STRINGA, search));

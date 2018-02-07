@@ -6983,7 +6983,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 * MessageSecurity vuoto altrimenti null.
 	 */
 	@Override
-	public List<PortaApplicativa> porteAppList(int idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativa> porteAppList(long idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
 		int offset;
 		int limit;
 		int idLista=Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
@@ -7033,7 +7033,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stm = con.prepareStatement(queryString);
-			stm.setInt(1, idSoggetto);
+			stm.setLong(1, idSoggetto);
 			rs = stm.executeQuery();
 			if (rs.next())
 				ricerca.setNumEntries(idLista,rs.getInt(1));
@@ -7306,7 +7306,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 * Ritorna la lista di proprieta di una Porta Applicativa
 	 */
 	@Override
-	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		int offset;
 		int limit;
 		int idLista = Liste.PORTE_APPLICATIVE_PROP;
@@ -7357,7 +7357,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaApplicativa);
+			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -7447,7 +7447,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	/**
 	 * Ritorna la lista di Azioni di una  Porta Applicativa
 	 */
-	public List<PortaApplicativaAzione> porteAppAzioneList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativaAzione> porteAppAzioneList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		int offset;
 		int limit;
 		int idLista = Liste.PORTE_APPLICATIVE_AZIONI;
@@ -7493,7 +7493,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			queryString = sqlQueryObject.createSQLQuery();
 			
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaApplicativa);
+			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -7581,7 +7581,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<ServizioApplicativo> porteAppServizioApplicativoList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> porteAppServizioApplicativoList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteAppServizioApplicativoList";
 		int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO;
 		int offset;
@@ -7635,7 +7635,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaApplicativa);
+			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -7748,7 +7748,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<MessageSecurityFlowParameter> porteAppMessageSecurityRequestList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MessageSecurityFlowParameter> porteAppMessageSecurityRequestList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteAppMessageSecurityRequestList";
 		int idLista = Liste.PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST;
 
@@ -7800,7 +7800,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaApplicativa);
+			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -7890,7 +7890,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<MessageSecurityFlowParameter> porteAppMessageSecurityResponseList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MessageSecurityFlowParameter> porteAppMessageSecurityResponseList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteAppMessageSecurityResponseList";
 		int idLista = Liste.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE;
 		int offset;
@@ -8033,7 +8033,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<PortaDelegata> porteDelegateList(int idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaDelegata> porteDelegateList(long idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateList";
 		int idLista = Liste.PORTE_DELEGATE_BY_SOGGETTO;
 		int offset;
@@ -8085,7 +8085,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idSoggetto);
+			stmt.setLong(1, idSoggetto);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -8668,7 +8668,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<ServizioApplicativo> porteDelegateServizioApplicativoList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> porteDelegateServizioApplicativoList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateServizioApplicativoList";
 		int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
 		int offset;
@@ -8838,7 +8838,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityRequestList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityRequestList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateMessageSecurityRequestList";
 		int idLista = Liste.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST;
 		int offset;
@@ -8890,7 +8890,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaDelegata);
+			stmt.setLong(1, idPortaDelegata);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -8981,7 +8981,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityResponseList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityResponseList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateMessageSecurityResponseList";
 		int idLista = Liste.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE;
 		int offset;
@@ -17410,7 +17410,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	
 	
 	@Override
-	public List<MtomProcessorFlowParameter> porteDelegateMTOMRequestList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MtomProcessorFlowParameter> porteDelegateMTOMRequestList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateMTOMRequestList";
 		int idLista = Liste.PORTE_DELEGATE_MTOM_REQUEST;
 		int offset;
@@ -17462,7 +17462,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaDelegata);
+			stmt.setLong(1, idPortaDelegata);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -17565,7 +17565,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<MtomProcessorFlowParameter> porteDelegateMTOMResponseList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MtomProcessorFlowParameter> porteDelegateMTOMResponseList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateMTOMResponseList";
 		int idLista = Liste.PORTE_DELEGATE_MTOM_RESPONSE;
 		int offset;
@@ -17720,7 +17720,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 	
 	@Override
-	public List<MtomProcessorFlowParameter> porteApplicativeMTOMRequestList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MtomProcessorFlowParameter> porteApplicativeMTOMRequestList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteApplicativeMTOMRequestList";
 		int idLista = Liste.PORTE_APPLICATIVE_MTOM_REQUEST;
 		int offset;
@@ -17772,7 +17772,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaApplicativa);
+			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -17875,7 +17875,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	@Override
-	public List<MtomProcessorFlowParameter> porteApplicativeMTOMResponseList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MtomProcessorFlowParameter> porteApplicativeMTOMResponseList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteApplicativeMTOMResponseList";
 		int idLista = Liste.PORTE_APPLICATIVE_MTOM_RESPONSE;
 		int offset;
