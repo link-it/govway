@@ -2933,6 +2933,16 @@ public class ConsoleHelper {
 		boolean old_autorizzazione_ruoli = false;
 		String old_autorizzazione = null;
 		
+		String nomePostback = this.getPostBackElementName();
+		if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE.equals(nomePostback) &&
+				TipoOperazione.CHANGE.equals(tipoOperazione) && (numAutenticati>0)) {
+			autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+		}
+		if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI.equals(nomePostback) &&
+				TipoOperazione.CHANGE.equals(tipoOperazione) && (numRuoli>0)) {
+			autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+		}
+		
 		if(TipoOperazione.CHANGE.equals(tipoOperazione) && oggetto!=null){
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
