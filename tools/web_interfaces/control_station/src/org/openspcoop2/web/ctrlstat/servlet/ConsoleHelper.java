@@ -3513,6 +3513,7 @@ public class ConsoleHelper {
 
 			// setto la barra del titolo
 
+			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
 			this.pd.setSearchDescription("");
 			lstParametriBreadcrumbs.add(new Parameter(CostantiControlStation.LABEL_PARAMETRO_AZIONI_DI + nomePorta,null));
 

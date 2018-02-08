@@ -73,8 +73,7 @@ public class PageData {
 		this.searchLabel = "Ricerca";
 		this.searchNote = false;
 		//this.searchNumEntries = 10;
-		this.searchNumEntries = -1; // DA RIPRISTINARE 10
-		System.out.println("RIPRISTINAMI !!!!!!!!!! IN pageData");
+		this.searchNumEntries = -1; // Per visualizzare sempre
 		this.mode = "";
 		this.message = "";
 		this.messageType = MessageType.ERROR.toString();

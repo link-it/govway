@@ -42,7 +42,6 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -1655,10 +1654,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 			if(this.isModalitaAvanzata())
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
-			if(this.core.isRegistroServiziLocale()){
-				//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
-				listaLabel.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA);
-			}
+//			if(this.core.isRegistroServiziLocale()){
+//				//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
+//				listaLabel.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA);
+//			}
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				listaLabel.add(extendedServletList.getListTitle(this));
 			}
@@ -1815,53 +1814,53 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						e.addElement(de);
 					}
 
-					if(this.core.isRegistroServiziLocale()){
-						/*
-						 * Visualizzo SoggettoErogatore/Servizio I soggetti
-						 * erogatori possono essere identificati con due casi 1. PA
-						 * che hanno soggetto proprietario, servizio e non hanno
-						 * definito il soggetto virtuale. In questo caso il soggetto
-						 * erogatore e' il soggetto proprietario. 2. PA che hanno un
-						 * soggetto virtuale. In questo caso il soggetto erogatore
-						 * e' il soggetto virtuale
-						 */
-						int idSoggEr = 0;
-						PortaApplicativaSoggettoVirtuale pasv = pa.getSoggettoVirtuale();
-						if (pasv != null)
-							idSoggEr = pasv.getId().intValue();
-						else
-							idSoggEr = pa.getIdSoggetto().intValue();
-						PortaApplicativaServizio pas = pa.getServizio();
-						int idServ = pas.getId().intValue();
-						Soggetto soggEr = null;
-						AccordoServizioParteSpecifica asps = null;
-						try {
-							soggEr = this.soggettiCore.getSoggettoRegistro(idSoggEr);
-							asps = this.apsCore.getAccordoServizioParteSpecifica(idServ);
-						} catch (DriverRegistroServiziNotFound drsnf) {
-							// ok
-						} catch (DriverRegistroServiziException drse) {
-							// ok
-						}
-						String tmpAz = "";
-						PortaApplicativaAzione paa = pa.getAzione();
-						if (paa != null)
-							tmpAz = "-" + paa.getNome();
-						de = new DataElement();
-						Parameter pId2 = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ);
-						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-						Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
-
-						de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, 
-								pId2, pNomeServizio, pTipoServizio, pVersioneServizio);
-						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
-								soggEr.getTipo(),soggEr.getNome(), 
-								asps.getVersione());
-						de.setValue(IDServizioFactory.getInstance().getUriFromIDServizio(idServizio) + tmpAz);
-
-						e.addElement(de);
-					}
+//					if(this.core.isRegistroServiziLocale()){
+//						/*
+//						 * Visualizzo SoggettoErogatore/Servizio I soggetti
+//						 * erogatori possono essere identificati con due casi 1. PA
+//						 * che hanno soggetto proprietario, servizio e non hanno
+//						 * definito il soggetto virtuale. In questo caso il soggetto
+//						 * erogatore e' il soggetto proprietario. 2. PA che hanno un
+//						 * soggetto virtuale. In questo caso il soggetto erogatore
+//						 * e' il soggetto virtuale
+//						 */
+//						int idSoggEr = 0;
+//						PortaApplicativaSoggettoVirtuale pasv = pa.getSoggettoVirtuale();
+//						if (pasv != null)
+//							idSoggEr = pasv.getId().intValue();
+//						else
+//							idSoggEr = pa.getIdSoggetto().intValue();
+//						PortaApplicativaServizio pas = pa.getServizio();
+//						int idServ = pas.getId().intValue();
+//						Soggetto soggEr = null;
+//						AccordoServizioParteSpecifica asps = null;
+//						try {
+//							soggEr = this.soggettiCore.getSoggettoRegistro(idSoggEr);
+//							asps = this.apsCore.getAccordoServizioParteSpecifica(idServ);
+//						} catch (DriverRegistroServiziNotFound drsnf) {
+//							// ok
+//						} catch (DriverRegistroServiziException drse) {
+//							// ok
+//						}
+//						String tmpAz = "";
+//						PortaApplicativaAzione paa = pa.getAzione();
+//						if (paa != null && paa.getNome()!=null)
+//							tmpAz = "-" + paa.getNome();
+//						de = new DataElement();
+//						Parameter pId2 = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ);
+//						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+//						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+//						Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
+//
+//						de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, 
+//								pId2, pNomeServizio, pTipoServizio, pVersioneServizio);
+//						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+//								soggEr.getTipo(),soggEr.getNome(), 
+//								asps.getVersione());
+//						de.setValue(IDServizioFactory.getInstance().getUriFromIDServizio(idServizio) + tmpAz);
+//
+//						e.addElement(de);
+//					}
 
 					
 					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
@@ -1948,6 +1947,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
 			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI + idporta,null));
@@ -2059,6 +2059,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
 
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI + idporta,null));
@@ -2158,6 +2159,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
 					));
 			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, // + idporta,
@@ -2286,6 +2288,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, idporta),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
 					));
+			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI, // + idporta,
@@ -2412,6 +2416,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
 			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_DI, // + idporta,
@@ -2527,6 +2532,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
 			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_DI, // + idporta,
@@ -2715,6 +2721,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
 
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_DI + idporta,null));
@@ -3019,6 +3026,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
 					));
+			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI, // + idporta,
@@ -3132,6 +3141,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
 					));
 
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_RESPONSE_FLOW_DI, // + idporta,
@@ -3236,6 +3246,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
 			
+			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_DI + idporta,null));
