@@ -41,6 +41,8 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -54,6 +56,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
@@ -1655,7 +1658,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					true, true, ruoli)==false){
+					true, true, pd, ruoli)==false){
 				return false;
 			}
 
@@ -2014,13 +2017,14 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					labelsList.add(CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO);
 				}
 			}
-			//labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE); 
-			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI); 
-			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI); 
+
+			
+			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI); 
+			
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY); 
-			//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM);
-			//}
+
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				labelsList.add(extendedServletList.getListTitle(this));
@@ -2042,6 +2046,10 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				while (it.hasNext()) {
 					PortaDelegata pd = it.next();
 
+					Parameter pIdPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, "" + pd.getId());
+					Parameter pNomePD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, pd.getNome());
+					Parameter pIdSoggPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pd.getIdSoggetto() + "");
+					
 					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(pd.getTipoSoggettoProprietario());
 					
 					Vector<DataElement> e = new Vector<DataElement>();
@@ -2053,9 +2061,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA,pd.getNome()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, "" + pd.getId())
+							pIdSoggPD,
+							pNomePD,
+							pIdPD
 							);
 					de.setValue(pd.getNome());
 					de.setIdToRemove(pd.getId().toString());
@@ -2064,7 +2072,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 					if(useIdSogg==false){
 						de = new DataElement();
-						de.setValue(pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario());
+						de.setValue(this.getLabelNomeSoggetto(protocollo, pd.getTipoSoggettoProprietario() , pd.getNomeSoggettoProprietario()));
 						e.addElement(de);
 											
 						if( showProtocolli ) {
@@ -2074,52 +2082,37 @@ public class PorteDelegateHelper extends ConsoleHelper {
 						}
 					}
 					
-//					de = new DataElement();
-//					de.setValue(pd.getDescrizione());
-//					e.addElement(de);
-					
+					// Controllo Accessi
 					de = new DataElement();
-					if(TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione()) 
-							|| 
-							!TipoAutorizzazione.getAllValues().contains(pd.getAutorizzazione()) // custom 
-							){
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId())
-								);
-						if (contaListe) {
-							int numSA = pd.sizeServizioApplicativoList();
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSA));
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD);
+					String autenticazione = pd.getAutenticazione();
+					String autenticazioneCustom = null;
+					if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
+						autenticazioneCustom = autenticazione;
+						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+					}
+					String autenticazioneOpzionale = "";
+					if(pd.getAutenticazioneOpzionale()!=null){
+						if (pd.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+						}
+					}
+					String autorizzazioneContenuti = pd.getAutorizzazioneContenuto();
+					
+					String autorizzazione= null, autorizzazioneCustom = null;
+					if (pd.getAutorizzazione() != null &&
+							!TipoAutorizzazione.getAllValues().contains(pd.getAutorizzazione())) {
+						autorizzazioneCustom = pd.getAutorizzazione();
+						autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
 					}
 					else{
-						de.setValue("-");
+						autorizzazione = AutorizzazioneUtilities.convertToStato(pd.getAutorizzazione());
 					}
+					
+					String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
+					de.setValue(statoControlloAccessi);
 					e.addElement(de);
 					
-					de = new DataElement();
-					if(TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione()) 
-							|| 
-							!TipoAutorizzazione.getAllValues().contains(pd.getAutorizzazione()) // custom 
-							){
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId())
-								);
-						if (contaListe) {
-							int numSA = 0;
-							if(pd.getRuoli()!=null){
-								numSA= pd.getRuoli().sizeRuoloList();
-							}
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSA));
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					else{
-						de.setValue("-");
-					}
-					e.addElement(de);
 
 					de = new DataElement();
 					de.setUrl( 

@@ -599,7 +599,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(this.controlloAccessiCheck(tipoOp, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 						erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, 
 						erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
-						isSupportatoAutenticazione, false, null)==false){
+						isSupportatoAutenticazione, false, null, null)==false){
 					return false;
 				}
 				
@@ -830,7 +830,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
 						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
-						true, true, null)==false){
+						true, true, null, null)==false){
 					return false;
 				}
 
@@ -1415,6 +1415,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, search);
 			}
@@ -1422,7 +1423,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto le label delle colonne
 			//User user = ServletUtils.getUserFromSession(this.session);
 			String[] labels;
-			String labelFruitore = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORE;
+			String labelFruitore = AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO;
 			//if(this.core.isTerminologiaSICA_RegistroServizi()){
 			//	labelFruitore = "Adesione";
 			//}
@@ -1596,6 +1597,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
 			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
 
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
 			Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
@@ -1612,6 +1614,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 			lstParm.add(new Parameter(servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
 			
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, null));
@@ -1631,6 +1634,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI, search);
 			}
 
+			boolean visualizzaMTOM = true;
+			switch (serviceBinding) {
+			case REST:
+				visualizzaMTOM = false;
+				break;
+			case SOAP:
+			default:
+				visualizzaMTOM = true;
+				break;
+			}
+			
 			// setto le label delle colonne
 			List<String> listaLabel = new ArrayList<String>();
 
@@ -1640,7 +1654,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
+			if(visualizzaMTOM) {
+				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
+			}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 			if(this.isModalitaAvanzata())
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
@@ -1758,17 +1774,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				e.addElement(de);
 				
 				//mtom
-				de = new DataElement();
-				org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
-				
-				switch (serviceBinding) {
-				case REST:
-					de.setValue("-");
-					break;
-				case SOAP:
-				default:
+				if(visualizzaMTOM) {
+					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM,pIdPorta, pIdSogg, pIdAsps);
-
 					boolean isMTOMAbilitatoReq = false;
 					boolean isMTOMAbilitatoRes= false;
 					if(paAssociata.getMtomProcessor()!= null){
@@ -1779,7 +1787,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									isMTOMAbilitatoReq = true;
 							}
 						}
-
+	
 						if(paAssociata.getMtomProcessor().getResponseFlow() != null){
 							if(paAssociata.getMtomProcessor().getResponseFlow().getMode() != null){
 								MTOMProcessorType mode = paAssociata.getMtomProcessor().getResponseFlow().getMode();
@@ -1788,15 +1796,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 						}
 					}
-
+	
 					if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
 					else 
-						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);
-					break;
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);				
+					e.addElement(de);
 				}
-				
-				e.addElement(de);
 				
 				// correlazione applicativa
 				de = new DataElement();
@@ -2193,6 +2199,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			//lstParm.add(new Parameter(servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
 			lstParm.add(new Parameter(fruitoreTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pIdServizio,pIdFruitore,pIdProviderSoggettoFruitore));
 			
+			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, null));
@@ -4847,7 +4854,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, false, ruoli)==false){
+					isSupportatoAutenticazione, false, pa, ruoli)==false){
 				return false;
 			}
 		}
@@ -4895,10 +4902,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				return false;
 			}
 			
+			PortaDelegata pd = null;
+			if (TipoOperazione.CHANGE == tipoOp){
+				pd = this.porteDelegateCore.getPortaDelegata(Long.parseLong(idPorta)); 
+			}
+			
+			List<String> ruoli = new ArrayList<>();
+			if(pd!=null && pd.getRuoli()!=null && pd.getRuoli().sizeRuoloList()>0){
+				for (int i = 0; i < pd.getRuoli().sizeRuoloList(); i++) {
+					ruoli.add(pd.getRuoli().getRuolo(i).getNome());
+				}
+			}
+			
 			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, true, null)==false){
+					isSupportatoAutenticazione, true, pd, ruoli)==false){
 				return false;
 			}
 		}

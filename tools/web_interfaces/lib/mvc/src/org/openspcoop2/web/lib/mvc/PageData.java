@@ -336,6 +336,16 @@ public class PageData {
 	public List<DataElement> getFilterValues() {
 		return this.filter_values;
 	}
+	public boolean hasAlmostOneFilterDefined() {
+		if(this.filter_values!=null) {
+			for (DataElement de : this.filter_values) {
+				if(de.getValue()!=null && !"".equals(de.value)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public void setPageSize(int i) {
 		this.pageSize = i;

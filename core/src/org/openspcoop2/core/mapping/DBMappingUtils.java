@@ -189,8 +189,8 @@ public class DBMappingUtils {
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
 				if (!search.equals("")) {
 					sqlQueryObject.addWhereCondition(false, 
-							sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".nome", search, true, true),
-							sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
+							sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".nome", search, true, true));
+							//sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
 				} 
 				
 				sqlQueryObject.setANDLogicOperator(true);
@@ -224,8 +224,8 @@ public class DBMappingUtils {
 			
 			if (ricerca!=null && !search.equals("")) {
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".nome", search, true, true));
+						//sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
 			} 
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default",false);
@@ -1051,8 +1051,8 @@ public class DBMappingUtils {
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
 				if (!search.equals("")) {
 					sqlQueryObject.addWhereCondition(false, 
-							sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true),
-							sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
+							sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true));
+							//sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
 				} 
 				
 				sqlQueryObject.setANDLogicOperator(true);
@@ -1086,8 +1086,8 @@ public class DBMappingUtils {
 			
 			if (ricerca != null && !search.equals("")) {
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true),
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".nome", search, true, true));
+						//sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
 			} 
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default",false);

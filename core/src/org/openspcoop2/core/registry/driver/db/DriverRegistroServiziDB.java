@@ -14514,8 +14514,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".nome_soggetto",search,true,true), 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".tipo_soggetto",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".nome_soggetto",search,true,true)); 
+						//sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".tipo_soggetto",search,true,true));
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".stato = ?");
 				}
@@ -14564,8 +14565,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
-				sqlQueryObject.addWhereCondition(false, sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".nome_soggetto",search,true,true), 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".tipo_soggetto",search,true,true));
+				sqlQueryObject.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".nome_soggetto",search,true,true)); 
+						//sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI + ".tipo_soggetto",search,true,true));
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".stato = ?");
 				}

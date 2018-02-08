@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -62,6 +63,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -392,7 +394,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, false, ruoli)==false){
+					isSupportatoAutenticazione, false, pa, ruoli)==false){
 				return false;
 			}
 			
@@ -1643,10 +1645,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 
 			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE);
-			if(this.isModalitaAvanzata()){
-				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
-			}
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI); 
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
+			
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI); 
+			
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
 			//if(isModalitaAvanzata){
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
@@ -1699,7 +1701,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					
 					if(useIdSogg==false){
 						de = new DataElement();
-						de.setValue(pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario());
+						de.setValue(this.getLabelNomeSoggetto(protocollo, pa.getTipoSoggettoProprietario() , pa.getNomeSoggettoProprietario()));
 						e.addElement(de);
 						
 						if( showProtocolli ) {
@@ -1713,40 +1715,47 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 //					de.setValue(pa.getDescrizione());
 //					e.addElement(de);
 
-					if(this.isModalitaAvanzata()){
-						de = new DataElement();
-						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST, pIdSogg, pIdPorta, pIdAsps);
-						if (contaListe) {
-							int numSA = pa.sizeServizioApplicativoList();
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSA));
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-						e.addElement(de);
-					}
-					
 					de = new DataElement();
-					if(TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) 
-							|| 
-							!TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione()) // custom 
-							){
-						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST,
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, "" + pa.getIdSoggetto()),
-								new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+pa.getId()),
-								pIdAsps
-								);
-						if (contaListe) {
-							int numRuoli = 0;
-							if(pa.getRuoli()!=null){
-								numRuoli= pa.getRuoli().sizeRuoloList();
-							}
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numRuoli));
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST, pIdSogg, pIdPorta, pIdAsps);
+					if (contaListe) {
+						int numSA = pa.sizeServizioApplicativoList();
+						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSA));
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+					
+					
+					// controllo accessi
+					de = new DataElement();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
+					String autenticazione = pa.getAutenticazione();
+					String autenticazioneCustom = null;
+					if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
+						autenticazioneCustom = autenticazione;
+						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+					}
+					String autenticazioneOpzionale = "";
+					if(pa.getAutenticazioneOpzionale()!=null){
+						if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+						}
+					}
+					String autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
+					
+					String autorizzazione= null, autorizzazioneCustom = null;
+					if (pa.getAutorizzazione() != null &&
+							!TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione())) {
+						autorizzazioneCustom = pa.getAutorizzazione();
+						autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
 					}
 					else{
-						de.setValue("-");
+						autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
 					}
+					String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
+					de.setValue(statoControlloAccessi);
 					e.addElement(de);
+					
 
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY, pIdSogg, pIdPorta,pIdAsps);
@@ -2706,13 +2715,16 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			String tmpTitle = null;
+			String protocollo = null;
 			if(this.core.isRegistroServiziLocale()){
 				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+				tmpTitle = this.getLabelNomeSoggetto(protocollo, mySogg.getTipo() , mySogg.getNome());
 			}
 			else{
 				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+				tmpTitle = this.getLabelNomeSoggetto(protocollo, mySogg.getTipo() , mySogg.getNome());
 			}
 
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
@@ -2759,7 +2771,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
-					de.setValue(sog.getTipo() + "/" + sog.getNome());
+					de.setValue(this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome()));
 					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
 					e.addElement(de);
 

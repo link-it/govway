@@ -3140,7 +3140,7 @@ public class ConsoleHelper {
 			String autenticazione, String autenticazioneOpzionale, 
 			String autorizzazione, String autorizzazioneAutenticati, String autorizzazioneRuoli,  
 			String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
-			boolean isSupportatoAutenticazione, boolean isPortaDelegata,
+			boolean isSupportatoAutenticazione, boolean isPortaDelegata, Object oggetto,
 			List<String> ruoli) throws Exception{
 		try {
 			
@@ -3256,6 +3256,43 @@ public class ConsoleHelper {
 				}
 			}
 
+			if(oggetto!=null){
+				if(isPortaDelegata){
+					PortaDelegata pd = (PortaDelegata) oggetto;
+					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
+							(ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false) ){
+						if(pd.getRuoli()!=null && pd.getRuoli().sizeRuoloList()>0) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							return false;
+						}
+					}
+					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
+							(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false) ){
+						if(pd.sizeServizioApplicativoList()>0) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							return false;
+						}
+					}
+				}
+				else {
+					PortaApplicativa pa = (PortaApplicativa) oggetto;
+					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
+							(ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false) ){
+						if(pa.getRuoli()!=null && pa.getRuoli().sizeRuoloList()>0) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							return false;
+						}
+					}
+					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
+							(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false) ){
+						if(pa.sizeServizioApplicativoList()>0) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							return false;
+						}
+					}
+				}
+			}
+			
 			return true;
 
 		} catch (Exception e) {

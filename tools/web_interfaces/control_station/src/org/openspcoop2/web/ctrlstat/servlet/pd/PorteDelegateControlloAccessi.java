@@ -236,7 +236,7 @@ public class PorteDelegateControlloAccessi extends Action {
 			boolean isOk = porteDelegateHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					 isSupportatoAutenticazione, isPortaDelegata, ruoli);
+					 isSupportatoAutenticazione, isPortaDelegata, portaDelegata, ruoli);
 					
 			if (!isOk) {
 				// preparo i campi

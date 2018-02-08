@@ -252,15 +252,11 @@ public class PorteApplicativeControlloAccessi extends Action {
 						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, ForwardParams.OTHER(""));
 			}
 
-			porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
-					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
-					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, isPortaDelegata, ruoli);
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, isPortaDelegata, ruoli);
+					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli);
 					
 			if (!isOk) {
 				// preparo i campi

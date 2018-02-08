@@ -102,20 +102,16 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tmpTitle = null;
-			String tipoSoggettoProprietario = null;
-			@SuppressWarnings("unused")
-			String nomeSoggettoProprietario = null;
+			String protocollo = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
+				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+				tmpTitle = porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 			else{
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
+				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+				tmpTitle = porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 
 			//decodifica soggetto scelto
@@ -141,7 +137,6 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			String nomePorta = pa.getNome();
 			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(pa.getAutenticazione());
 			
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			
 			// lista soggetti disponibili
@@ -174,7 +169,7 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 					
 					if(!found){
 						soggettiListTmp.add(soggetto.getId().toString());
-						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
+						soggettiListLabelTmp.add(porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome()));
 					}
 				}
 				soggettiList = soggettiListTmp.toArray(new String[1]);
