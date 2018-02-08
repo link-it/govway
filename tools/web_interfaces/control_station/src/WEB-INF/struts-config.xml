@@ -1618,6 +1618,26 @@
             <forward name="porteApplicativeControlloAccessiCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeControlloAccessiError" path="/jsplib/info.jsp"/>
         </action>
+        
+   		<!--  Porte Applicative (Soggetti) -->
+
+        <action path="/porteApplicativeSoggettoAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeSoggettoAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeSoggettoAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeSoggettoAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeSoggettoAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeSoggettoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeSoggettoList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeSoggettoList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeSoggettoList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeSoggettoError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeSoggettoDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeSoggettoDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeSoggettoDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeSoggettoError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

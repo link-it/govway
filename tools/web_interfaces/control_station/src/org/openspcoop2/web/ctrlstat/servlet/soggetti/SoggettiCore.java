@@ -28,6 +28,7 @@ import java.util.Map;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Soggetto;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -862,6 +863,28 @@ public class SoggettiCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
+	}
+	
+	public List<org.openspcoop2.core.registry.Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser,CredenzialeTipo credenziale) throws DriverConfigurazioneException{
+		Connection con = null;
+		String nomeMetodo = "getSoggettiFromTipoAutenticazione";
+		DriverControlStationDB driver = null;
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getSoggettiFromTipoAutenticazione(tipiSoggetto,superuser,credenziale);
+
+		} 
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
 	}
 	
 }

@@ -309,21 +309,17 @@ if (
 							    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
 							    String classLink = "";
 							    String classSpan = "";
-							    
-					
+							    String tdStyle = " "; 
+							    if (!de.getStyle().equals("")) {
+							    	tdStyle = " style=\""+ de.getStyle() +"\"";
+						  		}
 							    
 							    // se e' un elemento visualizzabile inserisco una cella
 							    if (!de.getType().equals("hidden")) {
-							      %><td class="tdText"><%
+							      %><td class="tdText" <%=tdStyle %>><%
 							    }
 					
 								if (de.getType().equals("text")) {
-						    	// spostato su.
-						    	//setto l'id del campo checkbfull_002dlist_jsp.java:182ox che serve per l'eliminazione
-						    	//in caso non sia gia' stato settato.
-						    	//if(idToRemove==null) idToRemove = de.getValue();
-						    	//if(idToRemove==null) idToRemove = de.getIdToRemove();
-					    			
 						    		// tipo link
 					      			if (!de.getUrl().equals("")) {
 							    		//tooltip

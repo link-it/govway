@@ -31,20 +31,19 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -136,19 +135,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 				numRuoli = pa.getRuoli().sizeRuoloList();
 			}
 			
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
-			AccordoServizioParteSpecifica asps = null;
-			
-			if(!idAsps.isEmpty())
-				asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			else {
-				// [TODO] calcola l'accordo dalla PA
-			}
-			
-			int sizeFruitori = 0;
-			if(asps!=null){
-				sizeFruitori = asps.sizeFruitoreList();
-			}
+			Search searchForCount = new Search(true,1);
+			porteApplicativeCore.porteAppSoggettoList(idInt, searchForCount);
+			int sizeSoggettiPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_SOGGETTO);
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tmpTitle = null;
@@ -174,12 +163,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
+			
 			Parameter[] urlParmsAutorizzazioneAutenticati = { 
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID,asps.getId()+"")	,
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE,asps.getIdSoggetto()+""),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO,asps.getTipo()),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO,asps.getNome())};
-			Parameter urlAutorizzazioneAutenticatiParam= new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST , urlParmsAutorizzazioneAutenticati);
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
+			Parameter urlAutorizzazioneAutenticatiParam= new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST, urlParmsAutorizzazioneAutenticati);
 			String urlAutorizzazioneAutenticati = urlAutorizzazioneAutenticatiParam.getValue();
 			
 			
@@ -244,9 +233,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
-				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,
+				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 						autenticazione, autorizzazione, autorizzazioneCustom, 
-						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
+						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false);
@@ -263,9 +252,15 @@ public class PorteApplicativeControlloAccessi extends Action {
 						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, ForwardParams.OTHER(""));
 			}
 
+			porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+					autorizzazioneRuoliTipologia, ruoloMatch, 
+					isSupportatoAutenticazione, isPortaDelegata, ruoli);
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazioneCustom, autenticazioneOpzionale, autorizzazioneContenuti, 
-					autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, ruoloMatch, isSupportatoAutenticazione, isPortaDelegata, ruoli);
+			boolean isOk = porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+					autorizzazioneRuoliTipologia, ruoloMatch, 
+					isSupportatoAutenticazione, isPortaDelegata, ruoli);
 					
 			if (!isOk) {
 				// preparo i campi
@@ -276,9 +271,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
-				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,
+				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 						autenticazione, autorizzazione, autorizzazioneCustom, 
-						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
+						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false);
@@ -393,9 +388,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
-			porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,
+			porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
 					autenticazione, autorizzazione, autorizzazioneCustom, 
-					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
+					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazione, contaListe, false, false);

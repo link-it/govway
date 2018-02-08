@@ -2400,7 +2400,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto,
 			List<AccordoServizioParteComune> asCompatibili,
 			String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale,String erogazioneAutorizzazione, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
-			String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch) throws Exception{
+			String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
+			List<String> soggettiAutenticati, String soggettoAutenticato) throws Exception{
 
 		String tipoServizioEffettivo = oldTipoServizio!=null ? oldTipoServizio : tipoServizio; 
 		String nomeServizioEffettivo = oldTipoServizio!=null ? oldNomeServizio : nomeServizio; 
@@ -2988,9 +2989,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
 			
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, 
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
-					erogazioneAutorizzazioneAutenticati, null, 0, null, null,
+					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
@@ -3924,7 +3925,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
 				
-				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,
+				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 						fruizioneAutenticazione, fruizioneAutorizzazione, null, 
 						fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 						fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
@@ -4771,7 +4772,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
 			
-			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, 
+			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
 					erogazioneAutorizzazioneAutenticati, null, 0, null, null,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
@@ -4970,7 +4971,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 			this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
 		
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 				fruizioneAutenticazione, fruizioneAutorizzazione, null, 
 				fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 				fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,

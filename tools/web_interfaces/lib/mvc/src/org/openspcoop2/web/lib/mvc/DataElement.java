@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 
 
@@ -90,6 +91,9 @@ public class DataElement {
 	String styleClass = null;
 	
 	String [] selezionati = null; // serve per gestire i valori selezionati in una multiselect
+	
+	private String style = null;
+	private String width = null;
 	
 	private Integer minValue = null, maxValue= null;
 
@@ -503,6 +507,59 @@ public class DataElement {
 	public void setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
 	}
+
+	public String getStyle() {
+		String width = this.getWidth();
+		
+		if(StringUtils.isNotEmpty(this.style)) {
+			if(width != null)
+				return DataElement.checkNull(this.style) + " " + width;
+		} else {
+			if(width != null)
+				return width;
+		}
+			
+		return DataElement.checkNull(this.style);
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
+	}
+
+	public String getWidth() {
+		if(StringUtils.isNotEmpty(this.width)) {
+			return " width: " + this.width + ";";
+		} else 
+			return null;
+	}
+
+	/**
+	 * Imposta la larghezza dell'elemento
+	 * Nota: Indicare solo il valore, il nome proprieta': "width" viene generato automaticamente.
+	 * Valori ammessi (Decrizione):
+	 * 
+	 * auto	(Default value. The browser calculates the width)
+	 * length	(Defines the width in px, cm, etc.) 
+	 * %	(Defines the width in percent of the containing block)
+	 * initial	(Sets this property to its default value.)
+	 * inherit	(Inherits this property from its parent element.)
+	 * 
+	 * @param width
+	 */
+	public void setWidth(String width) {
+		this.width = width;
+	}
 	
-	
+	public void setWidthPx(int width) {
+		this.setWidth(width + "px");
+	}
+	public void setWidthCm(int width) {
+		this.setWidth(width + "cm");
+	}
+	public void setWidthAuto() {
+		this.setWidth("auto");
+	}
+	public void setWidthPercentuale(int width) {
+		this.setWidth(width + "%");
+	}
 }

@@ -402,7 +402,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
 						erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
-						nomeSA, erogazioneRuolo);
+						nomeSA, erogazioneRuolo,null);
 				
 			}
 

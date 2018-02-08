@@ -44,6 +44,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizio;
@@ -56,6 +57,7 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -171,6 +173,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String erogazioneAutenticazioneOpzionale;
 	private String erogazioneAutorizzazione;
 	private String erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch;
+	private String erogazioneSoggettoAutenticato; 
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -225,6 +228,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.erogazioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
 			this.erogazioneAutorizzazioneRuoliTipologia = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
 			this.erogazioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
+			this.erogazioneSoggettoAutenticato = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO);
 			
 			// proxy
 			this.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
@@ -309,6 +313,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			this.versione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
 			this.nomeSA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
+			
 
 
 			if(apsHelper.isMultipart()){
@@ -723,6 +728,36 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					saSoggetti[i+1] = sa.getNome();
 				}
 			}
+			
+			List<String> soggettiAutenticati = new ArrayList<String>();
+			// lista soggetti autenticati per la creazione automatica
+//			if(saCore.isGenerazioneAutomaticaPorteApplicative() 
+					//&& (this.erogazioneAutenticazione !=null && !"".equals(this.erogazioneAutenticazione))
+//					){
+				
+				CredenzialeTipo credenziale =  null;
+				if((this.erogazioneAutenticazione !=null && !"".equals(this.erogazioneAutenticazione)) && erogazioneIsSupportatoAutenticazioneSoggetti) {
+					TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(this.erogazioneAutenticazione);
+					credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(this.erogazioneAutenticazione) : null;
+				}
+				
+				List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
+				 
+				if(apsCore.isVisioneOggettiGlobale(userLogin)){
+					listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
+				}else{
+					listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
+				}
+				
+				if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
+					
+					soggettiAutenticati.add("-"); // elemento nullo di default
+					for (Soggetto soggetto : listSoggettiCompatibili) {
+						soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
+					}
+				}
+//			}
+			
 
 			// Controllo se il soggetto erogare appartiene ad una pdd di tipo operativo.
 			if(this.tipoSoggettoErogatore!=null && !"".equals(this.tipoSoggettoErogatore) 
@@ -922,8 +957,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
 						saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
-						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch
-						);
+						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
+						soggettiAutenticati, this.erogazioneSoggettoAutenticato);
 
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
 						this.url, this.nome,
@@ -1057,8 +1092,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
-						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch
-						);
+						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
+						soggettiAutenticati, this.erogazioneSoggettoAutenticato);
 
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 						this.url, this.nome, this.tipo, this.user,
@@ -1204,8 +1239,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 							saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null,
 							this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
-							this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch
-							);
+							this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
+							soggettiAutenticati, this.erogazioneSoggettoAutenticato);
 
 					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 							this.url, this.nome, this.tipo, this.user,
@@ -1259,10 +1294,24 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				MappingErogazionePortaApplicativa mappingErogazione = implementationDefault.getMapping();
 				portaApplicativa.setIdSoggetto((long) idProv);
 				
+				IDSoggetto idSoggettoAutenticatoErogazione = null;
+				if(this.erogazioneSoggettoAutenticato != null && !"".equals(this.erogazioneSoggettoAutenticato) && !"-".equals(this.erogazioneSoggettoAutenticato)) {
+					String [] splitSoggetto = this.erogazioneSoggettoAutenticato.split("/");
+					if(splitSoggetto != null) {
+						idSoggettoAutenticatoErogazione = new IDSoggetto();
+						if(splitSoggetto.length == 2) {
+							idSoggettoAutenticatoErogazione.setTipo(splitSoggetto[0]);
+							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[1]);
+						} else {
+							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[0]);
+						}
+					}
+				}
+				
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						this.erogazioneAutenticazione, this.erogazioneAutenticazioneOpzionale,
 						this.erogazioneAutorizzazione, this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-						this.nomeSA, this.erogazioneRuolo);
+						this.nomeSA, this.erogazioneRuolo,idSoggettoAutenticatoErogazione);
 
 				listaOggettiDaCreare.add(portaApplicativa);				
 				listaOggettiDaCreare.add(mappingErogazione);

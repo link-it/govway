@@ -69,6 +69,8 @@ public class PorteApplicativeCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_AZIONE = "porteApplicativeAzione";
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO = "porteApplicativeSoggetto";
+	
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"Add.do";
@@ -218,6 +220,17 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AZIONE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_LIST);
 	}
 	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+"Add.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+"Del.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO+"List.do";
+	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_SOGGETTO = new Vector<String>();
+	
+	static{
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_ADD);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_DELETE);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST);
+	}
+	
 	
 	/* LABEL GENERALI */
 	
@@ -274,6 +287,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE = "modeCreazione";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.PARAMETRO_SOGGETTO;
 	
 	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
@@ -317,6 +331,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI = "Propriet&agrave; Protocollo di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI = "Porte Applicative di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI = "Applicativi Erogatori di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_DI = "Soggetti di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_DI = "Ruoli di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGGIO = "Trattamento Messaggio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "Message Security";
@@ -363,7 +378,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitata";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitata";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = "Soggetto";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO = "abilitato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO = "disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA = "Risultati Ricerca";

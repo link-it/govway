@@ -5306,15 +5306,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// setto le label delle colonne
-			// String[] labels = { "Soggetto", "Servizio",
-			// "Accordo unilaterale", "Fruitori" };
-			
 			List<String> labelList = new ArrayList<>();
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE);
 			//labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);
-			
 //			labelList.add(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION);
 //			if(gui.equals(InterfaceType.AVANZATA))
 //				labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS);
@@ -5353,6 +5349,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					else {
 						de.setValue(risorsa.getMethod().toString());
 					}
+					de.setWidthPx(100);
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -5855,8 +5852,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa));
 
-//			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-
 			int idLista = Liste.ACCORDI_API_RESOURCES_RESPONSE;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -5866,9 +5861,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			
-//			User user = ServletUtils.getUserFromSession(this.session);
-//			InterfaceType gui = user.getInterfaceType();
-
 			// setto la barra del titolo
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
@@ -5914,14 +5906,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// setto le label delle colonne
-			// String[] labels = { "Soggetto", "Servizio",
-			// "Accordo unilaterale", "Fruitori" };
 			List<String> labelList = new ArrayList<>();
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE);
-//			labelList.add(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION);
-//			if(gui.equals(InterfaceType.AVANZATA))
-//				labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS);
 			
 			String[] labels = labelList.toArray(new String[labelList.size()]);
 			this.pd.setLabels(labels);
@@ -5953,6 +5940,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						de.setValue(risposta.getStatus()+"");
 					}
 					de.setIdToRemove(risposta.getStatus()+"");
+					de.setWidthPx(90);
 					e.addElement(de);
 
 					de = new DataElement();

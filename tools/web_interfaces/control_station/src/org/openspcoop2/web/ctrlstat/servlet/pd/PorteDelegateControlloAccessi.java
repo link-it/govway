@@ -213,7 +213,7 @@ public class PorteDelegateControlloAccessi extends Action {
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
-				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,
+				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
 						autenticazione, autorizzazione, autorizzazioneCustom, 
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
@@ -233,8 +233,10 @@ public class PorteDelegateControlloAccessi extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazioneCustom, autenticazioneOpzionale, autorizzazioneContenuti, 
-					autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, ruoloMatch, isSupportatoAutenticazione, isPortaDelegata, ruoli);
+			boolean isOk = porteDelegateHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+					autorizzazioneRuoliTipologia, ruoloMatch, 
+					 isSupportatoAutenticazione, isPortaDelegata, ruoli);
 					
 			if (!isOk) {
 				// preparo i campi
@@ -245,7 +247,7 @@ public class PorteDelegateControlloAccessi extends Action {
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
-				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,
+				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
 						autenticazione, autorizzazione, autorizzazioneCustom, 
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
@@ -362,7 +364,7 @@ public class PorteDelegateControlloAccessi extends Action {
 			porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
-			porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,
+			porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
 					autenticazione, autorizzazione, autorizzazioneCustom, 
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 

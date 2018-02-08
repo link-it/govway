@@ -822,7 +822,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
-							null,null,null,null);
+							null,null,null,null,null,null);
 
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  null,
 							url,nome, tipo, user, password, initcont, urlpgk,
@@ -940,7 +940,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 						null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
 						null,null,null,null,false,
-						null,null,null,null);
+						null,null,null,null,null,null);
 
 				dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, null, 
 						url, nome,
@@ -1176,7 +1176,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
-							null,null,null,null);
+							null,null,null,null,null,null);
 
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url,

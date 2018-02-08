@@ -30,6 +30,8 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -69,7 +71,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 	public void configureControlloAccessiPortaApplicativa(PortaApplicativa pa,
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
-			String nomeSA, String erogazioneRuolo) {
+			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato) {
 		pa.setAutenticazione(erogazioneAutenticazione);
 		if(erogazioneAutenticazioneOpzionale != null){
 			if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
@@ -106,6 +108,17 @@ public class PorteApplicativeCore extends ControlStationCore {
 			Ruolo ruolo = new Ruolo();
 			ruolo.setNome(erogazioneRuolo);
 			pa.getRuoli().addRuolo(ruolo);
+		}
+		
+		if(idErogazioneSoggettoAutenticato!=null){
+			if(pa.getSoggetti() == null) {
+				pa.setSoggetti(new PortaApplicativaAutorizzazioneSoggetti());
+			}
+			
+			PortaApplicativaAutorizzazioneSoggetto soggetto = new PortaApplicativaAutorizzazioneSoggetto();
+			soggetto.setTipo(idErogazioneSoggettoAutenticato.getTipo());
+			soggetto.setNome(idErogazioneSoggettoAutenticato.getNome()); 
+			pa.getSoggetti().addSoggetto(soggetto);
 		}
 	}
 	
@@ -267,6 +280,29 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 
 	}
+	
+	public List<PortaApplicativaAutorizzazioneSoggetto> porteAppSoggettoList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "porteAppSoggettoList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().porteAppSoggettoList(idPortaApplicativa, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
 
 	public List<MessageSecurityFlowParameter> porteAppMessageSecurityRequestList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;

@@ -44,6 +44,7 @@ public final class Liste
 	public final static int PORTE_APPLICATIVE_PROP;
 	public final static int PORTE_APPLICATIVE_AZIONI;
 	public final static int PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO;
+	public final static int PORTE_APPLICATIVE_SOGGETTO;
 	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST;
 	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE;
 	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA;
@@ -137,6 +138,7 @@ public final class Liste
     	PORTE_APPLICATIVE_PROP = numeroListe ++;
     	PORTE_APPLICATIVE_AZIONI = numeroListe ++;
     	PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = numeroListe ++;
+    	PORTE_APPLICATIVE_SOGGETTO = numeroListe ++;
     	PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = numeroListe ++;
     	PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = numeroListe ++;
     	PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = numeroListe ++;

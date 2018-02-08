@@ -6800,6 +6800,103 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 	
+	/***
+	 * Restituisce tutti i soggetti con i tipi indicati che utilizzano le credenziali indicate
+	 * 
+	 * @param tipiSoggetto
+	 * @param superuser
+	 * @param credenziale
+	 * @return
+	 */
+	public List<Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser, CredenzialeTipo credenziale) throws DriverRegistroServiziException {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		String queryString;
+		int offset = 0;
+		int limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+		
+		this.log.debug("getSoggettiFromTipoAutenticazione...");
+		
+		List<Soggetto> soggetti= null;
+		
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = this.getConnectionFromDatasource("getSoggettiFromTipoAutenticazione");
+			else
+				con = this.globalConnection;
+		
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("tipo_soggetto");
+			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.setANDLogicOperator(true);
+			if(tipiSoggetto!=null && tipiSoggetto.size()>0) {
+				sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
+			}
+			if (superuser!=null && !superuser.equals(""))
+				sqlQueryObject.addWhereCondition("superuser = ?");
+			if(credenziale != null) {
+				sqlQueryObject.addWhereCondition("tipoauth = ?");
+			}
+			
+			sqlQueryObject.addOrderBy("nome_soggetto");
+			sqlQueryObject.addOrderBy("tipo_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			if (superuser!=null && !superuser.equals(""))
+				stmt.setString(index++, superuser);
+			if(credenziale != null) {
+				stmt.setString(index++, credenziale.toString());
+			}
+			
+			risultato = stmt.executeQuery();
+			
+			Soggetto sog;
+			soggetti = new ArrayList<Soggetto>();
+			while (risultato.next()) {
+
+				sog = new Soggetto();
+				sog.setId(risultato.getLong("id"));
+				sog.setNome(risultato.getString("nome_soggetto"));
+				sog.setTipo(risultato.getString("tipo_soggetto"));
+				soggetti.add(sog);
+			}
+
+			return soggetti;
+		} catch (Exception qe) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggettiFromTipoAutenticazione] Exception: " + qe.getMessage(),qe);
+		} finally {
+			try {
+				risultato.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 	/**
 	 *  Ritorna gli identificatori dei soggetti che rispettano il parametro di ricerca
 	 * 
@@ -20587,6 +20684,5 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 		}
 	}
-		
 }
 

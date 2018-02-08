@@ -7746,6 +7746,130 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
+	@Override
+	public List<PortaApplicativaAutorizzazioneSoggetto> porteAppSoggettoList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "porteAppSoggettoList";
+		int idLista = Liste.PORTE_APPLICATIVE_SOGGETTO;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		PreparedStatement stmt1=null;
+		ResultSet risultato=null;
+		ArrayList<PortaApplicativaAutorizzazioneSoggetto> lista = new ArrayList<PortaApplicativaAutorizzazioneSoggetto>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("porteAppSoggettoList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			//query con search
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_SOGGETTI+".nome_soggetto", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+			} 
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setInt(1, idPortaApplicativa);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+			sqlQueryObject.addSelectField("id_porta");
+			sqlQueryObject.addSelectField("tipo_soggetto");
+			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			if (!search.equals("")) {
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_SOGGETTI+".nome_soggetto", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+			}
+			sqlQueryObject.addOrderBy("tipo_soggetto");
+			sqlQueryObject.addOrderBy("nome_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPortaApplicativa);
+			risultato = stmt.executeQuery();
+
+			PortaApplicativaAutorizzazioneSoggetto paAuthSoggetto = null;
+			while (risultato.next()) {
+				paAuthSoggetto = new PortaApplicativaAutorizzazioneSoggetto();
+				paAuthSoggetto.setNome(risultato.getString("nome_soggetto"));
+				paAuthSoggetto.setTipo(risultato.getString("tipo_soggetto"));
+				
+				lista.add(paAuthSoggetto);
+			}
+			risultato.close();
+			stmt.close();
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();			
+				if(stmt!=null) stmt.close();
+				if(stmt1!=null) stmt1.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 
 	@Override
 	public List<MessageSecurityFlowParameter> porteAppMessageSecurityRequestList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {

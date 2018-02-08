@@ -181,6 +181,8 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_AZIONE = "Azione";
 	public final static String LABEL_PARAMETRO_AZIONI = "Azioni";
 	public final static String LABEL_PARAMETRO_AZIONI_DI = "Azioni di ";
+	public final static String LABEL_PARAMETRO_SOGGETTO = "Soggetto";
+	public final static String LABEL_PARAMETRO_SOGGETTI = "Soggetti";
 	
 	/** PARAMETERS **/
 	
@@ -221,6 +223,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
+	public final static String PARAMETRO_SOGGETTO = "soggt";
 	
 	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
 	public final static String PARAMETRO_SERVICE_BINDING_SEARCH = "serviceBindingSearch";

@@ -60,6 +60,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -1882,7 +1883,7 @@ public class ConsoleHelper {
 		}else{
 			if(addMsgServiziApplicativoNonDisponibili){
 				if(sizeAttuale>0){
-					this.pd.setMessage("Non ulteriori esistono servizi applicativi associabili alla porta",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+					this.pd.setMessage("Non esistono ulteriori servizi applicativi associabili alla porta",org.openspcoop2.web.lib.mvc.MessageType.INFO);
 				}
 				else{
 					this.pd.setMessage("Non esistono servizi applicativi associabili alla porta",org.openspcoop2.web.lib.mvc.MessageType.INFO);
@@ -1893,6 +1894,36 @@ public class ConsoleHelper {
 
 		return dati;
 	}
+	
+	public Vector<DataElement> addPorteSoggettoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
+			String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
+				boolean addMsgSoggettiNonDisponibili) {
+			
+			if(soggettiList!=null && soggettiList.length>0){
+			
+				DataElement de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+				de.setType(DataElementType.SELECT);
+				de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
+				de.setLabels(soggettiLabelList);
+				de.setValues(soggettiList);
+				de.setSelected(soggetto);
+				dati.addElement(de);
+				
+			}else{
+				if(addMsgSoggettiNonDisponibili){
+					if(sizeAttuale>0){
+						this.pd.setMessage("Non esistono ulteriori soggetti associabili alla porta",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+					}
+					else{
+						this.pd.setMessage("Non esistono soggetti associabili alla porta",org.openspcoop2.web.lib.mvc.MessageType.INFO);
+					}
+					this.pd.disableEditMode();
+				}
+			}
+
+			return dati;
+		}
 
 	// Controlla i dati del Message-Security
 	public boolean WSCheckData(TipoOperazione tipoOp) throws Exception {
@@ -2838,7 +2869,7 @@ public class ConsoleHelper {
 		
 	}
 	
-	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante,
+	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto,
 			String autenticazione, 
 			String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
@@ -2883,6 +2914,24 @@ public class ConsoleHelper {
 		dati.addElement(de);
 		
 		
+		boolean old_autorizzazione_autenticazione = false;
+		boolean old_autorizzazione_ruoli = false;
+		String old_autorizzazione = null;
+		
+		if(TipoOperazione.CHANGE.equals(tipoOperazione) && oggetto!=null){
+			if(isPortaDelegata){
+				PortaDelegata pd = (PortaDelegata) oggetto;
+				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pd.getAutorizzazione());
+				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione());
+				old_autorizzazione_ruoli = TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione());
+			}
+			else {
+				PortaApplicativa pa = (PortaApplicativa) oggetto;
+				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
+				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione());
+				old_autorizzazione_ruoli = TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione());
+			}
+		}
 		
 		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 		
@@ -2897,7 +2946,8 @@ public class ConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
 				}
 				else{
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI);
+					String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
+					de.setLabel(labelSoggetti);
 				}
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
 				if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
@@ -2914,7 +2964,7 @@ public class ConsoleHelper {
 			}
 			
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-				if(urlAutorizzazioneAutenticati!=null && (autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione)) ){
+				if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 					de = new DataElement();
 					de.setType(DataElementType.LINK);
 					de.setUrl(urlAutorizzazioneAutenticati);
@@ -2926,24 +2976,32 @@ public class ConsoleHelper {
 					}
 					else{
 						if (contaListe) {
-							ServletUtils.setDataElementCustomLabel(de,AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI,new Long(numAutenticati));
+							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI,new Long(numAutenticati));
 						} else
-							ServletUtils.setDataElementCustomLabel(de,AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI);
+							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
 					}
 					dati.addElement(de);
 				}
 			}
 			else{
-				if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) &&
-						autorizzazione_autenticazione && isPortaDelegata){
-					String [] saArray = null;
-					if(autenticati!=null && autenticati.size()>0){
-						saArray = autenticati.toArray(new String[1]);
+				if(!isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) {
+					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) && autorizzazione_autenticazione && isPortaDelegata){
+						String [] saArray = null;
+						if(autenticati!=null && autenticati.size()>0){
+							saArray = autenticati.toArray(new String[1]);
+						}
+						this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false);
 					}
-					this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false);
+//					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata && isSupportatoAutenticazione) {
+					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata) {
+						String soggettiList [] = null;
+						if(autenticati!=null && autenticati.size()>0){
+							soggettiList = autenticati.toArray(new String[1]);
+						}
+						this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiList, soggettiList, autenticato, 0, false);
+					}
 				}
 			}
-			
 		}
 		
 		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
@@ -3003,7 +3061,7 @@ public class ConsoleHelper {
 			}
 			
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-				if(urlAutorizzazioneRuoli!=null && (autorizzazione_ruoli || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione)) ){
+				if(urlAutorizzazioneRuoli!=null && autorizzazione_ruoli && (old_autorizzazione_ruoli || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 					
 					de = new DataElement();
 					de.setType(DataElementType.LINK);

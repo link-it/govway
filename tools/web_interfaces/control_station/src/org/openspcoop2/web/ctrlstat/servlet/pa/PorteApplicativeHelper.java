@@ -36,6 +36,8 @@ import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
@@ -517,6 +519,72 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 	}
 
 
+	// Controlla i dati dell soggetto della porta applicativa
+	public boolean porteAppSoggettoCheckData(TipoOperazione tipoOp)
+			throws Exception {
+		try {
+			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			int idInt = Integer.parseInt(idPorta);
+			String soggetto = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
+			if (soggetto == null) {
+				soggetto = "";
+			}
+
+			// Campi obbligatori
+			if (soggetto.equals("")) {
+				this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto");
+				return false;
+			}
+
+			long idSoggetto = Integer.parseInt(soggetto);
+			// Controllo che il servizioApplicativo appartenga alla lista di
+			// servizioApplicativo disponibili per il soggetto
+			// Prendo il nome e il tipo del soggetto
+			String nomeSoggettoSelezionato = null;
+			String tipoSoggettoSelezionato = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(idSoggetto);
+				nomeSoggettoSelezionato = mySogg.getNome();
+				tipoSoggettoSelezionato = mySogg.getTipo();
+			}else{
+				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(idSoggetto);
+				nomeSoggettoSelezionato = mySogg.getNome();
+				tipoSoggettoSelezionato = mySogg.getTipo();
+			}
+
+			// Se tipoOp = add, controllo che il servizioApplicativo non sia
+			// gia'
+			// stato
+			// registrato per la porta applicativa
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = false;
+
+				// Prendo il nome della porta applicativa
+				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idInt);
+				String nomeporta = pa.getNome();
+				PortaApplicativaAutorizzazioneSoggetti soggetti = pa.getSoggetti() != null ? pa.getSoggetti() : new PortaApplicativaAutorizzazioneSoggetti();
+				
+
+				for (int i = 0; i < soggetti.sizeSoggettoList(); i++) {
+					PortaApplicativaAutorizzazioneSoggetto tmpSoggetto = soggetti.getSoggetto(i);
+					if (tipoSoggettoSelezionato.equals(tmpSoggetto.getTipo()) && nomeSoggettoSelezionato.equals(tmpSoggetto.getNome())) {
+						giaRegistrato = true;
+						break;
+					}
+				}
+
+				if (giaRegistrato) {
+					this.pd.setMessage("Il Soggetto '" + tipoSoggettoSelezionato + "/"+ nomeSoggettoSelezionato + " &egrave; gi&agrave; stato associato alla porta applicativa " + nomeporta);
+					return false;
+				}
+			}
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 
 
 
@@ -2603,6 +2671,102 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 
 			
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	// Prepara la lista di soggetti associati alla pa
+	public void preparePorteAppSoggettoList(String nomePorta, ISearch ricerca, List<PortaApplicativaAutorizzazioneSoggetto> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+
+			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+
+			int idLista = Liste.PORTE_APPLICATIVE_SOGGETTO;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			String tmpTitle = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
+				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+			}
+			else{
+				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
+				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+			}
+
+			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			String idporta = myPA.getNome();
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_DI + idporta,null));
+			}else{
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_DI + idporta,
+						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST ,
+						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
+				
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
+			}
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				this.pd.setSearch("on");
+				this.pd.setSearchDescription("Soggetti contenenti la stringa '" + search + "'");
+			}
+
+			// setto le label delle colonne
+			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<PortaApplicativaAutorizzazioneSoggetto> it = lista.iterator();
+				while (it.hasNext()) {
+					PortaApplicativaAutorizzazioneSoggetto sog = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					DataElement de = new DataElement();
+					de.setValue(sog.getTipo() + "/" + sog.getNome());
+					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
 

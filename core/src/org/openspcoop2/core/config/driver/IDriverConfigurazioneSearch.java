@@ -28,6 +28,7 @@ import java.util.List;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
@@ -74,6 +75,12 @@ public interface IDriverConfigurazioneSearch {
 	 * Tiene conto dei criteri di ricerca settati
 	 */
 	public List<ServizioApplicativo> porteAppServizioApplicativoList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
+	
+	/**
+	 * Ritorna la lista di Soggetti Autorizzati di una Porta Applicativa
+	 * Tiene conto dei criteri di ricerca settati
+	 */
+	public List<PortaApplicativaAutorizzazioneSoggetto> porteAppSoggettoList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
 
 	/**
 	 * Ritorna la lista di RequestFlow di una PortaApplicativa associata ad un Soggetto

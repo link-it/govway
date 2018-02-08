@@ -225,6 +225,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLI = CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI;
 	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA = CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA;
 	public final static String PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH = CostantiControlStation.PARAMETRO_RUOLO_MATCH;
+	public final static String PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO = CostantiControlStation.PARAMETRO_SOGGETTO;
 	public final static String PARAMETRO_APS_RIPRISTINA_STATO = "backToStato";
 	public final static String PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	
