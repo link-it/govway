@@ -5655,7 +5655,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					// BugFix OP-674
 					//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
 					Search searchForCount = new Search(true,1);
-					this.apcCore.accordiResourceResponseList(idRisorsa.intValue(), searchForCount);
+					this.apcCore.accordiResourceResponseList(idRisorsa, searchForCount);
 					//int num = tmpLista.size();
 					int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_RESPONSE);
 					de.setValue(AccordiServizioParteComuneCostanti.LABEL_RISPOSTE+" ("+num+")");

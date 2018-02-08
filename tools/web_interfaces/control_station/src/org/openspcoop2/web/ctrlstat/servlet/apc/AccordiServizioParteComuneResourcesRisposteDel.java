@@ -60,9 +60,6 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -73,13 +70,8 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
-//		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-//			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
-//			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
-//			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -105,56 +97,12 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 				}
 			}
 			
-//			List<IDServizio> idServiziWithAccordo = null;
-//			try{
-//				idServiziWithAccordo = apsCore.getIdServiziWithAccordo(idAccordoFactory.getIDAccordoFromAccordo(as),true);
-//			}catch(DriverRegistroServiziNotFound dNotF){}
-//			
 			String responseStatus = "";
 			boolean modificaAS_effettuata = false;
-//			boolean checkPorte = true;
 			StringBuffer errori = new StringBuffer();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
 				responseStatus = resourcesToRemove.get(i);
-				
-//				// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
-//				if(idServiziWithAccordo!=null && idServiziWithAccordo.size()>0){
-//				
-//					if(checkPorte){
-//						
-//						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano PA/PD esistenti.
-//						if (porteApplicativeCore.existsPortaApplicativaAzione(responseStatus)) {
-//							List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(responseStatus);
-//							errori.append("Risorsa "+responseStatus+" non rimuovibile poiche' in uso in porte applicative: <BR>");
-//							for(int j=0;j<idPAs.size();j++){
-//								errori.append("- "+idPAs.get(j).toString()+"<BR>");
-//							}
-//							continue;
-//						}
-//						if (porteDelegateCore.existsPortaDelegataAzione(responseStatus)) {
-//							List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(responseStatus);
-//							errori.append("Risorsa "+responseStatus+" non rimuovibile poiche' in uso in porte delegate: <BR>");
-//							for(int j=0;j<idPDs.size();j++){
-//								errori.append("- "+idPDs.get(j).toString()+"<BR>");
-//							}
-//							continue;
-//						}
-//						
-//					}else{
-//						
-//						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano PA/PD esistenti,
-//						// poiche' non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
-//						// Allora non permetto l'eliminazione poiche' esistono dei servizi che implementano l'accordo
-//						errori.append("Risorsa "+responseStatus+" non rimuovibile poiche' l'accordo di servizio parte comune viene implementato dai seguenti servizi: <br>");
-//						for(int j=0; j<idServiziWithAccordo.size();j++){
-//							errori.append("- "+idServiziWithAccordo.get(j).toString()+"<br>");
-//						}
-//						continue;
-//						
-//					}
-//					
-//				}
-//				
+
 				// Effettuo eliminazione
 				for (int j = 0; j < risorsa.sizeResponseList(); j++) {
 					ResourceResponse resp = risorsa.getResponse(j);
@@ -176,8 +124,20 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			
+			// Devo rileggere l'accordo dal db, perche' altrimenti
+			// manca l'id dei port-type
+			as = apcCore.getAccordoServizio(new Long(idInt));
+			
+			risorsa = null;
+			for (int j = 0; j < as.sizeResourceList(); j++) {
+				risorsa = as.getResource(j);
+				if (nomeRisorsa.equals(risorsa.getNome())) {
+					break;
+				}
+			}
 
-			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(idRisorsa.intValue(), ricerca);
+			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId(), ricerca);
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type

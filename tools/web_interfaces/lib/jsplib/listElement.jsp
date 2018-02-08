@@ -205,6 +205,7 @@ function Search(form) {
 
   addHidden(form, 'index' , 0);
   addHidden(form, 'iddati' , iddati);
+  addHidden(form, 'pageSize' , pageSize);
 
   // formatParams
   
@@ -222,6 +223,9 @@ function Search(form) {
 	       addHidden(form, pair[0] , pair[1]);
 	   }
    }
+
+  // imposto la destinazione
+  document.form.action = nomeServletList;
       
   // form submit
   document.form.submit();
@@ -248,6 +252,7 @@ function Reset(form) {
 
 	  addHidden(form, 'index' , 0);
 	  addHidden(form, 'iddati' , iddati);
+	  addHidden(form, 'pageSize' , pageSize);
 
 	  // formatParams
 	  
@@ -265,7 +270,9 @@ function Reset(form) {
 		       addHidden(form, pair[0] , pair[1]);
 		   }
 	  }
-	     
+	  
+	   // imposto la destinazione
+	   document.form.action = nomeServletList;
 	   
 	  // form submit
 	  document.form.submit();

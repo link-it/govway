@@ -601,7 +601,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 	
-	public List<org.openspcoop2.core.registry.ResourceResponse> accordiResourceResponseList(int idRisorsa, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<org.openspcoop2.core.registry.ResourceResponse> accordiResourceResponseList(Long idRisorsa, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiResourceResponseList";
 		DriverControlStationDB driver = null;

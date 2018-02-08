@@ -279,7 +279,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 				}
 			}
 			
-			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId().intValue(), ricerca);
+			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId(), ricerca);
 
 			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, nomeRisorsa);
 

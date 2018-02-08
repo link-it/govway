@@ -82,12 +82,12 @@ public final class AccordiServizioParteComuneResourcesRisposteList extends Actio
 			apcHelper.makeMenu();
 
 			// Prendo l'id della risorsa
-			int idRisorsa = 0;
+			long idRisorsa = 0;
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
 			for (int i = 0; i < as.sizeResourceList(); i++) {
 				Resource res = as.getResource(i);
 				if (nomeRisorsa.equals(res.getNome())) {
-					idRisorsa = res.getId().intValue();
+					idRisorsa = res.getId();
 					break;
 				}
 			}
