@@ -147,7 +147,7 @@ public final class PddChange extends Action {
 			}
 	
 			// Se nomehid = null, devo visualizzare la pagina per la modifica dati
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(pddHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO,

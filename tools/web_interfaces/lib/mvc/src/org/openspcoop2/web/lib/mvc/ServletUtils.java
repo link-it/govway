@@ -147,33 +147,12 @@ public class ServletUtils {
 		return Costanti.PARAMETER_EDIT_MODE_END;
 	}
 
-	public static boolean isEditModeInProgress(HttpServletRequest request){
-		String editMode = request.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-		return isEditModeInProgress(editMode);		
-	}
-
-	public static boolean isEditModeFinished(HttpServletRequest request){
-		String editMode = request.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-		return isEditModeFinished(editMode);		
-	}
-
 	public static boolean isEditModeInProgress(String editMode){
 		return !Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END.equals(editMode);
 	}
 
 	public static boolean isEditModeFinished(String editMode){
 		return !Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END.equals(editMode);
-	}
-
-
-
-
-
-
-	/* ------ POST BACK ---- */
-
-	public static String getPostBackElementName(HttpServletRequest request){
-		return request.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 	}
 
 

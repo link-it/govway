@@ -191,7 +191,7 @@ public final class SoggettiEndPoint extends Action {
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(soggettiHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 

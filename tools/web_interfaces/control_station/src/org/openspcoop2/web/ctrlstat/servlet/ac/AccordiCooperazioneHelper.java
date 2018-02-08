@@ -273,8 +273,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Accordi cooperazione contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, search);
 			}
 
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
@@ -954,8 +953,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE);
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Soggetti Partecipanti contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI, search);
 			}
 			
 			
@@ -1038,8 +1036,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Allegati contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATI, search);
 			}
 
 			// setto le label delle colonne

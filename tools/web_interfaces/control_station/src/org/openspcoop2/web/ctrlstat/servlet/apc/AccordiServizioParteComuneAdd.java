@@ -218,7 +218,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 			}
 
-			if(ServletUtils.isEditModeInProgress(this.editMode)){// && ServletUtils.isEditModeInProgress(request)){
+			if(ServletUtils.isEditModeInProgress(this.editMode)){// && apcHelper.isEditModeInProgress()){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
 			}else{
@@ -422,7 +422,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 
 			// Se nome = null, devo visualizzare la pagina per l'inserimento dati
-			if(ServletUtils.isEditModeInProgress(this.editMode)){ // && ServletUtils.isEditModeInProgress(request)){
+			if(ServletUtils.isEditModeInProgress(this.editMode)){ // && apcHelper.isEditModeInProgress()){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletAdd(pd, labelAccordoServizio);

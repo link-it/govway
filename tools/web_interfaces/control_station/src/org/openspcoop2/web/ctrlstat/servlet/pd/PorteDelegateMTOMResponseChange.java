@@ -130,7 +130,7 @@ public class PorteDelegateMTOMResponseChange extends Action {
 			
 			lstParam.add(new Parameter(nome , null));
 			
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	porteDelegateHelper.isEditModeInProgress()){
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

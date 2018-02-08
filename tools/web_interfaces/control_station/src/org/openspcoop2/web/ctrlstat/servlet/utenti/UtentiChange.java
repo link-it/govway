@@ -165,7 +165,7 @@ public final class UtentiChange extends Action {
 			utentiHelper.makeMenu();
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(utentiHelper.isEditModeInProgress()){
 
 				// setto la barra del titolo
 				//				ServletUtils.setPageDataTitle_ServletChange(pd, UtentiCostanti.LABEL_UTENTI, 

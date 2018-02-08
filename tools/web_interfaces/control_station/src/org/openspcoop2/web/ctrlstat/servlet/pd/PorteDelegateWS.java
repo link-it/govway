@@ -167,7 +167,7 @@ public final class PorteDelegateWS extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
+			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

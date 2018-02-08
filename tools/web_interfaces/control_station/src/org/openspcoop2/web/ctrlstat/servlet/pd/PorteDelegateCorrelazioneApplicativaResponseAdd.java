@@ -124,7 +124,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseAdd extends Actio
 			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI , null));
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (porteDelegateHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

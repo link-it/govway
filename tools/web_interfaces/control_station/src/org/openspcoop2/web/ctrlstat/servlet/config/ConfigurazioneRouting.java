@@ -128,7 +128,7 @@ public final class ConfigurazioneRouting extends Action {
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = confHelper.getPostBackElementName();
 
 			// Controllo se ho modificato il protocollo, resetto il referente
 			if(postBackElementName != null ){
@@ -141,7 +141,7 @@ public final class ConfigurazioneRouting extends Action {
 			// Se tiporottahid != null, modifico i dati della porta di dominio
 			// nel
 			// db
-			if (!(ServletUtils.isEditModeInProgress(request) && !applicaModifica)) {
+			if (!(confHelper.isEditModeInProgress() && !applicaModifica)) {
 				// Controlli sui campi immessi
 				boolean isOk = confHelper.routingCheckData(registriList);
 				if (!isOk) {

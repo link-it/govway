@@ -180,7 +180,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			int messageOutputCnt = 0;
 			int messageInputCnt = 0;
 
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = apcHelper.getPostBackElementName();
 
 			if(postBackElementName!= null){
 				if(postBackElementName.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_PROFILO_COLLABORAZIONE)){

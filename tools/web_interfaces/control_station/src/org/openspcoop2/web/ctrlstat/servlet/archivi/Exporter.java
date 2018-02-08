@@ -192,7 +192,7 @@ public final class Exporter extends Action {
 			
 			
 			// Eventuale PostBack element name che ha scaturito l'evento
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = archiviHelper.getPostBackElementName();
 			
 
 					
@@ -246,7 +246,7 @@ public final class Exporter extends Action {
 			
 			
 			// Controllo se ho terminato di impostare le proprieta' e devo procedere con l'esportazione.
-			boolean fineSceltaOpzioniEsportazione = !ServletUtils.isEditModeInProgress(request)  &&
+			boolean fineSceltaOpzioniEsportazione = !archiviHelper.isEditModeInProgress()  &&
 					(postBackElementName==null || "".equals(postBackElementName));
 			boolean configurationEnabled = ArchiveType.CONFIGURAZIONE.equals(archiveType) && !archiviCore.isExportArchivi_standard();
 			boolean cascadeEnabled = !ArchiveType.CONFIGURAZIONE.equals(archiveType) && archiviCore.isCascadeEnabled(exportModes, exportMode);

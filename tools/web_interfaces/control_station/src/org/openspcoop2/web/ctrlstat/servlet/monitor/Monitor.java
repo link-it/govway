@@ -193,7 +193,7 @@ public final class Monitor extends Action {
 			String[] tipoProfcoll = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE;
 			String actionConfirm = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION_CONFIRM);
 
-			if (ServletUtils.isEditModeInProgress(request) && (metodo == null || !metodo.equals(MonitorCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS))&&
+			if (monitorHelper.isEditModeInProgress() && (metodo == null || !metodo.equals(MonitorCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS))&&
 					actionConfirm == null && (ns == null || !ns.equals(MonitorCostanti.DEFAULT_VALUE_FALSE) )) {
 				// prima volta che accedo quindi show form
 

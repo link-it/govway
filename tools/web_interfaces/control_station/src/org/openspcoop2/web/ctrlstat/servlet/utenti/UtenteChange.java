@@ -128,7 +128,7 @@ public final class UtenteChange extends Action {
 
 			User myS = null;
 			// Se idhid != null, modifico i dati della porta di dominio nel db
-			if(ServletUtils.isEditModeInProgress(request) == false){
+			if(utentiHelper.isEditModeInProgress() == false){
 
 				//se e' richiesta la modifica pwd allora controllo dati inseriti per modifica pwd
 				

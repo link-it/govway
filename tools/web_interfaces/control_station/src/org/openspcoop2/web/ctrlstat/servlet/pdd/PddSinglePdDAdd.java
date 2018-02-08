@@ -87,7 +87,7 @@ public final class PddSinglePdDAdd extends Action {
 			pddHelper.makeMenu();
 	
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(pddHelper.isEditModeInProgress()){
 			
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO);

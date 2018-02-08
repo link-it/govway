@@ -404,7 +404,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(saHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletAdd(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);

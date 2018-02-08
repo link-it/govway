@@ -167,8 +167,7 @@ public abstract class AbstractServletListUtilities extends Action {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				pd.setSearch("on");
-				pd.setSearchDescription("Elementi contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(pd, "Elementi", search);
 			}
 
 			// setto le label delle colonne

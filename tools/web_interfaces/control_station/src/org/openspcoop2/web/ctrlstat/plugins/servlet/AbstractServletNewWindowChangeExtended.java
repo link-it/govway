@@ -125,7 +125,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 			extendedBean = extendedServlet.readHttpParameters(object, TipoOperazione.CHANGE, extendedBean, request);
 
 
-			if (!ServletUtils.isEditModeInProgress(request)) {
+			if (!consoleHelper.isEditModeInProgress()) {
 				
 				boolean isOk = true;
 				try{

@@ -138,7 +138,7 @@ public final class Importer extends Action {
 					
 			
 			// Eventuale PostBack element name che ha scaturito l'evento
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = archiviHelper.getPostBackElementName();
 			
 			
 			// Indicazione se devo effettuare una delete od una import
@@ -239,7 +239,7 @@ public final class Importer extends Action {
 			
 			// validazione
 			String tmpValidazioneDocumenti = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
-			if(ServletUtils.isEditModeInProgress(request) && tmpValidazioneDocumenti==null){
+			if(archiviHelper.isEditModeInProgress() && tmpValidazioneDocumenti==null){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
 			}
@@ -254,7 +254,7 @@ public final class Importer extends Action {
 			
 			// updateEnabled
 			String tmpUpdateEnabled = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
-			if(ServletUtils.isEditModeInProgress(request) && tmpUpdateEnabled==null){
+			if(archiviHelper.isEditModeInProgress() && tmpUpdateEnabled==null){
 				// primo accesso alla servlet
 				this.updateEnabled = false;
 			}
@@ -312,7 +312,7 @@ public final class Importer extends Action {
 			archiviHelper.makeMenu();
 			
 			// Se severita == null, devo visualizzare la pagina con il pulsante
-			if(ServletUtils.isEditModeInProgress(request) && 
+			if(archiviHelper.isEditModeInProgress() && 
 					this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo == null){
 				
 				// setto la barra del titolo
@@ -379,7 +379,7 @@ public final class Importer extends Action {
 			// ImportInformationMissingInvocazioneServizio
 			if(isOk){
 				try{
-					if(!ServletUtils.isEditModeInProgress(request)){
+					if(!archiviHelper.isEditModeInProgress()){
 						this.importInformationMissing_invocazioneServizio = archiviHelper.readInvocazioneServizio();
 					}
 					else{
@@ -396,7 +396,7 @@ public final class Importer extends Action {
 			// ImportInformationMissingConnettore
 			if(isOk){
 				try{
-					if(!ServletUtils.isEditModeInProgress(request)){
+					if(!archiviHelper.isEditModeInProgress()){
 						this.importInformationMissing_connettore = archiviHelper.readConnettore();
 					}
 					else{
@@ -413,7 +413,7 @@ public final class Importer extends Action {
 			// ImportInformationMissingCredenziali
 			if(isOk){
 				try{
-					if(!ServletUtils.isEditModeInProgress(request)){
+					if(!archiviHelper.isEditModeInProgress()){
 						this.importInformationMissing_credenziali = archiviHelper.readCredenzialiSA();
 					}
 					else{
@@ -431,7 +431,7 @@ public final class Importer extends Action {
 			MapPlaceholder importInformationMissing_placeholder = null;
 			if(isOk){
 				try{
-					if(!ServletUtils.isEditModeInProgress(request)){
+					if(!archiviHelper.isEditModeInProgress()){
 						importInformationMissing_placeholder = archiviHelper.readPlaceholder();
 						if(importInformationMissing_placeholder!=null){
 							this.importInformationMissing_globalPlaceholder.putAll(importInformationMissing_placeholder);
@@ -469,7 +469,7 @@ public final class Importer extends Action {
 			
 			
 			// Step
-			if(!ServletUtils.isEditModeInProgress(request) && isOk){
+			if(!archiviHelper.isEditModeInProgress() && isOk){
 				this.step++;
 			}
 						

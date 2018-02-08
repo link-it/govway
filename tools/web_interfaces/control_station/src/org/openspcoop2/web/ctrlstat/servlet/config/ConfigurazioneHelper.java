@@ -1005,8 +1005,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Proprietà di Sistema contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA, search);
 			}
 
 			// setto le label delle colonne
@@ -1241,8 +1240,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Destinazioni contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINAZIONI, search);
 			}
 
 			// setto le label delle colonne
@@ -1497,11 +1495,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Registri contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRI, search);
 			}
 
-			// setto le label delle colonne
+			// setto le label delle colonne	
 			String[] labels = {
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME,
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO

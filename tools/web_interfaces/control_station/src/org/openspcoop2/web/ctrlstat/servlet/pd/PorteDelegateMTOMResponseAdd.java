@@ -124,7 +124,7 @@ public class PorteDelegateMTOMResponseAdd extends Action {
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati
 //			if (nome == null) {
-				if(	ServletUtils.isEditModeInProgress(request)){
+				if(	porteDelegateHelper.isEditModeInProgress()){
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParam);
 

@@ -101,7 +101,7 @@ public   class Auditing extends Action {
 				tipiOgg[i+1] = tipiOggTmp[i];
 
 			// Se datainizio == null, devo visualizzare la pagina con il pulsante
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (auditingHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 
@@ -124,7 +124,10 @@ public   class Auditing extends Action {
 			}
 
 			// Controlli sui campi immessi
-			String msg = auditingHelper.getAuditHelper().auditReportCheckData(request, tipiOgg);
+			String msg = auditingHelper.getAuditHelper().auditReportCheckData(datainizio, datafine,
+					tipooperazione, tipooggetto,
+					id, oldid,
+					statooperazione, tipiOgg);
 			if (!msg.equals("")) {
 				pd.setMessage(msg);
 
@@ -164,7 +167,12 @@ public   class Auditing extends Action {
 					tipooggetto, id, oldid, utente,
 					statooperazione, contoggetto);
 
-			auditingHelper.getAuditHelper().prepareAuditReportList(ricerca, lista, idLista);
+			auditingHelper.getAuditHelper().prepareAuditReportList(ricerca, lista, idLista,
+					datainizio, datafine,
+					tipooperazione, tipooggetto,
+					id, oldid,
+					utente, statooperazione,
+					contoggetto);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

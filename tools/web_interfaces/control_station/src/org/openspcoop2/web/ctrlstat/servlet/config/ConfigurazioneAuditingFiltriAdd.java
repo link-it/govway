@@ -109,7 +109,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (confHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 
@@ -153,7 +153,11 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			String msg = ah.filtriCheckData(request, tipiOgg);
+			String msg = ah.filtriCheckData(utente, tipooperazione,
+					tipooggetto, statooperazione,
+					stato, tipofiltro,
+					dump, statoazione,
+					dumpazione, tipiOgg);
 			if (!msg.equals("")) {
 				pd.setMessage(msg);
 

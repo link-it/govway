@@ -136,7 +136,7 @@ public class PorteApplicativeMTOMResponseChange extends Action {
 			));
 			lstParam.add(new Parameter(nome, null));
 						
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	porteApplicativeHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);

@@ -147,7 +147,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	porteDelegateHelper.isEditModeInProgress()){
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

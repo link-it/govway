@@ -227,7 +227,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			//						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio),
 			//						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio)
 					);
-			if (ServletUtils.isEditModeInProgress(this.editMode) && ServletUtils.isEditModeInProgress(request)) {
+			if (ServletUtils.isEditModeInProgress(this.editMode) && apsHelper.isEditModeInProgress()) {
 
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 

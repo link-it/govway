@@ -249,7 +249,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			boolean validazioneDocumenti = true;
 			String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(apsHelper.isEditModeInProgress()){
 				// primo accesso alla servlet
 				if(tmpValidazioneDocumenti!=null){
 					if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){

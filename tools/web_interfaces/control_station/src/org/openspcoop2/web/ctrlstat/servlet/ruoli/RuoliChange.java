@@ -111,7 +111,7 @@ public final class RuoliChange extends Action {
 			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (ruoliHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, RuoliCostanti.LABEL_RUOLI, 

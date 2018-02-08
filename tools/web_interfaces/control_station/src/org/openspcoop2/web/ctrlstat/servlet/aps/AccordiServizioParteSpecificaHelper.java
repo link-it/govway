@@ -944,8 +944,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_ALLEGATI_CONTENENTI_LA_STRINGA, search));
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, search);
 			}
 
 			// setto le label delle colonne
@@ -1050,6 +1049,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 //			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 //					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+			this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_RICERCA_SERVIZIO_SOGGETTO);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, null));
@@ -1064,8 +1064,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_SERVIZI_CONTENENTI_LA_STRINGA, search));
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS, search);
 			}
 
 			// setto le label delle colonne
@@ -1105,11 +1104,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listApc.add(apc);
 				protocolli.add(protocollo);
 			}
+			
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			
 			// controllo visualizzazione colonna ruolo
 			List<String> listaLabelTabella = new ArrayList<String>();
 
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
+			if( showProtocolli ) {
+				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO);
+			}
 			listaLabelTabella.add(asLabel);
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
 			
@@ -1143,6 +1148,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			for (int i = 0; i < lista.size(); i++) {
 				AccordoServizioParteSpecifica asps = lista.get(i);
 
+				String protocollo = protocolli.get(i);
+				
 				Vector<DataElement> e = new Vector<DataElement>();
 
 				Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
@@ -1169,7 +1176,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
 					pNomeServizio, pTipoServizio, pIdsoggErogatore);
-				de.setValue(asps.getTipo()+"/"+asps.getNome());
+				de.setValue(this.getLabelNomeServizio(protocollo, asps.getTipo(), asps.getNome(), asps.getVersione()));
 				de.setIdToRemove(asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + ":" + asps.getTipo() + "/" + asps.getNome()+ ":" + asps.getVersione());
 				de.setToolTip(uriASPS);
 				e.addElement(de);
@@ -1182,8 +1189,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, asps.getIdSoggetto() + ""),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, asps.getTipoSoggettoErogatore()),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, asps.getNomeSoggettoErogatore()));
-				de.setValue(asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore());
+				de.setValue(this.getLabelNomeSoggetto(protocollo, asps.getTipoSoggettoErogatore() , asps.getNomeSoggettoErogatore()));
 				e.addElement(de);
+				
+				if(showProtocolli) {
+					de = new DataElement();
+					de.setValue(this.getLabelProtocollo(protocollo));
+					e.addElement(de);
+				}
 				
 				de = new DataElement();
 				AccordoServizioParteComune apc = listApc.get(i);
@@ -1195,7 +1208,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, 
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getIdAccordo() + ""),
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME, apc.getNome()), pTipoAccordo);
-				de.setValue(asps.getAccordoServizioParteComune());
+				de.setValue(this.getLabelIdAccordo(apc));
 				e.addElement(de);
 				
 				// colonna configurazioni
@@ -1226,7 +1239,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				e.addElement(de);
 				
 				// Colonna ruoli
-				String protocollo = protocolli.get(i);
 				if(showRuoli){
 					de = new DataElement();
 					if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){ 
@@ -1404,8 +1416,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_FRUITORI_DI_XX_CONTENENTI_LA_STRINGA_YY, tmpTitle, search));
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, search);
 			}
 
 			// setto le label delle colonne
@@ -1617,8 +1628,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, search));
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI, search);
 			}
 
 			// setto le label delle colonne
@@ -1917,8 +1927,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, search));
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI, search);
 			}
 
 
@@ -2198,8 +2207,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, search));
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, search);
 			}
 
 
@@ -4556,7 +4564,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 	public Vector<DataElement>  addInfoAllegatiToDati(TipoOperazione tipoOp,    String idAllegato,
 			AccordoServizioParteSpecifica asps, Documento doc,
-			Vector<DataElement> dati) {
+			Vector<DataElement> dati) throws Exception {
 		DataElement de = new DataElement();
 
 
@@ -4591,7 +4599,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setSize( getSize());
 		dati.addElement(de);
 
-		if(ServletUtils.isEditModeInProgress(this.request) && this.apsCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(asps.getStatoPackage())){
+		if(this.isEditModeInProgress() && this.apsCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(asps.getStatoPackage())){
 			this.pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 		}
 		else{	

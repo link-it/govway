@@ -92,7 +92,7 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (consoleHelper.isEditModeInProgress()) {
 	
 				// setto la barra del titolo
 				this.setFormTitle(object, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.ADD, 

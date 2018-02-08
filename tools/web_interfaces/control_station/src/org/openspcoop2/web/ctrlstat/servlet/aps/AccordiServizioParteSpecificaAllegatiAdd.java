@@ -133,7 +133,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (apsHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 				

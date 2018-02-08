@@ -227,7 +227,7 @@ public final class SoggettiAdd extends Action {
 				this.tipoprov = soggettiCore.getTipoSoggettoDefault();
 			}
 
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = soggettiHelper.getPostBackElementName();
 
 			// Controllo se ho modificato il protocollo, ricalcolo il default della versione del protocollo
 			if(postBackElementName != null ){

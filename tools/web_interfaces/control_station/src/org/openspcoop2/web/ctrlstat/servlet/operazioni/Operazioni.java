@@ -77,7 +77,7 @@ public class Operazioni extends Action{
 			String metodo = opHelper.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_METHOD);
 
 			// prima volta che accedo quindi show form
-			if (ServletUtils.isEditModeInProgress(request) && (metodo == null || metodo.equals(OperazioniCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_FORM))){
+			if (opHelper.isEditModeInProgress() && (metodo == null || metodo.equals(OperazioniCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_FORM))){
 				opHelper.makeMenu();
 
 				opHelper.showForm("", "", formBean);

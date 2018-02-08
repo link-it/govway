@@ -1628,8 +1628,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Porte Applicative contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, search);
 			}
 
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
@@ -1966,8 +1965,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Propriet&agrave; protocollo contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES, search);
 			}
 
 			// setto le label delle colonne
@@ -2079,8 +2077,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Servizi Applicativi contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI, search);
 			}
 
 			// setto le label delle colonne
@@ -2181,8 +2178,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Correlazioni Applicative contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, search);
 			}
 
 			// setto le label delle colonne
@@ -2311,8 +2307,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Correlazioni Applicative per la risposta contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI, search);
 			}
 
 			// setto le label delle colonne
@@ -2436,8 +2431,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Message-Security request-flow contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_DI, search);
 			}
 
 			// setto le label delle colonne
@@ -2552,8 +2546,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Message-Security response-flow contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_DI, search);
 			}
 
 			// setto le label delle colonne
@@ -3046,8 +3039,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("MTOM request-flow contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI, search);
 			}
 
 			// setto le label delle colonne
@@ -3160,8 +3152,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("MTOM response-flow contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_RESPONSE_FLOW_DI, search);
 			}
 
 			// setto le label delle colonne
@@ -3264,8 +3255,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Servizi Applicativi contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI, search);
 			}
 
 			// setto le label delle colonne

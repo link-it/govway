@@ -189,7 +189,7 @@ public class PorteDelegateMTOM extends Action {
 			Parameter url1 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM_REQUEST_LIST , urlParms);
 			Parameter url2 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM_RESPONSE_LIST , urlParms);
 
-			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
+			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 
 
 				// preparo i campi

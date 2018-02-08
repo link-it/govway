@@ -111,7 +111,12 @@ public final class AuditingDel extends Action {
 					tipooggetto, id, oldid, utente,
 					statooperazione, contoggetto);
 
-			auditingHelper.getAuditHelper().prepareAuditReportList(ricerca, lista, Liste.AUDIT_REPORT);
+			auditingHelper.getAuditHelper().prepareAuditReportList(ricerca, lista, Liste.AUDIT_REPORT,
+					datainizio, datafine,
+					tipooperazione, tipooggetto,
+					id, oldid,
+					utente, statooperazione,
+					contoggetto);
  
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

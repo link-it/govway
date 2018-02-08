@@ -101,7 +101,7 @@ public final class ConfigurazioneRegistriChange extends Action {
 
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (confHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 

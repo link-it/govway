@@ -107,7 +107,7 @@ public final class SoggettiRuoliAdd extends Action {
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (soggettiHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 

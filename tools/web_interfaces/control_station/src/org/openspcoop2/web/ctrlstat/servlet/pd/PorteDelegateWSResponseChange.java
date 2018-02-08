@@ -122,7 +122,7 @@ public final class PorteDelegateWSResponseChange extends Action {
 			// Se valore = null, devo visualizzare la pagina per la
 			// modifica dati
 			//			if (valore == null) {
-			if(	ServletUtils.isEditModeInProgress(request)){
+			if(	porteDelegateHelper.isEditModeInProgress()){
 				// setto la barra del titolo
 
 				MessageSecurity ws = pde.getMessageSecurity();

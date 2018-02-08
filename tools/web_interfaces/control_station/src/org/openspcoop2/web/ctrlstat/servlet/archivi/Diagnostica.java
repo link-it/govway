@@ -86,7 +86,7 @@ public final class Diagnostica extends Action {
 			String nomeDs = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
 			
 			String index = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_INDEX);
-			String postBackElementName=ServletUtils.getPostBackElementName(request);
+			String postBackElementName=archiviHelper.getPostBackElementName();
 			boolean showList = false;
 			if(index!=null && !ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO.equals(postBackElementName) ){
 				showList = true;
@@ -152,7 +152,7 @@ public final class Diagnostica extends Action {
 			if(showList==false){
 			
 				// Se severita == null, devo visualizzare la pagina con il pulsante
-				if(ServletUtils.isEditModeInProgress(request)){
+				if(archiviHelper.isEditModeInProgress()){
 	
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, 

@@ -175,7 +175,7 @@ import org.slf4j.Logger;
  * 
  */
 public class ConsoleHelper {
-
+	
 	protected HttpServletRequest request;
 	public HttpServletRequest getRequest() {
 		return this.request;
@@ -188,6 +188,21 @@ public class ConsoleHelper {
 	public HttpSession getSession() {
 		return this.session;
 	}
+	
+	public boolean isEditModeInProgress() throws Exception{
+		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+		return ServletUtils.isEditModeInProgress(editMode);		
+	}
+
+	public boolean isEditModeFinished() throws Exception{
+		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+		return ServletUtils.isEditModeFinished(editMode);		
+	}
+	
+	public String getPostBackElementName() throws Exception{
+		return this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
+	}
+	
 	protected Password passwordManager;
 	protected ControlStationCore core = null;
 	public ControlStationCore getCore() {

@@ -133,8 +133,10 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_ALLEGATI_DI = "Allegati di ";
 	public final static String LABEL_APS_DOWNLOAD = "Download";
 	public final static String LABEL_APS_SERVIZIO = "Servizio";
+	public final static String LABEL_APS_RICERCA_SERVIZIO_SOGGETTO = "Servizio/Soggetto";
 	public final static String LABEL_APS_ALLEGATI = "Allegati";
 	public final static String LABEL_APS_ALLEGATO = "Allegato";
+	public final static String LABEL_APS_CONFIGURAZIONI = "Configurazioni";
 	public final static String LABEL_APS_PORTE_APPLICATIVE = "Configurazione";
 	public final static String LABEL_APS_PORTE_DELEGATE = "Configurazione";
 	public final static String LABEL_APS_STATO = "Stato";
@@ -161,6 +163,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String LABEL_APS_SOGGETTO = "Soggetto";
 	public static final String LABEL_APS_TIPO_SERVIZIO = "Tipo Servizio";
 	public static final String LABEL_APS_NOME_SERVIZIO = "Nome Servizio";
+	public final static String LABEL_PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
 	
 	public final static String LABEL_APS_MENU_VISUALE_AGGREGATA = "Erogazioni";
 	
@@ -228,6 +231,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO = CostantiControlStation.PARAMETRO_SOGGETTO;
 	public final static String PARAMETRO_APS_RIPRISTINA_STATO = "backToStato";
 	public final static String PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
+	public final static String PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	
 	/* ATTRIBUTI SESSIONE */
 	
@@ -289,11 +293,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	/* DEFAULT VALUE ATTRIBUTI SESSIONE */
 	
-	/* MESSAGGI INFO SEARCH */
-	public static final String MESSAGGIO_SEARCH_XX_CONTENENTI_LA_STRINGA_YY = "{0} contenenti la stringa '{1}'";
-	public static final String MESSAGGIO_SEARCH_FRUITORI_DI_XX_CONTENENTI_LA_STRINGA_YY = "Fruitori di {0} contenenti la stringa '{1}'";
-	public static final String MESSAGGIO_SEARCH_SERVIZI_CONTENENTI_LA_STRINGA = "Servizi contenenti la stringa '{0}'";
-	public static final String MESSAGGIO_SEARCH_ALLEGATI_CONTENENTI_LA_STRINGA = "Allegati contenenti la stringa '{0}'";
 
 	/* MESSAGGI ERRORE */
 	

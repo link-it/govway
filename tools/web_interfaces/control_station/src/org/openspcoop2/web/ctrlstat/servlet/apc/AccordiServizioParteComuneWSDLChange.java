@@ -162,7 +162,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					session.removeAttribute(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}
 			
-			if(ServletUtils.isEditModeInProgress(this.editMode)){// && ServletUtils.isEditModeInProgress(request)){
+			if(ServletUtils.isEditModeInProgress(this.editMode)){// && apcHelper.isEditModeInProgress()){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
 			}else{
@@ -311,7 +311,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()
 					);
-			if(ServletUtils.isEditModeInProgress(request) && ServletUtils.isEditModeInProgress(this.editMode)){
+			if(apcHelper.isEditModeInProgress() && ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo				
 				ServletUtils.setPageDataTitle(pd, 

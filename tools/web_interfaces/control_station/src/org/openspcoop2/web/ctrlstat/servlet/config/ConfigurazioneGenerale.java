@@ -191,7 +191,7 @@ public final class ConfigurazioneGenerale extends Action {
 
 			// Se idhid != null, modifico i dati della porta di dominio nel
 			// db
-			if (!ServletUtils.isEditModeInProgress(request)) {
+			if (!confHelper.isEditModeInProgress()) {
 				
 				// Controlli sui campi immessi
 				boolean isOk = confHelper.configurazioneCheckData();

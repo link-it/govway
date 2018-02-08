@@ -17701,9 +17701,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						// - ricerca su tipo/nome servizio
 						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
 						sqlQueryObject.getWhereLikeCondition("nome_servizio", search, true, true),
-						// - ricerca su dati accordo
-						sqlQueryObject.getWhereLikeCondition("aps_nome", search, true, true),
-						//sqlQueryObject.getWhereLikeCondition("aps_versione", search, true, true), la versione e' troppo, di solito e' sempre 1...
+						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
 						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
 
 				if(permessiUtente != null){
@@ -17792,8 +17790,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				sqlQueryObject.addWhereCondition(false, 
 						// - ricerca su tipo/nome servizio
-						sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
+						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
 						sqlQueryObject.getWhereLikeCondition("nome_servizio", search, true, true),
+						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
 						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
 				
 				if(permessiUtente != null){
@@ -17815,8 +17814,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_servizio");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
-//				sqlQueryObject.addOrderBy("aps_nome");
-//				sqlQueryObject.addOrderBy("aps_versione");
 
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -17867,9 +17864,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_servizio");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
-
-//				sqlQueryObject.addOrderBy("aps_nome");
-//				sqlQueryObject.addOrderBy("aps_versione");
 
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);

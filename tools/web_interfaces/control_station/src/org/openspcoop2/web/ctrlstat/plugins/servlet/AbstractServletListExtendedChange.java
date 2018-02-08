@@ -105,7 +105,7 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (consoleHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
 				this.setFormTitle(object, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.CHANGE, 

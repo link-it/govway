@@ -369,7 +369,7 @@ public final class PorteDelegateAdd extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (porteDelegateHelper.isEditModeInProgress()) {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 

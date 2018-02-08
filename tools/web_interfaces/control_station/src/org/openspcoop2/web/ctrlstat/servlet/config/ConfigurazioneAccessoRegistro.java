@@ -102,7 +102,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 			// Se statohid == null, visualizzo la pagina per la modifica dati
 			// In caso contrario, modifico i dati della porta di dominio nel db
-			if (ServletUtils.isEditModeInProgress(request) && !applicaModifica) {
+			if (confHelper.isEditModeInProgress() && !applicaModifica) {
 				Cache arc = ar.getCache();
 				if (arc == null) {
 					if (statocache == null) {

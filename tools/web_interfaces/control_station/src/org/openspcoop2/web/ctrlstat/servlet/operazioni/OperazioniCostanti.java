@@ -59,6 +59,7 @@ public class OperazioniCostanti {
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_OPERAZIONI = "Coda Configurazioni";
+	public final static String LABEL_OPERAZIONI_CONFIGURAZIONI = "Configurazioni";
 	public final static String LABEL_OPERAZIONI_RISULTATI_RICERCA = "Risultati ricerca";
 	public static final String LABEL_OPERAZIONI_PARAMETRO_ERRORE = "Errore";
 	public static final String LABEL_OPERAZIONI_RICHIESTA_IL = "Richiesta il ";

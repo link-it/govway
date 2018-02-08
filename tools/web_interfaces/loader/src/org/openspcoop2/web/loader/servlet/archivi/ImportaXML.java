@@ -92,7 +92,7 @@ public final class ImportaXML extends Action {
 			
 			loaderHelper.makeMenu();
 
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(loaderHelper.isEditModeInProgress()){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 

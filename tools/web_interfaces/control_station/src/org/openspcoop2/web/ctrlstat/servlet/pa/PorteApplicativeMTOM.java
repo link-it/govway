@@ -196,7 +196,7 @@ public class PorteApplicativeMTOM extends Action {
 			Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_REQUEST_LIST , urlParms);
 			Parameter url2 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE_LIST , urlParms);
 
-			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
+			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 
 
 				// preparo i campi

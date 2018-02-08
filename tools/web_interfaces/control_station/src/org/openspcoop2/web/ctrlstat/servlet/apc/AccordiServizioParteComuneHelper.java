@@ -1465,7 +1465,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES, search);
-				this.pd.setSearch("on");
 			}
 
 			// setto le label delle colonne
@@ -4431,7 +4430,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			int index = 1;
 
 			if( showProtocolli ) {
-				labels[index] = AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO;
+				labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO;
 				index++;
 			}
 			
@@ -4819,8 +4818,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Componenti contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_COMPONENTI, search);
 			}
 
 			// setto le label delle colonne
@@ -5302,7 +5300,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_RISORSE, search);
-				this.pd.setSearch("on");
 			}
 
 			// setto le label delle colonne
@@ -5902,7 +5899,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_RISPOSTE, search);
-				this.pd.setSearch("on");
 			}
 
 			// setto le label delle colonne
@@ -6142,7 +6138,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION, search);
-				this.pd.setSearch("on");
 			}
 
 			// setto le label delle colonne nome, descrizione, tipo
@@ -6300,7 +6295,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			this.pd.setSearchLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_PARAMETERS, search);
-				this.pd.setSearch("on");
 			}
 
 			

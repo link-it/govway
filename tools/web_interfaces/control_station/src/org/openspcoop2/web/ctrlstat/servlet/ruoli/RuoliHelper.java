@@ -249,13 +249,12 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME);
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Ruoli contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, RuoliCostanti.LABEL_RUOLI, search);
 			}
 
 			// setto le label delle colonne
-			this.pd.setSearchLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME);
 			String[] labels = {
 					RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME,
 					RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA,

@@ -561,7 +561,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		
 		// ImportInformationMissingInvocazioneServizio
-		if(!ServletUtils.isEditModeInProgress(this.request)){
+		if(!this.isEditModeInProgress()){
 			try{
 				InvocazioneServizio is = this.readInvocazioneServizio();
 				if(is!=null){
@@ -592,7 +592,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		
 		// ImportInformationMissingConnettore
-		if(!ServletUtils.isEditModeInProgress(this.request)){
+		if(!this.isEditModeInProgress()){
 			try{
 				org.openspcoop2.core.registry.Connettore connettore = this.readConnettore();
 				if(connettore!=null){
@@ -615,7 +615,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		
 		// ImportInformationMissingCredenziali
-		if(!ServletUtils.isEditModeInProgress(this.request)){
+		if(!this.isEditModeInProgress()){
 			try{
 				Credenziali credenziali = this.readCredenzialiSA();
 				if(credenziali!=null){

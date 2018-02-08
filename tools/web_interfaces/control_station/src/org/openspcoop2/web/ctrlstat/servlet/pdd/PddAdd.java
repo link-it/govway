@@ -107,7 +107,7 @@ public final class PddAdd extends Action {
 			pddHelper.makeMenu();
 	
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(pddHelper.isEditModeInProgress()){
 	
 				// default value
 				if (porta == null || "".equals(porta))

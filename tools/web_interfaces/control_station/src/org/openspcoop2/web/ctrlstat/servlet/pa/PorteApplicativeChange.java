@@ -276,7 +276,7 @@ public final class PorteApplicativeChange extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (porteApplicativeHelper.isEditModeInProgress()) {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm);

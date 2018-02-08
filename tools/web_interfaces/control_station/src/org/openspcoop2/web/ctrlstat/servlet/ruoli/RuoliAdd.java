@@ -93,7 +93,7 @@ public final class RuoliAdd extends Action {
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (ruoliHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletAdd(pd, RuoliCostanti.LABEL_RUOLI);

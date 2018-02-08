@@ -167,7 +167,7 @@ public final class PorteApplicativeWS extends Action {
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(request) && !applicaModifica) {
+			if (porteApplicativeHelper.isEditModeInProgress() && !applicaModifica) {
 
 
 				// preparo i campi

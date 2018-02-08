@@ -162,7 +162,7 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI;
 			
-			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
+			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (autenticazione == null) {
 					autenticazione = portaDelegata.getAutenticazione();

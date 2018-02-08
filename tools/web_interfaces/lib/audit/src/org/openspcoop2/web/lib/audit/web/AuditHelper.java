@@ -182,14 +182,9 @@ public class AuditHelper {
 		}
 	}
 
-	public String auditCheckData(HttpServletRequest request)
+	public String auditCheckData(String statoaudit, String stato, String dump, String formatodump, String log4j)
 			throws Exception {
 		try {
-			String statoaudit = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_AUDIT);
-			String stato = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO);
-			String dump = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP);
-			String formatodump = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_FORMATO_DUMP);
-			String log4j = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_LOG4J);
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!statoaudit.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) && !statoaudit.equals(AuditCostanti.DEFAULT_VALUE_DISABILITATO)) {
@@ -255,8 +250,7 @@ public class AuditHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Filtri contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, AuditCostanti.LABEL_AUDIT_FILTRI, search);
 			}
 
 			// setto le label delle colonne
@@ -454,18 +448,13 @@ public class AuditHelper {
 		}
 	}
 
-	public String filtriCheckData(HttpServletRequest request, String[] tipiOgg)
+	public String filtriCheckData(String utente, String tipooperazione,
+			String tipooggetto, String statooperazione,
+			String stato, String tipofiltro,
+			String dump, String statoazione,
+			String dumpazione, String[] tipiOgg)
 			throws Exception {
 		try {
-			String utente = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			String stato = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO);
-			String tipofiltro = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_FILTRO);
-			String dump = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP);
-			String statoazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_AZIONE);
-			String dumpazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP_AZIONE);
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!tipooperazione.equals("-") &&
@@ -668,18 +657,13 @@ public class AuditHelper {
 		}
 	}
 
-	public String auditReportCheckData(HttpServletRequest request, String[] tipiOgg)
+	public String auditReportCheckData(String datainizio, String datafine,
+			String tipooperazione, String tipooggetto,
+			String id, String oldid,
+			String statooperazione,
+			String[] tipiOgg)
 			throws Exception {
 		try {
-			String datainizio = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
-			String datafine = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
-			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String id = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
-			String oldid = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
-			//String utente = request.getParameter("utente");
-			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			//String contoggetto = request.getParameter("contoggetto");
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!tipooperazione.equals("-") &&
@@ -852,18 +836,13 @@ public class AuditHelper {
 
 	// Prepara la lista di operazioni
 	public void prepareAuditReportList(ISearch ricerca, List<Operation> lista,
-			int idLista) throws Exception {
+			int idLista,
+			String datainizio, String datafine,
+			String tipooperazione, String tipooggetto,
+			String id, String oldid,
+			String utente, String statooperazione,
+			String contoggetto) throws Exception {
 		try {
-			String datainizio = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
-			String datafine = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
-			String tipooperazione = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String id = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
-			String oldid = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
-			String utente = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			String statooperazione = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			String contoggetto = this.request.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
-
 
 			ServletUtils.addListElementIntoSession(this.session, AuditCostanti.OBJECT_NAME_AUDITING);
 

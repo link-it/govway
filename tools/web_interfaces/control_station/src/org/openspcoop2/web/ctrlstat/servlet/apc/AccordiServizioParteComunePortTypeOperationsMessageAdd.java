@@ -159,7 +159,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 				listaParametri.add (new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 			
 			
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(apcHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle( pd,listaParametri);

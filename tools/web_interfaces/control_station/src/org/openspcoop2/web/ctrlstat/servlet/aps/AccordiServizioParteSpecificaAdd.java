@@ -480,7 +480,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			//			}
 
 
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = apsHelper.getPostBackElementName();
 
 			// Controllo se ho modificato l'accordo, se si allora suggerisco il referente dell'accordo
 			if(postBackElementName != null ){

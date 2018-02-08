@@ -189,7 +189,7 @@ public class AccordiServizioParteComunePortTypeOperationsMessageChange  extends 
 			listaParametri.add (new Parameter(messagePartName, null));
 
 
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(apcHelper.isEditModeInProgress()){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle( pd,listaParametri);

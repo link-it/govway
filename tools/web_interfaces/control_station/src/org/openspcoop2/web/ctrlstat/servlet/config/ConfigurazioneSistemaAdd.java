@@ -92,7 +92,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			String nomeCache = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE);
 			String nomeMetodo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO);
 			
-			String nomeParametroPostBack = ServletUtils.getPostBackElementName(request);
+			String nomeParametroPostBack = confHelper.getPostBackElementName();
 			
 			
 			if(alias==null || "".equals(alias)){

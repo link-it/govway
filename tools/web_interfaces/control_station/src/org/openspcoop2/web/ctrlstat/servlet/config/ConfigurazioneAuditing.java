@@ -83,7 +83,7 @@ public final class ConfigurazioneAuditing extends Action {
 			String dump = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP);
 			String formatodump = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_FORMATO_DUMP);
 			String log4j = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_LOG4J);
-
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			AuditHelper ah = new AuditHelper(request, pd, session);
 			AuditingCore auditingCore = new AuditingCore(confCore);
@@ -101,9 +101,9 @@ public final class ConfigurazioneAuditing extends Action {
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// Se idhid != null, modifico i dati dell'audit nel db
-			if (!ServletUtils.isEditModeInProgress(request)) {
+			if (!confHelper.isEditModeInProgress()) {
 				// Controlli sui campi immessi
-				String msg = ah.auditCheckData(request);
+				String msg = ah.auditCheckData(statoaudit, stato, dump, formatodump, log4j);
 				if (!msg.equals("")) {
 					pd.setMessage(msg);
 

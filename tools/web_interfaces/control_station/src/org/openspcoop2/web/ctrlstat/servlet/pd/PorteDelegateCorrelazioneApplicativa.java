@@ -135,7 +135,7 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			Parameter urlRichiesta = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST, urlParms);
 			Parameter urlRisposta = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST , urlParms);
 
-			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
+			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 				if ((scadcorr == null) && (ca != null)) {
 					scadcorr = ca.getScadenza();
 				}

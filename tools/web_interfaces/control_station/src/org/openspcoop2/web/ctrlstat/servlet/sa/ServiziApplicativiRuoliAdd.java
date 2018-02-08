@@ -133,7 +133,7 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (saHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
 				if(useIdSogg){

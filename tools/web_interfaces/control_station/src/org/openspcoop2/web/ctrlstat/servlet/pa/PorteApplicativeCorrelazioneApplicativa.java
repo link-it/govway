@@ -149,7 +149,7 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 			Parameter urlRichiesta = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST, urlParms);
 			Parameter urlRisposta = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST , urlParms);
 
-			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
+			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 				if ((scadcorr == null) && (ca != null)) {
 					scadcorr = ca.getScadenza();
 				}

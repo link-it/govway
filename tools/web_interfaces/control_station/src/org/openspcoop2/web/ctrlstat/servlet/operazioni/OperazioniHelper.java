@@ -103,8 +103,7 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Operazioni contenenti la stringa '" + search + "'");
+				ServletUtils.enabledPageDataSearch(this.pd, OperazioniCostanti.LABEL_OPERAZIONI_CONFIGURAZIONI, search);
 			}
 
 			// Genero l'elenco delle labels

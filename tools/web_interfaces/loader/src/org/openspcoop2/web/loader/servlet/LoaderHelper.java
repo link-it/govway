@@ -69,6 +69,20 @@ public class LoaderHelper {
 		return this.log;
 	}
 
+	public boolean isEditModeInProgress() throws Exception{
+		String editMode = this.request.getParameter(org.openspcoop2.web.lib.mvc.Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+		return ServletUtils.isEditModeInProgress(editMode);		
+	}
+
+	public boolean isEditModeFinished() throws Exception{
+		String editMode = this.request.getParameter(org.openspcoop2.web.lib.mvc.Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+		return ServletUtils.isEditModeFinished(editMode);		
+	}
+	
+	public String getPostBackElementName() throws Exception{
+		return this.request.getParameter(org.openspcoop2.web.lib.mvc.Costanti.POSTBACK_ELEMENT_NAME);
+	}
+	
 	public LoaderHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
 		this.pd = pd;

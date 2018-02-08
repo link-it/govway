@@ -182,7 +182,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI;
 			
-			if(	ServletUtils.isEditModeInProgress(request) && !applicaModifica){
+			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (autenticazione == null) {
 					autenticazione = pa.getAutenticazione();

@@ -153,7 +153,7 @@ public final class PorteApplicativeRuoliAdd extends Action {
 
 			// Se servizioApplicativohid = null, devo visualizzare la pagina per
 			// l'inserimento dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

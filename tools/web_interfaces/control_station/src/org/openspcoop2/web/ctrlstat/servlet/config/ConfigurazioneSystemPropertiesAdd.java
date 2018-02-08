@@ -95,7 +95,7 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (confHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 

@@ -225,7 +225,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
 			boolean erogazioneIsSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
 
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = apsHelper.getPostBackElementName();
 
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
@@ -282,7 +282,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+			if (apsHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,lstParm); 
 

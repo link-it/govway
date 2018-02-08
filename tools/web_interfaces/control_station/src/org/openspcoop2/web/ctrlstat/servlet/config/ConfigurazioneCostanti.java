@@ -278,6 +278,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE_STATO = "Stato";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO = "Registro";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_REGISTRI = "Elenco registri";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRI = "Registri";
 	public final static String LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI = "Messaggi Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO = "Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER = "Integration Manager";
