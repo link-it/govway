@@ -98,7 +98,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 			
 			String statusS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
 			int status = -1;
-			if(statusS==null) {
+			if(statusS==null || "".equals(statusS)) {
 				status = ApiResponse.getDefaultHttpReturnCode();
 			}
 			else {

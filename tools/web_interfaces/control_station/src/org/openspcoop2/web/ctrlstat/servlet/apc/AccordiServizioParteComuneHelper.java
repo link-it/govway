@@ -5942,55 +5942,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setValue(risposta.getDescrizione());
 					e.addElement(de);
-					
-//					// link  rappresentazioni
-//					de = new DataElement();
-//					de.setType(DataElementType.LINK);
-//					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_REPRESENTATIONS_LIST, 
-//							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
-//							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-//							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "false"),
-//							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
-//							);
-//					if (contaListe) {
-//						// Prendo l'id del port-type
-//
-//						// BugFix OP-674
-//						//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-//						Search searchForCount = new Search(true,1);
-//						this.apcCore.accordiResourceRepresentationsList(null, false, risposta.getId(), searchForCount);
-//						//int num = tmpLista.size();
-//						int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST);
-//						de.setValue(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION+" ("+num+")");
-//					} else
-//						de.setValue(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION);
-//					e.addElement(de);
-//					
-//					
-//					if (InterfaceType.AVANZATA.equals(gui)) {
-//						 // link parametri
-//						de = new DataElement();
-//						de.setType(DataElementType.LINK);
-//						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST, 
-//								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
-//								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-//								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "false"),
-//								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
-//								);
-//						if (contaListe) {
-//							// Prendo l'id del port-type
-//
-//							// BugFix OP-674
-//							//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-//							Search searchForCount = new Search(true,1);
-//							this.apcCore.accordiResourceParametersList(null, false, risposta.getId(), searchForCount);
-//							//int num = tmpLista.size();
-//							int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_PARAMETERS_REQUEST);
-//							de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS+" ("+num+")");
-//						} else
-//							de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS);
-//						e.addElement(de);
-//					}
 
 					dati.addElement(e);
 				}
@@ -6035,7 +5986,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					this.pd.setMessage("Il formato del campo "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" non &egrave; valido, indicare un HTTP Status valido");
 					return false;				
 				}
-				if(httpStatus<200 || httpStatus>599) {
+				if((httpStatus<200 || httpStatus>599) && !ApiResponse.isDefaultHttpReturnCode(httpStatus)) {
 					this.pd.setMessage("Il formato del campo "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+" non &egrave; valido, indicare un HTTP Status compreso nell'intervallo [200-599]");
 					return false;		
 				}
@@ -6435,6 +6386,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
 			int statoInt = -1;
 			try {
@@ -6451,10 +6403,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 			} else {
 				de.setType(DataElementType.TEXT);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS+"__LABEL");
+				
+				DataElement deValue = new DataElement();
+				deValue.setType(DataElementType.HIDDEN);
+				deValue.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+				deValue.setValue(status);
+				dati.addElement(deValue);
 			}
-			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
 			de.setSize(this.getSize());
 			dati.addElement(de);
+			
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE);
