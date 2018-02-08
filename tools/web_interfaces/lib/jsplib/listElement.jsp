@@ -348,9 +348,19 @@ function addHidden(theForm, name, value) {
 
 var panelListaRicercaOpen = false; // controlla l'aperture del pannello di ricerca.
 <%
-if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) || pd.getFilterNames() != null){
+if ( 
+	(
+		pd.getSearch().equals("on") || 
+		(pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()))
+	) || 
+	(
+		pd.getFilterNames() != null &&
+		pd.getFilterValues().size()>0
+	)
+) {
+
 	String searchDescription = pd.getSearchDescription();
-	if (!searchDescription.equals("") || pd.getFilterNames() != null){
+	if (!searchDescription.equals("") || (pd.getFilterNames() != null && pd.hasAlmostOneFilterDefined())){
 	%>	panelListaRicercaOpen = true; <% 
 	} 
 }%>
