@@ -54,6 +54,9 @@ public final class Filtri
 	public final static String VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_EROGATORE = "Erogatore";
 	public final static String VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE = "Fruitore";
 	
+	public final static String FILTRO_RUOLO_TIPOLOGIA = "filtroRuoloTipologia";
+	public final static String FILTRO_RUOLO_CONTESTO = "filtroRuoloContesto";
+	
 	public final static String FILTRO_UTENTE = "filtroUtente";
 	
 	

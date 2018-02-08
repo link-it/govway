@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 
 /**
  * RuoliCostanti
@@ -71,9 +72,9 @@ public class RuoliCostanti {
 	
 	public final static String LABEL_PARAMETRO_RUOLO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_RUOLO_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = "Fonte";
+	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA;
 	public final static String LABEL_PARAMETRO_RUOLO_NOME_ESTERNO = "Identificativo Esterno";
-	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = "Contesto";
+	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO;
 	
 	
 	
@@ -89,8 +90,8 @@ public class RuoliCostanti {
 		RUOLI_TIPOLOGIA.add(RuoloTipologia.ESTERNO.getValue());
 	}
 	
-	public final static String RUOLI_TIPOLOGIA_LABEL_INTERNO = "registro";
-	public final static String RUOLI_TIPOLOGIA_LABEL_ESTERNO = "esterna";
+	public final static String RUOLI_TIPOLOGIA_LABEL_INTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_INTERNO;
+	public final static String RUOLI_TIPOLOGIA_LABEL_ESTERNO = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
 	public final static List<String> RUOLI_TIPOLOGIA_LABEL = new ArrayList<String>();
 	static {
 		RUOLI_TIPOLOGIA_LABEL.add(RuoloTipologia.QUALSIASI.getValue());
@@ -104,8 +105,8 @@ public class RuoliCostanti {
 		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.PORTA_APPLICATIVA.getValue());
 		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.PORTA_DELEGATA.getValue());
 	}
-	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "erogazione";
-	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "fruizione";
+	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
 	public final static List<String> RUOLI_CONTESTO_UTILIZZO_LABEL = new ArrayList<String>();
 	static {
 		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RuoloContesto.QUALSIASI.getValue());

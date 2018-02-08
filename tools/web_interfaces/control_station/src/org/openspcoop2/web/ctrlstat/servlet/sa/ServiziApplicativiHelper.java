@@ -1853,6 +1853,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 		
 			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);
 			if (!search.equals("")) {
 				this.pd.setSearch("on");
 				this.pd.setSearchDescription("Ruoli contenenti la stringa '" + search + "'");

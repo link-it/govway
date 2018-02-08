@@ -291,8 +291,6 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					totEl++;
 				}
 			}
-//			if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED))
-				totEl++;
 
 			// protocolli
 			if( showProtocolli ) {

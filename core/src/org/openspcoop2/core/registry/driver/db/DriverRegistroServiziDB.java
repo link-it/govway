@@ -6130,6 +6130,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
+		String filterRuoloTipologia = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_TIPOLOGIA);
+		org.openspcoop2.core.registry.constants.RuoloTipologia ruoloTipologia = null;
+		if(filterRuoloTipologia!=null) {
+			ruoloTipologia = org.openspcoop2.core.registry.constants.RuoloTipologia.toEnumConstant(filterRuoloTipologia);
+		}
+		
+		String filterRuoloContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_CONTESTO);
+		org.openspcoop2.core.registry.constants.RuoloContesto ruoloContesto = null;
+		if(filterRuoloContesto!=null) {
+			ruoloContesto = org.openspcoop2.core.registry.constants.RuoloContesto.toEnumConstant(filterRuoloContesto);
+		}
+		
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt = null;
@@ -6161,7 +6173,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);	
-				
+				if(ruoloContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(ruoloTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -6170,6 +6187,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectCountField("*", "cont");
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(ruoloContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(ruoloTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -6177,6 +6200,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			int index = 1;
 			if (superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
+			}
+			if(ruoloContesto!=null) {
+				stmt.setString(index++, ruoloContesto.getValue());
+			}
+			if(ruoloTipologia!=null) {
+				stmt.setString(index++, ruoloTipologia.getValue());
 			}
 
 			risultato = stmt.executeQuery();
@@ -6195,6 +6224,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				if(ruoloContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(ruoloTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -6208,6 +6243,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("nome");
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(ruoloContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(ruoloTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -6219,6 +6260,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			index = 1;
 			if (superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
+			}
+			if(ruoloContesto!=null) {
+				stmt.setString(index++, ruoloContesto.getValue());
+			}
+			if(ruoloTipologia!=null) {
+				stmt.setString(index++, ruoloTipologia.getValue());
 			}
 			risultato = stmt.executeQuery();
 

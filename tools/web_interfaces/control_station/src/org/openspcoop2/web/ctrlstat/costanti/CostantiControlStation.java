@@ -136,6 +136,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_RUOLO_MATCH = "Ruoli Richiesti";
 	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ALL = "tutti";
 	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ANY = "almeno uno";
+	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = "Contesto";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI = "Controllo degli Accessi";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE = "Autenticazione";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE = "Autorizzazione";
@@ -160,6 +161,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_PARAMETRO_HTTP_METHOD = "HTTP Method";
+	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT = "Default";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_SOAP_11 = "Soap 1.1";
@@ -259,6 +262,14 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI = "";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_HTTP_METHOD_QUALSIASI = "";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI = "";
+	public final static String RUOLI_TIPOLOGIA_LABEL_INTERNO = "Registro";
+	public final static String RUOLI_TIPOLOGIA_LABEL_ESTERNO = "Esterna";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_QUALSIASI = "";
+	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "Erogazione";
+	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "Fruizione";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI = "";
 	

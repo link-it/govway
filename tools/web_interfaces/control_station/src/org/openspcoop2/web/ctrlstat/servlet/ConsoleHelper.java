@@ -3572,6 +3572,64 @@ public class ConsoleHelper {
 		}
 	}
 	
+	public void addFilterRuoloTipologia(String ruoloTipologia, boolean postBack) throws Exception{
+		try {
+			String [] metodi = new String[2];
+			metodi[0] = RuoloTipologia.INTERNO.getValue();
+			metodi[1] = RuoloTipologia.ESTERNO.getValue();
+			String [] metodiLabel = new String[2];
+			metodiLabel[0] = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_INTERNO;
+			metodiLabel[1] = CostantiControlStation.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
+			String [] values = new String[metodi.length + 1];
+			String [] labels = new String[metodi.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI;
+			for (int i =0; i < metodi.length ; i ++) {
+				labels[i+1] = metodiLabel[i];
+				values[i+1] = metodi[i];
+			}
+			
+			String selectedValue = ruoloTipologia != null ? ruoloTipologia : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA;
+			
+			this.pd.addFilter(Filtri.FILTRO_RUOLO_TIPOLOGIA, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterRuoloContesto(String ruoloContesto, boolean postBack) throws Exception{
+		try {
+			String [] metodi = new String[2];
+			metodi[0] = RuoloContesto.PORTA_APPLICATIVA.getValue();
+			metodi[1] = RuoloContesto.PORTA_DELEGATA.getValue();
+			String [] metodiLabel = new String[2];
+			metodiLabel[0] = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+			metodiLabel[1] = CostantiControlStation.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+			String [] values = new String[metodi.length + 1];
+			String [] labels = new String[metodi.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_QUALSIASI;
+			for (int i =0; i < metodi.length ; i ++) {
+				labels[i+1] = metodiLabel[i];
+				values[i+1] = metodi[i];
+			}
+			
+			String selectedValue = ruoloContesto != null ? ruoloContesto : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO;
+			
+			this.pd.addFilter(Filtri.FILTRO_RUOLO_CONTESTO, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
 		if( (this.isModalitaCompleta()==false) && 
 				(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {

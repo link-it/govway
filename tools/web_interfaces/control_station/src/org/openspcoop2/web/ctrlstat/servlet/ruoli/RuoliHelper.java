@@ -26,8 +26,10 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -222,6 +224,12 @@ public class RuoliHelper extends ConsoleHelper{
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
+			String filterRuoloTipologia = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_TIPOLOGIA);
+			this.addFilterRuoloTipologia(filterRuoloTipologia, false);
+			
+			String filterRuoloContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_CONTESTO);
+			this.addFilterRuoloContesto(filterRuoloContesto, false);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -247,6 +255,7 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 
 			// setto le label delle colonne
+			this.pd.setSearchLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME);
 			String[] labels = {
 					RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME,
 					RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA,
