@@ -3283,6 +3283,14 @@ public class ConsoleHelper {
 							return false;
 						}
 					}
+					if(isSupportatoAutenticazione && pd.getAutenticazione()!=null && 
+							!pd.getAutenticazione().equals(autenticazione)){
+						// modiifcata autenticazione
+						if(pd.sizeServizioApplicativoList()>0) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
+							return false;
+						}
+					}
 				}
 				else {
 					PortaApplicativa pa = (PortaApplicativa) oggetto;
@@ -3295,8 +3303,16 @@ public class ConsoleHelper {
 					}
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
 							(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false) ){
-						if(pa.sizeServizioApplicativoList()>0) {
+						if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
 							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							return false;
+						}
+					}
+					if(isSupportatoAutenticazione && pa.getAutenticazione()!=null && 
+							!pa.getAutenticazione().equals(autenticazione)){
+						// modiifcata autenticazione
+						if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
 							return false;
 						}
 					}
