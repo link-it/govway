@@ -60,9 +60,9 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public abstract class AbstractServletListExtendedChange extends AbstractServletListUtilities {
 
-	protected abstract void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper,HttpServletRequest request) throws ExtendedException;
+	protected abstract void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException;
 		
-	protected abstract UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception;
+	protected abstract UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper) throws Exception;
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -83,9 +83,9 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 			
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper,consoleCore);
+			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper);
 			
-			Object object = this.getObject(consoleCore,request);
+			Object object = this.getObject(consoleHelper);
 			
 			IExtendedBean extendedBean = null;
 			DBManager dbManager = null;
@@ -108,14 +108,14 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 			if (ServletUtils.isEditModeInProgress(request)) {
 				
 				// setto la barra del titolo
-				this.setFormTitle(object, request, session, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.CHANGE, 
-						this.getUrlExtendedList(consoleHelper, request));
+				this.setFormTitle(object, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.CHANGE, 
+						this.getUrlExtendedList(consoleHelper));
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				this.addToHiddenDati(dati,consoleHelper,request);
+				this.addToHiddenDati(dati,consoleHelper);
 				
 				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
@@ -140,14 +140,14 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				this.setFormTitle(object, request, session, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.CHANGE, 
-						this.getUrlExtendedList(consoleHelper, request));
+				this.setFormTitle(object, consoleHelper, extendedServlet, extendedBean, pd, TipoOperazione.CHANGE, 
+						this.getUrlExtendedList(consoleHelper));
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				this.addToHiddenDati(dati,consoleHelper,request);
+				this.addToHiddenDati(dati,consoleHelper);
 				
 				extendedServlet.addToDati(dati, TipoOperazione.CHANGE, consoleHelper, consoleCore, object, extendedBean);
 				
@@ -180,8 +180,8 @@ public abstract class AbstractServletListExtendedChange extends AbstractServletL
 					object, limit, offset, search);
 			ricerca.setNumEntries(idLista,extendedList.getSize());
 
-			this.prepareList(TipoOperazione.CHANGE, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request,
-					this.getUrlExtendedFather(consoleHelper, request));
+			this.prepareList(TipoOperazione.CHANGE, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(),
+					this.getUrlExtendedFather(consoleHelper));
 
 			String msgCompletato = extendedServlet.getTestoModificaEffettuata(TipoOperazione.CHANGE, consoleHelper);
 			if(msgCompletato!=null && !"".equals(msgCompletato)){

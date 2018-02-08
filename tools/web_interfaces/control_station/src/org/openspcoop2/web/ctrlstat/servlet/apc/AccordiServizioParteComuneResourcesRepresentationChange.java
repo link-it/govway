@@ -116,7 +116,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationChange exten
 				if(statusS!=null)
 					status = Integer.parseInt(statusS);
 			} catch(Exception e) {}
-			String isReq = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
+			String isReq = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST);
 			boolean isRequest = ServletUtils.isCheckBoxEnabled(isReq);
 			
 			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);

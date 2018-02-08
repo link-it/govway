@@ -38,7 +38,6 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.audit.dao.Operation;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
-import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -73,20 +72,20 @@ public final class AuditingDettaglioInfo extends Action {
 
 
 		try {
-			ConsoleHelper consoleHelper = new ConsoleHelper(request, pd, session);
+			ConsoleHelper auditingHelper = new ConsoleHelper(request, pd, session);
 
-			String type = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TYPE);
-			String idop = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OP);
+			String type = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TYPE);
+			String idop = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OP);
 			long idlong = Long.parseLong(idop);
-			String datainizio = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
-			String datafine = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
-			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String id = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
-			String oldid = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
-			String utente = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			String contoggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
+			String datainizio = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
+			String datafine = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
+			String tipooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
+			String tipooggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
+			String id = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
+			String oldid = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
+			String utente = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
+			String statooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
+			String contoggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
 
 			Parameter pDataInizio = new Parameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO, datainizio);
 			Parameter pDataFine = new Parameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE, datafine);
@@ -101,10 +100,10 @@ public final class AuditingDettaglioInfo extends Action {
 			Parameter pEnd = new Parameter(ServletUtils.getDataElementForEditModeFinished().getName(), ServletUtils.getDataElementForEditModeFinished().getValue());
 
 			// Preparo il menu
-			consoleHelper.makeMenu();
+			auditingHelper.makeMenu();
 
 			AuditingCore auditingCore = new AuditingCore();
-			AuditHelper ah = new AuditHelper(request, pd, session);
+			
 
 			// setto la barra del titolo
 			String label = "";
@@ -135,10 +134,10 @@ public final class AuditingDettaglioInfo extends Action {
 			// preparo i campi
 			Vector<DataElement> dati = null;
 			if (type.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TYPE_ERROR))
-				dati = ah.addAuditReportInfoToDati(
+				dati = auditingHelper.getAuditHelper().addAuditReportInfoToDati(
 						type, singleOp.getError());
 			else
-				dati = ah.addAuditReportInfoToDati(
+				dati = auditingHelper.getAuditHelper().addAuditReportInfoToDati(
 						type, singleOp.getObjectDetails());
 
 			pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);

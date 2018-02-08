@@ -93,13 +93,13 @@ public final class RuoliChange extends Action {
 		try {
 			RuoliHelper ruoliHelper = new RuoliHelper(request, pd, session);
 
-			String id = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_ID);
+			String id = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_ID);
 			long ruoloId = Long.parseLong(id);
-			String nome = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
-			String descrizione = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
-			String tipologia = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
-			String nomeEsterno = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
-			String contesto = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
+			String nome = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
+			String descrizione = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
+			String tipologia = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
+			String nomeEsterno = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
+			String contesto = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
 			
 			RuoliCore ruoliCore = new RuoliCore();
 

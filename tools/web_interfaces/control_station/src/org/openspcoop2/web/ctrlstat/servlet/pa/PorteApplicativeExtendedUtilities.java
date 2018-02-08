@@ -24,12 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -51,31 +47,34 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public class PorteApplicativeExtendedUtilities {
 
-	public static void addToHiddenDati(TipoOperazione tipoOperazione,Vector<DataElement> dati,ConsoleHelper consoleHelper,HttpServletRequest request) throws ExtendedException{
-		String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-		String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-		PorteApplicativeHelper porteApplicativeHelper = (PorteApplicativeHelper)consoleHelper;
-		porteApplicativeHelper.addHiddenFieldsToDati(tipoOperazione, idPorta, idsogg, idPorta, dati);
+	public static void addToHiddenDati(TipoOperazione tipoOperazione,Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+		try {
+			String idPorta = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			PorteApplicativeHelper porteApplicativeHelper = (PorteApplicativeHelper)consoleHelper;
+			porteApplicativeHelper.addHiddenFieldsToDati(tipoOperazione, idPorta, idsogg, idPorta, dati);
+		}catch(Exception e) {
+			throw new ExtendedException(e.getMessage(),e);
+		}
 	}
 	
-	public static Object getObject(ControlStationCore core,
-			HttpServletRequest request) throws Exception {
-		PorteApplicativeCore PorteApplicativeCore = (PorteApplicativeCore) core;
-		String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+	public static Object getObject(ConsoleHelper consoleHelper) throws Exception {
+		PorteApplicativeCore PorteApplicativeCore = (PorteApplicativeCore) consoleHelper.getCore();
+		String idPorta = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 		int idInt = Integer.parseInt(idPorta);
 		return PorteApplicativeCore.getPortaApplicativa(idInt);
 	}
 	
-	public static List<Parameter> getTitle(Object object, HttpServletRequest request, HttpSession session, ControlStationCore consoleCore) throws Exception {
+	public static List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
 		
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, consoleHelper.getSession());
 		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 		
 		PortaApplicativa pa = (PortaApplicativa) object;
 		String tmpTitle = pa.getTipoSoggettoProprietario() + "/" + pa.getNomeSoggettoProprietario();
 		
-		String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-		String idAsps = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+		String idsogg = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+		String idAsps = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 		if(idAsps == null) 
 			idAsps = "";
 		
@@ -83,7 +82,7 @@ public class PorteApplicativeExtendedUtilities {
 		
 		switch (parentPA) {
 		case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(consoleCore);
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(consoleHelper.getCore());
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			String servizioTmpTile = asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + "-" + asps.getTipo() + "/" + asps.getNome();
@@ -114,11 +113,10 @@ public class PorteApplicativeExtendedUtilities {
 		
 	}
 	
-	public static Parameter[] getParameterList(HttpServletRequest request,
-			HttpSession session) throws Exception {
+	public static Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception {
 		
-		String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-		String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+		String idPorta = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+		String idsogg = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 		
 		Parameter[] par = new Parameter[2];
 		par[0] = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
@@ -127,9 +125,9 @@ public class PorteApplicativeExtendedUtilities {
 		
 	}
 	
-	public static UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception {
-		String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-		String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+	public static UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception {
+		String idPorta = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+		String idsogg = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.addParameter(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,idPorta));
 		urlExtended.addParameter(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg));
@@ -137,10 +135,9 @@ public class PorteApplicativeExtendedUtilities {
 		return urlExtended;
 	}
 	
-	public static UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper,
-			HttpServletRequest request) throws Exception {
-		String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-		String idsogg = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+	public static UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper) throws Exception {
+		String idPorta = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+		String idsogg = consoleHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.addParameter(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,idPorta));
 		urlExtended.addParameter(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg));

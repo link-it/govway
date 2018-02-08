@@ -83,7 +83,7 @@ public final class AccordiCooperazioneDel extends Action {
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
 
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = acHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 
@@ -108,7 +108,7 @@ public final class AccordiCooperazioneDel extends Action {
 				// nome = de.getValue();
 				String id = idsToRemove.get(i);
 				int idAccordo = Integer.parseInt(id);
-				String tipoSICA = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
+				String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 				if("".equals(tipoSICA))
 					tipoSICA = null;
 

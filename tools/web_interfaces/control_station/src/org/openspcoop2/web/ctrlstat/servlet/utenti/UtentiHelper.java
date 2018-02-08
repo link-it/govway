@@ -549,18 +549,18 @@ public class UtentiHelper extends ConsoleHelper {
 
 	public boolean utentiCheckData(TipoOperazione tipoOperazione,boolean singlePdD,List<String> oldProtocolliSupportati, boolean oldUserHasOnlyPermessiUtenti) throws Exception {
 		try {
-			String nomesu = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-			String pwsu = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
-			String confpwsu = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
-			String tipoGui = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-			String isServizi = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
-			String isDiagnostica = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-			String isSistema = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
-			String isMessaggi = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
-			String isUtenti = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
-			String isAccordiCooperazione = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
-			String isAuditing = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
-			String changepwd = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			String nomesu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
+			String pwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
+			String confpwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			String tipoGui = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
+			String isServizi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
+			String isDiagnostica = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+			String isSistema = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
+			String isMessaggi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
+			String isUtenti = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
+			String isAccordiCooperazione = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
+			String isAuditing = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
+			String changepwd = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
 
 			List<String> protocolliRegistratiConsole = this.utentiCore.getProtocolli();
 			
@@ -568,7 +568,7 @@ public class UtentiHelper extends ConsoleHelper {
 			List<String> nuoviProtocolliSupportati = new ArrayList<String>();
 			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 				String protocolloName = protocolliRegistratiConsole.get(i);
-				modalitaScelte[i] = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+				modalitaScelte[i] = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 				if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
 					nuoviProtocolliSupportati.add(protocolloName);
 				}
@@ -813,10 +813,10 @@ public class UtentiHelper extends ConsoleHelper {
 
 		try{
 
-			String oldpw = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-			String newpw = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
-			String confpw = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
-			String changepwd = this.request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
+			String oldpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+			String newpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+			String changepwd = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
 
 			if (!ServletUtils.isCheckBoxEnabled(changepwd)) {
 				// non si vuole cambiare le pwd

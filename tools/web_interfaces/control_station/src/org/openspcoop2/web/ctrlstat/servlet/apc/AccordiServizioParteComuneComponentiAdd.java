@@ -87,12 +87,12 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			String idAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			String idServizioComponente = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_COMPONENTE);
+			String idAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String idServizioComponente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_COMPONENTE);
 			int idAccordoInt = Integer.parseInt(idAccordo);
-			//String portType = request.getParameter("port_type");
+			//String portType = apcHelper.getParameter("port_type");
 
-			String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA );
+			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA );
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 

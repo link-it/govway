@@ -71,31 +71,33 @@ public final class DiagnosticaTesto extends Action {
 
 		// Prendo il datasource
 		ArchiviCore archiviCore = new ArchiviCore();
-		String nomeDs = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
-		DriverMsgDiagnostici driverMsgDiagnostici = archiviCore.getDriverMSGDiagnostici(nomeDs);
+
 
 		try {
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
-			String iddiagnostico = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID);
+			String nomeDs = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
+			DriverMsgDiagnostici driverMsgDiagnostici = archiviCore.getDriverMSGDiagnostici(nomeDs);
+			
+			String iddiagnostico = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID);
 			long idLong = Long.parseLong(iddiagnostico);
-			String severita = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA);
-			String idfunzione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_FUNZIONE);
-			String datainizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
-			String datafine = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
-			String tipo_servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
-			String servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
-			String tipo_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
-			String nome_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
-			String tipo_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
-			String nome_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
-			String nome_azione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
-			String correlazioneApplicativa = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
-			String idMessaggio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO);
-			String idMessaggioRisposta = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_RISPOSTA);
-			String idporta = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_PORTA);
-			String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
-			String identificativoMessaggioSearch = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
+			String severita = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA);
+			String idfunzione = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_FUNZIONE);
+			String datainizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
+			String datafine = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
+			String tipo_servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
+			String servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
+			String tipo_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
+			String nome_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
+			String tipo_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
+			String nome_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
+			String nome_azione = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
+			String correlazioneApplicativa = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
+			String idMessaggio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO);
+			String idMessaggioRisposta = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_RISPOSTA);
+			String idporta = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_PORTA);
+			String protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+			String identificativoMessaggioSearch = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
 
 			Parameter pDs = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE, (nomeDs==null ? "" : nomeDs));
 			Parameter pSev = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA,severita);

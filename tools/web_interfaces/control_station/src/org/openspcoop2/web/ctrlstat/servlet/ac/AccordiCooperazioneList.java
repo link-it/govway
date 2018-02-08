@@ -70,7 +70,7 @@ public final class AccordiCooperazioneList extends Action {
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
 			
-			String tipoSICA = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
+			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
 				tipoSICA = null;
 			
@@ -95,7 +95,7 @@ public final class AccordiCooperazioneList extends Action {
 
 			acHelper.prepareAccordiCooperazioneList(lista, ricerca);
 
-			String msg = request.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT );
+			String msg = acHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT );
 			if(msg!=null && !"".equals(msg)){
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}

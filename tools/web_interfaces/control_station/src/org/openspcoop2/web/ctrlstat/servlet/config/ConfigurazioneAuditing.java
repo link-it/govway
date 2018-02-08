@@ -78,11 +78,11 @@ public final class ConfigurazioneAuditing extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			String statoaudit = request.getParameter( AuditCostanti.PARAMETRO_AUDIT_STATO_AUDIT);
-			String stato = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO);
-			String dump = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP);
-			String formatodump = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_FORMATO_DUMP);
-			String log4j = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_LOG4J);
+			String statoaudit = confHelper.getParameter( AuditCostanti.PARAMETRO_AUDIT_STATO_AUDIT);
+			String stato = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO);
+			String dump = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP);
+			String formatodump = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_FORMATO_DUMP);
+			String log4j = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_LOG4J);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			AuditHelper ah = new AuditHelper(request, pd, session);

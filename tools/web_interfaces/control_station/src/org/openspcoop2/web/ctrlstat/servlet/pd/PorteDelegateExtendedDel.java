@@ -60,21 +60,19 @@ public final class PorteDelegateExtendedDel extends AbstractServletListExtendedD
 	}
 
 	@Override
-	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper,ControlStationCore core)
+	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper)
 			throws Exception {
-		return core.getExtendedServletPortaDelegata();
+		return consoleHelper.getCore().getExtendedServletPortaDelegata();
 	}
 
 	@Override
-	protected Object getObject(ControlStationCore core,
-			HttpServletRequest request) throws Exception {
-		return PorteDelegateExtendedUtilities.getObject(core, request);
+	protected Object getObject(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getObject(consoleHelper);
 	}
 
 	@Override
-	protected List<Parameter> getTitle(Object object,
-			HttpServletRequest request, HttpSession session) throws Exception {
-		return PorteDelegateExtendedUtilities.getTitle(object, request, session,this.getConsoleCore());
+	protected List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getTitle(object, consoleHelper);
 	}
 
 	@Override
@@ -83,9 +81,8 @@ public final class PorteDelegateExtendedDel extends AbstractServletListExtendedD
 	}
 
 	@Override
-	protected Parameter[] getParameterList(HttpServletRequest request,
-			HttpSession session) throws Exception {
-		return PorteDelegateExtendedUtilities.getParameterList(request, session);
+	protected Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getParameterList(consoleHelper);
 	}
 
 	@Override
@@ -94,13 +91,12 @@ public final class PorteDelegateExtendedDel extends AbstractServletListExtendedD
 	}
 
 	@Override
-	protected UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception {
-		return PorteDelegateExtendedUtilities.getUrlExtendedChange(consoleHelper, request);
+	protected UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getUrlExtendedChange(consoleHelper);
 	}
 	
 	@Override
-	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper,
-			HttpServletRequest request) throws Exception {
-		return PorteDelegateExtendedUtilities.getUrlExtendedList(consoleHelper, request);
+	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getUrlExtendedList(consoleHelper);
 	}
 }

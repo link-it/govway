@@ -73,7 +73,7 @@ public final class AccordiServizioParteSpecificaFruitoriList extends Action {
 			 * field validation done in porteDomForm.java Business logic validation
 			 * done in porteDomAdd.java
 			 */
-			String id = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 	
 			// Preparo il menu
 			apsHelper.makeMenu();

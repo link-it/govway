@@ -75,11 +75,11 @@ public final class PddSinglePdDAdd extends Action {
 
 		try {
 			PddHelper pddHelper = new PddHelper(request, pd, session);
-			String nome = request.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
-			String descr = request.getParameter(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
-			String implementazione = request.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
-			String subject = request.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
-			String clientAuth = request.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
+			String nome = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
+			String descr = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
+			String implementazione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
+			String subject = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
+			String clientAuth = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
 			
 			PddCore pddCore = new PddCore();
 	

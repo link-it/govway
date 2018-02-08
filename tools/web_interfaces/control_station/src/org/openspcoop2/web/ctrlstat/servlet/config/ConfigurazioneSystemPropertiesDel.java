@@ -78,9 +78,9 @@ public final class ConfigurazioneSystemPropertiesDel extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			//String id = request.getParameter("id");
+			//String id = confHelper.getParameter("id");
 			//int idInt = Integer.parseInt(id);
-			String objToRemove =request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
+			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
 			// int[] idToRemove = new int[objTok.countTokens()];

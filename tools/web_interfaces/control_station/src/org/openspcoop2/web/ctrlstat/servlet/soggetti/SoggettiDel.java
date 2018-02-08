@@ -77,8 +77,10 @@ public final class SoggettiDel extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
+			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
+			
 			// ctrlstatHelper ch = new ctrlstatHelper(request, pd, con, session);
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = soggettiHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// // Elimino i soggetti dal db
@@ -95,8 +97,6 @@ public final class SoggettiDel extends Action {
 			// String nomeprov = "", tipoprov = "";
 			boolean isInUso = false;
 			
-			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
-	
 			soggettiHelper.makeMenu();
 	
 			String userLogin = ServletUtils.getUserLoginFromSession(session);

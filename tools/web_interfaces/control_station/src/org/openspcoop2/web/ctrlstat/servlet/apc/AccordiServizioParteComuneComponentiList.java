@@ -71,9 +71,9 @@ public final class AccordiServizioParteComuneComponentiList extends Action {
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			String idAccordoServizio = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String idAccordoServizio = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 
-			String tipoSICA = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA);
+			String tipoSICA = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_TIPO_SICA);
 			if("".equals(tipoSICA))
 				tipoSICA = null;
 

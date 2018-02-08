@@ -97,7 +97,7 @@ public final class AccordiServizioParteSpecificaList extends Action {
 
 			apsHelper.prepareServiziList(ricerca, lista);
 
-			String msg = request.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
+			String msg = apsHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
 			if(msg!=null && !"".equals(msg)){
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}

@@ -92,9 +92,9 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 			 * field validation done in porteDomForm.java Business logic
 			 * validation done in porteDomAdd.java
 			 */
-			String id = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			int idServizio = Integer.parseInt(id);
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden

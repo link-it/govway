@@ -69,10 +69,10 @@ public final class PorteDelegateCorrelazioneApplicativaRequestList extends Actio
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 
-			String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-			// String idsogg = request.getParameter("idsogg");
+			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			// String idsogg = porteDelegateHelper.getParameter("idsogg");
 			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
+			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
 			// Preparo il menu

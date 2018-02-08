@@ -83,15 +83,15 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			String utente = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			String stato = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO);
-			String tipofiltro = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_FILTRO);
-			String dump = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP);
-			String statoazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_AZIONE);
-			String dumpazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP_AZIONE);
+			String utente = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
+			String tipooperazione = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
+			String tipooggetto = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
+			String statooperazione = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
+			String stato = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO);
+			String tipofiltro = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_FILTRO);
+			String dump = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP);
+			String statoazione = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_AZIONE);
+			String dumpazione = confHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DUMP_AZIONE);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			AuditingCore auditingCore = new AuditingCore(confCore);

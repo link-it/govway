@@ -43,8 +43,8 @@ public class LoginHelper extends ConsoleHelper {
 	
 	public boolean loginCheckData(LoginTipologia tipoCheck) throws Exception {
 		try{
-			String login = this.request.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
-			String password = this.request.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
+			String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
+			String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
 
 			// Campi obbligatori
 			if (login.equals("")) {

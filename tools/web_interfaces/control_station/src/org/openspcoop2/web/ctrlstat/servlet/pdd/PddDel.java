@@ -69,8 +69,11 @@ public final class PddDel extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
+			
+			PddHelper pddHelper = new PddHelper(request, pd, session);
+			
 			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, session);
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = pddHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 	
 			// Elimino i pdd dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -78,8 +81,6 @@ public final class PddDel extends Action {
 			// String nome = "";
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
-			PddHelper pddHelper = new PddHelper(request, pd, session);
 
 			PddCore pddCore = new PddCore();
 			

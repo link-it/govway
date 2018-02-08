@@ -34,7 +34,6 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.audit.dao.Operation;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
-import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -67,19 +66,19 @@ public final class AuditingDettaglioDocumentiBinari extends Action {
 
 
 		try {
-			ConsoleHelper consoleHelper = new ConsoleHelper(request, pd, session);
+			ConsoleHelper auditingHelper = new ConsoleHelper(request, pd, session);
 
-			String idop = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OP);
+			String idop = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_OPERATION_ID_OP);
 			long idlong = Long.parseLong(idop);
-			String datainizio = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
-			String datafine = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
-			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String id = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
-			String oldid = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
-			String utente = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			String contoggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
+			String datainizio = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
+			String datafine = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
+			String tipooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
+			String tipooggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
+			String id = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
+			String oldid = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
+			String utente = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
+			String statooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
+			String contoggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
 
 			Parameter pDataInizio = new Parameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO, datainizio);
 			Parameter pDataFine = new Parameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE, datafine);
@@ -93,16 +92,15 @@ public final class AuditingDettaglioDocumentiBinari extends Action {
 			Parameter pEnd = new Parameter(ServletUtils.getDataElementForEditModeFinished().getName(), ServletUtils.getDataElementForEditModeFinished().getValue());
 			
 			AuditingCore auditingCore = new AuditingCore();
-			AuditHelper auditingHelper = new AuditHelper(request, pd, session);
 
 			// Preparo il menu
-			consoleHelper.makeMenu();
+			auditingHelper.makeMenu();
 
 			// Prendo l'operazione
 			Operation singleOp = auditingCore.getAuditOperation(idlong);
 
 			// Preparo la lista
-			auditingHelper.prepareDocBinList(singleOp, pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto, pEnd);
+			auditingHelper.getAuditHelper().prepareDocBinList(singleOp, pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto, pEnd);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

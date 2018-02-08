@@ -61,13 +61,6 @@ public class AuditHelper {
 	PageData pd;
 	HttpSession session;
 
-	// Costruttore per le addToDati
-	public AuditHelper() {
-		this.request = null;
-		this.pd = null;
-		this.session = null;
-	}
-
 	// Costruttore per le list
 	public AuditHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;

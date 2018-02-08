@@ -73,14 +73,14 @@ public final class RuoliAdd extends Action {
 		try {
 			RuoliHelper ruoliHelper = new RuoliHelper(request, pd, session);
 
-			String nome = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
-			String descrizione = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
-			String tipologia = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
+			String nome = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
+			String descrizione = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
+			String tipologia = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
 			if (tipologia == null) {
 				tipologia = RuoliCostanti.DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA;
 			}
-			String nomeEsterno = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
-			String contesto = request.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
+			String nomeEsterno = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
+			String contesto = ruoliHelper.getParameter(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
 			if (contesto == null) {
 				contesto = RuoliCostanti.DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_UTILIZZO;
 			}

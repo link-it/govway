@@ -80,14 +80,14 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 		try {
 			ConsoleHelper consoleHelper = this.getConsoleHelper(request, pd, session);
 			
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = consoleHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper,consoleCore);
+			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper);
 			
-			Object object = this.getObject(consoleCore,request);
+			Object object = this.getObject(consoleHelper);
 			
 			DBManager dbManager = null;
 			Connection con = null;
@@ -156,8 +156,8 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 					object, limit, offset, search);
 			ricerca.setNumEntries(idLista,extendedList.getSize());
 
-			this.prepareList(TipoOperazione.DEL, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request,
-					this.getUrlExtendedFather(consoleHelper, request));
+			this.prepareList(TipoOperazione.DEL, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(),
+					this.getUrlExtendedFather(consoleHelper));
 
 			String msgCompletato = extendedServlet.getTestoModificaEffettuata(TipoOperazione.DEL, consoleHelper);
 			if(msgCompletato!=null && !"".equals(msgCompletato)){

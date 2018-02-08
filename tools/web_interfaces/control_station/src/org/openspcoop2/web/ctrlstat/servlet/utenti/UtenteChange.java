@@ -78,12 +78,12 @@ public final class UtenteChange extends Action {
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
 
-			String newpw = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
-			String tipogui = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI);
-			String changeGui = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI);
-			String changepw = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
-			String changeModalita = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA);
-			String tipoModalita = request.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+			String newpw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+			String tipogui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI);
+			String changeGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI);
+			String changepw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
+			String changeModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA);
+			String tipoModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 
 			UtentiCore utentiCore = new UtentiCore();
 

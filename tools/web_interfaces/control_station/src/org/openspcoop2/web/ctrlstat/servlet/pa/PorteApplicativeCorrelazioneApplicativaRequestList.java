@@ -70,10 +70,10 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestList extends Ac
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 
-			String idPorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			// String idsogg = request.getParameter("idsogg");
+			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			// String idsogg = porteApplicativeHelper.getParameter("idsogg");
 			// int soggInt = Integer.parseInt(idsogg);
-			String nomePorta = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
+			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 

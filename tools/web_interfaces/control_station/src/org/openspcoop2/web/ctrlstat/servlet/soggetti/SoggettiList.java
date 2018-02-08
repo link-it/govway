@@ -101,7 +101,7 @@ public final class SoggettiList extends Action {
 				soggettiHelper.prepareSoggettiConfigList(lista, ricerca);
 			}
 			
-			String msg = request.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
+			String msg = soggettiHelper.getParameter(Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT);
 			if(msg!=null && !"".equals(msg)){
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}

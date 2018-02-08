@@ -80,7 +80,7 @@ public final class RuoliDel extends Action {
 		try {
 			RuoliHelper ruoliHelper = new RuoliHelper(request, pd, session);
 
-			String objToRemove =request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
+			String objToRemove =ruoliHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			RuoliCore ruoliCore = new RuoliCore();
 

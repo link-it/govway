@@ -30,11 +30,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.lib.mvc.PageData;
 
 /**
  * Questa servlet si occupa di esportare le tracce in formato xml zippandole
@@ -72,19 +74,32 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 	 */
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		ControlStationCore.logDebug("Ricevuta Richiesta di esportazione configurazione di Sistema...");
-		Enumeration<?> en = request.getParameterNames();
-		ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
-		while (en.hasMoreElements()) {
-			String param = (String) en.nextElement();
-			String value = request.getParameter(param);
-			ControlStationCore.logDebug(param + " = " + value);
-		}
-		ControlStationCore.logDebug("-----------------");
+		HttpSession session = request.getSession(true);
 
-		String alias = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		// Inizializzo PageData
+		PageData pd = new PageData();
 		
+		ConfigurazioneHelper confHelper = null;
 		try {
+			confHelper = new ConfigurazioneHelper(request, pd, session);
+		
+			ControlStationCore.logDebug("Ricevuta Richiesta di esportazione configurazione di Sistema...");
+			Enumeration<?> en = confHelper.getParameterNames();
+			ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
+			while (en.hasMoreElements()) {
+				String param = (String) en.nextElement();
+				String value = confHelper.getParameter(param);
+				ControlStationCore.logDebug(param + " = " + value);
+			}
+			ControlStationCore.logDebug("-----------------");
+			
+		}catch(Exception e){
+			throw new ServletException(e.getMessage(),e);
+		}
+	
+		try {
+			
+			String alias = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			

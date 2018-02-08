@@ -82,7 +82,7 @@ public final class ConfigurazioneAuditingFiltriDel extends Action {
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			AuditHelper ah = new AuditHelper(request, pd, session);
 
-			String objToRemove =request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
+			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 
 			// Elimino i filtri dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);

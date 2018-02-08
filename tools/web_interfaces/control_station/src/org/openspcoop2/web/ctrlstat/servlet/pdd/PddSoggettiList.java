@@ -68,9 +68,10 @@ public final class PddSoggettiList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			String id = request.getParameter(PddCostanti.PARAMETRO_PDD_ID);
-	
+			
 			PddHelper pddHelper = new PddHelper(request, pd, session);
+			
+			String id = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_ID);
 	
 			PddCore pddCore = new PddCore();
 			PdDControlStation pdd = pddCore.getPdDControlStation(Integer.parseInt(id));

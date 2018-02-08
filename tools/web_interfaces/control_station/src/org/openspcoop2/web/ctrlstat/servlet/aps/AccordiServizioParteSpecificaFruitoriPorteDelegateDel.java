@@ -87,17 +87,17 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			 * field validation done in porteDomForm.java Business logic
 			 * validation done in porteDomAdd.java
 			 */
-			String idServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			Long idS = Long.parseLong(idServizio);
 			
-			String idFruizione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
+			String idFruizione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);
 			Long idFru = Long.parseLong(idFruizione);
 			
-			String idSoggFruitoreDelServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
+			String idSoggFruitoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
 			@SuppressWarnings("unused")
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
 			
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			// gli id contenuti nell'array sono i nomi delle porte applicative
 			// da rimuovere
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);

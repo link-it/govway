@@ -35,13 +35,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.audit.dao.Operation;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
-import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -75,23 +74,23 @@ public   class Auditing extends Action {
 
 
 		try {
-			ConsoleHelper consoleHelper = new ConsoleHelper(request, pd, session);
+			ConsoleHelper auditingHelper = new ConsoleHelper(request, pd, session);
 
-			String datainizio = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
-			String datafine = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
-			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String id = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
-			String oldid = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
-			String utente = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			String contoggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
+			String datainizio = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
+			String datafine = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
+			String tipooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
+			String tipooggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
+			String id = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
+			String oldid = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
+			String utente = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
+			String statooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
+			String contoggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
 
 			AuditingCore auditingCore = new AuditingCore();
-			AuditHelper auditingHelper = new AuditHelper(request, pd, session);
+			
 
 			// Preparo il menu
-			consoleHelper.makeMenu();
+			auditingHelper.makeMenu();
 			//User user = Utilities.getLoggedUser(session);
 
 			IDBuilder idb = new IDBuilder();
@@ -112,7 +111,7 @@ public   class Auditing extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = auditingHelper.addAuditReportToDati(
+				Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
 						"", "", "-", tipiOgg, "-", "", "", "", "-", "");
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
@@ -125,7 +124,7 @@ public   class Auditing extends Action {
 			}
 
 			// Controlli sui campi immessi
-			String msg = auditingHelper.auditReportCheckData(request, tipiOgg);
+			String msg = auditingHelper.getAuditHelper().auditReportCheckData(request, tipiOgg);
 			if (!msg.equals("")) {
 				pd.setMessage(msg);
 
@@ -138,7 +137,7 @@ public   class Auditing extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
-				Vector<DataElement> dati = auditingHelper.addAuditReportToDati(
+				Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
 						datainizio, datafine, tipooperazione, tipiOgg,
 						tipooggetto, id, oldid, utente, statooperazione,
 						contoggetto);
@@ -158,14 +157,14 @@ public   class Auditing extends Action {
 
 			int idLista = Liste.AUDIT_REPORT;
 
-			ricerca = consoleHelper.checkSearchParameters(idLista, ricerca);
+			ricerca = auditingHelper.checkSearchParameters(idLista, ricerca);
 
 			List<Operation> lista = auditingCore.auditOperationList(ricerca,
 					datainizio, datafine, tipooperazione,
 					tipooggetto, id, oldid, utente,
 					statooperazione, contoggetto);
 
-			auditingHelper.prepareAuditReportList(ricerca, lista, idLista);
+			auditingHelper.getAuditHelper().prepareAuditReportList(ricerca, lista, idLista);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

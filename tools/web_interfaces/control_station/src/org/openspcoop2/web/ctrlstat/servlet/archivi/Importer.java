@@ -143,7 +143,7 @@ public final class Importer extends Action {
 			
 			// Indicazione se devo effettuare una delete od una import
 			boolean deleter = false;
-			String parametroModalitaFunzionamento = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);
+			String parametroModalitaFunzionamento = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);
 			if(parametroModalitaFunzionamento!=null){
 				deleter = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA.equals(parametroModalitaFunzionamento.trim());
 			}
@@ -159,7 +159,7 @@ public final class Importer extends Action {
 			
 			
 			// parametri vari
-			this.filePath = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH);
+			this.filePath = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH);
 			if(this.filePath==null || "".equals(this.filePath)){
 				this.step = 0;
 			}
@@ -171,7 +171,7 @@ public final class Importer extends Action {
 				protocolli.add(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED);
 				protocolli.addAll(archiviCore.getProtocolli(session));
 			}
-			this.protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+			this.protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 			if("".equals(this.protocollo) || ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(this.protocollo)){
 				this.protocollo = null;
 			}
@@ -194,7 +194,7 @@ public final class Importer extends Action {
 			for (String imp : importModesMap.keySet()) {
 				importModes.add(new ImportMode(imp));
 			}
-			this.importMode = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
+			this.importMode = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 			if(this.importMode!=null){
 				// verifico che esista nei modes disponibili per i protocolli selezionati
 				if(importModes.contains(new ImportMode(this.importMode))==false){
@@ -221,7 +221,7 @@ public final class Importer extends Action {
 			if(this.importMode!=null){
 				importTypes = importerUtils.getImportModeTypes(archiveMode, protocolloEffettivo);
 			}
-			this.importType = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO);
+			this.importType = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO);
 			if(this.importType!=null){
 				// verifico che esista nei tyoes disponibili per il mode selezionato
 				if(importTypes.contains(new ArchiveModeType(this.importType))==false){
@@ -238,7 +238,7 @@ public final class Importer extends Action {
 			
 			
 			// validazione
-			String tmpValidazioneDocumenti = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
+			String tmpValidazioneDocumenti = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
 			if(ServletUtils.isEditModeInProgress(request) && tmpValidazioneDocumenti==null){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
@@ -253,7 +253,7 @@ public final class Importer extends Action {
 			}
 			
 			// updateEnabled
-			String tmpUpdateEnabled = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
+			String tmpUpdateEnabled = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
 			if(ServletUtils.isEditModeInProgress(request) && tmpUpdateEnabled==null){
 				// primo accesso alla servlet
 				this.updateEnabled = false;
@@ -269,10 +269,10 @@ public final class Importer extends Action {
 			
 			
 			// importInformationMissing: objectClass
-			String tmpClass = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_CLASS);
+			String tmpClass = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_CLASS);
 			if(tmpClass!=null && !"".equals(tmpClass)){
 				this.importInformationMissing_classObject = Class.forName(tmpClass);
-				String absolutePath = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_FILE_PATH);
+				String absolutePath = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_FILE_PATH);
 				if(absolutePath==null || "".equals(absolutePath)){
 					throw new Exception("Parametro ["+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_FILE_PATH
 							+"] non trovato, nonostante sia presente il parametro ["+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_CLASS
@@ -284,23 +284,23 @@ public final class Importer extends Action {
 				this.importInformationMissing_object = null;
 			}
 			// importInformationMissing: soggetto
-			this.importInformationMissing_soggettoInput = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT);
+			this.importInformationMissing_soggettoInput = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT);
 			// importInformationMissing: versione
-			this.importInformationMissing_versioneInput = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT);
+			this.importInformationMissing_versioneInput = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT);
 			// Import Information Missing collection
-			this.importInformationMissingCollectionFilePath = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_COLLECTION_FILE_PATH);
+			this.importInformationMissingCollectionFilePath = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_COLLECTION_FILE_PATH);
 			// Import Information Missing object id
-			this.importInformationMissingObjectId = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID);
+			this.importInformationMissingObjectId = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID);
 			// importInformationMissing: servizi, modalita' di acquisizione
 			this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo = 
-					request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT);
+					archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT);
 			// importInformationMissing: portTypeImplemented
 			this.importInformationMissing_portTypeImplementedInput = 
-					request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT);
+					archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT);
 			// importInformationMissing: accordoServizioParteComune
-			this.importInformationMissing_accordoServizioParteComuneInput = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT);
+			this.importInformationMissing_accordoServizioParteComuneInput = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT);
 			// importInformationMissing: accordoCooperazione
-			this.importInformationMissing_accordoCooperazioneInput = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT);
+			this.importInformationMissing_accordoCooperazioneInput = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT);
 						
 			
 	

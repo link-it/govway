@@ -68,9 +68,9 @@ public abstract class AbstractServletListExtendedList extends AbstractServletLis
 
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper,consoleCore);
+			IExtendedListServlet extendedServlet = this.getExtendedServlet(consoleHelper);
 			
-			Object object = this.getObject(consoleCore,request);
+			Object object = this.getObject(consoleHelper);
 			
 			// Preparo il menu
 			consoleHelper.makeMenu();
@@ -88,8 +88,8 @@ public abstract class AbstractServletListExtendedList extends AbstractServletLis
 					object, limit, offset, search);
 			ricerca.setNumEntries(idLista,extendedList.getSize());
 			
-			this.prepareList(TipoOperazione.LIST, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(), request,
-					this.getUrlExtendedFather(consoleHelper, request));
+			this.prepareList(TipoOperazione.LIST, consoleHelper, ricerca, object, extendedServlet, extendedList.getExtendedBean(), ControlStationCore.getLog(),
+					this.getUrlExtendedFather(consoleHelper));
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

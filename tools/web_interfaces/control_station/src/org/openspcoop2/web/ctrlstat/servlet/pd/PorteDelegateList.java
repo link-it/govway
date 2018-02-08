@@ -72,7 +72,9 @@ public final class PorteDelegateList extends Action {
 		Boolean useIdSogg = parentPD == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
 		
 		try {
-			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			
+			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = -1;
 			// Posso arrivare a questa pagina anche dal menu' senza specificare il soggetto
 			if(idsogg != null){
@@ -86,8 +88,6 @@ public final class PorteDelegateList extends Action {
 
 			// salvo il punto di ingresso
 			ServletUtils.setObjectIntoSession(session, parentPD, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
-
-			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();

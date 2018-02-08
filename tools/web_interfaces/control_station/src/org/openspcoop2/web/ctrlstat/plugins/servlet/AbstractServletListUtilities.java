@@ -53,28 +53,28 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public abstract class AbstractServletListUtilities extends Action {
 
-	protected abstract UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception;
+	protected abstract UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper) throws Exception;
 	
 	protected abstract ConsoleHelper getConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) throws Exception;
 	
 	protected abstract ControlStationCore getConsoleCore() throws Exception;
 	
-	protected abstract IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper,ControlStationCore core) throws Exception;
+	protected abstract IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper) throws Exception;
 	
-	protected abstract Object getObject(ControlStationCore core, HttpServletRequest request) throws Exception;
+	protected abstract Object getObject(ConsoleHelper consoleHelper) throws Exception;
 	
-	protected abstract List<Parameter> getTitle(Object object, HttpServletRequest request, HttpSession session) throws Exception;
+	protected abstract List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception;
 	
 	protected abstract int getIdList() throws Exception;
 	
-	protected abstract Parameter[] getParameterList(HttpServletRequest request, HttpSession session) throws Exception;
+	protected abstract Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception;
 	
 	protected abstract String getObjectName() throws Exception;
 	
-	protected abstract UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception;
+	protected abstract UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception;
 	
 	protected void prepareList(TipoOperazione tipoOperazione, ConsoleHelper consoleHelper, Search ricerca, Object object, IExtendedListServlet extendedServlet, List<IExtendedBean> lista,
-			Logger log, HttpServletRequest request, UrlParameters extendedFather)
+			Logger log, UrlParameters extendedFather)
 			throws Exception {
 		try {
 
@@ -84,7 +84,7 @@ public abstract class AbstractServletListUtilities extends Action {
 			
 			List<Parameter> newLista = new ArrayList<Parameter>();
 			
-			Parameter[] pSession = this.getParameterList(request,session);
+			Parameter[] pSession = this.getParameterList(consoleHelper);
 			if(pSession!=null && pSession.length>0){
 				for (int i = 0; i < pSession.length; i++) {
 					newLista.add(pSession[i]);
@@ -121,7 +121,7 @@ public abstract class AbstractServletListUtilities extends Action {
 			pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// setto la barra del titolo 1
-			List<Parameter> lstParam = this.getTitle(object,request, session);
+			List<Parameter> lstParam = this.getTitle(object,consoleHelper);
 			List<Parameter> listP = new ArrayList<Parameter>();
 			if(extendedFather.sizeParameter()>0){
 				listP.addAll(extendedFather.getParameter());
@@ -186,7 +186,7 @@ public abstract class AbstractServletListUtilities extends Action {
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					extendedServlet.addDatiToList(e, tipoOperazione, consoleHelper, consoleCore, object, extendendBean, 
-							this.getUrlExtendedChange(consoleHelper, request));
+							this.getUrlExtendedChange(consoleHelper));
 										
 					dati.addElement(e);
 				}
@@ -200,9 +200,9 @@ public abstract class AbstractServletListUtilities extends Action {
 		}
 	}
 	
-	protected void setFormTitle(Object object,HttpServletRequest request,HttpSession session,ConsoleHelper consoleHelper,
+	protected void setFormTitle(Object object,ConsoleHelper consoleHelper,
 			IExtendedListServlet extendedServlet,IExtendedBean extendedBean,PageData pd,TipoOperazione tipoOperazione,UrlParameters extendedList) throws Exception{
-		List<Parameter> lstParam = this.getTitle(object,request,session);
+		List<Parameter> lstParam = this.getTitle(object,consoleHelper);
 		
 		List<Parameter> listP = new ArrayList<Parameter>();
 		if(extendedList.sizeParameter()>0){

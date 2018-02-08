@@ -23,10 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -49,6 +45,7 @@ import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.slf4j.Logger;
 
 /**
  * Mapping delle autorizzazioni necessarie per invocare una servlet
@@ -72,12 +69,12 @@ public class GestoreAutorizzazioni {
 			utentiCore = new UtentiCore(core);
 		}
 	}
-	public static boolean autorizzazioneUtente(boolean singlePdD,Logger log,String nomeServlet,HttpServletRequest request ,HttpSession session) throws Exception{
+	public static boolean autorizzazioneUtente(boolean singlePdD,Logger log,String nomeServlet,LoginHelper loginHelper) throws Exception{
 		if(GestoreAutorizzazioni.permessi==null)
 			GestoreAutorizzazioni.init(singlePdD);
 		
 		
-		return GestoreAutorizzazioni.permessi.permettiVisualizzazione(log, nomeServlet,request, session);
+		return GestoreAutorizzazioni.permessi.permettiVisualizzazione(log, nomeServlet,loginHelper);
 	}
 	
 	// Raccolta servlet in funzionalita
@@ -379,9 +376,9 @@ public class GestoreAutorizzazioni {
 	}
 	
 	
-	public boolean permettiVisualizzazione(Logger log,String nomeServlet,HttpServletRequest request, HttpSession session){
+	public boolean permettiVisualizzazione(Logger log,String nomeServlet,LoginHelper loginHelper) throws Exception{
 		
-		String login = ServletUtils.getUserLoginFromSession(session);
+		String login = ServletUtils.getUserLoginFromSession(loginHelper.getSession());
 		User user = null;
 		try{
 			user = utentiCore.getUser(login);
@@ -406,7 +403,7 @@ public class GestoreAutorizzazioni {
 			//controllo che la servlet richiesta sia consentita per il profilo dell'utente
 			boolean servletOk = this.permessiAccordiServizio.or(user.getPermessi());
 			
-			String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO); 
+			String tipoAccordo = loginHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO); 
 			
 			//se la richiesta fa parte di un gruppo di servlet consentite 
 			//controllo se viene passato un parametro con nome tipo accordo 

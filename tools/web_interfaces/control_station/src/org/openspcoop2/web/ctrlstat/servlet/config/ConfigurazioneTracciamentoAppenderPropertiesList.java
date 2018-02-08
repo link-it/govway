@@ -68,7 +68,7 @@ public final class ConfigurazioneTracciamentoAppenderPropertiesList extends Acti
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			String id = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
+			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			int idInt = Integer.parseInt(id);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();

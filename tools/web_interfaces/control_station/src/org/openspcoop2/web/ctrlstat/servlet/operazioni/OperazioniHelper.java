@@ -322,7 +322,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			String operazione = null;
 			// controllo se richiesta corretta
 			boolean trovato = false;
-			operazione = this.request.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE);
+			operazione = this.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE);
 			if ((operazione == null) || operazione.equals("")) {
 				operazione = OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE_IN_CODA;
 			}
@@ -346,14 +346,14 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			form.setTipo(operazione);
 
-			String idOperazione = this.request.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_ID);
+			String idOperazione = this.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_ID);
 			if ((idOperazione != null) && !idOperazione.equals("")) {
 				form.setIdOperazione(idOperazione);
 			}
 
 			// utente 
 
-			String utente = this.request.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE);
+			String utente = this.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE);
 
 			List<User> userList = new ArrayList<User>();
 			String utenteTmp = null;
@@ -378,7 +378,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			form.setListaUser(userList); 
 
 			// Pagina da visualizzare
-			String metodo = this.request.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_METHOD);
+			String metodo = this.getParameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_METHOD);
 
 			if(metodo == null)
 				metodo = OperazioniCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_FORM;

@@ -27,12 +27,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettoreConverter;
@@ -54,12 +50,12 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 public class ServletExtendedConnettoreUtils {
 
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.config.Connettore connettore,
-			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, 
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper,
 			boolean first,String endpointType) throws ExtendedException{
-		return getExtendedConnettore(connettore, servletType, consoleHelper, core, request, session, null, first, endpointType);
+		return getExtendedConnettore(connettore, servletType, consoleHelper, null, first, endpointType);
 	}
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.config.Connettore connettore,
-			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, Properties parametersPOST,
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper, Properties parametersPOST,
 			boolean first,String endpointType) throws ExtendedException{
 		
 		boolean connettoreDisabilitato = true;
@@ -80,25 +76,25 @@ public class ServletExtendedConnettoreUtils {
 			tipoConnettore = endpointType;
 		}
 		
-		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, core, session, connettoreDisabilitato, tipoConnettore);
+		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, connettoreDisabilitato, tipoConnettore);
 		if(l!=null && l.size()>0){
 			if(first)
 				ExtendedConnettoreConverter.readExtendedInfoFromConnettore(l, connettore);
-			else
-				updateInfo(request, parametersPOST, l);
+			else 
+				updateInfo(consoleHelper, parametersPOST, l);
 		}
 		return l;
 		
 	}
 	
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.registry.Connettore connettore,
-			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, 
-			boolean first,String endpointType) throws ExtendedException{
-		return getExtendedConnettore(connettore, servletType, consoleHelper, core, request, session, null, first, endpointType);
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper, 
+			boolean first,String endpointType) throws Exception{
+		return getExtendedConnettore(connettore, servletType, consoleHelper, null, first, endpointType);
 	}
 	public static List<ExtendedConnettore> getExtendedConnettore(org.openspcoop2.core.registry.Connettore connettore,
-			ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpServletRequest request, HttpSession session, Properties parametersPOST, 
-			boolean first,String endpointType) throws ExtendedException{
+			ConnettoreServletType servletType, ConsoleHelper consoleHelper, Properties parametersPOST, 
+			boolean first,String endpointType) throws Exception{
 		
 		boolean connettoreDisabilitato = true;
 		String tipoConnettore = TipiConnettore.DISABILITATO.getNome();
@@ -113,24 +109,24 @@ public class ServletExtendedConnettoreUtils {
 			tipoConnettore = endpointType;
 		}
 					
-		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, core, session,connettoreDisabilitato, tipoConnettore);
+		List<ExtendedConnettore> l = getExtendedConnettore(servletType, consoleHelper, connettoreDisabilitato, tipoConnettore);
 		if(l!=null && l.size()>0){
 			if(first)
 				ExtendedConnettoreConverter.readExtendedInfoFromConnettore(l, connettore);
 			else
-				updateInfo(request, parametersPOST, l);
+				updateInfo(consoleHelper, parametersPOST, l);
 		}
 		return l;
 		
 	}
-	private static List<ExtendedConnettore> getExtendedConnettore(ConnettoreServletType servletType, ConsoleHelper consoleHelper, ControlStationCore core, HttpSession session, 
+	private static List<ExtendedConnettore> getExtendedConnettore(ConnettoreServletType servletType, ConsoleHelper consoleHelper,
 			boolean connettoreDisabilitato, String tipoConnettore) throws ExtendedException{
 		List<ExtendedConnettore> list = new ArrayList<ExtendedConnettore>();
-		if(core.getExtendedConnettore()!=null && core.getExtendedConnettore().size()>0){
+		if(consoleHelper.getCore().getExtendedConnettore()!=null && consoleHelper.getCore().getExtendedConnettore().size()>0){
 		
 			boolean interfacciaAvanzata =consoleHelper.isModalitaAvanzata();
 			
-			for (IExtendedConnettore ext : core.getExtendedConnettore()) {
+			for (IExtendedConnettore ext : consoleHelper.getCore().getExtendedConnettore()) {
 				
 				List<ExtendedConnettore> l = ext.getExtendedConnettore(servletType,interfacciaAvanzata,connettoreDisabilitato,tipoConnettore);
 				if(l!=null && l.size()>0){
@@ -205,39 +201,43 @@ public class ServletExtendedConnettoreUtils {
 		
 	}
 	
-	public static void updateInfo(HttpServletRequest request,Properties parametersPOST, List<ExtendedConnettore> list){
-		if(list!=null){
-			for (ExtendedConnettore extendedConnettore : list) {
-				
-				String tmp = request.getParameter(extendedConnettore.getId());
-				if(parametersPOST!=null && parametersPOST.size()>0){
-					tmp = getValueFromPropertiesPOST(parametersPOST, extendedConnettore.getId());
-				}
-				extendedConnettore.setEnabled(ServletUtils.isCheckBoxEnabled(tmp));
-				
-				String tmpOldValue = request.getParameter(extendedConnettore.getIdForOldValue());
-				if(parametersPOST!=null && parametersPOST.size()>0){
-					tmpOldValue = getValueFromPropertiesPOST(parametersPOST, extendedConnettore.getIdForOldValue());
-				}
-				boolean oldValue = ServletUtils.isCheckBoxEnabled(tmpOldValue);
-				boolean changeRidefinizione = oldValue != extendedConnettore.isEnabled(); 
-				
-				if(extendedConnettore.isEnabled() && !changeRidefinizione){ // altrimenti devo mantenere i valori di default
-					if(extendedConnettore.getListItem()!=null && extendedConnettore.getListItem().size()>0){
-						for (ExtendedConnettoreItem extendedConnettoreItem : extendedConnettore.getListItem()) {
+	public static void updateInfo(ConsoleHelper consoleHelper,Properties parametersPOST, List<ExtendedConnettore> list) throws ExtendedException{
+		try {
+			if(list!=null){
+				for (ExtendedConnettore extendedConnettore : list) {
 					
-							String id = ExtendedConnettoreConverter.buildId(extendedConnettore.getId(), extendedConnettoreItem.getId());
-							tmp = request.getParameter(id);
-							if(parametersPOST!=null && parametersPOST.size()>0){
-								tmp = getValueFromPropertiesPOST(parametersPOST, id);
+					String tmp = consoleHelper.getParameter(extendedConnettore.getId());
+					if(parametersPOST!=null && parametersPOST.size()>0){
+						tmp = getValueFromPropertiesPOST(parametersPOST, extendedConnettore.getId());
+					}
+					extendedConnettore.setEnabled(ServletUtils.isCheckBoxEnabled(tmp));
+					
+					String tmpOldValue = consoleHelper.getParameter(extendedConnettore.getIdForOldValue());
+					if(parametersPOST!=null && parametersPOST.size()>0){
+						tmpOldValue = getValueFromPropertiesPOST(parametersPOST, extendedConnettore.getIdForOldValue());
+					}
+					boolean oldValue = ServletUtils.isCheckBoxEnabled(tmpOldValue);
+					boolean changeRidefinizione = oldValue != extendedConnettore.isEnabled(); 
+					
+					if(extendedConnettore.isEnabled() && !changeRidefinizione){ // altrimenti devo mantenere i valori di default
+						if(extendedConnettore.getListItem()!=null && extendedConnettore.getListItem().size()>0){
+							for (ExtendedConnettoreItem extendedConnettoreItem : extendedConnettore.getListItem()) {
+						
+								String id = ExtendedConnettoreConverter.buildId(extendedConnettore.getId(), extendedConnettoreItem.getId());
+								tmp = consoleHelper.getParameter(id);
+								if(parametersPOST!=null && parametersPOST.size()>0){
+									tmp = getValueFromPropertiesPOST(parametersPOST, id);
+								}
+								extendedConnettoreItem.setValue(tmp);
+															
 							}
-							extendedConnettoreItem.setValue(tmp);
-														
 						}
 					}
+					
 				}
-				
 			}
+		}catch(Exception e) {
+			throw new ExtendedException(e.getMessage(),e);
 		}
 	}
 	

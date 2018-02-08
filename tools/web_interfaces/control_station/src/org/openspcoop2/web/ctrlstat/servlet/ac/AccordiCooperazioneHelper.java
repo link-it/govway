@@ -445,7 +445,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			throws Exception {
 		try {
 
-			String id = this.request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String id = this.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			ServletUtils.addListElementIntoSession(this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI,
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id));
 
@@ -921,7 +921,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 	public void prepareAccordiCoopPartecipantiList(AccordoCooperazione ac,List<IDSoggetto> lista, ISearch ricerca)
 			throws Exception {
 		try {
-			String id = this.request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			String id = this.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			ServletUtils.addListElementIntoSession(this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI,
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id));
 			

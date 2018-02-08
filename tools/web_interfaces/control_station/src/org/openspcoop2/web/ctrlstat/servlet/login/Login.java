@@ -71,7 +71,7 @@ public final class Login extends Action {
 			
 			LoginHelper loginHelper = new LoginHelper(request, pd, session);
 	
-			String login = request.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
+			String login = loginHelper.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
 	
 			if(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione){
 				

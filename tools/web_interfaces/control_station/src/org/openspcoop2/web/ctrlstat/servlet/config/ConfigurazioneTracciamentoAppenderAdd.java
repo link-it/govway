@@ -77,7 +77,7 @@ public final class ConfigurazioneTracciamentoAppenderAdd extends Action {
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
-			String tipo = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
+			String tipo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 

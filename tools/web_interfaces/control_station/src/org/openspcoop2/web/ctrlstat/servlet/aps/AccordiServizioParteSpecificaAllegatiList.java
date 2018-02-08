@@ -70,7 +70,7 @@ public final class AccordiServizioParteSpecificaAllegatiList extends Action {
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 
-			String id = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 
 			// Preparo il menu
 			apsHelper.makeMenu();

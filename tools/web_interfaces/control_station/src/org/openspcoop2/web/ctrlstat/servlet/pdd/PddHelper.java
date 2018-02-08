@@ -306,16 +306,16 @@ public class PddHelper extends ConsoleHelper {
 
 		try{
 
-			String nome = this.request.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
-			String ip = this.request.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_PUBBLICO);
-			String ipGestione = this.request.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_GESTIONE);
-			String tipoParam = this.request.getParameter(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
+			String nome = this.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
+			String ip = this.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_PUBBLICO);
+			String ipGestione = this.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_GESTIONE);
+			String tipoParam = this.getParameter(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
 			PddTipologia tipo = PddTipologia.toPddTipologia(tipoParam); 
-			String implementazione = this.request.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
-			String clientAuth = this.request.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
-			String subject = this.request.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
-			String porta = this.request.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_PUBBLICA);
-			String portaGestione = this.request.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_GESTIONE);
+			String implementazione = this.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
+			String clientAuth = this.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
+			String subject = this.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
+			String porta = this.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_PUBBLICA);
+			String portaGestione = this.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_GESTIONE);
 
 			if (implementazione == null || "".equals(implementazione)) {
 				this.pd.setMessage("Il campo Implementazione deve essere specificato.");

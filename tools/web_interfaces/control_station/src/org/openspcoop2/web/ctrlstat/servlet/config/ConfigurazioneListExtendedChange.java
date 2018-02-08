@@ -52,7 +52,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 public final class ConfigurazioneListExtendedChange extends AbstractServletListExtendedChange {
 	
 	@Override
-	public void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper,HttpServletRequest request) throws ExtendedException{
+	public void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
 		
 	}
 	
@@ -69,20 +69,19 @@ public final class ConfigurazioneListExtendedChange extends AbstractServletListE
 	}
 
 	@Override
-	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper,ControlStationCore core)
+	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper)
 			throws Exception {
-		return core.getExtendedServletConfigurazioneList(consoleHelper);
+		return consoleHelper.getCore().getExtendedServletConfigurazioneList(consoleHelper);
 	}
 
 	@Override
-	protected Object getObject(ControlStationCore core,
-			HttpServletRequest request) throws Exception {
-		ConfigurazioneCore c = (ConfigurazioneCore) core;
+	protected Object getObject(ConsoleHelper consoleHelper) throws Exception {
+		ConfigurazioneCore c = (ConfigurazioneCore) consoleHelper.getCore();
 		return c.getConfigurazioneGenerale();
 	}
 
 	@Override
-	protected List<Parameter> getTitle(Object object, HttpServletRequest request, HttpSession session) throws Exception {
+	protected List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
 		List<Parameter> lstParam = new ArrayList<Parameter>();
 		lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 		return lstParam;
@@ -94,7 +93,7 @@ public final class ConfigurazioneListExtendedChange extends AbstractServletListE
 	}
 
 	@Override
-	protected Parameter[] getParameterList(HttpServletRequest request, HttpSession session) throws Exception {
+	protected Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception {
 		return null;
 	}
 
@@ -104,7 +103,7 @@ public final class ConfigurazioneListExtendedChange extends AbstractServletListE
 	}
 
 	@Override
-	protected UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception {
+	protected UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception {
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_LIST_EXTENDED_CHANGE);
 		return urlExtended;
@@ -112,16 +111,14 @@ public final class ConfigurazioneListExtendedChange extends AbstractServletListE
 
 
 	@Override
-	protected UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper,
-			HttpServletRequest request) throws Exception {
+	protected UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper) throws Exception {
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_LIST_EXTENDED_LIST);
 		return urlExtended;
 	}
 	
 	@Override
-	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper,
-			HttpServletRequest request) throws Exception {
+	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper) throws Exception {
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE_EXTENDED);
 		return urlExtended;

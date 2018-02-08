@@ -25,11 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -52,42 +48,45 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public class PorteDelegateExtendedUtilities {
 
-	public static void addToHiddenDati(TipoOperazione tipoOperazione,Vector<DataElement> dati,ConsoleHelper consoleHelper,HttpServletRequest request) throws ExtendedException{
-		String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-		String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
-		PorteDelegateHelper porteDelegateHelper = (PorteDelegateHelper)consoleHelper;
-		porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, dati);
+	public static void addToHiddenDati(TipoOperazione tipoOperazione,Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+		try {
+			String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			PorteDelegateHelper porteDelegateHelper = (PorteDelegateHelper)consoleHelper;
+			porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, dati);
+		}catch(Exception e) {
+			throw new ExtendedException(e.getMessage(),e);
+		}
 	}
 	
-	public static Object getObject(ControlStationCore core,
-			HttpServletRequest request) throws Exception {
-		PorteDelegateCore porteDelegateCore = (PorteDelegateCore) core;
-		String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+	public static Object getObject(ConsoleHelper consoleHelper) throws Exception {
+		PorteDelegateCore porteDelegateCore = (PorteDelegateCore) consoleHelper.getCore();
+		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 		int idInt = Integer.parseInt(id);
 		return porteDelegateCore.getPortaDelegata(idInt);
 	}
 	
-	public static List<Parameter> getTitle(Object object, HttpServletRequest request, HttpSession session, ControlStationCore consoleCore) throws Exception {
+	public static List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
 		// PortaDelegata pd = (PortaDelegata) object;
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, consoleHelper.getSession());
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		List<Parameter> lstParam = new ArrayList<>();
 		
-		String idSoggettoFruitore = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+		String idSoggettoFruitore = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 
-		String idAsps = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+		String idAsps = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 		if(idAsps == null)
 			idAsps = "";
 		
-		String idFruizione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+		String idFruizione = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 		if(idFruizione == null)
 			idFruizione = "";
 		
-		SoggettiCore soggettiCore = new SoggettiCore(consoleCore);
+		SoggettiCore soggettiCore = new SoggettiCore(consoleHelper.getCore());
 		String tipoSoggettoFruitore = null;
 		String nomeSoggettoFruitore = null;
-		if(consoleCore.isRegistroServiziLocale()){
+		if(soggettiCore.isRegistroServiziLocale()){
 			org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoFruitore));
 			tipoSoggettoFruitore = soggettoFruitore.getTipo();
 			nomeSoggettoFruitore = soggettoFruitore.getNome();
@@ -100,7 +99,7 @@ public class PorteDelegateExtendedUtilities {
 		switch (parentPD) {
 		case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE:
 			// Prendo il nome e il tipo del servizio
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(consoleCore); 
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(consoleHelper.getCore()); 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			String servizioTmpTile = asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + "-" + asps.getTipo() + "/" + asps.getNome();
 			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
@@ -135,11 +134,10 @@ public class PorteDelegateExtendedUtilities {
 		
 	}
 	
-	public static Parameter[] getParameterList(HttpServletRequest request,
-			HttpSession session) throws Exception {
+	public static Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception {
 		
-		String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-		String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+		String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		
 		Parameter[] par = new Parameter[2];
 		par[0] = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
@@ -148,9 +146,9 @@ public class PorteDelegateExtendedUtilities {
 		
 	}
 	
-	public static UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception {
-		String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-		String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+	public static UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception {
+		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+		String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id));
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg));
@@ -158,10 +156,9 @@ public class PorteDelegateExtendedUtilities {
 		return urlExtended;
 	}
 	
-	public static UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper,
-			HttpServletRequest request) throws Exception {
-		String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
-		String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+	public static UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper) throws Exception {
+		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+		String idsogg = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		UrlParameters urlExtended = new UrlParameters();
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id));
 		urlExtended.addParameter(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg));

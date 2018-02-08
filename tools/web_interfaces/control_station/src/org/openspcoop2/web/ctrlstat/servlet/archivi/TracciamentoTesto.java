@@ -84,30 +84,30 @@ public class TracciamentoTesto extends Action {
 		try {
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 			
-			String nomeDs = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
+			String nomeDs = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
 			ArchiviCore archiviCore = new ArchiviCore();
 			DriverTracciamento driver = archiviCore.getDriverTracciamento(nomeDs);
 			
-			String codicePorta = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CODICE_PORTA);
-			String nomeSoggettoPorta = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SOGGETTO_PORTA);
-			String tipoSoggettoPorta = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SOGGETTO_PORTA);
+			String codicePorta = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CODICE_PORTA);
+			String nomeSoggettoPorta = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SOGGETTO_PORTA);
+			String tipoSoggettoPorta = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SOGGETTO_PORTA);
 			IDSoggetto idSoggettoPorta = new IDSoggetto(tipoSoggettoPorta, nomeSoggettoPorta, codicePorta);
 			
-			String idMessaggio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO);
+			String idMessaggio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO);
 			
-			String datainizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
-			String datafine = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
-			String profcoll = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE);
-			String tipo_servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
-			String servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
-			String tipo_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
-			String nome_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
-			String tipo_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
-			String nome_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
-			String nome_azione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
-			String correlazioneApplicativa = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
-			String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
-			String identificativoMessaggioSearch = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
+			String datainizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
+			String datafine = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
+			String profcoll = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE);
+			String tipo_servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
+			String servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
+			String tipo_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
+			String nome_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
+			String tipo_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
+			String nome_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
+			String nome_azione = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
+			String correlazioneApplicativa = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
+			String protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+			String identificativoMessaggioSearch = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
 
 			Parameter pDs = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE, (nomeDs==null ? "" : nomeDs));
 			Parameter pProfColl = new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE,profcoll);

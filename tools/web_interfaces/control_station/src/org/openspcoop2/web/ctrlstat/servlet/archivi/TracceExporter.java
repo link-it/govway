@@ -56,6 +56,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -96,15 +97,27 @@ public class TracceExporter extends HttpServlet {
 
 		String filename = "Tracce.zip";
 
-		ControlStationCore.logDebug("Ricevuta Richiesta di esportazione...");
-		Enumeration<?> en = request.getParameterNames();
-		ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
-		while (en.hasMoreElements()) {
-			String param = (String) en.nextElement();
-			String value = request.getParameter(param);
-			ControlStationCore.logDebug(param + " = " + value);
+		HttpSession session = request.getSession(true);
+
+		// Inizializzo PageData
+		PageData pd = new PageData();
+		
+		ArchiviHelper archiviHelper = null;
+		try {
+			archiviHelper = new ArchiviHelper(request, pd, session);
+		
+			ControlStationCore.logDebug("Ricevuta Richiesta di esportazione...");
+			Enumeration<?> en = archiviHelper.getParameterNames();
+			ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
+			while (en.hasMoreElements()) {
+				String param = (String) en.nextElement();
+				String value = archiviHelper.getParameter(param);
+				ControlStationCore.logDebug(param + " = " + value);
+			}
+			ControlStationCore.logDebug("-----------------");
+		}catch(Exception e){
+			throw new ServletException(e.getMessage(),e);
 		}
-		ControlStationCore.logDebug("-----------------");
 
 		// Setto Proprietà Export File
 		try{
@@ -125,7 +138,7 @@ public class TracceExporter extends HttpServlet {
 			byte[] buf = new byte[1024];
 			ZipOutputStream zip = new ZipOutputStream(out);
 			InputStream in = null;
-			while ((tracce = getTracce(request, offset, limit)).size() > 0) {
+			while ((tracce = getTracce(archiviHelper, offset, limit)).size() > 0) {
 
 				for (Iterator<String> keys = tracce.keySet().iterator(); keys.hasNext();) {
 					String key = keys.next();
@@ -164,11 +177,11 @@ public class TracceExporter extends HttpServlet {
 		}
 	}
 
-	private HashMap<String, ArrayList<Traccia>> getTracce(HttpServletRequest request, int offset, int limit) throws Exception {
+	private HashMap<String, ArrayList<Traccia>> getTracce(ArchiviHelper archiviHelper, int offset, int limit) throws Exception {
 
 		ControlStationCore core = new ControlStationCore();
 		SoggettiCore soggettiCore = new SoggettiCore(core);
-		String nomeDs = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
+		String nomeDs = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
 		if(nomeDs!=null && nomeDs.equals("")){
 			nomeDs = null;
 		}
@@ -177,19 +190,19 @@ public class TracceExporter extends HttpServlet {
 		}
 		DriverTracciamento driver = core.getDriverTracciamento(nomeDs);
 
-		String datainizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
-		String datafine = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
-		String profcoll = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE);
-		String tipo_servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
-		String servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
-		String tipo_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
-		String nome_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
-		String tipo_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
-		String nome_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
-		String nome_azione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
-		String correlazioneApplicativa = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
-		String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
-		String idMessaggio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
+		String datainizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
+		String datafine = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
+		String profcoll = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE);
+		String tipo_servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
+		String servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
+		String tipo_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
+		String nome_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
+		String tipo_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
+		String nome_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
+		String nome_azione = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
+		String correlazioneApplicativa = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
+		String protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+		String idMessaggio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
 
 		if (tipo_destinatario == null || "".equals(tipo_destinatario) || "-".equals(tipo_destinatario))
 			tipo_destinatario = null;
@@ -243,7 +256,7 @@ public class TracceExporter extends HttpServlet {
 		}
 
 
-		HttpSession session = request.getSession(true);
+		HttpSession session = archiviHelper.getSession();
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 		List<IDSoggetto> filtroSoggetti = null;
 		if(core.isVisioneOggettiGlobale(userLogin)==false){

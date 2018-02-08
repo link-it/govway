@@ -34,13 +34,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.audit.dao.Operation;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
-import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -75,22 +74,20 @@ public final class AuditingDel extends Action {
 		String userLogin = ServletUtils.getUserLoginFromSession(session);	
 
 		try {
-			ConsoleHelper consoleHelper = new ConsoleHelper(request, pd, session);
-
 			AuditingCore auditingCore = new AuditingCore();
-			AuditHelper auditingHelper = new AuditHelper(request, pd, session);
+			ConsoleHelper auditingHelper = new ConsoleHelper(request, pd, session);
 
-			String datainizio = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
-			String datafine = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
-			String tipooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			String tipooggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
-			String id = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
-			String oldid = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
-			String utente = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
-			String statooperazione = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
-			String contoggetto = request.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
+			String datainizio = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_INIZIO);
+			String datafine = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_DATA_FINE);
+			String tipooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
+			String tipooggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_TIPO_OGGETTO);
+			String id = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_ID);
+			String oldid = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_OLD_ID);
+			String utente = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_UTENTE);
+			String statooperazione = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
+			String contoggetto = auditingHelper.getParameter(AuditCostanti.PARAMETRO_AUDIT_CONTENUTO_OGGETTO);
 
-			String objToRemove =  request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
+			String objToRemove =  auditingHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 
 			// Elimino le operazioni dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -100,11 +97,11 @@ public final class AuditingDel extends Action {
 				Operation singleOp = auditingCore.getAuditOperation(Long.parseLong(idsToRemove.get(i)));
 
 				// Elimino l'operazione
-				auditingCore.performDeleteOperation(userLogin, consoleHelper.smista(), singleOp);
+				auditingCore.performDeleteOperation(userLogin, auditingHelper.smista(), singleOp);
 			}
 
 			// Preparo il menu
-			consoleHelper.makeMenu();
+			auditingHelper.makeMenu();
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -114,7 +111,7 @@ public final class AuditingDel extends Action {
 					tipooggetto, id, oldid, utente,
 					statooperazione, contoggetto);
 
-			auditingHelper.prepareAuditReportList(ricerca, lista, Liste.AUDIT_REPORT);
+			auditingHelper.getAuditHelper().prepareAuditReportList(ricerca, lista, Liste.AUDIT_REPORT);
  
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

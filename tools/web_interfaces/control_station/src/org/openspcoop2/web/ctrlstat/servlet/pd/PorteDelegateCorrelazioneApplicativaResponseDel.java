@@ -74,11 +74,11 @@ public final class PorteDelegateCorrelazioneApplicativaResponseDel extends Actio
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 
-			String id = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
-			// String idsogg = request.getParameter("idsogg");
+			// String idsogg = porteDelegateHelper.getParameter("idsogg");
 			// int soggInt = Integer.parseInt(idsogg);
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 

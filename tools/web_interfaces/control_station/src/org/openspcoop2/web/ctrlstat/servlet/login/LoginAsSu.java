@@ -68,7 +68,7 @@ public final class LoginAsSu extends Action {
 			
 			LoginHelper loginHelper = new LoginHelper(request, pd, session);
 	
-			String login = request.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
+			String login = loginHelper.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
 	
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (login == null) {

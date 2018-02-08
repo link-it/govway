@@ -83,10 +83,10 @@ public final class UtentiAdd extends Action {
 			UtentiCore utentiCore = new UtentiCore();
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
 	
-			String nomesu = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
-			String pwsu = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
-			String confpwsu = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
-			String tipoGui = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
+			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
+			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
+			String confpwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			
 			InterfaceType interfaceType = null;
 			if(tipoGui==null) {
@@ -96,13 +96,13 @@ public final class UtentiAdd extends Action {
 				interfaceType = InterfaceType.convert(tipoGui, true);
 			}
 			
-			String isServizi = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
-			String isDiagnostica = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-			String isSistema = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
-			String isMessaggi = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
-			String isUtenti = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
-			String isAuditing = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
-			String isAccordiCooperazione = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
+			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
+			String isDiagnostica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+			String isSistema = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
+			String isMessaggi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
+			String isUtenti = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
+			String isAuditing = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
+			String isAccordiCooperazione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
 	
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
@@ -111,7 +111,7 @@ public final class UtentiAdd extends Action {
 			String [] modalitaScelte = new String[protocolliRegistratiConsole.size()]; 
 			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 				String protocolloName = protocolliRegistratiConsole.get(i);
-				modalitaScelte[i] = request.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+				modalitaScelte[i] = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			}
 			
 			// Preparo il menu

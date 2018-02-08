@@ -72,7 +72,7 @@ public class OperazioniDel  extends Action {
 			
 			OperazioniCore opCore = new OperazioniCore();
 
-			String objToRemove =  request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
+			String objToRemove =  opHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 			
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			for (int i = 0; i < idsToRemove.size(); i++) {

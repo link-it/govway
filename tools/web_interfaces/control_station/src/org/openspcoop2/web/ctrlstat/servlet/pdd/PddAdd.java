@@ -77,18 +77,18 @@ public final class PddAdd extends Action {
 			PddHelper pddHelper = new PddHelper(request, pd, session);
 			PddCore pddCore = new PddCore();
 			
-			String nome = request.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
-			String tipo = request.getParameter(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
-			String descrizione = request.getParameter(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
-			String ip = request.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_PUBBLICO);
-			String ipGestione = request.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_GESTIONE);
-			String porta = request.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_PUBBLICA);
-			String portaGestione = request.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_GESTIONE);
-			String implementazione = request.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
-			String subject = request.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
-			String clientAuth = request.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
-			String protocollo = request.getParameter(PddCostanti.PARAMETRO_PDD_PROTOCOLLO);
-			String protocolloGestione = request.getParameter(PddCostanti.PARAMETRO_PDD_PROTOCOLLO_GESTIONE);
+			String nome = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_NOME);
+			String tipo = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
+			String descrizione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
+			String ip = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_PUBBLICO);
+			String ipGestione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_INDIRIZZO_GESTIONE);
+			String porta = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_PUBBLICA);
+			String portaGestione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_PORTA_GESTIONE);
+			String implementazione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_IMPLEMENTAZIONE);
+			String subject = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_SUBJECT);
+			String clientAuth = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
+			String protocollo = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_PROTOCOLLO);
+			String protocolloGestione = pddHelper.getParameter(PddCostanti.PARAMETRO_PDD_PROTOCOLLO_GESTIONE);
 			
 			int portaInt = 0;
 			int portaGestioneInt = 0;

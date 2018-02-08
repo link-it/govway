@@ -76,7 +76,7 @@ public final class PddSinglePdDDel extends Action {
 		try {
 			PddHelper pddHelper = new PddHelper(request, pd, session);
 
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = pddHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 
 			PddCore pddCore = new PddCore();

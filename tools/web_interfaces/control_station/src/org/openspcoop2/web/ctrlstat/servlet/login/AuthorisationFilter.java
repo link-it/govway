@@ -84,6 +84,14 @@ public final class AuthorisationFilter implements Filter {
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, this.core.isSinglePdD());
 		GeneralHelper generalHelper = new GeneralHelper(session);
 
+		LoginHelper loginHelper = null;
+		try {
+			loginHelper = new LoginHelper(request, new PageData(), session);
+		} catch (Exception e) {
+			ControlStationCore.logError("Errore rilevato durante l'authorizationFilter",e);
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		
 		try {
 //			System.out.println("SERVLET PATH ["+request.getServletPath()+"]");
 //			System.out.println("SERVLET URI ["+request.getRequestURI()+"]");
@@ -137,7 +145,7 @@ public final class AuthorisationFilter implements Filter {
 							
 							// Non faccio verificare login/logout
 							if (!LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
-								if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta,request, session)==false){
+								if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper)==false){
 									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
 									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA);
 									// return so that we do not chain to other filters

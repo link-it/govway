@@ -83,7 +83,9 @@ public final class ServiziApplicativiDel extends Action {
 
 
 		try {
-			String provider = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
 			long soggLong = -1;
 			// se ho fatto la add 
@@ -91,10 +93,8 @@ public final class ServiziApplicativiDel extends Action {
 				if(provider != null && !provider.equals("")){
 				soggLong = Long.parseLong(provider);
 			}
-			
-			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
-			
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+						
+			String objToRemove = saHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Elimino i servizioApplicativo dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");

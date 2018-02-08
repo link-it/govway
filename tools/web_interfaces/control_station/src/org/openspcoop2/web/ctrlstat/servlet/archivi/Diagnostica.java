@@ -79,13 +79,13 @@ public final class Diagnostica extends Action {
 			
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 		
-			String severita = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA);
-			String idfunzione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_FUNZIONE);
-			String datainizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
-			String datafine = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
-			String nomeDs = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
+			String severita = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA);
+			String idfunzione = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_FUNZIONE);
+			String datainizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
+			String datafine = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
+			String nomeDs = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
 			
-			String index = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_INDEX);
+			String index = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_INDEX);
 			String postBackElementName=ServletUtils.getPostBackElementName(request);
 			boolean showList = false;
 			if(index!=null && !ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO.equals(postBackElementName) ){
@@ -100,7 +100,7 @@ public final class Diagnostica extends Action {
 			archiviHelper.makeMenu();
 			//User user = ServletUtils.getUserFromSession(session);
 			
-			String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+			String protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 			
             List<String> tipiSoggetti = new ArrayList<String>();
             tipiSoggetti.add("-");

@@ -189,7 +189,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
 			
 			// http
 			String url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -371,8 +371,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					asps.getConfigurazioneServizio().getConnettore().getCustom();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(asps.getConfigurazioneServizio().getConnettore(), ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsHelper, apsCore, 
-							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
+					ServletExtendedConnettoreUtils.getExtendedConnettore(asps.getConfigurazioneServizio().getConnettore(), ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsHelper, 
+							(endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			// Lista port-type associati all'accordo di servizio
 			// se l'accordo e' selezionato allora prendo quello selezionato
@@ -679,7 +679,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}
 					}
 					
-					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
+					opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
 					
 					if (url == null) {
 						url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);

@@ -222,7 +222,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 
 			String uri = null;
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
@@ -412,7 +412,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	public void prepareAccordiAllegatiList(AccordoServizioParteComune as, ISearch ricerca, List<Documento> lista,String tipoAccordo) throws Exception {
 		try {
 
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 
 			String uri = null;
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
@@ -3966,16 +3966,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	// Controlla i dati del connettore del servizio
 	boolean accordiErogatoriCheckData(List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 		try {
-			// String id = this.request.getParameter("id");
+			// String id = this.getParameter("id");
 			// int idInt = 0;
 			// if (tipoOp.equals("change")) {
 			// idInt = Integer.parseInt(id);
 			// }
-			String nomeprov = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO);
-			String tipoprov = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO);
-			// String nomeservizio = this.request.getParameter("nomeservizio");
-			// String tiposervizio = this.request.getParameter("tiposervizio");
-			String endpointtype = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_ENDPOINT_TYPE);
+			String nomeprov = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO);
+			String tipoprov = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO);
+			// String nomeservizio = this.getParameter("nomeservizio");
+			// String tiposervizio = this.getParameter("tiposervizio");
+			String endpointtype = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_ENDPOINT_TYPE);
 
 			if (!this.endPointCheckData(listExtendedConnettore)) {
 				return false;
@@ -4921,7 +4921,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public void prepareAccordiPorttypeOperationMessagePartList(ISearch ricerca, List<MessagePart> lista, AccordoServizioParteComune as,String tipoAccordo,String nomePT, String nomeOp, boolean isMessageInput) throws Exception {
 		try {
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idLista = Liste.ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT;
 
 //			String uri = null;
@@ -4947,7 +4947,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			//					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri),
 			//					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME,nomePT));
 
-			//			String nomept = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
+			//			String nomept = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			//			Hashtable<String, String> campiHidden = new Hashtable<String, String>();
 			//			campiHidden.put("nomeop", nomeOp);
 			//			this.pd.setHidden(campiHidden);
@@ -5143,22 +5143,22 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		try{
 
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			String id = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idInt = Integer.parseInt(id);
-			String nomept = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
-			String nomeop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME);
-			String tipoAccordo = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+			String nomept = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
+			String nomeop = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME);
+			String tipoAccordo = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 
-			String tipoMessage = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_TYPE);
+			String tipoMessage = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_TYPE);
 
 			boolean isMessageInput = tipoMessage.equals(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_INPUT);
 
-			String messagePartName = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME);
-			String messagePartLocalName = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME);
-			String messagePartNs = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS);
-			//			String messagePartType = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE);
+			String messagePartName = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME);
+			String messagePartLocalName = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME);
+			String messagePartNs = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS);
+			//			String messagePartType = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE);
 
 			AccordoServizioParteComune as = this.apcCore.getAccordoServizio(idInt);
 

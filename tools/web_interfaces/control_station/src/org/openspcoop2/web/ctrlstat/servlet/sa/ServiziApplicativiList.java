@@ -71,7 +71,9 @@ public final class ServiziApplicativiList extends Action {
 
 
 		try {
-			String idsogg = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			String idsogg = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			long soggLong = -1;
 			// Posso arrivare a questa pagina anche dal menu' senza specificare il soggetto
 			if(idsogg != null){
@@ -83,8 +85,6 @@ public final class ServiziApplicativiList extends Action {
 
 			// salvo il punto di ingresso
 			ServletUtils.setObjectIntoSession(session, useIdSogg, ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO);
-
-			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 
 			// Preparo il menu
 			saHelper.makeMenu();

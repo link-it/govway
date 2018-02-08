@@ -52,8 +52,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public final class PorteDelegateExtendedAdd extends AbstractServletListExtendedAdd {
 
 	@Override
-	public void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper,HttpServletRequest request) throws ExtendedException{
-		PorteDelegateExtendedUtilities.addToHiddenDati(TipoOperazione.ADD, dati, consoleHelper, request);
+	public void addToHiddenDati(Vector<DataElement> dati,ConsoleHelper consoleHelper) throws ExtendedException{
+		PorteDelegateExtendedUtilities.addToHiddenDati(TipoOperazione.ADD, dati, consoleHelper);
 	}
 	
 	@Override
@@ -68,20 +68,19 @@ public final class PorteDelegateExtendedAdd extends AbstractServletListExtendedA
 	}
 
 	@Override
-	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper,ControlStationCore core)
+	protected IExtendedListServlet getExtendedServlet(ConsoleHelper consoleHelper)
 			throws Exception {
-		return core.getExtendedServletPortaDelegata();
+		return consoleHelper.getCore().getExtendedServletPortaDelegata();
 	}
 
 	@Override
-	protected Object getObject(ControlStationCore core,
-			HttpServletRequest request) throws Exception {
-		return PorteDelegateExtendedUtilities.getObject(core, request);
+	protected Object getObject(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getObject(consoleHelper);
 	}
 
 	@Override
-	protected List<Parameter> getTitle(Object object, HttpServletRequest request, HttpSession session) throws Exception {
-		return PorteDelegateExtendedUtilities.getTitle(object, request, session,this.getConsoleCore());
+	protected List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getTitle(object, consoleHelper);
 	}
 
 	@Override
@@ -90,8 +89,8 @@ public final class PorteDelegateExtendedAdd extends AbstractServletListExtendedA
 	}
 
 	@Override
-	protected Parameter[] getParameterList(HttpServletRequest request, HttpSession session) throws Exception {
-		return PorteDelegateExtendedUtilities.getParameterList(request, session);
+	protected Parameter[] getParameterList(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getParameterList(consoleHelper);
 	}
 
 	@Override
@@ -100,19 +99,17 @@ public final class PorteDelegateExtendedAdd extends AbstractServletListExtendedA
 	}
 
 	@Override
-	protected UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper,HttpServletRequest request) throws Exception {
-		return PorteDelegateExtendedUtilities.getUrlExtendedChange(consoleHelper, request);
+	protected UrlParameters getUrlExtendedChange(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getUrlExtendedChange(consoleHelper);
 	}
 	
 	@Override
-	protected UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper,
-			HttpServletRequest request) throws Exception {
-		return PorteDelegateExtendedUtilities.getUrlExtendedList(consoleHelper, request);
+	protected UrlParameters getUrlExtendedList(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getUrlExtendedList(consoleHelper);
 	}
 	
 	@Override
-	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper,
-			HttpServletRequest request) throws Exception {
-		return PorteDelegateExtendedUtilities.getUrlExtendedList(consoleHelper, request);
+	protected UrlParameters getUrlExtendedFather(ConsoleHelper consoleHelper) throws Exception {
+		return PorteDelegateExtendedUtilities.getUrlExtendedList(consoleHelper);
 	}
 }

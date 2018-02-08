@@ -98,7 +98,7 @@ public abstract class AbstractServletNewWindowChangeExtended extends Action {
 
 			ControlStationCore consoleCore = this.getConsoleCore();
 			
-			IExtendedFormServlet extendedServlet = this.getExtendedServlet(consoleCore,request.getParameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID));
+			IExtendedFormServlet extendedServlet = this.getExtendedServlet(consoleCore,consoleHelper.getParameter(CostantiControlStation.PARAMETRO_EXTENDED_FORM_ID));
 			
 			// Preparo il menu
 			consoleHelper.makeMenu();

@@ -148,6 +148,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
+import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -207,6 +208,11 @@ public class ConsoleHelper {
 	protected ProtocolPropertiesCore protocolPropertiesCore = null;
 	protected RuoliCore ruoliCore = null;
 
+	protected AuditHelper auditHelper;
+	public AuditHelper getAuditHelper() {
+		return this.auditHelper;
+	}
+	
 	/** Gestione dei parametri unica sia per le chiamate multipart che per quelle normali*/
 	private boolean multipart = false;
 	public boolean isMultipart() {
@@ -306,6 +312,8 @@ public class ConsoleHelper {
 			this.operazioniCore = new OperazioniCore(this.core);
 			this.protocolPropertiesCore = new ProtocolPropertiesCore(this.core);
 			this.ruoliCore = new RuoliCore(this.core);
+			
+			this.auditHelper = new AuditHelper(request, pd, session);
 
 			this.idBinaryParameterRicevuti = new ArrayList<String>();
 			// analisi dei parametri della request
@@ -417,6 +425,24 @@ public class ConsoleHelper {
 	//		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
 	//	}
 
+	public Enumeration<?> getParameterNames() throws Exception {
+		if(this.multipart){
+			throw new Exception("Not Implemented");
+		}
+		else {
+			return this.request.getParameterNames();
+		}
+	}
+	
+	public String [] getParameterValues(String parameterName) throws Exception {
+		if(this.multipart){
+			throw new Exception("Not Implemented");
+		}
+		else {
+			return this.request.getParameterValues(parameterName);
+		}
+	}
+	
 	public String getParameter(String parameterName) throws Exception {
 		return getParameter(parameterName, String.class, null);
 	}
@@ -1620,16 +1646,16 @@ public class ConsoleHelper {
 
 			String search = ricerca.getSearchString(idLista);
 
-			if (this.request.getParameter("index") != null) {
-				offset = Integer.parseInt(this.request.getParameter("index"));
+			if (this.getParameter("index") != null) {
+				offset = Integer.parseInt(this.getParameter("index"));
 				ricerca.setIndexIniziale(idLista, offset);
 			}
-			if (this.request.getParameter("pageSize") != null) {
-				limit = Integer.parseInt(this.request.getParameter("pageSize"));
+			if (this.getParameter("pageSize") != null) {
+				limit = Integer.parseInt(this.getParameter("pageSize"));
 				ricerca.setPageSize(idLista, limit);
 			}
-			if (this.request.getParameter("search") != null) {
-				search = this.request.getParameter("search");
+			if (this.getParameter("search") != null) {
+				search = this.getParameter("search");
 				search = search.trim();
 				if (search.equals("")) {
 					ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);
@@ -1649,11 +1675,11 @@ public class ConsoleHelper {
 				ricerca.clearFilters(idLista);
 				this.initializeFilter(ricerca,idLista);	
 			}
-			while (this.request.getParameter(nameFilter) != null) {
-				String paramFilterName = this.request.getParameter(nameFilter);
+			while (this.getParameter(nameFilter) != null) {
+				String paramFilterName = this.getParameter(nameFilter);
 				paramFilterName = paramFilterName.trim();
 				
-				String paramFilterValue = this.request.getParameter( PageData.GET_PARAMETRO_FILTER_VALUE(index));
+				String paramFilterValue = this.getParameter( PageData.GET_PARAMETRO_FILTER_VALUE(index));
 				if(paramFilterValue==null) {
 					paramFilterValue = "";
 				}
@@ -1871,7 +1897,7 @@ public class ConsoleHelper {
 	// Controlla i dati del Message-Security
 	public boolean WSCheckData(TipoOperazione tipoOp) throws Exception {
 		try{
-			String messageSecurity = this.request.getParameter(CostantiControlStation.PARAMETRO_MESSAGE_SECURITY);
+			String messageSecurity = this.getParameter(CostantiControlStation.PARAMETRO_MESSAGE_SECURITY);
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!messageSecurity.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_ABILITATO) && 
@@ -2160,13 +2186,13 @@ public class ConsoleHelper {
 	// Controlla i dati della correlazione applicativa richiesta della porta delegata
 	public boolean correlazioneApplicativaRichiestaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
 		try {
-			String id = this.request.getParameter(CostantiControlStation.PARAMETRO_ID);
+			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
-			// String idsogg = this.request.getParameter("idsogg");
-			String elemxml = this.request.getParameter(CostantiControlStation.PARAMETRO_ELEMENTO_XML);
-			String mode = this.request.getParameter(CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA);
-			String pattern = this.request.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
-			String idcorr = this.request.getParameter(CostantiControlStation.PARAMETRO_ID_CORRELAZIONE);
+			// String idsogg = this.getParameter("idsogg");
+			String elemxml = this.getParameter(CostantiControlStation.PARAMETRO_ELEMENTO_XML);
+			String mode = this.getParameter(CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA);
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
+			String idcorr = this.getParameter(CostantiControlStation.PARAMETRO_ID_CORRELAZIONE);
 			int idcorrInt = 0;
 			if (idcorr != null) {
 				idcorrInt = Integer.parseInt(idcorr);
@@ -2260,13 +2286,13 @@ public class ConsoleHelper {
 	// Controlla i dati della correlazione applicativa della porta delegata
 	public boolean correlazioneApplicativaRispostaCheckData(TipoOperazione tipoOp,boolean portaDelegata) throws Exception {
 		try {
-			String id = this.request.getParameter(CostantiControlStation.PARAMETRO_ID);
+			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
-			// String idsogg = this.request.getParameter("idsogg");
-			String elemxml = this.request.getParameter(CostantiControlStation.PARAMETRO_ELEMENTO_XML);
-			String mode = this.request.getParameter(CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA);
-			String pattern = this.request.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
-			String idcorr = this.request.getParameter(CostantiControlStation.PARAMETRO_ID_CORRELAZIONE);
+			// String idsogg = this.getParameter("idsogg");
+			String elemxml = this.getParameter(CostantiControlStation.PARAMETRO_ELEMENTO_XML);
+			String mode = this.getParameter(CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA);
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
+			String idcorr = this.getParameter(CostantiControlStation.PARAMETRO_ID_CORRELAZIONE);
 			int idcorrInt = 0;
 			if (idcorr != null) {
 				idcorrInt = Integer.parseInt(idcorr);
@@ -2359,8 +2385,8 @@ public class ConsoleHelper {
 	// Controlla i dati del Message-Security
 	public boolean MTOMCheckData(TipoOperazione tipoOp) throws Exception {
 		try{
-			String mtomRichiesta = this.request.getParameter(CostantiControlStation.PARAMETRO_MTOM_RICHIESTA);
-			String mtomRisposta = this.request.getParameter(CostantiControlStation.PARAMETRO_MTOM_RISPOSTA);
+			String mtomRichiesta = this.getParameter(CostantiControlStation.PARAMETRO_MTOM_RICHIESTA);
+			String mtomRisposta = this.getParameter(CostantiControlStation.PARAMETRO_MTOM_RISPOSTA);
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!mtomRichiesta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_DISABLE) && 
@@ -2389,12 +2415,12 @@ public class ConsoleHelper {
 	// Controlla i dati dei parametri MTOM 
 	public boolean MTOMParameterCheckData(TipoOperazione tipoOp, boolean isRisposta, boolean isPortaDelegata) throws Exception {
 		try {
-			String id = this.request.getParameter(CostantiControlStation.PARAMETRO_ID);
+			String id = this.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
-			String nome = this.request.getParameter(CostantiControlStation.PARAMETRO_NOME);
-			String contentType =this.request.getParameter(CostantiControlStation.PARAMETRO_CONTENT_TYPE);
-			//	String obbligatorio = this.request.getParameter(CostantiControlStation.PARAMETRO_OBBLIGATORIO);
-			String pattern = this.request.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
+			String nome = this.getParameter(CostantiControlStation.PARAMETRO_NOME);
+			String contentType =this.getParameter(CostantiControlStation.PARAMETRO_CONTENT_TYPE);
+			//	String obbligatorio = this.getParameter(CostantiControlStation.PARAMETRO_OBBLIGATORIO);
+			String pattern = this.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
 
 
 			// Campi obbligatori
@@ -3454,7 +3480,7 @@ public class ConsoleHelper {
 		}
 	}
 	
-
+	
 	public void addFilterServiceBinding(String serviceBinding, boolean postBack, boolean showAPISuffix) throws Exception{
 		try {
 			ServiceBinding[] serviceBindings = ServiceBinding.values();

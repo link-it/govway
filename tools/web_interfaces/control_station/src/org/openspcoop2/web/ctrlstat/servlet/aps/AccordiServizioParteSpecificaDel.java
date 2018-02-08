@@ -106,7 +106,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			 * field validation done in porteDomForm.java Business logic
 			 * validation done in porteDomAdd.java
 			 */
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Preparo il menu
 			apsHelper.makeMenu();

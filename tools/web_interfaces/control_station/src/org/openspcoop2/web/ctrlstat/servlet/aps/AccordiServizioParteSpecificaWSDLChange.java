@@ -512,7 +512,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					}
 				}
 				
-				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
+				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
 				
 				// http
 				if (url == null) {
@@ -601,8 +601,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connettore.getCustom();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsHelper, apsCore, 
-							request, session, true, null);
+					ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsHelper, 
+							true, null);
 			
 			// Lista port-type associati all'accordo di servizio
 			// se l'accordo e' selezionato allora prendo quello selezionato

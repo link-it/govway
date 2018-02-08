@@ -56,6 +56,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -96,15 +97,27 @@ public class DiagnosticaExporter extends HttpServlet {
 
 		String filename = "Diagnostici.zip";
 
-		ControlStationCore.logDebug("Ricevuta Richiesta di esportazione...");
-		Enumeration<?> en = request.getParameterNames();
-		ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
-		while (en.hasMoreElements()) {
-			String param = (String) en.nextElement();
-			String value = request.getParameter(param);
-			ControlStationCore.logDebug(param + " = " + value);
+		HttpSession session = request.getSession(true);
+
+		// Inizializzo PageData
+		PageData pd = new PageData();
+		
+		ArchiviHelper archiviHelper = null;
+		try {
+			archiviHelper = new ArchiviHelper(request, pd, session);
+			
+			ControlStationCore.logDebug("Ricevuta Richiesta di esportazione...");
+			Enumeration<?> en = archiviHelper.getParameterNames();
+			ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
+			while (en.hasMoreElements()) {
+				String param = (String) en.nextElement();
+				String value = archiviHelper.getParameter(param);
+				ControlStationCore.logDebug(param + " = " + value);
+			}
+			ControlStationCore.logDebug("-----------------");
+		}catch(Exception e){
+			throw new ServletException(e.getMessage(),e);
 		}
-		ControlStationCore.logDebug("-----------------");
 
 		// Setto Proprietà Export File
 		try{
@@ -126,7 +139,7 @@ public class DiagnosticaExporter extends HttpServlet {
 			ZipOutputStream zip = new ZipOutputStream(out);
 			InputStream in = null;
 
-			while ((tracce = getMessaggiDiagnostici(request, offset, limit)).size() > 0) {
+			while ((tracce = getMessaggiDiagnostici(archiviHelper, offset, limit)).size() > 0) {
 
 				for (Iterator<String> keys = tracce.keySet().iterator(); keys.hasNext();) {
 					String key = keys.next();
@@ -166,13 +179,13 @@ public class DiagnosticaExporter extends HttpServlet {
 		} 
 	}
 
-	private HashMap<String, ArrayList<MsgDiagnostico>> getMessaggiDiagnostici(HttpServletRequest request, int offset, int limit) throws Exception {
+	private HashMap<String, ArrayList<MsgDiagnostico>> getMessaggiDiagnostici(ArchiviHelper archiviHelper, int offset, int limit) throws Exception {
 
 		
 		ArchiviCore archiviCore = new ArchiviCore();
 		SoggettiCore soggettiCore = new SoggettiCore(archiviCore);
 		
-		String nomeDs = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
+		String nomeDs = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
 		if(nomeDs!=null && nomeDs.equals("")){
 			nomeDs = null;
 		}
@@ -181,25 +194,25 @@ public class DiagnosticaExporter extends HttpServlet {
 		}
 		DriverMsgDiagnostici driver = archiviCore.getDriverMSGDiagnostici(nomeDs);
 
-		String severita = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA);
-		String idfunzione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_FUNZIONE);
-		String datainizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
-		String datafine = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
-		String tipo_servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
-		String servizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
-		String tipo_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
-		String nome_mittente = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
-		String tipo_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
-		String nome_destinatario = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
-		String nome_azione = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
-		String correlazioneApplicativa = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
+		String severita = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA);
+		String idfunzione = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_FUNZIONE);
+		String datainizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
+		String datafine = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
+		String tipo_servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_SERVIZIO);
+		String servizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_SERVIZIO);
+		String tipo_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_MITTENTE);
+		String nome_mittente = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_MITTENTE);
+		String tipo_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPO_DESTINATARIO);
+		String nome_destinatario = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DESTINATARIO);
+		String nome_azione = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_AZIONE);
+		String correlazioneApplicativa = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA);
 		if (correlazioneApplicativa == null || "".equals(correlazioneApplicativa))
 			correlazioneApplicativa = null;
-		String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+		String protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		if (protocollo == null || "".equals(protocollo))
 			protocollo = null;
-		String search = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_SEARCH);
-		String idMessaggio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
+		String search = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_SEARCH);
+		String idMessaggio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH);
 
 		/*
 		 * String params = "&severita="+severita +"&idfunzione="+idfunzione
@@ -310,7 +323,7 @@ public class DiagnosticaExporter extends HttpServlet {
 			filter.setRicercaSoloMessaggiCorrelatiInformazioniProtocollo(true);
 		}
 
-		HttpSession session = request.getSession(true);
+		HttpSession session = archiviHelper.getSession();
 		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 		if(archiviCore.isVisioneOggettiGlobale(userLogin)==false){
 			filter.setFiltroSoggetti(soggettiCore.getSoggettiWithSuperuser(userLogin));

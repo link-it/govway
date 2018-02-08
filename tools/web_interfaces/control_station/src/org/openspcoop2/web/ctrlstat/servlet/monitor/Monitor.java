@@ -188,17 +188,17 @@ public final class Monitor extends Action {
 
 			ArrayList<String> errors = new ArrayList<String>();
 
-			String metodo = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
-			String ns = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
+			String metodo = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
+			String ns = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
 			String[] tipoProfcoll = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE;
-			String actionConfirm = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION_CONFIRM);
+			String actionConfirm = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION_CONFIRM);
 
 			if (ServletUtils.isEditModeInProgress(request) && (metodo == null || !metodo.equals(MonitorCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS))&&
 					actionConfirm == null && (ns == null || !ns.equals(MonitorCostanti.DEFAULT_VALUE_FALSE) )) {
 				// prima volta che accedo quindi show form
 
 				// recupero eventuali parametri nella request
-				MonitorFormBean mb = this.getBeanForm(errors, request);
+				MonitorFormBean mb = this.getBeanForm(errors, monitorHelper);
 
 				this.showForm(session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", mb, monitorCore);
 
@@ -210,7 +210,7 @@ public final class Monitor extends Action {
 						);
 			}
 
-			String pageSize = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_PAGE_SIZE);
+			String pageSize = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_PAGE_SIZE);
 			// se pageSize settato allora vuol dire che sono in una richiesta di
 			// nextPage
 			// altrimenti prima richiesta
@@ -223,7 +223,7 @@ public final class Monitor extends Action {
 			MonitorFormBean formBean = null;
 			if (((pageSize == null) || pageSize.equals("")) &&
 					actionConfirm == null) {
-				formBean = this.getBeanForm(errors, request);
+				formBean = this.getBeanForm(errors, monitorHelper);
 			} else {
 				// prendo il form dalla sessione xe' salvato precedentemente
 				formBean =  (MonitorFormBean) session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
@@ -325,8 +325,8 @@ public final class Monitor extends Action {
 			}
 
 			// controllo se cancellazione messaggio
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
-			//String action = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION);
+			String objToRemove = monitorHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			//String action = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION);
 			if (objToRemove != null) {
 //				if ((action != null) && action.equals(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_MONITOR_ACTION_DELETE)) {
 				FilterSearch filter = new FilterSearch();
@@ -467,7 +467,7 @@ public final class Monitor extends Action {
 				// Criteri di visualizzazione/ricerca
 				Search ricerca = new Search();
 
-				String newSearch = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
+				String newSearch = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
 				if ((newSearch != null) && newSearch.equals(MonitorCostanti.DEFAULT_VALUE_FALSE)) {
 					FilterSearch oldfilter = (FilterSearch) session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
 					if (oldfilter != null) {
@@ -712,14 +712,14 @@ public final class Monitor extends Action {
 	 * @return MonitorFormBean
 	 * @throws Exception
 	 */
-	private MonitorFormBean getBeanForm(ArrayList<String> errors, HttpServletRequest request) throws Exception {
+	private MonitorFormBean getBeanForm(ArrayList<String> errors, MonitorHelper monitorHelper) throws Exception {
 		try {
 			MonitorFormBean form = null;
 
 			String method = null;
 			// controllo se richiesta corretta
 			boolean trovato = false;
-			method = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
+			method = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
 			if ((method == null) || method.equals("")) {
 				return null;
 			}
@@ -742,19 +742,19 @@ public final class Monitor extends Action {
 
 			form.setMethod(method);
 
-			String idMessaggio = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
+			String idMessaggio = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
 			if ((idMessaggio != null) && !idMessaggio.equals("")) {
 				form.setIdMessaggio(idMessaggio);
 			}
 
 			// tipo messaggio outbox/inbox
-			String tipo = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO);
+			String tipo = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO);
 			if ((tipo != null) && !tipo.equals("")) {
 				form.setTipo(tipo);
 			}
 
 			// Profilo Collaborazione
-			String profcoll = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
+			String profcoll = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
 
 			if ((profcoll == null) || profcoll.equals("") || profcoll.equals(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_TIPO_PROFILO_COLLABORAZIONE_ANY)) {
 				form.setProfiloCollaborazione(null);
@@ -769,8 +769,8 @@ public final class Monitor extends Action {
 			}
 
 			// Mittente
-			String tipoSogg = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
-			String nomeSogg = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NOME_MITTENTE);
+			String tipoSogg = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
+			String nomeSogg = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NOME_MITTENTE);
 			BustaSoggetto mittente = null;
 			if (((tipoSogg != null) && !tipoSogg.equals("")) || ((nomeSogg != null) && !nomeSogg.equals(""))) {
 				mittente = new BustaSoggetto();
@@ -781,8 +781,8 @@ public final class Monitor extends Action {
 
 			// Destinatario
 			BustaSoggetto destinatario = null;
-			tipoSogg = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
-			nomeSogg = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NOME_DESTINATARIO);
+			tipoSogg = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
+			nomeSogg = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NOME_DESTINATARIO);
 			if (((tipoSogg != null) && !tipoSogg.equals("")) || ((nomeSogg != null) && !nomeSogg.equals(""))) {
 				destinatario = new BustaSoggetto();
 				destinatario.setNome(nomeSogg);
@@ -792,8 +792,8 @@ public final class Monitor extends Action {
 
 			// Servizio
 			BustaServizio servizio = null;
-			String tipoServizio = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
-			String nomeServizio = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NOME_SERVIZIO);
+			String tipoServizio = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
+			String nomeServizio = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NOME_SERVIZIO);
 			if (((tipoServizio != null) && !tipoServizio.equals("")) || ((nomeServizio != null) && !nomeServizio.equals(""))) {
 				servizio = new BustaServizio();
 				servizio.setNome(nomeServizio);
@@ -802,13 +802,13 @@ public final class Monitor extends Action {
 			form.setServizio(servizio);
 
 			// Azione
-			String azione = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_AZIONE);
+			String azione = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_AZIONE);
 			if ((azione != null) && !azione.equals("")) {
 				form.setAzione(azione);
 			}
 
 			// Soglia
-			String soglia = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA);
+			String soglia = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA);
 			long sogliaLong = 0;
 			try {
 				sogliaLong = Long.parseLong(soglia);
@@ -818,34 +818,34 @@ public final class Monitor extends Action {
 			form.setSoglia(sogliaLong);
 
 			// Riscontro
-			String riscontro = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_RISCONTRO);
+			String riscontro = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_RISCONTRO);
 			if ((riscontro != null) && !riscontro.equals("")) {
 				form.setRiscontro(true);
 			}
 
 			// pdd
 			if(singlePdD==false){
-				String pdd = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_PDD);
+				String pdd = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_PDD);
 				if ((pdd != null) && !pdd.equals("")) {
 					form.setPdd(pdd);
 				}
 			}
 
 			// stato
-			String stato = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_STATO);
+			String stato = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_STATO);
 			if ((stato != null) && (stato.equals(MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE) || stato.equals(""))) {
 				stato = null;
 			}
 			form.setStato(stato);
 
 			// messagePattern
-//			String mp = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_PATTERN);
+//			String mp = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_PATTERN);
 //			if ((mp != null) && !mp.equals("")) {
 //				form.setMessagePattern(mp);
 //			}
 
 			// CorrelazioneApplicativa
-			String correlazioneApplicativa = request.getParameter(MonitorCostanti.PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
+			String correlazioneApplicativa = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
 			if ((correlazioneApplicativa != null) && !correlazioneApplicativa.equals("")) {
 				form.setCorrelazioneApplicativa(correlazioneApplicativa);
 			}

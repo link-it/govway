@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -53,6 +54,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
+import org.openspcoop2.web.lib.mvc.PageData;
 import org.slf4j.Logger;
 
 /**
@@ -92,34 +94,46 @@ public class DocumentoExporter extends HttpServlet {
 	 */
 	private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		HttpSession session = request.getSession(true);
 
-		ControlStationCore.logDebug("Ricevuta Richiesta di esportazione...");
-		Enumeration<?> en = request.getParameterNames();
-		ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
-		while (en.hasMoreElements()) {
-			String param = (String) en.nextElement();
-			String value = request.getParameter(param);
-			ControlStationCore.logDebug(param + " = " + value);
+		// Inizializzo PageData
+		PageData pd = new PageData();
+		
+		ArchiviHelper archiviHelper = null;
+		try {
+			archiviHelper = new ArchiviHelper(request, pd, session);
+			
+			ControlStationCore.logDebug("Ricevuta Richiesta di esportazione...");
+			Enumeration<?> en = archiviHelper.getParameterNames();
+			ControlStationCore.logDebug("Parametri (nome = valore):\n-----------------");
+			while (en.hasMoreElements()) {
+				String param = (String) en.nextElement();
+				String value = archiviHelper.getParameter(param);
+				ControlStationCore.logDebug(param + " = " + value);
+			}
+			ControlStationCore.logDebug("-----------------");
+		}catch(Exception e){
+			throw new ServletException(e.getMessage(),e);
 		}
-		ControlStationCore.logDebug("-----------------");
 
-		String idAllegato = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ALLEGATO);
-		String idAccordo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO);
-		String tipoDocumento = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO);
-		String tipoDocumentoDaScaricare = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO);
-		if(tipoDocumentoDaScaricare==null || "".equals(tipoDocumentoDaScaricare)){
-			tipoDocumentoDaScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_DOCUMENTO;
-		}
-		
-		String tipoSoggettoFruitore = request.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE);
-		String nomeSoggettoFruitore = request.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE);
-		
-		int idAccordoInt = 0 ;
-		try{ idAccordoInt = Integer.parseInt(idAccordo); }catch(Exception e){ idAccordoInt = 0 ; }
 		byte[] docBytes = null;
 		String fileName = null;
 		
 		try {
+			String idAllegato = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ALLEGATO);
+			String idAccordo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO);
+			String tipoDocumento = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO);
+			String tipoDocumentoDaScaricare = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO);
+			if(tipoDocumentoDaScaricare==null || "".equals(tipoDocumentoDaScaricare)){
+				tipoDocumentoDaScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_DOCUMENTO;
+			}
+			
+			String tipoSoggettoFruitore = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE);
+			String nomeSoggettoFruitore = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE);
+			
+			int idAccordoInt = 0 ;
+			try{ idAccordoInt = Integer.parseInt(idAccordo); }catch(Exception e){ idAccordoInt = 0 ; }
+			
 			ArchiviCore archiviCore = new ArchiviCore();
 			ProtocolPropertiesCore ppCore = new ProtocolPropertiesCore(archiviCore);
 			

@@ -75,20 +75,18 @@ public final class AccordiServizioParteComuneDel extends Action {
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 		
-		// ctrlstatHelper ch = new ctrlstatHelper(request, pd, session);
-		String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
-		ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-
 		try {
+			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			
-			String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 			
-			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
-
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);

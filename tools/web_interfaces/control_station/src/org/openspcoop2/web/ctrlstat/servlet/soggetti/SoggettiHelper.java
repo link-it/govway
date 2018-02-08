@@ -546,16 +546,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 	boolean soggettiCheckData(TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter) throws Exception {
 		try {
-//			String id = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+//			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idInt = 0;
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 				idInt = Integer.parseInt(id);
 			}
-//			String nomeprov = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-//			String tipoprov = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
-//			String codiceIpa = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
-//			String pd_url_prefix_rewriter = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-//			String pa_url_prefix_rewriter = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+//			String nomeprov = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
+//			String tipoprov = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+//			String codiceIpa = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
+//			String pd_url_prefix_rewriter = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+//			String pa_url_prefix_rewriter = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
 
 			// Campi obbligatori
 			if (nomeprov.equals("") || tipoprov.equals("") ) {
@@ -670,15 +670,15 @@ public class SoggettiHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			String tipoauth = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+			String tipoauth = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauth == null) {
 				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 			}
-			String utente = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			String password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			// String confpw = this.request.getParameter("confpw");
-			String subject = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-			String principal = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			String utente = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String password = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			// String confpw = this.getParameter("confpw");
+			String subject = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 			
 			// Se sono presenti credenziali, controllo che non siano gia'
 			// utilizzate da altri soggetti
@@ -1204,12 +1204,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 	public boolean soggettiEndPointCheckData(TipoOperazione tipoOp,List<ExtendedConnettore> listExtendedConnettore, String tipoSoggetto, String nomeSoggetto) throws Exception {
 		try {
-			String id = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
+			String id = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 			int idInt = 0;
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 				idInt = Integer.parseInt(id);
 			}
-			//String endpointtype = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+			//String endpointtype = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			String endpointtype = this.readEndPointType();
 
 			if (!this.endPointCheckData(listExtendedConnettore)) {
@@ -1255,7 +1255,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 	public void prepareRuoliList(ISearch ricerca, List<String> lista)
 					throws Exception {
 		try {
-			String id = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 
 
 			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 

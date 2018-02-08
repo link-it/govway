@@ -89,10 +89,10 @@ public final class PorteDelegateDel extends Action {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			int soggInt = -1;
 			if(useIdSogg){
-				String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+				String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 				soggInt = Integer.parseInt(idsogg);
 			}
-			String objToRemove = request.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);

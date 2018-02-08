@@ -76,12 +76,12 @@ public final class Tracciamento extends Action {
 		try {
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 
-			String datainizio = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
-			String datafine = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
-			String profcoll = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE);
-			String nomeDs = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
+			String datainizio = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_INIZIO);
+			String datafine = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_DATA_FINE);
+			String profcoll = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE);
+			String nomeDs = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_NOME_DATASOURCE);
 
-			String index = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_INDEX);
+			String index = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_INDEX);
 			String postBackElementName=ServletUtils.getPostBackElementName(request);
 			boolean showList = false;
 			if(index!=null && !ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO.equals(postBackElementName) ){
@@ -97,7 +97,7 @@ public final class Tracciamento extends Action {
 
 			//User user = ServletUtils.getUserFromSession(session);
 			
-			String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
+			String protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 			
             List<String> tipiSoggetti = new ArrayList<String>();
             tipiSoggetti.add("-");
