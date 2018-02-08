@@ -291,7 +291,7 @@ public class RuoliHelper extends ConsoleHelper{
 						de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO);
 					}
 					else{
-						de.setValue(ruolo.getTipologia().getValue());
+						de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_QUALSIASI);
 					}
 					
 					e.addElement(de);
@@ -304,7 +304,7 @@ public class RuoliHelper extends ConsoleHelper{
 						de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
 					}
 					else{
-						de.setValue(ruolo.getContestoUtilizzo().getValue());
+						de.setValue(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL_QUALSIASI);
 					}
 					e.addElement(de);
 
