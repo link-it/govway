@@ -452,7 +452,8 @@ public final class SoggettiChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, this.id, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter);
+			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, this.id, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter,
+					soggettoRegistry, isSupportatoAutenticazioneSoggetti);
 
 			if(isOk){
 				// check change tipo/nome con gestione workflow abilitata

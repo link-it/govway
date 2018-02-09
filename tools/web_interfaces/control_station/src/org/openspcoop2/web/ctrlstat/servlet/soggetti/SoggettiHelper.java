@@ -31,7 +31,9 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -544,7 +546,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 		return dati;
 	}
 
-	boolean soggettiCheckData(TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter) throws Exception {
+	boolean soggettiCheckData(TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter,
+			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti) throws Exception {
 		try {
 //			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idInt = 0;
@@ -618,13 +621,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 			}
 
+			IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
+			
 			// Se tipoOp = add o tipoOp = change, controllo che non esistano
 			// altri soggetti con stessi nome e tipo
 			// Se tipoOp = change, devo fare attenzione a non escludere nome e
 			// tipo del soggetto selezionato
 			if (tipoOp.equals(TipoOperazione.ADD) || tipoOp.equals(TipoOperazione.CHANGE)) {
 				int idSogg = 0;
-				IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
 				boolean existsSogg = this.soggettiCore.existsSoggetto(ids);
 				if (existsSogg) {
 					if(this.core.isRegistroServiziLocale()){
@@ -665,6 +669,41 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 			}
 
+			if (tipoOp.equals(TipoOperazione.CHANGE)) {
+				
+				String oldTipoAuth = null;
+				if(isSupportatoAutenticazioneSoggetti &&
+						soggettoOld!=null) {
+					// prendo il primo
+					org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = null;
+					if(soggettoOld.getCredenziali()!=null) {
+						tipo = soggettoOld.getCredenziali().getTipo();
+					}
+					if(tipo!=null) {
+						oldTipoAuth = tipo.getValue();
+					}
+					else {
+						oldTipoAuth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+					}
+				}
+				
+				String tipoauth = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+				
+				if(oldTipoAuth!=null && !oldTipoAuth.equals(tipoauth)) {
+					// controllo che non sia usato in qualche PD
+					
+					FiltroRicercaPorteApplicative filtro = new FiltroRicercaPorteApplicative();
+					filtro.setIdSoggettoAutorizzato(ids);
+					List<IDPortaApplicativa> list = this.porteApplicativeCore.getAllIdPorteApplicative(filtro);
+					if(list!=null && list.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; il soggetto viene utilizzato all'interno del controllo degli accessi di "+
+								list.size()+" configurazioni di erogazione di servizio");
+						return false;
+					}
+				}
+				
+			}
+			
 
 			if(this.credenzialiCheckData()==false){
 				return false;

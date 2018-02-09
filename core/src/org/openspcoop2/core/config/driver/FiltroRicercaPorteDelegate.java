@@ -66,14 +66,18 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	/** Azione */
 	private String azione;
 
-	/** Ruolo */
+	/** Autorizzazione Ruolo */
 	private IDRuolo idRuolo;
+	
+	/** Autorizzazione ServizioApplicativo */
+	private String nomeServizioApplicativo;
 	
 	/** Stato */
 	private StatoFunzionalita stato;
 	
 	/** Trova tutte le porte associate a quella indicata nel parametro con funzione DelegatedBy */
 	private String nomePortaDelegante;
+	
 		
 
 	@Override
@@ -96,6 +100,8 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 			bf.append(" [azione:"+this.azione+"]");
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.nomeServizioApplicativo!=null)
+			bf.append(" [nomeServizioApplicativo:"+this.nomeServizioApplicativo+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
@@ -196,5 +202,13 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 
 	public void setNomePortaDelegante(String nomePortaDelegante) {
 		this.nomePortaDelegante = nomePortaDelegante;
+	}
+	
+	public String getNomeServizioApplicativo() {
+		return this.nomeServizioApplicativo;
+	}
+
+	public void setNomeServizioApplicativo(String nomeServizioApplicativo) {
+		this.nomeServizioApplicativo = nomeServizioApplicativo;
 	}
 }

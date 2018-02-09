@@ -374,6 +374,11 @@ public class ConsoleHelper {
 		this.idServizioFactory = IDServizioFactory.getInstance();
 	}
 	
+	public boolean isUseIdSogg() {
+		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+		return ServletUtils.getBooleanAttributeFromSession(CostantiControlStation.PARAMETRO_USAIDSOGG , this.session, false);
+	}
+	
 	public IDAccordo getIDAccordoFromValues(String nomeAS, String soggettoReferente, String versione) throws Exception{
 		Soggetto s = this.soggettiCore.getSoggetto(Integer.parseInt(soggettoReferente));			
 		IDSoggetto assr = new IDSoggetto();

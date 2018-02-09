@@ -144,7 +144,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				
 				// Verifico se sono in modalità di interfaccia 'standard' che non si tratti della PortaApplicativa generata automaticamente.
 				// In tal caso la posso eliminare.
-				if(asps!=null && asps.getPortType()!=null && !"".equals(asps.getPortType())){
+				if(asps!=null){
 					boolean generaPACheckSoggetto = true;
 					IDSoggetto idSoggettoEr = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );

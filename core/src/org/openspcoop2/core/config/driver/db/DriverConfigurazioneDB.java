@@ -17020,6 +17020,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
 				}
 			}
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getNomeServizioApplicativo()!=null){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SA);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SA+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SA+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				}
+			}
 			boolean porteDelegatePerAzioni = false;
 			if(filtroRicerca!=null && filtroRicerca.getNomePortaDelegante()!=null) {
 				porteDelegatePerAzioni = true;
@@ -17053,6 +17061,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo = ?");
+				if(filtroRicerca.getNomeServizioApplicativo()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome = ?");			
 				if(filtroRicerca.getStato()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".stato = ?");
 				if(porteDelegatePerAzioni) {
@@ -17121,6 +17131,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(filtroRicerca.getIdRuolo()!=null){
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getNomeServizioApplicativo()!=null){
+					this.log.debug("servizioApplicativo stmt.setString("+filtroRicerca.getNomeServizioApplicativo()+")");
+					stm.setString(indexStmt, filtroRicerca.getNomeServizioApplicativo());
 					indexStmt++;
 				}
 				if(filtroRicerca.getStato()!=null){
@@ -17228,6 +17243,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
 				}
 			}
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdSoggettoAutorizzato()!=null &&
+						(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null || 
+						filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null)){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SOGGETTI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+				}
+			}
 			boolean porteDelegatePerAzioni = false;
 			if(filtroRicerca!=null && filtroRicerca.getNomePortaDelegante()!=null) {
 				porteDelegatePerAzioni = true;
@@ -17261,6 +17284,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo = ?");
+				if(filtroRicerca.getIdSoggettoAutorizzato()!=null &&
+						(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null || 
+						filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null)){
+					if(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null) {
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SOGGETTI+".tipo_soggetto= ?");
+					}
+					if(filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null) {
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SOGGETTI+".nome_soggetto= ?");
+					}
+				}
 				if(filtroRicerca.getStato()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".stato = ?");
 				if(porteDelegatePerAzioni) {
@@ -17330,6 +17363,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
 					indexStmt++;
+				}
+				if(filtroRicerca.getIdSoggettoAutorizzato()!=null &&
+						(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null || 
+						filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null)){
+					if(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null) {
+						this.log.debug("idSoggettoAutorizzazione.tipo stmt.setString("+filtroRicerca.getIdSoggettoAutorizzato().getTipo()+")");
+						stm.setString(indexStmt, filtroRicerca.getIdSoggettoAutorizzato().getTipo());
+						indexStmt++;
+					}
+					if(filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null) {
+						this.log.debug("idSoggettoAutorizzazione.nome stmt.setString("+filtroRicerca.getIdSoggettoAutorizzato().getNome()+")");
+						stm.setString(indexStmt, filtroRicerca.getIdSoggettoAutorizzato().getNome());
+						indexStmt++;
+					}
 				}
 				if(filtroRicerca.getStato()!=null){
 					this.log.debug("stato stmt.setString("+filtroRicerca.getStato().getValue()+")");

@@ -374,10 +374,19 @@ public class ServletUtils {
 	}
 
 	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session) {
+		return getBooleanAttributeFromSession(attributeName,session,null);
+	}
+	public static Boolean getBooleanAttributeFromSession(String attributeName, HttpSession session, Boolean defaultValue) {
 		Object obj = session.getAttribute(attributeName);
 
-		if(obj == null)
-			return null;
+		if(obj == null) {
+			if(defaultValue==null) {
+				return null;
+			}
+			else {
+				return defaultValue;
+			}
+		}
 
 		return(Boolean) obj;
 	}

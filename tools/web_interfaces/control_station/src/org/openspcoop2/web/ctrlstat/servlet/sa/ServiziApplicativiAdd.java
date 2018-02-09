@@ -98,11 +98,6 @@ public final class ServiziApplicativiAdd extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , session);
-
-
-	
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
@@ -112,6 +107,8 @@ public final class ServiziApplicativiAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			boolean useIdSogg= saHelper.isUseIdSogg();
 			
 			boolean interfacciaAvanzata = saHelper.isModalitaAvanzata();
 			
@@ -468,7 +465,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = saHelper.servizioApplicativoCheckData(TipoOperazione.ADD, soggettiList, -1, ruoloFruitore, ruoloErogatore,
-					listExtendedConnettore);
+					listExtendedConnettore, null);
 			if (!isOk) {
 				
 				// setto la barra del titolo

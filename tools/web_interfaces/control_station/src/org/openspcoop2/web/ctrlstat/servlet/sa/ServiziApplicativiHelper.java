@@ -40,10 +40,13 @@ import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -212,7 +215,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		boolean configurazioneStandardNonApplicabile = false;
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , this.session);
+		boolean useIdSogg= this.isUseIdSogg();
 
 
 		IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
@@ -233,7 +236,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 
-		if(useIdSogg!=null && !useIdSogg) {
+		if(!useIdSogg) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 	
@@ -820,7 +823,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 
 	public boolean servizioApplicativoCheckData(TipoOperazione tipoOperazione, String[] soggettiList, long idProvOld,
-			String ruoloFruitore, String ruoloErogatore, List<ExtendedConnettore> listExtendedConnettore)
+			String ruoloFruitore, String ruoloErogatore, List<ExtendedConnettore> listExtendedConnettore,
+			ServizioApplicativo saOld)
 			throws Exception {
 		try {
 			
@@ -967,21 +971,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 
+			IDSoggetto ids = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(newProv);
+				ids = new IDSoggetto(mySogg.getTipo(), mySogg.getNome());
+			}else{
+				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(newProv);
+				ids = new IDSoggetto(mySogg.getTipo(), mySogg.getNome());
+			}
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setIdSoggettoProprietario(ids);
+			idSA.setNome(nome);
+			
 			// Se tipoOp = add, controllo che il servizioApplicativo non sia
 			// gia'
 			// stato registrato
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				IDSoggetto ids = null;
-				if(this.core.isRegistroServiziLocale()){
-					Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(newProv);
-					ids = new IDSoggetto(mySogg.getTipo(), mySogg.getNome());
-				}else{
-					org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(newProv);
-					ids = new IDSoggetto(mySogg.getTipo(), mySogg.getNome());
-				}
-				IDServizioApplicativo idSA = new IDServizioApplicativo();
-				idSA.setIdSoggettoProprietario(ids);
-				idSA.setNome(nome);
 				boolean giaRegistrato = this.saCore.existsServizioApplicativo(idSA);
 				if (giaRegistrato) {
 					this.pd.setMessage("Il Servizio Applicativo " + nome + " &egrave; gi&agrave; stato registrato per il soggetto scelto.");
@@ -989,6 +994,44 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 
+			if (tipoOperazione.equals(TipoOperazione.CHANGE)) {
+				
+				String oldTipoAuth = null;
+				TipologiaFruizione tipologiaFruizione = null;
+				if(saOld!=null) {
+					tipologiaFruizione = TipologiaFruizione.toEnumConstant(saOld.getTipologiaFruizione());
+				}
+				if(tipologiaFruizione!=null && !TipologiaFruizione.DISABILITATO.equals(tipologiaFruizione) &&
+						saOld.getInvocazionePorta()!=null && saOld.getInvocazionePorta().sizeCredenzialiList()>0) {
+					// prendo il primo
+					CredenzialeTipo tipo = saOld.getInvocazionePorta().getCredenziali(0).getTipo();
+					if(tipo!=null) {
+						oldTipoAuth = tipo.getValue();
+					}
+					else {
+						oldTipoAuth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+					}
+				}
+				
+				String tipoauth = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+				
+				if(oldTipoAuth!=null && !oldTipoAuth.equals(tipoauth)) {
+					// controllo che non sia usato in qualche PD
+					
+					FiltroRicercaPorteDelegate filtro = new FiltroRicercaPorteDelegate();
+					filtro.setTipoSoggetto(idSA.getIdSoggettoProprietario().getTipo());
+					filtro.setNomeSoggetto(idSA.getIdSoggettoProprietario().getNome());
+					filtro.setNomeServizioApplicativo(idSA.getNome());
+					List<IDPortaDelegata> list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
+					if(list!=null && list.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi di "+
+								list.size()+" configurazioni di fruizione di servizio");
+						return false;
+					}
+				}
+				
+			}
+			
 			// Se tipoOp = change, se sto cambiando provider controllo che
 			// il servizioApplicativo non sia associato al vecchio provider
 			// Ovvero, che non sia associato ad una delle porte delegate
@@ -1241,8 +1284,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , this.session);
+			boolean useIdSogg= this.isUseIdSogg();
 
 			if(useIdSogg){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
@@ -1756,8 +1800,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		try {
 			String idsil = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , this.session);
+			boolean useIdSogg= this.isUseIdSogg();
 
 			Parameter pSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, idsil); 
 			

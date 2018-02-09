@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -66,12 +67,10 @@ public final class ServiziApplicativiList extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , session);
-
-
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			boolean useIdSogg= saHelper.isUseIdSogg();
 			
 			String idsogg = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			long soggLong = -1;
@@ -84,7 +83,7 @@ public final class ServiziApplicativiList extends Action {
 			}
 
 			// salvo il punto di ingresso
-			ServletUtils.setObjectIntoSession(session, useIdSogg, ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO);
+			ServletUtils.setObjectIntoSession(session, useIdSogg, CostantiControlStation.PARAMETRO_USAIDSOGG);
 
 			// Preparo il menu
 			saHelper.makeMenu();

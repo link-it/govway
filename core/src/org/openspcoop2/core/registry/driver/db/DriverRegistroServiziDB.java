@@ -6806,7 +6806,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @param tipiSoggetto
 	 * @param superuser
 	 * @param credenziale
-	 * @return
+	 * @return tutti i soggetti con i tipi indicati che utilizzano le credenziali indicate
 	 */
 	public List<Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser, CredenzialeTipo credenziale) throws DriverRegistroServiziException {
 		Connection con = null;

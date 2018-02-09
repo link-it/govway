@@ -818,6 +818,22 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}
+					// Filtro By Autorizzazione Servizio Applicativo
+					if(filtroRicerca.getNomeServizioApplicativo()!=null) {
+						if(pd.sizeServizioApplicativoList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pd.sizeServizioApplicativoList(); z++) {
+							if(filtroRicerca.getNomeServizioApplicativo().equals(pd.getServizioApplicativo(z).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}						
 					// Filtro By Stato
 					if(filtroRicerca.getStato()!=null){
 						if(pd.getStato()==null){
@@ -1236,6 +1252,30 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 								contains = true;
 								break;
 							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
+					// Filtro By SoggettoAutorizzato
+					if(filtroRicerca.getIdSoggettoAutorizzato()!=null &&
+							(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null || 
+							filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null)){
+						if(pa.getSoggetti()==null || pa.getSoggetti().sizeSoggettoList()<=0) {
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getSoggetti().sizeSoggettoList(); z++) {
+							if(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null &&
+									!filtroRicerca.getIdSoggettoAutorizzato().getTipo().equals(pa.getSoggetti().getSoggetto(z).getTipo())){
+								continue;
+							}
+							if(filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null &&
+									!filtroRicerca.getIdSoggettoAutorizzato().getNome().equals(pa.getSoggetti().getSoggetto(z).getNome())){
+								continue;
+							}
+							contains = true;
+							break;
 						}
 						if(!contains){
 							continue;

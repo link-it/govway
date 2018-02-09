@@ -1388,6 +1388,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
 			
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+			
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
 			//Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
 
@@ -1471,7 +1473,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						pId,	pMyId, pIdSoggettoErogatore,
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, fru.getIdSoggetto() + ""));
 
-				de.setValue(fru.getTipo() + "/" + fru.getNome());
+				de.setValue(this.getLabelNomeSoggetto(protocollo, fru.getTipo() , fru.getNome()));
 				de.setIdToRemove(fru.getId().toString());
 				e.addElement(de);
 

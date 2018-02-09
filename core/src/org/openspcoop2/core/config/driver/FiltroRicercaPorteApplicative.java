@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDSoggetto;
 
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
@@ -66,8 +67,11 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	/** Azione */
 	private String azione;
 
-	/** Ruolo */
+	/** Autorizzazione Ruolo */
 	private IDRuolo idRuolo;
+	
+	/** Autorizzazione Soggetto */
+	private IDSoggetto idSoggettoAutorizzato;
 	
 	/** Stato */
 	private StatoFunzionalita stato;
@@ -96,6 +100,8 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 			bf.append(" [azione:"+this.azione+"]");
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.idSoggettoAutorizzato!=null)
+			bf.append(" [ruolo:"+this.idSoggettoAutorizzato+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
@@ -192,5 +198,13 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 
 	public void setNomePortaDelegante(String nomePortaDelegante) {
 		this.nomePortaDelegante = nomePortaDelegante;
+	}
+	
+	public IDSoggetto getIdSoggettoAutorizzato() {
+		return this.idSoggettoAutorizzato;
+	}
+
+	public void setIdSoggettoAutorizzato(IDSoggetto idSoggettoAutorizzato) {
+		this.idSoggettoAutorizzato = idSoggettoAutorizzato;
 	}
 }

@@ -130,8 +130,6 @@ public class ServiziApplicativiCostanti {
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACTION = "action";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO = "correlato";
 	
-	public final static String ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO = CostantiControlStation.PARAMETRO_USAIDSOGG;
-	
 	
 	/* LABEL PARAMETRI */
 	

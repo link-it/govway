@@ -282,7 +282,6 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA;
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
 
-	public final static String ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO = CostantiControlStation.PARAMETRO_USAIDSOGG;
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
 	
 	public final static String ATTRIBUTO_PORTE_DELEGATE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
