@@ -1020,7 +1020,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.tipoProtocollo, listaTipiProtocollo);
 
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-						apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+						apsHelper.isModalitaCompleta()?null:
+							(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 						this.url, this.nome,
 						tipoJms, this.user,
 						this.password, this.initcont, this.urlpgk,
@@ -1157,7 +1158,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.tipoProtocollo, listaTipiProtocollo);
 
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-						apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+						apsHelper.isModalitaCompleta()?null:
+							(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 						this.url, this.nome, this.tipo, this.user,
 						this.password, this.initcont, this.urlpgk,
 						this.provurl, this.connfact, this.sendas,
@@ -1245,7 +1247,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			if(asps.getConfigurazioneServizio()==null)
 				asps.setConfigurazioneServizio(new ConfigurazioneServizio());
-			if(apsHelper.isModalitaCompleta()) {
+			if(apsHelper.isModalitaCompleta() || !generaPACheckSoggetto) {
 				asps.getConfigurazioneServizio().setConnettore(connettore);
 			}
 
@@ -1307,7 +1309,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.tipoProtocollo, listaTipiProtocollo);
 
 					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+							apsHelper.isModalitaCompleta()?null:
+								(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
