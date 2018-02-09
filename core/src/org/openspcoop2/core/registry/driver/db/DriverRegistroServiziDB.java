@@ -17593,11 +17593,22 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}catch(Exception e) {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
-		String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 
+		String filterTipoAPI = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+		
+		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
+		PddTipologia pddTipologia = null;
+		if(filterDominio!=null && !"".equals(filterDominio)) {
+			pddTipologia = PddTipologia.toPddTipologia(filterDominio);
+		}
+		
+		String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
+		this.log.debug("filterTipoAPI : " + filterTipoAPI);
+		this.log.debug("filterDominio : " + filterDominio);
 		this.log.debug("filterStatoAccordo : " + filterStatoAccordo);
 		
 		
@@ -17617,15 +17628,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		try {
 
-			ISQLQueryObject sqlQueryObjectAccordiComposti = null;
-
+			ISQLQueryObject sqlQueryObjectAccordiComposti = null;			
 			if (permessiUtente != null) {
 				sqlQueryObjectAccordiComposti = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObjectAccordiComposti.addFromTable(CostantiDB.ACCORDI);
 				sqlQueryObjectAccordiComposti.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
 				sqlQueryObjectAccordiComposti.addSelectField(CostantiDB.ACCORDI_SERVIZI_COMPOSTO, "id");
 				sqlQueryObjectAccordiComposti.setANDLogicOperator(true);
-				sqlQueryObjectAccordiComposti.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				sqlQueryObjectAccordiComposti.addWhereCondition(CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo="+CostantiDB.ACCORDI+".id");
 			}
 
@@ -17647,12 +17655,34 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				if(permessiUtente!=null || filterTipoAPI!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				}
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
+				}
+				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
 				}
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
@@ -17682,12 +17712,34 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				if(permessiUtente!=null || filterTipoAPI!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				}
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
+				}
+				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
 				}
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
@@ -17712,6 +17764,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			int index = 1;
 			if(superuser!=null && (!"".equals(superuser)))
 				stmt.setString(index++, superuser);
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+				stmt.setString(index++, filterTipoAPI);
+			}
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
 			}
@@ -17728,6 +17786,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				if(permessiUtente!=null || filterTipoAPI!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				}
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
 				sqlQueryObject.addSelectField("nome_servizio");
 				sqlQueryObject.addSelectField("tipo_servizio");
@@ -17735,7 +17800,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("id_soggetto");
 				sqlQueryObject.addSelectField("id_accordo");
 				sqlQueryObject.addSelectField("servizio_correlato");
-				sqlQueryObject.addSelectField("stato");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".stato","statoServizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
@@ -17744,6 +17809,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
+				}
+				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
 				}
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
@@ -17784,6 +17864,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				if(permessiUtente!=null || filterTipoAPI!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
+				}
+				if(pddTipologia!=null) {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
 				sqlQueryObject.addSelectField("nome_servizio");
 				sqlQueryObject.addSelectField("tipo_servizio");
@@ -17791,7 +17878,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("id_soggetto");
 				sqlQueryObject.addSelectField("id_accordo");
 				sqlQueryObject.addSelectField("servizio_correlato");
-				sqlQueryObject.addSelectField("stato");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".stato","statoServizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
@@ -17801,6 +17888,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
 					sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
+				}
+				if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+					sqlQueryObject.addWhereCondition("service_binding = ?");
+				}
+				if(pddTipologia!=null) {
+					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObjectPdd.setANDLogicOperator(false);
+						sqlQueryObjectPdd.addWhereIsNullCondition("server");
+						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					}
+					else {
+						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					}
 				}
 				if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".stato = ?");
@@ -17837,6 +17939,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			index = 1;
 			if(superuser!=null && (!"".equals(superuser)))
 				stmt.setString(index++, superuser);
+			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
+				stmt.setString(index++, filterTipoAPI);
+			}
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			if(filterStatoAccordo!=null && !filterStatoAccordo.equals("")) {
 				stmt.setString(index++, filterStatoAccordo);
 			}
@@ -17874,7 +17982,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				serv.setAccordoServizioParteComune(this.idAccordoFactory.getUriFromAccordo(as));
 
 				// Stato
-				serv.setStatoPackage(risultato.getString("stato"));
+				serv.setStatoPackage(risultato.getString("statoServizio"));
 
 				serviziList.add(serv);
 			}

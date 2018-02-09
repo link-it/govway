@@ -290,7 +290,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					}
 				}
 				if(msg) {
-					if(soggettiCore.isGestionePddAbilitata()) {
+					if(soggettiCore.isGestionePddAbilitata(apcHelper)) {
 						pd.setMessage("Non risultano registrati soggetti associati a porte di dominio di tipo operativo", Costanti.MESSAGE_TYPE_INFO);
 					}
 					else {

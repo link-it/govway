@@ -397,8 +397,8 @@ public class ControlStationCore {
 
 	/** Porte di Dominio */
 	private boolean gestionePddAbilitata = true;
-	public boolean isGestionePddAbilitata() {
-		return this.singlePdD && this.registroServiziLocale && this.gestionePddAbilitata;
+	public boolean isGestionePddAbilitata(ConsoleHelper consoleHelper) {
+		return this.singlePdD && this.registroServiziLocale && (this.gestionePddAbilitata || consoleHelper.isModalitaAvanzata());
 	}
 	
 	/** Registro Servizi */

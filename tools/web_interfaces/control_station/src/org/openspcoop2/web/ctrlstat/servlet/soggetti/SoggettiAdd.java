@@ -203,7 +203,7 @@ public final class SoggettiAdd extends Action {
 				}
 				
 				// Gestione pdd
-				if(soggettiCore.isGestionePddAbilitata()==false) {
+				if(soggettiCore.isGestionePddAbilitata(soggettiHelper)==false) {
 					
 					if(nomePddGestioneLocale==null) {
 						throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
@@ -435,7 +435,7 @@ public final class SoggettiAdd extends Action {
 				soggettoRegistro.setIdentificativoPorta(this.portadom);
 				soggettoRegistro.setCodiceIpa(this.codiceIpa);
 				
-				if(pddCore.isGestionePddAbilitata()==false){
+				if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
 					if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(this.dominio)) {
 						this.pdd = nomePddGestioneLocale;
 					}

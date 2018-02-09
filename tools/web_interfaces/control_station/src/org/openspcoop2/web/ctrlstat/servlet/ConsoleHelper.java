@@ -855,7 +855,7 @@ public class ConsoleHelper {
 				if(pu.isServizi()){
 					// Link PdD
 					if(this.core.isRegistroServiziLocale()){
-						if(this.core.isGestionePddAbilitata()) {
+						if(this.core.isGestionePddAbilitata(this)) {
 							totEntries ++;
 						}
 					}
@@ -910,7 +910,7 @@ public class ConsoleHelper {
 					
 					//Link PdD
 					if(this.core.isRegistroServiziLocale()){
-						if(this.core.isGestionePddAbilitata()) {
+						if(this.core.isGestionePddAbilitata(this)) {
 							pddVisualizzate = true;
 							entries[index][0] = PddCostanti.LABEL_PDD_MENU_VISUALE_AGGREGATA;
 							if (singlePdD == false) {
@@ -3770,6 +3770,29 @@ public class ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public void addFilterDominio(String dominio, boolean postBack) throws Exception{
+		try {
+			
+			String [] values = new String[SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length + 1];
+			String [] labels = new String[SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length + 1];
+			labels[0] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI;
+			values[0] = SoggettiCostanti.DEFAULT_VALUE_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI;
+			for (int i =0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length ; i ++) {
+				labels[i+1] = SoggettiCostanti.SOGGETTI_DOMINI_LABEL[i];
+				values[i+1] = SoggettiCostanti.SOGGETTI_DOMINI_VALUE[i];
+			}
+			
+			String selectedValue = dominio != null ? dominio : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			
+			this.pd.addFilter(Filtri.FILTRO_DOMINIO, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+
 	}
 	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{

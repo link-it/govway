@@ -1046,11 +1046,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			addFilterProtocol(ricerca, idLista);
 			
+			String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+			this.addFilterServiceBinding(filterTipoAccordo,false,true);
+			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
+			}
+			
+			if(this.core.isGestionePddAbilitata(this)==false) {
+				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
+				this.addFilterDominio(filterDominio, false);
 			}
 			
 			this.pd.setIndex(offset);

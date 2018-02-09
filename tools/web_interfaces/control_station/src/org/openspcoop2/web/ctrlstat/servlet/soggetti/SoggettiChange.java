@@ -181,7 +181,7 @@ public final class SoggettiChange extends Action {
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(soggettiCore);
 
 			String nomePddGestioneLocale = null;
-			if(pddCore.isGestionePddAbilitata()==false){
+			if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
 				nomePddGestioneLocale = pddCore.getNomePddOperativa();
 				if(nomePddGestioneLocale==null) {
 					throw new Exception("Non è stata rilevata una pdd di tipologia 'operativo'");
@@ -339,7 +339,7 @@ public final class SoggettiChange extends Action {
 						this.descr = soggettoRegistry.getDescrizione();
 					if(this.pdd==null)
 						this.pdd = soggettoRegistry.getPortaDominio();
-					if(pddCore.isGestionePddAbilitata()==false){
+					if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
 						if(this.dominio==null) {
 							if(pddCore.isPddEsterna(this.pdd)) {
 								this.dominio = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE;
@@ -667,7 +667,7 @@ public final class SoggettiChange extends Action {
 				}
 			}
 		
-			if(pddCore.isGestionePddAbilitata()==false){
+			if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
 				if(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(this.dominio)) {
 					this.pdd = nomePddGestioneLocale;
 				}

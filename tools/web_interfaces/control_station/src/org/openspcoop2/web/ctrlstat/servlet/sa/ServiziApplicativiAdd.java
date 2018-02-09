@@ -273,7 +273,7 @@ public final class ServiziApplicativiAdd extends Action {
 			saHelper.makeMenu();
 
 			if(listaTipiProtocollo.size()<=0) {
-				if(saCore.isGestionePddAbilitata()) {
+				if(saCore.isGestionePddAbilitata(saHelper)) {
 					pd.setMessage("Non risultano registrati soggetti associati a porte di dominio di tipo operativo", Costanti.MESSAGE_TYPE_INFO);
 				}
 				else {
