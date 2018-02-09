@@ -294,7 +294,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Prendo la lista di soggetti e la metto in un array
 			// Prendo la lista di accordi e la metto in un array
 			String tmpTitle = tiposervizio + "/" + nomeservizio;
-			String provider = "", provString = "";
+			String provider = "";
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 			String[] accordiList = null;
@@ -337,8 +337,35 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
-			List<AccordoServizioParteComune> lista =  
+			List<AccordoServizioParteComune> listaTmp =  
 					AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, new Search(true), permessi);
+			List<AccordoServizioParteComune> lista = null;
+			if(apsHelper.isModalitaCompleta()) {
+				lista = listaTmp;
+			}
+			else {
+				// filtro accordi senza risorse o senza pt/operation
+				lista = new ArrayList<AccordoServizioParteComune>();
+				for (AccordoServizioParteComune accordoServizioParteComune : listaTmp) {
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(accordoServizioParteComune.getServiceBinding())) {
+						if(accordoServizioParteComune.sizeResourceList()>0) {
+							lista.add(accordoServizioParteComune);	
+						}
+					}
+					else {
+						boolean ptValido = false;
+						for (PortType pt : accordoServizioParteComune.getPortTypeList()) {
+							if(pt.sizeAzioneList()>0) {
+								ptValido = true;
+								break;
+							}
+						}
+						if(ptValido) {
+							lista.add(accordoServizioParteComune);	
+						}
+					}
+				}
+			}
 
 			if (lista.size() > 0) {
 				accordiList = new String[lista.size()];
@@ -366,6 +393,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Servizio
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 
+			String tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+			
 			Boolean isConnettoreCustomUltimaImmagineSalvata = asps.getConfigurazioneServizio()!=null &&
 					asps.getConfigurazioneServizio().getConnettore()!=null &&
 					asps.getConfigurazioneServizio().getConnettore().getCustom();
@@ -445,7 +474,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			oldnomeservizio = asps.getNome();
 			oldtiposoggetto = asps.getTipoSoggettoErogatore();
 			oldnomesoggetto = asps.getNomeSoggettoErogatore();
-			provString = tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
 			oldStatoPackage = asps.getStatoPackage();		
 
 			// aggiorno tmpTitle
@@ -490,7 +518,23 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 
-			List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+			List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+			List<PortType> portTypes = null;
+			
+			if(apsHelper.isModalitaCompleta()) {
+				portTypes = portTypesTmp;
+			}
+			else {
+				// filtro pt senza op
+				portTypes = new ArrayList<PortType>();
+				for (PortType portTypeCheck : portTypesTmp) {
+					if(portTypeCheck.sizeAzioneList()>0) {
+						portTypes.add(portTypeCheck);
+					}
+				}
+			}
+			
+			
 			if (portTypes.size() > 0) {
 				ptList = new String[portTypes.size() + 1];
 				ptList[0] = "-";
@@ -545,7 +589,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
 				tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
-				provString = tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
 				if (servcorr == null) {
 					if(TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()))
 						servcorr = Costanti.CHECK_BOX_ENABLED;
@@ -815,14 +858,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio,
-							provider, provString,
+							provider, tipoSoggettoErogatore, nomeSoggettoErogatore,
 							soggettiList, soggettiListLabel, accordo,serviceBinding, formatoSpecifica, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
-							null,null,null,null,null,null);
+							null,null,null,null,null,null,
+							tipoProtocollo,null);
 
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  null,
 							url,nome, tipo, user, password, initcont, urlpgk,
@@ -883,7 +927,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					null,null,null,null,null,
 					null, null, null, null,false,
-					listExtendedConnettore);
+					generaPACheckSoggetto, listExtendedConnettore);
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -933,14 +977,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
-						provider, provString, soggettiList, 
+						provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
 						soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
 						accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-						null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+						null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 						null,null,null,null,false,
-						null,null,null,null,null,null);
+						null,null,null,null,null,null,
+						tipoProtocollo,null);
 
 				dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, null, 
 						url, nome,
@@ -998,7 +1043,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 					
-					dati = apsHelper.addServiziToDatiAsHidden(dati, nomeservizio, tiposervizio, provider, provString, soggettiList, 
+					dati = apsHelper.addServiziToDatiAsHidden(dati, nomeservizio, tiposervizio, provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList, 
 							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
@@ -1169,14 +1214,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, oldnomeservizio, oldtiposervizio, 
-							provider, provString, soggettiList,
+							provider, tipoSoggettoErogatore, nomeSoggettoErogatore, soggettiList,
 							soggettiListLabel, accordo, serviceBinding,formatoSpecifica, 
 							accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
-							null,null,null,null,null,null);
+							null,null,null,null,null,null,
+							tipoProtocollo,null);
 
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url,

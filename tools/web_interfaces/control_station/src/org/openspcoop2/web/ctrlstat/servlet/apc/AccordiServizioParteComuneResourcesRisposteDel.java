@@ -88,11 +88,9 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 			ArrayList<String> resourcesToRemove = Utilities.parseIdsToRemove(objToRemove);
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
 			Resource risorsa =  null;
-			Long idRisorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {
 				risorsa = as.getResource(j);
 				if (nomeRisorsa.equals(risorsa.getNome())) {
-					idRisorsa = risorsa.getId();
 					break;
 				}
 			}

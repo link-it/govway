@@ -351,7 +351,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			String nomeSoggettoErogatore = aspsT.getNomeSoggettoErogatore();
 			String tipoSoggettoErogatore = aspsT.getTipoSoggettoErogatore();
-			String provString = tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
 			String servcorr = "";
 			if (TipologiaServizio.CORRELATO.equals(aspsT.getTipologiaServizio()))
 				servcorr = Costanti.CHECK_BOX_ENABLED;
@@ -654,16 +653,17 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
 			dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, null, null, 
-					provider, provString, soggettiList,
+					provider, tipoSoggettoErogatore , nomeSoggettoErogatore, soggettiList,
 					soggettiListLabel, accordo, serviceBinding, formatoSpecifica, 
 					accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru,
 					TipoOperazione.CHANGE, this.id, tipiServizi, profilo, portType, ptList,
 					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,
 					versioneservizio.intValue()+"", versioniProtocollo,this.validazioneDocumenti,
-					null,null,protocollo,true,null,
+					null,null,true,null,
 					null,null,null,null,false,
-					null,null,null,null,null,null);
+					null,null,null,null,null,null,
+					protocollo, null);
 
 			dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,

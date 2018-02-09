@@ -2214,7 +2214,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 			this.pd.setDati(dati);
 			// le porte delegate non si possono piu' creare dalle liste PD e PD di un soggetto
-			this.pd.setAddButton(false);
+			if(!this.isModalitaCompleta() || !useIdSogg) {
+				this.pd.setAddButton(false);
+			}
 			
 			if (useIdSogg){ 
 				if(!this.isModalitaAvanzata()){

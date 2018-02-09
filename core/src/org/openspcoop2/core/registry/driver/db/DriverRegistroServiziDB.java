@@ -15248,17 +15248,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if (!search.equals("")) { // con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
-				sqlQueryObject.addSelectField("id_accordo");
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("profilo_collaborazione");
-				sqlQueryObject.addSelectField("filtro_duplicati");
-				sqlQueryObject.addSelectField("conferma_ricezione");
-				sqlQueryObject.addSelectField("identificativo_collaborazione");
-				sqlQueryObject.addSelectField("consegna_in_ordine");
-				sqlQueryObject.addSelectField("scadenza");
-				sqlQueryObject.addSelectField("profilo_pt");
-				sqlQueryObject.addSelectField("soap_style");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
@@ -15272,17 +15261,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// senza search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
-				sqlQueryObject.addSelectField("id_accordo");
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("profilo_collaborazione");
-				sqlQueryObject.addSelectField("filtro_duplicati");
-				sqlQueryObject.addSelectField("conferma_ricezione");
-				sqlQueryObject.addSelectField("identificativo_collaborazione");
-				sqlQueryObject.addSelectField("consegna_in_ordine");
-				sqlQueryObject.addSelectField("scadenza");
-				sqlQueryObject.addSelectField("profilo_pt");
-				sqlQueryObject.addSelectField("soap_style");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				sqlQueryObject.addOrderBy("nome");
@@ -15295,39 +15273,19 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt.setLong(1, idAccordo);
 			risultato = stmt.executeQuery();
 
-			PortType pt;
+			List<Long> listID = new ArrayList<Long>();
 			while (risultato.next()) {
-				pt = new PortType();
-
-				String tmp = risultato.getString("nome");
-				pt.setNome(((tmp == null || tmp.equals("")) ? null : tmp));
-				tmp = risultato.getString("descrizione");
-				pt.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
-				tmp = risultato.getString("profilo_collaborazione");
-				pt.setProfiloCollaborazione(DriverRegistroServiziDB_LIB.getEnumProfiloCollaborazione(((tmp == null || tmp.equals("")) ? null : tmp)));
-				tmp = risultato.getString("filtro_duplicati");
-				pt.setFiltroDuplicati(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
-				tmp = risultato.getString("conferma_ricezione");
-				pt.setConfermaRicezione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
-				tmp = risultato.getString("identificativo_collaborazione");
-				pt.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
-				tmp = risultato.getString("consegna_in_ordine");
-				pt.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
-				tmp = risultato.getString("scadenza");
-				pt.setScadenza(((tmp == null || tmp.equals("")) ? null : tmp));
-				tmp = risultato.getString("profilo_pt");
-				if (tmp == null || tmp.equals(""))
-					pt.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
-				else
-					pt.setProfiloPT(tmp);
-				tmp = risultato.getString("soap_style");
-				pt.setStyle(DriverRegistroServiziDB_LIB.getEnumBindingStyle(((tmp == null || tmp.equals("")) ? null : tmp)));
-				pt.setIdAccordo(risultato.getLong("id_accordo"));
+				
 				long idPortType = risultato.getLong("id");
-				pt.setId(idPortType);
-				lista.add(pt);
+				listID.add(idPortType);
 			}
 
+			if(listID.size()>0) {
+				for (Long idPT : listID) {
+					lista.add(this.getPortType(idPT));
+				}
+			}
+			
 			return lista;
 
 		} catch (Exception se) {
@@ -18677,6 +18635,57 @@ IDriverWS ,IMonitoraggioRisorsa{
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getPortType");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+		
+			return this.getPortType(DBUtils.getIdPortType(DBUtils.getIdAccordoServizioParteComune(idPT.getIdAccordo(), con, this.tipoDB), idPT.getNome(), con));
+			
+		} catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			// Chiudo statement and resultset
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
+	public PortType getPortType(long id) throws DriverRegistroServiziException {
+		String nomeMetodo = "getPortType(long)";
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		String queryString;
 
 		if (this.atomica) {
@@ -18696,18 +18705,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		try {
 
-			//recupero idAccordo
-			long idAccordoLong = DBUtils.getIdAccordoServizioParteComune(idPT.getIdAccordo(), con, this.tipoDB);
 			// Controllo che il pdd non sia in uso
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition(CostantiDB.PORT_TYPE+".id_accordo=?");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORT_TYPE+".nome=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORT_TYPE+".id=?");
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idAccordoLong);
-			stmt.setString(2, idPT.getNome());
+			stmt.setLong(1, id);
 
 			rs = stmt.executeQuery();
 			PortType pt = null;
@@ -18746,7 +18751,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				tmp = rs.getString("soap_style");
 				pt.setStyle(DriverRegistroServiziDB_LIB.getEnumBindingStyle(((tmp == null || tmp.equals("")) ? null : tmp)));
 
-				pt.setIdAccordo(idAccordoLong);
+				pt.setIdAccordo(rs.getLong("id_accordo"));
 
 				long idPortType = rs.getLong("id");
 				pt.setId(idPortType);

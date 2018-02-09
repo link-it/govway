@@ -164,6 +164,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String LABEL_APS_TIPO_SERVIZIO = "Tipo Servizio";
 	public static final String LABEL_APS_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	public final static String LABEL_APS_APPLICATIVO_EROGATORE_PREFIX = "Applicativo Erogatore - ";
 	
 	public final static String LABEL_APS_MENU_VISUALE_AGGREGATA = "Erogazioni";
 	
@@ -314,8 +315,9 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI = "Esiste gi&agrave; un servizio con il tipo e nome definito erogato dal Soggetto {0}/{1}";
 	public static final String MESSAGGIO_ERRORE_ID_ACCORDO_SERVIZIO_NON_DEFINITO = "id Accordo Servizio non definito";
 	public static final String MESSAGGIO_ERRORE_ID_SOGGETTO_EROGATORE_NON_DEFINITO = "id Soggetto erogatore non definito";
-	public static final String MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUÒ_ESSERE_DISABILITATO_POICHÈ_NON_È_STATO_DEFINITO_UN_CONNETTORE_SUL_SOGGETTO_EROGATORE_ED_ESISTONO_FRUIZIONI_DEL_SERVIZIO_DA_PARTE_DI_SOGGETTI_OPERATIVI_CHE_NON_HANNO_UN_CONNETTORE_DEFINITO = "Il connettore sul servizio non può essere disabilitato poichè non è stato definito un connettore sul soggetto erogatore ed esistono fruizioni del servizio, da parte di soggetti operativi, che non hanno un connettore definito";
+	public static final String MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_SUL_SOGGETTO_EROGATORE_ED_ESISTONO_FRUIZIONI_DEL_SERVIZIO_DA_PARTE_DI_SOGGETTI_OPERATIVI_CHE_NON_HANNO_UN_CONNETTORE_DEFINITO = "Il connettore sul servizio non può essere disabilitato poichè non è stato definito un connettore sul soggetto erogatore ed esistono fruizioni del servizio, da parte di soggetti operativi, che non hanno un connettore definito";
 	public static final String MESSAGGIO_ERRORE_IL_CONNETTORE_DEL_SERVIZIO_DEVE_ESSERE_SPECIFICATO_SE_NON_EGRAVE_STATO_DEFINITO_UN_CONNETTORE_PER_IL_SOGGETTO_EROGATORE = "Il connettore del servizio deve essere specificato se non &egrave; stato definito un connettore per il soggetto erogatore";
+	public static final String MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_APPLICATIVO_EROGATORE = "Deve essere definito il connettore dell'applicativo erogatore";
 	public static final String MESSAGGIO_ERRORE_USO_SOGGETTO_EROGATORE_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA = "Non &egrave; possibile utilizzare un soggetto erogatore con visibilit&agrave; privata, in un servizio con visibilit&agrave; pubblica.";
 	public static final String MESSAGGIO_ERRORE_ACCORDO_SERVIZIO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_ACCORDI_SERVIZIO = "L'accordo servizio dev'essere scelto tra quelli definiti nel pannello Accordi servizio";
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI = "Il soggetto dev'essere scelto tra quelli definiti nel pannello Soggetti";

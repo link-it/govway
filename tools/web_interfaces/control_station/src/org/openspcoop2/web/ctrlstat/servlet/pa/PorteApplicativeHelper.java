@@ -1899,7 +1899,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			this.pd.setDati(dati);
 			// le porte applicative non si possono piu' creare dalle liste PA e PA di un soggetto
-			this.pd.setAddButton(false);
+			if(!this.isModalitaCompleta() || !useIdSogg) {
+				this.pd.setAddButton(false);
+			}
 			
 			if (useIdSogg){ 
 				if(this.isModalitaStandard()){

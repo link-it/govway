@@ -38,14 +38,19 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.constants.TipologiaErogazione;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -83,6 +88,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -174,6 +180,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String erogazioneAutorizzazione;
 	private String erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch;
 	private String erogazioneSoggettoAutenticato; 
+	
+	private String tipoProtocollo;
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -403,6 +411,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						ForwardParams.ADD());
 			}
 			
+			this.tipoProtocollo = apsHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
+			if(this.tipoProtocollo == null){
+				this.tipoProtocollo = apsCore.getProtocolloDefault(session, listaTipiProtocollo);
+			}
+			
 			String[] ptList = null;
 			// Prendo la lista di soggetti e la metto in un array
 			// Prendo la lista di accordi e la metto in un array
@@ -433,9 +446,36 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
 			Search searchAccordi = new Search(true);
-			apsHelper.setFilterSelectedProtocol(searchAccordi, Liste.ACCORDI);
-			List<AccordoServizioParteComune> lista =  
+			searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, this.tipoProtocollo);
+			List<AccordoServizioParteComune> listaTmp =  
 					AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, permessi);
+			List<AccordoServizioParteComune> lista = null;
+			if(apsHelper.isModalitaCompleta()) {
+				lista = listaTmp;
+			}
+			else {
+				// filtro accordi senza risorse o senza pt/operation
+				lista = new ArrayList<AccordoServizioParteComune>();
+				for (AccordoServizioParteComune accordoServizioParteComune : listaTmp) {
+					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(accordoServizioParteComune.getServiceBinding())) {
+						if(accordoServizioParteComune.sizeResourceList()>0) {
+							lista.add(accordoServizioParteComune);	
+						}
+					}
+					else {
+						boolean ptValido = false;
+						for (PortType pt : accordoServizioParteComune.getPortTypeList()) {
+							if(pt.sizeAzioneList()>0) {
+								ptValido = true;
+								break;
+							}
+						}
+						if(ptValido) {
+							lista.add(accordoServizioParteComune);	
+						}
+					}
+				}
+			}
 
 			int accordoPrimoAccesso = -1;
 
@@ -464,7 +504,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							}
 						}
 					}
-					accordiListLabel[i] = idAccordoFactory.getUriFromValues(as.getNome(),soggettoReferente,as.getVersione());
+					accordiListLabel[i] = apsHelper.getLabelIdAccordo(this.tipoProtocollo, idAccordoFactory.getIDAccordoFromAccordo(as));
 					i++;
 				}
 			}
@@ -484,7 +524,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Controllo se ho modificato l'accordo, se si allora suggerisco il referente dell'accordo
 			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO)){
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO) ||
+						postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROTOCOLLO)){
+					
+					if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROTOCOLLO)){
+						this.accordo = null;
+					}
+					
 					this.provider = null;
 					this.tiposervizio = null;
 
@@ -526,7 +572,22 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
-				List<PortType> portTypes = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+				List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+				List<PortType> portTypes = null;
+				
+				if(apsHelper.isModalitaCompleta()) {
+					portTypes = portTypesTmp;
+				}
+				else {
+					// filtro pt senza op
+					portTypes = new ArrayList<PortType>();
+					for (PortType portType : portTypesTmp) {
+						if(portType.sizeAzioneList()>0) {
+							portTypes.add(portType);
+						}
+					}
+				}
+				
 				if (portTypes.size() > 0) {
 					ptList = new String[portTypes.size() + 1];
 					ptList[0] = "-";
@@ -589,53 +650,37 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// Versione
 			//String profiloReferente = core.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getProfilo();
 
-			String protocollo = null;
-			if(as!=null && as.getSoggettoReferente()!=null){
-				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
-			}
-			else{
-				protocollo = apsCore.getProtocolloDefault(session,listaTipiProtocollo);
-			}
-			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
-			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,this.serviceBinding);
-			boolean erogazioneIsSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
+			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(this.tipoProtocollo);
+			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
+			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(this.tipoProtocollo,this.serviceBinding);
+			boolean erogazioneIsSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(this.tipoProtocollo);
 
 			// calcolo soggetti compatibili con accordi
 			List<Soggetto> list = null;
+			Search searchSoggetti = new Search(true);
+			searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, this.tipoProtocollo);
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				list = soggettiCore.soggettiRegistroList(null, new Search(true));
+				list = soggettiCore.soggettiRegistroList(null, searchSoggetti);
 			}else{
-				list = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
+				list = soggettiCore.soggettiRegistroList(userLogin, searchSoggetti);
 			}
 
 			if (list.size() > 0) {
 				List<String> soggettiListTmp = new ArrayList<String>();
 				List<String> soggettiListLabelTmp = new ArrayList<String>();
 				for (Soggetto soggetto : list) {
-					if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
-						soggettiListTmp.add(soggetto.getId().toString());
-						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
-					}
+					soggettiListTmp.add(soggetto.getId().toString());
+					soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
 				}
 
-				boolean existsAPCCompatibili = false;
-				for (AccordoServizioParteComune aspc : lista) {
-					if(tipiSoggettiCompatibiliAccordo.contains(aspc.getSoggettoReferente().getTipo())){
-						existsAPCCompatibili = true;
-						break;
-					}
-				}
+				boolean existsAPCCompatibili = lista!=null && lista.size()>0;
 
 				if(soggettiListTmp.size()>0 && existsAPCCompatibili){
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 				}
 				else{
-					if(lista.size()>0){
-						protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(lista.get(0).getSoggettoReferente().getTipo());
-					}
-					else{
+					if(lista.size()<=0){
 						pd.setMessage("Non esistono accordi di servizio parte comune", Costanti.MESSAGE_TYPE_INFO);
 						pd.disableEditMode();
 
@@ -652,15 +697,21 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 
 					// refresh di tutte le infromazioni
-					versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
-					tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,this.serviceBinding);
+					versioniProtocollo = apsCore.getVersioniProtocollo(this.tipoProtocollo);
+					tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
+					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(this.tipoProtocollo,this.serviceBinding);
 
+					searchSoggetti = new Search(true);
+					searchSoggetti.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, this.tipoProtocollo);
+					if(apsCore.isVisioneOggettiGlobale(userLogin)){
+						list = soggettiCore.soggettiRegistroList(null, searchSoggetti);
+					}else{
+						list = soggettiCore.soggettiRegistroList(userLogin, searchSoggetti);
+					}
+					
 					for (Soggetto soggetto : list) {
-						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
-							soggettiListTmp.add(soggetto.getId().toString());
-							soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
-						}
+						soggettiListTmp.add(soggetto.getId().toString());
+						soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
 					}
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
@@ -688,7 +739,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			if(this.tiposervizio == null){
-				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(protocollo,this.serviceBinding);
+				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(this.tipoProtocollo,this.serviceBinding);
 			}
 
 
@@ -769,7 +820,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 
@@ -817,7 +868,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.wsdlimpler.setValue(new byte[1]);
 					if(this.wsdlimplfru.getValue() == null)
 						this.wsdlimplfru.setValue(new byte[1]); 
-					this.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 					this.tipoconn = "";
 					this.url = "";
 					this.nome = "";
@@ -847,6 +897,15 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpspwdkey = "";
 					this.httpspwdprivatekey = "";
 					this.versione="1";
+				}
+				
+				if(this.endpointtype==null) {
+					if(apsHelper.isModalitaCompleta()==false) {
+						this.endpointtype = TipiConnettore.HTTP.getNome();
+					}
+					else {
+						this.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
 				}
 				
 				switch (this.serviceBinding) {
@@ -939,7 +998,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 				String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 
-				this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
+				if(generaPACheckSoggetto) {
+					this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -950,34 +1011,38 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAps);
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio,  null, null, 
-						this.provider, "", 
+						this.provider, null, null, 
 						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, this.formatoSpecifica, accordiList, accordiListLabel, this.servcorr, 
 						this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
-						saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null,
+						saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-						soggettiAutenticati, this.erogazioneSoggettoAutenticato);
+						soggettiAutenticati, this.erogazioneSoggettoAutenticato,
+						this.tipoProtocollo, listaTipiProtocollo);
 
-				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
-						this.url, this.nome,
-						tipoJms, this.user,
-						this.password, this.initcont, this.urlpgk,
-						this.provurl, this.connfact, tipoSendas,
-						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-						this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
-						this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
-						this.httpspwdprivatekeytrust, this.httpspathkey,
-						this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
-						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, 
-						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						listExtendedConnettore);
+				if(generaPACheckSoggetto) {
+					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+							this.url, this.nome,
+							tipoJms, this.user,
+							this.password, this.initcont, this.urlpgk,
+							this.provurl, this.connfact, tipoSendas,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+							this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
+							this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
+							this.httpspwdprivatekeytrust, this.httpspathkey,
+							this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
+							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+							null, null, null, null, null, null, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							listExtendedConnettore);
+				}
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1027,10 +1092,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 					null,this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,
 					this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,erogazioneIsSupportatoAutenticazioneSoggetti,
-					listExtendedConnettore);
+					generaPACheckSoggetto, listExtendedConnettore);
 
 			if(isOk){
-				if(generaPACheckSoggetto && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
+				if(generaPACheckSoggetto && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
 					if(saSoggetti==null || saSoggetti.length==0 || (saSoggetti.length==1 && "-".equals(saSoggetti[0]))){
 						pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PRIMA_DI_POTER_DEFINIRE_UN_ACCORDO_PARTE_SPECIFICA_DEVE_ESSERE_CREATO_UN_SERVIZIO_APPLICATIVO_EROGATO_DAL_SOGGETTO_X_Y,
 								this.tipoSoggettoErogatore, this.nomeSoggettoErogatore));
@@ -1085,34 +1150,38 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
-						this.provider, "", 
+						this.provider, null, null, 
 						soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, this.formatoSpecifica, accordiList, accordiListLabel,
 						this.servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
-						saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null,
+						saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-						soggettiAutenticati, this.erogazioneSoggettoAutenticato);
+						soggettiAutenticati, this.erogazioneSoggettoAutenticato,
+						this.tipoProtocollo, listaTipiProtocollo);
 
-				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
-						this.url, this.nome, this.tipo, this.user,
-						this.password, this.initcont, this.urlpgk,
-						this.provurl, this.connfact, this.sendas,
-						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-						this.httpshostverify, this.httpspath, this.httpstipo,
-						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-						this.httpskeystore, this.httpspwdprivatekeytrust,
-						this.httpspathkey, this.httpstipokey,
-						this.httpspwdkey, this.httpspwdprivatekey,
-						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, 
-						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						listExtendedConnettore);
+				if(generaPACheckSoggetto) {
+					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+							this.url, this.nome, this.tipo, this.user,
+							this.password, this.initcont, this.urlpgk,
+							this.provurl, this.connfact, this.sendas,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+							this.httpshostverify, this.httpspath, this.httpstipo,
+							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+							this.httpskeystore, this.httpspwdprivatekeytrust,
+							this.httpspathkey, this.httpstipokey,
+							this.httpspwdkey, this.httpspwdprivatekey,
+							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+							null, null, null, null, null, null, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							listExtendedConnettore);
+				}
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1158,36 +1227,40 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				asps.setPortType(this.portType);
 
 			// Connettore
-			Connettore connettore = new Connettore();
-			// connettore.setNome("CNT_" + this.tiposervizio + "_" +
-			// this.nomeservizio);
-			if (this.endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
-				connettore.setTipo(this.tipoconn);
-			else
-				connettore.setTipo(this.endpointtype);
-
-			apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
-					this.nome, this.tipo, this.user, this.password,
-					this.initcont, this.urlpgk, this.url, this.connfact,
-					this.sendas, this.httpsurl, this.httpstipologia,
-					this.httpshostverify, this.httpspath, this.httpstipo,
-					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-					this.httpskeystore, this.httpspwdprivatekeytrust,
-					this.httpspathkey, this.httpstipokey,
-					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey,
-					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-					listExtendedConnettore);
+			Connettore connettore = null;
+			if(apsHelper.isModalitaCompleta() || generaPACheckSoggetto) {
+				connettore = new Connettore();
+				// this.nomeservizio);
+				if (this.endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
+					connettore.setTipo(this.tipoconn);
+				else
+					connettore.setTipo(this.endpointtype);
+	
+				apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+						this.nome, this.tipo, this.user, this.password,
+						this.initcont, this.urlpgk, this.url, this.connfact,
+						this.sendas, this.httpsurl, this.httpstipologia,
+						this.httpshostverify, this.httpspath, this.httpstipo,
+						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+						this.httpskeystore, this.httpspwdprivatekeytrust,
+						this.httpspathkey, this.httpstipokey,
+						this.httpspwdkey, this.httpspwdprivatekey,
+						this.httpsalgoritmokey,
+						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+						listExtendedConnettore);
+			}
 
 			if(asps.getConfigurazioneServizio()==null)
 				asps.setConfigurazioneServizio(new ConfigurazioneServizio());
-			asps.getConfigurazioneServizio().setConnettore(connettore);
+			if(apsHelper.isModalitaCompleta()) {
+				asps.getConfigurazioneServizio().setConnettore(connettore);
+			}
 
 			// Versione
-			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo)){
+			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(this.tipoProtocollo)){
 				if(this.versione!=null)
 					asps.setVersione(Integer.parseInt(this.versione));
 				else
@@ -1232,34 +1305,38 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
-							this.provider, "", 
+							this.provider, null, null, 
 							soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, this.formatoSpecifica, accordiList, accordiListLabel, this.servcorr, 
 							this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
-							saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null,
+							saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
 							this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 							this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-							soggettiAutenticati, this.erogazioneSoggettoAutenticato);
+							soggettiAutenticati, this.erogazioneSoggettoAutenticato,
+							this.tipoProtocollo, listaTipiProtocollo);
 
-					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
-							this.url, this.nome, this.tipo, this.user,
-							this.password, this.initcont, this.urlpgk,
-							this.provurl, this.connfact, this.sendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-							this.httpshostverify, this.httpspath, this.httpstipo,
-							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-							this.httpskeystore, this.httpspwdprivatekeytrust,
-							this.httpspathkey, this.httpstipokey,
-							this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, null, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							listExtendedConnettore);
+					if(generaPACheckSoggetto) {
+						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+								this.url, this.nome, this.tipo, this.user,
+								this.password, this.initcont, this.urlpgk,
+								this.provurl, this.connfact, this.sendas,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+								this.httpshostverify, this.httpspath, this.httpstipo,
+								this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+								this.httpskeystore, this.httpspwdprivatekeytrust,
+								this.httpspathkey, this.httpstipokey,
+								this.httpspwdkey, this.httpspwdprivatekey,
+								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+								null, null, null, null, null, null, true,
+								isConnettoreCustomUltimaImmagineSalvata, 
+								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+								listExtendedConnettore);
+					}
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1308,12 +1385,43 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 				}
 				
+				String nomeServizioApplicativoErogatore = this.nomeSA;
+				ServizioApplicativo sa = null;
+				
+				if(apsHelper.isModalitaCompleta()==false) {
+					
+					// Creo il servizio applicativo
+					
+					nomeServizioApplicativoErogatore = portaApplicativa.getNome();
+					
+					sa = new ServizioApplicativo();
+					sa.setNome(nomeServizioApplicativoErogatore);
+					sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
+					sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+					sa.setIdSoggetto((long) idProv);
+					sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
+					sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
+					
+					RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
+					rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
+					sa.setRispostaAsincrona(rispostaAsinc);
+					
+					InvocazioneServizio invServizio = new InvocazioneServizio();
+					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
+					invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
+					sa.setInvocazioneServizio(invServizio);
+				}
+				
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						this.erogazioneAutenticazione, this.erogazioneAutenticazioneOpzionale,
 						this.erogazioneAutorizzazione, this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-						this.nomeSA, this.erogazioneRuolo,idSoggettoAutenticatoErogazione);
-
-				listaOggettiDaCreare.add(portaApplicativa);				
+						nomeServizioApplicativoErogatore, this.erogazioneRuolo,idSoggettoAutenticatoErogazione);
+				
+				listaOggettiDaCreare.add(sa);
+				
+				listaOggettiDaCreare.add(portaApplicativa);						
 				listaOggettiDaCreare.add(mappingErogazione);
 
 			}

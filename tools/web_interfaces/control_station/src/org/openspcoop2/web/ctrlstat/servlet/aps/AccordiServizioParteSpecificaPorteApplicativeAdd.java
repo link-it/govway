@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
@@ -44,6 +45,8 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -406,6 +409,20 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				
 			}
 
+			portaApplicativa.getServizioApplicativoList().clear();
+			for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
+				IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
+				idServizioApplicativoDefault.setNome(paSADefault.getNome());
+				idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaDefault.getTipoSoggettoProprietario(), portaApplicativaDefault.getNomeSoggettoProprietario()));
+				ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
+				ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
+				sa.setNome(portaApplicativa.getNome());
+				PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+				paSa.setNome(sa.getNome());
+				portaApplicativa.getServizioApplicativoList().add(paSa);
+				listaOggettiDaCreare.add(sa);
+			}
+			
 			listaOggettiDaCreare.add(portaApplicativa);
 			listaOggettiDaCreare.add(mappingErogazione);
 
