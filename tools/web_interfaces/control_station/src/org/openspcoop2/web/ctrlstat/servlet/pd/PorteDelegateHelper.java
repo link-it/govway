@@ -283,7 +283,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				if (this.isModalitaStandard()) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-					de.setValue(this.soggettiCore.getTipoSoggettoDefault());
+					de.setValue(this.soggettiCore.getTipoSoggettoDefaultProtocollo(protocollo));
 					de.setType(DataElementType.HIDDEN);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
 					dati.addElement(de);
@@ -411,7 +411,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				if (this.isModalitaStandard()) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-					de.setValue(this.apsCore.getTipoServizioDefault(serviceBinding));
+					//de.setValue(this.apsCore.getTipoServizioDefault(serviceBinding));
 					de.setType(DataElementType.HIDDEN);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
 					dati.addElement(de);
@@ -901,7 +901,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			try{
 				String tipoSoggetto = null;
 				if (this.isModalitaStandard()) {
-					tipoSoggetto = this.soggettiCore.getTipoSoggettoDefault();
+					tipoSoggetto = this.soggettiCore.getTipoSoggettoDefaultProtocollo(protocollo);
 				} else {
 					tipoSoggetto = tiposp;
 				}

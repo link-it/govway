@@ -651,6 +651,18 @@ public class SoggettiCore extends ControlStationCore {
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
+	public String getTipoSoggettoDefaultProtocollo(String protocollo) throws  DriverRegistroServiziException {
+		String getTipoServizioDefault = "getTipoSoggettoDefaultProtocollo";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getTipoSoggettoDefault();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + getTipoServizioDefault + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + getTipoServizioDefault + "] Error :" + e.getMessage(),e);
+		}
+	}
+
 	public List<String> getTipiSoggettiGestitiProtocollo(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getTipiSoggettiGestitiProtocollo";
 		try{
@@ -690,18 +702,6 @@ public class SoggettiCore extends ControlStationCore {
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		}
-	}
-	
-	public String getTipoSoggettoDefault() throws  DriverRegistroServiziException {
-		String getTipoSoggettoDefault = "getTipoSoggettoDefault";
-		try{
-			
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().getTipoSoggettoDefault(); 
-			
-		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + getTipoSoggettoDefault + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + getTipoSoggettoDefault + "] Error :" + e.getMessage(),e);
 		}
 	}
 	

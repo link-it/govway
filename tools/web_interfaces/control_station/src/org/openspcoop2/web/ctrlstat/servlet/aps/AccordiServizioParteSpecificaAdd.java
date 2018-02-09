@@ -859,7 +859,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				if (this.nomeservizio == null) {
 					this.nomeservizio = "";
-					this.tiposervizio = apsCore.getTipoServizioDefault(this.serviceBinding);
 					//					this.provider = "";
 					//					this.accordo = "";
 					this.servcorr = "";
@@ -998,9 +997,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 				String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 
-				if(generaPACheckSoggetto) {
-					this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
-				}
+				this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -1022,27 +1019,25 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiAutenticati, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo);
 
-				if(generaPACheckSoggetto) {
-					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
-							this.url, this.nome,
-							tipoJms, this.user,
-							this.password, this.initcont, this.urlpgk,
-							this.provurl, this.connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-							this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
-							this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
-							this.httpspwdprivatekeytrust, this.httpspathkey,
-							this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, null, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							listExtendedConnettore);
-				}
+				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+						apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+						this.url, this.nome,
+						tipoJms, this.user,
+						this.password, this.initcont, this.urlpgk,
+						this.provurl, this.connfact, tipoSendas,
+						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+						this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
+						this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
+						this.httpspwdprivatekeytrust, this.httpspathkey,
+						this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
+						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+						null, null, null, null, null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, 
+						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+						listExtendedConnettore);
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1161,27 +1156,25 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiAutenticati, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo);
 
-				if(generaPACheckSoggetto) {
-					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
-							this.url, this.nome, this.tipo, this.user,
-							this.password, this.initcont, this.urlpgk,
-							this.provurl, this.connfact, this.sendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-							this.httpshostverify, this.httpspath, this.httpstipo,
-							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-							this.httpskeystore, this.httpspwdprivatekeytrust,
-							this.httpspathkey, this.httpstipokey,
-							this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, null, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							listExtendedConnettore);
-				}
+				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+						apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+						this.url, this.nome, this.tipo, this.user,
+						this.password, this.initcont, this.urlpgk,
+						this.provurl, this.connfact, this.sendas,
+						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+						this.httpshostverify, this.httpspath, this.httpstipo,
+						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+						this.httpskeystore, this.httpspwdprivatekeytrust,
+						this.httpspathkey, this.httpstipokey,
+						this.httpspwdkey, this.httpspwdprivatekey,
+						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+						null, null, null, null, null, null, true,
+						isConnettoreCustomUltimaImmagineSalvata, 
+						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+						listExtendedConnettore);
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1227,31 +1220,28 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				asps.setPortType(this.portType);
 
 			// Connettore
-			Connettore connettore = null;
-			if(apsHelper.isModalitaCompleta() || generaPACheckSoggetto) {
-				connettore = new Connettore();
-				// this.nomeservizio);
-				if (this.endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
-					connettore.setTipo(this.tipoconn);
-				else
-					connettore.setTipo(this.endpointtype);
-	
-				apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
-						this.nome, this.tipo, this.user, this.password,
-						this.initcont, this.urlpgk, this.url, this.connfact,
-						this.sendas, this.httpsurl, this.httpstipologia,
-						this.httpshostverify, this.httpspath, this.httpstipo,
-						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-						this.httpskeystore, this.httpspwdprivatekeytrust,
-						this.httpspathkey, this.httpstipokey,
-						this.httpspwdkey, this.httpspwdprivatekey,
-						this.httpsalgoritmokey,
-						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						listExtendedConnettore);
-			}
+			Connettore connettore = new Connettore();
+			// this.nomeservizio);
+			if (this.endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
+				connettore.setTipo(this.tipoconn);
+			else
+				connettore.setTipo(this.endpointtype);
+
+			apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+					this.nome, this.tipo, this.user, this.password,
+					this.initcont, this.urlpgk, this.url, this.connfact,
+					this.sendas, this.httpsurl, this.httpstipologia,
+					this.httpshostverify, this.httpspath, this.httpstipo,
+					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+					this.httpskeystore, this.httpspwdprivatekeytrust,
+					this.httpspathkey, this.httpstipokey,
+					this.httpspwdkey, this.httpspwdprivatekey,
+					this.httpsalgoritmokey,
+					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+					listExtendedConnettore);
 
 			if(asps.getConfigurazioneServizio()==null)
 				asps.setConfigurazioneServizio(new ConfigurazioneServizio());
@@ -1316,27 +1306,25 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							soggettiAutenticati, this.erogazioneSoggettoAutenticato,
 							this.tipoProtocollo, listaTipiProtocollo);
 
-					if(generaPACheckSoggetto) {
-						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
-								this.url, this.nome, this.tipo, this.user,
-								this.password, this.initcont, this.urlpgk,
-								this.provurl, this.connfact, this.sendas,
-								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-								this.httpshostverify, this.httpspath, this.httpstipo,
-								this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-								this.httpskeystore, this.httpspwdprivatekeytrust,
-								this.httpspathkey, this.httpstipokey,
-								this.httpspwdkey, this.httpspwdprivatekey,
-								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-								null, null, null, null, null, null, true,
-								isConnettoreCustomUltimaImmagineSalvata, 
-								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-								listExtendedConnettore);
-					}
+					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_EROGATORE_PREFIX, 
+							this.url, this.nome, this.tipo, this.user,
+							this.password, this.initcont, this.urlpgk,
+							this.provurl, this.connfact, this.sendas,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+							this.httpshostverify, this.httpspath, this.httpstipo,
+							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+							this.httpskeystore, this.httpspwdprivatekeytrust,
+							this.httpspathkey, this.httpstipokey,
+							this.httpspwdkey, this.httpspwdprivatekey,
+							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+							null, null, null, null, null, null, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							listExtendedConnettore);
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);

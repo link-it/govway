@@ -355,26 +355,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if (!versione.equals("") && !this.checkNumber(versione, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE, false)) {
 				return false;
 			}
-
-			boolean checkConnettore = (this.isModalitaCompleta() || generaPACheckSoggetto);
 			
 			// Controllo dell'end-point
 			// Non li puo' prendere dalla servtlet
-			if(checkConnettore) {
-				if (!this.endPointCheckData(endpointtype, url, nome, tipo,
-						user, password, initcont, urlpgk, provurl, connfact,
-						sendas, httpsurl, httpstipologia, httpshostverify,
-						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
-						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn,autenticazioneHttp,
-						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore)) {
-					return false;
-				}
+			if (!this.endPointCheckData(endpointtype, url, nome, tipo,
+					user, password, initcont, urlpgk, provurl, connfact,
+					sendas, httpsurl, httpstipologia, httpshostverify,
+					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
+					httpstipokey, httpspwdkey, httpspwdprivatekey,
+					httpsalgoritmokey, tipoconn,autenticazioneHttp,
+					proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					listExtendedConnettore)) {
+				return false;
 			}
 
 			// Controllo che i campi "checkbox" abbiano uno dei valori
@@ -431,36 +427,42 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Se il connettore e' disabilitato devo controllare che il
 			// connettore del soggetto non sia disabilitato se è di tipo operativo
-			if (checkConnettore && endpointtype.equals(TipiConnettore.DISABILITATO.getNome())) {
-//				String eptypeprov = TipiConnettore.DISABILITATO.getNome();
-//
-//				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoErogatore, nomeErogatore));
-//				if(this.pddCore.isPddEsterna(soggetto.getPortaDominio())){
-//					Connettore connettore = soggetto.getConnettore();
-//					if ((connettore != null) && (connettore.getTipo() != null)) {
-//						eptypeprov = connettore.getTipo();
-//					}
-//	
-//					if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
-//						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_DEL_SERVIZIO_DEVE_ESSERE_SPECIFICATO_SE_NON_EGRAVE_STATO_DEFINITO_UN_CONNETTORE_PER_IL_SOGGETTO_EROGATORE);
-//						return false;
-//					}
-//				}
-//				else{
-				if(tipoOp.equals(TipoOperazione.CHANGE)){
-					boolean escludiSoggettiEsterni = true;
-					boolean trovatoServ = this.apsCore.existFruizioniServizioWithoutConnettore(idInt,escludiSoggettiEsterni);
-					if (trovatoServ) {
-						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_SUL_SOGGETTO_EROGATORE_ED_ESISTONO_FRUIZIONI_DEL_SERVIZIO_DA_PARTE_DI_SOGGETTI_OPERATIVI_CHE_NON_HANNO_UN_CONNETTORE_DEFINITO);
+			if (endpointtype.equals(TipiConnettore.DISABILITATO.getNome())) {
+				String eptypeprov = TipiConnettore.DISABILITATO.getNome();
+
+				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoErogatore, nomeErogatore));
+				if(this.pddCore.isPddEsterna(soggetto.getPortaDominio())){
+					Connettore connettore = soggetto.getConnettore();
+					if ((connettore != null) && (connettore.getTipo() != null)) {
+						eptypeprov = connettore.getTipo();
+					}
+	
+					if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
+						if(!this.isModalitaCompleta() && tipoOp.equals(TipoOperazione.ADD)) {
+							this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_EROGAZIONE);
+						}
+						else {
+							this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_DEL_SERVIZIO_DEVE_ESSERE_SPECIFICATO_SE_NON_EGRAVE_STATO_DEFINITO_UN_CONNETTORE_PER_IL_SOGGETTO_EROGATORE);
+						}
 						return false;
 					}
 				}
-//				}
-				
-				else {
-					if(!this.isModalitaCompleta()) {
-						this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_APPLICATIVO_EROGATORE);
-						return false;
+				else{
+					if(tipoOp.equals(TipoOperazione.CHANGE)){
+						boolean escludiSoggettiEsterni = true;
+						boolean trovatoServ = this.apsCore.existFruizioniServizioWithoutConnettore(idInt,escludiSoggettiEsterni);
+						if (trovatoServ) {
+							this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_SUL_SOGGETTO_EROGATORE_ED_ESISTONO_FRUIZIONI_DEL_SERVIZIO_DA_PARTE_DI_SOGGETTI_OPERATIVI_CHE_NON_HANNO_UN_CONNETTORE_DEFINITO);
+							return false;
+						}
+					}
+	//				}
+					
+					else {
+						if(!this.isModalitaCompleta() && generaPACheckSoggetto) {
+							this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_EROGAZIONE);
+							return false;
+						}
 					}
 				}
 			}

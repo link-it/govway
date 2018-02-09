@@ -106,17 +106,6 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public String getTipoServizioDefault(ServiceBinding serviceBinding) throws  DriverRegistroServiziException {
-		String getTipoServizioDefault = "getTipoServizioDefault";
-		try{
-			
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().getTipoServizioDefault(serviceBinding); 
-			
-		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + getTipoServizioDefault + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + getTipoServizioDefault + "] Error :" + e.getMessage(),e);
-		}
-	}
 	
 	public List<String> getTipiServiziGestiti(ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getTipiServiziGestiti";

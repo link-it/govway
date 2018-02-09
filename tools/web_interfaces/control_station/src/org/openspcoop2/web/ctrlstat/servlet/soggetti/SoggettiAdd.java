@@ -224,7 +224,7 @@ public final class SoggettiAdd extends Action {
 			// lista tipi
 			//			tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(); // all tipi soggetti gestiti
 			if(this.tipoprov==null){
-				this.tipoprov = soggettiCore.getTipoSoggettoDefault();
+				this.tipoprov = soggettiCore.getTipoSoggettoDefaultProtocollo(this.protocollo);
 			}
 
 			String postBackElementName = soggettiHelper.getPostBackElementName();
