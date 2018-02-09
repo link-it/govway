@@ -129,7 +129,6 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONTENT_TYPE = "Content-Type";
 	public final static String LABEL_PARAMETRO_PARAMETRI = "Parametri";
 	public final static String LABEL_PARAMETRO_APPLICA_MTOM = "Applica MTOM";
-	public final static String LABEL_PARAMETRO_ACCETTA_MTOM = "Accetta MTOM";
 	public final static String LABEL_PARAMETRO_RUOLO = "Nome";
 	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = "Fonte";
 	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY = "Fonte Ruoli";
@@ -183,6 +182,12 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_AZIONI_DI = "Azioni di ";
 	public final static String LABEL_PARAMETRO_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_SOGGETTI = "Soggetti";
+	public final static String LABEL_PARAMETRO_PORTE_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_PORTE_ACCETTA_MTOM = "Accetta MTOM";
+	public final static String LABEL_PARAMETRO_PORTE_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE = "Tipo Validazione";
+	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI = "Validazione Contenuti";
+	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_DI = "Validazione Contenuti di ";
 	
 	/** PARAMETERS **/
 	
@@ -224,6 +229,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
 	public final static String PARAMETRO_SOGGETTO = "soggt";
+	public final static String PARAMETRO_PORTE_TIPO_VALIDAZIONE = "tipo_validazione";
+	public final static String PARAMETRO_PORTE_XSD = "xsd";
+	public final static String PARAMETRO_PORTE_APPLICA_MTOM = PARAMETRO_APPLICA_MTOM_RICHIESTA;
 	
 	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
 	public final static String PARAMETRO_SERVICE_BINDING_SEARCH = "serviceBindingSearch";
@@ -257,6 +265,13 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_MTOM_VERIFY = "verify";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM =  "custom";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "custom";
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_XSD_DISABILITATO = CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_XSD_ABILITATO = CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_XSD_WARNING_ONLY = CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD =  CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_WSDL = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.toString();
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP = "SOAP";
 	public final static String DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST = "REST";
@@ -347,5 +362,6 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare i soggetti associati";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare gli applicativi associati";
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare i soggetti associati";
+	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY = "Validazione XSD dev'essere abilitato, disabilitato o warningOnly";
 
 }

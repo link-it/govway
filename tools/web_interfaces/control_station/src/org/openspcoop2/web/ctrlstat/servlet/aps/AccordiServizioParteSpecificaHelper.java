@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -1655,6 +1656,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(this.isModalitaAvanzata())
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
 			if(visualizzaMTOM) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
@@ -1764,6 +1766,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
 				de.setValue(statoControlloAccessi);
+				e.addElement(de);
+				
+				// validazione contenuti
+				de = new DataElement();
+				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
+				String statoValidazione = null;
+				
+				ValidazioneContenutiApplicativi vx = paAssociata.getValidazioneContenutiApplicativi();
+				if (vx == null) {
+					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+				} else {
+					if(vx.getStato()!=null)
+						statoValidazione = vx.getStato().toString();
+					if ((statoValidazione == null) || "".equals(statoValidazione)) {
+						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+					}
+				}
+				
+				de.setValue(statoValidazione);
 				e.addElement(de);
 				
 				// message security
@@ -2225,6 +2247,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
+			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY);
 			if(visualizzaMTOM)
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM);
@@ -2314,6 +2337,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
 				de.setValue(statoControlloAccessi);
+				e.addElement(de);
+				
+				// validazione contenuti
+				de = new DataElement();
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+				String statoValidazione = null;
+				
+				ValidazioneContenutiApplicativi vx = pdAssociata.getValidazioneContenutiApplicativi();
+				if (vx == null) {
+					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+				} else {
+					if(vx.getStato()!=null)
+						statoValidazione = vx.getStato().toString();
+					if ((statoValidazione == null) || "".equals(statoValidazione)) {
+						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+					}
+				}
+				de.setValue(statoValidazione);
 				e.addElement(de);
 				
 				// Message Security

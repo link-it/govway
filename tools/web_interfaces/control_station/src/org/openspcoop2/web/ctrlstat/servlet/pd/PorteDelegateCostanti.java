@@ -65,6 +65,9 @@ public class PorteDelegateCostanti {
 	public final static ForwardParams TIPO_OPERAZIONE_CONTROLLO_ACCESSI = ForwardParams.OTHER("");
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_AZIONE = "porteDelegateAzione";
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = "porteDelegateValidazioneContenuti";
+	public final static ForwardParams TIPO_OPERAZIONE_VALIDAZIONE_CONTENUTI = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */
 
@@ -205,7 +208,7 @@ public class PorteDelegateCostanti {
 		PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_AZIONE.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST);
 	}
 	
-
+	public final static String SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI+".do";
 	/* LABEL GENERALI */
 
 	public final static String LABEL_PORTE_DELEGATE = "Porte Delegate";
@@ -237,8 +240,8 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_SERVIZIO = "servizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "versioneservizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
-	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = "tipo_validazione";
-	public final static String PARAMETRO_PORTE_DELEGATE_XSD = "xsd";
+	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE;
+	public final static String PARAMETRO_PORTE_DELEGATE_XSD = CostantiControlStation.PARAMETRO_PORTE_XSD;
 	public final static String PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST = "gestManifest";
 	public final static String PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY = "gestBody";
 	public final static String PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD = "localForward";
@@ -280,7 +283,7 @@ public class PorteDelegateCostanti {
 	
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA;
-	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
+	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM;
 
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
 	
@@ -316,10 +319,11 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Regole di Correlazione della Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = "Validazione Contenuti";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = "Tipo Validazione";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_DI;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = "Integrazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_METADATI = "Metadati";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS = "Stateless";
@@ -360,12 +364,12 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Identificazione fallita";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO = "Riuso ID";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATO = CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED = "ForceWsdlBased";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_ABILITATO = "abilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_DISABILITATO = "disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM = CostantiControlStation.LABEL_PARAMETRO_ACCETTA_MTOM;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM = CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM;
 
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI = "Controllo Accessi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_DI = "Controllo Accessi di ";
@@ -411,12 +415,12 @@ public class PorteDelegateCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD =  CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_WSDL = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO = CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO = CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY = CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD =  CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_WSDL = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_WSDL;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_DISABILITATO;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_ABILITATO;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_WARNING_ONLY;
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_AZ_INPUT_BASED = "input-based";

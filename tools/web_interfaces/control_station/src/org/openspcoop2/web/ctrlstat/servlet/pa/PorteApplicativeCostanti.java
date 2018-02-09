@@ -71,6 +71,9 @@ public class PorteApplicativeCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO = "porteApplicativeSoggetto";
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = "porteApplicativeValidazioneContenuti";
+	public final static ForwardParams TIPO_OPERAZIONE_VALIDAZIONE_CONTENUTI = ForwardParams.OTHER("");
+	
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"Add.do";
@@ -231,7 +234,8 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST);
 	}
 	
-	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI+".do";
+
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_PORTE_APPLICATIVE = "Porte Applicative";
@@ -266,9 +270,9 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "servizioApplicativo";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA = "ricsim";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA = "ricasim";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = "tipo_validazione";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_XSD = "xsd";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_XSD = CostantiControlStation.PARAMETRO_PORTE_XSD;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = "gestManifest";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY = "gestBody";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD = "localForward";
@@ -303,7 +307,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA;
 	
-	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
 
 	/* LABEL PARAMETRI */
@@ -357,8 +361,9 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR = "Elemento xml<BR/>(Il campo vuoto indica qualsiasi elemento)";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE = "Il campo vuoto indica qualsiasi elemento";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = "Validazione Contenuti";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = "Tipo Validazione";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_DI;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = "Integrazione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI = "Metadati";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS = "Stateless";
@@ -382,10 +387,10 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO = "abilitato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO = "disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA = "Risultati Ricerca";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO = "Stato";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO = CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM = CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ACCETTA_MTOM = CostantiControlStation.LABEL_PARAMETRO_ACCETTA_MTOM;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ACCETTA_MTOM = CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = "Controllo Accessi";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_DI = "Controllo Accessi di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO = "Abilitato";
@@ -403,12 +408,12 @@ public class PorteApplicativeCostanti {
 	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED;
 	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED;
 	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO = CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO = CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY = CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD =  CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_WSDL = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_DISABILITATO;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_ABILITATO;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_WARNING_ONLY;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD =  CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_WSDL = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_WSDL;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP;
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT = "default";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
@@ -431,7 +436,6 @@ public class PorteApplicativeCostanti {
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. E' necessario indicare: {0}"; 
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_VIRTUALE_DEVE_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI = "Il Soggetto virtuale deve essere scelto tra quelli definiti nel pannello Soggetti";
-	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY = "Validazione XSD dev'essere abilitato, disabilitato o warningOnly";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_NE_SPAZI_NE_NEL_CAMPO_BEHAVIOUR = "Non inserire ne spazi ne ',' nel campo 'behaviour'";
 
 }

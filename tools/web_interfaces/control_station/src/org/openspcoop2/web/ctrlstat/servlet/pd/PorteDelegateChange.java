@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
@@ -46,12 +45,9 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -60,7 +56,6 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
@@ -126,11 +121,6 @@ public final class PorteDelegateChange extends Action {
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 			String statoPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
-			String autenticazione = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE );
-			String autenticazioneOpzionale = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE );
-			String autenticazioneCustom = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
-			String autorizzazione = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
-			String autorizzazioneCustom = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 			String tipoSoggettoErogatore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
 			String modeSoggettoErogatore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SP);
 			String nomeSoggettoErogatore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SP);
@@ -150,17 +140,8 @@ public final class PorteDelegateChange extends Action {
 			String gestManifest = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
 			String ricsim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
 			String ricasim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			String xsd = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
-			String tipoValidazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
 			String scadcorr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA);
-			String autorizzazioneContenuti = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
-			String applicaMTOM = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
-
-			String autorizzazioneAutenticati = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
-			String autorizzazioneRuoli = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
-			String autorizzazioneRuoliTipologia = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
-			String ruoloMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
@@ -266,6 +247,71 @@ public final class PorteDelegateChange extends Action {
 				}
 			}
 			
+			String autenticazione = pde.getAutenticazione();
+			String autenticazioneCustom = null;
+			if (autenticazione != null &&
+					!TipoAutenticazione.getValues().contains(autenticazione)) {
+				autenticazioneCustom = autenticazione;
+				autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+			}
+			String	autenticazioneOpzionale = "";
+			if(pde.getAutenticazioneOpzionale()!=null){
+				if (pde.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+					autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+				}
+			}
+
+			String autorizzazione = null;
+			String autorizzazioneCustom = null;
+			String autorizzazioneAutenticati = null;
+			String autorizzazioneRuoli = null;
+			String autorizzazioneRuoliTipologia = null;
+			String ruoloMatch = null;
+			String autorizzazioneContenuti = pde.getAutorizzazioneContenuto();
+			
+			if (pde.getAutorizzazione() != null &&
+					!TipoAutorizzazione.getAllValues().contains(pde.getAutorizzazione())) {
+				autorizzazioneCustom = pde.getAutorizzazione();
+				autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+			}
+			else{
+				autorizzazione = AutorizzazioneUtilities.convertToStato(pde.getAutorizzazione());
+				if(TipoAutorizzazione.isAuthenticationRequired(pde.getAutorizzazione()))
+					autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+				if(TipoAutorizzazione.isRolesRequired(pde.getAutorizzazione()))
+					autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+				autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(pde.getAutorizzazione()).getValue();
+			}
+			
+			if(pde.getRuoli()!=null && pde.getRuoli().getMatch()!=null){
+				ruoloMatch = pde.getRuoli().getMatch().getValue();
+			}
+			
+			String xsd = null;
+			String tipoValidazione = null;
+			String applicaMTOM = "";
+			ValidazioneContenutiApplicativi vx = pde.getValidazioneContenutiApplicativi();
+			if (vx == null) {
+				xsd = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+				tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD;
+			} else {
+				if(vx.getStato()!=null)
+					xsd = vx.getStato().toString();
+				if ((xsd == null) || "".equals(xsd)) {
+					xsd = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+				}
+				
+				if(vx.getTipo()!=null)
+					tipoValidazione = vx.getTipo().toString();
+				if (tipoValidazione == null || "".equals(tipoValidazione)) {
+					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD ;
+				}
+				
+				if(vx.getAcceptMtomMessage()!=null)
+					if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
+						applicaMTOM = Costanti.CHECK_BOX_ENABLED;
+			}
+			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			lstParam.add(new Parameter(oldNomePD , null));
 
@@ -336,80 +382,6 @@ public final class PorteDelegateChange extends Action {
 						ricasim = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO; 
 					}
 				}
-				if (autenticazione == null) {
-					autenticazione = pde.getAutenticazione();
-					if (autenticazione != null &&
-							!TipoAutenticazione.getValues().contains(autenticazione)) {
-						autenticazioneCustom = autenticazione;
-						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-					}
-				}
-				if(autenticazioneOpzionale==null){
-					autenticazioneOpzionale = "";
-					if(pde.getAutenticazioneOpzionale()!=null){
-						if (pde.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-						}
-					}
-				}
-				if (autorizzazione == null) {
-					if (pde.getAutorizzazione() != null &&
-							!TipoAutorizzazione.getAllValues().contains(pde.getAutorizzazione())) {
-						autorizzazioneCustom = pde.getAutorizzazione();
-						autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
-					}
-					else{
-						autorizzazione = AutorizzazioneUtilities.convertToStato(pde.getAutorizzazione());
-						if(TipoAutorizzazione.isAuthenticationRequired(pde.getAutorizzazione()))
-							autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
-						if(TipoAutorizzazione.isRolesRequired(pde.getAutorizzazione()))
-							autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
-						autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(pde.getAutorizzazione()).getValue();
-					}
-				}
-				if (ruoloMatch == null) {
-					if(pde.getRuoli()!=null && pde.getRuoli().getMatch()!=null){
-						ruoloMatch = pde.getRuoli().getMatch().getValue();
-					}
-				}
-				if (xsd == null) {
-					ValidazioneContenutiApplicativi vx = pde.getValidazioneContenutiApplicativi();
-					if (vx == null) {
-						xsd = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
-					} else {
-						if(vx.getStato()!=null)
-							xsd = vx.getStato().toString();
-						if ((xsd == null) || "".equals(xsd)) {
-							xsd = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
-						}
-					}
-				}
-				if (tipoValidazione == null) {
-					ValidazioneContenutiApplicativi vx = pde.getValidazioneContenutiApplicativi();
-					if (vx == null) {
-						tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD;
-					} else {
-						if(vx.getTipo()!=null)
-							tipoValidazione = vx.getTipo().toString();
-						if (tipoValidazione == null || "".equals(tipoValidazione)) {
-							tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD;
-						}
-					}
-				}
-				if (applicaMTOM == null) {
-					ValidazioneContenutiApplicativi vx = pde.getValidazioneContenutiApplicativi();
-					applicaMTOM = "";
-					if (vx != null) {
-						if(vx.getAcceptMtomMessage()!=null)
-							if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
-								applicaMTOM = "yes";
-					}
-				}
-
-				if(autorizzazioneContenuti==null){
-					autorizzazioneContenuti = pde.getAutorizzazioneContenuto();
-				}
-
 				if (integrazione == null) {
 					integrazione = pde.getIntegrazione();
 				}
@@ -940,35 +912,6 @@ public final class PorteDelegateChange extends Action {
 				portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
 			}
 			
-			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
-				portaDelegata.setAutenticazione(autenticazione);
-			else
-				portaDelegata.setAutenticazione(autenticazioneCustom);
-			if(autenticazioneOpzionale != null){
-				if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
-					portaDelegata.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
-				else 
-					portaDelegata.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
-			} else 
-				portaDelegata.setAutenticazioneOpzionale(null);
-			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
-				portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
-						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli), 
-						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
-			else
-				portaDelegata.setAutorizzazione(autorizzazioneCustom);
-			
-			if(ruoloMatch!=null && !"".equals(ruoloMatch)){
-				RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(ruoloMatch);
-				if(tipoRuoloMatch!=null){
-					if(portaDelegata.getRuoli()==null){
-						portaDelegata.setRuoli(new AutorizzazioneRuoli());
-					}
-					portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
-				}
-			}
-			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
-			
 			if (stateless!=null && stateless.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT))
 				portaDelegata.setStateless(null);
 			else
@@ -1111,21 +1054,6 @@ public final class PorteDelegateChange extends Action {
 
 			// ws sec
 			// portaDelegata.setMessageSecurity(oldPD.getMessageSecurity());
-
-			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
-			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
-			vx.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
-			if(applicaMTOM != null){
-				if(ServletUtils.isCheckBoxEnabled(applicaMTOM))
-					vx.setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
-				else 
-					vx.setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
-			} else 
-				vx.setAcceptMtomMessage(null);
-			
-			portaDelegata.setValidazioneContenutiApplicativi(vx);
-
-			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
 
 			// Cambio i dati della vecchia CorrelazioneApplicativa
 			// Non ne creo una nuova, altrimenti mi perdo le vecchie entry

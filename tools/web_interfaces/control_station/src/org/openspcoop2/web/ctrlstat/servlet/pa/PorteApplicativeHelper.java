@@ -57,7 +57,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -176,9 +175,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!xsd.equals(CostantiControlStation.DEFAULT_VALUE_ABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY)) {
-				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY);
-				return false;
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				if (!xsd.equals(CostantiControlStation.DEFAULT_VALUE_ABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY)) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY);
+					return false;
+				}
 			}
 
 			if(this.core.isRegistroServiziLocale()){
@@ -380,7 +381,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 			
 			PortaApplicativa pa = null;
-			if (TipoOperazione.CHANGE == tipoOp){
+			if (TipoOperazione.CHANGE.equals(tipoOp)){
 				pa = this.porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
 			}
 			
@@ -391,14 +392,16 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 			}
 			
-			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
-					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
-					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, false, pa, ruoli)==false){
-				return false;
+			if (TipoOperazione.ADD.equals(tipoOp)){
+				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+						autorizzazioneRuoliTipologia, ruoloMatch, 
+						isSupportatoAutenticazione, false, pa, ruoli)==false){
+					return false;
+				}
 			}
 			
-			if (TipoOperazione.CHANGE == tipoOp && isSupportatoAutenticazione) {
+			if (TipoOperazione.CHANGE.equals(tipoOp) && isSupportatoAutenticazione) {
 				
 				if(autenticazione!=null && autenticazione.equals(pa.getAutenticazione())==false &&
 						!TipoAutenticazione.DISABILITATO.equals(autenticazione) &&
@@ -1116,7 +1119,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
 		de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
-		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazioneCustom, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
 		ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, statoControlloAccessi);
 		dati.addElement(de);
 		
@@ -1164,7 +1167,78 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		*/
 
 		
+		// *************** Validazione Contenuti *********************
 		
+		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
+		dati.addElement(de);
+		
+		// Validazione Contenuti
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
+		ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, xsd);
+		dati.addElement(de);
+		
+		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteApplicativeValidazione, lascio questo codice per eventuali ripensamenti.
+	// *************** Validazione Contenuti *********************
+		
+//		de = new DataElement();
+//		de.setType(DataElementType.TITLE);
+//		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
+//		dati.addElement(de);
+//		
+//		String[] tipoXsd = { 
+//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO ,
+//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO ,
+//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY 
+//		};
+//		de = new DataElement();
+//		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO);
+//		de.setType(DataElementType.SELECT);
+//		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
+//		de.setValues(tipoXsd);
+//		//		de.setOnChange("CambiaMode('" + tipoOp + "')");
+//		de.setPostBack(true);
+//		de.setSelected(xsd);
+//		dati.addElement(de);
+//
+//		if (PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO.equals(xsd) ||
+//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY.equals(xsd)) {
+//			String[] tipi_validazione = {
+//					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD,
+//					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_WSDL,
+//					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_OPENSPCOOP 
+//			};
+//			//String[] tipi_validazione = { "xsd", "wsdl" };
+//			de = new DataElement();
+//			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO);
+//			de.setType(DataElementType.SELECT);
+//			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE);
+//			de.setValues(tipi_validazione);
+//			de.setSelected(tipoValidazione);
+//			dati.addElement(de);
+//			
+//			
+//			// Applica MTOM 
+//			de = new DataElement();
+//			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ACCETTA_MTOM);
+//			
+//			//if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+//			de.setType(DataElementType.CHECKBOX);
+//			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
+//				de.setSelected(true);
+//			}
+////			}
+////			else{
+////				de.setType(DataElementType.HIDDEN);
+////				de.setValue(applicaMTOM);
+////			}
+//			 
+//			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
+//			dati.addElement(de);
+//		}
 		
 		
 		
@@ -1336,80 +1410,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			//}
 			
 		}
-		
-		
-
-		
-		
-		
-		
-		
-		
-		
-		// *************** Validazione Contenuti *********************
-		
-		de = new DataElement();
-		de.setType(DataElementType.TITLE);
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
-		dati.addElement(de);
-		
-		String[] tipoXsd = { 
-				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO ,
-				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO ,
-				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY 
-		};
-		de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO);
-		de.setType(DataElementType.SELECT);
-		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
-		de.setValues(tipoXsd);
-		//		de.setOnChange("CambiaMode('" + tipoOp + "')");
-		de.setPostBack(true);
-		de.setSelected(xsd);
-		dati.addElement(de);
-
-		if (PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO.equals(xsd) ||
-				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY.equals(xsd)) {
-			String[] tipi_validazione = {
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD,
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_WSDL,
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_OPENSPCOOP 
-			};
-			//String[] tipi_validazione = { "xsd", "wsdl" };
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO);
-			de.setType(DataElementType.SELECT);
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE);
-			de.setValues(tipi_validazione);
-			de.setSelected(tipoValidazione);
-			dati.addElement(de);
-			
-			
-			// Applica MTOM 
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ACCETTA_MTOM);
-			
-			//if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
-			de.setType(DataElementType.CHECKBOX);
-			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
-				de.setSelected(true);
-			}
-//			}
-//			else{
-//				de.setType(DataElementType.HIDDEN);
-//				de.setValue(applicaMTOM);
-//			}
-			 
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
-			dati.addElement(de);
-		}
-		
-		
-		
-		
-		
-		
-		
 		
 		
 		// *************** Asincroni *********************

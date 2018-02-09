@@ -1260,7 +1260,7 @@
             <forward name="porteDelegateAzioneError" path="/jsplib/info.jsp"/>
         </action>
 
-	<!--  Porte Delegate (Controllo Accessi) -->
+		<!--  Porte Delegate (Controllo Accessi) -->
 
         <action path="/porteDelegateControlloAccessi" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateControlloAccessi"
             scope="request" validate="true">
@@ -1270,7 +1270,15 @@
             <forward name="porteDelegateControlloAccessiError" path="/jsplib/info.jsp"/>
         </action>
     
-    
+    	<!--  Porte Delegate (Validazione Contenuti) -->
+
+        <action path="/porteDelegateValidazioneContenuti" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateValidazioneContenuti"
+            scope="request" validate="true">
+            <forward name="porteDelegateValidazioneContenutiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateValidazioneContenutiError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     
@@ -1639,6 +1647,15 @@
             <forward name="porteApplicativeSoggettoError" path="/jsplib/info.jsp"/>
         </action>
     
+   		<!--  Porte Applicative (Validazione) -->
+
+        <action path="/porteApplicativeValidazioneContenuti" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeValidazioneContenuti"
+            scope="request" validate="true">
+            <forward name="porteApplicativeValidazioneContenutiForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeValidazioneContenutiError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

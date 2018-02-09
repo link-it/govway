@@ -726,7 +726,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
 		de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazioneCustom, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
 		ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
 		dati.addElement(de);
 		
@@ -764,6 +764,73 @@ public class PorteDelegateHelper extends ConsoleHelper {
 //		this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		
 		
+		// *************** Validazione Contenuti *********************
+		
+		
+		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteDelegateValidazione, lascio questo codice per eventuali ripensamenti.
+
+		de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
+		dati.addElement(de);
+		
+		// validazione contenuti
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+		ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, xsd);
+		dati.addElement(de);
+		
+		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteDelegateValidazione, lascio questo codice per eventuali ripensamenti.
+
+//		String[] tipoXsd = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO,
+//				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO,
+//				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY };
+//		de = new DataElement();
+//		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO);
+//		de.setType(DataElementType.SELECT);
+//		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
+//		de.setValues(tipoXsd);
+//		//		de.setOnChange("CambiaModePD('" + tipoOp + "', " + numCorrApp + ")");
+//		de.setPostBack(true);
+//		de.setSelected(xsd);
+//		dati.addElement(de);
+//
+//		if (PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO.equals(xsd) || 
+//				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY.equals(xsd)) {
+//			String[] tipi_validazione = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD,
+//					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_WSDL,
+//					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_OPENSPCOOP };
+//			//String[] tipi_validazione = { "xsd", "wsdl" };
+//			de = new DataElement();
+//			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
+//			de.setType(DataElementType.SELECT);
+//			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
+//			de.setValues(tipi_validazione);
+//			de.setSelected(tipoValidazione);
+//			dati.addElement(de);
+//
+//
+//			// Applica MTOM 
+//			de = new DataElement();
+//			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM);
+//
+//			
+//			//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+//			de.setType(DataElementType.CHECKBOX);
+//			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
+//				de.setSelected(true);
+//			}
+////			}
+////			else{
+////				de.setType(DataElementType.HIDDEN);
+////				de.setValue(applicaMTOM);
+////			}
+//		 
+//			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
+//			dati.addElement(de);
+//
+//		}
 		
 		
 		
@@ -1011,71 +1078,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			
 		}
 		
-		
-		
-		
-		
-		
-		
-		// *************** Validazione Contenuti *********************
-
-		de = new DataElement();
-		de.setType(DataElementType.TITLE);
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
-		dati.addElement(de);
-
-		String[] tipoXsd = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY };
-		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO);
-		de.setType(DataElementType.SELECT);
-		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
-		de.setValues(tipoXsd);
-		//		de.setOnChange("CambiaModePD('" + tipoOp + "', " + numCorrApp + ")");
-		de.setPostBack(true);
-		de.setSelected(xsd);
-		dati.addElement(de);
-
-		if (PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO.equals(xsd) || 
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY.equals(xsd)) {
-			String[] tipi_validazione = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD,
-					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_WSDL,
-					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_OPENSPCOOP };
-			//String[] tipi_validazione = { "xsd", "wsdl" };
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-			de.setType(DataElementType.SELECT);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
-			de.setValues(tipi_validazione);
-			de.setSelected(tipoValidazione);
-			dati.addElement(de);
-
-
-			// Applica MTOM 
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM);
-
-			
-			//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
-			de.setType(DataElementType.CHECKBOX);
-			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
-				de.setSelected(true);
-			}
-//			}
-//			else{
-//				de.setType(DataElementType.HIDDEN);
-//				de.setValue(applicaMTOM);
-//			}
-		 
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
-			dati.addElement(de);
-
-		}
-
-
-
-
 		
 		// *************** Asincroni *********************
 		
@@ -1622,11 +1624,13 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				this.pd.setMessage("Mode Azione dev'essere user-input, register-input, url-based, content-based, input-based, soap-action-based o wsdl-based");
 				return false;
 			}
-			if (!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO) &&
-					!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO) &&
-					!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY)) {
-				this.pd.setMessage("Validazione XSD dev'essere abilitato, disabilitato o warningOnly");
-				return false;
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				if (!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO) &&
+						!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO) &&
+						!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY)) {
+					this.pd.setMessage("Validazione XSD dev'essere abilitato, disabilitato o warningOnly");
+					return false;
+				}
 			}
 
 			// Se autenticazione = custom, nomeauth dev'essere specificato
@@ -1644,7 +1648,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 			
 			PortaDelegata pdDatabase = null;
-			if (TipoOperazione.CHANGE == tipoOp){
+			if (TipoOperazione.CHANGE.equals(tipoOp)){
 				pdDatabase = this.porteDelegateCore.getPortaDelegata(Long.parseLong(id)); 
 			}
 			
@@ -1655,11 +1659,13 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				}
 			}
 			
-			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
-					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
-					autorizzazioneRuoliTipologia, ruoloMatch, 
-					true, true, pd, ruoli)==false){
-				return false;
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+						autorizzazioneRuoliTipologia, ruoloMatch, 
+						true, true, null, ruoli)==false){
+					return false;
+				}
 			}
 
 			// Se modesp = register-input, controllo che il soggetto sia uno di
@@ -1729,7 +1735,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 			// Se tipoOp = add, controllo che la porta delegata non sia gia'
 			// stata registrata
-			if (tipoOp == TipoOperazione.ADD) {
+			if (TipoOperazione.ADD.equals(tipoOp)) {
 				boolean giaRegistrato = false;
 				long idPDGiaRegistrata = -1;
 				try {
@@ -1748,7 +1754,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "] associata al Soggetto [" + pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario() + "]");
 					return false;
 				}
-			} else if (TipoOperazione.CHANGE == tipoOp) {
+			} else if (TipoOperazione.CHANGE.equals(tipoOp)) {
 				PortaDelegata portaDelegata = null;
 				try {
 					// controllo su nome (non possono esistere 2 pd con stesso

@@ -36,7 +36,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
@@ -46,12 +45,9 @@ import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
-import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
@@ -60,7 +56,6 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -135,24 +130,10 @@ public final class PorteApplicativeChange extends Action {
 			String gestManifest = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
 			String ricsim = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA);
 			String ricasim = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			String xsd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
-			String tipoValidazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE);
-			String autorizzazioneContenuti = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI);
 			String scadcorr = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA);
 			String integrazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
-			String applicaMTOM = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
 			String servizioApplicativo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 
-			String autenticazione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE );
-			String autenticazioneOpzionale = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE );
-			String autenticazioneCustom = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
-			String autorizzazione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
-			String autorizzazioneCustom = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
-			
-			String autorizzazioneAutenticati = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
-			String autorizzazioneRuoli = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
-			String autorizzazioneRuoliTipologia = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
-			String ruoloMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
@@ -270,6 +251,75 @@ public final class PorteApplicativeChange extends Action {
 				numCorrApp = ca.sizeElementoList();
 			}
 			
+			String xsd = null;
+			String tipoValidazione = null;
+			String applicaMTOM = "";
+			ValidazioneContenutiApplicativi vx = pa.getValidazioneContenutiApplicativi();
+			if (vx == null) {
+				xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+				tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD;
+			} else {
+				if(vx.getStato()!=null)
+					xsd = vx.getStato().toString();
+				if ((xsd == null) || "".equals(xsd)) {
+					xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+				}
+				
+				if(vx.getTipo()!=null)
+					tipoValidazione = vx.getTipo().toString();
+				if (tipoValidazione == null || "".equals(tipoValidazione)) {
+					tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD ;
+				}
+				
+				if(vx.getAcceptMtomMessage()!=null)
+					if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
+						applicaMTOM = Costanti.CHECK_BOX_ENABLED;
+			}
+
+			String autenticazione = pa.getAutenticazione();
+			String autenticazioneCustom = null;
+			if (autenticazione != null &&
+					!TipoAutenticazione.getValues().contains(autenticazione)) {
+				autenticazioneCustom = autenticazione;
+				autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+			}
+
+			String autenticazioneOpzionale = "";
+				if(pa.getAutenticazioneOpzionale()!=null){
+					if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+						autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+					}
+				}
+
+			String autorizzazione = null;
+			String autorizzazioneCustom = null;
+			String autorizzazioneAutenticati = null;
+			String autorizzazioneRuoli = null;
+			String autorizzazioneRuoliTipologia = null;
+			String ruoloMatch = null;
+			String autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
+			
+			if (pa.getAutorizzazione() != null &&
+					!TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione())) {
+				autorizzazioneCustom = pa.getAutorizzazione();
+				autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+			}
+			else{
+				autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
+				if(TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()))
+					autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+				if(TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()))
+					autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+				autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()).getValue();
+			}
+			
+			
+			if (ruoloMatch == null) {
+				if(pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
+					ruoloMatch = pa.getRuoli().getMatch().getValue();
+				}
+			}
+			
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tipoNomeSoggettoProprietario);
 			
 			lstParm.add(new Parameter(oldNomePA , null));
@@ -329,82 +379,6 @@ public final class PorteApplicativeChange extends Action {
 						ricasim = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO;
 					}
 				}
-				if (xsd == null) {
-					ValidazioneContenutiApplicativi vx = pa.getValidazioneContenutiApplicativi();
-					if (vx == null) {
-						xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
-					} else {
-						if(vx.getStato()!=null)
-							xsd = vx.getStato().toString();
-						if ((xsd == null) || "".equals(xsd)) {
-							xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
-						}
-					}
-				}
-				if (tipoValidazione == null) {
-					ValidazioneContenutiApplicativi vx = pa.getValidazioneContenutiApplicativi();
-					if (vx == null) {
-						tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD;
-					} else {
-						if(vx.getTipo()!=null)
-							tipoValidazione = vx.getTipo().toString();
-						if (tipoValidazione == null || "".equals(tipoValidazione)) {
-							tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD ;
-						}
-					}
-				}
-				if (applicaMTOM == null) {
-					ValidazioneContenutiApplicativi vx = pa.getValidazioneContenutiApplicativi();
-					applicaMTOM = "";
-					if (vx != null) {
-						if(vx.getAcceptMtomMessage()!=null)
-							if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
-								applicaMTOM = Costanti.CHECK_BOX_ENABLED;
-					}
-				}
-
-				if (autenticazione == null) {
-					autenticazione = pa.getAutenticazione();
-					if (autenticazione != null &&
-							!TipoAutenticazione.getValues().contains(autenticazione)) {
-						autenticazioneCustom = autenticazione;
-						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-					}
-				}
-				if(autenticazioneOpzionale==null){
-					autenticazioneOpzionale = "";
-					if(pa.getAutenticazioneOpzionale()!=null){
-						if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-						}
-					}
-				}
-				if (autorizzazione == null) {
-					if (pa.getAutorizzazione() != null &&
-							!TipoAutorizzazione.getAllValues().contains(pa.getAutorizzazione())) {
-						autorizzazioneCustom = pa.getAutorizzazione();
-						autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
-					}
-					else{
-						autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
-						if(TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()))
-							autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
-						if(TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()))
-							autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
-						autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()).getValue();
-					}
-				}
-				
-				if (ruoloMatch == null) {
-					if(pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
-						ruoloMatch = pa.getRuoli().getMatch().getValue();
-					}
-				}
-				
-				if(autorizzazioneContenuti==null){
-					autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
-				}
-
 				if ((scadcorr == null) && (ca != null)) {
 					scadcorr = ca.getScadenza();
 				}
@@ -846,36 +820,7 @@ public final class PorteApplicativeChange extends Action {
 			else{
 				pa.setStato(StatoFunzionalita.DISABILITATO);
 			}
-			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
-			
-			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
-				pa.setAutenticazione(autenticazione);
-			else
-				pa.setAutenticazione(autenticazioneCustom);
-			if(autenticazioneOpzionale != null){
-				if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
-					pa.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
-				else 
-					pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
-			} else 
-				pa.setAutenticazioneOpzionale(null);
-			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
-				pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
-						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli), 
-						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
-			else
-				pa.setAutorizzazione(autorizzazioneCustom);
-			
-			if(ruoloMatch!=null && !"".equals(ruoloMatch)){
-				RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(ruoloMatch);
-				if(tipoRuoloMatch!=null){
-					if(pa.getRuoli()==null){
-						pa.setRuoli(new AutorizzazioneRuoli());
-					}
-					pa.getRuoli().setMatch(tipoRuoloMatch);
-				}
-			}
-			
+		
 			if (stateless!=null && stateless.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT))
 				pa.setStateless(null);
 			else
@@ -922,18 +867,6 @@ public final class PorteApplicativeChange extends Action {
 			} else
 				pa.setAzione(null);
 
-			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
-			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
-			vx.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
-			if(applicaMTOM != null){
-				if(ServletUtils.isCheckBoxEnabled(applicaMTOM))
-					vx.setAcceptMtomMessage(StatoFunzionalita.ABILITATO);
-				else 
-					vx.setAcceptMtomMessage(StatoFunzionalita.DISABILITATO);
-			} else 
-				vx.setAcceptMtomMessage(null);
-			
-			pa.setValidazioneContenutiApplicativi(vx);
 			// Cambio i dati della vecchia CorrelazioneApplicativa
 			// Non ne creo una nuova, altrimenti mi perdo le vecchie entry
 			if (ca != null)
@@ -979,7 +912,7 @@ public final class PorteApplicativeChange extends Action {
 				Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
 				List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, idSoggetto.intValue(), ricerca);
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-				apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, null, ricerca);
+				apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
 				break;
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
 				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;

@@ -3537,7 +3537,7 @@ public class ConsoleHelper {
 	}
 	
 	public boolean porteAppAzioneCheckData(TipoOperazione add, List<String> azioniOccupate) {
-		String[] azionis = this.request.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+		String[] azionis = this.request.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -3938,4 +3938,84 @@ public class ConsoleHelper {
 		//}
 		return bf.toString();
 	}
+	
+	// Validazione contenuti
+	
+	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM) throws Exception{
+		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM);
+	}
+	
+	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM) {
+		DataElement de = new DataElement();
+		
+		if(addSezione) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI);
+			dati.addElement(de);
+		}
+		
+		String[] tipoXsd = { CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_ABILITATO,
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_DISABILITATO,
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_WARNING_ONLY };
+		
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO);
+		de.setType(DataElementType.SELECT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_XSD);
+		de.setValues(tipoXsd);
+		//		de.setOnChange("CambiaMode('" + tipoOp + "')");
+		de.setPostBack(true);
+		de.setSelected(xsd);
+		dati.addElement(de);
+		
+		if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_ABILITATO.equals(xsd) ||
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_WARNING_ONLY.equals(xsd)) {
+			String[] tipi_validazione = {
+					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD,
+					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_WSDL,
+					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP 
+			};
+			//String[] tipi_validazione = { "xsd", "wsdl" };
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE);
+			de.setValues(tipi_validazione);
+			de.setSelected(tipoValidazione);
+			dati.addElement(de);
+			
+			
+			// Applica MTOM 
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM);
+			
+			//if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			de.setType(DataElementType.CHECKBOX);
+			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
+				de.setSelected(true);
+			}
+		//	}
+		//	else{
+		//		de.setType(DataElementType.HIDDEN);
+		//		de.setValue(applicaMTOM);
+		//	}
+			 
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM);
+			dati.addElement(de);
+		}
+	}
+	
+	public boolean validazioneContenutiCheck(TipoOperazione tipoOperazione,boolean isPortaDelegata) throws Exception {
+		String xsd = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_XSD);
+		
+		// Controllo che i campi "select" abbiano uno dei valori ammessi
+		if (!xsd.equals(CostantiControlStation.DEFAULT_VALUE_ABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY)) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY);
+			return false;
+		}
+		
+		return true;
+	}
+	
 }
