@@ -341,8 +341,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
-
-		if(this.core.isRegistroServiziLocale() && this.isModalitaAvanzata()){
+		boolean showVersioneProtocollo = this.core.isRegistroServiziLocale() && (this.apsCore.getVersioniProtocollo(protocollo).size()>1);
+		if(showVersioneProtocollo){
 			de.setValues(versioniLabel);
 			de.setSelected(profilo);
 			de.setType(DataElementType.SELECT);

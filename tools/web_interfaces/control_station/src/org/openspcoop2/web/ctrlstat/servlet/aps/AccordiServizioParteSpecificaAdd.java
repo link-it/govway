@@ -529,6 +529,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					
 					if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROTOCOLLO)){
 						this.accordo = null;
+						this.versione = null;
 					}
 					
 					this.provider = null;
@@ -1089,7 +1090,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziCheckData(tipoOp, soggettiList,
-					accordiList, this.nomeservizio, this.tiposervizio,
+					accordiList, this.nomeservizio, this.tiposervizio, 
+					(this.versione!=null && !"".equals(this.versione)) ? Integer.parseInt(this.versione) : 1,
 					this.nomeservizio, this.tiposervizio, this.provider,
 					this.nomeSoggettoErogatore, this.tipoSoggettoErogatore,
 					this.accordo, this.serviceBinding, this.servcorr, this.endpointtype,

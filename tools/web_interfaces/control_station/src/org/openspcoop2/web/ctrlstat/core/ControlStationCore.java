@@ -4704,18 +4704,6 @@ public class ControlStationCore {
 		}
 	}
 	
-	public String getVersioneDefault() throws  DriverRegistroServiziException {
-		String getVersioneDefault = "getVersioneDefault";
-		try{
-
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().getVersioni().get(0);
-
-		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + getVersioneDefault + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + getVersioneDefault + "] Error :" + e.getMessage(),e);
-		}
-	}
-
 	public List<String> getVersioniProtocollo(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getVersioniProtocollo";
 		try{

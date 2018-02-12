@@ -1962,7 +1962,7 @@ public class DriverControlStationDB  {
 	
 	/* *********** METODI EXISTS ****************** */
 	
-	public long existServizio(String nomeServizio, String tipoServizio, long idSoggettoErogatore) throws DriverControlStationException {
+	public long existServizio(String nomeServizio, String tipoServizio, int versioneServizio, long idSoggettoErogatore) throws DriverControlStationException {
 				String nomeMetodo = "existServizio";
 		
 		Connection con = null;
@@ -1988,6 +1988,7 @@ public class DriverControlStationDB  {
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.addWhereCondition("nome_servizio = ?");
 			sqlQueryObject.addWhereCondition("tipo_servizio = ?");
+			sqlQueryObject.addWhereCondition("versione_servizio = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 		
@@ -1995,6 +1996,7 @@ public class DriverControlStationDB  {
 			stmt.setLong(1, idSoggettoErogatore);
 			stmt.setString(2, nomeServizio);
 			stmt.setString(3, tipoServizio);
+			stmt.setInt(4, versioneServizio);
 		
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {

@@ -114,8 +114,11 @@ public final class Tracciamento extends Action {
 				tipiServizi.addAll(apsCore.getTipiServiziGestitiProtocollo(protocollo,ServiceBinding.SOAP));
 				tipiServizi.addAll(apsCore.getTipiServiziGestitiProtocollo(protocollo,ServiceBinding.REST));
 			}else{
-				tipiServizi.addAll(apsCore.getTipiServiziGestiti(ServiceBinding.SOAP));
-				tipiServizi.addAll(apsCore.getTipiServiziGestiti(ServiceBinding.REST));
+				List<String> list = archiviCore.getProtocolli(session);
+				for (String protocolloL : list) {
+					tipiServizi.addAll(apsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
+					tipiServizi.addAll(apsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST));	
+				}
 			}
 			String[] tipiServiziLabel = tipiServizi.toArray(new String[1]);
 			

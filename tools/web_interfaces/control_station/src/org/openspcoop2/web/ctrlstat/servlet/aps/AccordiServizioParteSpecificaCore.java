@@ -23,7 +23,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,6 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
-import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -107,32 +105,6 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 	
 	
-	public List<String> getTipiServiziGestiti(ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		String nomeMetodo = "getTipiServiziGestiti";
-		try{
-			
-			List<String> tipi = new ArrayList<String>();
-			
-			MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
-			Enumeration<String> protocolli = protocolFactories.keys();
-			while (protocolli.hasMoreElements()) {
-				
-				String protocollo = protocolli.nextElement();
-				IProtocolFactory<?> protocolFactory = protocolFactories.get(protocollo);
-				for (String tipo : protocolFactory.createProtocolConfiguration().getTipiServizi(serviceBinding)){
-					if(!tipi.contains(tipo)){
-						tipi.add(tipo);
-					}
-				}
-			}
-			
-			return tipi;
-			
-		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		}
-	}
 	public List<String> getTipiServiziGestitiProtocollo(String protocollo,ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getTipiServiziGestitiProtocollo";
 		try{
@@ -999,7 +971,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 	
 
-	public long existServizio(String nomeServizio, String tipoServizio, long idSoggettoErogatore) throws DriverControlStationException {
+	public long existServizio(String nomeServizio, String tipoServizio, int versioneServizio, long idSoggettoErogatore) throws DriverControlStationException {
 		Connection con = null;
 		String nomeMetodo = "existServizio";
 		DriverControlStationDB driver = null;
@@ -1010,7 +982,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.existServizio(nomeServizio, tipoServizio, idSoggettoErogatore);
+			return driver.existServizio(nomeServizio, tipoServizio, versioneServizio, idSoggettoErogatore);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

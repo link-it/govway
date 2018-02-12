@@ -315,7 +315,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String[] accordiListLabel = null;
 			// soggetti
 			List<Soggetto> list = soggettiCore.soggettiRegistroList("", new Search(true));
-			List<String> tipiServizi = apsCore.getTipiServiziGestiti(serviceBinding);
+			List<String> tipiServizi = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 			if (list.size() > 0) {
 				soggettiList = new String[list.size()];
 				soggettiListLabel = new String[list.size()];

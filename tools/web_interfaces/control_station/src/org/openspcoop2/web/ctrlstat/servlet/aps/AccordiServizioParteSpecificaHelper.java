@@ -171,7 +171,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	// Controlla i dati dei Servizi
 	public boolean serviziCheckData(TipoOperazione tipoOp, String[] soggettiList,
 			String[] accordiList, String oldNomeservizio,
-			String oldTiposervizio, String nomeservizio,
+			String oldTiposervizio, int oldVersioneServizio,
+			String nomeservizio,
 			String tiposervizio, String idSoggErogatore,
 			String nomeErogatore, String tipoErogatore, String idAccordo, ServiceBinding serviceBinding,
 			String servcorr, String endpointtype, String url, String nome,
@@ -260,13 +261,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 
-
+			Integer versioneInt = 1;
+			if(versione!=null && !"".equals(versione)){
+				versioneInt = Integer.parseInt(versione);
+			}
+			else {
+				versione = "1";
+				versioneInt = 1;
+			}
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 
-				Integer versioneInt = 1;
-				if(versione!=null){
-					versioneInt = Integer.parseInt(versione);
-				}
 				@SuppressWarnings("unused")
 				IDServizio idService = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, 
 						tipoErogatore, nomeErogatore, versioneInt);
@@ -484,11 +488,28 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// .equals(Costanti.CHECK_BOX_ENABLED)) ? true : false);
 
 			// Controllo non esistenza gia' del servizio
-			if ((!tipoOp.equals(TipoOperazione.CHANGE)) || ((tipoOp.equals(TipoOperazione.CHANGE)) && (!oldTiposervizio.equals(tiposervizio) || !oldNomeservizio.equals(nomeservizio)))) {
-				if (this.apsCore.existServizio(nomeservizio, tiposervizio, idSoggettoErogatore) > 0) {
+			if (
+					(!tipoOp.equals(TipoOperazione.CHANGE)) 
+					|| 
+					(
+							tipoOp.equals(TipoOperazione.CHANGE)
+							&& 
+							( 
+								(!oldTiposervizio.equals(tiposervizio)) 
+									|| 
+								(!oldNomeservizio.equals(nomeservizio)) 
+									|| 
+								(oldVersioneServizio!=versioneInt)
+							) 
+					)
+				){
+				if (this.apsCore.existServizio(nomeservizio, tiposervizio, versioneInt, idSoggettoErogatore) > 0) {
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoErogatore);
+					String labelServizio = this.getLabelNomeServizio(protocollo, tiposervizio, nomeservizio, versioneInt);
+					String labelSoggetto = this.getLabelNomeSoggetto(protocollo, tipoErogatore, nomeErogatore);
 					this.pd.setMessage(MessageFormat.format(
 							AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI,
-							tipoErogatore, nomeErogatore));
+							labelServizio, labelSoggetto));
 					return false;
 				}
 			}
@@ -506,10 +527,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			long idAccordoServizioParteComuneLong = Long.parseLong(idAccordo);
 			AccordoServizioParteComune accordoServizioParteComune = this.apcCore.getAccordoServizio(idAccordoServizioParteComuneLong);
 			
-			Integer versioneInt = 1;
-			if(versione!=null){
-				versioneInt = Integer.parseInt(versione);
-			}
 			IDServizio idAccordoServizioParteSpecifica = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, 
 					tipoErogatore, nomeErogatore, versioneInt);
 			
@@ -1222,7 +1239,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
 					pNomeServizio, pTipoServizio, pIdsoggErogatore);
 				de.setValue(this.getLabelNomeServizio(protocollo, asps.getTipo(), asps.getNome(), asps.getVersione()));
-				de.setIdToRemove(asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + ":" + asps.getTipo() + "/" + asps.getNome()+ ":" + asps.getVersione());
 				de.setToolTip(uriASPS);
 				e.addElement(de);
 
@@ -2505,9 +2521,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 
-	private void addInfoCorrelata(Vector<DataElement> dati,TipoOperazione tipoOp, String portType, boolean modificaAbilitata, String servcorr, String oldStato,
-			String tipoProtocollo, ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	private boolean addInfoCorrelata(TipoOperazione tipoOp, String portType, boolean modificaAbilitata, String servcorr, String oldStato,
+			String tipoProtocollo, ServiceBinding serviceBinding, Vector<DataElement> dati) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
+		
+		boolean infoCorrelataShow = false;
 		
 		DataElement de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SERVIZIO_CORRELATO);
@@ -2517,6 +2535,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 		else if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
 			de.setType(DataElementType.CHECKBOX);
+			infoCorrelataShow = true;
 		}else{
 			de.setType(DataElementType.HIDDEN);
 		}
@@ -2549,21 +2568,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				(this.core.isShowCorrelazioneAsincronaInAccordi() &&
 						( !isModalitaAvanzata || 
 								(portType!=null && !"".equals(portType) && !"-".equals(portType)) )) ){
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPOLOGIA_SERVIZIO);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_SERVIZIO_CORRELATO_LABEL);
+			DataElement deLabel = new DataElement();
+			deLabel.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPOLOGIA_SERVIZIO);
+			deLabel.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_SERVIZIO_CORRELATO_LABEL);
 			if (  (servcorr != null) && ((servcorr.equals(Costanti.CHECK_BOX_ENABLED)) || servcorr.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_ABILITATO)) ) {
-				de.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO);
+				deLabel.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO);
 			}else{
-				de.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE);
+				deLabel.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE);
 			}
 			if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(tipoProtocollo,serviceBinding)){	
-				de.setType(DataElementType.TEXT);
+				deLabel.setType(DataElementType.TEXT);
+				infoCorrelataShow = true;
 			} else {
-				de.setType(DataElementType.HIDDEN);
+				deLabel.setType(DataElementType.HIDDEN);
 			}
-			dati.addElement(de);
+			dati.addElement(deLabel);
 		}
+		
+		return infoCorrelataShow;
 	}
 
 	public Vector<DataElement> addServiziToDati(Vector<DataElement> dati, String nomeServizio, String tipoServizio, String oldNomeServizio, String oldTipoServizio,
@@ -2610,6 +2632,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+
 		
 		// accordo di servizio parte comune 
 
@@ -2630,8 +2653,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			asLabel = AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO;
 		}
 
+		boolean showReferente = this.apcCore.isSupportatoSoggettoReferente(tipoProtocollo);
+		
 		DataElement de = new DataElement();
-		de.setLabel(asLabel);
+		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_INFO_GENERALI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -2653,11 +2678,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
+		
+		de = new DataElement();
+		de.setLabel(asLabel);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
 		// Accordo 
 		//if(tipoOp.equals("add") || modificaAbilitata){
+		IDAccordo idAccordoParteComune = null;
 		if(tipoOp.equals(TipoOperazione.ADD) ){
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO);
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME);
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
 			de.setValues(accordiList);
@@ -2677,11 +2709,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}
 				
-			IDAccordo idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
+			idAccordoParteComune = this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE);
-			de.setType(DataElementType.TEXT);
+			if(showReferente) {
+				de.setType(DataElementType.TEXT);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
 			de.setName("param_"+AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_REFERENTE );
 			de.setValue(idAccordoParteComune.getSoggettoReferente().toString());
 			dati.addElement(de);
@@ -2725,15 +2762,30 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		switch(serviceBinding) {
 		case REST:
 			
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SERVICE_BINDING);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE+"__LABEL");
+			de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST);
+			dati.addElement(de);
+			
 			//Servizio (portType)  nascosto nel caso REST
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-			de.setValue(portType != null && !"".equals(portType) ? portType : portType);
+			de.setValue(portType);
 			dati.addElement(de);
 			break;
 		case SOAP:
 		default:
+			
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SERVICE_BINDING);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE+"__LABEL");
+			de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP);
+			dati.addElement(de);
+			
 			//Servizio (portType)  visibile nel caso SOAP
 			if (ptList != null) {
 				if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
@@ -2755,14 +2807,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-					de.setValue(portType != null && !"".equals(portType) ? portType : portType);
+					de.setValue(portType);
 					dati.addElement(de);
 
 					de = new DataElement();
 					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 					de.setType(DataElementType.TEXT);
 					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE_LABEL);
-					de.setValue(portType != null && !"".equals(portType) ? portType : portType);
+					de.setValue(portType);
 					dati.addElement(de);
 				}
 			}else{
@@ -2775,46 +2827,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			break;
 		}
 		
-		if(this.isModalitaStandard()) {
-			
-			// Tipo e info correlata viene visualizzata qua
-			
-			if( (tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata) && tipiLabel!=null && tipiLabel.length>1){
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO  );
-				de.setValues(tipiLabel);
-				de.setSelected(tipoServizio);
-				de.setType(DataElementType.SELECT);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
-				de.setSize(this.getSize());
-				if(tipoOp.equals(TipoOperazione.ADD)) {
-					de.setPostBack(true);
-				}
-				dati.addElement(de);
-			}else{
-				de = new DataElement();
-				de.setValue(tipoServizio);
-				if(tipiLabel!=null && tipiLabel.length>1) {
-					de.setType(DataElementType.TEXT);
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-				}
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
-				dati.addElement(de);
-			}
-			
-			this.addInfoCorrelata(dati,tipoOp, portType, modificaAbilitata, servcorr, oldStato,
-					tipoProtocollo, serviceBinding);
-		}
-		
 
 		//Sezione Soggetto Erogatore (provider)
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -2848,10 +2866,46 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		//Sezione Servizio
 
-		if(isModalitaAvanzata){
+		Vector<DataElement> datiCorrelati = new Vector<>();
+		boolean showInfoCorrelata = this.addInfoCorrelata(tipoOp, portType, modificaAbilitata, servcorr, oldStato,
+				tipoProtocollo, serviceBinding, datiCorrelati);
+		
+		boolean modificaAbilitataOrOperazioneAdd = tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata;
+		
+		boolean showSceltaNomeServizioDisabilitata = !isModalitaAvanzata && 
+				(
+						TipoOperazione.ADD.equals(tipoOp) || 
+						(ServiceBinding.SOAP.equals(serviceBinding) && nomeServizio!=null && nomeServizio.equals(portType)) ||
+						(ServiceBinding.REST.equals(serviceBinding) && nomeServizio!=null && nomeServizio.equals(idAccordoParteComune.getNome()))
+				);
+		
+		boolean showFlagPrivato = this.core.isShowFlagPrivato() &&  (tipoOp.equals(TipoOperazione.ADD) || 
+				modificaAbilitata) && isModalitaAvanzata;
+		
+		boolean showFlagPrivatoLabel = this.core.isShowFlagPrivato() && tipoOp.equals(TipoOperazione.CHANGE ) && 
+			(this.core.isShowGestioneWorkflowStatoDocumenti() && 
+					StatiAccordo.finale.toString().equals(oldStato) ) &&
+					isModalitaAvanzata;
+		
+		boolean showTipoServizio = (this.apsCore.getTipiServiziGestitiProtocollo(tipoProtocollo,serviceBinding).size()>1);
+		
+		boolean showVersioneProtocollo = modificaAbilitataOrOperazioneAdd && (this.apsCore.getVersioniProtocollo(tipoProtocollo).size()>1);
+		
+		
+		boolean showLabelServizio = this.isModalitaAvanzata() || 
+				showTipoServizio ||
+				(!showSceltaNomeServizioDisabilitata) ||
+				visualizzaVersione ||
+				showInfoCorrelata ||
+				showFlagPrivato ||
+				showFlagPrivatoLabel ||
+				showVersioneProtocollo ||
+				(this.core.isShowGestioneWorkflowStatoDocumenti() && (TipoOperazione.CHANGE.equals(tipoOp) || this.isModalitaAvanzata()));
+		
+		if(showLabelServizio){
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
-			de.setType(DataElementType.TITLE);
+			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 		}
 
@@ -2891,8 +2945,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		} else {*/
 
 
-		if(this.isModalitaAvanzata()) {
-			if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
+		if(showTipoServizio) {
+			if(modificaAbilitataOrOperazioneAdd){
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO  );
 				de.setValues(tipiLabel);
@@ -2912,11 +2966,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
 				dati.addElement(de);
 			}
+		}else{
+			de = new DataElement();
+			de.setValue(tipoServizio);
+			de.setType(DataElementType.HIDDEN);
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
+			dati.addElement(de);
 		}
 
 		//}
 
-		if (!isModalitaAvanzata) {
+		if (showSceltaNomeServizioDisabilitata ) {
 			de = new DataElement();
 			if (nomeServizio == null) {
 				de.setValue("");
@@ -2945,12 +3006,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
-		if(isModalitaAvanzata){
+		if(visualizzaVersione){
 
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-			de.setValue(versione);
+			de.setValue(((versione==null || "".equals(versione)) ? "1" : versione));
 			if(visualizzaVersione){
 				if( modificaAbilitata ){
 					de.setType(DataElementType.NUMBER);
@@ -2968,29 +3029,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 		}
-		else{
-			
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-			de.setValue(versione);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-			dati.addElement(de);
-			
-		}
 		
-
-		if(this.isModalitaAvanzata()) {
-			this.addInfoCorrelata(dati,tipoOp, portType, modificaAbilitata, servcorr, oldStato,
-					tipoProtocollo, serviceBinding);
-		}
-		
+		dati.addAll(datiCorrelati);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PRIVATO);
-		if (this.core.isShowFlagPrivato() &&  (tipoOp.equals(TipoOperazione.ADD) || 
-				modificaAbilitata) && isModalitaAvanzata) {
+		if (showFlagPrivato) {
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(privato ? Costanti.CHECK_BOX_ENABLED : "");
 		} else {
@@ -3000,10 +3044,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PRIVATO);
 		dati.addElement(de);
 
-		if(this.core.isShowFlagPrivato() && tipoOp.equals(TipoOperazione.CHANGE ) && 
-				(this.core.isShowGestioneWorkflowStatoDocumenti() && 
-						StatiAccordo.finale.toString().equals(oldStato) ) &&
-						isModalitaAvanzata){
+		if(showFlagPrivatoLabel){
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VISIBILITA_SERVIZIO);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PRIVATO_LABEL);
@@ -3015,9 +3056,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 
+		
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE_PROTOCOLLO);
-		if(isModalitaAvanzata){
+		if(showVersioneProtocollo){
 			if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
 				de.setValues(versioniValues);
 				de.setLabels(versioniLabel);
@@ -4087,19 +4129,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(soggettoId==null || "".equals(soggettoId)){
 					soggettoId = soggettiList[0];
 				}
-				IDSoggetto idSoggetto = null;
-				for (int i = 0; i < soggettiList.length; i++) {
-					if(soggettiList[i].equals(soggettoId)){
-						String[]tmp = soggettiListLabel[i].split("/");
-						idSoggetto = new IDSoggetto(tmp[0], tmp[1]);
-						break;
-					}
-				}
-				if(idSoggetto!=null){
-					Soggetto sogg = this.soggettiCore.getSoggettoRegistro(idSoggetto);
-					if(!this.pddCore.isPddEsterna(sogg.getPortaDominio())){
-						isSoggettoGestitoPorta = true;	
-					}
+				Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Long.parseLong(soggettoId));
+				if(!this.pddCore.isPddEsterna(sogg.getPortaDominio())){
+					isSoggettoGestitoPorta = true;	
 				}
 			}
 

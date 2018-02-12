@@ -903,14 +903,23 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 
-			if (apsHelper.isModalitaStandard()) {
-				// il nome del servizio e' quello del porttype selezionato
-				nomeservizio = portType;
+			if (apsHelper.isModalitaStandard() && (nomeservizio==null || "".equals(nomeservizio))) {
+				switch (serviceBinding) {
+				case REST:
+					// il nome del servizio e' quello dell'accordo
+					nomeservizio = as.getNome();
+					break;
+				case SOAP:
+				default:
+					// il nome del servizio e' quello del porttype selezionato
+					nomeservizio = portType;
+					break;
+				}
 			}
-
+			
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziCheckData(tipoOp, soggettiList,
-					accordiList, asps.getNome(), asps.getTipo(),
+					accordiList, asps.getNome(), asps.getTipo(), asps.getVersione(),
 					nomeservizio, tiposervizio, provider,
 					nomeSoggettoErogatore, tipoSoggettoErogatore, accordo, serviceBinding, 
 					servcorr, endpointtype, url, nome, tipo, user, password,

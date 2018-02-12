@@ -1214,10 +1214,13 @@ public final class Monitor extends Action {
 			List<String> tipiServizi_label = new ArrayList<String>();
 			tipiServizi.add("");
 			tipiServizi_label.add("-");
-			tipiServizi.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.SOAP));
-			tipiServizi_label.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.SOAP));
-			tipiServizi.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.REST));
-			tipiServizi_label.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.REST));
+			List<String> list = monitorCore.getProtocolli(session);
+			for (String protocolloL : list) {
+				tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
+				tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST));	
+				tipiServizi_label.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
+				tipiServizi_label.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.REST));	
+			}
 			
 			de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);
