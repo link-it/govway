@@ -781,33 +781,31 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			
 			List<String> soggettiAutenticati = new ArrayList<String>();
+			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
 			// lista soggetti autenticati per la creazione automatica
-//			if(saCore.isGenerazioneAutomaticaPorteApplicative() 
-					//&& (this.erogazioneAutenticazione !=null && !"".equals(this.erogazioneAutenticazione))
-//					){
+			CredenzialeTipo credenziale =  null;
+			if((this.erogazioneAutenticazione !=null && !"".equals(this.erogazioneAutenticazione)) && erogazioneIsSupportatoAutenticazioneSoggetti) {
+				TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(this.erogazioneAutenticazione);
+				credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(this.erogazioneAutenticazione) : null;
+			}
+			
+			List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
+			 
+			if(apsCore.isVisioneOggettiGlobale(userLogin)){
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
+			}else{
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
+			}
+			
+			if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
 				
-				CredenzialeTipo credenziale =  null;
-				if((this.erogazioneAutenticazione !=null && !"".equals(this.erogazioneAutenticazione)) && erogazioneIsSupportatoAutenticazioneSoggetti) {
-					TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(this.erogazioneAutenticazione);
-					credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(this.erogazioneAutenticazione) : null;
+				soggettiAutenticati.add("-"); // elemento nullo di default
+				soggettiAutenticatiLabel.add("-");
+				for (Soggetto soggetto : listSoggettiCompatibili) {
+					soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
+					soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo(), soggetto.getNome())); 
 				}
-				
-				List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
-				 
-				if(apsCore.isVisioneOggettiGlobale(userLogin)){
-					listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
-				}else{
-					listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
-				}
-				
-				if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
-					
-					soggettiAutenticati.add("-"); // elemento nullo di default
-					for (Soggetto soggetto : listSoggettiCompatibili) {
-						soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
-					}
-				}
-//			}
+			}
 			
 
 			// Controllo se il soggetto erogare appartiene ad una pdd di tipo operativo.
@@ -967,8 +965,32 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				if(this.erogazioneRuolo==null || "".equals(this.erogazioneRuolo))
 					this.erogazioneRuolo = "-";
-				if(this.erogazioneAutenticazione==null || "".equals(this.erogazioneAutenticazione))
+				if(this.erogazioneAutenticazione==null || "".equals(this.erogazioneAutenticazione)) {
 					this.erogazioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
+					
+					soggettiAutenticati = new ArrayList<String>();
+					soggettiAutenticatiLabel = new ArrayList<String>();
+					if(erogazioneIsSupportatoAutenticazioneSoggetti) {
+						TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(this.erogazioneAutenticazione);
+						credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(this.erogazioneAutenticazione) : null;
+					}
+					 
+					if(apsCore.isVisioneOggettiGlobale(userLogin)){
+						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
+					}else{
+						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
+					}
+					
+					if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
+						soggettiAutenticati.add("-"); // elemento nullo di default
+						soggettiAutenticatiLabel.add("-");
+						for (Soggetto soggetto : listSoggettiCompatibili) {
+							soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
+							soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo(), soggetto.getNome())); 
+						}
+					}
+					
+				}
 				if(this.erogazioneAutorizzazione==null || "".equals(this.erogazioneAutorizzazione)){
 					String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteApplicative();
 					this.erogazioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
@@ -1016,7 +1038,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-						soggettiAutenticati, this.erogazioneSoggettoAutenticato,
+						soggettiAutenticati,soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo);
 
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
@@ -1154,7 +1176,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-						soggettiAutenticati, this.erogazioneSoggettoAutenticato,
+						soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo);
 
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
@@ -1305,7 +1327,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
 							this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 							this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-							soggettiAutenticati, this.erogazioneSoggettoAutenticato,
+							soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 							this.tipoProtocollo, listaTipiProtocollo);
 
 					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 

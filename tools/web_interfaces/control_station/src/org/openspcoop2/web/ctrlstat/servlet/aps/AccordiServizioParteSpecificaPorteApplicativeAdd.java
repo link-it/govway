@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
@@ -50,6 +51,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -96,6 +99,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 		PageData pd = new PageData();
 
 		GeneralHelper generalHelper = new GeneralHelper(session);
+		
+		String userLogin = ServletUtils.getUserLoginFromSession(session);	
 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
@@ -127,6 +132,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String erogazioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
 			String erogazioneAutorizzazioneRuoliTipologia = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
 			String erogazioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
+			String erogazioneSoggettoAutenticato = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO);
+			
 
 			String nomeSA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
 
@@ -226,6 +233,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			}
 			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
+			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			boolean erogazioneIsSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
 
 			String postBackElementName = apsHelper.getPostBackElementName();
@@ -240,9 +248,6 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					// 
 				}
 			}
-
-
-
 
 			String [] saSoggetti = null;
 			if ((idSoggettoErogatoreDelServizio != null) && !idSoggettoErogatoreDelServizio.equals("")) {
@@ -276,6 +281,34 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				for (int i = 0; i < validSA.size(); i++) {
 					ServizioApplicativo sa = validSA.get(i);
 					saSoggetti[i+1] = sa.getNome();
+				}
+			}
+			
+			List<String> soggettiAutenticati = new ArrayList<String>();
+			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
+			// lista soggetti autenticati per la creazione automatica
+			CredenzialeTipo credenziale =  null;
+			if((erogazioneAutenticazione !=null && !"".equals(erogazioneAutenticazione)) && erogazioneIsSupportatoAutenticazioneSoggetti) {
+				TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(erogazioneAutenticazione);
+				credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(erogazioneAutenticazione) : null;
+			}
+			
+			List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
+			 
+			if(apsCore.isVisioneOggettiGlobale(userLogin)){
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
+			}else{
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
+			}
+			
+			if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
+				
+				soggettiAutenticati.add("-"); // elemento nullo di default
+				soggettiAutenticatiLabel.add("-");
+				for (Soggetto soggetto : listSoggettiCompatibili) {
+					soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
+					soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome())); 
+					
 				}
 			}
 
@@ -325,8 +358,31 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 	
 					if(erogazioneRuolo==null || "".equals(erogazioneRuolo))
 						erogazioneRuolo = "-";
-					if(erogazioneAutenticazione==null || "".equals(erogazioneAutenticazione))
+					if(erogazioneAutenticazione==null || "".equals(erogazioneAutenticazione)) {
 						erogazioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
+						
+						soggettiAutenticati = new ArrayList<String>();
+						soggettiAutenticatiLabel = new ArrayList<String>();
+						if(erogazioneIsSupportatoAutenticazioneSoggetti) {
+							TipoAutenticazione tipoAutenticazione = TipoAutenticazione.toEnumConstant(erogazioneAutenticazione);
+							credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(erogazioneAutenticazione) : null;
+						}
+						 
+						if(apsCore.isVisioneOggettiGlobale(userLogin)){
+							listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
+						}else{
+							listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
+						}
+						
+						if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
+							soggettiAutenticati.add("-"); // elemento nullo di default
+							soggettiAutenticatiLabel.add("-");
+							for (Soggetto soggetto : listSoggettiCompatibili) {
+								soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
+								soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome())); 
+							}
+						}
+					}
 					if(erogazioneAutorizzazione==null || "".equals(erogazioneAutorizzazione)){
 						String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteApplicative();
 						erogazioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
@@ -342,7 +398,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
 							mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
-							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch);
+							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato);
 				}
 					
 				pd.setDati(dati);
@@ -371,7 +427,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
 						mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
-						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch);
+						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato);
 
 				pd.setDati(dati);
 
@@ -402,10 +458,24 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			
 			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				
+				IDSoggetto idSoggettoAutenticatoErogazione = null;
+				if(erogazioneSoggettoAutenticato != null && !"".equals(erogazioneSoggettoAutenticato) && !"-".equals(erogazioneSoggettoAutenticato)) {
+					String [] splitSoggetto = erogazioneSoggettoAutenticato.split("/");
+					if(splitSoggetto != null) {
+						idSoggettoAutenticatoErogazione = new IDSoggetto();
+						if(splitSoggetto.length == 2) {
+							idSoggettoAutenticatoErogazione.setTipo(splitSoggetto[0]);
+							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[1]);
+						} else {
+							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[0]);
+						}
+					}
+				}
+				
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
 						erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
-						nomeSA, erogazioneRuolo,null);
+						nomeSA, erogazioneRuolo,idSoggettoAutenticatoErogazione);
 				
 			}
 
@@ -425,8 +495,6 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			
 			listaOggettiDaCreare.add(portaApplicativa);
 			listaOggettiDaCreare.add(mappingErogazione);
-
-			String userLogin = ServletUtils.getUserLoginFromSession(session);		
 
 			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaCreare.toArray());
 

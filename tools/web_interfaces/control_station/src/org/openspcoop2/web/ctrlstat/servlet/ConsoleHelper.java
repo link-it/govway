@@ -2896,6 +2896,19 @@ public class ConsoleHelper {
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata,
 			boolean addTitoloSezione) throws Exception{
+		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, 
+				autenticazione, autorizzazione, autorizzazioneCustom, 
+				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
+				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
+				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione);
+		
+	}
+	
+	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto,
+			String autenticazione, String autorizzazione, String autorizzazioneCustom, 
+			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, List<String> autenticatiLabel, String autenticato,
+			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
+			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione) throws Exception{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.SUBTITLE);
@@ -3025,10 +3038,14 @@ public class ConsoleHelper {
 //					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata && isSupportatoAutenticazione) {
 					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata) {
 						String soggettiList [] = null;
+						String soggettiLabelList[] = null;
 						if(autenticati!=null && autenticati.size()>0){
 							soggettiList = autenticati.toArray(new String[1]);
+							if(autenticatiLabel!=null && autenticatiLabel.size()>0){
+								soggettiLabelList = autenticatiLabel.toArray(new String[1]);
+							}
 						}
-						this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiList, soggettiList, autenticato, 0, false);
+						this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiLabelList, soggettiList, autenticato, 0, false);
 					}
 				}
 			}

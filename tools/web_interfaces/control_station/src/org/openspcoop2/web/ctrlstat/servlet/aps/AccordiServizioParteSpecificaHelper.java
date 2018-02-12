@@ -1720,7 +1720,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// azioni
 				de = new DataElement();
 				if(!mapping.isDefault()) {
-					List<String> listaAzioni = paAssociata.getAzione().getAzioneDelegataList();
+					List<String> listaAzioni = paAssociata.getAzione()!= null ?  paAssociata.getAzione().getAzioneDelegataList() : new ArrayList<String>();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_AZIONE_LIST,pIdSogg, pIdPorta, pIdAsps);
 					if (contaListe) {
@@ -2539,7 +2539,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<AccordoServizioParteComune> asCompatibili,
 			String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale,String erogazioneAutorizzazione, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
-			List<String> soggettiAutenticati, String soggettoAutenticato,
+			List<String> soggettiAutenticati, List<String> soggettiAutenticatiLabel, String soggettoAutenticato,
 			String tipoProtocollo, List<String> listaTipiProtocollo) throws Exception{
 
 		String tipoServizioEffettivo = oldTipoServizio!=null ? oldTipoServizio : tipoServizio; 
@@ -3141,7 +3141,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
-					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettoAutenticato,
+					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
@@ -4834,7 +4834,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String nomeSA, String [] saSoggetti, 
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli,
-			String erogazioneRuolo, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch) throws Exception {
+			String erogazioneRuolo, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch, List<String> soggettiAutenticati,  List<String> soggettiAutenticatiLabel, String soggettoAutenticato) throws Exception {
 		
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -4923,7 +4923,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
-					erogazioneAutorizzazioneAutenticati, null, 0, null, null,
+					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
