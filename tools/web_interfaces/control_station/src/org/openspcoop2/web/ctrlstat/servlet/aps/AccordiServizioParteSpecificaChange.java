@@ -869,7 +869,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,
 							tipoProtocollo,null);
 
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  null,
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
+							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url,nome, tipo, user, password, initcont, urlpgk,
 							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 							httpsurl, httpstipologia, httpshostverify,
@@ -885,7 +886,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore);
+							listExtendedConnettore, false);
 					
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -997,7 +998,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null,null,null,null,null,null,null,
 						tipoProtocollo,null);
 
-				dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, null, 
+				dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
+						apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl, httpstipologia,
@@ -1013,7 +1015,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
+						listExtendedConnettore, false);
 				
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1171,12 +1173,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			IDServizio oldIDServizioForUpdate = 
 					IDServizioFactory.getInstance().getIDServizioFromValues(oldtiposervizio, oldnomeservizio,
-							oldtiposoggetto, oldnomesoggetto, Integer.parseInt(oldversioneaccordo));
+							oldtiposoggetto, oldnomesoggetto, 
+							(oldversioneaccordo!=null && !"".equals(oldversioneaccordo)) ? Integer.parseInt(oldversioneaccordo) : 1);
 			asps.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 			
 			// Versione
 			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(tipoProtocollo)){
-				if(versione!=null){
+				if(versione!=null && !"".equals(versione)){
 					asps.setVersione(Integer.parseInt(versione));
 				}
 				else{
@@ -1234,7 +1237,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,
 							tipoProtocollo,null);
 
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url,
 							nome, tipo, user, password, initcont, urlpgk,
 							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl,
@@ -1251,7 +1255,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore);
+							listExtendedConnettore, false);
 					
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

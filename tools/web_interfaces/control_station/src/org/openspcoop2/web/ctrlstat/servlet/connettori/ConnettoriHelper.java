@@ -393,7 +393,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			List<ExtendedConnettore> listExtendedConnettore) {
+			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled) {
 		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
 				objectName,tipoOperazione, httpsurl, httpstipologia, httpshostverify,
@@ -407,7 +407,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 				requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-				listExtendedConnettore);
+				listExtendedConnettore, forceEnabled);
 	}
 
 	// Controlla i dati del connettore custom
@@ -930,7 +930,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
-			List<ExtendedConnettore> listExtendedConnettore) {
+			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled) {
 
 
 		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
@@ -998,7 +998,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setValue(TipiConnettore.DISABILITATO.toString());
 				}
 			}else{
-				de.setType(DataElementType.CHECKBOX);
+				if(forceEnabled) {
+					de.setType(DataElementType.HIDDEN);
+					de.setSelected(true);
+				}
+				else {
+					de.setType(DataElementType.CHECKBOX);
+				}
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 					de.setSelected(true);
 				}
@@ -1174,17 +1180,29 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			/** VISUALIZZAZIONE COMPLETA CONNETTORI MODE */
 
-
-			int sizeEP = Connettori.getList().size();
-			if (!Connettori.getList().contains(TipiConnettore.HTTPS.toString()))
+			List<String> connettoriList = Connettori.getList();
+			if(forceEnabled) {
+				int indexDisabled = -1;
+				for (int i = 0; i < connettoriList.size(); i++) {
+					if(TipiConnettore.DISABILITATO.getNome().equals(connettoriList.get(i))) {
+						indexDisabled = i;
+						break;
+					}
+				}
+				if(indexDisabled>=0) {
+					connettoriList.remove(indexDisabled);
+				}
+			}
+			int sizeEP = connettoriList.size();
+			if (!connettoriList.contains(TipiConnettore.HTTPS.toString()))
 				sizeEP++;
 			if (confPers &&
 					TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL.equals(tipologiaConnettori))
 				sizeEP++;
 			String[] tipoEP = new String[sizeEP];
-			Connettori.getList().toArray(tipoEP);
-			int newCount = Connettori.getList().size();
-			if (!Connettori.getList().contains(TipiConnettore.HTTPS.toString())) {
+			connettoriList.toArray(tipoEP);
+			int newCount = connettoriList.size();
+			if (!connettoriList.contains(TipiConnettore.HTTPS.toString())) {
 				tipoEP[newCount] = TipiConnettore.HTTPS.toString();
 				newCount++;
 			}

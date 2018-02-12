@@ -1220,15 +1220,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				@SuppressWarnings("unused")
 				Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 
-//				Integer versione = asps.getVersione();
-//				if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
-//					versione = null;
-//				}
-				String uriASPS = this.idAccordoFactory.getUriFromValues(asps.getNome(), 
-						asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), 
-						asps.getVersione());
+				String uriASPS = this.idServizioFactory.getUriFromAccordo(asps);
 				
-
 				Soggetto sog = this.soggettiCore.getSoggettoRegistro(asps.getIdSoggetto());
 				boolean isPddEsterna = 
 						this.pddCore.isPddEsterna(sog.getPortaDominio());
@@ -1239,7 +1232,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
 					pNomeServizio, pTipoServizio, pIdsoggErogatore);
 				de.setValue(this.getLabelNomeServizio(protocollo, asps.getTipo(), asps.getNome(), asps.getVersione()));
-				de.setToolTip(uriASPS);
+				de.setIdToRemove(uriASPS);
 				e.addElement(de);
 
 				
@@ -3192,48 +3185,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
-
-		// Porta Applicativa e Servizio Applicativo Erogatore
-		if (tipoOp.equals(TipoOperazione.ADD) && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
-
-			if(this.isModalitaCompleta()) {
-			
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE );
-				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
-	
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
-				de.setSelected(nomeSA);
-				de.setValues(saSoggetti);
-				de.setType(DataElementType.SELECT);
-				dati.addElement(de);
-				
-			}
-			
-			// Controllo Accesso
-			
-			this.controlloAccessi(dati);
-			
-			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
-			
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
-					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
-					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
-					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
-					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
-					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
-			
-		}
-
 		if(serviceBinding.equals(ServiceBinding.SOAP) && interfaceType.equals(org.openspcoop2.protocol.manifest.constants.InterfaceType.WSDL_11)){
 
 			if(isModalitaAvanzata){
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SPECIFICA_PORTI_ACCESSO);
-				de.setType(DataElementType.TITLE);
+				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 	
 				de = new DataElement();
@@ -3352,6 +3309,43 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 		}
+		
+
+		// Porta Applicativa e Servizio Applicativo Erogatore
+		if (tipoOp.equals(TipoOperazione.ADD) && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
+
+			if(this.isModalitaCompleta()) {
+			
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE );
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE);
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
+				de.setSelected(nomeSA);
+				de.setValues(saSoggetti);
+				de.setType(DataElementType.SELECT);
+				dati.addElement(de);
+				
+			}
+			
+			// Controllo Accesso
+			
+			this.controlloAccessi(dati);
+			
+			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
+			
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
+					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
+					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
+					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
+					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
+					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
+			
+		}
+
 
 		/*
 		 * de = new DataElement(); de.setLabel("Servizio pubblico");

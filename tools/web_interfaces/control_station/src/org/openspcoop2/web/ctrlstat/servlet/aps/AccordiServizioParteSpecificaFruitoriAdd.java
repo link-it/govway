@@ -646,7 +646,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-								listExtendedConnettore);
+								listExtendedConnettore, false);
 					}else{
 						//spostato dentro l'helper
 					}
@@ -767,7 +767,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							listExtendedConnettore);
+							listExtendedConnettore, false);
 				}else{
 					//spostato dentro l'helper
 				}
@@ -906,7 +906,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-								listExtendedConnettore);
+								listExtendedConnettore, false);
 					}else{
 						//spostato dentro l'helper
 					}

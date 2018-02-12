@@ -34,8 +34,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -44,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -101,6 +106,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 
 			// Elimino le porte applicative del servizio dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
@@ -141,6 +147,16 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 					
 					// cancello la porta associata
 					listaOggettiDaEliminare.add(tmpPA);
+					
+					for (PortaApplicativaServizioApplicativo paSA : tmpPA.getServizioApplicativoList()) {
+						if(paSA.getNome().equals(tmpPA.getNome())) {
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPA.getTipoSoggettoProprietario(), tmpPA.getNomeSoggettoProprietario()));
+							idSA.setNome(paSA.getNome());
+							ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
+							listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+						}
+					}
 					
 					// Elimino entrambi gli oggetti
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));

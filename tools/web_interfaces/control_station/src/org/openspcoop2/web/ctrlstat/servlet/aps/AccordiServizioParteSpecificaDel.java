@@ -36,8 +36,11 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -53,6 +56,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -97,6 +101,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
 			
 			//User utente = ServletUtils.getUserFromSession(session);
@@ -223,6 +228,15 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 							
 							listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 							
+							for (PortaApplicativaServizioApplicativo paSA : paGenerataAutomcaticamente.getServizioApplicativoList()) {
+								if(paSA.getNome().equals(paGenerataAutomcaticamente.getNome())) {
+									IDServizioApplicativo idSA = new IDServizioApplicativo();
+									idSA.setIdSoggettoProprietario(soggettoErogatore);
+									idSA.setNome(paSA.getNome());
+									ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
+									listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+								}
+							}
 						}
 						
 					}

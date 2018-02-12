@@ -642,6 +642,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 			
+			boolean forceEnableConnettore = false;
+			if( (!apsHelper.isModalitaCompleta())) {
+				forceEnableConnettore = true;
+			}
 
 			//String profiloValue = profiloSoggettoErogatore;
 			//if(this.profilo!=null && !"".equals(this.profilo) && !"-".equals(this.profilo)){
@@ -1061,7 +1065,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						listExtendedConnettore);
+						listExtendedConnettore, forceEnableConnettore);
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1200,7 +1204,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						listExtendedConnettore);
+						listExtendedConnettore, forceEnableConnettore);
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1277,7 +1281,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Versione
 			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(this.tipoProtocollo)){
-				if(this.versione!=null)
+				if(this.versione!=null && !"".equals(this.versione))
 					asps.setVersione(Integer.parseInt(this.versione));
 				else
 					asps.setVersione(1);
@@ -1351,7 +1355,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							listExtendedConnettore);
+							listExtendedConnettore, forceEnableConnettore);
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1378,7 +1382,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				IDSoggetto soggettoErogatore = new IDSoggetto(this.tipoSoggettoErogatore,this.nomeSoggettoErogatore);
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.tiposervizio, this.nomeservizio, soggettoErogatore, 
-						Integer.parseInt(this.versione));
+						(this.versione==null || "".equals(this.versione))? 1 : Integer.parseInt(this.versione));
 				Implementation implementationDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
 						createDefaultImplementation(this.serviceBinding, idServizio);
 				

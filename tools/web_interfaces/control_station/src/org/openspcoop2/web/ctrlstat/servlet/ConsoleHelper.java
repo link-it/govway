@@ -386,7 +386,11 @@ public class ConsoleHelper {
 		IDSoggetto assr = new IDSoggetto();
 		assr.setTipo(s.getTipo());
 		assr.setNome(s.getNome());
-		return this.idAccordoFactory.getIDAccordoFromValues(nomeAS, assr, Integer.parseInt(versione));
+		int versioneInt = 1;
+		if(versione!=null && !"".equals(versione)) {
+			versioneInt = Integer.parseInt(versione);
+		}
+		return this.idAccordoFactory.getIDAccordoFromValues(nomeAS, assr, versioneInt);
 	}
 	
 	public IDServizio getIDServizioFromValues(String tipo, String nome, String soggettoErogatore, String versione) throws Exception{
@@ -394,14 +398,22 @@ public class ConsoleHelper {
 		IDSoggetto assr = new IDSoggetto();
 		assr.setTipo(s.getTipo());
 		assr.setNome(s.getNome());
-		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr, Integer.parseInt(versione));
+		int versioneInt = 1;
+		if(versione!=null && !"".equals(versione)) {
+			versioneInt = Integer.parseInt(versione);
+		}
+		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr, versioneInt);
 	}
 	
 	public IDServizio getIDServizioFromValues(String tipo, String nome, String tipoSoggettoErogatore, String soggettoErogatore, String versione) throws Exception{
 		IDSoggetto assr = new IDSoggetto();
 		assr.setTipo(tipoSoggettoErogatore);
 		assr.setNome(soggettoErogatore);
-		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr, Integer.parseInt(versione));
+		int versioneInt = 1;
+		if(versione!=null && !"".equals(versione)) {
+			versioneInt = Integer.parseInt(versione);
+		}
+		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr,versioneInt);
 	}
 	
 	public int getSize() {
