@@ -100,7 +100,7 @@ public final class AccordiCooperazionePartecipantiAdd extends Action {
 			acHelper.makeMenu();
 
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(this.idAccordoCoop));
-			String titleAS = acHelper.getLabelIdAccordo(ac);
+			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo());
 			//String profiloSoggettoReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(ac.getSoggettoReferente().getTipo(), ac.getSoggettoReferente().getNome())).getVersioneProtocollo();

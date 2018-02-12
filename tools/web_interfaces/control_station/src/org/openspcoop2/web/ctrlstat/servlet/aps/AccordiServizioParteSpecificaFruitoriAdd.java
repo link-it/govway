@@ -387,7 +387,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 
-			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			String tmpTitle = apsHelper.getLabelIdServizio(asps);
 
 			// Soggetti fruitori
 			// tutti i soggetti anche il soggetto attuale
@@ -413,12 +413,16 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<String> soggettiListVector = new ArrayList<String>();
 			List<String> soggettiListLabelVector = new ArrayList<String>();
 			IDSoggetto idSoggettoSelected = null;
+			IDSoggetto idSoggettoFirst = null;
 			for (int i = 0; i < keyFruitori.size(); i++) {
 				String tipoNome = keyFruitori.get(i);
 				Fruitore fru = mapFruitori.get(tipoNome);
 				if(tipiSoggettiCompatibiliAccordo.contains(fru.getTipo())){
 					soggettiListVector.add("" + fru.getId());
-					soggettiListLabelVector.add(fru.getTipo() + "/" + fru.getNome());
+					soggettiListLabelVector.add(apsHelper.getLabelNomeSoggetto(protocollo, fru.getTipo() , fru.getNome()));
+					if(idSoggettoFirst==null) {
+						idSoggettoFirst = new IDSoggetto(fru.getTipo(), fru.getNome());
+					}
 					if(this.idSoggettoFruitore!=null && !"".equals(this.idSoggettoFruitore)){
 						long idProvider = Long.parseLong(this.idSoggettoFruitore);
 						if(fru.getId()==idProvider){
@@ -433,9 +437,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 				if(idSoggettoSelected==null){
 					// prendo il primo soggetto se esiste
-					if(soggettiListLabel!=null && soggettiListLabel.length>0){
-						String [] tmp = soggettiListLabel[0].split("/");
-						idSoggettoSelected = new IDSoggetto(tmp[0], tmp[1]);
+					if(idSoggettoFirst!=null){
+						idSoggettoSelected = idSoggettoFirst;
 					}
 				}
 			}

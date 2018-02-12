@@ -50,7 +50,6 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -173,7 +172,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String tiposervizio = asps.getTipo();
 			Integer versioneservizio = asps.getVersione();
 		
-			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			String tmpTitle = apsHelper.getLabelIdServizio(asps);
 
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));

@@ -19,7 +19,6 @@ import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -55,7 +54,6 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 			String id = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
@@ -73,26 +71,11 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
 
-			// Prendo nome, tipo e pdd del soggetto
-			String tmpTitle = null;
-			String tipoSoggettoProprietario = null;
-			if(porteApplicativeCore.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-			}
-
-			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_DI + idporta,  null));
 

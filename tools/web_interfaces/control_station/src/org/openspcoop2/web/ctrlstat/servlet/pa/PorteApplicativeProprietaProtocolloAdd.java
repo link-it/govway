@@ -38,7 +38,6 @@ import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocol
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -81,7 +80,6 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
 			String valore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -93,23 +91,12 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 
 			// Prendo nome, tipo e pdd del soggetto
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
-			
-			String tmpTitle = null;
-			if(porteApplicativeCore.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-			// String pdd = soggetto.getServer();
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
 			
-			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI + idporta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,

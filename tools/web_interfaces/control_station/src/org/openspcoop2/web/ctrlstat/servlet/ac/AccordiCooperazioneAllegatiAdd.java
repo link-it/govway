@@ -104,7 +104,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 
 			// Prendo il nome
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(new Long(idAccordoInt));
-			String titleAS = acHelper.getLabelIdAccordo(ac);
+			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 			
 			String[] ruoli = {RuoliDocumento.allegato.toString(),RuoliDocumento.specificaSemiformale.toString()};
 			

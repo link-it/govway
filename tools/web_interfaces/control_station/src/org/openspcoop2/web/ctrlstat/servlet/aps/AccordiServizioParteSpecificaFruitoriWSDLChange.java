@@ -178,7 +178,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServ);
-			String uriServizio = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			String titleServizio = apsHelper.getLabelIdServizio(asps);
 			
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
@@ -188,10 +188,10 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			// volta che sarà stato rimosso/aggiunto e se ne sarà perso l'id
 			IDServizio ids = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 
-			Soggetto mySogg2 = soggettiCore.getSoggettoRegistro(tmpProv);
-			String tmpTitle = mySogg2.getTipo() + "/" + mySogg2.getNome();
-
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
+			
+			Soggetto mySogg2 = soggettiCore.getSoggettoRegistro(tmpProv);
+			String tmpTitle = apsHelper.getLabelNomeSoggetto(protocollo, mySogg2.getTipo() , mySogg2.getNome());
 			
 			String label = null;
 			if(apcCore.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){
@@ -219,7 +219,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + uriServizio, 
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ this.idSoggettoErogatoreDelServizio)
@@ -255,7 +255,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + uriServizio, 
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ this.idSoggettoErogatoreDelServizio)
@@ -323,7 +323,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + uriServizio, 
+			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ this.idSoggettoErogatoreDelServizio)

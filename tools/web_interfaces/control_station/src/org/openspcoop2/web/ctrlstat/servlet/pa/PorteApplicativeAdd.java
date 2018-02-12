@@ -166,10 +166,7 @@ public final class PorteApplicativeAdd extends Action {
 			}
 
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
-			//			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			//			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo);
-
-			// String pdd = soggetto.getServer();
+			String tmpTitle = porteApplicativeHelper.getLabelNomeSoggetto(protocollo, tipoSoggettoProprietario, nomeSoggettoProprietario);
 
 			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
 			
@@ -361,7 +358,7 @@ public final class PorteApplicativeAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tipoNomeSoggettoProprietario, 
+						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
 								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
 								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
 								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
@@ -453,7 +450,7 @@ public final class PorteApplicativeAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tipoNomeSoggettoProprietario, 
+						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
 								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
 								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
 								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)

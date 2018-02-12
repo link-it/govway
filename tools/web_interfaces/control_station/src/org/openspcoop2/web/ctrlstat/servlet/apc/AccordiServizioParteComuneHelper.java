@@ -68,6 +68,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
@@ -4325,6 +4326,26 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showServiceBinding = true;
+			boolean showResources = true;
+			boolean showServices = true;
+			if( !showProtocolli ) {
+				List<String> l = this.core.getProtocolli(this.session);
+				if(l.size()>0) {
+					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
+					if(p.getManifest().getBinding().getRest()==null) {
+						showResources=false;
+					}
+					if(p.getManifest().getBinding().getSoap()==null) {
+						showServices=false;
+					}
+					if( (!showResources) || (!showServices) ) {
+						showServiceBinding = false;
+					}
+				}
+			}
+			
 			int idLista = Liste.ACCORDI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -4332,8 +4353,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			addFilterProtocol(ricerca, idLista);
 			
-			String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
-			this.addFilterServiceBinding(filterTipoAccordo,false,false);
+			String filterTipoAccordo = null;
+			if(showServiceBinding) {
+				filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+				this.addFilterServiceBinding(filterTipoAccordo,false,false);
+			}
 			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -4379,8 +4403,6 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 			Boolean showColonnaAccordiCooperazione = tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO);
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
-
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
 				ServletUtils.enabledPageDataSearch(this.pd, termine, search);
@@ -4394,7 +4416,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				totEl ++;
 			
 			//Colonna ServiceBinding
-			totEl++;
+			if(showServiceBinding) {
+				totEl++;
+			}
 
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()) {
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -4402,12 +4426,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 						
-			if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter)) {
+			if(showResources && (serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter))) {
 				// colonna risorse
 				totEl++;
 			}
 			
-			if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBindingFilter)) {
+			if(showServices && (serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBindingFilter))) {
 				if (gestioneInfoProtocollo && showAccordiAzioni)
 					totEl++;
 				totEl++; // portTypes
@@ -4441,8 +4465,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			
 			// serviceBinding
-			labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SERVICE_BINDING;
-			index++;
+			if(showServiceBinding) {
+				labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SERVICE_BINDING;
+				index++;
+			}
 
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -4451,13 +4477,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 
-			if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter)) {
+			if(showResources && (serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter))) {
 				// risorse
 				labels[index] = AccordiServizioParteComuneCostanti.LABEL_RISORSE;
 				index++;
 			}
 
-			if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBindingFilter)) {
+			if(showServices && (serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBindingFilter))) {
 				if (gestioneInfoProtocollo && showAccordiAzioni) {
 					labels[index] = AccordiServizioParteComuneCostanti.LABEL_AZIONI;
 					index++;
@@ -4529,23 +4555,25 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoCooperazione.getId()+""),
 									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoCooperazione.getNome()));
 
-							de.setValue(this.getLabelIdAccordo(accordoCooperazione));
+							de.setValue(this.getLabelIdAccordoCooperazione(accordoCooperazione));
 						}
 						e.addElement(de);
 					}
 
 					// service binding
-					de = new DataElement();
-					switch (serviceBinding) {
-					case REST:
-						de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST);
-						break;
-					case SOAP:
-					default:
-						de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP);
-						break;
+					if(showServiceBinding) {
+						de = new DataElement();
+						switch (serviceBinding) {
+						case REST:
+							de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST);
+							break;
+						case SOAP:
+						default:
+							de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP);
+							break;
+						}
+						e.addElement(de);
 					}
-					e.addElement(de);
 					
 					if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -4555,7 +4583,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						}
 					}
 					
-					if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter)) {
+					if(showResources && (serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBindingFilter))) {
 						// risorse
 						de = new DataElement();
 						switch (serviceBinding) {
@@ -4591,7 +4619,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					}*/
 
 					
-					if(serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBindingFilter)) {
+					if(showServices && (serviceBindingFilter==null || org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBindingFilter))) {
 						if (gestioneInfoProtocollo && showAccordiAzioni) {
 							de = new DataElement();
 							switch (serviceBinding) {

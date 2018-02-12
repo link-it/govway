@@ -124,18 +124,15 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			porteApplicativeHelper.makeMenu();
 
 			// Prendo nome, tipo e pdd del soggetto
-			String tmpTitle = null;
 			String tipoSoggettoProprietario = null;
 			String nomeSoggettoProprietario = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
 				tipoSoggettoProprietario = soggetto.getTipo();
 				nomeSoggettoProprietario = soggetto.getNome();
 			}
 			else{
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
 				tipoSoggettoProprietario = soggetto.getTipo();
 				nomeSoggettoProprietario = soggetto.getNome();
 			}
@@ -186,7 +183,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				}
 			}
 			
-			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI + nomePorta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,

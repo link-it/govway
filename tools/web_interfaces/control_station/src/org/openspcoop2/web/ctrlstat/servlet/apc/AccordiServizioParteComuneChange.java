@@ -329,7 +329,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					while (itL.hasNext()) {
 						AccordoCooperazione singleAC = itL.next();
 						accordiCooperazioneEsistenti[i] = "" + singleAC.getId();
-						accordiCooperazioneEsistentiLabel[i] = apcHelper.getLabelIdAccordo(acCore.getAccordoCooperazione(singleAC.getId())); 
+						accordiCooperazioneEsistentiLabel[i] = apcHelper.getLabelIdAccordoCooperazione(acCore.getAccordoCooperazione(singleAC.getId())); 
 						i++;
 					}
 				} else {

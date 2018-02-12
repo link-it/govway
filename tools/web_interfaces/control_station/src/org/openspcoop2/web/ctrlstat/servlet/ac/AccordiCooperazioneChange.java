@@ -169,7 +169,7 @@ public final class AccordiCooperazioneChange extends Action {
 			IDAccordoCooperazione idAccordoOLD = idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),
 					BeanUtilities.getSoggettoReferenteID(ac.getSoggettoReferente()),ac.getVersione());
 			String uriAS = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoOLD);
-			String titleAS = acHelper.getLabelIdAccordo(ac);
+			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 			String oldStatoPackage = ac.getStatoPackage();	
 
 			// Prendo il nome dell'accordo

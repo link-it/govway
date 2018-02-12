@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -95,7 +94,7 @@ public final class AccordiServizioParteSpecificaAllegatiView extends Action {
 			// Prendo il nome
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(new Long(idServizioInt));
 
-			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			String tmpTitle = apsHelper.getLabelIdServizio(asps);
 
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
 

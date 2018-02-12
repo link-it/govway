@@ -381,8 +381,6 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "Nuova";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING = "Configurazione";
-	public static final String LABEL_FRUIZIONE_TIPO_NOME_SOGGETTO = "Fruizione {0}/{1}";
-	public static final String LABEL_TIPO_NOME_SOGGETTO = "{0}/{1}";
 	
 
 	

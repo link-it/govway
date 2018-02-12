@@ -10882,22 +10882,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				throw new Exception("Non e' possibile invocare il metodo accordiListEngine con entrambi i parametri excludeASParteComune,excludeASComposti impostati al valore true");
 			}
 
-			ISQLQueryObject sqlQueryObjectSoggetti = null;
-			if (!search.equals("") || searchByTipoSoggetto) {
-				sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObjectSoggetti.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
-				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
-				sqlQueryObjectSoggetti.setANDLogicOperator(true);
-				sqlQueryObjectSoggetti.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
-				if(searchByTipoSoggetto) {
-					sqlQueryObjectSoggetti.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));				
-				}
-				if(!search.equals("")) {
-					sqlQueryObjectSoggetti.addWhereLikeCondition("nome_soggetto", search, true, true);
-				}
-			}
-
 
 			ISQLQueryObject sqlQueryObjectExclude = null;
 			if(excludeASComposti || excludeASParteComune){
@@ -10909,20 +10893,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+CostantiDB.SOGGETTI+".id");
 			sqlQueryObject.addSelectCountField("*", "cont");
 			if (superuser!=null && (!superuser.equals("")))
-				sqlQueryObject.addWhereCondition("superuser = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".superuser = ?");
 			
 			//query con search
 			if (!search.equals("")) {
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true));
 						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+						//sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true));  // fa confusone nei protocolli che non supportano il referente
 			}
-			else if (sqlQueryObjectSoggetti!=null) {
-				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+			if (searchByTipoSoggetto) {
+				sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));		
 			}
 			
 			if(excludeASParteComune){
@@ -10977,13 +10962,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			
 			if (!search.equals("")) { // con search
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition("nome", search, true, true),
-						//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.ACCORDI+".nome", search, true, true));
+				//sqlQueryObject.getWhereLikeCondition("versione", search, true, true), // la versione e' troppo, tutte hanno 1 ....
+				//sqlQueryObject.getWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true));  // fa confusone nei protocolli che non supportano il referente
 			}
-			else if (sqlQueryObjectSoggetti!=null) {
-				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+			if (searchByTipoSoggetto) {
+				sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));		
 			}
 
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) { // con filter

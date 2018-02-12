@@ -1393,7 +1393,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 					
 					if(tipiServiziCompatibili.contains(asps.getTipo()) && tipiSoggettiCompatibili.contains(asps.getTipoSoggettoErogatore())){
 						serviziL.add(""+idServizio);
-						serviziLabelL.add(helper.getLabelIdAccordo(asps));
+						serviziLabelL.add(helper.getLabelIdServizio(asps));
 					}
 
 					//i++;

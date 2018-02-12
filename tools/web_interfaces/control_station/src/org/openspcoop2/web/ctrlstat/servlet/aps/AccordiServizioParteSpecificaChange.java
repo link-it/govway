@@ -260,6 +260,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 			
 			String versione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			
 			String backToStato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
 			String actionConfirm = apsHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
@@ -293,7 +294,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Prendo nome, tipo e provider dal db
 			// Prendo la lista di soggetti e la metto in un array
 			// Prendo la lista di accordi e la metto in un array
-			String tmpTitle = tiposervizio + "/" + nomeservizio;
+
 			String provider = "";
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
@@ -319,7 +320,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String uriAccordo = null;
 
 			Soggetto soggettoErogatoreID = null;
-			String protocollo = null;
 			List<String> versioniProtocollo = null;
 			List<String> tipiSoggettiCompatibiliAccordo = null;
 			List<String> tipiServizioCompatibiliAccordo = null;
@@ -395,6 +395,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			String tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
 			
+			String tmpTitle = apsHelper.getLabelIdServizio(asps);
+			
 			Boolean isConnettoreCustomUltimaImmagineSalvata = asps.getConfigurazioneServizio()!=null &&
 					asps.getConfigurazioneServizio().getConnettore()!=null &&
 					asps.getConfigurazioneServizio().getConnettore().getCustom();
@@ -428,10 +430,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 			
 			// Versione
-			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
-			versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
-			tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
+			versioniProtocollo = apsCore.getVersioniProtocollo(tipoProtocollo);
+			tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
+			tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(tipoProtocollo,serviceBinding);
 
 			// calcolo soggetti compatibili con accordi
 			List<Soggetto> list = null;
@@ -551,7 +552,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				statoPackage = backToStato;
 			
 			
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			IDServizio idAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore,nomeSoggettoErogatore, versione);
@@ -570,7 +571,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_PARTE_SPECIFICA);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, uriAccordo);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE + "?" + request.getQueryString(), "UTF-8"));
-			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, tipoProtocollo);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
 			
 			// Se idhid = null, devo visualizzare la pagina per la
@@ -1047,7 +1048,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							soggettiListLabel, accordo, serviceBinding,accordiList, accordiListLabel, servcorr, "", "", tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,protocollo,generaPACheckSoggetto);
+							null,null,tipoProtocollo,generaPACheckSoggetto);
 
 					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
@@ -1165,7 +1166,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			asps.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 			
 			// Versione
-			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(protocollo)){
+			if(apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(tipoProtocollo)){
 				if(versione!=null){
 					asps.setVersione(Integer.parseInt(versione));
 				}

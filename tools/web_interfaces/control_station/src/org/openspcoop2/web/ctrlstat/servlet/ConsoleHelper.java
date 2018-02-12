@@ -240,6 +240,7 @@ public class ConsoleHelper {
 	}
 	private MimeMultipart mimeMultipart = null;
 	private Map<String, InputStream> mapParametri = null;
+	private Map<String, Object> mapParametriReaded = null;
 	private Map<String, String> mapNomiFileParametri = null;
 	private List<String> idBinaryParameterRicevuti = null;
 	
@@ -338,6 +339,7 @@ public class ConsoleHelper {
 				this.multipart = true;
 				this.mimeMultipart = new MimeMultipart(request.getInputStream(), this.contentType);
 				this.mapParametri = new HashMap<String,InputStream>();
+				this.mapParametriReaded = new HashMap<>();
 				this.mapNomiFileParametri = new HashMap<String,String>();
 
 				for(int i = 0 ; i < this.mimeMultipart.countBodyParts() ;  i ++) {
@@ -482,13 +484,19 @@ public class ConsoleHelper {
 		String paramAsString = null;
 
 		if(this.multipart){
-			InputStream inputStream = this.mapParametri.get(parameterName);
-			if(inputStream != null){
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				IOUtils.copy(inputStream, baos);
-				baos.flush();
-				baos.close();
-				paramAsString = baos.toString();
+			if(this.mapParametriReaded.containsKey(parameterName)) {
+				paramAsString = (String) this.mapParametriReaded.get(parameterName);
+			}
+			else {
+				InputStream inputStream = this.mapParametri.get(parameterName);
+				if(inputStream != null){
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					IOUtils.copy(inputStream, baos);
+					baos.flush();
+					baos.close();
+					paramAsString = baos.toString();
+					this.mapParametriReaded.put(parameterName, paramAsString);
+				}
 			}
 		}else{
 			paramAsString = this.request.getParameter(parameterName);
@@ -511,11 +519,18 @@ public class ConsoleHelper {
 	
 	public byte[] getBinaryParameterContent(String parameterName) throws Exception {
 		if(this.multipart){
-			InputStream inputStream = this.mapParametri.get(parameterName);
-			if(inputStream != null){
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				IOUtils.copy(inputStream, baos);
-				return baos.toByteArray();
+			if(this.mapParametriReaded.containsKey(parameterName)) {
+				return (byte[]) this.mapParametriReaded.get(parameterName);
+			}
+			else {
+				InputStream inputStream = this.mapParametri.get(parameterName);
+				if(inputStream != null){
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					IOUtils.copy(inputStream, baos);
+					byte[] b = baos.toByteArray();
+					this.mapParametriReaded.put(parameterName, b);
+					return b;
+				}
 			}
 		}else{
 			String paramAsString = this.request.getParameter(parameterName);
@@ -3922,8 +3937,9 @@ public class ConsoleHelper {
 		bf.append(idAccordo.getVersione());
 		if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
 			if(idAccordo.getSoggettoReferente()!=null){
-				bf.append(":");
+				bf.append(" (");
 				bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
+				bf.append(")");
 			}
 		}
 		return bf.toString();
@@ -3949,31 +3965,33 @@ public class ConsoleHelper {
 			return nomeServizio+versione;
 		}
 	}
-	public String getLabelIdAccordo(AccordoServizioParteSpecifica as) throws Exception{
-		return this.getLabelIdAccordo(
+	public String getLabelIdServizio(AccordoServizioParteSpecifica as) throws Exception{
+		return this.getLabelIdServizio(
 				this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getTipoSoggettoErogatore()), 
 				this.idServizioFactory.getIDServizioFromAccordo(as));
 	}
-	public String getLabelIdAccordo(String protocollo, IDServizio idServizio) throws Exception{
+	public String getLabelIdServizio(String protocollo, IDServizio idServizio) throws Exception{
 		StringBuffer bf = new StringBuffer();
 		bf.append(this.getLabelNomeServizio(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione()));
-		bf.append(":");
+		bf.append(" (");
 		bf.append(this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome()));
+		bf.append(")");
 		return bf.toString();
 	}
-	public String getLabelIdAccordo(AccordoCooperazione ac) throws Exception{
-		return this.getLabelIdAccordo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo()), 
+	public String getLabelIdAccordoCooperazione(AccordoCooperazione ac) throws Exception{
+		return this.getLabelIdAccordoCooperazione(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo()), 
 				this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac));
 	}
-	public String getLabelIdAccordo(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
+	public String getLabelIdAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
 		StringBuffer bf = new StringBuffer();
 		bf.append(idAccordo.getNome());
 		bf.append(":");
 		bf.append(idAccordo.getVersione());
 		//if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
 		if(idAccordo.getSoggettoReferente()!=null){
-			bf.append(":");
+			bf.append(" (");
 			bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
+			bf.append(")");
 		}
 		//}
 		return bf.toString();

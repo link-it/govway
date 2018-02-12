@@ -20,7 +20,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -96,19 +95,21 @@ public class PorteDelegateExtendedUtilities {
 			nomeSoggettoFruitore = soggettoFruitore.getNome();
 		}
 		
+		String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoFruitore);
+		
 		switch (parentPD) {
 		case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE:
 			// Prendo il nome e il tipo del servizio
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(consoleHelper.getCore()); 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			String servizioTmpTile = asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + "-" + asps.getTipo() + "/" + asps.getNome();
+			String servizioTmpTile = consoleHelper.getLabelIdServizio(asps);
 			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
 			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
 			Parameter pIdFruizione = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruizione+ "");
 			Parameter pIdSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore);
 			Parameter pIdProviderSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoFruitore);
 			
-			String fruizioneTmpTile = MessageFormat.format(PorteDelegateCostanti.LABEL_FRUIZIONE_TIPO_NOME_SOGGETTO, tipoSoggettoFruitore,nomeSoggettoFruitore);
+			String fruizioneTmpTile = consoleHelper.getLabelNomeSoggetto(protocollo, tipoSoggettoFruitore,nomeSoggettoFruitore);
 			
 			lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
@@ -118,7 +119,7 @@ public class PorteDelegateExtendedUtilities {
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST ,pIdFruizione,pIdServizio,pIdSoggettoFruitore));
 			break;
 		case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO:
-			String soggettoTitle =   MessageFormat.format(PorteDelegateCostanti.LABEL_TIPO_NOME_SOGGETTO, tipoSoggettoFruitore,nomeSoggettoFruitore);
+			String soggettoTitle =   consoleHelper.getLabelNomeSoggetto(protocollo, tipoSoggettoFruitore,nomeSoggettoFruitore);
 			lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null));
 			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + soggettoTitle, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST ,

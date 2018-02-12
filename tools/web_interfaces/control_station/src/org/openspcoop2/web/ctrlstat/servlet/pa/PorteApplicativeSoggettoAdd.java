@@ -101,17 +101,14 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			porteApplicativeHelper.makeMenu();
 
 			// Prendo nome, tipo e pdd del soggetto
-			String tmpTitle = null;
 			String protocollo = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
-				tmpTitle = porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 			else{
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
-				tmpTitle = porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 
 			//decodifica soggetto scelto
@@ -176,7 +173,7 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 				soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 			}
 			
-			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_DI + nomePorta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST,

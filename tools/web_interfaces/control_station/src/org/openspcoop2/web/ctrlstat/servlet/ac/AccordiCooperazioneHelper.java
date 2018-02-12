@@ -340,7 +340,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 							new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME, accordoCooperazione.getNome())
 							);
 					//String uriAccordo = this.idAccordoCooperazioneFactory.getUriFromAccordo(accordoCooperazione);
-					de.setValue(this.getLabelIdAccordo(accordoCooperazione));
+					de.setValue(this.getLabelIdAccordoCooperazione(accordoCooperazione));
 					de.setIdToRemove("" + accordoCooperazione.getId());
 					de.setToolTip(accordoCooperazione.getDescrizione());
 					e.addElement(de);
@@ -931,7 +931,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String titleAS = this.getLabelIdAccordo(ac);
+			String titleAS = this.getLabelIdAccordoCooperazione(ac);
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
@@ -1010,7 +1010,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String titleAS = this.getLabelIdAccordo(ac);
+			String titleAS = this.getLabelIdAccordoCooperazione(ac);
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();

@@ -320,7 +320,7 @@ public final class PorteApplicativeChange extends Action {
 				}
 			}
 			
-			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tipoNomeSoggettoProprietario);
+			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParm.add(new Parameter(oldNomePA , null));
 

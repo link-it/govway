@@ -63,6 +63,8 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
@@ -932,7 +934,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps); 
+			String tmpTitle = this.getLabelIdServizio(asps);
 
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -1039,6 +1041,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Boolean isAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 			Boolean isServizi = user.getPermessi().isServizi();
 
+			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showServiceBinding = true;
+			if( !showProtocolli ) {
+				List<String> l = this.core.getProtocolli(this.session);
+				if(l.size()>0) {
+					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
+					if(p.getManifest().getBinding().getRest()==null || p.getManifest().getBinding().getSoap()==null) {
+						showServiceBinding = false;
+					}
+				}
+			}
+			
 			int idLista = Liste.SERVIZI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -1046,8 +1060,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			addFilterProtocol(ricerca, idLista);
 			
-			String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
-			this.addFilterServiceBinding(filterTipoAccordo,false,true);
+			if(showServiceBinding) {
+				String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+				this.addFilterServiceBinding(filterTipoAccordo,false,true);
+			}
 			
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -1106,6 +1122,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				asLabel = AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO;
 			}
 
+			@SuppressWarnings("unused")
 			String correlatoLabel = AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO;
 
 			String fruitoriLabel = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI;
@@ -1126,7 +1143,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				protocolli.add(protocollo);
 			}
 			
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+
 			
 			// controllo visualizzazione colonna ruolo
 			List<String> listaLabelTabella = new ArrayList<String>();
@@ -1137,10 +1154,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO);
 			}
 			listaLabelTabella.add(asLabel);
+			
+			// serviceBinding
+			if(showServiceBinding) {
+				listaLabelTabella.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SERVICE_BINDING);
+			}
+
 			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
 			
-			if(showRuoli)
-				listaLabelTabella.add(correlatoLabel);
+			if(showRuoli) {
+				//listaLabelTabella.add(correlatoLabel);
+			}
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()) {
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 					listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_STATO);
@@ -1221,6 +1245,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				de = new DataElement();
 				AccordoServizioParteComune apc = listApc.get(i);
+				@SuppressWarnings("unused")
 				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
 				Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(apc);
@@ -1231,6 +1256,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME, apc.getNome()), pTipoAccordo);
 				de.setValue(this.getLabelIdAccordo(apc));
 				e.addElement(de);
+				
+				if(showServiceBinding) {
+					de = new DataElement();
+					switch (serviceBinding) {
+					case REST:
+						de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST);
+						break;
+					case SOAP:
+					default:
+						de.setValue(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP);
+						break;
+					}
+					e.addElement(de);
+				}
 				
 				// colonna configurazioni
 				de = new DataElement();
@@ -1260,18 +1299,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				e.addElement(de);
 				
 				// Colonna ruoli
-				if(showRuoli){
-					de = new DataElement();
-					if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){ 
-						de.setValue((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
-								AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
-									AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
-	
-					}else {
-						de.setValue("-");
-					}
-					e.addElement(de);
-				}
+//				if(showRuoli){
+//					de = new DataElement();
+//					if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding)){ 
+//						de.setValue((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
+//								AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
+//									AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
+//	
+//					}else {
+//						de.setValue("-");
+//					}
+//					e.addElement(de);
+//				}
 
 				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
 					if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
@@ -1414,7 +1453,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
 			//Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
 
-			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps); 
+			String tmpTitle = this.getLabelIdServizio(asps);
 
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -1622,10 +1661,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
 
-			// Prendo il nome e il tipo del soggetto erogatore del servizio
-			Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
-
-			String servizioTmpTile = sogg.getTipo() + "/" + sogg.getNome() + "-" + asps.getTipo() + "/" + asps.getNome();
+			String servizioTmpTile = this.getLabelIdServizio(asps);
 			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
 			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
@@ -2223,12 +2259,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Prendo il nome e il tipo del soggetto fruitore
 			Soggetto soggFruitore = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoFruitore));
 		
-			String servizioTmpTile = asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + "-" + asps.getTipo() + "/" + asps.getNome();
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggFruitore.getTipo());
+			
+			String servizioTmpTile = this.getLabelIdServizio(asps);
 			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio+ "");
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idServizio);
 			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
 			
-			String fruitoreTmpTile = MessageFormat.format(PorteDelegateCostanti.LABEL_TIPO_NOME_SOGGETTO, soggFruitore.getTipo(), soggFruitore.getNome());
+			String fruitoreTmpTile = this.getLabelNomeSoggetto(protocollo, soggFruitore.getTipo(), soggFruitore.getNome());
 			
 			Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione+ "");
 			Parameter pIdSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore);

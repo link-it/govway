@@ -201,15 +201,15 @@ public final class PorteDelegateAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 
-			String tmpTitle = null, tipoSoggetto = null;
+			String tmpTitle = null, protocollo = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggetto = soggetto.getTipo();
+				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+				tmpTitle = porteDelegateHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome());
 			}else{
 				org.openspcoop2.core.config.Soggetto tmpSogg = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
-				tipoSoggetto = tmpSogg.getTipo();
+				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+				tmpTitle = porteDelegateHelper.getLabelNomeSoggetto(protocollo, tmpSogg.getTipo() , tmpSogg.getNome());
 			}
 
 
@@ -220,7 +220,6 @@ public final class PorteDelegateAdd extends Action {
 
 			ServiceBinding serviceBinding = ServiceBinding.SOAP; // TODO
 			
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 

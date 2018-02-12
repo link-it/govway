@@ -140,23 +140,20 @@ public class PorteApplicativeControlloAccessi extends Action {
 			int sizeSoggettiPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_SOGGETTO);
 
 			// Prendo nome, tipo e pdd del soggetto
-			String tmpTitle = null;
 			String tipoSoggettoProprietario = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
 				tipoSoggettoProprietario = soggetto.getTipo();
 			}
 			else{
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
 				tipoSoggettoProprietario = soggetto.getTipo();
 			}
 			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggettoProprietario);
 			boolean isSupportatoAutenticazione = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
 			
-			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_DI + idporta,  null));
 			

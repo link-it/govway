@@ -196,20 +196,13 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			}
 
 			// Prendo nome, tipo e pdd del soggetto
-			String tipoNomeSoggettoProprietario = null;
 			String tipoSoggettoProprietario = null;
-			@SuppressWarnings("unused")
-			String nomeSoggettoProprietario = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tipoNomeSoggettoProprietario = soggetto.getTipo() + "/" + soggetto.getNome();
 				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
 			}else{
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tipoNomeSoggettoProprietario = soggetto.getTipo() + "/" + soggetto.getNome();
 				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
 			}
 
 			AccordoServizioParteComune as = null;
@@ -312,7 +305,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				}
 			}
 
-			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idSoggettoErogatoreDelServizio, idAsps, tipoNomeSoggettoProprietario);
+			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idSoggettoErogatoreDelServizio, idAsps);
 
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 

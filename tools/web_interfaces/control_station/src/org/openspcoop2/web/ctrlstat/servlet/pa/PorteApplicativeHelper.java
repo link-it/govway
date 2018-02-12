@@ -1584,10 +1584,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				String tmpTitle;
 				if(this.core.isRegistroServiziLocale()){
 					Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(id));
-					tmpTitle = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = this.getLabelNomeSoggetto(protocollo, tmpSogg.getTipo() , tmpSogg.getNome());
 				}else{
 					org.openspcoop2.core.config.Soggetto tmpSogg = this.soggettiCore.getSoggetto(Integer.parseInt(id));
-					tmpTitle = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = this.getLabelNomeSoggetto(protocollo, tmpSogg.getTipo() , tmpSogg.getNome());
 				}
 				lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
@@ -1943,20 +1945,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
@@ -2054,21 +2047,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
 			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
@@ -2276,21 +2259,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_DI + idporta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, 
@@ -2406,20 +2379,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_DI + idporta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY ,
@@ -2522,20 +2486,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_DI + idporta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY ,
@@ -2628,22 +2583,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = mySogg.getTipo() + "/" + mySogg.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 			List<String> azioneDelegataList = myPA.getAzione().getAzioneDelegataList();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
 			this.pd.setSearchDescription("");
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_DI + idporta,null));
@@ -2716,24 +2661,21 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
 			String protocollo = null;
 			if(this.core.isRegistroServiziLocale()){
 				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
 				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
-				tmpTitle = this.getLabelNomeSoggetto(protocollo, mySogg.getTipo() , mySogg.getNome());
 			}
 			else{
 				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
 				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
-				tmpTitle = this.getLabelNomeSoggetto(protocollo, mySogg.getTipo() , mySogg.getNome());
 			}
 
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
 			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
@@ -3019,20 +2961,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(id));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM,
@@ -3133,20 +3066,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(id));
 			String idporta = myPA.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DI + idporta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM,
@@ -3245,20 +3169,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			String tmpTitle = null;
-			if(this.core.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-			}
-
 			PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(id));
 			String idporta = pa.getNome();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);
 			if(search.equals("")){
@@ -3319,23 +3234,25 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		String soggettoTitle = null;
 		if(this.core.isRegistroServiziLocale()){
 			Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
-			soggettoTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+			soggettoTitle = this.getLabelNomeSoggetto(protocollo, mySogg.getTipo() , mySogg.getNome());
 		}
 		else{
 			org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
-			soggettoTitle = mySogg.getTipo() + "/" + mySogg.getNome();
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
+			soggettoTitle = this.getLabelNomeSoggetto(protocollo, mySogg.getTipo() , mySogg.getNome());
 		}
-		return getTitoloPA(parentPA, idsogg, idAsps, soggettoTitle);
+		return _getTitoloPA(parentPA, idsogg, idAsps, soggettoTitle);
 	}
 
-	public List<Parameter> getTitoloPA(Integer parentPA, String idsogg, String idAsps, String soggettoTitle)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	private List<Parameter> _getTitoloPA(Integer parentPA, String idsogg, String idAsps, String soggettoTitle)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		List<Parameter> lstParam = new ArrayList<>();
 		switch (parentPA) {
 		case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(this.porteApplicativeCore);
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			String servizioTmpTile = asps.getTipoSoggettoErogatore() + "/" + asps.getNomeSoggettoErogatore() + "-" + asps.getTipo() + "/" + asps.getNome();
+			String servizioTmpTile = this.getLabelIdServizio(asps);
 			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
 			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());

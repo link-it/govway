@@ -45,7 +45,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -88,37 +87,15 @@ public final class PorteApplicativeRuoliAdd extends Action {
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
 			String nome = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
 			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
-
-			// Prendo nome, tipo e pdd del soggetto
-			String tmpTitle = null;
-			@SuppressWarnings("unused")
-			String tipoSoggettoProprietario = null;
-			@SuppressWarnings("unused")
-			String nomeSoggettoProprietario = null;
-			if(porteApplicativeCore.isRegistroServiziLocale()){
-				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				tmpTitle = soggetto.getTipo() + "/" + soggetto.getNome();
-				tipoSoggettoProprietario = soggetto.getTipo();
-				nomeSoggettoProprietario = soggetto.getNome();
-			}
-			// String pdd = soggetto.getServer();
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
@@ -142,7 +119,7 @@ public final class PorteApplicativeRuoliAdd extends Action {
 				}
 			}
 			
-			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps, tmpTitle);
+			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_DI + nomePorta,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST,

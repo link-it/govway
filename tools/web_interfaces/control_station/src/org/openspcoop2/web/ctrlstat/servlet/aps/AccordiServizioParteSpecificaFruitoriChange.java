@@ -324,7 +324,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Preparo il menu
 			apsHelper.makeMenu();
 
-			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			String tmpTitle = apsHelper.getLabelIdServizio(asps);
 
 			Soggetto soggettoFruitore = null;
 			if ((idSoggettoFruitore != null) && !idSoggettoFruitore.equals("")) {
@@ -412,7 +412,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio);
 			Parameter urlChange = new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pMyId, pId, pIdSoggettoErogatore,pMyTipo,pMyNome);
 			
-			String fruitoreLabel = tipofru + "/" + nomefru;
+			String fruitoreLabel = apsHelper.getLabelNomeSoggetto(protocollo, tipofru , nomefru);
 			Properties propertiesProprietario = new Properties();
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, idServizioFruitoreInt+"");
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_FRUITORE);
