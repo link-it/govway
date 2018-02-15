@@ -23,14 +23,16 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -44,6 +46,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -141,6 +144,27 @@ public final class PorteApplicativeAdd extends Action {
 			String autorizzazioneRuoliTipologia = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+			String azid = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID);
+			String modeaz = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE);
+			String forceWsdlBased = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+			
+			String serviceBindingS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING);
+			ServiceBinding serviceBinding = null;
+			if(StringUtils.isNotEmpty(serviceBindingS))
+				serviceBinding = ServiceBinding.valueOf(serviceBindingS);
+			
+			if(servizio == null) {
+				servizio = "";
+			}
+			
+			if(modeaz == null) {
+				modeaz = PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT;
+			}
+			 
+			if ((modeaz != null) && !modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && (azione == null)) {
+				azione = "";
+			}
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -169,6 +193,37 @@ public final class PorteApplicativeAdd extends Action {
 			String tmpTitle = porteApplicativeHelper.getLabelNomeSoggetto(protocollo, tipoSoggettoProprietario, nomeSoggettoProprietario);
 
 			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
+			
+			
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			
+			// se ho modificato il soggetto ricalcolo il servizio e il service binding
+			if (postBackElementName != null) {
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE)) {
+					servizio = null;
+					serviceBinding = null;
+				} else if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO)) {
+					serviceBinding = null;
+				} 
+			}
+			
+			List<String> tipiServizioCompatibiliAccordo = new ArrayList<String>();
+			if(serviceBinding == null) {
+				List<ServiceBinding> serviceBindingListProtocollo = apsCore.getServiceBindingListProtocollo(protocollo);
+				
+				if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+					for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
+						List<String> tipiServizioCompatibiliAccordoTmp = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding2);
+						
+						for (String tipoTmp : tipiServizioCompatibiliAccordoTmp) {
+							if(!tipiServizioCompatibiliAccordo.contains(tipoTmp))
+								tipiServizioCompatibiliAccordo.add(tipoTmp);
+						}
+					}
+				}
+			} else {
+				tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
+			}
 			
 			// Informazioni sul numero di ServiziApplicativi, Correlazione Applicativa e stato Message-Security
 			int numSA = 0;
@@ -211,15 +266,18 @@ public final class PorteApplicativeAdd extends Action {
 				soggettiListLabel = new String[totEl];
 				soggettiList[0] = "-";
 				soggettiListLabel[0] = "-";
+				Map<String, String> soggettiMapTmp = new HashMap<String,String>();
 				List<String> listSoggettiOrdered = new ArrayList<String>();
 				for (IDSoggetto idSoggetto : listSoggetti) {
 					listSoggettiOrdered.add(idSoggetto.getTipo() + "/" + idSoggetto.getNome());
+					soggettiMapTmp.put(idSoggetto.getTipo() + "/" + idSoggetto.getNome(), porteApplicativeHelper.getLabelNomeSoggetto(protocollo,
+							idSoggetto.getTipo(), idSoggetto.getNome()));
 				}
 				Collections.sort(listSoggettiOrdered);
 				int i = 1;
 				for (String idSOrdered : listSoggettiOrdered) {
 					soggettiList[i] = idSOrdered;
-					soggettiListLabel[i] = idSOrdered;
+					soggettiListLabel[i] = soggettiMapTmp.get(idSOrdered); 
 					i++;
 				}
 			}
@@ -227,7 +285,6 @@ public final class PorteApplicativeAdd extends Action {
 			// Prendo la lista di servizi e li metto in un array
 			String[] serviziList = null;
 			String[] serviziListLabel = null;
-			List<IDServizio> list1 = new ArrayList<IDServizio>();
 			FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
 			if ( (!soggvirt.equals("")) && (!soggvirt.equals("-")) ){
 				filtroServizi.setTipoSoggettoErogatore(soggvirt.split("/")[0]);
@@ -237,45 +294,27 @@ public final class PorteApplicativeAdd extends Action {
 				filtroServizi.setTipoSoggettoErogatore(tipoSoggettoProprietario);
 				filtroServizi.setNomeSoggettoErogatore(nomeSoggettoProprietario);
 			}
+			List<IDServizio> listaServizi = null;
 			try{
-				List<IDServizio> listaServizi = apsCore.getAllIdServizi(filtroServizi);
-				if(listaServizi!=null){
-					for (int j = 0; j < listaServizi.size(); j++) {
-						list1.add(listaServizi.get(j));			
+				listaServizi = apsCore.getAllIdServizi(filtroServizi);
+			}catch(DriverRegistroServiziNotFound not){}
+			if(listaServizi!=null && listaServizi.size()>0){
+				List<String> serviziListTmp = new ArrayList<String>();
+				Map<String, IDServizio> serviziMapTmp = new HashMap<String,IDServizio>();
+				for (IDServizio idServizio : listaServizi) {
+					if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
+						String keyServizio = idServizio.getSoggettoErogatore().getTipo() + "/" + idServizio.getSoggettoErogatore().getNome() + " " + idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione().intValue();
+						serviziListTmp.add(keyServizio); 
+						serviziMapTmp.put(keyServizio, idServizio); 
 					}
 				}
-			}catch(DriverRegistroServiziNotFound not){}
-			if (list1.size() > 0) {
-				serviziList = new String[list1.size()];
-				serviziListLabel = new String[list1.size()];
-				
-				List<String> tmp = new ArrayList<String>();
-				List<IDServizio> ordered = new ArrayList<IDServizio>();
-				Hashtable<String, IDServizio> map = new Hashtable<String, IDServizio>();
-				for (IDServizio servizioInLista : list1) {
-					String key = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + 
-							servizioInLista.getTipo() + "/" + servizioInLista.getNome() + "/"+
-							servizioInLista.getVersione().intValue();
-					tmp.add(key);
-					map.put(key, servizioInLista);
-				}
-				Collections.sort(tmp);
-				for (String idSOrdered : tmp) {
-					ordered.add(map.get(idSOrdered));
-				}
-				
-				int i = 0;
-				for (IDServizio servizioInLista : ordered) {
-					if (servizio == null)
-						servizio = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + 
-								servizioInLista.getTipo() + "/" + servizioInLista.getNome()+ "/"+
-								servizioInLista.getVersione().intValue();
-					serviziList[i] = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + 
-								servizioInLista.getTipo() + "/" + servizioInLista.getNome()+"/"+
-								servizioInLista.getVersione().intValue();
-					serviziListLabel[i] = servizioInLista.getTipo() + "/" + servizioInLista.getNome()+"/"+
-							servizioInLista.getVersione().intValue();
-					i++;
+
+				Collections.sort(serviziListTmp);
+				serviziList = serviziListTmp.toArray(new String[1]);
+				serviziListLabel = new String[serviziList.length];
+				for (int i = 0; i < serviziList.length; i++) {
+					String idServTmp = serviziList[i];
+					serviziListLabel[i] = porteApplicativeHelper.getLabelIdServizio(protocollo, serviziMapTmp.get(idServTmp));
 				}
 			}
 
@@ -325,32 +364,31 @@ public final class PorteApplicativeAdd extends Action {
 			}
 			
 			AccordoServizioParteComune as = null;
-			ServiceBinding serviceBinding = null;
 			if (servS != null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
 				as = apcCore.getAccordoServizio(idAccordo);
-				serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+				if(serviceBinding == null)
+					serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 			}
 			
-			// Prendo le azioni associate al servizio
 			String[] azioniList = null;
-			List<String> azioni = null;
-			try {
-				azioni = apcCore.getAzioni(servS, as, true, false, null);
-			} catch (Exception e) {
-				// Il refresh, in seguito al cambio della validazione puo'
-				// avvenire anche se il servizio non e' selezionato
-			}
-			if(azioni!=null && azioni.size()>0) {
-				if (azione == null) {
-					azione = "-";
+			String[] azioniListLabel = null;
+			boolean addTrattinoSelezioneNonEffettuata = false;
+			List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+			if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
+			
+				List<String> azioni = porteApplicativeCore.getAzioni(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
+				if(azioni != null && azioni.size() > 0) {
+					azioniList = new String[azioni.size()];
+					azioniListLabel = new String[azioni.size()];
+					Collections.sort(azioni);
+					for (int i = 0; i < azioni.size(); i++) {
+						azioniList[i] = "" + azioni.get(i);
+						azioniListLabel[i] = azioniList[i];
+					}
 				}
-				azioniList = new String[azioni.size()];
-				for (int i = 0; i < azioni.size(); i++) {
-					azioniList[i] = "" + azioni.get(i);
-				}
 			}
-
+			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
@@ -363,7 +401,7 @@ public final class PorteApplicativeAdd extends Action {
 								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
 								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
 						);
-
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
@@ -422,17 +460,17 @@ public final class PorteApplicativeAdd extends Action {
 				}
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
-						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, 
+						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, azioniListLabel,
 						stateless, ricsim, ricasim, null, null, xsd, tipoValidazione, gestBody, gestManifest,
 						null,0,null,autorizzazioneContenuti,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
-						behaviour,null,null,
+						behaviour,null,null,null,
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
-						statoPorta);
+						statoPorta, modeaz,  azid,  azione, forceWsdlBased,false,false);
 
 				pd.setDati(dati);
 
@@ -465,16 +503,16 @@ public final class PorteApplicativeAdd extends Action {
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList,
-						serviziListLabel, azione, azioniList,  stateless, ricsim, ricasim, 
+						serviziListLabel, azione, azioniList, azioniListLabel, stateless, ricsim, ricasim, 
 						null, null, xsd, tipoValidazione, gestBody, gestManifest,null,0,null,autorizzazioneContenuti,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
-						behaviour,null,null,
+						behaviour,null,null,null,
 						autenticazione, autorizzazione,
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
-						statoPorta);
+						statoPorta, modeaz,  azid, azione, forceWsdlBased, false,false);
 
 				pd.setDati(dati);
 
@@ -562,12 +600,44 @@ public final class PorteApplicativeAdd extends Action {
 				pas.setVersione(idServizio.getVersione());
 				pa.setServizio(pas);
 			}
-
-			if ((azione != null) && !azione.equals("") && !azione.equals("-")) {
+			
+			// se l azione e' settata allora creo il bean
+			if (((!azione.equals("") || 
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) ||
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) ||
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) ||
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED))) ||
+							!azid.equals("")) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
+
+				if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
+					azione = azid;
+					if(paa.getId()<=0){
+						paa.setId(-2l);
+					}
+				}
 				paa.setNome(azione);
+				paa.setIdentificazione(PortaApplicativaAzioneIdentificazione.toEnumConstant(modeaz));
+				paa.setPattern(azione);
+
+				//FORCE WSDL BASED
+				if(!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) &&
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED)){
+
+					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
+						paa.setForceInterfaceBased(StatoFunzionalita.ABILITATO);
+					}else {
+						paa.setForceInterfaceBased(StatoFunzionalita.DISABILITATO);
+					}
+				}else {
+					paa.setForceInterfaceBased(null);
+				}
+
 				pa.setAzione(paa);
-			}
+			} else
+				pa.setAzione(null);
 
 			pa.setStatoMessageSecurity(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO);
 			pa.setIdSoggetto(new Long(soggInt));

@@ -169,6 +169,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_APPLICATIVO_ESTERNO_PREFIX = "Dominio Esterno - ";
 	
 	public final static String LABEL_APS_MENU_VISUALE_AGGREGATA = "Erogazioni";
+	public static final String LABEL_N_D = "N.D.";
 	
 	/* PARAMETRI */
 	
@@ -298,12 +299,13 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 
 	/* MESSAGGI ERRORE */
-	
+	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTORIZZAZIONE_XX = "Indicare un nome per l''autorizzazione ''{0}''";
+	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTENTICAZIONE_XX = "Indicare un nome per l''autenticazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO = "La {0} con nome {1} (tipo: {2}) &egrave; gi&agrave; presente nel servizio.";
 	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI = "L'allegato con nome {0} (tipo: {1}) &egrave; gi&agrave; presente nel servizio.";
 	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA_DIMENSIONE_ESTENSIONE_TROPPO_LUNGA = "L'estensione del documento non &egrave; valida. La dimensione dell'estensione &egrave; troppo lunga.";
 	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA = "L'estensione del documento non &egrave; valida.";
-	public static final String MESSAGGIO_ERRORE_DOCUMENTO_SELEZIONATO_NON_PUO_ESSERE_VUOTO = "Il documento selezionato non puo essere vuoto.";
+	public static final String MESSAGGIO_ERRORE_DOCUMENTO_SELEZIONATO_NON_PUO_ESSERE_VUOTO = "Il documento selezionato non pu&ograve; essere vuoto.";
 	public static final String MESSAGGIO_ERRORE_DOCUMENTO_OBBLIGATORIO = "&Egrave; necessario selezionare un documento.";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_IL_TIPO_DI_DOCUMENTO = "Dati incompleti. &Egrave; necessario indicare il Tipo di documento";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO = "Esiste gi&agrave; un fruitore del Servizio con lo stesso Soggetto";

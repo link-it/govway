@@ -3395,53 +3395,68 @@ public class ConsoleHelper {
 		return label;
 	}
 	
+	public DataElement getServiceBindingDataElement(ServiceBinding serviceBinding) throws Exception{
+		return getServiceBindingDataElement(null, false, serviceBinding, true);
+	}
 	
 	public DataElement getServiceBindingDataElement(IProtocolFactory<?> protocolFactory, boolean used, ServiceBinding serviceBinding) throws Exception{
+		return getServiceBindingDataElement(protocolFactory, used, serviceBinding, false);
+	}
+	
+	public DataElement getServiceBindingDataElement(IProtocolFactory<?> protocolFactory, boolean used, ServiceBinding serviceBinding, boolean forceHidden) throws Exception{
 		DataElement de = null;
-		try {
-			List<ServiceBinding> serviceBindingList = this.core.getServiceBindingList(protocolFactory);
-			
+		if(!forceHidden) {
+			try {
+				List<ServiceBinding> serviceBindingList = this.core.getServiceBindingList(protocolFactory);
+				
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_SERVICE_BINDING);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
+				
+				if(serviceBindingList != null && serviceBindingList.size() > 1){
+					if(used){
+						de.setType(DataElementType.TEXT);
+						de.setValue(serviceBinding.toString());
+					}else {
+						de.setSelected(serviceBinding.toString());
+						de.setType(DataElementType.SELECT);
+						de.setPostBack(true);
+	
+						String [] values = new String[serviceBindingList.size()];
+						String [] labels = new String[serviceBindingList.size()];
+						for (int i =0; i < serviceBindingList.size() ; i ++) {
+							ServiceBinding serviceBinding2 = serviceBindingList.get(i);
+							switch (serviceBinding2) {
+							case REST:
+								labels[i] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST;
+								values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
+								break;
+							case SOAP:
+							default:
+								labels[i] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
+								values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
+								break;
+							}
+						}
+						
+						de.setValues(values);
+						de.setLabels(labels);
+					}
+				} else {
+					de.setValue(serviceBinding.toString());
+					de.setType(DataElementType.HIDDEN);
+				}
+				de.setSize(this.getSize());
+			} catch (Exception e) {
+				this.log.error("Exception: " + e.getMessage(), e);
+				throw new Exception(e);
+			}
+		} else {
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_SERVICE_BINDING);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
-			
-			if(serviceBindingList != null && serviceBindingList.size() > 1){
-				if(used){
-					de.setType(DataElementType.TEXT);
-					de.setValue(serviceBinding.toString());
-				}else {
-					de.setSelected(serviceBinding.toString());
-					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
-
-					String [] values = new String[serviceBindingList.size()];
-					String [] labels = new String[serviceBindingList.size()];
-					for (int i =0; i < serviceBindingList.size() ; i ++) {
-						ServiceBinding serviceBinding2 = serviceBindingList.get(i);
-						switch (serviceBinding2) {
-						case REST:
-							labels[i] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST;
-							break;
-						case SOAP:
-						default:
-							labels[i] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
-							values[i] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP;
-							break;
-						}
-					}
-					
-					de.setValues(values);
-					de.setLabels(labels);
-				}
-			} else {
-				de.setValue(serviceBinding.toString());
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setSize(this.getSize());
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			de.setValue(serviceBinding !=null ? serviceBinding.toString() : null);
+			de.setType(DataElementType.HIDDEN);
 		}
 		return de;
 	}

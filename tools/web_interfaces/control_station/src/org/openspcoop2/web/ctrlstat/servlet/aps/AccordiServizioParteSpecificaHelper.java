@@ -34,7 +34,9 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -80,6 +82,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -1791,13 +1794,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// servizi applicativi (solo avanzata)
 				if(this.isModalitaAvanzata()) {
 					de = new DataElement();
+					PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST, pIdSogg, pIdPorta, pIdAsps);
-					if (contaListe) {
-						int numSA = paAssociata.sizeServizioApplicativoList();
-						ServletUtils.setDataElementVisualizzaLabel(de, (long) numSA );
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdSogg, pIdPorta, pIdAsps,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
+					ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
 				}
 				
@@ -3441,7 +3443,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, (long) num);
 				}catch(Exception e){
 					this.log.error("Calcolo numero fruitori non riuscito",e);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, "N.D.");
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
 				}
 			}else{
 				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI);
@@ -3463,7 +3465,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
 				}catch(Exception e){
 					this.log.error("Calcolo numero Allegati non riuscito",e);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, "N.D.");
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
 				}
 			}else{
 				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
@@ -4639,7 +4641,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							
 						}catch(Exception e){
 							this.log.error("Calcolo numero pa non riuscito",e);
-							ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, "N.D.");
+							ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
 						}
 					}else{
 						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE);
@@ -5023,17 +5025,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autorizzazioneRuoliTipologia = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+//			if() {
+//				
+//			}
+			
 			// Se autenticazione = custom, nomeauth dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
 					(autenticazioneCustom == null || autenticazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autenticazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTENTICAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM));
 				return false;
 			}
 
 			// Se autorizzazione = custom, nomeautor dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione) && 
 					(autorizzazioneCustom == null || autorizzazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autorizzazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTORIZZAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM));
 				return false;
 			}
 			
@@ -5089,14 +5095,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Se autenticazione = custom, nomeauth dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
 					(autenticazioneCustom == null || autenticazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autenticazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTENTICAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM));
 				return false;
 			}
 
 			// Se autorizzazione = custom, nomeautor dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione) && 
 					(autorizzazioneCustom == null || autorizzazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autorizzazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTORIZZAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM));
 				return false;
 			}
 			

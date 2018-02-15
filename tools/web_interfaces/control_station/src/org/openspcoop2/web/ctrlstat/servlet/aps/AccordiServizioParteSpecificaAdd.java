@@ -1408,7 +1408,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				ServizioApplicativo sa = null;
 				
 				if(apsHelper.isModalitaCompleta()==false) {
-					
 					// Creo il servizio applicativo
 					
 					nomeServizioApplicativoErogatore = portaApplicativa.getNome();
@@ -1431,14 +1430,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
 					invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
 					sa.setInvocazioneServizio(invServizio);
+					
+					listaOggettiDaCreare.add(sa);
 				}
 				
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						this.erogazioneAutenticazione, this.erogazioneAutenticazioneOpzionale,
 						this.erogazioneAutorizzazione, this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 						nomeServizioApplicativoErogatore, this.erogazioneRuolo,idSoggettoAutenticatoErogazione);
-				
-				listaOggettiDaCreare.add(sa);
 				
 				listaOggettiDaCreare.add(portaApplicativa);						
 				listaOggettiDaCreare.add(mappingErogazione);

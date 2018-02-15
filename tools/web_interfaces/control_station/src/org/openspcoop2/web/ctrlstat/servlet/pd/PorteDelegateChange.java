@@ -23,13 +23,16 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -55,7 +58,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
@@ -66,7 +68,6 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -112,7 +113,7 @@ public final class PorteDelegateChange extends Action {
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 		try {
-
+			
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 
 			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -122,11 +123,9 @@ public final class PorteDelegateChange extends Action {
 			String descr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 			String statoPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
 			String tipoSoggettoErogatore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
-			String modeSoggettoErogatore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SP);
 			String nomeSoggettoErogatore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SP);
 			String idSoggettoErogatore = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID);
 			String tiposervizio = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
-			String modeservizio = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO);
 			String servizio = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO);
 			String versioneServizio = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO);
 			String servid = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID);
@@ -151,6 +150,11 @@ public final class PorteDelegateChange extends Action {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String serviceBindingS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING);
+			ServiceBinding serviceBinding = null;
+			if(StringUtils.isNotEmpty(serviceBindingS))
+				serviceBinding = ServiceBinding.valueOf(serviceBindingS);
+			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
 			String oldNomePD = pdOld.getHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD);
@@ -165,22 +169,44 @@ public final class PorteDelegateChange extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 
 			
-			IDSoggetto ids = null;
+			IDSoggetto idSoggettoFruitore = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
-				ids = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
+				idSoggettoFruitore = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 			}else{
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
-				ids = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
+				idSoggettoFruitore = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 			}
 
-			ServiceBinding serviceBinding = ServiceBinding.SOAP; // TODO
+			boolean usataInConfigurazioni = false;
+			boolean usataInConfigurazioneDefault = false;
+			boolean addTrattinoSelezioneNonEffettuata = false;
 			
 			// Prendo la porta delegata
 			IDPortaDelegata idpd = new IDPortaDelegata();
 			idpd.setNome(oldNomePD);
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idpd);
-
+			
+			Long idAspsLong = -1L;
+			if(idAsps.equals("")) {
+				PortaDelegataServizio servizio2 = pde.getServizio();
+				idAspsLong = servizio2.getId();
+			} else {
+				idAspsLong = Long.parseLong(idAsps);
+			}
+			
+			// controllo se la porta e' usata in qualche configurazione e se e' usata nella configurazione di default
+			MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+			mappingFruizione.setIdFruitore(idSoggettoFruitore);
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			IDServizio idServizioCheck = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			mappingFruizione.setIdServizio(idServizioCheck);
+			mappingFruizione.setIdPortaDelegata(idpd );
+			usataInConfigurazioni = porteDelegateCore.existsMappingFruizionePortaDelegata(mappingFruizione);
+			
+			IDPortaDelegata idPortaDelegataAssociataDefault = porteDelegateCore.getIDPortaDelegataAssociataDefault(idServizioCheck, idSoggettoFruitore);
+			usataInConfigurazioneDefault = (idPortaDelegataAssociataDefault != null && idPortaDelegataAssociataDefault.getNome().equals(idpd.getNome()));
+			
 			// Prendo il numero di correlazioni applicative
 			CorrelazioneApplicativa ca = pde.getCorrelazioneApplicativa();
 			int numCorrApp = 0;
@@ -188,10 +214,8 @@ public final class PorteDelegateChange extends Action {
 				numCorrApp = ca.sizeElementoList();
 			}
 
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(ids.getTipo());
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggettoFruitore.getTipo());
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
-
 
 			// Informazioni sul numero di ServiziApplicativi, Correlazione Applicativa e stato Message-Security
 			int numSA =pde.sizeServizioApplicativoList();
@@ -312,6 +336,36 @@ public final class PorteDelegateChange extends Action {
 						applicaMTOM = Costanti.CHECK_BOX_ENABLED;
 			}
 			
+			String postBackElementName = porteDelegateHelper.getPostBackElementName();
+			
+			// se ho modificato il soggetto ricalcolo il servizio e il service binding
+			if (postBackElementName != null) {
+				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID)) {
+					servid = null;
+					serviceBinding = null;
+				} else if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID)) {
+					serviceBinding = null;
+				} 
+			}
+			
+			List<String> tipiServizioCompatibiliAccordo = new ArrayList<String>();
+			if(serviceBinding == null) {
+				List<ServiceBinding> serviceBindingListProtocollo = apsCore.getServiceBindingListProtocollo(protocollo);
+				
+				if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+					for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
+						List<String> tipiServizioCompatibiliAccordoTmp = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding2);
+						
+						for (String tipoTmp : tipiServizioCompatibiliAccordoTmp) {
+							if(!tipiServizioCompatibiliAccordo.contains(tipoTmp))
+								tipiServizioCompatibiliAccordo.add(tipoTmp);
+						}
+					}
+				}
+			} else {
+				tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
+			}
+			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			lstParam.add(new Parameter(oldNomePD , null));
 
@@ -328,6 +382,21 @@ public final class PorteDelegateChange extends Action {
 				if (descr == null) {
 					descr = pde.getDescrizione();
 				}
+				
+				if(idSoggettoErogatore == null) {
+					PortaDelegataSoggettoErogatore pdsse = pde.getSoggettoErogatore();
+					tipoSoggettoErogatore = pdsse.getTipo();
+					nomeSoggettoErogatore = pdsse.getNome();
+					idSoggettoErogatore = tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
+				}
+				
+				if(servid == null) {
+					PortaDelegataServizio pds = pde.getServizio();
+					tiposervizio = pds.getTipo();
+					servizio = pds.getNome();
+					servid = pds.getTipo() + "/" + pds.getNome() + "/" + pds.getVersione().intValue();
+				}
+				
 				if (statoPorta == null) {
 					statoPorta = pde.getStato()!=null ? pde.getStato().getValue() : CostantiConfigurazione.ABILITATO.getValue();
 				}
@@ -389,20 +458,6 @@ public final class PorteDelegateChange extends Action {
 				if ((scadcorr == null) && (ca != null)) {
 					scadcorr = ca.getScadenza();
 				}
-				if (modeSoggettoErogatore == null) {
-					PortaDelegataSoggettoErogatore pdsse = pde.getSoggettoErogatore();
-					tipoSoggettoErogatore = pdsse.getTipo();
-					nomeSoggettoErogatore = pdsse.getNome();
-					int idSoggettoErogatoreInt = pdsse.getId().intValue();
-					idSoggettoErogatore = "" + idSoggettoErogatoreInt;
-				}
-				if (modeservizio == null) {
-					PortaDelegataServizio pds = pde.getServizio();
-					tiposervizio = pds.getTipo();
-					servizio = pds.getNome();
-					int servidInt = pds.getId().intValue();
-					servid = "" + servidInt;
-				}
 				if (modeaz == null) {
 					PortaDelegataAzione pda = pde.getAzione();
 					if (pda == null) {
@@ -417,42 +472,33 @@ public final class PorteDelegateChange extends Action {
 						azid = "" + pda.getId();
 					}
 					if ((modeaz == null) || "".equals(modeaz)) {
-						modeaz = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_AZ_STATIC;
+						modeaz = PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT;
 					}
 					boolean useForceWSDLBased = true;
 					// assegno costante
 					if (modeaz != null) {
 						switch (PortaDelegataAzioneIdentificazione.toEnumConstant(modeaz)) {
-						case CONTENT_BASED:
-							modeaz = IdentificazioneView.CONTENT_BASED.toString();
-							break;
-						case INPUT_BASED:
-							modeaz = IdentificazioneView.INPUT_BASED.toString();
-							break;
-						case HEADER_BASED:
-							modeaz = IdentificazioneView.HEADER_BASED.toString();
-							break;
-						case URL_BASED:
-							modeaz = IdentificazioneView.URL_BASED.toString();
-							break;
 						case STATIC:
 							useForceWSDLBased = false;
 							int azidInt = 0;
 							if (azid != null)
 								azidInt = Integer.parseInt(azid);
 							if ( (azidInt == -2) || (azidInt>0) ) {
-								modeaz = IdentificazioneView.REGISTER_INPUT.toString();
+//								modeaz = IdentificazioneView.REGISTER_INPUT.toString();
 								azid = azione;
 							} else {
-								modeaz = IdentificazioneView.USER_INPUT.toString();
+//								modeaz = IdentificazioneView.USER_INPUT.toString();
 							}
-							break;
-						case SOAP_ACTION_BASED:
-							modeaz = IdentificazioneView.SOAP_ACTION_BASED.toString();
 							break;
 						case INTERFACE_BASED:
 							useForceWSDLBased = false;
-							modeaz = IdentificazioneView.INTERFACE_BASED.toString();
+							break;
+						case CONTENT_BASED:
+						case INPUT_BASED:
+						case HEADER_BASED:
+						case URL_BASED:
+						case SOAP_ACTION_BASED:
+						default:
 							break;
 						}
 
@@ -468,59 +514,49 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 
-				if (modeSoggettoErogatore != null && (!modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modeservizio))) {
-					modeservizio = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT;
-				}
-				if (modeSoggettoErogatore != null && (!modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-						PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modeaz))) {
-					modeaz = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT;
-				}
-				if (modeservizio != null && (!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-						PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modeaz))) {
-					modeaz = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT;
-				}
-				if (modeSoggettoErogatore != null && (!modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-						(nomeSoggettoErogatore == null))) {
-					nomeSoggettoErogatore = "";
-				}
-				if (modeSoggettoErogatore != null && !modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-						(tipoSoggettoErogatore == null)) {
-					tipoSoggettoErogatore = "";
-				}
-				if (modeservizio != null && !modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						(servizio == null)) {
-					servizio = "";
-				}
-				if (modeservizio != null &&!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						(tiposervizio == null)) {
-					tiposervizio = "";
-				}
-				if ((modeaz != null) && !modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
+				if ((modeaz != null) && !modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
 						(azione == null)) {
 					azione = "";
 				}
 
+				if(!usataInConfigurazioneDefault) {
+					PortaDelegataAzione pda = pde.getAzione();
+					if(pda != null) {
+						List<String> azioneDelegataList = pda.getAzioneDelegataList();
+						StringBuilder sb = new StringBuilder();
+						
+						for (String aD : azioneDelegataList) {
+							if(sb.length() > 0) sb.append(", ");
+							sb.append(aD);
+						}
+						azione = sb.toString();
+					}
+				}
+				
 				// Se modesp = register-input, prendo la lista di tutti i
 				// soggetti e la metto in un array
-
-
-
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
-				if (modeSoggettoErogatore != null && modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
-					if (list!=null && list.size() > 0) {
+				List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
+				if (list!=null && list.size() > 0) {
 
-						List<String> soggettiListTmp = new ArrayList<String>();
-						for (IDSoggetto soggetto : list) {
-							if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
-								soggettiListTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
-							}
+					List<String> soggettiListTmp = new ArrayList<String>();
+					Map<String, String> soggettiMapTmp = new HashMap<String,String>();
+					
+					for (IDSoggetto soggetto : list) {
+						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
+							String keyIdSog = soggetto.getTipo() + "/" + soggetto.getNome();
+							soggettiListTmp.add(keyIdSog);
+							soggettiMapTmp.put(keyIdSog, porteDelegateHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome()));
 						}
-						Collections.sort(soggettiListTmp);
-						soggettiList = soggettiListTmp.toArray(new String[1]);
-						soggettiListLabel = soggettiList;
+					}
+					Collections.sort(soggettiListTmp);
+					soggettiList = soggettiListTmp.toArray(new String[1]);
+					soggettiListLabel = new String[soggettiList.length];
+					
+					for (int i = 0; i < soggettiList.length; i++) {
+						String keyIdSog = soggettiList[i];
+						soggettiListLabel[i] = soggettiMapTmp.get(keyIdSog);
 					}
 				}
 
@@ -528,28 +564,33 @@ public final class PorteDelegateChange extends Action {
 				// servizi e la metto in un array
 				String[] serviziList = null;
 				String[] serviziListLabel = null;
-				if (modeservizio != null && modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					if ((idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))) {
-						IDSoggetto idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
-						FiltroRicercaServizi filtro = new FiltroRicercaServizi();
-						filtro.setTipoSoggettoErogatore(idSoggetto.getTipo());
-						filtro.setNomeSoggettoErogatore(idSoggetto.getNome());
-						List<IDServizio> list = null;
-						try{
-							list = apsCore.getAllIdServizi(filtro);
-						}catch(DriverRegistroServiziNotFound dNotFound){}
-						if(list!=null && list.size()>0){
-							List<String> serviziListTmp = new ArrayList<String>();
-
-							for (IDServizio idServizio : list) {
-								if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
-									serviziListTmp.add(idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione().intValue());
-								}
+				if ((idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))) {
+					IDSoggetto idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
+					FiltroRicercaServizi filtro = new FiltroRicercaServizi();
+					filtro.setTipoSoggettoErogatore(idSoggetto.getTipo());
+					filtro.setNomeSoggettoErogatore(idSoggetto.getNome());
+					List<IDServizio> listIdServ = null;
+					try{
+						listIdServ = apsCore.getAllIdServizi(filtro);
+					}catch(DriverRegistroServiziNotFound dNotFound){}
+					
+					if(listIdServ!=null && listIdServ.size()>0){
+						List<String> serviziListTmp = new ArrayList<String>();
+						Map<String, IDServizio> serviziMapTmp = new HashMap<String,IDServizio>();
+						for (IDServizio idServizio : listIdServ) {
+							if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
+								String keyServizio = idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione();
+								serviziListTmp.add(keyServizio);
+								serviziMapTmp.put(keyServizio, idServizio);
 							}
+						}
 
-							Collections.sort(serviziListTmp);
-							serviziList = serviziListTmp.toArray(new String[1]);
-							serviziListLabel = serviziList;
+						Collections.sort(serviziListTmp);
+						serviziList = serviziListTmp.toArray(new String[1]);
+						serviziListLabel = new String[serviziList.length];
+						for (int i = 0; i < serviziList.length; i++) {
+							String idServTmp = serviziList[i];
+							serviziListLabel[i] = porteDelegateHelper.getLabelIdServizio(protocollo, serviziMapTmp.get(idServTmp));
 						}
 					}
 				}
@@ -592,61 +633,29 @@ public final class PorteDelegateChange extends Action {
 				if ( servS!=null ) {
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
 					as = apcCore.getAccordoServizio(idAccordo);
+					
+					if(serviceBinding == null) {
+						serviceBinding = porteDelegateCore.toMessageServiceBinding(as.getServiceBinding());
+					}
+					
 				}
 				
 				// Se modeaz = register-input, prendo la lista delle azioni
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					if ( servS!=null ) {
-
-						if(servS.getPortType()!=null){
-							// Bisogna prendere le operations del port type
-							PortType pt = null;
-							for (int i = 0; i < as.sizePortTypeList(); i++) {
-								if(as.getPortType(i).getNome().equals(servS.getPortType())){
-									pt = as.getPortType(i);
-									break;
-								}
-							}
-							if(pt==null){
-								throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+servS.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+servS.getAccordoServizioParteComune()+"]");
-							}
-							if(pt.sizeAzioneList()>0){
-								azioniList = new String[pt.sizeAzioneList()];
-								azioniListLabel = new String[pt.sizeAzioneList()];
-								List<String> azioni = new ArrayList<String>();
-								for (int i = 0; i < pt.sizeAzioneList(); i++) {
-									if (azid == null) {
-										azid = pt.getAzione(i).getNome();
-									}
-									azioni.add("" + pt.getAzione(i).getNome());
-								}
-								Collections.sort(azioni);
-								for (int i = 0; i < azioni.size(); i++) {
-									azioniList[i] = "" + azioni.get(i);
-									azioniListLabel[i] = azioniList[i];
-								}
-							}
-						}else{
-							if(as.sizeAzioneList()>0){
-								azioniList = new String[as.sizeAzioneList()];
-								azioniListLabel = new String[as.sizeAzioneList()];
-								List<String> azioni = new ArrayList<String>();
-								for (int i = 0; i < as.sizeAzioneList(); i++) {
-									if (azid == null) {
-										azid = as.getAzione(i).getNome();
-									}
-									azioni.add(as.getAzione(i).getNome());
-								}
-								Collections.sort(azioni);
-								for (int i = 0; i < azioni.size(); i++) {
-									azioniList[i] = "" + azioni.get(i);
-									azioniListLabel[i] = azioniList[i];
-								}
-							}
-						}				
+				List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+				
+					List<String> azioni = porteDelegateCore.getAzioni(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
+					if(azioni != null && azioni.size() > 0) {
+						azioniList = new String[azioni.size()];
+						azioniListLabel = new String[azioni.size()];
+						Collections.sort(azioni);
+						for (int i = 0; i < azioni.size(); i++) {
+							azioniList[i] = "" + azioni.get(i);
+							azioniListLabel[i] = azioniList[i];
+						}
 					}
 				}
 				int numAzioni = 0;
@@ -663,10 +672,10 @@ public final class PorteDelegateChange extends Action {
 
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.CHANGE, idsogg, nomePorta, dati,
 						idPorta, descr, autenticazione,
-						autorizzazione, modeSoggettoErogatore,
+						autorizzazione, 
 						idSoggettoErogatore, soggettiList, soggettiListLabel,
 						nomeSoggettoErogatore, tipoSoggettoErogatore,
-						patternErogatore, modeservizio, servid, serviziList,
+						patternErogatore, servid, serviziList,
 						serviziListLabel, servizio, tiposervizio, versioneServizio,
 						patternServizio, modeaz, azid, azioniListLabel,
 						azioniList, azione, patternAzione, numAzioni,
@@ -679,7 +688,7 @@ public final class PorteDelegateChange extends Action {
 						numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,riusoID,
 						servS, as,serviceBinding,
-						statoPorta);
+						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 				
@@ -698,37 +707,30 @@ public final class PorteDelegateChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				if (!modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					modeservizio = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT;
-				}
-				if (!modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-						modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					modeaz = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT;
-				}
-				if (!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-						modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					modeaz = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT;
-				}
-
 				// Se modesp = register-input, prendo la lista di tutti i
 				// soggetti e la metto in un array
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
-				if (modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
-					if (list!=null && list.size() > 0) {
+				List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
+				if (list!=null && list.size() > 0) {
 
-						List<String> soggettiListTmp = new ArrayList<String>();
-						List<String> soggettiListLabelTmp = new ArrayList<String>();
-						for (IDSoggetto soggetto : list) {
-							if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
-								soggettiListTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
-								soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
-							}
+					List<String> soggettiListTmp = new ArrayList<String>();
+					Map<String, String> soggettiMapTmp = new HashMap<String,String>();
+					
+					for (IDSoggetto soggetto : list) {
+						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
+							String keyIdSog = soggetto.getTipo() + "/" + soggetto.getNome();
+							soggettiListTmp.add(keyIdSog);
+							soggettiMapTmp.put(keyIdSog, porteDelegateHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome()));
 						}
-						soggettiList = soggettiListTmp.toArray(new String[1]);
-						soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
+					}
+					Collections.sort(soggettiListTmp);
+					soggettiList = soggettiListTmp.toArray(new String[1]);
+					soggettiListLabel = new String[soggettiList.length];
+					
+					for (int i = 0; i < soggettiList.length; i++) {
+						String keyIdSog = soggettiList[i];
+						soggettiListLabel[i] = soggettiMapTmp.get(keyIdSog);
 					}
 				}
 
@@ -736,29 +738,35 @@ public final class PorteDelegateChange extends Action {
 				// e la metto in un array
 				String[] serviziList = null;
 				String[] serviziListLabel = null;
-				if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					if ((idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))) {
-						IDSoggetto idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
-						FiltroRicercaServizi filtro = new FiltroRicercaServizi();
-						filtro.setTipoSoggettoErogatore(idSoggetto.getTipo());
-						filtro.setNomeSoggettoErogatore(idSoggetto.getNome());
-						List<IDServizio> list = null;
-						try{
-							list = apsCore.getAllIdServizi(filtro);
-						}catch(DriverRegistroServiziNotFound dNotFound){}
-						if(list!=null && list.size()>0){
-							List<String> serviziListTmp = new ArrayList<String>();
-							List<String> serviziListLabelTmp = new ArrayList<String>();
+				if ((idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))) {
+					IDSoggetto idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
+					FiltroRicercaServizi filtro = new FiltroRicercaServizi();
+					filtro.setTipoSoggettoErogatore(idSoggetto.getTipo());
+					filtro.setNomeSoggettoErogatore(idSoggetto.getNome());
+					List<IDServizio> listTmp = null;
+					try{
+						listTmp = apsCore.getAllIdServizi(filtro);
+					}catch(DriverRegistroServiziNotFound dNotFound){}
+					if(listTmp!=null && listTmp.size()>0){
+						List<String> serviziListTmp = new ArrayList<String>();
+						List<String> serviziListLabelTmp = new ArrayList<String>();
 
-							for (IDServizio idServizio : list) {
-								if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
-									serviziListTmp.add(idServizio.getTipo() + "/" + idServizio.getNome()+ "/" + idServizio.getVersione().intValue());
-									serviziListLabelTmp.add(idServizio.getTipo() + "/" + idServizio.getNome()+ "/" + idServizio.getVersione().intValue());
-								}
+						Map<String, IDServizio> serviziMapTmp = new HashMap<String,IDServizio>();
+						for (IDServizio idServizio : listTmp) {
+							if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
+								String keyServizio = idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione();
+								serviziListTmp.add(keyServizio);
+								serviziMapTmp.put(keyServizio, idServizio);
+								serviziListLabelTmp.add(idServizio.getTipo() + "/" + idServizio.getNome()+ "/" + idServizio.getVersione().intValue());
 							}
+						}
 
-							serviziList = serviziListTmp.toArray(new String[1]);
-							serviziListLabel =serviziListLabelTmp.toArray(new String[1]);
+						Collections.sort(serviziListTmp);
+						serviziList = serviziListTmp.toArray(new String[1]);
+						serviziListLabel = new String[serviziList.length];
+						for (int i = 0; i < serviziList.length; i++) {
+							String idServTmp = serviziList[i];
+							serviziListLabel[i] = porteDelegateHelper.getLabelIdServizio(protocollo, serviziMapTmp.get(idServTmp));
 						}
 					}
 				}
@@ -789,47 +797,19 @@ public final class PorteDelegateChange extends Action {
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {					
-					if(servS==null){
-						throw new Exception("Servizio ["+idServizio.toString()+"] non riscontrato");
+				List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
+				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+				
+					List<String> azioni = porteDelegateCore.getAzioni(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
+					if(azioni != null && azioni.size() > 0) {
+						azioniList = new String[azioni.size()];
+						azioniListLabel = new String[azioni.size()];
+						Collections.sort(azioni);
+						for (int i = 0; i < azioni.size(); i++) {
+							azioniList[i] = "" + azioni.get(i);
+							azioniListLabel[i] = azioniList[i];
+						}
 					}
-					
-					if(servS.getPortType()!=null){
-						// Bisogna prendere le operations del port type
-						PortType pt = null;
-						for (int i = 0; i < as.sizePortTypeList(); i++) {
-							if(as.getPortType(i).getNome().equals(servS.getPortType())){
-								pt = as.getPortType(i);
-								break;
-							}
-						}
-						if(pt==null){
-							throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+servS.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+servS.getAccordoServizioParteComune()+"]");
-						}
-						if(pt.sizeAzioneList()>0){
-							azioniList = new String[pt.sizeAzioneList()];
-							azioniListLabel = new String[pt.sizeAzioneList()];
-							for (int i = 0; i < pt.sizeAzioneList(); i++) {
-								if (azid == null) {
-									azid = pt.getAzione(i).getNome();
-								}
-								azioniList[i] = "" + pt.getAzione(i).getNome();
-								azioniListLabel[i] = pt.getAzione(i).getNome();
-							}
-						}
-					}else{
-						if(as.sizeAzioneList()>0){
-							azioniList = new String[as.sizeAzioneList()];
-							azioniListLabel = new String[as.sizeAzioneList()];
-							for (int i = 0; i < as.sizeAzioneList(); i++) {
-								if (azid == null) {
-									azid = as.getAzione(i).getNome();
-								}
-								azioniList[i] = "" + as.getAzione(i).getNome();
-								azioniListLabel[i] = as.getAzione(i).getNome();
-							}
-						}
-					}				
 				}
 				int numAzioni = 0;
 				if (azioniList != null)
@@ -846,10 +826,10 @@ public final class PorteDelegateChange extends Action {
 
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.CHANGE, idsogg, nomePorta, dati,
 						idPorta, descr, autenticazione,
-						autorizzazione, modeSoggettoErogatore,
+						autorizzazione, 
 						idSoggettoErogatore, soggettiList, soggettiListLabel,
 						nomeSoggettoErogatore, tipoSoggettoErogatore,
-						nomeSoggettoErogatore, modeservizio, servid,
+						nomeSoggettoErogatore, servid,
 						serviziList, serviziListLabel, servizio,
 						tiposervizio, servizio, versioneServizio, modeaz, azid,
 						azioniListLabel, azioniList, azione, azione,
@@ -861,7 +841,7 @@ public final class PorteDelegateChange extends Action {
 						statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,
 						servS, as,serviceBinding,
-						statoPorta);
+						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 
@@ -876,20 +856,17 @@ public final class PorteDelegateChange extends Action {
 
 			// Modifico i dati della porta delegata nel db
 
-			if (modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				nomeSoggettoErogatore = idSoggettoErogatore.split("/")[1];
-				tipoSoggettoErogatore = idSoggettoErogatore.split("/")[0];
-			}
-			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				servizio = servid.split("/")[1];
-				tiposervizio = servid.split("/")[0];
-			}
-			if (modeaz != null) {
-				if (modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					azione = "";
-				} else {
-					azid = "";
-				}
+			nomeSoggettoErogatore = idSoggettoErogatore.split("/")[1];
+			tipoSoggettoErogatore = idSoggettoErogatore.split("/")[0];
+			
+			versioneServizio = servid.split("/")[2];
+			servizio = servid.split("/")[1];
+			tiposervizio = servid.split("/")[0];
+			
+			if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+				azione = "";
+			} else {
+				azid = "";
 			}
 
 			long idPA = pde.getId();
@@ -937,11 +914,9 @@ public final class PorteDelegateChange extends Action {
 
 			PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
 			IDSoggetto idSoggErogatore = new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore);
-			if (modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				pdSogg.setId(soggettiCore.getSoggettoRegistro(idSoggErogatore).getId());
-				if(pdSogg.getId()<=0){
-					pdSogg.setId(-2l);
-				}
+			pdSogg.setId(soggettiCore.getSoggettoRegistro(idSoggErogatore).getId());
+			if(pdSogg.getId()<=0){
+				pdSogg.setId(-2l);
 			}
 			pdSogg.setNome(nomeSoggettoErogatore);
 			pdSogg.setTipo(tipoSoggettoErogatore);
@@ -949,18 +924,15 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setSoggettoErogatore(pdSogg);
 
 			PortaDelegataServizio pdServizio = new PortaDelegataServizio();
-			AccordoServizioParteSpecifica asps = null;
 			IDServizio idServizio = null;
-			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, servizio, idSoggErogatore, Integer.parseInt(versioneServizio)); 
-				try{
-					asps = apsCore.getServizio(idServizio);
-					pdServizio.setId(asps.getId());
-				}catch(DriverRegistroServiziNotFound dNotFound){
-				}
-				if(pdServizio.getId()<=0){
-					pdServizio.setId(-2l);
-				}
+			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, servizio, idSoggErogatore, Integer.parseInt(versioneServizio)); 
+			try{
+				asps = apsCore.getServizio(idServizio);
+				pdServizio.setId(asps.getId());
+			}catch(DriverRegistroServiziNotFound dNotFound){
+			}
+			if(pdServizio.getId()<=0){
+				pdServizio.setId(-2l);
 			}
 			pdServizio.setNome(servizio);
 			pdServizio.setTipo(tiposervizio);
@@ -968,66 +940,63 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setServizio(pdServizio);
 
 			// se l azione e' settata allora creo il bean
-			if ((modeaz != null) &&
-					((azione != null) || (azid != null) || modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
-							modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
-							modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)) &&
+			if (((azione != null) || (azid != null) || modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
+							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
+							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)) &&
 							(!azione.equals("") || !azid.equals("") || 
-									(modeaz != null && (modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) || 
-											modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
-											modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))))) {
+									(modeaz != null && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) || 
+											modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
+											modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))))) {
 				PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 
-				if (modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+				if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 					azione = azid;
-				}
-				if (modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-					AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
-
-					if(asps.getPortType()!=null){
-						// Bisogna prendere le operations del port type
-						PortType pt = null;
-						for (int i = 0; i < as.sizePortTypeList(); i++) {
-							if(as.getPortType(i).getNome().equals(asps.getPortType())){
-								pt = as.getPortType(i);
-								break;
-							}
-						}
-						if(pt==null){
-							throw new Exception("Accordo servizio parte specifica ["+idServizio.toString()+"] possiede un port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio parte comune ["+asps.getAccordoServizioParteComune()+"]");
-						}
-						if(pt.sizeAzioneList()>0){
-							for (int i = 0; i < pt.sizeAzioneList(); i++) {
-								if(pt.getAzione(i).getNome().equals(azione)){
-									pdAzione.setId(pt.getAzione(i).getId());
-									break;
-								}
-							}
-						}
-					}else{
-						if(as.sizeAzioneList()>0){
-							for (int i = 0; i < as.sizeAzioneList(); i++) {
-								if(as.getAzione(i).getNome().equals(azione)){
-									pdAzione.setId(as.getAzione(i).getId());
-									break;
-								}
-							}
-						}
-					}
+//					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+//					AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
+//
+//					if(asps.getPortType()!=null){
+//						// Bisogna prendere le operations del port type
+//						PortType pt = null;
+//						for (int i = 0; i < as.sizePortTypeList(); i++) {
+//							if(as.getPortType(i).getNome().equals(asps.getPortType())){
+//								pt = as.getPortType(i);
+//								break;
+//							}
+//						}
+//						if(pt==null){
+//							throw new Exception("Accordo servizio parte specifica ["+idServizio.toString()+"] possiede un port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio parte comune ["+asps.getAccordoServizioParteComune()+"]");
+//						}
+//						if(pt.sizeAzioneList()>0){
+//							for (int i = 0; i < pt.sizeAzioneList(); i++) {
+//								if(pt.getAzione(i).getNome().equals(azione)){
+//									pdAzione.setId(pt.getAzione(i).getId());
+//									break;
+//								}
+//							}
+//						}
+//					}else{
+//						if(as.sizeAzioneList()>0){
+//							for (int i = 0; i < as.sizeAzioneList(); i++) {
+//								if(as.getAzione(i).getNome().equals(azione)){
+//									pdAzione.setId(as.getAzione(i).getId());
+//									break;
+//								}
+//							}
+//						}
+//					}
 
 					if(pdAzione.getId()<=0){
 						pdAzione.setId(-2l);
 					}
 				}
 				pdAzione.setNome(azione);
-				pdAzione.setIdentificazione(IdentificazioneView.view2db_azione_portaDelegata(modeaz));
+				pdAzione.setIdentificazione(PortaDelegataAzioneIdentificazione.toEnumConstant(modeaz)); 
 				pdAzione.setPattern(azione);
 
 				//FORCE WSDL BASED
-				if(modeaz != null && (!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT) &&
-						!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))){
+				if(!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) &&
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
 						pdAzione.setForceInterfaceBased(StatoFunzionalita.ABILITATO);
@@ -1082,7 +1051,7 @@ public final class PorteDelegateChange extends Action {
 				asps = apsCore.getAccordoServizioParteSpecifica(idAspsInt);
 				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 				
-				List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), ids, idServizio2, ricerca);
+				List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 				apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
 				

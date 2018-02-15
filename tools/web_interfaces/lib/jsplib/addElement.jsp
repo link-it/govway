@@ -91,6 +91,21 @@ function CheckDati() {
                 $(":input[name='datafine']").datepicker({dateFormat: 'yy-mm-dd'});
 
                 showSlider($("select[name^='percentuale']:not([type=hidden])"));
+                
+                var numInputs = document.querySelectorAll('input[type=number]');
+
+                numInputs.forEach(function (input) {
+                	  input.addEventListener('change', function (e) {
+                	    if (e.target.value == '') {
+                	    	if(input.min){
+                	         e.target.value = input.min;
+                	    	} else {
+                	    		e.target.value = 0;
+                	    	}
+                	    }
+                	  })
+                	});
+                
         });
 </script>
 

@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.Vector;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -292,6 +293,10 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE = "modeCreazione";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.PARAMETRO_SOGGETTO;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED = "forceWsdlBased";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE = "modeaz";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	
 	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
@@ -401,6 +406,16 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING = "Configurazione";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED = "Force Interface";
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = "register-input";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = "header-based";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = "url-based";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = "content-based";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = "input-based";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = "soap-action-based";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = "wsdl-based";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = "protocol-based";
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
@@ -430,6 +445,15 @@ public class PorteApplicativeCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE =  TipoAutenticazione.SSL.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE = TipoAutorizzazione.AUTHENTICATED.getValue();
 	
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = PortaApplicativaAzioneIdentificazione.STATIC.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = PortaApplicativaAzioneIdentificazione.HEADER_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = PortaApplicativaAzioneIdentificazione.URL_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = PortaApplicativaAzioneIdentificazione.CONTENT_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = PortaApplicativaAzioneIdentificazione.INPUT_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString();
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "nuova";
 	
@@ -437,5 +461,27 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. E' necessario indicare: {0}"; 
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_VIRTUALE_DEVE_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI = "Il Soggetto virtuale deve essere scelto tra quelli definiti nel pannello Soggetti";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_NE_SPAZI_NE_NEL_CAMPO_BEHAVIOUR = "Non inserire ne spazi ne ',' nel campo 'behaviour'";
+	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI = "Non inserire spazi all'inizio o alla fine dei valori";
+	public static final String MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY = "La propriet&agrave; di message-security {0} &egrave; gi&agrave; stata associata alla porta applicativa {1}";
+	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI = "Non inserire spazi nei nomi";
+	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY = "La property {0} &egrave; gi&agrave; stata associata alla porta applicativa {1}";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}";
+	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_XX_EGRAVE_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY = "Il Soggetto ''{0}'' &egrave; gi&agrave; stato associato alla porta applicativa {1}";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SOGGETTO = "Dati incompleti. &Egrave; necessario indicare un Soggetto";
+	public static final String MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_XX_E_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY = "Il Servizio Applicativo {0} &egrave; gi&agrave; stato associato alla porta applicativa {1}";
+	public static final String MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SERVIZI_APPLICATIVI_ED_ASSOCIATI_AL_SOGGETTO_XX = "Il Servizio Applicativo dev''essere scelto tra quelli definiti nel pannello Servizi Applicativi ed associati al soggetto {0}";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SERVIZIO_APPLICATIVO = "Dati incompleti. &Egrave; necessario indicare un Servizio Applicativo";
+	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
+	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX = "Indicare un nome per l'autorizzazione ''{0}''";
+	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX = "Indicare un nome per l'autenticazione ''{0}''";
+	public static final String MESSAGGIO_ERRORE_MODE_AZIONE_DEV_ESSERE_USER_INPUT_REGISTER_INPUT_URL_BASED_CONTENT_BASED_INPUT_BASED_SOAP_ACTION_BASED_PROTOCOL_BASED_O_WSDL_BASED = "Mode Azione dev'essere user-input, register-input, url-based, content-based, input-based, soap-action-based, protocol-based o wsdl-based";
+	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE = "Dati incompleti. &Egrave; necessario indicare: Pattern azione";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA = "Dati incompleti. Non &egrave; stata trovata nessuna azione associata al servizio. Scegliere una delle altre modalit&agrave;";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_MODALITA_AZIONE = "Dati incompleti. Non &egrave; stata trovata nessuna Modalit&agrave; Azione";
+	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_CON_NOME_XX = "Esiste gi&agrave; una Porta Applicativa con nome [{0}]";
+	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_PER_IL_SERVIZIO_XX_CON_AZIONE_YY_EROGATO_DAL_SOGGETTO_ZZ = "Esiste gi&agrave; una Porta Applicativa per il Servizio [{0}] con Azione [{1}] erogato dal Soggetto{2} [{3}]";
+	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_XX_APPARTENENTE_AL_SOGGETTO_YY = "Esiste gi&agrave; una Porta Applicativa [{0}] appartenente al Soggetto [{1}]";
+
 
 }

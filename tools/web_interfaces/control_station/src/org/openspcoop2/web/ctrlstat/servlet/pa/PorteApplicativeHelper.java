@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -45,10 +46,12 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -57,18 +60,19 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -116,9 +120,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				servizio = "";
 			}
 			String azione = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-			if (azione == null) {
-				azione = "-";
-			}
+			String azid = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID);
+			String modeaz = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE);
+
 			String xsd = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
 
 			String behaviour = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
@@ -292,6 +296,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				idSE = IDServizioFactory.getInstance().getIDServizioFromValues(tmp[1].split("/")[0], tmp[1].split("/")[1], 
 						idSO, Integer.parseInt(tmp[1].split("/")[2]));
 				
+				if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
+					azione = azid;
+				}
+				
 				if (azione!=null && !"".equals(azione) && !"-".equals(azione) ) {
 					idSE.setAzione(azione);
 				}
@@ -304,7 +312,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					giaRegistrato = this.porteApplicativeCore.existsPortaApplicativa(idPA);
 
 					if (giaRegistrato) {
-						this.pd.setMessage("Esiste gia' una Porta Applicativa [" + nomePorta + "] appartenente al Soggetto [" + idSO.toString() + "]");
+						this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_XX_APPARTENENTE_AL_SOGGETTO_YY,
+								nomePorta, idSO.toString()));
 						return false;
 					}
 
@@ -341,10 +350,14 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("Esiste gia' una Porta Applicativa per il " + "Servizio [" + idSE.getTipo() + "/" + idSE.getNome() +  "/" + idSE.getVersione()+
-							"] " + "con Azione [" + (idSE.getAzione() != null ? idSE.getAzione() : "not set") + 
-							"] " + "erogato dal Soggetto " + (!soggvirt.equals("-") ? "Virtuale" : "") + " [" 
-							+ (!soggvirt.equals("-") ? virtuale.getTipo() + "/" + virtuale.getNome() : idSE.getSoggettoErogatore().toString()) + "]");
+					
+					String nomeAzioneMessaggio = idSE.getAzione() != null ? idSE.getAzione() : "not set";
+					String nomeSoggettoVirtualeMessaggio = !soggvirt.equals("-") ? " Virtuale" : "";
+					String nomeSoggettoMessaggio = !soggvirt.equals("-") ? virtuale.getTipo() + "/" + virtuale.getNome() : idSE.getSoggettoErogatore().toString();
+					String nomeServizioMessaggio = idSE.getTipo() + "/" + idSE.getNome() +  "/" + idSE.getVersione();
+					this.pd.setMessage(MessageFormat.format(
+							PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_PER_IL_SERVIZIO_XX_CON_AZIONE_YY_EROGATO_DAL_SOGGETTO_ZZ,
+							nomeServizioMessaggio, nomeAzioneMessaggio, nomeSoggettoVirtualeMessaggio, nomeSoggettoMessaggio));
 
 					// this.pd.setMessage("La porta applicativa " + id + "
 					// &egrave; gi&agrave; stata registrata");
@@ -358,25 +371,62 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						idPANew.setNome(nomePorta);
 						boolean exists = this.porteApplicativeCore.existsPortaApplicativa(idPANew);
 						if (exists) {
-							this.pd.setMessage("Esiste gia' una Porta Applicativa con nome [" + nomePorta + "]");
+							this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_CON_NOME_XX, nomePorta));
 							return false;
 						}
 					}
 				}
 			}
 			
+			if (modeaz == null) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_MODALITA_AZIONE);
+				return false;
+			}
+			
+			if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && (azid == null)) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA);
+				return false;
+			}
+			if ((modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) || 
+					modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) ||
+					modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED)) && (azione==null || azione.equals(""))) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE);
+				return false;
+			}
+			
+			if ((modeaz != null) && !modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) &&
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) &&
+					(azione.indexOf(" ") != -1)) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				return false;
+			}
+
+			// Controllo che i campi "select" abbiano uno dei valori ammessi
+			if ((modeaz != null) && !modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) && 
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED)) {
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_MODE_AZIONE_DEV_ESSERE_USER_INPUT_REGISTER_INPUT_URL_BASED_CONTENT_BASED_INPUT_BASED_SOAP_ACTION_BASED_PROTOCOL_BASED_O_WSDL_BASED);
+				return false;
+			}
+			
 
 			// Se autenticazione = custom, nomeauth dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
 					(autenticazioneCustom == null || autenticazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autenticazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM));
 				return false;
 			}
 
 			// Se autorizzazione = custom, nomeautor dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione) && 
 					(autorizzazioneCustom == null || autorizzazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autorizzazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM));
 				return false;
 			}
 			
@@ -424,8 +474,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 							}
 						}
 						if(fruitoriCompatibili == false){
-							this.pd.setMessage("Non è possibile modificare il tipo di autenticazione da ["+pa.getAutenticazione()+"] a ["+autenticazione+
-									"], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalità di accesso, con il nuovo tipo di autenticazione");
+							this.pd.setMessage(MessageFormat.format(
+									PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE,
+									pa.getAutenticazione(), autenticazione));
 							return false;
 						}
 					}	
@@ -455,7 +506,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// Campi obbligatori
 			if (servizioApplicativo.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Servizio Applicativo");
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SERVIZIO_APPLICATIVO);
 				return false;
 			}
 
@@ -486,7 +537,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				idSA = this.saCore.getIdServizioApplicativo(ids, servizioApplicativo);
 
 			if (!trovatoServizioApplicativo) {
-				this.pd.setMessage("Il Servizio Applicativo dev'essere scelto tra quelli definiti nel pannello Servizi Applicativi ed associati al soggetto " + tipoprov + "/" + nomeprov);
+				String nomeSoggettoMessaggio = tipoprov + "/" + nomeprov;
+				this.pd.setMessage(MessageFormat.format(
+						PorteApplicativeCostanti.MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SERVIZI_APPLICATIVI_ED_ASSOCIATI_AL_SOGGETTO_XX,
+						nomeSoggettoMessaggio));
 				return false;
 			}
 
@@ -510,7 +564,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("Il Servizio Applicativo " + servizioApplicativo + " &egrave; gi&agrave; stato associato alla porta applicativa " + nomeporta);
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_XX_E_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY, servizioApplicativo, nomeporta));
 					return false;
 				}
 			}
@@ -536,7 +590,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// Campi obbligatori
 			if (soggetto.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Soggetto");
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SOGGETTO);
 				return false;
 			}
 
@@ -578,7 +632,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("Il Soggetto '" + tipoSoggettoSelezionato + "/"+ nomeSoggettoSelezionato + " &egrave; gi&agrave; stato associato alla porta applicativa " + nomeporta);
+					String nomeSoggettoMessaggio = tipoSoggettoSelezionato + "/"+ nomeSoggettoSelezionato;
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_IL_SOGGETTO_XX_EGRAVE_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY,
+							nomeSoggettoMessaggio, nomeporta));
 					return false;
 				}
 			}
@@ -615,7 +671,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
@@ -642,7 +698,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("La property " + nome + " &egrave; gi&agrave; stata associata alla porta applicativa " + nomeporta);
+					this.pd.setMessage(MessageFormat.format(
+							PorteApplicativeCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY, nome,
+							nomeporta));
 					return false;
 				}
 			}
@@ -675,18 +733,18 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage("Non inserire spazi nei nomi");
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
 			if(valore.startsWith(" ") || valore.endsWith(" ")){
-				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
 
@@ -711,7 +769,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("La proprieta' di message-security " + nome + " &egrave; gi&agrave; stato associata alla porta applicativa " + nomeporta);
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY,nome, nomeporta));
 					return false;
 				}
 			}
@@ -745,18 +803,18 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage("Non inserire spazi nei nomi");
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
 			if(valore.startsWith(" ") || valore.endsWith(" ")){
-				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
+				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
 
@@ -781,7 +839,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("La proprieta' di message-security " + nome + " &egrave; gi&agrave; stato associato alla porta applicativa " + nomeporta);
+					this.pd.setMessage(
+							MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY,nome, nomeporta));
 					return false;
 				}
 			}
@@ -811,35 +870,37 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 
 	public Vector<DataElement> addPorteAppToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomePorta, String descr, String soggvirt, String[] soggettiList, String[] soggettiListLabel, 
-			String servizio, String[] serviziList, String[] serviziListLabel, String azione, String[] azioniList,  String stateless, String ricsim, String ricasim, 
+			String servizio, String[] serviziList, String[] serviziListLabel, String azione, String[] azioniList,  String[] azioniListLabel,  String stateless, String ricsim, String ricasim, 
 			String idsogg, String idPorta, String xsd, String tipoValidazione, String gestBody, String gestManifest,String integrazione,
 			int numCorrApp,String scadcorr,String autorizzazioneContenuti, String protocollo,
 			int numSA,	 int numRuoli, String ruoloMatch,
 			String statoMessageSecurity ,String statoMTOM ,int numCorrelazioneReq , int numCorrelazioneRes, int numProprProt,String applicaMTOM,
 			String behaviour,
-			String[] servizioApplicativoList, String servizioApplicativo,
+			String[] servizioApplicativoList, String servizioApplicativo, Long idSa,
 			String autenticazione, String autorizzazione,
 			String autenticazioneOpzionale, String autenticazioneCustom, String autorizzazioneCustom,
 			boolean isSupportatoAutenticazioneSoggetti,
 			String autorizzazioneAutenticati,String autorizzazioneRuoli,String autorizzazioneRuoliTipologia,
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc, ServiceBinding serviceBinding,
-			String statoPorta) throws Exception {
+			String statoPorta, String modeaz, String azid, String patternAzione, String forceWsdlBased, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 		// Soggetto virtuale?
 		Boolean soggVirt = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
 		
-//		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		
 		int alternativeSize = 80;
-
-		boolean configurazioneStandardNonApplicabile = false;
 		
-		Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
-		Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
-		Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
-		Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, nomePorta);
+		Parameter pIdSogg = null, pIdPorta = null, pIdAsps = null, pNomePorta = null;
+
+		if(!tipoOp.equals(TipoOperazione.ADD)) {
+			pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
+			pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, nomePorta);
+		}
 		
 		// *************** Nome/Descrizione *********************
 		
@@ -847,6 +908,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
+		
+		// servicebinding hidden
+		dati.add(this.getServiceBindingDataElement(serviceBinding));
 		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
@@ -905,12 +969,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		// *************** Soggetto Virtuale *********************
 		
 		if (soggVirt) {
-		
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE);
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
-			
 		}
 		
 		de = new DataElement();
@@ -921,7 +983,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			de.setValues(soggettiList);
 			de.setLabels(soggettiListLabel);
 			de.setSelected(soggvirt);
-			//			de.setOnChange("CambiaSoggetto('" + tipoOp + "')");
 			de.setPostBack(true);
 		}else{
 			de.setValue("-");
@@ -931,131 +992,161 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 		
 		
-		
-		
-		
 		// *************** Servizio *********************
 		
 		de = new DataElement();
-		//if(this.core.isTerminologiaSICA_RegistroServizi()){
-		//	de.setLabel("Accordo Servizio Parte Specifica");
-		//}else{
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
-		//}
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
-		de.setPostBack(true);
-		if(TipoOperazione.CHANGE.equals(tipoOp) && this.isModalitaStandard()) {
+		if(!usataInConfigurazioni) {
+			de.setPostBack(true);
+			de.setType(DataElementType.SELECT);
+			de.setValues(serviziList);
+			de.setLabels(serviziListLabel);
+			de.setSelected(servizio);
+		} else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(servizio);
+			de.setValue(servizio); 
 			dati.addElement(de);
 			
 			de = new DataElement();
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+			de.setType(DataElementType.TEXT);
 			for (int i = 0; i < serviziList.length; i++) {
 				if(serviziList[i]!=null && serviziList[i].equals(servizio)){
 					de.setValue(serviziListLabel[i]);
 					break;
 				}
 			}
-			de.setType(DataElementType.TEXT);
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
-			
-		}else{
-			de.setType(DataElementType.SELECT);
-			de.setValues(serviziList);
-			de.setLabels(serviziListLabel);
-			de.setSelected(servizio);
-		}
-		//		de.setOnChange("CambiaServizio('" + tipoOp + "')");
+		}		
 		dati.addElement(de);
 
 		
 		
 		
 		// *************** Azione *********************
+		List<PortaApplicativaAzioneIdentificazione> allImplementationIdentificationResourceModes = getModalitaIdentificazionePorta(protocollo, serviceBinding);
 		
-		if (azioniList != null) {
+		List<String> azTmp = new ArrayList<>();
+		String[] tipoModeAzione = null;
+		String[] tipoModeAzioneLabel = null;
+		
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (!usataInConfigurazioni || usataInConfigurazioneDefault)))
+			azTmp.add(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT);
+		
+		if(allImplementationIdentificationResourceModes != null && allImplementationIdentificationResourceModes.size() >0) {
 			
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-			boolean tutteAzioni = false;
-			if(TipoOperazione.CHANGE.equals(tipoOp) && this.isModalitaStandard()) {
-				if("-".equals(azione)){
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(azione);
-					dati.addElement(de);
-					
-					de = new DataElement();
-					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_QUALSIASI_AZIONE);
-					tutteAzioni = true;
-					de.setType(DataElementType.TEXT);
-					de.setLabel(null);
-					
-				}else{
-					de.setType(DataElementType.TEXT);
-					de.setValue(azione);
-				}
-			}else{
-				de.setType(DataElementType.SELECT);
-				de.setValues(azioniList);
-				de.setSelected(azione);
+			
+			for (int i = 0; i < allImplementationIdentificationResourceModes.size(); i++) {
+				PortaApplicativaAzioneIdentificazione pdAi = allImplementationIdentificationResourceModes.get(i);
+				azTmp.add(pdAi.toString());
 			}
-			dati.addElement(de);
 			
-			if(TipoOperazione.CHANGE.equals(tipoOp)){
-				if(tutteAzioni && asps!=null && aspc!=null){
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					String tipoAccordo = AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
-					if(aspc.getServizioComposto()!=null){
-						tipoAccordo = AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
-					}
-					if(asps.getPortType()!=null && !"".equals(asps.getPortType()) && !"-".equals(asps.getPortType())){
-						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST, 
-								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, aspc.getId()+""),
-								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME, asps.getPortType()),
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
-								);
-						org.openspcoop2.core.registry.PortType pt = null;
-						for (org.openspcoop2.core.registry.PortType ptCheck : aspc.getPortTypeList()) {
-							if(ptCheck.getNome().equals(asps.getPortType())){
-								pt = ptCheck;
-								break;
-							}
-						}
-						if (contaListe) {
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)pt.sizeAzioneList());
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					else{
-						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_LIST,
-								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, aspc.getId()+""),
-								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, aspc.getNome()),
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-						if (contaListe) {
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)aspc.sizeAzioneList());
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					dati.addElement(de);
-				}
+			Collections.sort(azTmp);
+						
+			tipoModeAzione = new String [azTmp.size()];
+			tipoModeAzioneLabel = new String [azTmp.size()];
+			
+			for (int i = 0; i < azTmp.size(); i++) {
+				String azMod = azTmp.get(i);
+				tipoModeAzione[i] = azMod;
+				tipoModeAzioneLabel[i] = this.getPortaApplicativaAzioneIdentificazioneLabel(azMod);
 			}
 		}
 		
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
 		
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE);
+		if(!usataInConfigurazioni || usataInConfigurazioneDefault) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoModeAzione);
+			de.setLabels(tipoModeAzioneLabel); 
+			de.setSelected(modeaz);
+			de.setPostBack(true);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modeaz); 
+		}
 		
+		dati.addElement(de);
 		
+		if(!usataInConfigurazioni || usataInConfigurazioneDefault) {
+	
+			if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+				de.setType(DataElementType.SELECT);
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID);
+				de.setValues(azioniList);
+				de.setLabels(azioniListLabel);
+				de.setSelected(azid);
+				dati.addElement(de);
+			} else {
+	
+				de = new DataElement();
+				if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) 
+						|| modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED)
+						|| modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED))) {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+					de.setValue(patternAzione);
+					de.setRequired(true);
+				} else {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+					de.setValue(azione);
+				}
+	
+				if (!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED.equals(modeaz) && 
+						!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
+						!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED.equals(modeaz) && 
+						!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED.equals(modeaz) ){
+					de.setType(DataElementType.TEXT_EDIT);
+				}else
+					de.setType(DataElementType.HIDDEN);
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+				de.setSize(alternativeSize);
+				dati.addElement(de);
+			}
+	
+			// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
+			de = new DataElement();
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+			if( this.isModalitaAvanzata() &&
+					modeaz!= null && (
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) &&
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED))
+				){
+	
+				de.setType(DataElementType.CHECKBOX);
+				if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
+					de.setSelected(true);
+				}
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(forceWsdlBased);
+			}
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+			dati.addElement(de);
+		
+		} else {
+			// azione non modificabile, metto la lista delle azioni
+			de = new DataElement();
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+			de.setValue(azione);
+			dati.addElement(de);
+		}
 		
 		
 		// *************** ServizioApplicativo Erogatore *********************
@@ -1084,7 +1175,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					de.setLabel(null);
 					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 					de.setType(DataElementType.TEXT);
-					configurazioneStandardNonApplicabile = true;
+//					configurazioneStandardNonApplicabile = true;
 				}
 				dati.addElement(de);
 			}
@@ -1097,13 +1188,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
+				
+				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdSogg, pIdPorta, pIdAsps,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, servizioApplicativo),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, idSa+""));
+				ServletUtils.setDataElementVisualizzaLabel(de);
 
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST,
-						pIdSogg,pIdPorta);
-				if (contaListe) {
-					ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI,new Long(numSA));
-				} else
-					ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
 
 				dati.addElement(de);
 			}
@@ -1115,132 +1205,55 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 	
 		this.controlloAccessi(dati);
 		
-		// controllo accessi
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
-		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
-		ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, statoControlloAccessi);
-		dati.addElement(de);
-		
-		
-		
-		// Pintori 29/11/2017 Gestione Accessi spostata nella servlet PorteApplicativeControlloAccessi, lascio questo codice per eventuali ripensamenti.
-	/*	
-		this.controlloAccessi(dati);
-		
-		this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti);
-		
-		String urlAutorizzazioneAutenticati = null;
-		String urlAutorizzazioneRuoli = null;
-		if(TipoOperazione.CHANGE.equals(tipoOp)){
-			urlAutorizzazioneAutenticati = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST +"?" + 
-					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID + "=" + asps.getId() + "&" +
-					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE + "=" + asps.getIdSoggetto() + "&" +
-					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO + "=" + asps.getTipo()+ "&" +
-					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO + "=" + asps.getNome();
+		if(!tipoOp.equals(TipoOperazione.ADD)) {
+			// 	controllo accessi
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
+			String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+			ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, statoControlloAccessi);
+			dati.addElement(de);
+		}else {
+
+			// Pintori 29/11/2017 Gestione Accessi spostata nella servlet PorteApplicativeControlloAccessi,  in ADD devo mostrare comunque la form.
 			
-			urlAutorizzazioneRuoli = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST +"?" + 
-					PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO + "=" + idsogg + "&" +
-					PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID + "=" + idPorta;
+			this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti);
+			
+			String urlAutorizzazioneAutenticati = null;
+			String urlAutorizzazioneRuoli = null;
+			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ADD;
+			
+			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante, null,
+					autenticazione, autorizzazione, autorizzazioneCustom, 
+					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, 0, null, null,
+					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
+					autorizzazioneRuoliTipologia, ruoloMatch,
+					confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false);
+			
+			this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		}
 		
-		String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ADD;
-		if (tipoOp == TipoOperazione.CHANGE) {
-			servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE;
-		}
 		
-		int sizeFruitori = 0;
-		if(asps!=null){
-			sizeFruitori = asps.sizeFruitoreList();
-		}
-		this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,
-				autenticazione, autorizzazione, autorizzazioneCustom, 
-				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
-				autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
-				autorizzazioneRuoliTipologia, ruoloMatch,
-				confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false);
-		
-		this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
-		
-
-		*/
-
 		
 		// *************** Validazione Contenuti *********************
+		if(!tipoOp.equals(TipoOperazione.ADD)) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
+			dati.addElement(de);
+			
+			
+			// Validazione Contenuti
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
+			ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, xsd);
+			dati.addElement(de);
 		
-		de = new DataElement();
-		de.setType(DataElementType.TITLE);
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
-		dati.addElement(de);
-		
-		// Validazione Contenuti
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
-		ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, xsd);
-		dati.addElement(de);
-		
-		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteApplicativeValidazione, lascio questo codice per eventuali ripensamenti.
-	// *************** Validazione Contenuti *********************
-		
-//		de = new DataElement();
-//		de.setType(DataElementType.TITLE);
-//		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
-//		dati.addElement(de);
-//		
-//		String[] tipoXsd = { 
-//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO ,
-//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO ,
-//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY 
-//		};
-//		de = new DataElement();
-//		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATO);
-//		de.setType(DataElementType.SELECT);
-//		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
-//		de.setValues(tipoXsd);
-//		//		de.setOnChange("CambiaMode('" + tipoOp + "')");
-//		de.setPostBack(true);
-//		de.setSelected(xsd);
-//		dati.addElement(de);
-//
-//		if (PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_ABILITATO.equals(xsd) ||
-//				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_WARNING_ONLY.equals(xsd)) {
-//			String[] tipi_validazione = {
-//					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD,
-//					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_WSDL,
-//					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_OPENSPCOOP 
-//			};
-//			//String[] tipi_validazione = { "xsd", "wsdl" };
-//			de = new DataElement();
-//			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO);
-//			de.setType(DataElementType.SELECT);
-//			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE);
-//			de.setValues(tipi_validazione);
-//			de.setSelected(tipoValidazione);
-//			dati.addElement(de);
-//			
-//			
-//			// Applica MTOM 
-//			de = new DataElement();
-//			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ACCETTA_MTOM);
-//			
-//			//if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
-//			de.setType(DataElementType.CHECKBOX);
-//			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
-//				de.setSelected(true);
-//			}
-////			}
-////			else{
-////				de.setType(DataElementType.HIDDEN);
-////				de.setValue(applicaMTOM);
-////			}
-//			 
-//			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
-//			dati.addElement(de);
-//		}
-		
-		
+		}else {
+			// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteApplicativeValidazione, in ADD devo mostrare comunque la form.
+			this.validazioneContenuti(tipoOp, dati, true, false, xsd, tipoValidazione, applicaMTOM);
+		}
 		
 		// *************** Integrazione *********************
 		
@@ -1299,7 +1312,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			if(this.isModalitaAvanzata()){
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,pIdSogg,pIdPorta);
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,pIdSogg,pIdPorta, pIdAsps);
 
 				if (contaListe) {
 					ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES,new Long(numProprProt));
@@ -1351,7 +1364,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,pIdSogg,pIdPorta,pNomePorta);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,pIdSogg,pIdPorta,pNomePorta, pIdAsps);
 			if (contaListe) {
 				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RICHIESTA,new Long(numCorrelazioneReq));
 			} else
@@ -1361,7 +1374,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST,pIdSogg,pIdPorta,pNomePorta);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST,pIdSogg,pIdPorta,pNomePorta, pIdAsps);
 			if (contaListe) {
 				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA,new Long(numCorrelazioneRes));
 			} else
@@ -1387,7 +1400,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA,pIdSogg,pIdPorta,pNomePorta);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA,pIdSogg,pIdPorta,pNomePorta, pIdAsps);
 			String statoCorrelazioneApplicativa = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
 			if(numCorrelazioneReq>0 || numCorrelazioneRes>0){
 				statoCorrelazioneApplicativa = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA;
@@ -1397,14 +1410,14 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY,pIdSogg,pIdPorta);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY,pIdSogg,pIdPorta, pIdAsps);
 			ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY, statoMessageSecurity);
 			dati.addElement(de);
 			
 			//if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, pIdSogg,pIdPorta);
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM, pIdSogg,pIdPorta, pIdAsps);
 			ServletUtils.setDataElementCustomLabel(de, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM, statoMTOM);
 			dati.addElement(de);
 			//}
@@ -1493,7 +1506,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			};
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
-			if(this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+			if(this.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoGestManifest);
 				de.setSelected(gestManifest);
@@ -1507,20 +1520,59 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			
 		}
 		
-		
-		
-		
-		
-		
-		if(configurazioneStandardNonApplicabile){
-			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
-			this.pd.disableEditMode();
-		}
+//		if(configurazioneStandardNonApplicabile){
+//			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
+//			this.pd.disableEditMode();
+//		}
 		
 
 
 		return dati;
 	}
+	
+	
+	public boolean isFunzionalitaProtocolloSupportataDalProtocollo(String protocollo, ServiceBinding serviceBinding,FunzionalitaProtocollo funzionalitaProtocollo)
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+		if(serviceBinding == null) {
+			List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
+			
+			boolean supportato = true;
+			if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
+					boolean supportatoTmp = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding2, funzionalitaProtocollo);
+					supportato = supportato || supportatoTmp;
+				}
+			}
+			return supportato;
+		} else {
+			return this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, funzionalitaProtocollo);
+		}
+	}
+	
+
+	public List<PortaApplicativaAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding)
+			throws ProtocolException, DriverConfigurazioneException { 
+		
+		if(serviceBinding == null) {
+			List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
+			
+			List<PortaApplicativaAzioneIdentificazione> listaModalita = new ArrayList<PortaApplicativaAzioneIdentificazione>();
+			if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
+					List<PortaApplicativaAzioneIdentificazione> listaModalitaTmp = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolIntegrationConfiguration().getAllImplementationIdentificationResourceModes(serviceBinding2);
+					
+					for (PortaApplicativaAzioneIdentificazione tipoTmp : listaModalitaTmp) {
+						if(!listaModalita.contains(tipoTmp))
+							listaModalita.add(tipoTmp);
+					}
+				}
+			}
+			return listaModalita;
+		} else {
+			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolIntegrationConfiguration().getAllImplementationIdentificationResourceModes(serviceBinding);
+		}
+	}
+
 
 
 	public void preparePorteAppList(ISearch ricerca, List<PortaApplicativa> lista, int idLista)
@@ -2695,10 +2747,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
 
 			// controllo eventuali risultati ricerca
-			if (!search.equals("")) {
-				this.pd.setSearch("on");
-				this.pd.setSearchDescription("Soggetti contenenti la stringa '" + search + "'");
-			}
+//			if (!search.equals("")) {
+//				this.pd.setSearch("on");
+//				this.pd.setSearchDescription("Soggetti contenenti la stringa '" + search + "'");
+//			}
 
 			// setto le label delle colonne
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO};
@@ -3277,5 +3329,43 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			break;
 		}
 		return lstParam;
+	}
+	
+	
+	public String getPortaApplicativaAzioneIdentificazioneLabel(String paAiString) {
+		if(paAiString == null)
+			return "";
+		
+		return getPortaApplicativaAzioneIdentificazioneLabel(PortaApplicativaAzioneIdentificazione.toEnumConstant(paAiString));
+	}
+	
+
+	public String getPortaApplicativaAzioneIdentificazioneLabel(PortaApplicativaAzioneIdentificazione paAi) {
+		if(paAi == null)
+			return "";
+		switch (paAi) {
+		case CONTENT_BASED:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED;
+		case HEADER_BASED:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED;
+		case INPUT_BASED:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED;
+		case INTERFACE_BASED:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED;
+		case SOAP_ACTION_BASED:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED;
+		case STATIC:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT;
+		case URL_BASED:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED;
+		case PROTOCOL_BASED:
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED;
+		case DELEGATED_BY:
+			break;
+		default:
+			break;
+		}
+		
+		return "";
 	}
 }

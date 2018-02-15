@@ -155,7 +155,8 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 				list.add(PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED);		
 				break;
 			case PROTOCOL:
-				throw new ProtocolException("IdentificationMode '"+type+"' unsupported");
+				list.add(PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED);	
+//				throw new ProtocolException("IdentificationMode '"+type+"' unsupported");
 			}
 		}
 		return list;

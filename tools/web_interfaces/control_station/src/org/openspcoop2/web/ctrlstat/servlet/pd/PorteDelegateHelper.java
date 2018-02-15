@@ -19,7 +19,9 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -40,9 +42,11 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
+import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -54,15 +58,14 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -82,7 +85,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev$, $Date$
  */
 public class PorteDelegateHelper extends ConsoleHelper {
-
+	
+	
 	public PorteDelegateHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
@@ -91,9 +95,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 	public Vector<DataElement> addPorteDelegateToDati(TipoOperazione tipoOp, String idsogg,
 			String nomePorta, Vector<DataElement> dati, String idPorta,
 			String descr, String autenticazione,
-			String autorizzazione, String modesp, String soggid,
+			String autorizzazione, String soggid,
 			String[] soggettiList, String[] soggettiListLabel, String sp,
-			String tiposp, String patternErogatore, String modeservizio,
+			String tiposp, String patternErogatore, 
 			String servid, String[] serviziList, String[] serviziListLabel,
 			String servizio, String tiposervizio,String versioneServizio, String patternServizio,
 			String modeaz, String azid, String[] azioniListLabel,
@@ -107,15 +111,13 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			int numCorrelazioneRes,String forceWsdlBased, String applicaMTOM,
 			boolean riusoId,
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,ServiceBinding serviceBinding,
-			String statoPorta) throws Exception {
+			String statoPorta, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault) throws Exception {
 
 
 
 //		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-		boolean configurazioneStandardNonApplicabile = false;
-		
 		int alternativeSize = 80;
 		
 		Parameter pIdSogg = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
@@ -143,9 +145,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 		dati.addElement(de);
 		
-
-		
-
+		// servicebinding hidden
+		dati.add(this.getServiceBindingDataElement(serviceBinding));
 		
 		// *************** Dati Generali: Nome/Descrizione *********************
 		
@@ -202,514 +203,191 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		// *************** Soggetto Erogatore *********************
 		
-		boolean configurazioneStandardSoggettoErogatore = false;
-		
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
-		String[] tipoMode = {
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED
-		};
-		String[] tipoModeSimple = { 
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED
-		};
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
-		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SP);
-		if(TipoOperazione.CHANGE.equals(tipoOp)){
-			if (this.isModalitaStandard()) {
-				if(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modesp) ){
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(modesp);
-					configurazioneStandardSoggettoErogatore = true;
-				}
-				else{
-					de.setLabel(null);
-					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
-					de.setType(DataElementType.TEXT);
-					configurazioneStandardNonApplicabile = true;
-				}
-			}
-			else{
-				de.setType(DataElementType.SELECT);
-				de.setValues(tipoMode);
-				de.setSelected(modesp);
-			}
-		}
-		else{
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID);
+		if(!usataInConfigurazioni) {
+			de.setPostBack(true);
 			de.setType(DataElementType.SELECT);
-			de.setValues(tipoMode);
-			de.setSelected(modesp);
+			de.setValues(soggettiList);
+			de.setLabels(soggettiListLabel);
+			de.setSelected(soggid);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(soggid); 
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO);
+			de.setType(DataElementType.TEXT);
+			String tipoSoggetto = soggid.split("/")[0];
+			String nomeSoggetto = soggid.split("/")[1];
+			de.setValue(this.getLabelNomeSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
 		}
-		//		de.setOnChange("CambiaModeSP('" + tipoOp + "', " + numCorrApp + ")");
-		de.setPostBack(true);
 		dati.addElement(de);
 
-		if(!configurazioneStandardNonApplicabile){
-			if (modesp != null && modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID);
-				de.setPostBack(true);
-				if(configurazioneStandardSoggettoErogatore){
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(soggid);
-					dati.addElement(de);
-					
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-					de.setValue(soggid);
-					de.setType(DataElementType.TEXT);
-				}else{
-					de.setType(DataElementType.SELECT);
-					de.setValues(soggettiList);
-					de.setLabels(soggettiListLabel);
-					de.setSelected(soggid);
-				}
-				//			de.setOnChange("CambiaSoggPD('" + tipoOp + "', " + numCorrApp + ")");
-				dati.addElement(de);
-			} else {
-	
-				if (this.isModalitaStandard()) {
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-					de.setValue(this.soggettiCore.getTipoSoggettoDefaultProtocollo(protocollo));
-					de.setType(DataElementType.HIDDEN);
-					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
-					dati.addElement(de);
-				} else {
-					
-					List<String> tipiSoggetto = this.soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-					
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-					de.setValues(tipiSoggetto);
-					de.setValue(tiposp);
-					de.setSelected(tiposp);
-					de.setType(DataElementType.SELECT);
-					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
-					de.setSize(alternativeSize);
-					dati.addElement(de);
-				}
-	
-				de = new DataElement();
-				if (modesp != null && (modesp.equals(IdentificazioneView.URL_BASED.toString()) || modesp.equals(IdentificazioneView.CONTENT_BASED.toString()))) {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
-					de.setValue(patternErogatore);
-				} else {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-					de.setValue(sp);
-				}
-				if (modesp != null && !modesp.equals(IdentificazioneView.INPUT_BASED.toString())){
-					de.setType(DataElementType.TEXT_EDIT);
-					de.setRequired(true);
-				}else
-					de.setType(DataElementType.HIDDEN);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SP);
-				de.setSize(alternativeSize);
-				dati.addElement(de);
-			}
-		}
 
-		
-		
-		
-		
-		
-		
-		
-		
 		// *************** Servizio *********************
 		
-		boolean configurazioneStandardServizio = false;
-		
 		de = new DataElement();
-		//if(this.core.isTerminologiaSICA_RegistroServizi()){
-		//	de.setLabel("Accordo Servizio Parte Specifica");
-		//}else{
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO);
-		//}
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID);
+		if(!usataInConfigurazioni) {
+			de.setPostBack(true);
+			de.setType(DataElementType.SELECT);
+			de.setValues(serviziList);
+			de.setLabels(serviziListLabel);
+			de.setSelected(servid);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(servid); 
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+			de.setType(DataElementType.TEXT);
+			for (int i = 0; i < serviziList.length; i++) {
+				if(serviziList[i]!=null && serviziList[i].equals(servid)){
+					de.setValue(serviziListLabel[i]);
+					break;
+				}
+			}
+		}
+		dati.addElement(de);
+		
+		// *************** Azione *********************
+		
+		List<PortaDelegataAzioneIdentificazione> allSubscriptionIdentificationResourceModes = getModalitaIdentificazionePorta(protocollo, serviceBinding);
+		
+		
+		// se servizio register-input e azioneList==null e
+		// mode_azione=register-input allora nn c'e' azione
+		List<String> azTmp = new ArrayList<>();
+		String[] tipoModeAzione = null;
+		String[] tipoModeAzioneLabel = null;
+		
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (!usataInConfigurazioni || usataInConfigurazioneDefault)))
+			azTmp.add(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT);
+		
+		if(allSubscriptionIdentificationResourceModes != null && allSubscriptionIdentificationResourceModes.size() >0) {
+			
+			
+			for (int i = 0; i < allSubscriptionIdentificationResourceModes.size(); i++) {
+				PortaDelegataAzioneIdentificazione pdAi = allSubscriptionIdentificationResourceModes.get(i);
+				azTmp.add(pdAi.toString());
+			}
+			
+			Collections.sort(azTmp);
+						
+			tipoModeAzione = new String [azTmp.size()];
+			tipoModeAzioneLabel = new String [azTmp.size()];
+			
+			for (int i = 0; i < azTmp.size(); i++) {
+				String azMod = azTmp.get(i);
+				tipoModeAzione[i] = azMod;
+				tipoModeAzioneLabel[i] = this.getPortaDelegataAzioneIdentificazioneLabel(azMod);
+			}
+		}
+		
+	
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
-		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO);
-		if(TipoOperazione.CHANGE.equals(tipoOp)){
-			if (this.isModalitaStandard()) {
-				if(!configurazioneStandardNonApplicabile && PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modeservizio) ){
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(modeservizio);
-					configurazioneStandardServizio = true;
-				}
-				else{
-					de.setLabel(null);
-					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
-					de.setType(DataElementType.TEXT);
-					configurazioneStandardNonApplicabile = true;
-				}
-			}
-			else{
-				de.setType(DataElementType.SELECT);
-				if (modesp != null && modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					de.setValues(tipoMode);
-				} else {
-					de.setValues(tipoModeSimple);
-				}
-				de.setSelected(modeservizio);
-			}
-		}else{
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
+		if(!usataInConfigurazioni || usataInConfigurazioneDefault) {
 			de.setType(DataElementType.SELECT);
-			if (modesp != null && modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				de.setValues(tipoMode);
-			} else {
-				de.setValues(tipoModeSimple);
-			}
-			de.setSelected(modeservizio);
+			de.setValues(tipoModeAzione);
+			de.setLabels(tipoModeAzioneLabel); 
+			de.setSelected(modeaz);
+			de.setPostBack(true);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modeaz); 
 		}
-		//if (modesp.equals("register-input")) {
-		//			de.setOnChange("CambiaModeServizio('" + tipoOp + "', " + numCorrApp + ")");
-		de.setPostBack(true);
-		//}
+		
 		dati.addElement(de);
-
-		if(!configurazioneStandardNonApplicabile){
-			if (modeservizio!= null && modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+		
+		if(!usataInConfigurazioni || usataInConfigurazioneDefault) {
+	
+			if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID);
-				de.setPostBack(true);
-				if(configurazioneStandardServizio){
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(servid);
-					dati.addElement(de);
-					
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-					de.setValue(servid);
-					de.setType(DataElementType.TEXT);
-				}else{
-					de.setType(DataElementType.SELECT);
-					de.setValues(serviziList);
-					de.setLabels(serviziListLabel);
-					de.setSelected(servid);
-				}
-				//			de.setOnChange("CambiaServPD('" + tipoOp + "', " + numCorrApp + ")");
+				de.setType(DataElementType.SELECT);
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
+				de.setValues(azioniList);
+				de.setLabels(azioniListLabel);
+				de.setSelected(azid);
 				dati.addElement(de);
 			} else {
 	
-				if (this.isModalitaStandard()) {
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-					//de.setValue(this.apsCore.getTipoServizioDefault(serviceBinding));
-					de.setType(DataElementType.HIDDEN);
-					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
-					dati.addElement(de);
-				} else {
-					
-					List<String> tipiServizio = this.apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
-					
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
-					de.setValues(tipiServizio);
-					de.setSelected(tiposervizio);
-					de.setValue(tiposervizio);
-					de.setType(DataElementType.SELECT);
-					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
-					de.setSize(alternativeSize);
-					dati.addElement(de);
-				}
-	
 				de = new DataElement();
-				if (modeservizio!= null && (modeservizio.equals(IdentificazioneView.URL_BASED.toString()) || modeservizio.equals(IdentificazioneView.CONTENT_BASED.toString()))) {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
-					de.setValue(patternServizio);
-				} else {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-					de.setValue(servizio);
-				}
-				if (modeservizio!= null && !modeservizio.equals(IdentificazioneView.INPUT_BASED.toString())){
-					de.setType(DataElementType.TEXT_EDIT);
-					de.setRequired(true);
-				}else
-					de.setType(DataElementType.HIDDEN);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO);
-				de.setSize(alternativeSize);
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO);
-				de.setValue(tiposervizio);
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO);
-				de.setSize(alternativeSize);
-				de.setRequired(true);
-				dati.addElement(de);
-			}
-		}
-		
-		// *************** Azione *********************
-		
-		boolean configurazioneStandardAzione = false;
-		
-		// se servizio register-input e azioneList==null e
-		// mode_azione=register-input allora nn c'e' azione
-		String[] tipoModeAzione = {
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED
-		};
-		String[] tipoModeSimpleAzione = {
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED
-		};
-		if(TipoOperazione.CHANGE.equals(tipoOp) && this.isModalitaStandard() ){
-			if ( !configurazioneStandardNonApplicabile && 
-					(modeaz != null) && 
-					(
-					 modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) ||
-					 modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT) ||
-					 modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)
-					)
-				) {
-				if( modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) ){
-					if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
-						configurazioneStandardAzione = true;
-					}
-					else{
-						configurazioneStandardNonApplicabile = true;
-					}
-				}
-				else{
-					configurazioneStandardAzione = true;
-				}
-			}
-			else{
-				configurazioneStandardNonApplicabile = true;
-			}
-		}
-		if(configurazioneStandardNonApplicabile){
-			
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
-			de.setType(DataElementType.TEXT);
-			dati.addElement(de);
-			
-		}
-		else{
-
-			if(configurazioneStandardAzione){
-				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
-				de.setType(DataElementType.HIDDEN);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
-				de.setValue(modeaz);
-				dati.addElement(de);
-				
-				if( modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) ){
-					de = new DataElement();
+				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
+						|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED)
+						|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
 					de.setValue(patternAzione);
+					de.setRequired(true);
+				} else {
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					de.setValue(azione);
+				}
+	
+				if (!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED.equals(modeaz) && 
+						!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
+						!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED.equals(modeaz) ){
+					de.setType(DataElementType.TEXT_EDIT);
+				}else
 					de.setType(DataElementType.HIDDEN);
-					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
-					de.setSize(alternativeSize);
-					dati.addElement(de);
-				}
-				else{
-					if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-						de = new DataElement();
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
-						de.setValue(azid);
-						dati.addElement(de);
-					}
-					else{
-						de = new DataElement();
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-						de.setValue(azione);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
-						de.setSize(alternativeSize);
-						dati.addElement(de);
-					}
-				}
-				
-				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(forceWsdlBased);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+				de.setSize(alternativeSize);
 				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
-				de.setType(DataElementType.SUBTITLE);
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setType(DataElementType.TEXT);
-				boolean tutteAzioni = false;
-				if ((modeaz != null) && (modeaz.equals(IdentificazioneView.URL_BASED.toString()))){
-					de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE);
-					tutteAzioni = true;
+			}
+	
+			// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
+			if( this.isModalitaAvanzata() &&
+					modeaz!= null && (
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) &&
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))
+				){
+	
+				de.setType(DataElementType.CHECKBOX);
+				if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
+					de.setSelected(true);
 				}
-				else{
-					// static o registry
-					if(azione==null || "".equals(azione) || "-".equals(azione)){
-						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE);
-						tutteAzioni = true;
-					}else{
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-						de.setValue(azione);
-					}
-				}
-				dati.addElement(de);
-				
-				if(TipoOperazione.CHANGE.equals(tipoOp)){
-					if(tutteAzioni && asps!=null && aspc!=null){
-						de = new DataElement();
-						de.setType(DataElementType.LINK);
-						String tipoAccordo = AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
-						if(aspc.getServizioComposto()!=null){
-							tipoAccordo = AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
-						}
-						if(asps.getPortType()!=null && !"".equals(asps.getPortType()) && !"-".equals(asps.getPortType())){
-							de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST, 
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, aspc.getId()+""),
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME, asps.getPortType()),
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
-									);
-							org.openspcoop2.core.registry.PortType pt = null;
-							for (org.openspcoop2.core.registry.PortType ptCheck : aspc.getPortTypeList()) {
-								if(ptCheck.getNome().equals(asps.getPortType())){
-									pt = ptCheck;
-									break;
-								}
-							}
-							if (contaListe) {
-								ServletUtils.setDataElementVisualizzaLabel(de,(long)pt.sizeAzioneList());
-							} else
-								ServletUtils.setDataElementVisualizzaLabel(de);
-						}
-						else{
-							de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_LIST,
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, aspc.getId()+""),
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, aspc.getNome()),
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-							if (contaListe) {
-								ServletUtils.setDataElementVisualizzaLabel(de,(long)aspc.sizeAzioneList());
-							} else
-								ServletUtils.setDataElementVisualizzaLabel(de);
-						}
-						dati.addElement(de);
-					}
-				}
-				
 			}
 			else{
-				if (modeservizio!= null && !(modeservizio.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((modeaz != null) && modeaz.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((azioniList == null) || (azioniList.length == 0))))) {
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
-					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);
-		
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
-					de.setType(DataElementType.SELECT);
-					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
-					if (modeservizio!= null && modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-						de.setValues(tipoModeAzione);
-					} else {
-						de.setValues(tipoModeSimpleAzione);
-					}
-					de.setSelected(modeaz);
-					//if (modeservizio.equals("register-input")) {
-					//				de.setOnChange("CambiaModeAzione('" + tipoOp + "', " + numCorrApp + ")");
-					de.setPostBack(true);
-					//}
-					dati.addElement(de);
-		
-					if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-						de = new DataElement();
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-						de.setType(DataElementType.SELECT);
-						de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
-						de.setValues(azioniList);
-						de.setLabels(azioniListLabel);
-						de.setSelected(azid);
-						dati.addElement(de);
-					} else {
-		
-						de = new DataElement();
-						if ((modeaz != null) && (modeaz.equals(IdentificazioneView.URL_BASED.toString()) || modeaz.equals(IdentificazioneView.CONTENT_BASED.toString()))) {
-							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
-							de.setValue(patternAzione);
-							de.setRequired(true);
-						} else {
-							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-							de.setValue(azione);
-						}
-		
-						if (!IdentificazioneView.INPUT_BASED.toString().equals(modeaz) && 
-								!IdentificazioneView.SOAP_ACTION_BASED.toString().equals(modeaz) && 
-								!IdentificazioneView.INTERFACE_BASED.toString().equals(modeaz) ){
-							de.setType(DataElementType.TEXT_EDIT);
-						}else
-							de.setType(DataElementType.HIDDEN);
-						de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
-						de.setSize(alternativeSize);
-						dati.addElement(de);
-					}
-		
-					// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
-					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
-					if( this.isModalitaAvanzata() &&
-							modeaz!= null && (
-								!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT) &&
-								!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-								!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))
-						){
-		
-						de.setType(DataElementType.CHECKBOX);
-						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
-							de.setSelected(true);
-						}
-					}
-					else{
-						de.setType(DataElementType.HIDDEN);
-						de.setValue(forceWsdlBased);
-					}
-					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
-					dati.addElement(de);
-		
-				}
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(forceWsdlBased);
 			}
-		}
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
+			dati.addElement(de);
 		
+		} else {
+			// azione non modificabile, metto la lista delle azioni
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			de.setValue(azione);
+			dati.addElement(de);
+		}
 		
 		
 		
@@ -721,124 +399,64 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		this.controlloAccessi(dati);
 		
-		// controllo accessi
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-		String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
-		ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
-		dati.addElement(de);
-		
-		// Pintori 11/12/2017 Gestione Accessi spostata nella servlet PorteDelegateControlloAccessi, lascio questo codice per eventuali ripensamenti.
-//		this.controlloAccessi(dati);
-//		
-//		boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
-//		
-//		this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti);
-//		
-//		String urlAutorizzazioneAutenticati = null;
-//		String urlAutorizzazioneRuoli = null;
-//		if(TipoOperazione.CHANGE.equals(tipoOp)){
-//			urlAutorizzazioneAutenticati = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST +"?" + 
-//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&" +
-//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta;
-//			
-//			urlAutorizzazioneRuoli = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST +"?" + 
-//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&" +
-//					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta;
-//		}
-//		
-//		String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
-//		if (tipoOp == TipoOperazione.CHANGE) {
-//			servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE;
-//		}
-//		
-//		this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,
-//				autenticazione, autorizzazione, autorizzazioneCustom, 
-//				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
-//				autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
-//				autorizzazioneRuoliTipologia, ruoloMatch,
-//				confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false);
-//		
-//		this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
+		// Pintori 11/12/2017 Gestione Accessi spostata nella servlet PorteDelegateControlloAccessi,  in ADD devo mostrare comunque la form.
+		if(!tipoOp.equals(TipoOperazione.ADD)) {
+			// controllo accessi
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+			String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+			ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
+			dati.addElement(de);
+		}else {
+			boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
+			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			
+			this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers , isSupportatoAutenticazioneSoggetti);
+			
+			String urlAutorizzazioneAutenticati = null;
+			String urlAutorizzazioneRuoli = null;
+			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
+			
+			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,null,
+					autenticazione, autorizzazione, autorizzazioneCustom, 
+					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
+					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
+					autorizzazioneRuoliTipologia, ruoloMatch,
+					confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false);
+			
+			this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
+		}
 		
 		
 		// *************** Validazione Contenuti *********************
 		
 		
-		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteDelegateValidazione, lascio questo codice per eventuali ripensamenti.
-
-		de = new DataElement();
-		de.setType(DataElementType.TITLE);
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
-		dati.addElement(de);
+		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteDelegateValidazione, in ADD devo mostrare comunque la form.
 		
-		// validazione contenuti
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-		ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, xsd);
-		dati.addElement(de);
+		if(!tipoOp.equals(TipoOperazione.ADD)) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
+			dati.addElement(de);
+			
+			// validazione contenuti
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+			ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, xsd);
+			dati.addElement(de);
 		
-		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteDelegateValidazione, lascio questo codice per eventuali ripensamenti.
-
-//		String[] tipoXsd = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO,
-//				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO,
-//				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY };
-//		de = new DataElement();
-//		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO);
-//		de.setType(DataElementType.SELECT);
-//		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
-//		de.setValues(tipoXsd);
-//		//		de.setOnChange("CambiaModePD('" + tipoOp + "', " + numCorrApp + ")");
-//		de.setPostBack(true);
-//		de.setSelected(xsd);
-//		dati.addElement(de);
-//
-//		if (PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO.equals(xsd) || 
-//				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY.equals(xsd)) {
-//			String[] tipi_validazione = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD,
-//					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_WSDL,
-//					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_OPENSPCOOP };
-//			//String[] tipi_validazione = { "xsd", "wsdl" };
-//			de = new DataElement();
-//			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-//			de.setType(DataElementType.SELECT);
-//			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
-//			de.setValues(tipi_validazione);
-//			de.setSelected(tipoValidazione);
-//			dati.addElement(de);
-//
-//
-//			// Applica MTOM 
-//			de = new DataElement();
-//			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM);
-//
-//			
-//			//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
-//			de.setType(DataElementType.CHECKBOX);
-//			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
-//				de.setSelected(true);
-//			}
-////			}
-////			else{
-////				de.setType(DataElementType.HIDDEN);
-////				de.setValue(applicaMTOM);
-////			}
-//		 
-//			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
-//			dati.addElement(de);
-//
-//		}
-		
-		
+		} else {
+			this.validazioneContenuti(tipoOp, dati, true, xsd, tipoValidazione, applicaMTOM);
+		}
 		
 		
 		// *************** Integrazione *********************
 		
 		Vector<DataElement> deIntegrazione = new Vector<DataElement>();
 		
-		if (tipoOp == TipoOperazione.CHANGE) {
+		if (tipoOp.equals(TipoOperazione.CHANGE)) {
 
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_METADATI);
@@ -862,19 +480,19 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
 		if(this.core.isShowJ2eeOptions()){
-			if(configurazioneStandardNonApplicabile){
-				de.setType(DataElementType.TEXT);
-				if(stateless!=null && !"".equals(stateless)){
-					de.setValue(stateless);
-				}
-				else{
-					de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT);
-				}
-			}else{
+//			if(configurazioneStandardNonApplicabile){
+//				de.setType(DataElementType.TEXT);
+//				if(stateless!=null && !"".equals(stateless)){
+//					de.setValue(stateless);
+//				}
+//				else{
+//					de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT);
+//				}
+//			}else{
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoStateless);
 				de.setSelected(stateless);
-			}
+//			}
 			deIntegrazione.addElement(de);
 		}else{
 			de.setType(DataElementType.HIDDEN);
@@ -886,30 +504,15 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		// LocalForward
 		boolean localForwardShow = true;
 		Soggetto soggettoErogatoreLocalForward  = null;
-		if (modesp != null && modesp.equals(IdentificazioneView.REGISTER_INPUT.toString()) ) {
-			try{
-				if(soggid!=null && soggid.contains("/")){
-					soggettoErogatoreLocalForward = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]));
-				}
-				else if(soggid!=null && !"".equals(soggid)){
-					soggettoErogatoreLocalForward = this.soggettiCore.getSoggettoRegistro(Long.parseLong(soggid));
-				}
-			}catch(DriverRegistroServiziNotFound dNot){}
-		}
-		else if (modesp != null && modesp.equals(IdentificazioneView.USER_INPUT.toString()) ) {
-			try{
-				String tipoSoggetto = null;
-				if (this.isModalitaStandard()) {
-					tipoSoggetto = this.soggettiCore.getTipoSoggettoDefaultProtocollo(protocollo);
-				} else {
-					tipoSoggetto = tiposp;
-				}
-				if(tipoSoggetto!=null && !"".equals(tipoSoggetto) && 
-						sp!=null && !"".equals(sp)){
-					soggettoErogatoreLocalForward = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoSoggetto, sp));
-				}
-			}catch(DriverRegistroServiziNotFound dNot){}
-		}
+		try{
+			if(soggid!=null && soggid.contains("/")){
+				soggettoErogatoreLocalForward = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]));
+			}
+			else if(soggid!=null && !"".equals(soggid)){
+				soggettoErogatoreLocalForward = this.soggettiCore.getSoggettoRegistro(Long.parseLong(soggid));
+			}
+		}catch(DriverRegistroServiziNotFound dNot){}
+		
 		if(soggettoErogatoreLocalForward!=null){
 			if(this.pddCore.isRegistroServiziLocale()){
 				if(soggettoErogatoreLocalForward.getPortaDominio()!=null){
@@ -1159,7 +762,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO };
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
-			if(this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+			if(isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoGestManifest);
 				de.setSelected(gestManifest);
@@ -1171,18 +774,54 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			dati.addElement(de);
 		
 		}
-		
-		
-
 	
-		if(configurazioneStandardNonApplicabile){
-			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
-			this.pd.disableEditMode();
-		}
-		
-		
+//		if(configurazioneStandardNonApplicabile){
+//			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
+//			this.pd.disableEditMode();
+//		}
 		
 		return dati;
+	}
+
+	public boolean isFunzionalitaProtocolloSupportataDalProtocollo(String protocollo, ServiceBinding serviceBinding,FunzionalitaProtocollo funzionalitaProtocollo)
+			throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+		if(serviceBinding == null) {
+			List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
+			
+			boolean supportato = true;
+			if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
+					boolean supportatoTmp = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding2, funzionalitaProtocollo);
+					supportato = supportato || supportatoTmp;
+				}
+			}
+			return supportato;
+		} else {
+			return this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, funzionalitaProtocollo);
+		}
+	}
+
+	public List<PortaDelegataAzioneIdentificazione> getModalitaIdentificazionePorta(String protocollo, ServiceBinding serviceBinding)
+			throws ProtocolException, DriverConfigurazioneException { 
+		
+		if(serviceBinding == null) {
+			List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocollo);
+			
+			List<PortaDelegataAzioneIdentificazione> listaModalita = new ArrayList<PortaDelegataAzioneIdentificazione>();
+			if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
+				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
+					List<PortaDelegataAzioneIdentificazione> listaModalitaTmp = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding2);
+					
+					for (PortaDelegataAzioneIdentificazione tipoTmp : listaModalitaTmp) {
+						if(!listaModalita.contains(tipoTmp))
+							listaModalita.add(tipoTmp);
+					}
+				}
+			}
+			return listaModalita;
+		} else {
+			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding);
+		}
 	}
 
 
@@ -1377,18 +1016,18 @@ public class PorteDelegateHelper extends ConsoleHelper {
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage("Non inserire spazi nei nomi");
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
 				return false;
 			}
 			if(valore.startsWith(" ") || valore.endsWith(" ")){
-				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
 
@@ -1413,7 +1052,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("La proprieta' di message-security " + nome + " &egrave; gi&agrave; stato associata alla porta delegata " + nomeporta);
+					this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_DELEGATA_YY,	nome, nomeporta));
 					return false;
 				}
 			}
@@ -1450,13 +1089,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			String autorizzazioneRuoliTipologia = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			String soggid = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID);
-			String tiposp = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
-			String modesp = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SP);
-			String sp = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SP);
 			String servid = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID);
-			String tiposervizio = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
-			String modeservizio = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO);
-			String servizio = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO);
 			String azid = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
 			String modeaz = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 			String azione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
@@ -1464,170 +1097,68 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 			// Campi obbligatori
 			if (nomePD==null || nomePD.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il Nome");
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_EGRAVE_NECESSARIO_INDICARE_IL_NOME);
 				return false;
 			}
 
-			if (!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-					!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) &&
-					(tiposp.equals("") || sp.equals(""))) {
-				String tmpElenco = "";
-				if (tiposp.equals("")) {
-					tmpElenco = "Tipo soggetto erogatore";
-				}
-				if (sp.equals("")) {
-					if(modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED)
-							|| modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED)){
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Pattern soggetto erogatore";
-						} else {
-							tmpElenco = tmpElenco + ", Pattern soggetto erogatore";
-						}
-					}else{
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Nome soggetto erogatore";
-						} else {
-							tmpElenco = tmpElenco + ", Nome soggetto erogatore";
-						}
-					}
-				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
-				return false;
-			}
-			if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && (soggid == null)) {
-				this.pd.setMessage("Dati incompleti. Non &egrave; stato trovato nessun soggetto erogatore. Scegliere una delle altre modalit&agrave");
-				return false;
-			}
-			if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) && (tiposp.equals(""))) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo soggetto erogatore");
+			if (soggid == null) {
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA);
 				return false;
 			}
 
-			if (!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-					!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) &&
-					(tiposervizio.equals("") || servizio.equals(""))) {
-				String tmpElenco = "";
-				if (tiposervizio.equals("")) {
-					tmpElenco = "Tipo servizio";
-				}
-				if (servizio.equals("")) {
-					if(modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) ||
-							modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED)){
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Pattern servizio";
-						} else {
-							tmpElenco = tmpElenco + ", Pattern servizio";
-						}
-					}else{
-						if (tmpElenco.equals("")) {
-							tmpElenco = "Nome servizio";
-						} else {
-							tmpElenco = tmpElenco + ", Nome servizio";
-						}
-					}
-				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+			if (servid == null) {
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SERVIZIO_ASSOCIATO_AL_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA);
 				return false;
 			}
-			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && (servid == null)) {
-				this.pd.setMessage("Dati incompleti. Non &egrave; stato trovato nessun servizio associato al soggetto erogatore. Scegliere una delle altre modalit&agrave");
-				return false;
-			}
-			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) && (tiposervizio.equals(""))) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo servizio");
+			
+			if (modeaz == null) {
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_MODALITA_AZIONE);
 				return false;
 			}
 
-			if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && (azid == null)) {
-				this.pd.setMessage("Dati incompleti. Non &egrave; stata trovata nessuna azione associata al servizio. Scegliere una delle altre modalit&agrave");
+			if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && (azid == null)) {
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA);
 				return false;
 			}
-			if ( modeaz!=null && (modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) || 
-					modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED)) && (azione==null || azione.equals(""))) {
-				String tmpElenco = "";
-				if (tmpElenco.equals("")) {
-					tmpElenco = "Pattern azione";
-				} else {
-					tmpElenco = tmpElenco + ", Pattern azione";
-				}
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+			if ((modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) || 
+					modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) ||
+					modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED)) && (azione==null || azione.equals(""))) {
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE);
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nomePD.indexOf(" ") != -1) ) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 			if(this.checkIntegrationEntityName(nomePD,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false){
 				return false;
 			}
-			if (!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED)) {
-					if (tiposp.indexOf(" ") != -1) {
-						this.pd.setMessage("Non inserire spazi nei campi di testo");
-						return false;
-					}
-				} else {
-					if ((tiposp.indexOf(" ") != -1) || (sp.indexOf(" ") != -1)) {
-						this.pd.setMessage("Non inserire spazi nei campi di testo");
-						return false;
-					}
-				}
-			}
-			if (!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED)) {
-					if (tiposervizio.indexOf(" ") != -1) {
-						this.pd.setMessage("Non inserire spazi nei campi di testo");
-						return false;
-					}
-				} else {
-					if ((tiposervizio.indexOf(" ") != -1) || (servizio.indexOf(" ") != -1)) {
-						this.pd.setMessage("Non inserire spazi nei campi di testo");
-						return false;
-					}
-				}
-			}
-			if ((modeaz != null) && !modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) &&
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) &&
+			if ((modeaz != null) && !modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) &&
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) &&
 					(azione.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT) &&
-					!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) 
-					&& !modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) && 
-					!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED) &&
-					!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED)) {
-				this.pd.setMessage("Mode SP dev'essere user-input, register-input, url-based, content-based o input-based");
-				return false;
-			}
-			if (!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT) && 
-					!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-					!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) &&
-					!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED) &&
-					!modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED)) {
-				this.pd.setMessage("Mode Servizio dev'essere user-input, register-input, url-based, content-based o input-based");
-				return false;
-			}
-			if ((modeaz != null) && !modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_USER_INPUT) && 
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) && 
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED) && 
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) && 
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) && 
-					!modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)) {
-				this.pd.setMessage("Mode Azione dev'essere user-input, register-input, url-based, content-based, input-based, soap-action-based o wsdl-based");
+			if ((modeaz != null) && !modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) && 
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) && 
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED) && 
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) && 
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) && 
+					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)) {
+				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_MODE_AZIONE_DEV_ESSERE_USER_INPUT_REGISTER_INPUT_URL_BASED_CONTENT_BASED_INPUT_BASED_SOAP_ACTION_BASED_O_WSDL_BASED);
 				return false;
 			}
 			if(tipoOp.equals(TipoOperazione.ADD)) {
 				if (!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_ABILITATO) &&
 						!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO) &&
 						!xsd.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_WARNING_ONLY)) {
-					this.pd.setMessage("Validazione XSD dev'essere abilitato, disabilitato o warningOnly");
+					this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY);
 					return false;
 				}
 			}
@@ -1635,14 +1166,14 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			// Se autenticazione = custom, nomeauth dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
 					(autenticazioneCustom == null || autenticazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autenticazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM));
 				return false;
 			}
 
 			// Se autorizzazione = custom, nomeautor dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione) && 
 					(autorizzazioneCustom == null || autorizzazioneCustom.equals(""))) {
-				this.pd.setMessage("Indicare un nome per l'autorizzazione '"+CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+"'");
+				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM));
 				return false;
 			}
 			
@@ -1665,54 +1196,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 						true, true, null, ruoli)==false){
 					return false;
 				}
-			}
-
-			// Se modesp = register-input, controllo che il soggetto sia uno di
-			// quelli disponibili
-			// Se modeservizio = register-input, controllo che il servizio sia
-			// uno
-			// di quelli disponibili
-			// Se modeaz = register-input, controllo che l'azione sia una di
-			// quelle
-			// disponibili
-			if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				/*IDSoggetto idSoggetto = new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]);
-					boolean soggEsiste = this.core.existsSoggetto(idSoggetto);
-					if (!soggEsiste) {
-						this.pd.setMessage("Il soggetto erogatore specificato non esiste");
-						return false;
-					}*/ // Questo controllo serve??? Il valore è stato preso da una select list!!!
-			}
-
-			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				/*IDSoggetto idSoggetto = new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]);
-					IDServizio idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
-					boolean servEsiste = this.core.existsAccordoServizioParteSpecifica(idServizio);
-					if (!servEsiste) {
-						this.pd.setMessage("Il servizio specificato non esiste");
-						return false;
-					}*/ // Questo controllo serve??? Il valore è stato preso da una select list!!!
-			}
-
-			if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-
-				/*int servInt = Integer.parseInt(servid);
-					AccordoServizioParteSpecifica myServ = this.core.getAccordoServizioParteSpecifica(servInt);
-					boolean trovataAz = false;
-					if(myServ.getPortType()!=null){
-						trovataAz = this.core.existsAccordoServizioOperation(Integer.parseInt(azid)); 
-						if (!trovataAz) {
-							this.pd.setMessage("L'Azione dev'essere scelta tra quelle associate al servizio "+myServ.getPortType()+" dell'accordo di servizio "+myServ.getAccordoServizio());
-							return false;
-						}
-					}
-					else{
-						trovataAz = this.core.existsAccordoServizioAzione(Integer.parseInt(azid));
-						if (!trovataAz) {
-							this.pd.setMessage("L'Azione dev'essere scelta tra quelle associate all'accordo di servizio "+myServ.getAccordoServizio());
-							return false;
-						}
-					}*/ // Questo controllo serve??? Il valore è stato preso da una select list!!!
 			}
 
 			IDSoggetto idSoggettoFruitore = null; 
@@ -1750,7 +1233,10 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 				if (giaRegistrato) {
 					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPDGiaRegistrata);
-					this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "] associata al Soggetto [" + pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario() + "]");
+					String soggettoProprietarioMessaggio = pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario();
+					this.pd.setMessage(MessageFormat.format(
+							PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY, nomePD,
+							soggettoProprietarioMessaggio));
 					return false;
 				}
 			} else if (TipoOperazione.CHANGE.equals(tipoOp)) {
@@ -1762,7 +1248,10 @@ public class PorteDelegateHelper extends ConsoleHelper {
 						long curID = this.porteDelegateCore.getIdPortaDelegata(nomePD);
 						if (curID > 0) {
 							PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(curID);
-							this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "] associata al Soggetto [" + pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario() + "]");
+							String soggettoProprietarioMessaggio = pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario();
+							this.pd.setMessage(MessageFormat.format(
+									PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY,
+									nomePD, soggettoProprietarioMessaggio));
 							return false;
 						}
 					}
@@ -1784,7 +1273,10 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				if (portaDelegata != null) {
 					if (oldIDpd != portaDelegata.getId()) {
 						PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(oldIDpd);
-						this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + portaDelegata.getNome() + "] associata al Soggetto [" + pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario() + "]");
+						String soggettoProprietarioMessaggio = pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario();
+						this.pd.setMessage(MessageFormat.format(
+								PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY,
+								portaDelegata.getNome(), soggettoProprietarioMessaggio));
 						return false;
 					}
 				}
@@ -1831,8 +1323,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 							}
 							
 							if(saCompatibili==false){
-								this.pd.setMessage("Non è possibile modificare il tipo di autenticazione da ["+portaDelegata.getAutenticazione()+"] a ["+autenticazione+
-										"], poichè risultano associati alla porta delegata dei servizi applicativi non compatibili, nella modalita' di accesso, con il nuovo tipo di autenticazione");
+								this.pd.setMessage(MessageFormat.format(
+										PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_ALLA_PORTA_DELEGATA_DEI_SERVIZI_APPLICATIVI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE,
+										portaDelegata.getAutenticazione(), autenticazione));
 								return false;
 							}
 						}
@@ -3196,5 +2689,38 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		}
 		return lstParam;
 	}
+	
+	public String getPortaDelegataAzioneIdentificazioneLabel(String pdAiString) {
+		if(pdAiString == null)
+			return "";
+		
+		return getPortaDelegataAzioneIdentificazioneLabel(PortaDelegataAzioneIdentificazione.toEnumConstant(pdAiString));
+	}
+	
 
+	public String getPortaDelegataAzioneIdentificazioneLabel(PortaDelegataAzioneIdentificazione pdAi) {
+		if(pdAi == null)
+			return "";
+		switch (pdAi) {
+		case CONTENT_BASED:
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED;
+		case HEADER_BASED:
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED;
+		case INPUT_BASED:
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED;
+		case INTERFACE_BASED:
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED;
+		case SOAP_ACTION_BASED:
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED;
+		case STATIC:
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT;
+		case URL_BASED:
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED;
+		case DELEGATED_BY:
+		default:
+			break;
+		}
+		
+		return "";
+	}
 }
