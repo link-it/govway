@@ -260,7 +260,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			AccordoServizioParteSpecifica asps  =apsCore.getAccordoServizioParteSpecifica(idServizio);
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
-			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, soggInt, null);
+			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
 			MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
 
 			String[] listaMappingLabels = null;
@@ -723,12 +723,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore);
 				
-				String nomeServizioApplicativoErogatore = nomeSA;
-				ServizioApplicativo sa = null;
-				
-				nomeServizioApplicativoErogatore = portaApplicativa.getNome();
-				
-				sa = new ServizioApplicativo();
+				String nomeServizioApplicativoErogatore = portaApplicativa.getNome();
+				ServizioApplicativo sa = new ServizioApplicativo();
 				sa.setNome(nomeServizioApplicativoErogatore);
 				sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
 				sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
@@ -783,7 +779,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, Integer.parseInt(idSoggettoErogatoreDelServizio), ricerca);
+			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), ricerca);
 
 			apsHelper.prepareServiziConfigurazioneList(lista, idAsps, null, ricerca);
 

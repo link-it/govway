@@ -102,9 +102,11 @@ public class ServiziApplicativiCostanti {
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO = "idsil";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_NOME = "nome";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO = "nomeservizioApplicativo";
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS = CostantiControlStation.PARAMETRO_ID_ASPS;
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA = CostantiControlStation.PARAMETRO_ID_PORTA;
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO = "tipoprov";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO = "nomeprov";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER = "provider";
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER = CostantiControlStation.PARAMETRO_PROVIDER;
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_ID_PROVIDER_SERVIZIO_APPLICATIVO = "idprovidersa";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP = "sbustamento";
@@ -182,5 +184,10 @@ public class ServiziApplicativiCostanti {
 	public final static String[] SERVIZI_APPLICATIVI_RUOLO = { SERVIZI_APPLICATIVI_RUOLO_FRUITORE, 
 		SERVIZI_APPLICATIVI_RUOLO_EROGATORE };
 	
+	/* ATTRIBUTI */
 	
+	public final static String ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
+	public final static int ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
+	public final static int ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO;
+	public final static int ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
 }

@@ -34,7 +34,6 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
-import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -1301,7 +1300,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						//		asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
 						Search searchForCount = new Search(true,1);
 						IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps); 
-						this.apsCore.mappingServiziPorteAppList(idServizio, asps.getId().intValue(), asps.getIdSoggetto().intValue(), searchForCount);
+						this.apsCore.mappingServiziPorteAppList(idServizio, asps.getId(), searchForCount);
 						//int numPA = lista1.size();
 						int numPA = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
 						ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
@@ -1721,8 +1720,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
-			if(this.isModalitaAvanzata())
-				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI);
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
@@ -1755,6 +1753,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, paAssociata.getIdSoggetto() + "");
 				Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+paAssociata.getId());
 				Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
+				Parameter pIdProvider = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, paAssociata.getIdSoggetto() + "");
+				Parameter pIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+paAssociata.getId());
 
 				// nome mapping
 				DataElement de = new DataElement();
@@ -1791,17 +1791,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				e.addElement(de);
 				
-				// servizi applicativi (solo avanzata)
-				if(this.isModalitaAvanzata()) {
-					de = new DataElement();
-					PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
-					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdSogg, pIdPorta, pIdAsps,
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
-					ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
-				}
+				// servizi applicativi  
+				de = new DataElement();
+				PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
+				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
+				ServletUtils.setDataElementVisualizzaLabel(de);
+				e.addElement(de);
 				
 				// controllo accessi
 				de = new DataElement();
@@ -4967,19 +4965,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
 			dati.addElement(de);
 		} else {
-			
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE );
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
-			de.setSelected(nomeSA);
-			de.setValues(saSoggetti);
-			de.setType(DataElementType.SELECT);
-			dati.addElement(de);
 			
 			// Controllo Accesso
 			

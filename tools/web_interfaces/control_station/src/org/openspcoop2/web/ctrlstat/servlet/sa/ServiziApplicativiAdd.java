@@ -108,7 +108,10 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
-			boolean useIdSogg= saHelper.isUseIdSogg();
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
 			boolean interfacciaAvanzata = saHelper.isModalitaAvanzata();
 			

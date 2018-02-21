@@ -389,7 +389,25 @@ public final class PorteApplicativeChange extends Action {
 			
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
-			lstParm.add(new Parameter(oldNomePA , null));
+			String nomeBreadCrumb = oldNomePA;
+			if(parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) {
+				List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList = apsCore.mappingServiziPorteAppList(idServizioCheck, idAspsLong, null);
+				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = null;
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativaTmp : mappingServiziPorteAppList) {
+					if(mappingErogazionePortaApplicativaTmp.getIdPortaApplicativa().getNome().equals(oldNomePA)) {
+						mappingErogazionePortaApplicativa = mappingErogazionePortaApplicativaTmp;
+						break;
+					}
+				}
+				
+				if(mappingErogazionePortaApplicativa.isDefault()) {
+					nomeBreadCrumb = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+				} else {
+					nomeBreadCrumb = mappingErogazionePortaApplicativa.getNome(); 
+				}
+			}
+			
+			lstParm.add(new Parameter(nomeBreadCrumb , null));
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -976,7 +994,6 @@ public final class PorteApplicativeChange extends Action {
 
 				//FORCE WSDL BASED
 				if(!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
-						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) &&
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED)){
 
@@ -1036,7 +1053,7 @@ public final class PorteApplicativeChange extends Action {
 				asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 				Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
-				List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,idServizio, idSoggetto.intValue(), ricerca);
+				List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 				apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
 				break;

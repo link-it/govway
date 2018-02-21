@@ -61,7 +61,6 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -95,10 +94,13 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
+		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
+		Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+		if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+		
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
-			
-			boolean useIdSogg= saHelper.isUseIdSogg();
 			
 			String nomeservizioApplicativo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -114,6 +116,16 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String tipoauthRichiesta = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			if(provider == null){
+				provider = "";
+			} 
+			String idPorta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);
+			if(idPorta == null)
+				idPorta = "";
+			
+			String idAsps = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
 			
 			String endpointtype = saHelper.readEndPointType();
 			String tipoconn = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
@@ -208,15 +220,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			Connettore connis = is.getConnettore();
 			List<Property> cp = connis.getPropertyList();
 			
-			String tipoENomeSoggetto = "";
 			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
-			if(provider == null){
-				provider = "-1";
-			}else {
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
-				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
-			}
-			
 			long soggLong = -1;
 			// se ho fatto la add 
 			if(useIdSogg)
@@ -230,28 +234,16 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_INVOCAZIONE_SERVIZIO, saHelper, 
 							(endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
+			
+			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
+			lstParm.add(new Parameter("Invocazione servizio di " + nomeservizioApplicativo,null));
+			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
 			if(saHelper.isEditModeInProgress()){
 				
 				// setto la barra del titolo
-//				ServletUtils.setPageDataTitle_ServletChange(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, 
-//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Invocazione servizio di " + nomeservizioApplicativo);
-				
-				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
-									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
-									new Parameter( "Invocazione servizio di " + nomeservizioApplicativo, null)
-							);
-				}else {
-					ServletUtils.setPageDataTitle_ServletChange(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, 
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Invocazione servizio di " + nomeservizioApplicativo);
-				}
-				
+				ServletUtils.setPageDataTitle(pd, lstParm);
 				
 				// Prendo i dati dal db solo se non sono stati passati
 				// controllo se servizio applicativo appartiene a soggetto con
@@ -570,19 +562,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
-									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
-									new Parameter( "Invocazione servizio di " + nomeservizioApplicativo, null)
-							);
-				}else {
-					ServletUtils.setPageDataTitle_ServletChange(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, 
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Invocazione servizio di " + nomeservizioApplicativo);
-				}
+				ServletUtils.setPageDataTitle(pd, lstParm);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

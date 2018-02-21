@@ -117,6 +117,13 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 //		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+		
+		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+		
+		boolean isConfigurazione = parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE; 
+		boolean nascondiNome = TipoOperazione.CHANGE.equals(tipoOp) && (isConfigurazione && !usataInConfigurazioneDefault);
 
 		int alternativeSize = 80;
 		
@@ -158,12 +165,17 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 		de.setValue(nomePorta);
-		if(this.isModalitaStandard() && TipoOperazione.CHANGE.equals(tipoOp) ){
-			de.setType(DataElementType.TEXT);
-		}
-		else{
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);
+		
+		if(!nascondiNome) {
+			if(this.isModalitaStandard() && TipoOperazione.CHANGE.equals(tipoOp) ){
+				de.setType(DataElementType.TEXT);
+			}
+			else{
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(true);
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
 		de.setSize(alternativeSize);
@@ -172,7 +184,11 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 		de.setValue(descr);
-		de.setType(DataElementType.TEXT_EDIT);
+		if(!nascondiNome) {
+			de.setType(DataElementType.TEXT_EDIT);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+		}
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 		de.setSize(alternativeSize);
 		dati.addElement(de);
@@ -277,7 +293,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		String[] tipoModeAzione = null;
 		String[] tipoModeAzioneLabel = null;
 		
-		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (!usataInConfigurazioni || usataInConfigurazioneDefault)))
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && !usataInConfigurazioni))
 			azTmp.add(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT);
 		
 		if(allSubscriptionIdentificationResourceModes != null && allSubscriptionIdentificationResourceModes.size() >0) {
@@ -363,7 +379,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
 			if( this.isModalitaAvanzata() &&
 					modeaz!= null && (
-						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) &&
 						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
 						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))
 				){
@@ -397,18 +412,23 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		// *************** Controllo degli Accessi *********************
 		
-		this.controlloAccessi(dati);
+		
 		
 		// Pintori 11/12/2017 Gestione Accessi spostata nella servlet PorteDelegateControlloAccessi,  in ADD devo mostrare comunque la form.
 		if(!tipoOp.equals(TipoOperazione.ADD)) {
-			// controllo accessi
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-			String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
-			ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
-			dati.addElement(de);
+			if(!isConfigurazione) {
+				this.controlloAccessi(dati);
+				// controllo accessi
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+				String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
+				dati.addElement(de);
+			}
 		}else {
+			this.controlloAccessi(dati);
+			
 			boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
 			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 			
@@ -435,20 +455,21 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		// Pintori 08/02/2018 Validazione Contenuti spostata nella servlet PorteDelegateValidazione, in ADD devo mostrare comunque la form.
 		
 		if(!tipoOp.equals(TipoOperazione.ADD)) {
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
-			dati.addElement(de);
-			
-			// validazione contenuti
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-			ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, xsd);
-			dati.addElement(de);
-		
+			if(!isConfigurazione) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
+				dati.addElement(de);
+				
+				// validazione contenuti
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, xsd);
+				dati.addElement(de);
+			}
 		} else {
-			this.validazioneContenuti(tipoOp, dati, true, xsd, tipoValidazione, applicaMTOM);
+				this.validazioneContenuti(tipoOp, dati, true, xsd, tipoValidazione, applicaMTOM);
 		}
 		
 		
@@ -641,43 +662,43 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		if (!idsogg.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID) 
 				&& !idPorta.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID)) {
-
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGGIO);
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA +"?" + 
-					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
-					+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta+ "&"
-					+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME + "=" + nomePorta);
-			String statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
-			if(numCorrelazioneReq>0 || numCorrelazioneRes>0){
-				statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA;
-			}
-			ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, statoCorrelazioneApplicativa);
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY +"?" + 
-					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
-					+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
-			ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY, statoMessageSecurity);
-			dati.addElement(de);
-
-			//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM +"?" + 
-					PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
-					+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
-			ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM, statoMTOM);
-			dati.addElement(de);
-			//}
-			
+			if(!isConfigurazione) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGGIO);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA +"?" + 
+						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
+						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta+ "&"
+						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME + "=" + nomePorta);
+				String statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
+				if(numCorrelazioneReq>0 || numCorrelazioneRes>0){
+					statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA;
+				}
+				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, statoCorrelazioneApplicativa);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY +"?" + 
+						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
+						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
+				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY, statoMessageSecurity);
+				dati.addElement(de);
+	
+				//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM +"?" + 
+						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
+						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
+				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM, statoMTOM);
+				dati.addElement(de);
+				//}
+			}	
 		}
 		
 		

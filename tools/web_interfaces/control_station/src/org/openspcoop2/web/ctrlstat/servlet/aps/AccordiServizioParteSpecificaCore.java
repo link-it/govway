@@ -1118,7 +1118,11 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList(IDServizio idAccordoServizioParteSpecifica, Integer idServizio, Integer idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList(IDServizio idAccordoServizioParteSpecifica, Long idServizio, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return mappingServiziPorteAppList(idAccordoServizioParteSpecifica, idServizio, null, ricerca);
+	}
+	
+	public List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList(IDServizio idAccordoServizioParteSpecifica, Long idServizio, Long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "mappingServiziPorteAppList";
 

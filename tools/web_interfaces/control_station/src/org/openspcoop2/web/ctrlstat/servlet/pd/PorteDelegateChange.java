@@ -367,7 +367,30 @@ public final class PorteDelegateChange extends Action {
 			}
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
-			lstParam.add(new Parameter(oldNomePD , null));
+			
+			
+			String nomeBreadCrumb = oldNomePD;
+			
+			if(parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE) {
+				List<MappingFruizionePortaDelegata> mappingServiziPorteAppList = apsCore.serviziFruitoriMappingList(Long.parseLong(idFruizione), idSoggettoFruitore, idServizioCheck, null);
+						
+				MappingFruizionePortaDelegata mappingFruizionePortaDelegata = null;
+				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegataTmp : mappingServiziPorteAppList) {
+					if(mappingFruizionePortaDelegataTmp.getIdPortaDelegata().getNome().equals(oldNomePD)) {
+						mappingFruizionePortaDelegata = mappingFruizionePortaDelegataTmp;
+						break;
+					}
+				}
+				
+				if(mappingFruizionePortaDelegata.isDefault()) {
+					nomeBreadCrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+				} else {
+					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
+				}
+			}
+			
+			
+			lstParam.add(new Parameter(nomeBreadCrumb , null));
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -995,7 +1018,6 @@ public final class PorteDelegateChange extends Action {
 
 				//FORCE WSDL BASED
 				if(!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) &&
 						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){

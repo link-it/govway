@@ -120,7 +120,6 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			// Prendo l'id del soggetto erogatore del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-			int idSoggettoErogatoreDelServizio = asps.getIdSoggetto().intValue();
 
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 
@@ -176,7 +175,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
 			
-			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,Integer.parseInt(id), idSoggettoErogatoreDelServizio, ricerca);
+			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), ricerca);
 			apsHelper.prepareServiziConfigurazioneList(lista, id, null, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

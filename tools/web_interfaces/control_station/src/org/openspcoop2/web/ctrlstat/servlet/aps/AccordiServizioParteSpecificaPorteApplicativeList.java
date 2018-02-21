@@ -98,9 +98,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 	
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-			
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,Integer.parseInt(id), Integer.parseInt(idSoggettoErogatoreDelServizio), ricerca);
+			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), ricerca);
 			
 			apsHelper.prepareServiziConfigurazioneList(lista, id, idSoggettoErogatoreDelServizio, ricerca);
 	

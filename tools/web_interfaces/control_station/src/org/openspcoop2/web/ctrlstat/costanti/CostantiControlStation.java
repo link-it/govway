@@ -197,6 +197,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_ID_ASPS = "idAsps";
 	public final static String PARAMETRO_ID_FRUIZIONE = "myId";
 	public final static String PARAMETRO_NOME = "nome";
+	public final static String PARAMETRO_NOME_PORTA = "nomePorta";
 	public final static String PARAMETRO_SERVIZIO_APPLICATIVO = "servizioApplicativo";
 	public final static String PARAMETRO_VALORE = "valore";
 	public final static String PARAMETRO_PROTOCOLLO = "protocollo";
@@ -232,6 +233,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_TIPO_VALIDAZIONE = "tipo_validazione";
 	public final static String PARAMETRO_PORTE_XSD = "xsd";
 	public final static String PARAMETRO_PORTE_APPLICA_MTOM = PARAMETRO_APPLICA_MTOM_RICHIESTA;
+	public final static String PARAMETRO_PROVIDER = "provider";
 	
 	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
 	public final static String PARAMETRO_SERVICE_BINDING_SEARCH = "serviceBindingSearch";
