@@ -331,9 +331,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			porteDelegateCore = new PorteDelegateCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
 
+			boolean multiTenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant();
+			
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 
-			boolean generaPACheckSoggetto = true;
+			boolean soggettoOperativo = true;
+			boolean generaPACheckSoggetto = true; 
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
@@ -622,7 +625,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				IDSoggetto idSoggettoEr = new IDSoggetto( tipoSoggettoErogatore,  nomeSoggettoErogatore);
 				Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
 				if(pddCore.isPddEsterna(soggetto.getPortaDominio())){
-					generaPACheckSoggetto = false;
+					soggettoOperativo = false;
+					generaPACheckSoggetto = soggettoOperativo;
 				}
 
 
@@ -869,24 +873,47 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,
 							tipoProtocollo,null);
 
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
-							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
-							url,nome, tipo, user, password, initcont, urlpgk,
-							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
-							httpsurl, httpstipologia, httpshostverify,
-							httpspath, httpstipo, httpspwd, httpsalgoritmo,
-							httpsstato, httpskeystore,
-							httpspwdprivatekeytrust, httpspathkey,
-							httpstipokey, httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
-							nomeservizio, tiposervizio, null, null, null,
-							null, oldStatoPackage, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore, false);
+					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
+					
+						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
+								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+								url,nome, tipo, user, password, initcont, urlpgk,
+								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
+								httpsurl, httpstipologia, httpshostverify,
+								httpspath, httpstipo, httpspwd, httpsalgoritmo,
+								httpsstato, httpskeystore,
+								httpspwdprivatekeytrust, httpspathkey,
+								httpstipokey, httpspwdkey, httpspwdprivatekey,
+								httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+								nomeservizio, tiposervizio, null, null, null,
+								null, oldStatoPackage, true,
+								isConnettoreCustomUltimaImmagineSalvata, 
+								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								listExtendedConnettore, false);
+						
+					}
+					else {
+						
+						dati = apsHelper.addEndPointToDatiAsHidden(dati,
+								endpointtype, url, nome, tipo,
+								user, password, initcont, urlpgk,
+								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
+								httpsurl, httpstipologia, httpshostverify,
+								httpspath, httpstipo, httpspwd,
+								httpsalgoritmo, httpsstato, httpskeystore,
+								httpspwdprivatekeytrust, httpspathkey,
+								httpstipokey, httpspwdkey,
+								httpspwdprivatekey, httpsalgoritmokey,
+								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+								nomeservizio, tiposervizio, null, null, null,
+								null, oldStatoPackage,
+								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+						
+					}
 					
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -998,24 +1025,47 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null,null,null,null,null,null,null,
 						tipoProtocollo,null);
 
-				dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
-						apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
-						url, nome,
-						tipo, user, password, initcont, urlpgk, provurl,
-						connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo, httpspwd,
-						httpsalgoritmo, httpsstato, httpskeystore,
-						httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey, tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
-						nomeservizio, tiposervizio, null, null, null,
-						null, oldStatoPackage, true,
-						isConnettoreCustomUltimaImmagineSalvata, 
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore, false);
+				if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
+				
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
+							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							url, nome,
+							tipo, user, password, initcont, urlpgk, provurl,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl, httpstipologia,
+							httpshostverify, httpspath, httpstipo, httpspwd,
+							httpsalgoritmo, httpsstato, httpskeystore,
+							httpspwdprivatekeytrust, httpspathkey,
+							httpstipokey, httpspwdkey, httpspwdprivatekey,
+							httpsalgoritmokey, tipoconn,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+							nomeservizio, tiposervizio, null, null, null,
+							null, oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							listExtendedConnettore, false);
+					
+				}
+				else {
+					
+					dati = apsHelper.addEndPointToDatiAsHidden(dati,
+							endpointtype, url, nome, tipo,
+							user, password, initcont, urlpgk,
+							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
+							httpsurl, httpstipologia, httpshostverify,
+							httpspath, httpstipo, httpspwd,
+							httpsalgoritmo, httpsstato, httpskeystore,
+							httpspwdprivatekeytrust, httpspathkey,
+							httpstipokey, httpspwdkey,
+							httpspwdprivatekey, httpsalgoritmokey,
+							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+							nomeservizio, tiposervizio, null, null, null,
+							null, oldStatoPackage,
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+					
+				}
 				
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1237,25 +1287,48 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,
 							tipoProtocollo,null);
 
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
-							url,
-							nome, tipo, user, password, initcont, urlpgk,
-							provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl,
-							httpstipologia, httpshostverify, httpspath,
-							httpstipo, httpspwd, httpsalgoritmo, httpsstato,
-							httpskeystore, httpspwdprivatekeytrust,
-							httpspathkey, httpstipokey, httpspwdkey,
-							httpspwdprivatekey, httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
-							nomeservizio, tiposervizio, null, null, null,
-							null,
-							oldStatoPackage, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore, false);
+					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
+					
+						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+								url,
+								nome, tipo, user, password, initcont, urlpgk,
+								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl,
+								httpstipologia, httpshostverify, httpspath,
+								httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+								httpskeystore, httpspwdprivatekeytrust,
+								httpspathkey, httpstipokey, httpspwdkey,
+								httpspwdprivatekey, httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+								nomeservizio, tiposervizio, null, null, null,
+								null,
+								oldStatoPackage, true,
+								isConnettoreCustomUltimaImmagineSalvata, 
+								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+								listExtendedConnettore, false);
+						
+					}
+					else {
+						
+						dati = apsHelper.addEndPointToDatiAsHidden(dati,
+								endpointtype, url, nome, tipo,
+								user, password, initcont, urlpgk,
+								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
+								httpsurl, httpstipologia, httpshostverify,
+								httpspath, httpstipo, httpspwd,
+								httpsalgoritmo, httpsstato, httpskeystore,
+								httpspwdprivatekeytrust, httpspathkey,
+								httpstipokey, httpspwdkey,
+								httpspwdprivatekey, httpsalgoritmokey,
+								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, id,
+								nomeservizio, tiposervizio, null, null, null,
+								null, oldStatoPackage,
+								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+						
+					}
 					
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
