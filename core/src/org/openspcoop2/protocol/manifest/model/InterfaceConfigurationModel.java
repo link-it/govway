@@ -43,6 +43,7 @@ public class InterfaceConfigurationModel extends AbstractModel<InterfaceConfigur
 		this.TYPE = new Field("type",java.lang.String.class,"InterfaceConfiguration",InterfaceConfiguration.class);
 		this.SCHEMA = new Field("schema",boolean.class,"InterfaceConfiguration",InterfaceConfiguration.class);
 		this.CONVERSATIONS = new Field("conversations",boolean.class,"InterfaceConfiguration",InterfaceConfiguration.class);
+		this.IMPLEMENTATION = new Field("implementation",boolean.class,"InterfaceConfiguration",InterfaceConfiguration.class);
 	
 	}
 	
@@ -53,6 +54,7 @@ public class InterfaceConfigurationModel extends AbstractModel<InterfaceConfigur
 		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"InterfaceConfiguration",InterfaceConfiguration.class);
 		this.SCHEMA = new ComplexField(father,"schema",boolean.class,"InterfaceConfiguration",InterfaceConfiguration.class);
 		this.CONVERSATIONS = new ComplexField(father,"conversations",boolean.class,"InterfaceConfiguration",InterfaceConfiguration.class);
+		this.IMPLEMENTATION = new ComplexField(father,"implementation",boolean.class,"InterfaceConfiguration",InterfaceConfiguration.class);
 	
 	}
 	
@@ -63,6 +65,8 @@ public class InterfaceConfigurationModel extends AbstractModel<InterfaceConfigur
 	public IField SCHEMA = null;
 	 
 	public IField CONVERSATIONS = null;
+	 
+	public IField IMPLEMENTATION = null;
 	 
 
 	@Override

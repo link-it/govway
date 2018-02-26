@@ -77,7 +77,7 @@
     			<mediaType messageType="soap11">text/xml</mediaType>
     		</mediaTypeCollection>
     		<interfaces>
-    			<specification type="wsdl11" schema="true" conversations="true"/>
+    			<specification type="wsdl11" schema="true" conversations="true" implementation="true"/>
     		</interfaces>
 			<profile asyncInputOutput="true" polledInputOutput="true" />
 			<functionality duplicateFilter="true" acknowledgement="true"

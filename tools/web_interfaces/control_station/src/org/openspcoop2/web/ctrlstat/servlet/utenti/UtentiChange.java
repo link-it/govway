@@ -128,6 +128,8 @@ public final class UtentiChange extends Action {
 				modalitaScelte[i] = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			}
 
+			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
+						
 			// Prendo l'utente
 			User user = utentiCore.getUser(nomesu);
 			//Prendo i vecchi dati dell'utente
@@ -156,6 +158,15 @@ public final class UtentiChange extends Action {
 				}
 				protocolliSupportati  = oldProtocolliSupportati;
 				first = true;
+			}
+			
+			if(multiTenant==null && first) {
+				if(user.isPermitMultiTenant()) {
+					multiTenant = Costanti.CHECK_BOX_ENABLED;
+				}
+				else {
+					multiTenant = Costanti.CHECK_BOX_DISABLED;
+				}
 			}
 			
 //			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
@@ -208,7 +219,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte);
+						changepwd,modalitaScelte, multiTenant);
 
 				pd.setDati(dati);
 
@@ -240,7 +251,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte);
+						changepwd,modalitaScelte, multiTenant);
 
 				pd.setDati(dati);
 
@@ -402,6 +413,8 @@ public final class UtentiChange extends Action {
 					pwsu = procToCall.cryptPw(pwsu);
 				}
 
+				user.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
+				
 				// Modifico i dati dell'utente
 				user.setInterfaceType(InterfaceType.valueOf(tipoGui));
 				if(cpwd && !"".equals(pwsu))

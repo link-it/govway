@@ -165,6 +165,7 @@
               <xsd:attribute name="type" type="InterfaceType" use="required"/>
               <xsd:attribute name="schema" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="conversations" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="implementation" type="xsd:boolean" use="optional" default="false"/>
        </xsd:complexType>
        
        

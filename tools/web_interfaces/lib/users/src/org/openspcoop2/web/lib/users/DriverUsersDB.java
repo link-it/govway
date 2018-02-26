@@ -121,6 +121,14 @@ public class DriverUsersDB {
 				String protocollo =rs.getString("protocollo");
 				user.setProtocolloSelezionato(protocollo);
 				
+				int multiTenant = rs.getInt("multi_tenant");
+				if(CostantiDB.TRUE == multiTenant) {
+					user.setPermitMultiTenant(true);
+				}
+				else {
+					user.setPermitMultiTenant(false);
+				}
+				
 			}
 			rs.close();
 			stm.close();
@@ -423,6 +431,7 @@ public class DriverUsersDB {
 			sqlQueryObject.addInsertField("permessi", "?");
 			sqlQueryObject.addInsertField("protocolli", "?");
 			sqlQueryObject.addInsertField("protocollo", "?");
+			sqlQueryObject.addInsertField("multi_tenant", "?");
 			sqlQuery = sqlQueryObject.createSQLInsert();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			int index = 1;
@@ -433,6 +442,7 @@ public class DriverUsersDB {
 			stm.setString(index++, user.getPermessi().toString());
 			stm.setString(index++, user.getProtocolliSupportatiAsString());
 			stm.setString(index++, user.getProtocolloSelezionato());
+			stm.setInt(index++, user.isPermitMultiTenant()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.executeUpdate();
 			stm.close();
 		} catch (Exception qe) {
@@ -469,6 +479,7 @@ public class DriverUsersDB {
 			sqlQueryObject.addUpdateField("permessi", "?");
 			sqlQueryObject.addUpdateField("protocolli", "?");
 			sqlQueryObject.addUpdateField("protocollo", "?");
+			sqlQueryObject.addUpdateField("multi_tenant", "?");
 			sqlQueryObject.addWhereCondition("login=?");
 			sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
@@ -479,6 +490,7 @@ public class DriverUsersDB {
 			stm.setString(index++,user.getPermessi().toString());
 			stm.setString(index++, user.getProtocolliSupportatiAsString());
 			stm.setString(index++, user.getProtocolloSelezionato());
+			stm.setInt(index++, user.isPermitMultiTenant()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++, user.getLogin());
 			stm.executeUpdate();
 			stm.close();

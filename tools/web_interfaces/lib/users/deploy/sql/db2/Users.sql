@@ -9,6 +9,7 @@ CREATE TABLE users
 	permessi VARCHAR(255) NOT NULL,
 	protocolli CLOB,
 	protocollo VARCHAR(255),
+	multi_tenant INT,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints

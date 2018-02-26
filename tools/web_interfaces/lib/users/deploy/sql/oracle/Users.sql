@@ -11,6 +11,7 @@ CREATE TABLE users
 	permessi VARCHAR2(255) NOT NULL,
 	protocolli CLOB,
 	protocollo VARCHAR2(255),
+	multi_tenant NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

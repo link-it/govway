@@ -109,6 +109,7 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTE_TIPO_MODALITA = "tipo_mod";
 	public final static String PARAMETRO_UTENTE_TIPO_MODALITA_LIST = "tipo_mod_list";
 	public final static String PARAMETRO_UTENTE_CHANGE_MODALITA = "change_mod";
+	public final static String PARAMETRO_UTENTE_MULTI_TENANT = "multi_tenant";
 	
 	
 	/* LABEL PARAMETRI */
@@ -134,6 +135,8 @@ public class UtentiCostanti {
 	private final static String LABEL_UTENTE_PERMESSI_PREFIX_NOTE = "Utente a cui verranno assegnati gli oggetti creati con il permesso '";
 	public final static String LABEL_UTENTE_PERMESSI_SERVIZI_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_SERVIZI+"'";
 	public final static String LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE+"'";
+	
+	public final static String LABEL_PARAMETRO_UTENTE_MULTI_TENANT = "Multi-Tenant";
 	
 	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Qualsiasi";
 	

@@ -76,7 +76,7 @@ public class UtentiHelper extends ConsoleHelper {
 	public Vector<DataElement> addUtentiToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
-			String changepwd, String [] modalitaGateway) throws Exception{
+			String changepwd, String [] modalitaGateway, String multiTenant) throws Exception{
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_INFORMAZIONI_UTENTE);
@@ -94,6 +94,14 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.TEXT);
 		}
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT);
+		de.setType(DataElementType.CHECKBOX);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
+		de.setSelected(ServletUtils.isCheckBoxEnabled(multiTenant));
 		de.setSize(this.getSize());
 		dati.addElement(de);
 
@@ -419,7 +427,7 @@ public class UtentiHelper extends ConsoleHelper {
 	}
 
 	public void addUtenteChangeToDati(Vector<DataElement> dati,InterfaceType interfaceType,
-			String changepw, String nomeUtente, String modalitaDisponibili) throws DriverUsersDBException{
+			String changepw, String nomeUtente, String modalitaDisponibili, String multiTenant) throws DriverUsersDBException{
 
 		DataElement de = new DataElement();
 
@@ -480,6 +488,19 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setLabels(tipiInterfacceLabel);
 			de.setSelected(interfaceType.toString());
 		}
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT);
+		if(utente.hasOnlyPermessiUtenti()) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+		}
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
+		de.setSelected(ServletUtils.isCheckBoxEnabled(multiTenant));
+		de.setSize(this.getSize());
 		dati.addElement(de);
 
 		

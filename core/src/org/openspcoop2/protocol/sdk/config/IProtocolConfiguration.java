@@ -108,6 +108,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportoSpecificaConversazioni(ServiceBinding serviceBinding, InterfaceType interfaceType);
 	
 	/**
+	 * Ritorna l'indicazione se l'implementazione delle interfaccia è supportato nella parte specifica
+	 * 
+	 * @return True se l'implementazione delle interfaccia è supportato nella parte specifica
+	 */
+	public boolean isSupportoPortiAccessoAccordiParteSpecifica(ServiceBinding serviceBinding, InterfaceType interfaceType);
+	
+	/**
 	 * Restituisce la lista dei tipi associabili ai soggetti
 	 * 
 	 * @return la lista dei tipi associabili ai soggetti
@@ -207,7 +214,7 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se il versionamento degli accordi di servizio parte specifica viene supportata dal protocollo
 	 */
 	public boolean isSupportoVersionamentoAccordiParteSpecifica();
-	
+		
 	/**
 	 * Ritorna l'indicazione se lo sbustamento del protocollo è supportato
 	 * 
@@ -221,7 +228,7 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se se il protocollo, per la tipologia SOAP, supporta la scelta del fault
 	 */
 	public boolean isSupportoSceltaFault();
-	
+		
 	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo
 	 * 

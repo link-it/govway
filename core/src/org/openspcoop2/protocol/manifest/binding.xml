@@ -164,6 +164,7 @@
     <value name="type" field="type" usage="required" enum-value-method="toString" style="attribute"/>
     <value name="schema" field="schema" default="false" usage="optional" style="attribute"/>
     <value name="conversations" field="conversations" default="false" usage="optional" style="attribute"/>
+    <value name="implementation" field="implementation" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="profile" class="org.openspcoop2.protocol.manifest.CollaborationProfile">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>

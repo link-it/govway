@@ -47,6 +47,7 @@ public class User implements Serializable {
 	private PermessiUtente permessi;
 	private List<String> protocolliSupportati;
 	private String protocolloSelezionato;
+	private boolean permitMultiTenant = false;
 	
 	public List<String> getProtocolliSupportati() {
 		return this.protocolliSupportati;
@@ -178,9 +179,13 @@ public class User implements Serializable {
 			return false;
 	}
 
+	public boolean isPermitMultiTenant() {
+		return this.permitMultiTenant;
+	}
+	public void setPermitMultiTenant(boolean permitMultiTenant) {
+		this.permitMultiTenant = permitMultiTenant;
+	}
+	
 	private static final long serialVersionUID = 1L;
 
-	public static final String LOGIN = "login";
-
-	public static final String PASSWORD = "password";
 }

@@ -11,6 +11,7 @@ CREATE TABLE users
 	permessi VARCHAR(255) NOT NULL,
 	protocolli TEXT,
 	protocollo VARCHAR(255),
+	multi_tenant INT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_users') NOT NULL,
 	-- unique constraints

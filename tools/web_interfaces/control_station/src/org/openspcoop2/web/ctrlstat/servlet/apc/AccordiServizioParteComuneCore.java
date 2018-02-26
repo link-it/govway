@@ -218,6 +218,19 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
 		}
 	}
+	
+	public boolean showPortiAccesso(String protocollo, ServiceBinding serviceBinding, InterfaceType interfaceType) throws DriverRegistroServiziException{
+		String nomeMetodo = "showPortiAccesso";
+		try {
+
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			return protocol.createProtocolConfiguration().isSupportoPortiAccessoAccordiParteSpecifica(serviceBinding,interfaceType);
+
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		}
+	}
 
 	public ValidazioneResult validazione(AccordoServizioParteComune as,SoggettiCore soggettiCore, String protocollo) throws DriverRegistroServiziException {
 		String nomeMetodo = "validazione";

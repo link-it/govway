@@ -664,7 +664,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
 							idServizioFruitore,tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio, correlato,
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-							null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
+							null,null,null,null,null,null,null,null,null,null,
+							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
@@ -781,7 +782,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
 						idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  correlato,
 						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-						null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
+						null,null,null,null,null,null,null,null,null,null,
+						apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1003,7 +1005,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio, 
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-							null,null,null,null,null,null,null,null,null,null,apcCore.toMessageServiceBinding(as.getServiceBinding()));
+							null,null,null,null,null,null,null,null,null,null,
+							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,

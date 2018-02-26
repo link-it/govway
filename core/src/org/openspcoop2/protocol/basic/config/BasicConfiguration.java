@@ -176,6 +176,35 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isSupportoPortiAccessoAccordiParteSpecifica(ServiceBinding serviceBinding, InterfaceType interfaceType) {
+		switch (serviceBinding) {
+		case SOAP:
+			if(this.bindingManifest.getSoap()!=null && 
+				this.bindingManifest.getSoap().getInterfaces()!=null &&
+				this.bindingManifest.getSoap().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getSoap().getInterfaces().getSpecificationList()) {
+					if(interfaceType.equals(interfaceConfiguration.getType())) {
+						return interfaceConfiguration.isImplementation();
+					}
+				}
+			}
+			break;
+		case REST:
+			if(this.bindingManifest.getRest()!=null && 
+				this.bindingManifest.getRest().getInterfaces()!=null &&
+				this.bindingManifest.getRest().getInterfaces().sizeSpecificationList()>0){
+				for (InterfaceConfiguration interfaceConfiguration : this.bindingManifest.getRest().getInterfaces().getSpecificationList()) {
+					if(interfaceType.equals(interfaceConfiguration.getType())) {
+						return interfaceConfiguration.isImplementation();
+					}
+				}
+			}
+			break;
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean isSupportoAutenticazioneSoggetti() {
 		return this.registroManifest.getOrganization().getAuthentication();
 	}

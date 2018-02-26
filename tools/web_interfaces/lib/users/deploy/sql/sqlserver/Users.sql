@@ -9,6 +9,7 @@ CREATE TABLE users
 	permessi VARCHAR(255) NOT NULL,
 	protocolli VARCHAR(max),
 	protocollo VARCHAR(255),
+	multi_tenant INT,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

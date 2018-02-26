@@ -114,6 +114,8 @@ public final class UtentiAdd extends Action {
 				modalitaScelte[i] = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			}
 			
+			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
+			
 			// Preparo il menu
 			utentiHelper.makeMenu();
 	
@@ -146,7 +148,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte);
+						null,modalitaScelte, multiTenant);
 				
 				pd.setDati(dati);
 		
@@ -176,7 +178,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte);
+						null,modalitaScelte, multiTenant);
 				
 				pd.setDati(dati);
 	
@@ -243,6 +245,8 @@ public final class UtentiAdd extends Action {
 					newU.addProtocolloSupportato(protocolloName);
 				} 
 			}
+			
+			newU.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
 			
 			utentiCore.performCreateOperation(userLogin, utentiHelper.smista(), newU);
 	

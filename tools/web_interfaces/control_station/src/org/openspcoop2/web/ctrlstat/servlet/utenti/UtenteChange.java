@@ -84,9 +84,19 @@ public final class UtenteChange extends Action {
 			String changepw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
 			String changeModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA);
 			String tipoModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
 
 			UtentiCore utentiCore = new UtentiCore();
 
+			if(multiTenant==null && tipogui==null) {
+				if(ServletUtils.getUserFromSession(session).isPermitMultiTenant()) {
+					multiTenant = Costanti.CHECK_BOX_ENABLED;
+				}
+				else {
+					multiTenant = Costanti.CHECK_BOX_DISABLED;
+				}
+			}
+			
 			InterfaceType interfaceType = null;
 			if(tipogui==null) {
 				interfaceType = utentiHelper.getTipoInterfaccia();
@@ -105,7 +115,7 @@ public final class UtenteChange extends Action {
 				if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL))
 					protocolloSelezionatoUtente  = tipoModalita;
 			}
-			
+						
 
 			// Preparo il menu
 			utentiHelper.makeMenu();
@@ -142,7 +152,7 @@ public final class UtenteChange extends Action {
 
 						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili);
+						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant);
 
 						pd.setDati(dati);
 
@@ -176,6 +186,7 @@ public final class UtenteChange extends Action {
 				}
 				myS.setInterfaceType(interfaceType);
 				myS.setProtocolloSelezionato(protocolloSelezionatoUtente);
+				myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
 				utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
 
 				LoginSessionUtilities.cleanLoginParametersSession(session);
@@ -245,7 +256,7 @@ public final class UtenteChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili);
+				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant);
 
 				pd.setDati(dati);
 			}

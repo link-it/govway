@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/protocol/manifest}InterfaceType" use="required"/>
  * 		&lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="conversations" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="implementation" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -99,6 +100,18 @@ public class InterfaceConfiguration extends org.openspcoop2.utils.beans.BaseBean
     this.conversations = conversations;
   }
 
+  public boolean isImplementation() {
+    return this.implementation;
+  }
+
+  public boolean getImplementation() {
+    return this.implementation;
+  }
+
+  public void setImplementation(boolean implementation) {
+    this.implementation = implementation;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -116,5 +129,9 @@ public class InterfaceConfiguration extends org.openspcoop2.utils.beans.BaseBean
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="conversations",required=false)
   protected boolean conversations = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="implementation",required=false)
+  protected boolean implementation = false;
 
 }
