@@ -138,6 +138,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_ALLEGATI = "Allegati";
 	public final static String LABEL_APS_ALLEGATO = "Allegato";
 	public final static String LABEL_APS_CONFIGURAZIONI = "Configurazioni";
+	public final static String LABEL_APS_CONFIGURAZIONI_DI = "Configurazioni di ";
 	public final static String LABEL_APS_PORTE_APPLICATIVE = "Configurazione";
 	public final static String LABEL_APS_PORTE_DELEGATE = "Configurazione";
 	public final static String LABEL_APS_STATO = "Stato";

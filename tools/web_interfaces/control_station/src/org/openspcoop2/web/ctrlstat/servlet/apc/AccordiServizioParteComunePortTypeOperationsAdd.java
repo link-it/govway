@@ -659,7 +659,9 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idPT = pt.getId().intValue();
-			if(updateAccordo) {			
+			if(updateAccordo) {		
+				// ricarico l'accordo	
+				as = apcCore.getAccordoServizio(idInt);
 				for (PortType ptCheck : as.getPortTypeList()) {
 					if(ptCheck.getNome().equals(pt.getNome())) {
 						idPT = ptCheck.getId().intValue();
