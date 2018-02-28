@@ -128,7 +128,7 @@ public final class PorteApplicativeAdd extends Action {
 			String gestManifest = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
 			String ricsim = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA);
 			String ricasim = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			String xsd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
+			String statoValidazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
 			String tipoValidazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE);
 			String autorizzazioneContenuti = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI);
 			String applicaMTOM = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
@@ -408,12 +408,12 @@ public final class PorteApplicativeAdd extends Action {
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
 
-				if (xsd == null) {
+				if (statoValidazione == null) {
 					if(porteApplicativeCore.isSinglePdD()){
 						Configurazione config = porteApplicativeCore.getConfigurazioneGenerale();
 						if(config.getValidazioneContenutiApplicativi()!=null){
 							if(config.getValidazioneContenutiApplicativi().getStato()!=null)
-								xsd = config.getValidazioneContenutiApplicativi().getStato().toString();
+								statoValidazione = config.getValidazioneContenutiApplicativi().getStato().toString();
 							if(config.getValidazioneContenutiApplicativi().getTipo()!=null)
 								tipoValidazione = config.getValidazioneContenutiApplicativi().getTipo().toString();
 							if(StatoFunzionalita.ABILITATO.equals(config.getValidazioneContenutiApplicativi().getAcceptMtomMessage())){
@@ -423,11 +423,11 @@ public final class PorteApplicativeAdd extends Action {
 					}
 				}
 
-				if (xsd == null) {
-					xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+				if (statoValidazione == null) {
+					statoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO;
 				}
 				if (tipoValidazione == null) {
-					tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD;
+					tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE;
 				}
 				if (applicaMTOM == null) {
 					applicaMTOM = "";
@@ -461,7 +461,7 @@ public final class PorteApplicativeAdd extends Action {
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, azioniListLabel,
-						stateless, ricsim, ricasim, null, null, xsd, tipoValidazione, gestBody, gestManifest,
+						stateless, ricsim, ricasim, null, null, statoValidazione, tipoValidazione, gestBody, gestManifest,
 						null,0,null,autorizzazioneContenuti,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
@@ -504,7 +504,7 @@ public final class PorteApplicativeAdd extends Action {
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList,
 						serviziListLabel, azione, azioniList, azioniListLabel, stateless, ricsim, ricasim, 
-						null, null, xsd, tipoValidazione, gestBody, gestManifest,null,0,null,autorizzazioneContenuti,protocollo,
+						null, null, statoValidazione, tipoValidazione, gestBody, gestManifest,null,0,null,autorizzazioneContenuti,protocollo,
 						numSA,numRuoli, ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
 						behaviour,null,null,null,
@@ -642,7 +642,7 @@ public final class PorteApplicativeAdd extends Action {
 			pa.setIdSoggetto(new Long(soggInt));
 
 			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
-			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
+			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));
 			vx.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
 			
 			if(applicaMTOM != null){

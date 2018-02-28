@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.rest.entity;
 
+import java.util.Properties;
+
 /**
  * HttpBaseRequestEntity
  *
@@ -29,6 +31,14 @@ package org.openspcoop2.utils.rest.entity;
  * @version $Rev$, $Date$
  */
 public abstract class HttpBaseRequestEntity<T> extends HttpBaseEntity<T> {
-
 	
+	/* ---- Coppie nome/valori di invocazione della query --- */
+	private java.util.Properties parametersQuery = new Properties();
+	
+	public java.util.Properties getParametersQuery() {
+		return this.parametersQuery;
+	}
+	public void setParametersQuery(java.util.Properties parametersQuery) {
+		this.parametersQuery = parametersQuery;
+	}
 }

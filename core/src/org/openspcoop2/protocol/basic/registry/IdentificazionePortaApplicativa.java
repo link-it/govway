@@ -74,9 +74,14 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(urlProtocolContext, log, portaUrlBased, registryReader, configIntegrationReader, protocolFactory);
 	}
-    public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, IState state)
+    public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, IState state,
+    		PortaApplicativa pa)
 			throws ProtocolException {
 		super(log, protocolFactory, state);
+		this.pa = pa;
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
+		idPA.setNome(this.pa.getNome());
+		this.identificativoPorta = idPA;
 	}
 
 	@Override
@@ -84,6 +89,15 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 		return this.configIntegrationReader.getIdPortaApplicativa(porta, this.protocolFactory);
 	}
 
+	@Override
+	protected String enrichPorta(String porta) throws RegistryException{
+		try {
+			return this.porteNamingUtils.enrichPA(porta);
+		}catch(Exception e) {
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
 	/**
 	 * Avvia il processo di identificazione.
 	 *
@@ -119,15 +133,6 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 							getErrore441_PortaNonInvocabileDirettamente(idPA.getNome(),this.urlCompleta);
 				return false;
 			}
-			
-			// tipo di Autenticazione
-			this.tipoAutenticazione = this.pa.getAutenticazione();
-
-			// tipo di Autorizzazione
-			this.tipoAutorizzazione = this.pa.getAutorizzazione();
-			
-			// tipo di Autorizzazione per contenuto
-			this.tipoAutorizzazioneContenuto = this.pa.getAutorizzazioneContenuto();
 
 			return true;
 

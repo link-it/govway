@@ -28,7 +28,6 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -1693,8 +1692,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
 
 			String servizioTmpTile = this.getLabelIdServizio(asps);
+			@SuppressWarnings("unused")
 			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
+			@SuppressWarnings("unused")
 			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+			@SuppressWarnings("unused")
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 			
 			// setto la barra del titolo
@@ -1782,7 +1784,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps);
 				de.setValue(mapping.isDefault() ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT : mapping.getNome());
 				de.setIdToRemove(paAssociata.getNome());
-				de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
+				//de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
 				e.addElement(de);
 
 				// azioni
@@ -1861,12 +1863,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				ValidazioneContenutiApplicativi vx = paAssociata.getValidazioneContenutiApplicativi();
 				if (vx == null) {
-					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 				} else {
 					if(vx.getStato()!=null)
 						statoValidazione = vx.getStato().toString();
 					if ((statoValidazione == null) || "".equals(statoValidazione)) {
-						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 					}
 				}
 				
@@ -2299,6 +2301,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione+ "");
 			Parameter pIdSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore);
+			@SuppressWarnings("unused")
 			Parameter pIdProviderSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoFruitore);
 
 			// setto la barra del titolo
@@ -2367,7 +2370,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore);
 				de.setValue(mapping.isDefault() ? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT : mapping.getNome());
 				de.setIdToRemove(pdAssociata.getNome());
-				de.setToolTip(StringUtils.isNotEmpty(pdAssociata.getDescrizione()) ? pdAssociata.getDescrizione() : pdAssociata.getNome());
+				//de.setToolTip(StringUtils.isNotEmpty(pdAssociata.getDescrizione()) ? pdAssociata.getDescrizione() : pdAssociata.getNome());
 				e.addElement(de);
 				
 				// lista delle azioni
@@ -2434,12 +2437,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				ValidazioneContenutiApplicativi vx = pdAssociata.getValidazioneContenutiApplicativi();
 				if (vx == null) {
-					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 				} else {
 					if(vx.getStato()!=null)
 						statoValidazione = vx.getStato().toString();
 					if ((statoValidazione == null) || "".equals(statoValidazione)) {
-						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 					}
 				}
 				de.setValue(statoValidazione);

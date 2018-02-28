@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
@@ -50,23 +51,18 @@ public abstract class AbstractIdentificazionePorta {
 	/* ---- Location della Porta --- */
 	protected String location;
 	protected String urlCompleta;
+	
 	/* ----- Individuazione Nome Porta UrlBased -------- */
 	protected boolean nomePortaURLBased = true;
-    	
+    
+	/* ----- Utility per enrich porta -------- */
+	protected PorteNamingUtils porteNamingUtils;
+	
 	/* ---- messaggio di errore --- */
     protected ErroreIntegrazione erroreIntegrazione;
 
 	/* ---- IdentificativoPorta --- */
     protected Object identificativoPorta;
-
-	/* ---- Tipo di Autenticazione --- */
-    protected String tipoAutenticazione;
-
-	/* --- Tipo di Autorizzazione --- */
-    protected String tipoAutorizzazione;
-	
-	/* --- Tipo di Autorizzazione per Contenuto --- */
-    protected String tipoAutorizzazioneContenuto;
 	
     protected IProtocolFactory<?> protocolFactory = null;
 
@@ -94,6 +90,7 @@ public abstract class AbstractIdentificazionePorta {
 		this.log = log;
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
+		this.porteNamingUtils = new PorteNamingUtils(this.protocolFactory);
 	}
 	
 	public AbstractIdentificazionePorta(Logger log,
@@ -108,6 +105,7 @@ public abstract class AbstractIdentificazionePorta {
 
 	protected abstract Object getIDPorta(String porta) throws RegistryNotFound, RegistryException;
 	
+	protected abstract String enrichPorta(String porta) throws RegistryException;
 
 	/**
 	 * Avvia il processo di identificazione.
@@ -141,17 +139,28 @@ public abstract class AbstractIdentificazionePorta {
 						//this.log.info("TROVATA porta delegata ["+porta+"]");
 						break;
 					}else{
-						int indexCut = -1;
-						for(int i=(porta.length()-1); i>=0 ;i--){
-							if(porta.charAt(i) == '/'){
-								indexCut = i;
-								break;
+						
+						String enrichPorta = this.enrichPorta(porta);
+						try{
+							this.identificativoPorta = getIDPorta(enrichPorta);
+						}catch(RegistryNotFound dNotFound){}
+						if(this.identificativoPorta!=null){
+							//this.log.info("TROVATA porta delegata con enrich ["+enrichPorta+"]");
+							break;
+						}else{
+						
+							int indexCut = -1;
+							for(int i=(porta.length()-1); i>=0 ;i--){
+								if(porta.charAt(i) == '/'){
+									indexCut = i;
+									break;
+								}
 							}
+							//this.log.info("indexCut = "+indexCut);
+							//this.log.info("elimino parte '/'");
+							porta = porta.substring(0,indexCut);
+							//this.log.info("dopo eliminazione: "+porta);
 						}
-						//this.log.info("indexCut = "+indexCut);
-						//this.log.info("elimino parte '/'");
-						porta = porta.substring(0,indexCut);
-						//this.log.info("dopo eliminazione: "+porta);
 					}
 				}
 				// Provo ad effettuare ultima ricerca
@@ -216,19 +225,6 @@ public abstract class AbstractIdentificazionePorta {
 	public ErroreIntegrazione getErroreIntegrazione() {
 		return this.erroreIntegrazione;
 	}
-	
-	public String getTipoAutenticazione(){
-		return this.tipoAutenticazione;
-	}
-
-	public String getTipoAutorizzazione(){
-		return this.tipoAutorizzazione;
-	}
-
-	public String getTipoAutorizzazioneContenuto() {
-		return this.tipoAutorizzazioneContenuto;
-	}
-
 
 
 }

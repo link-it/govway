@@ -222,7 +222,7 @@ public class CostantiConfigurazione {
     /** Validazione WSDL: XSD */
     public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD = ValidazioneContenutiApplicativiTipo.XSD;
     /** Validazione WSDL: WSDL */
-    public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL = ValidazioneContenutiApplicativiTipo.WSDL;
+    public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE = ValidazioneContenutiApplicativiTipo.INTERFACE;
     /** Validazione WSDL: Accordo */
     public final static ValidazioneContenutiApplicativiTipo VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP = ValidazioneContenutiApplicativiTipo.OPENSPCOOP;
     

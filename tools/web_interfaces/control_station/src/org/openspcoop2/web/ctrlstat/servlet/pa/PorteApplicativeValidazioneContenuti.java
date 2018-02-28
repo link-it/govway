@@ -16,9 +16,17 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -61,7 +69,7 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 			String applicaModificaS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 
-			String xsd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
+			String statoValidazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
 			String tipoValidazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE);
 			String applicaMTOM = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
 
@@ -71,40 +79,56 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore aspcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
 
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), pa.getServizio().getVersione());
+			long idServizioLong = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
+			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(idServizioLong, false);
+			AccordoServizioParteComune aspc = aspcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 
-			lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_DI + idporta,  null));
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG;
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta,  null));
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 
-				if (xsd == null) {
+				if (statoValidazione == null) {
 					ValidazioneContenutiApplicativi vx = pa.getValidazioneContenutiApplicativi();
 					if (vx == null) {
-						xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+						statoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO;
 					} else {
 						if(vx.getStato()!=null)
-							xsd = vx.getStato().toString();
-						if ((xsd == null) || "".equals(xsd)) {
-							xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+							statoValidazione = vx.getStato().toString();
+						if ((statoValidazione == null) || "".equals(statoValidazione)) {
+							statoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO;
 						}
 					}
 				}
 				if (tipoValidazione == null) {
 					ValidazioneContenutiApplicativi vx = pa.getValidazioneContenutiApplicativi();
 					if (vx == null) {
-						tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD;
+						tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE;
 					} else {
 						if(vx.getTipo()!=null)
 							tipoValidazione = vx.getTipo().toString();
 						if (tipoValidazione == null || "".equals(tipoValidazione)) {
-							tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD ;
+							tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE ;
 						}
 					}
 				}
@@ -122,7 +146,8 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, xsd, tipoValidazione, applicaMTOM);
+				porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
+						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -143,7 +168,8 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, xsd, tipoValidazione, applicaMTOM);
+				porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
+						ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -157,7 +183,7 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 			}
 
 			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
-			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
+			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));
 			vx.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
 			if(applicaMTOM != null){
 				if(ServletUtils.isCheckBoxEnabled(applicaMTOM))
@@ -178,27 +204,27 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 
-			if (xsd == null) {
+			if (statoValidazione == null) {
 				vx = pa.getValidazioneContenutiApplicativi();
 				if (vx == null) {
-					xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+					statoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO;
 				} else {
 					if(vx.getStato()!=null)
-						xsd = vx.getStato().toString();
-					if ((xsd == null) || "".equals(xsd)) {
-						xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+						statoValidazione = vx.getStato().toString();
+					if ((statoValidazione == null) || "".equals(statoValidazione)) {
+						statoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO;
 					}
 				}
 			}
 			if (tipoValidazione == null) {
 				vx = pa.getValidazioneContenutiApplicativi();
 				if (vx == null) {
-					tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD;
+					tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE;
 				} else {
 					if(vx.getTipo()!=null)
 						tipoValidazione = vx.getTipo().toString();
 					if (tipoValidazione == null || "".equals(tipoValidazione)) {
-						tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD ;
+						tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE ;
 					}
 				}
 			}
@@ -212,7 +238,8 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 				}
 			}
 
-			porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, xsd, tipoValidazione, applicaMTOM);
+			porteApplicativeHelper.validazioneContenuti(TipoOperazione.OTHER,dati, isPortaDelegata, statoValidazione, tipoValidazione, applicaMTOM,
+					ServiceBinding.valueOf(aspc.getServiceBinding().name()), aspc.getFormatoSpecifica());
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 

@@ -2822,11 +2822,11 @@ public class ValidazioneSemantica {
 		ValidazioneContenutiApplicativiTipo tipoV = vca.getTipo();
 		// XSD: tipo: wsdl, openspcoop, xsd
 		if ((tipoV != null) && !tipoV.equals(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP) && 
-				!tipoV.equals(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL) && 
+				!tipoV.equals(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE) && 
 				!tipoV.equals(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD))
 			this.errori.add("Il tipo di validazione contenuti applicativi da attuare ("+tipo+") deve possedere uno dei seguenti valori: " +
 					CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD+", "+
-					CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL+" o "+
+					CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE+" o "+
 					CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP);
 	}
 

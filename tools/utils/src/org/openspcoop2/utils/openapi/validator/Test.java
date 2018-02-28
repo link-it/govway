@@ -35,6 +35,7 @@ import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
+import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -88,7 +89,7 @@ public class Test {
 			
 			System.out.println("["+testName+"] Test #3 (Richiesta GET con parametri query)");
 			Properties parametersQuery = new Properties();
-			HttpBaseEntity<?> httpEntity3 = new TextHttpRequestEntity();
+			HttpBaseRequestEntity<?> httpEntity3 = new TextHttpRequestEntity();
 			parametersQuery.put("status", "available");
 			httpEntity3.setParametersQuery(parametersQuery);
 			httpEntity3.setMethod(HttpRequestMethod.GET);

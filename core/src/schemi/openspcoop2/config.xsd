@@ -1429,7 +1429,7 @@
 	</xsd:simpleType>
 	<xsd:simpleType name="ValidazioneContenutiApplicativiTipo">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="wsdl"/>
+			<xsd:enumeration value="interface"/>
 			<xsd:enumeration value="openspcoop"/>
 			<xsd:enumeration value="xsd"/>
 		</xsd:restriction>

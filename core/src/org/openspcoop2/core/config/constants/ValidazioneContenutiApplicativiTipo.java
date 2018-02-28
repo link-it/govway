@@ -36,8 +36,8 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 @javax.xml.bind.annotation.XmlEnum(String.class)
 public enum ValidazioneContenutiApplicativiTipo implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("wsdl")
-	WSDL ("wsdl"),
+	@javax.xml.bind.annotation.XmlEnumValue("interface")
+	INTERFACE ("interface"),
 	@javax.xml.bind.annotation.XmlEnumValue("openspcoop")
 	OPENSPCOOP ("openspcoop"),
 	@javax.xml.bind.annotation.XmlEnumValue("xsd")

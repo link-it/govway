@@ -509,7 +509,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true);
+						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true,
+						parentSA);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -532,7 +533,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore, false);
 				
-				dati = saHelper.addHiddenFieldsToDati(dati, provider);
+				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
 				dati = saHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, idPorta, idAsps, dati);
 
@@ -557,7 +558,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true);
+						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true,
+						parentSA);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -580,7 +582,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore, false);
 				
-				dati = saHelper.addHiddenFieldsToDati(dati, provider);
+				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
 				dati = saHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, idPorta, idAsps, dati);
 

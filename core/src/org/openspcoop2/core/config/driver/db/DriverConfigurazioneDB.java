@@ -17256,7 +17256,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				porteDelegatePerAzioni = true;
 				if(filtroRicerca.getAzione()!=null) {
 					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
-					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
 				}
 			}
 

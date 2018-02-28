@@ -52,6 +52,7 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -452,7 +453,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			}
 			Object content = httpEntity.getContent();
 			
-			if(content instanceof Document){
+			if(content instanceof Element){
+				node = ((Element) content);
+			}
+			else if(content instanceof Document){
 				node = ((Document) content).getDocumentElement();
 			}
 			else if(content instanceof byte[]){

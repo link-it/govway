@@ -115,7 +115,7 @@
 				</antcall>
 				
 				<!-- org.openspcoop.2.protocol.abstraction -->	
-				<var name="packagesCompiled" value="org.openspcoop2.protocol.abstraction," />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction," />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.constants" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.csv" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.abstraction.model" />

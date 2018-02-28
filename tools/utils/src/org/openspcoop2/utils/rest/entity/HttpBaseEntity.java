@@ -39,8 +39,7 @@ public abstract class HttpBaseEntity<T> {
 	private String url;
 	private HttpRequestMethod method;
 	private String contentType;
-	/* ---- Coppie nome/valori di invocazione della query --- */
-	private java.util.Properties parametersQuery = new Properties();
+
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
 	private java.util.Properties parametersTrasporto = new Properties();
 	/* ---- Coppie nome/valori di invocazione form ----- */
@@ -56,10 +55,10 @@ public abstract class HttpBaseEntity<T> {
 	public void setContent(T content) {
 		this.content = content;
 	}
+
 	public String getUrl() {
 		return this.url;
 	}
-
 	public void setUrl(String url) {
 		this.url = url;
 	}
@@ -74,12 +73,6 @@ public abstract class HttpBaseEntity<T> {
 	}
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
-	}
-	public java.util.Properties getParametersQuery() {
-		return this.parametersQuery;
-	}
-	public void setParametersQuery(java.util.Properties parametersQuery) {
-		this.parametersQuery = parametersQuery;
 	}
 	public java.util.Properties getParametersForm() {
 		return this.parametersForm;

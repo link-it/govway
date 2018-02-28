@@ -1391,8 +1391,8 @@ public class ConfigurazionePdDReader {
 
 		if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(pd.getValidazioneContenutiApplicativi().getTipo())  )
 			valPD.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP);
-		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(pd.getValidazioneContenutiApplicativi().getTipo())  )
-			valPD.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL);
+		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(pd.getValidazioneContenutiApplicativi().getTipo())  )
+			valPD.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE);
 		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(pd.getValidazioneContenutiApplicativi().getTipo())  )
 			valPD.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
 
@@ -2023,8 +2023,8 @@ public class ConfigurazionePdDReader {
 
 		if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(pa.getValidazioneContenutiApplicativi().getTipo())  )
 			valPA.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP);
-		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(pa.getValidazioneContenutiApplicativi().getTipo())  )
-			valPA.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL);
+		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(pa.getValidazioneContenutiApplicativi().getTipo())  )
+			valPA.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE);
 		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(pa.getValidazioneContenutiApplicativi().getTipo())  )
 			valPA.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
 
@@ -4135,11 +4135,11 @@ public class ConfigurazionePdDReader {
 			pddPropertiesPresente = true;
 		}
 		if(tipo!=null  && ( 
-				CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.toString().equalsIgnoreCase(stato) || 
+				CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.toString().equalsIgnoreCase(stato) || 
 				CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.toString().equalsIgnoreCase(stato) || 
 				CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.toString().equalsIgnoreCase(stato) ) ){
-			if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.toString().equalsIgnoreCase(stato))
-				valDefault.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL);
+			if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.toString().equalsIgnoreCase(stato))
+				valDefault.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE);
 			else if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.toString().equalsIgnoreCase(stato))
 				valDefault.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
 			else
@@ -4195,8 +4195,8 @@ public class ConfigurazionePdDReader {
 					// Tipo
 					if(configurazione.getValidazioneContenutiApplicativi().getTipo()==null){
 						val.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
-					}else if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(configurazione.getValidazioneContenutiApplicativi().getTipo())){
-						val.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL);
+					}else if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(configurazione.getValidazioneContenutiApplicativi().getTipo())){
+						val.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE);
 					}else if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(configurazione.getValidazioneContenutiApplicativi().getTipo())){
 						val.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP);
 					}else{

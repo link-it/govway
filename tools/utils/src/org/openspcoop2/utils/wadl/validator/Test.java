@@ -25,7 +25,6 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.rest.ApiFactory;
@@ -37,13 +36,14 @@ import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
-import org.openspcoop2.utils.rest.entity.DocumentHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.ElementHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.wadl.WADLApi;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -111,7 +111,7 @@ public class Test {
 		System.out.println("Test #1 completato");
 		
 		System.out.println("Test #2 (Richiesta GET con tipo XML)");
-		DocumentHttpRequestEntity httpEntity2 = new DocumentHttpRequestEntity();
+		ElementHttpRequestEntity httpEntity2 = new ElementHttpRequestEntity();
 		
 		DocumentBuilderFactory factory = xmlUtils.getDocumentBuilderFactory();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -125,7 +125,7 @@ public class Test {
 		root.appendChild(nome);
 		
 		document.appendChild(root);
-		httpEntity2.setContent(document);
+		httpEntity2.setContent(document.getDocumentElement());
 		
 		httpEntity2.setContentType("application/xml");
 		httpEntity2.setUrl("/allineamentopendenze/getStatoTrasmissioni");

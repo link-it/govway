@@ -101,10 +101,10 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_528_RISPOSTA_RICHIESTA_NON_VALIDA(528),
     /** String che contiene un codice di errore OpenSPCoop: Errore, Correlazione Applicativa non riuscita, 529*/
     CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA(529),
-    /** String che contiene un codice di errore OpenSPCoop: Errore, Costruzione WSDL non riuscita, 530*/
-    CODICE_530_COSTRUZIONE_WSDL_FALLITA(530),
-    /** String che contiene un codice di errore OpenSPCoop: Errore, Validazione WSDL non riuscita, 531*/
-    CODICE_531_VALIDAZIONE_WSDL_FALLITA(531),
+    /** String che contiene un codice di errore OpenSPCoop: Errore, Costruzione Interfaccia non riuscita, 530*/
+    CODICE_530_COSTRUZIONE_INTERFACCIA_FALLITA(530),
+    /** String che contiene un codice di errore OpenSPCoop: Errore, Validazione Interfaccia non riuscita, 531*/
+    CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA(531),
     /** String che contiene un codice di errore OpenSPCoop: Risorse non disponibili , 532*/
     CODICE_532_RISORSE_NON_DISPONIBILI(532),
     /** String che contiene un codice di errore OpenSPCoop: Risorse non disponibili , 533*/
@@ -201,12 +201,12 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI(415),
     /** String che contiene un codice di errore OpenSPCoop: Errore, Correlazione Applicativa errore, 416*/
     CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE(416),
-    /** String che contiene un codice di errore OpenSPCoop: Errore, Costruzione XSD non riuscita, 417*/
-    CODICE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA(417),
-    /** String che contiene un codice di errore OpenSPCoop: Errore, Validazione XSD non riuscita, 418*/
-    CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA(418),
-    /** String che contiene un codice di errore OpenSPCoop: Errore, Validazione XSD non riuscita, 419*/
-    CODICE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA(419),
+    /** String che contiene un codice di errore OpenSPCoop: Errore, Costruzione Interfaccia non riuscita, 417*/
+    CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA(417),
+    /** String che contiene un codice di errore OpenSPCoop: Errore, Validazione Interfaccia non riuscita, 418*/
+    CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA(418),
+    /** String che contiene un codice di errore OpenSPCoop: Errore, Validazione Interfaccia non riuscita, 419*/
+    CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA(419),
     /** String che contiene un codice di errore OpenSPCoop: Errore, Busta presente in una richiesta applicativa, 420*/
     CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA(420),
     /** String che contiene un codice di errore OpenSPCoop: Errore, Busta soap non presente in una richiesta applicativa, 421*/
@@ -320,9 +320,9 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 414: return CodiceErroreIntegrazione.CODICE_414_CONSEGNA_IN_ORDINE_CON_PROFILO_NO_ONEWAY;
 				case 415: return CodiceErroreIntegrazione.CODICE_415_CONSEGNA_IN_ORDINE_SENZA_VINCOLI_RICHIESTI;
 				case 416: return CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE;
-				case 417: return CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA;
-				case 418: return CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA;
-				case 419: return CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA;
+				case 417: return CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA;
+				case 418: return CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA;
+				case 419: return CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA;
 				case 420: return CodiceErroreIntegrazione.CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA;
 				case 421: return CodiceErroreIntegrazione.CODICE_421_MSG_SOAP_NON_PRESENTE_RICHIESTA_APPLICATIVA;
 				case 422: return CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA;
@@ -383,8 +383,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 527: return CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO;
 				case 528: return CodiceErroreIntegrazione.CODICE_528_RISPOSTA_RICHIESTA_NON_VALIDA;
 				case 529: return CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA;
-				case 530: return CodiceErroreIntegrazione.CODICE_530_COSTRUZIONE_WSDL_FALLITA;
-				case 531: return CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA;
+				case 530: return CodiceErroreIntegrazione.CODICE_530_COSTRUZIONE_INTERFACCIA_FALLITA;
+				case 531: return CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA;
 				case 532: return CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI;
 				case 533: return CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO;
 				case 534: return CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE;

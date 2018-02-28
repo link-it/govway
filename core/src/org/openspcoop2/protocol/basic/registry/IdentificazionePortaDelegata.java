@@ -75,15 +75,29 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(urlProtocolContext, log, portaUrlBased, registryReader, configIntegrationReader, protocolFactory);
 	}
-    public IdentificazionePortaDelegata(Logger log, IProtocolFactory<?> protocolFactory, IState state)
+    public IdentificazionePortaDelegata(Logger log, IProtocolFactory<?> protocolFactory, IState state,
+    		PortaDelegata pd)
 			throws ProtocolException {
 		super(log, protocolFactory, state);
+		this.pd = pd;
+		IDPortaDelegata idPD = new IDPortaDelegata();
+		idPD.setNome(this.pd.getNome());
+		this.identificativoPorta = idPD;
 	}
 
 
 	@Override
 	protected Object getIDPorta(String porta) throws RegistryNotFound, RegistryException{
 		return this.configIntegrationReader.getIdPortaDelegata(porta, this.protocolFactory);
+	}
+	
+	@Override
+	protected String enrichPorta(String porta) throws RegistryException{
+		try {
+			return this.porteNamingUtils.enrichPD(porta);
+		}catch(Exception e) {
+			throw new RegistryException(e.getMessage(),e);
+		}
 	}
 	
 	/**
@@ -120,15 +134,6 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 							getErrore441_PortaNonInvocabileDirettamente(idPD.getNome(),this.urlCompleta);
 				return false;
 			}
-			
-			// tipo di Autenticazione
-			this.tipoAutenticazione = this.pd.getAutenticazione();
-
-			// tipo di Autorizzazione
-			this.tipoAutorizzazione = this.pd.getAutorizzazione();
-			
-			// tipo di Autorizzazione per contenuto
-			this.tipoAutorizzazioneContenuto = this.pd.getAutorizzazioneContenuto();
 
 			return true;
 

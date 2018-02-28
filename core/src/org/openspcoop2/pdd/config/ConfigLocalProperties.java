@@ -902,7 +902,7 @@ public class ConfigLocalProperties extends InstanceProperties {
 			if(validazioneContenutiApplicativi_tipo!=null){
 				validazioneContenutiApplicativi_tipo = validazioneContenutiApplicativi_tipo.trim();
 				if(!CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutiApplicativi_tipo) && 
-						!CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutiApplicativi_tipo)  && 
+						!CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutiApplicativi_tipo)  && 
 						!CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutiApplicativi_tipo) ){
 					throw new Exception("Tipo di controllo della validazione dei contenuti applicativi non corretto");
 				}

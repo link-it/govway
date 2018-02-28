@@ -121,7 +121,14 @@ public class PorteDelegateMTOMResponseChange extends Action {
 						
 			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione };
 			
-			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_DI + idporta, 
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG;
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG_DI+idporta;
+			}
+			lstParam.add(new Parameter(labelPerPorta, 
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM, urlParms));
 			
 			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI, // + idporta,

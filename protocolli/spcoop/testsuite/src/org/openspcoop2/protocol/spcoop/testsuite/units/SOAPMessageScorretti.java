@@ -1307,7 +1307,7 @@ public class SOAPMessageScorretti {
 					motivoErroreParser.add("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi");
 					this.invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, null, 
 							this.repositoryStrutturaXMLErrataPortaDelegataValidazioneContenutiApplicativiWarningOnly, portaDelegata,
-							CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA,
+							CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA,
 							false,false);
 				}catch(Throwable tInternal){
 					// rilancio l'originale

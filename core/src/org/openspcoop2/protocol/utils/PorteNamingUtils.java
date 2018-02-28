@@ -34,43 +34,62 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
  */
 public class PorteNamingUtils {
 
-	@SuppressWarnings("unused")
 	private IProtocolFactory<?> protocolFactory;
 	private IProtocolConfiguration protocolConfiguration;
+	private ServiceBinding serviceBindingDefault = null;
 	
 	public PorteNamingUtils(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.protocolFactory = protocolFactory;
 		this.protocolConfiguration = protocolFactory.createProtocolConfiguration();
+		
+		if(this.protocolFactory.getManifest().getBinding().getRest()!=null &&
+				this.protocolFactory.getManifest().getBinding().getSoap()!=null) {
+			// deve essere specificato un service binding di default
+			switch(this.protocolFactory.getManifest().getBinding().getDefault()) {
+			case REST:
+				this.serviceBindingDefault = ServiceBinding.REST;
+				break;
+			case SOAP:
+				this.serviceBindingDefault = ServiceBinding.SOAP;
+				break;
+			}
+		}
+		else if(this.protocolFactory.getManifest().getBinding().getRest()!=null) {
+			this.serviceBindingDefault = ServiceBinding.REST;
+		}
+		else {
+			this.serviceBindingDefault = ServiceBinding.SOAP;
+		}
 	}
 	
 	
-	public String normalizePD(String nome, ServiceBinding serviceBinding) throws ProtocolException {
+	public String normalizePD(String nome) throws ProtocolException {
 		// Convenzione PD: FRUITORE/EROGATORE/SERVIZIO/...
 		// Ogni oggetto viene separato dal tipo "_"
 		 int [] posizioneSoggetto = new int[2];
 		 posizioneSoggetto[0] = 0;
 		 posizioneSoggetto[1] = 1;
 		 int [] posizioneServizio = new int[1];
-		 posizioneSoggetto[0] = 2;
-		 return _normalize(nome, serviceBinding, posizioneSoggetto, posizioneServizio);
+		 posizioneServizio[0] = 2;
+		 return _normalize(nome, posizioneSoggetto, posizioneServizio);
 	}
-	public String normalizePA(String nome, ServiceBinding serviceBinding) throws ProtocolException {
+	public String normalizePA(String nome) throws ProtocolException {
 		// Convenzione PA: EROGATORE/SERVIZIO/...
 		// Ogni oggetto viene separato dal tipo "_"
 		 int [] posizioneSoggetto = new int[1];
 		 posizioneSoggetto[0] = 0;
 		 int [] posizioneServizio = new int[1];
-		 posizioneSoggetto[0] = 1;
-		 return _normalize(nome, serviceBinding, posizioneSoggetto, posizioneServizio);
+		 posizioneServizio[0] = 1;
+		 return _normalize(nome, posizioneSoggetto, posizioneServizio);
 	}
-	private String _normalize(String nome, ServiceBinding serviceBinding, int [] posizioneSoggetto, int [] posizioneServizio) throws ProtocolException {
+	private String _normalize(String nome, int [] posizioneSoggetto, int [] posizioneServizio) throws ProtocolException {
 		if(nome.contains("/")) {
 			
 			String tipoSoggettoDefault = this.protocolConfiguration.getTipoSoggettoDefault();
 			String _tipoSoggettoDefault = tipoSoggettoDefault +"_";
 			int _lengthTipoSoggettoDefault = _tipoSoggettoDefault.length();
 			
-			String tipoServizioDefault = this.protocolConfiguration.getTipoServizioDefault(serviceBinding);
+			String tipoServizioDefault = this.protocolConfiguration.getTipoServizioDefault(this.serviceBindingDefault);
 			String _tipoServizioDefault = tipoServizioDefault +"_";
 			int _lengthTipoServizioDefault = _tipoServizioDefault.length();
 			
@@ -101,7 +120,7 @@ public class PorteNamingUtils {
 					String s = tmp[i].trim();
 					if(soggetto || servizio) {
 						if(soggetto) {
-							if(s.startsWith(tipoSoggettoDefault) && s.length()>_lengthTipoSoggettoDefault) {
+							if(s.startsWith(_tipoSoggettoDefault) && s.length()>_lengthTipoSoggettoDefault) {
 								bf.append(s.substring(_lengthTipoSoggettoDefault));
 							}
 							else {
@@ -109,7 +128,7 @@ public class PorteNamingUtils {
 							}
 						}
 						else {
-							if(s.startsWith(tipoServizioDefault) && s.length()>_lengthTipoServizioDefault) {
+							if(s.startsWith(_tipoServizioDefault) && s.length()>_lengthTipoServizioDefault) {
 								bf.append(s.substring(_lengthTipoServizioDefault));
 							}
 							else {
@@ -121,6 +140,7 @@ public class PorteNamingUtils {
 						bf.append(s);
 					}
 				}
+				return bf.toString();
 			}
 			
 		}
@@ -129,32 +149,32 @@ public class PorteNamingUtils {
 	
 	
 	
-	public String enrichPD(String nome, ServiceBinding serviceBinding) throws ProtocolException {
+	public String enrichPD(String nome) throws ProtocolException {
 		// Convenzione PD: FRUITORE/EROGATORE/SERVIZIO/...
 		// Ogni oggetto viene separato dal tipo "_"
 		 int [] posizioneSoggetto = new int[2];
 		 posizioneSoggetto[0] = 0;
 		 posizioneSoggetto[1] = 1;
 		 int [] posizioneServizio = new int[1];
-		 posizioneSoggetto[0] = 2;
-		 return _enrich(nome, serviceBinding, posizioneSoggetto, posizioneServizio);
+		 posizioneServizio[0] = 2;
+		 return _enrich(nome, posizioneSoggetto, posizioneServizio);
 	}
-	public String enrichPA(String nome, ServiceBinding serviceBinding) throws ProtocolException {
+	public String enrichPA(String nome) throws ProtocolException {
 		// Convenzione PA: EROGATORE/SERVIZIO/...
 		// Ogni oggetto viene separato dal tipo "_"
 		 int [] posizioneSoggetto = new int[1];
 		 posizioneSoggetto[0] = 0;
 		 int [] posizioneServizio = new int[1];
-		 posizioneSoggetto[0] = 1;
-		 return _enrich(nome, serviceBinding, posizioneSoggetto, posizioneServizio);
+		 posizioneServizio[0] = 1;
+		 return _enrich(nome, posizioneSoggetto, posizioneServizio);
 	}
-	private String _enrich(String nome, ServiceBinding serviceBinding, int [] posizioneSoggetto, int [] posizioneServizio) throws ProtocolException {
+	private String _enrich(String nome, int [] posizioneSoggetto, int [] posizioneServizio) throws ProtocolException {
 		if(nome.contains("/")) {
 			
 			String tipoSoggettoDefault = this.protocolConfiguration.getTipoSoggettoDefault();
 			String _tipoSoggettoDefault = tipoSoggettoDefault +"_";
 			
-			String tipoServizioDefault = this.protocolConfiguration.getTipoServizioDefault(serviceBinding);
+			String tipoServizioDefault = this.protocolConfiguration.getTipoServizioDefault(this.serviceBindingDefault);
 			String _tipoServizioDefault = tipoServizioDefault +"_";
 			
 			String [] tmp = nome.split("/");
@@ -200,6 +220,7 @@ public class PorteNamingUtils {
 						bf.append(s);
 					}
 				}
+				return bf.toString();
 			}
 			
 		}

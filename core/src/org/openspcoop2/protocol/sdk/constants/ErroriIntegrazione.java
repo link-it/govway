@@ -127,14 +127,14 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE),
 			
-	ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_WSDL +" del servizio non definito (o definito non correttamente) nel Registro dei Servizi",
-			CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA),
+	ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA +" del servizio non definito (o definito non correttamente) nel Registro dei Servizi",
+			CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA),
 			
-	ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_WSDL+") definito nel Registro dei Servizi",
-			CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
+	ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA("Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA+") definito nel Registro dei Servizi",
+			CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 			
-	ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA("Il contenuto applicativo del messaggio di risposta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_WSDL+") definito nel Registro dei Servizi",
-			CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA),
+	ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA("Il contenuto applicativo del messaggio di risposta non rispetta l'accordo di servizio ("+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA+") definito nel Registro dei Servizi",
+			CodiceErroreIntegrazione.CODICE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA),
 			
 	ERRORE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA("Il messaggio inviato al servizio di ricezione contenuti applicativi presenta nell'header una busta",
 			CodiceErroreIntegrazione.CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA),
@@ -291,9 +291,9 @@ public enum ErroriIntegrazione {
 			this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA_SA) ||
 			this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO) ||
 			this.equals(ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE) ||
-			this.equals(ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA) ||
-			this.equals(ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA) ||
-			this.equals(ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA) ||
+			this.equals(ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA) ||
+			this.equals(ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA) ||
+			this.equals(ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA) ||
 			this.equals(ERRORE_421_MSG_SOAP_NON_COSTRUIBILE_TRAMITE_RICHIESTA_APPLICATIVA) ||
 			this.equals(ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA) ||
 			this.equals(ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA) ||
@@ -547,30 +547,30 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore417_CostruzioneValidatoreWSDLFallita(String tipoWSDL) {
-		if(!this.equals(ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA)){
-			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.name());
+	public ErroreIntegrazione getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(String tipoInterfaccia) {
+		if(!this.equals(ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_WSDL,tipoWSDL));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA,tipoInterfaccia));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore418_ValidazioneWSDLRichiesta(String tipoWSDL) {
-		if(!this.equals(ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA)){
-			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.name());
+	public ErroreIntegrazione getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(String tipoInterfaccia) {
+		if(!this.equals(ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_WSDL,tipoWSDL));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA,tipoInterfaccia));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore419_ValidazioneWSDLRisposta(String tipoWSDL) {
-		if(!this.equals(ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA)){
-			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.name());
+	public ErroreIntegrazione getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(String tipoInterfaccia) {
+		if(!this.equals(ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_WSDL,tipoWSDL));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_INTERFACCIA,tipoInterfaccia));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 

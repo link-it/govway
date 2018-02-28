@@ -52,7 +52,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -81,6 +80,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
+import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -2433,8 +2433,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								else{
-									OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
-									hasContent = restMsg.hasContent();
+									//OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
+									//hasContent = restMsg.hasContent();
+									hasContent = true; // devo controllare gli header etc...
 									isFault = MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								
@@ -2442,59 +2443,81 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									
 									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaInCorso");
 									
-									// Accept mtom message
-									List<MtomXomReference> xomReferences = null;
-									if(StatoFunzionalita.ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage())){
-										msgDiag.mediumDebug("Validazione xsd della risposta (mtomFastUnpackagingForXSDConformance)...");
-										if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())==false){
-											throw new Exception("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
-										}
-										xomReferences = responseMessage.castAsSoap().mtomFastUnpackagingForXSDConformance();
-									}
-									
-									// Init Validatore
-									boolean readWSDL = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo());
+									boolean readInterface = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo());
 									IDServizio idSValidazioneXSD = idServizio;
 									if(servizioHeaderIntegrazione!=null){
 										idSValidazioneXSD = servizioHeaderIntegrazione;
 									}
-									msgDiag.mediumDebug("Validazione xsd della risposta (initValidator)...");
-									ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
-										new ValidatoreMessaggiApplicativi(registroServiziManager,idSValidazioneXSD,
-												responseMessage,readWSDL,
-												this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione());
-
-									// Validazione WSDL 
-									if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
-											||
-											CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
-									){
-										msgDiag.mediumDebug("Validazione wsdl della risposta ...");
-										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false,
-												this.propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
-									}
 									
-									// Validazione XSD
-									msgDiag.mediumDebug("Validazione xsd della risposta ...");
-									validatoreMessaggiApplicativi.validateWithWsdlDefinitorio(false);
+									if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
 									
-									// Validazione WSDL (Restore Original Document)
-									if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo())
-										|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
-										if(this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione() &&
-												this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione()){
-											msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della risposta ...");
-											validatoreMessaggiApplicativi.restoreOriginalDocument(false);
+										// Accept mtom message
+										List<MtomXomReference> xomReferences = null;
+										if(StatoFunzionalita.ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage())){
+											msgDiag.mediumDebug("Validazione xsd della risposta (mtomFastUnpackagingForXSDConformance)...");
+											xomReferences = responseMessage.castAsSoap().mtomFastUnpackagingForXSDConformance();
 										}
-									}
-									
-									// Ripristino struttura messaggio con xom
-									if(xomReferences!=null && xomReferences.size()>0){
-										msgDiag.mediumDebug("Validazione xsd della risposta (mtomRestoreAfterXSDConformance)...");
-										if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())==false){
-											throw new Exception("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
+										
+										// Init Validatore
+										msgDiag.mediumDebug("Validazione della risposta (initValidator)...");
+										ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
+											new ValidatoreMessaggiApplicativi(registroServiziManager,idSValidazioneXSD,
+													responseMessage,readInterface,
+													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione());
+	
+										// Validazione WSDL 
+										if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
+												||
+												CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
+										){
+											msgDiag.mediumDebug("Validazione wsdl della risposta ...");
+											validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false,
+													this.propertiesReader.isValidazioneContenutiApplicativi_checkSoapAction());
 										}
-										responseMessage.castAsSoap().mtomRestoreAfterXSDConformance(xomReferences);
+										
+										// Validazione XSD
+										msgDiag.mediumDebug("Validazione xsd della risposta ...");
+										validatoreMessaggiApplicativi.validateWithWsdlDefinitorio(false);
+										
+										// Validazione WSDL (Restore Original Document)
+										if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo())
+											|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
+											if(this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione() &&
+													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione()){
+												msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della risposta ...");
+												validatoreMessaggiApplicativi.restoreOriginalDocument(false);
+											}
+										}
+										
+										// Ripristino struttura messaggio con xom
+										if(xomReferences!=null && xomReferences.size()>0){
+											msgDiag.mediumDebug("Validazione xsd della risposta (mtomRestoreAfterXSDConformance)...");
+											responseMessage.castAsSoap().mtomRestoreAfterXSDConformance(xomReferences);
+										}
+										
+									}
+									else {
+										
+										// Init Validatore
+										msgDiag.mediumDebug("Validazione della risposta (initValidator)...");
+										ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
+											new ValidatoreMessaggiApplicativiRest(registroServiziManager, idSValidazioneXSD, responseMessage, readInterface);
+										
+										if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
+												responseMessage.castAsRest().hasContent()) {
+											
+											// Validazione XSD
+											msgDiag.mediumDebug("Validazione xsd della risposta ...");
+											validatoreMessaggiApplicativi.validateWithSchemiXSD(false);
+											
+										}
+										else {
+											
+											// Validazione Interface
+											validatoreMessaggiApplicativi.validateResponseWithInterface(consegnaMessage);
+											
+										}
+										
 									}
 
 									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaEffettuata");
@@ -2537,7 +2560,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-												get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA),
+												get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA),
 											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, ex,
 											(responseMessage!=null ? responseMessage.getParseException() : null));
 								

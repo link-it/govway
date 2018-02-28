@@ -265,7 +265,7 @@ public class CostantiPdD {
     public static final int LIMIT_MESSAGGI_GESTORI = 50;
     
     /** Tipo WSDL */
-    public final static String WSDL_DEFINITORIO = "Schema xsd dei messaggi";
+    public final static String SCHEMA_XSD = "Schema xsd dei messaggi";
     public final static String WSDL_CONCETTUALE = "Wsdl concettuale";
     public final static String WSDL_FRUITORE = "Wsdl fruitore";
     public final static String WSDL_EROGATORE = "Wsdl erogatore";

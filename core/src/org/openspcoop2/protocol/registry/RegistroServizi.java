@@ -2820,6 +2820,8 @@ public class RegistroServizi  {
 		accordoServizioWrapper.setLocationSpecifica(as.getWsdlConcettuale());
 		accordoServizioWrapper.setBytesSpecifica(as.getByteWsdlConcettuale());
 		
+		accordoServizioWrapper.setRegistroServiziDB(asWrapper.registroServiziDB);
+		
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities wsdlWrapperUtilities = 
 				new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(this.log, accordoServizioWrapper);
 			

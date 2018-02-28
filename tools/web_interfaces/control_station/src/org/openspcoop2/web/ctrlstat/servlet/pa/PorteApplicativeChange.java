@@ -288,24 +288,24 @@ public final class PorteApplicativeChange extends Action {
 				numCorrApp = ca.sizeElementoList();
 			}
 			
-			String xsd = null;
+			String statoValidazione = null;
 			String tipoValidazione = null;
 			String applicaMTOM = "";
 			ValidazioneContenutiApplicativi vx = pa.getValidazioneContenutiApplicativi();
 			if (vx == null) {
-				xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
-				tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD;
+				statoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO;
+				tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE;
 			} else {
 				if(vx.getStato()!=null)
-					xsd = vx.getStato().toString();
-				if ((xsd == null) || "".equals(xsd)) {
-					xsd = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_XSD_DISABILITATO;
+					statoValidazione = vx.getStato().toString();
+				if ((statoValidazione == null) || "".equals(statoValidazione)) {
+					statoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_DISABILITATO;
 				}
 				
 				if(vx.getTipo()!=null)
 					tipoValidazione = vx.getTipo().toString();
 				if (tipoValidazione == null || "".equals(tipoValidazione)) {
-					tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_XSD ;
+					tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE ;
 				}
 				
 				if(vx.getAcceptMtomMessage()!=null)
@@ -738,7 +738,7 @@ public final class PorteApplicativeChange extends Action {
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.CHANGE,dati, 
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio,
 						serviziList, serviziListLabel, azione, azioniList, azioniListLabel, stateless, ricsim, ricasim, idsogg, 
-						idPorta, xsd, tipoValidazione, gestBody, gestManifest,integrazione,
+						idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazione,
 						numCorrApp,scadcorr,autorizzazioneContenuti,protocollo,
 						numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
@@ -901,7 +901,7 @@ public final class PorteApplicativeChange extends Action {
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.CHANGE,dati,
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio, 
 						serviziList, serviziListLabel, azione, azioniList, azioniListLabel,  stateless, ricsim,
-						ricasim, idsogg, idPorta, xsd, tipoValidazione, gestBody, gestManifest,integrazione,
+						ricasim, idsogg, idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazione,
 						numCorrApp,scadcorr,autorizzazioneContenuti,protocollo,
 						numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,

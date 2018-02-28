@@ -61,20 +61,20 @@ import org.w3c.dom.Element;
 public class ValidatoreMessaggiApplicativi {
 
 	/** Registro dei Servizi */
-	RegistroServiziManager registroServiziManager;
+	private RegistroServiziManager registroServiziManager;
 	/** Identificativo del Servizio */
-	IDServizio idServizio;
+	private IDServizio idServizio;
 	/** SOAPEnvelope */
-	OpenSPCoop2Message message;
-	Element element;
+	private OpenSPCoop2Message message;
+	private Element element;
 	/** WSDL Associato al servizio */
-	AccordoServizioWrapper accordoServizioWrapper = null;
+	private AccordoServizioWrapper accordoServizioWrapper = null;
 	/** Logger */
-	Logger logger = null;
+	private Logger logger = null;
 	/** XMLUtils */
-	org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
+	private org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
 	/** WSDLValidator */
-	WSDLValidator wsdlValidator = null;
+	private WSDLValidator wsdlValidator = null;
 	
 	
 	
@@ -115,7 +115,7 @@ public class ValidatoreMessaggiApplicativi {
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
 			= new ValidatoreMessaggiApplicativiException("Reader del Registro dei Servizi non fornito");
-			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
 		
@@ -123,7 +123,7 @@ public class ValidatoreMessaggiApplicativi {
 				idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null){
 			ValidatoreMessaggiApplicativiException ex 
 			= new ValidatoreMessaggiApplicativiException("ID del servizio da validare, non fornito");
-			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
 		
@@ -137,7 +137,7 @@ public class ValidatoreMessaggiApplicativi {
 					if(envelope.getBody()==null || (envelope.getBody().hasChildNodes()==false)){
 						ValidatoreMessaggiApplicativiException ex 
 							= new ValidatoreMessaggiApplicativiException("SOAPBody non esistente");
-						ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+						ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 						throw ex;
 					}
 				}
@@ -148,7 +148,7 @@ public class ValidatoreMessaggiApplicativi {
 					this.logger.error("Read failed: "+e.getMessage(),e);
 					ValidatoreMessaggiApplicativiException ex 
 						= new ValidatoreMessaggiApplicativiException("Lettura SOAPEnvelope fallita");
-					ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+					ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 					throw ex;
 				}
 			}
@@ -168,13 +168,13 @@ public class ValidatoreMessaggiApplicativi {
 		catch(Exception e){
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());
-			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
 		if(this.element==null){
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException("Contenuto da validare non esistente");
-			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
 
@@ -201,16 +201,16 @@ public class ValidatoreMessaggiApplicativi {
 			ValidatoreMessaggiApplicativiException ex 
 			= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage());
 			if(e.getMessage()!=null && e.getMessage().startsWith("[SchemaXSD]")){
-				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.getErrore417_CostruzioneValidatoreWSDLFallita(CostantiPdD.WSDL_DEFINITORIO));
+				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 				throw ex;
 			}else if(e.getMessage()!=null && e.getMessage().startsWith("[WSDL-FRUITORE]")){
-				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.getErrore417_CostruzioneValidatoreWSDLFallita(CostantiPdD.WSDL_FRUITORE));
+				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE));
 				throw ex;
 			}else if(e.getMessage()!=null && e.getMessage().startsWith("[WSDL-EROGATORE]")){
-				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.getErrore417_CostruzioneValidatoreWSDLFallita(CostantiPdD.WSDL_EROGATORE));
+				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE));
 				throw ex;
 			}else{
-				ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_530_COSTRUZIONE_WSDL_FALLITA));
+				ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_530_COSTRUZIONE_INTERFACCIA_FALLITA));
 				throw ex;
 			}
 		}
@@ -221,7 +221,7 @@ public class ValidatoreMessaggiApplicativi {
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());
-			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
 	}
@@ -263,15 +263,15 @@ public class ValidatoreMessaggiApplicativi {
 			this.logger.error("WSDL validate failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
 			= new ValidatoreMessaggiApplicativiException(e.getMessage());
-			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.getErrore417_CostruzioneValidatoreWSDLFallita(CostantiPdD.WSDL_DEFINITORIO));
+			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			throw ex;
 		}catch(Exception e){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 			= new ValidatoreMessaggiApplicativiException(e.getMessage());
 			if(isRichiesta){
-				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.getErrore418_ValidazioneWSDLRichiesta(CostantiPdD.WSDL_DEFINITORIO));
+				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			}else{
-				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.getErrore419_ValidazioneWSDLRisposta(CostantiPdD.WSDL_DEFINITORIO));
+				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			}
 			throw ex;
 		}
@@ -304,14 +304,14 @@ public class ValidatoreMessaggiApplicativi {
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.getErrore418_ValidazioneWSDLRichiesta(CostantiPdD.WSDL_FRUITORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.getErrore418_ValidazioneWSDLRichiesta(CostantiPdD.WSDL_EROGATORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE));
 			}else{
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.getErrore419_ValidazioneWSDLRisposta(CostantiPdD.WSDL_FRUITORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.getErrore419_ValidazioneWSDLRisposta(CostantiPdD.WSDL_EROGATORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE));
 			}
 			throw ex;
 		}
@@ -327,14 +327,14 @@ public class ValidatoreMessaggiApplicativi {
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());
 			if(isRichiesta){
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.getErrore418_ValidazioneWSDLRichiesta(CostantiPdD.WSDL_FRUITORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.getErrore418_ValidazioneWSDLRichiesta(CostantiPdD.WSDL_EROGATORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE));
 			}else{
 				if(TipologiaServizio.CORRELATO.equals(this.accordoServizioWrapper.getTipologiaServizio()))
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.getErrore419_ValidazioneWSDLRisposta(CostantiPdD.WSDL_FRUITORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_FRUITORE));
 				else
-					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_WSDL_RISPOSTA_FALLITA.getErrore419_ValidazioneWSDLRisposta(CostantiPdD.WSDL_EROGATORE));
+					ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(CostantiPdD.WSDL_EROGATORE));
 			}
 			throw ex;
 		}

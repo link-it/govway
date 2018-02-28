@@ -139,7 +139,7 @@ public final class PorteDelegateAdd extends Action {
 			String gestManifest = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
 			String ricsim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
 			String ricasim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			String xsd = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
+			String statoValidazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
 			String tipoValidazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
 			String autorizzazioneContenuti = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
@@ -427,12 +427,12 @@ public final class PorteDelegateAdd extends Action {
 					ricasim = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO;
 				}
 
-				if (xsd == null) {
+				if (statoValidazione == null) {
 					if(porteDelegateCore.isSinglePdD()){
 						Configurazione config = porteDelegateCore.getConfigurazioneGenerale();
 						if(config.getValidazioneContenutiApplicativi()!=null){
 							if(config.getValidazioneContenutiApplicativi().getStato()!=null){
-								xsd = config.getValidazioneContenutiApplicativi().getStato().toString();
+								statoValidazione = config.getValidazioneContenutiApplicativi().getStato().toString();
 							}
 							if(config.getValidazioneContenutiApplicativi().getTipo()!=null){
 								tipoValidazione = config.getValidazioneContenutiApplicativi().getTipo().toString();
@@ -444,11 +444,11 @@ public final class PorteDelegateAdd extends Action {
 					}
 				}
 
-				if (xsd == null) {
-					xsd = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+				if (statoValidazione == null) {
+					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 				}
 				if (tipoValidazione == null) {
-					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD;
+					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE;
 				}
 
 				if (applicaMTOM == null) {
@@ -466,7 +466,7 @@ public final class PorteDelegateAdd extends Action {
 						serviziListLabel, servizio, tiposervizio, versioneServizio, servizio,
 						modeaz, azid, azioniListLabel, azioniList, azione,
 						azione, numAzioni,  stateless, localForward, ricsim, ricasim,
-						xsd, tipoValidazione, 0, "", gestBody, gestManifest,
+						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,idsogg,protocollo,
 						numSA,numRuoli, ruoloMatch,
@@ -513,7 +513,7 @@ public final class PorteDelegateAdd extends Action {
 						serviziListLabel, servizio, tiposervizio,versioneServizio, servizio,
 						modeaz, azid, azioniListLabel, azioniList, azione,
 						azione, numAzioni, stateless, localForward, ricsim, ricasim,
-						xsd, tipoValidazione, 0, "", gestBody, gestManifest,
+						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti ,idsogg,protocollo,
 						numSA,numRuoli, ruoloMatch,
@@ -705,7 +705,7 @@ public final class PorteDelegateAdd extends Action {
 			portaDelegata.setNomeSoggettoProprietario(soggettoCS.getNome());
 
 			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
-			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(xsd));
+			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));
 			vx.setTipo(ValidazioneContenutiApplicativiTipo.toEnumConstant(tipoValidazione));
 			if(applicaMTOM != null){
 				if(ServletUtils.isCheckBoxEnabled(applicaMTOM))

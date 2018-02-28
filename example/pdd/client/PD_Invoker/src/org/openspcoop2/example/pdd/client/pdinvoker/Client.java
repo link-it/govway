@@ -230,12 +230,17 @@ public class Client {
 		else
 			Client.copy(httpConn.getErrorStream(),boutResponse);
 		boutResponse.flush();
-		boutResponse.flush();
+		boutResponse.close();
 		System.out.println("--------------------------------------------");
-		if(isPrintFileReceived)
-			System.out.println(boutResponse.toString());
-		else{
-			System.out.println("File ricevuto di dimensione "+boutResponse.size()+" bytes");
+		if(boutResponse.size()>0) {
+			if(isPrintFileReceived) {
+				System.out.println(boutResponse.toString());
+			}else{
+				System.out.println("File ricevuto di dimensione "+boutResponse.size()+" bytes");
+			}
+		}
+		else {
+			System.out.println("Risposta non contiene alcun contenuto");
 		}
 
 	}
@@ -248,6 +253,10 @@ public class Client {
 		// input or write to the output while copying is
 		// taking place
 
+		if(in==null) {
+			return;
+		}
+		
 		synchronized (in) {
 			synchronized (out) {
 

@@ -769,7 +769,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
 						
 				this.addEndPointToDati(dati,id,nome,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrif,risprif,nomeProtocollo,false,true, true);
+						getmsg,invrif,risprif,nomeProtocollo,false,true, true,
+						parentSA);
 				
 				if(TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 						CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -1665,8 +1666,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	public void addEndPointToDati(Vector<DataElement> dati,
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
 			String getmsg,String invrif,String risprif, String nomeProtocollo, boolean showName,
-			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio){
+			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
+			Integer parentSA) throws Exception{
 
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
+		IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
+		
 		DataElement de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 		de.setValue(idsil);
@@ -1674,7 +1679,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 		dati.addElement(de);
 
-		if(showName){
+		boolean showFromConfigurazione = false;
+		if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
+			showFromConfigurazione = true;
+		}
+		
+		if(showName && !showFromConfigurazione){
 			
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
@@ -1717,13 +1727,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}else{
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO);
 		}
-		de.setType(DataElementType.SELECT);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
-		de.setValues(tipoSbustamentoInformazioniProtocollo);
-		if(sbustamentoInformazioniProtocolloRichiesta==null){
-			de.setSelected(CostantiConfigurazione.ABILITATO.toString());
-		}else{
-			de.setSelected(sbustamentoInformazioniProtocolloRichiesta);
+		if(config.isSupportoSbustamentoProtocollo()) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoSbustamentoInformazioniProtocollo);
+			if(sbustamentoInformazioniProtocolloRichiesta==null){
+				de.setSelected(CostantiConfigurazione.ABILITATO.toString());
+			}else{
+				de.setSelected(sbustamentoInformazioniProtocolloRichiesta);
+			}
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			if(sbustamentoInformazioniProtocolloRichiesta==null){
+				de.setValue(CostantiConfigurazione.ABILITATO.toString());
+			}else{
+				de.setValue(sbustamentoInformazioniProtocolloRichiesta);
+			}
 		}
 		dati.addElement(de);
 
@@ -1792,13 +1812,28 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	}
 
 
-	public Vector<DataElement> addHiddenFieldsToDati(Vector<DataElement> dati, String provider){
+	public Vector<DataElement> addHiddenFieldsToDati(Vector<DataElement> dati, String provider,
+			String idAsps, String idPorta){
 
 		DataElement de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 		de.setValue(provider);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
+		de.setValue(idAsps);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);
+		de.setValue(idPorta);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);
 		dati.addElement(de);
 
 		return dati;

@@ -71,6 +71,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -4026,11 +4027,13 @@ public class ConsoleHelper {
 	
 	// Validazione contenuti
 	
-	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM) throws Exception{
-		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM);
+	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) throws Exception{
+		validazioneContenuti(tipoOperazione, dati, true,isPortaDelegata,xsd,tipoValidazione,applicaMTOM, serviceBinding, formatoSpecifica);
 	}
 	
-	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM) {
+	public void validazioneContenuti(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean addSezione,boolean isPortaDelegata, String xsd, String tipoValidazione, String applicaMTOM,
+			ServiceBinding serviceBinding, FormatoSpecifica formatoSpecifica) {
 		DataElement de = new DataElement();
 		
 		if(addSezione) {
@@ -4040,9 +4043,9 @@ public class ConsoleHelper {
 			dati.addElement(de);
 		}
 		
-		String[] tipoXsd = { CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_ABILITATO,
-				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_DISABILITATO,
-				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_WARNING_ONLY };
+		String[] tipoXsd = { CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO,
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_DISABILITATO,
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_WARNING_ONLY };
 		
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO);
@@ -4054,38 +4057,75 @@ public class ConsoleHelper {
 		de.setSelected(xsd);
 		dati.addElement(de);
 		
-		if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_ABILITATO.equals(xsd) ||
-				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_XSD_WARNING_ONLY.equals(xsd)) {
-			String[] tipi_validazione = {
-					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD,
-					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_WSDL,
-					CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP 
-			};
+		if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_ABILITATO.equals(xsd) ||
+				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_WARNING_ONLY.equals(xsd)) {
+			
+			List<String> tipiValidazione = new ArrayList<>();
+			tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_INTERFACE);
+			tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_XSD);
+			if(!this.isModalitaStandard()) {
+				tipiValidazione.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP);
+			}
+			
+			List<String> labelTipiValidazione = new ArrayList<>();
+			switch (formatoSpecifica) {
+			case OPEN_API_3:
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3);
+				break;
+			case SWAGGER_2:
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2);
+				break;
+			case WADL:
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WADL);
+				break;
+			case WSDL_11:
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11);
+				break;
+			}
+			labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_SCHEMI_XSD);
+			if(!this.isModalitaStandard()) {
+				labelTipiValidazione.add(CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP);
+			}
+			
 			//String[] tipi_validazione = { "xsd", "wsdl" };
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
-			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE);
-			de.setValues(tipi_validazione);
-			de.setSelected(tipoValidazione);
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) && this.isModalitaStandard()) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tipoValidazione);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipiValidazione);
+				de.setLabels(labelTipiValidazione);
+				de.setSelected(tipoValidazione);
+			}
 			dati.addElement(de);
+			
+			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) && this.isModalitaStandard()) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE+"__LABEL");
+				de.setType(DataElementType.TEXT);
+				de.setValue(CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP);
+				dati.addElement(de);
+			}
 			
 			
 			// Applica MTOM 
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM);
-			
-			//if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
-			de.setType(DataElementType.CHECKBOX);
-			if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
-				de.setSelected(true);
+			if(ServiceBinding.SOAP.equals(serviceBinding)) {
+				de.setType(DataElementType.CHECKBOX);
+				if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
+					de.setSelected(true);
+				}
 			}
-		//	}
-		//	else{
-		//		de.setType(DataElementType.HIDDEN);
-		//		de.setValue(applicaMTOM);
-		//	}
-			 
+			else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(applicaMTOM);
+			}		 
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM);
 			dati.addElement(de);
 		}

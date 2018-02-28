@@ -524,7 +524,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,true, true);
+						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,true, true,
+						parentSA);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
@@ -547,7 +548,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore, false);
 				
-				dati = saHelper.addHiddenFieldsToDati(dati, provider);
+				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
 				pd.setDati(dati);
 
@@ -570,7 +571,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,true, true);
+						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,true, true,
+						parentSA);
 				
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
@@ -593,7 +595,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore, false);
 				
-				dati = saHelper.addHiddenFieldsToDati(dati, provider);
+				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 
 				pd.setDati(dati);
 				

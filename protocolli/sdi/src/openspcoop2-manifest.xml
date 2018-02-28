@@ -24,7 +24,11 @@
 	    		 			<mode>protocol</mode>
 	    		 		</identificationModes>
 	    		 		<identificationParameter>
-	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 			<param prefix=".*/(?:" actor="providerType" suffix="_)?"/>
+	    		 			<param actor="providerName" suffix="/"/>
+	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
+	    		 			<param actor="serviceName" suffix="/"/>
+	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
 	    		 		</identificationParameter>
 						<specificResource>
 							<name>
@@ -54,7 +58,13 @@
 		    		 		<mode>soapAction</mode>
 	    		 		</identificationModes>
 	    		 		<identificationParameter>
-	    		 			<param prefix=".*" actor="name" suffix="/([^/|^?]*).*"/>
+	    		 			<param prefix=".*/(?:" actor="subscriberType" suffix="_)?"/>
+	    		 			<param actor="subscriberName" suffix="/"/>
+	    		 			<param prefix="(?:" actor="providerType" suffix="_)?"/>
+	    		 			<param actor="providerName" suffix="/"/>
+	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
+	    		 			<param actor="serviceName" suffix="/"/>
+	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
 	    		 		</identificationParameter>
 						<specificResource>
 							<name>

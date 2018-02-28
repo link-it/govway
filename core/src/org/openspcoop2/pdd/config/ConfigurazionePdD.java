@@ -1129,6 +1129,13 @@ public class ConfigurazionePdD  {
 			values = new Object[instances.length];
 			for (int i = 0; i < instances.length; i++) {
 				classArgoments[i] = instances[i].getClass();
+				if(classArgoments[i].getPackage().getName().equals("org.openspcoop2.protocol.sdk.registry")) {
+					try {
+						classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName());
+					}catch(Exception e) {
+						throw new DriverConfigurazioneException(e.getMessage(),e);
+					}
+				}
 				values[i] = instances[i];
 			}
 		}
@@ -1228,6 +1235,13 @@ public class ConfigurazionePdD  {
 			values = new Object[instances.length];
 			for (int i = 0; i < instances.length; i++) {
 				classArgoments[i] = instances[i].getClass();
+				if(classArgoments[i].getPackage().getName().equals("org.openspcoop2.protocol.sdk.registry")) {
+					try {
+						classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName());
+					}catch(Exception e) {
+						throw new DriverConfigurazioneException(e.getMessage(),e);
+					}
+				}
 				values[i] = instances[i];
 			}
 		}

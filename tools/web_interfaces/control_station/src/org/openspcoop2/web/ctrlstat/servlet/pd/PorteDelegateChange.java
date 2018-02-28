@@ -311,24 +311,24 @@ public final class PorteDelegateChange extends Action {
 				ruoloMatch = pde.getRuoli().getMatch().getValue();
 			}
 			
-			String xsd = null;
+			String statoValidazione = null;
 			String tipoValidazione = null;
 			String applicaMTOM = "";
 			ValidazioneContenutiApplicativi vx = pde.getValidazioneContenutiApplicativi();
 			if (vx == null) {
-				xsd = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
-				tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD;
+				statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
+				tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE;
 			} else {
 				if(vx.getStato()!=null)
-					xsd = vx.getStato().toString();
-				if ((xsd == null) || "".equals(xsd)) {
-					xsd = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_XSD_DISABILITATO;
+					statoValidazione = vx.getStato().toString();
+				if ((statoValidazione == null) || "".equals(statoValidazione)) {
+					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
 				}
 				
 				if(vx.getTipo()!=null)
 					tipoValidazione = vx.getTipo().toString();
 				if (tipoValidazione == null || "".equals(tipoValidazione)) {
-					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_XSD ;
+					tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE ;
 				}
 				
 				if(vx.getAcceptMtomMessage()!=null)
@@ -702,7 +702,7 @@ public final class PorteDelegateChange extends Action {
 						serviziListLabel, servizio, tiposervizio, versioneServizio,
 						patternServizio, modeaz, azid, azioniListLabel,
 						azioniList, azione, patternAzione, numAzioni,
-						stateless, localForward, ricsim, ricasim, xsd,
+						stateless, localForward, ricsim, ricasim, statoValidazione,
 						tipoValidazione, numCorrApp, scadcorr, gestBody,
 						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
@@ -857,7 +857,7 @@ public final class PorteDelegateChange extends Action {
 						tiposervizio, servizio, versioneServizio, modeaz, azid,
 						azioniListLabel, azioniList, azione, azione,
 						numAzioni,  stateless, localForward, ricsim, ricasim,
-						xsd, tipoValidazione, numCorrApp, scadcorr, gestBody,
+						statoValidazione, tipoValidazione, numCorrApp, scadcorr, gestBody,
 						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,

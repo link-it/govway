@@ -88,9 +88,14 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 		this.bytesSpecifica = bytesSpecifica;
 	}
 
-
-
-
+	/** Indicazione se il registro e' su DB */
+	private boolean registroServiziDB = false;
+	public boolean isRegistroServiziDB() {
+		return this.registroServiziDB;
+	}
+	public void setRegistroServiziDB(boolean registroServiziDB) {
+		this.registroServiziDB = registroServiziDB;
+	}
 	
 	@Override
 	public AccordoServizioWrapper clone(){
@@ -111,6 +116,8 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 		if(this.api!=null) {
 			as.api = (Api) this.api.clone();
 		}
+		
+		as.registroServiziDB = this.registroServiziDB;
 
 		return as;
 	}
