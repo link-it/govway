@@ -45,8 +45,10 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
@@ -764,6 +766,39 @@ public class PorteApplicativeCore extends ControlStationCore {
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public MappingErogazionePortaApplicativa getMappingErogazionePortaApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMappingErogazionePortaApplicativa";
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(pa.getNome());
+			
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+					pa.getServizio().getVersione());
+			
+			return DBMappingUtils.getMappingErogazione(idServizio, idPA, con, this.tipoDB);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public String getLabelRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException {
+		MappingErogazionePortaApplicativa mapping = this.getMappingErogazionePortaApplicativa(pa);
+		if(mapping.isDefault()) {
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+		}
+		else {
+			return mapping.getNome();
 		}
 	}
 	

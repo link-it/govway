@@ -88,7 +88,8 @@ public final class SoggettiRuoliAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore();
 
 			Soggetto soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);
-			String tmpTitle = soggettoRegistry.getTipo() + "/" + soggettoRegistry.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoRegistry.getTipo());
+			String tmpTitle = soggettiHelper.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome());
 			
 			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
 			filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);

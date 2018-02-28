@@ -300,23 +300,18 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI = "Porte Delegate di ";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG_DI = "Servizi Applicativi di ";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG_DI = "Ruoli di ";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_CONFIG = "Message-Security";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_CONFIG_DI = "Message-Security di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Message-Security request-flow di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Message-Security response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Parametri Message-Security della Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Parametri Message-Security della Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG = "Configurazione MTOM";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG_DI = "Configurazione MTOM di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_REQUEST_FLOW_DI = "MTOM request-flow di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_REQUEST_FLOW_DI = "Parametri MTOM della Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI = "Parametri MTOM della Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG = "Correlazione Applicativa";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI = "Correlazione Applicativa di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazioni Applicative per la richiesta di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazioni Applicative per la risposta di ";
@@ -327,7 +322,6 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_CONFIG = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = "Integrazione";
@@ -378,7 +372,6 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM = CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM;
 
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI = "Controllo Accessi";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG = "Controllo Accessi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI = "Controllo Accessi di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO = "Abilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO = "Disabilitato";

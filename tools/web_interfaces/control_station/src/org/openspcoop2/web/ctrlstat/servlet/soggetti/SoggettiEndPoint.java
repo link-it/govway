@@ -179,7 +179,8 @@ public final class SoggettiEndPoint extends Action {
 			org.openspcoop2.core.config.Soggetto ssconf = scs.getSoggettoConf();
 			String nomeprov = scs.getNome();
 			String tipoprov = scs.getTipo();
-			String tmpTitle = tipoprov + "/" + nomeprov;
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			String tmpTitle = soggettiHelper.getLabelNomeSoggetto(protocollo, tipoprov , nomeprov);
 			// String pdd = ss.getServer();
 			Connettore c = ss.getConnettore();
 			

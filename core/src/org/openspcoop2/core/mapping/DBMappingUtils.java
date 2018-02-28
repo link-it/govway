@@ -765,19 +765,19 @@ public class DBMappingUtils {
 	
 	private static long _getTableIdMappingErogazione(long idServizioLong, IDPortaApplicativa idPortaApplicativa,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		if(idServizioLong<=0){
+			throw new CoreException("IdServizio non fornito");
+		}
+		long idPA = DBUtils.getIdPortaApplicativa(idPortaApplicativa.getNome(), con, tipoDB);
+		if(idPA<=0){
+			throw new CoreException("PortaApplicativa ["+idPortaApplicativa+"] non esistente");
+		}
+
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
 		try {
 
-			if(idServizioLong<=0){
-				throw new Exception("IdServizio non fornito");
-			}
-			long idPA = DBUtils.getIdPortaApplicativa(idPortaApplicativa.getNome(), con, tipoDB);
-			if(idPA<=0){
-				throw new Exception("PortaApplicativa ["+idPortaApplicativa+"] non esistente");
-			}
-			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
 			sqlQueryObject.addWhereCondition("id_erogazione=?");
@@ -884,6 +884,80 @@ public class DBMappingUtils {
 		}
 	}
 	
+	
+	public static MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
+			Connection con, String tipoDB) throws CoreException {
+		return getMappingErogazione(idServizio, idPortaApplicativa, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
+		if(idServizioLong<=0){
+			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
+		}
+		
+		long idPA = DBUtils.getIdPortaApplicativa(idPortaApplicativa.getNome(), con, tipoDB);
+		if(idPA<=0){
+			throw new CoreException("PortaApplicativa ["+idPortaApplicativa+"] non esistente");
+		}
+		
+		MappingErogazionePortaApplicativa mapping = _getMappingErogazione(idServizioLong, idPA, con, tipoDB, tabellaSoggetti);
+		mapping.setIdPortaApplicativa(idPortaApplicativa);
+		mapping.setIdServizio(idServizio);
+		return mapping;
+	}
+	private static MappingErogazionePortaApplicativa _getMappingErogazione(long idServizioLong, long idPA,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+			sqlQueryObject.addWhereCondition("id_erogazione=?");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String queryString = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(queryString);
+			stm.setLong(1, idServizioLong);
+			stm.setLong(2, idPA);
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+				int isDefault = rs.getInt("is_default");
+				mapping.setDefault(isDefault == 1);
+				
+				mapping.setTableId(rs.getLong("id"));
+				
+				mapping.setNome(rs.getString("nome"));
+				
+				return mapping;
+			}
+			else{
+				throw new CoreException("Mapping tra PA (id:"+idPA+") e servizio (id:"+idServizioLong+") non esistente");
+			}
+		}catch(CoreException de){
+			throw de;
+		}
+		catch(Exception e){
+			throw new CoreException("getMappingErogazione error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
 	
 	
 	
@@ -1759,4 +1833,81 @@ public class DBMappingUtils {
 
 		}
 	} 
+	
+	
+	
+	public static MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
+			Connection con, String tipoDB) throws CoreException {
+		return getMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
+		if(idFruizione<=0){
+			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
+		}
+		
+		long idPD = DBUtils.getIdPortaDelegata(idPortaDelegata.getNome(), con, tipoDB);
+		if(idPD<=0){
+			throw new CoreException("PortaDelegata ["+idPortaDelegata+"] non esistente");
+		}
+		
+		MappingFruizionePortaDelegata mapping = _getMappingFruizione(idFruizione, idPD, con, tipoDB, tabellaSoggetti);
+		mapping.setIdPortaDelegata(idPortaDelegata);
+		mapping.setIdServizio(idServizio);
+		mapping.setIdFruitore(idFruitore);
+		return mapping;
+	}
+	private static MappingFruizionePortaDelegata _getMappingFruizione(long idFruizione, long idPD,
+			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException {
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+			sqlQueryObject.addWhereCondition("id_fruizione=?");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String queryString = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(queryString);
+			stm.setLong(1, idFruizione);
+			stm.setLong(2, idPD);
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+				int isDefault = rs.getInt("is_default");
+				mapping.setDefault(isDefault == 1);
+				
+				mapping.setTableId(rs.getLong("id"));
+				
+				mapping.setNome(rs.getString("nome"));
+				
+				return mapping;
+			}
+			else{
+				throw new CoreException("Mapping tra PD (id:"+idPD+") e Fruizione (id:"+idFruizione+") non esistente");
+			}
+		}catch(CoreException de){
+			throw de;
+		}
+		catch(Exception e){
+			throw new CoreException("getMappingFruizione error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
 }

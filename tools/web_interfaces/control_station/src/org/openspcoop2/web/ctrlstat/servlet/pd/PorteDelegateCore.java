@@ -41,8 +41,10 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
@@ -656,5 +658,40 @@ public class PorteDelegateCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
+	}
+	
+	public MappingFruizionePortaDelegata getMappingFruizionePortaDelegata(PortaDelegata pd) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMappingFruizionePortaDelegata";
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(pd.getNome());
+			
+			IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+			
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+					pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome(), 
+					pd.getServizio().getVersione());
+			
+			return DBMappingUtils.getMappingFruizione(idServizio, idFruitore, idPD, con, this.tipoDB);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public String getLabelRegolaMappingFruizionePortaDelegata(PortaDelegata pd) throws DriverConfigurazioneException {
+		MappingFruizionePortaDelegata mapping = this.getMappingFruizionePortaDelegata(pd);
+		if(mapping.isDefault()) {
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+		}
+		else {
+			return mapping.getNome();
+		}
 	}
 }
