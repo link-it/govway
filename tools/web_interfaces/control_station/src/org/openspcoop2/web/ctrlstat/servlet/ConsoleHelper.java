@@ -3635,7 +3635,8 @@ public class ConsoleHelper {
 	}
 	
 	// Prepara la lista di azioni delle porte
-	public void preparePorteAzioneList(List<String> listaAzioni, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, String nomePorta, String objectName, List<Parameter> listaParametriSessione) throws Exception {
+	public void preparePorteAzioneList(List<String> listaAzioni, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, String nomePorta, String objectName, List<Parameter> listaParametriSessione,
+			String labelPerPorta) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
 
@@ -3643,7 +3644,8 @@ public class ConsoleHelper {
 
 			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
 			this.pd.setSearchDescription("");
-			lstParametriBreadcrumbs.add(new Parameter(CostantiControlStation.LABEL_PARAMETRO_AZIONI_DI + nomePorta,null));
+			
+			lstParametriBreadcrumbs.add(new Parameter(labelPerPorta,null));
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParametriBreadcrumbs.toArray(new Parameter[lstParametriBreadcrumbs.size()]));

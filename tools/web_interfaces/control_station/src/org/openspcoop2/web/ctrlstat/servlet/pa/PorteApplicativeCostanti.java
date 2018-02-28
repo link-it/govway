@@ -326,7 +326,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.LABEL_PARAMETRO_AZIONI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_DI;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
