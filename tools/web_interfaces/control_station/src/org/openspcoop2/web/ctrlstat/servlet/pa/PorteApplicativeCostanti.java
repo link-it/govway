@@ -244,6 +244,7 @@ public class PorteApplicativeCostanti {
 
 	public final static String LABEL_PA_MENU_VISUALE_AGGREGATA = "Porte Applicative";
 	
+	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "Dati Invocazione";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI = "Dati Generali";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO = "Dati Servizio";
 	public final static String LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA = "Abilitato";
@@ -260,6 +261,9 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA =  CostantiControlStation.PARAMETRO_ID_CORRELAZIONE;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_TIPO_SOGGETTO = "tipoprov";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO = "nomeprov";
+	
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO = "configurazioneAltro";
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE = CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = CostantiControlStation.PARAMETRO_ELEMENTO_XML;
@@ -324,10 +328,15 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA = "idCorr";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "Servizio";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.LABEL_PARAMETRO_AZIONI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "Dati Invocazione";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE = "URL";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE = "Configurazione";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Applicativi Erogatori";
@@ -455,6 +464,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED.toString();
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.toString();
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY = PortaApplicativaAzioneIdentificazione.DELEGATED_BY.toString();
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "nuova";

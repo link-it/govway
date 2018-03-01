@@ -1740,7 +1740,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto le label delle colonne
 			List<String> listaLabel = new ArrayList<String>();
 
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
@@ -1750,8 +1750,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 			}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
-			if(this.isModalitaAvanzata())
+			if(this.isModalitaAvanzata()) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
+				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE);
+			}
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				listaLabel.add(extendedServletList.getListTitle(this));
 			}
@@ -1777,16 +1779,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
 				Parameter pIdProvider = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, paAssociata.getIdSoggetto() + "");
 				Parameter pIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+paAssociata.getId());
+				
+				Parameter pConfigurazioneDati = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
+				Parameter pConfigurazioneAltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
 
 				// nome mapping
 				DataElement de = new DataElement();
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps);
+				if(mapping.isDefault()) {
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneDati);
+				}
 				de.setValue(mapping.isDefault() ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT : mapping.getNome());
 				de.setIdToRemove(paAssociata.getNome());
 				//de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
 				e.addElement(de);
-
+				
 				// azioni
 				de = new DataElement();
 				if(!mapping.isDefault()) {
@@ -1947,6 +1954,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					e.addElement(de);
 				}
 
+				// Altro
+				if(this.isModalitaAvanzata()){
+					de = new DataElement();
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltro);
+					ServletUtils.setDataElementVisualizzaLabel(de);
+					//de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
+					e.addElement(de);
+				}
+				
 				// Extended Servlet List
 				if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 					de = new DataElement();

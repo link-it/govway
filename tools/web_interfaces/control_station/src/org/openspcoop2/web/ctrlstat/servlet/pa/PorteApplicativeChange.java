@@ -158,6 +158,12 @@ public final class PorteApplicativeChange extends Action {
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			if(postBackElementName!=null && PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE.equals(postBackElementName)) {
+				// ho cambiato modalita', elimino il valore
+				azione = null;
+			}
+			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
@@ -356,8 +362,6 @@ public final class PorteApplicativeChange extends Action {
 					ruoloMatch = pa.getRuoli().getMatch().getValue();
 				}
 			}
-			
-			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
 			if (postBackElementName != null) {
@@ -974,10 +978,14 @@ public final class PorteApplicativeChange extends Action {
 				pa.setServizio(null);
 			
 			// se l azione e' settata allora creo il bean
-			if (((!azione.equals("") || 
+			if(modeaz!=null && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY)) {
+				// non modifico paAzione
+			}
+			else if (((!azione.equals("") || 
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) ||
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED))) ||
 							!azid.equals("")) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
@@ -1007,8 +1015,9 @@ public final class PorteApplicativeChange extends Action {
 				}
 
 				pa.setAzione(paa);
-			}  else
+			}  else {
 				pa.setAzione(null);
+			}
 
 			// Cambio i dati della vecchia CorrelazioneApplicativa
 			// Non ne creo una nuova, altrimenti mi perdo le vecchie entry
