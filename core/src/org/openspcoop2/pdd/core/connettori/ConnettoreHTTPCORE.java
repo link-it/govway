@@ -152,7 +152,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Creazione URL...");
 			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ConnettoreHTTPCORE.ENDPOINT_TYPE, this.propertiesUrlBased, this.location);
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ConnettoreHTTPCORE.ENDPOINT_TYPE, this.propertiesUrlBased, this.location,
+					this.getProtocolFactory(), this.idModulo);
 
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");

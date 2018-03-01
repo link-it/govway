@@ -23,13 +23,6 @@
 	    		 		<identificationModes forceInterfaceMode="true">
 	    		 			<mode>protocol</mode>
 	    		 		</identificationModes>
-	    		 		<identificationParameter>
-	    		 			<param prefix=".*/(?:" actor="providerType" suffix="_)?"/>
-	    		 			<param actor="providerName" suffix="/"/>
-	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
-	    		 			<param actor="serviceName" suffix="/"/>
-	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
-	    		 		</identificationParameter>
 						<specificResource>
 							<name>
 	    		 				<param prefix="__" actor="name" suffix="__"/>

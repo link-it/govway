@@ -271,7 +271,8 @@ public class ConnettoreStresstest extends ConnettoreBase {
      */
     @Override
 	public String getLocation() throws ConnettoreException {
-    	return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ConnettoreStresstest.ENDPOINT_TYPE, this.propertiesUrlBased, LOCATION);
+    	return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ConnettoreStresstest.ENDPOINT_TYPE, this.propertiesUrlBased, LOCATION,
+				this.getProtocolFactory(), this.idModulo);
     }
  
     

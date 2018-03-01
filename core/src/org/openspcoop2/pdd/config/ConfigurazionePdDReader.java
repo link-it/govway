@@ -1138,7 +1138,7 @@ public class ConfigurazionePdDReader {
 
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
-					pattern, forceRegistryBased, forcePluginBased, this.log);
+					pattern, forceRegistryBased, forcePluginBased, this.log, false);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
@@ -1707,7 +1707,7 @@ public class ConfigurazionePdDReader {
 
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
-					pattern, forceRegistryBased, forcePluginBased, this.log);
+					pattern, forceRegistryBased, forcePluginBased, this.log, true);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException

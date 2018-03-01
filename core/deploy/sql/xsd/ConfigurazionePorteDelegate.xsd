@@ -21,6 +21,7 @@
                                 <linkit:sql-comment><![CDATA[**** Porte Delegate ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="porte-delegate" object-type="porte-delegate"/>
                                 <linkit:sql-table object-name="porte-delegate-sa" object-type="porte-delegate-sa"/>
+                                <linkit:sql-table object-name="porte-applicative-prop" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-delegate-mtom-request" object-type="MtomFlowParameter"/>
                                 <linkit:sql-table object-name="porte-delegate-mtom-response" object-type="MtomFlowParameter"/>
                                 <linkit:sql-table object-name="porte-delegate-ws-request" object-type="NomeValoreAsText"/>
@@ -683,6 +684,36 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
     
     
     
+    <xsd:element name="porte-delegate-prop" type="NomeValore">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pd_properties" 
+                        comment="Elenco di proprieta associate alla porta">
+                        <linkit:sql-table-constraint unique="uniq_pd_properties" index="idx_pd_properties"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-delegate"
+                            reference-object-type="porte-delegate"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                            <linkit:sql-table-unique-field name="valore"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_PD_PROP">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+    
+    
+    
     <xsd:element name="porte-delegate-mtom-request" type="MtomFlowParameter">
         <xsd:annotation>
             <xsd:appinfo>
@@ -778,6 +809,45 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
             </xsd:appinfo>
         </xsd:annotation>
     </xsd:element>
+    
+    
+    <xsd:complexType name="NomeValore">
+        <xsd:sequence>
+            <xsd:element name="id_porta" type="xsd:long">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="id_porta"/>
+                            <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="nome" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="nome"/>
+                            <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="valore" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="valore"/>
+                            <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
     
     
     <xsd:complexType name="NomeValoreAsText">

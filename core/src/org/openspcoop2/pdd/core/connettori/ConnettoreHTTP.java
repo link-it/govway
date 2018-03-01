@@ -891,7 +891,8 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     }
     private void buildLocation() throws ConnettoreException {
     	this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);			
-		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, TipiConnettore.HTTP.toString(), this.propertiesUrlBased, this.location);
+		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, TipiConnettore.HTTP.toString(), this.propertiesUrlBased, this.location,
+				this.getProtocolFactory(), this.idModulo);
     }
     
 

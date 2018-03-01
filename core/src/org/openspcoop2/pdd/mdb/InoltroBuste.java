@@ -1682,7 +1682,8 @@ public class InoltroBuste extends GenericLib{
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location);
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
@@ -1873,7 +1874,8 @@ public class InoltroBuste extends GenericLib{
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location);
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
@@ -3992,7 +3994,7 @@ public class InoltroBuste extends GenericLib{
 										// Init Validatore
 										msgDiag.mediumDebug("Validazione della risposta (initValidator)...");
 										ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-											new ValidatoreMessaggiApplicativiRest(registroServiziManager, richiestaDelegata.getIdServizio(), responseMessage, readInterface);
+											new ValidatoreMessaggiApplicativiRest(registroServiziManager, richiestaDelegata.getIdServizio(), responseMessage, readInterface, protocolFactory);
 										
 										if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
 												responseMessage.castAsRest().hasContent()) {
@@ -4005,7 +4007,7 @@ public class InoltroBuste extends GenericLib{
 										else {
 											
 											// Validazione Interface
-											validatoreMessaggiApplicativi.validateResponseWithInterface(requestMessage);
+											validatoreMessaggiApplicativi.validateResponseWithInterface(requestMessage, false);
 											
 										}
 										

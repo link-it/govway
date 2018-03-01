@@ -37,11 +37,14 @@ import org.openspcoop2.core.registry.rest.AccordoServizioWrapper;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.InformationApiSource;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
@@ -82,6 +85,8 @@ public class ValidatoreMessaggiApplicativiRest {
 	private org.openspcoop2.core.registry.rest.AccordoServizioWrapper accordoServizioWrapper = null;
 	/** Logger */
 	private Logger logger = null;
+	/** ProtocolFactory */
+	private IProtocolFactory<?> protocolFactory;
 
 	
 	
@@ -89,7 +94,7 @@ public class ValidatoreMessaggiApplicativiRest {
 	
 	/* ------ Costruttore -------------- */
 	public ValidatoreMessaggiApplicativiRest(RegistroServiziManager registro,IDServizio idServizio,
-			OpenSPCoop2Message message,boolean readInterfaceAccordoServizio)throws ValidatoreMessaggiApplicativiException{
+			OpenSPCoop2Message message,boolean readInterfaceAccordoServizio, IProtocolFactory<?> protocolFactory)throws ValidatoreMessaggiApplicativiException{
 		
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
@@ -111,6 +116,8 @@ public class ValidatoreMessaggiApplicativiRest {
 		this.registroServiziManager = registro;
 		
 		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		
+		this.protocolFactory = protocolFactory;
 		
 		try{
 			if(readInterfaceAccordoServizio){
@@ -237,13 +244,13 @@ public class ValidatoreMessaggiApplicativiRest {
 	
 	/* -------------- VALIDAZIONE Interface --------------------- */
 	
-	public void validateRequestWithInterface() throws ValidatoreMessaggiApplicativiException {
-		this.validateWithInterface(true, null);
+	public void validateRequestWithInterface(boolean portaApplicativa) throws ValidatoreMessaggiApplicativiException {
+		this.validateWithInterface(true, portaApplicativa, null);
 	}
-	public void validateResponseWithInterface(OpenSPCoop2Message requestMessage) throws ValidatoreMessaggiApplicativiException {
-		this.validateWithInterface(false, requestMessage);
+	public void validateResponseWithInterface(OpenSPCoop2Message requestMessage, boolean portaApplicativa) throws ValidatoreMessaggiApplicativiException {
+		this.validateWithInterface(false, portaApplicativa, requestMessage);
 	}
-	private void validateWithInterface(boolean isRichiesta, OpenSPCoop2Message requestMessage) throws ValidatoreMessaggiApplicativiException {
+	private void validateWithInterface(boolean isRichiesta, boolean portaApplicativa, OpenSPCoop2Message requestMessage) throws ValidatoreMessaggiApplicativiException {
 		
 		if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())){
 			throw new ValidatoreMessaggiApplicativiException("Tipo di validazione non supportata con Service Binding SOAP");
@@ -284,6 +291,30 @@ public class ValidatoreMessaggiApplicativiRest {
 			
 		
 		try{
+			org.openspcoop2.utils.transport.TransportRequestContext transportContext = null;
+			if(isRichiesta) {
+				transportContext = this.message.getTransportRequestContext();
+			}
+			else {
+				transportContext = requestMessage.getTransportRequestContext();
+			}
+			String normalizedInterfaceName = null;
+			try {
+				if(transportContext.getInterfaceName()!=null) {
+					PorteNamingUtils namingUtils = new PorteNamingUtils(this.protocolFactory);
+					if(portaApplicativa){
+						normalizedInterfaceName = namingUtils.normalizePA(transportContext.getInterfaceName());
+					}
+					else {
+						normalizedInterfaceName = namingUtils.normalizePD(transportContext.getInterfaceName());
+					}
+				}
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+			String path = RestUtilities.getUrlWithoutInterface(transportContext, normalizedInterfaceName);
+			HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(transportContext.getRequestType());
+			
 			if(isRichiesta) {
 				HttpBaseRequestEntity<?> httpRequest = null;
 				switch (this.message.getMessageType()) {
@@ -321,8 +352,8 @@ public class ValidatoreMessaggiApplicativiRest {
 				httpRequest.setContentType(this.message.getContentType());
 				httpRequest.setParametersTrasporto(this.message.getTransportRequestContext().getParametersTrasporto());
 				httpRequest.setParametersQuery(this.message.getTransportRequestContext().getParametersFormBased());
-				httpRequest.setUrl(this.message.getTransportRequestContext().getRequestURI());
-				httpRequest.setMethod(HttpRequestMethod.valueOf(this.message.getTransportRequestContext().getRequestType()));
+				httpRequest.setUrl(path);
+				httpRequest.setMethod(httpMethod);
 				apiValidator.validate(httpRequest);
 			}
 			else {
@@ -361,8 +392,8 @@ public class ValidatoreMessaggiApplicativiRest {
 				}
 				httpResponse.setContentType(this.message.getContentType());
 				httpResponse.setParametersTrasporto(this.message.getTransportResponseContext().getParametersTrasporto());
-				httpResponse.setUrl(requestMessage.getTransportRequestContext().getRequestURI());
-				httpResponse.setMethod(HttpRequestMethod.valueOf(requestMessage.getTransportRequestContext().getRequestType()));
+				httpResponse.setUrl(path);
+				httpResponse.setMethod(httpMethod);
 				httpResponse.setStatus(Integer.parseInt(this.message.getTransportResponseContext().getCodiceTrasporto()));
 				apiValidator.validate(httpResponse);
 			}

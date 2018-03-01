@@ -3081,7 +3081,7 @@ public class RegistroServizi  {
 	}
 	
 	private org.openspcoop2.core.registry.constants.ServiceBinding getServiceBindingEngine(IDServizio idService, String nomeRegistro,Connection connectionPdD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		_ASWrapperDati asWrapper = new _ASWrapperDati();
+		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD);
 		return asWrapper.as.getServiceBinding();
 	}
 	

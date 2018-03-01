@@ -35,7 +35,25 @@ import org.openspcoop2.utils.transport.TransportUtils;
  */
 public class RestUtilities {
 
-	public static String buildUrl(String url,Properties p,TransportRequestContext requestContext){
+	public static String getUrlWithoutInterface(TransportRequestContext requestContext, String normalizedInterfaceName) {
+		String resourcePath = requestContext.getFunctionParameters();
+		if(resourcePath!=null){
+			if(resourcePath.startsWith("/")){
+				resourcePath = resourcePath.substring(1);
+			}
+			if(requestContext.getInterfaceName()!=null) {
+				if(resourcePath.startsWith(requestContext.getInterfaceName())){
+					resourcePath = resourcePath.substring(requestContext.getInterfaceName().length());
+				}		
+				else if(normalizedInterfaceName!=null && resourcePath.startsWith(normalizedInterfaceName)){
+					resourcePath = resourcePath.substring(normalizedInterfaceName.length());
+				}
+			}
+		}
+		return resourcePath;
+	}
+	
+	public static String buildUrl(String url,Properties p,TransportRequestContext requestContext, String normalizedInterfaceName){
 		
 		String baseUrl = url;
 		String parameterOriginalUrl = null;
@@ -54,14 +72,8 @@ public class RestUtilities {
 		newUrl.append(baseUrl);
 		
 		if(requestContext!=null){
-			String resourcePath = requestContext.getFunctionParameters();
+			String resourcePath = getUrlWithoutInterface(requestContext,normalizedInterfaceName);
 			if(resourcePath!=null){
-				if(resourcePath.startsWith("/")){
-					resourcePath = resourcePath.substring(1);
-				}
-				if(requestContext.getInterfaceName()!=null && resourcePath.startsWith(requestContext.getInterfaceName())){
-					resourcePath = resourcePath.substring(requestContext.getInterfaceName().length());
-				}
 				boolean extraPathApplicativoStartWithSlash = false;
 				if(resourcePath.startsWith("/")){
 					extraPathApplicativoStartWithSlash = true;

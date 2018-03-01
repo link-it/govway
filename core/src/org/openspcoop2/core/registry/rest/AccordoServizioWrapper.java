@@ -114,7 +114,7 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 		as.bytesSpecifica = this.bytesSpecifica;
 
 		if(this.api!=null) {
-			as.api = (Api) this.api.clone();
+			as.api = this.api;
 		}
 		
 		as.registroServiziDB = this.registroServiziDB;

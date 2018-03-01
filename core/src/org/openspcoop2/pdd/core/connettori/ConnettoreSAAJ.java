@@ -143,7 +143,8 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			if(this.debug)
 				this.logger.debug("Check validita URL...");
 			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ENDPOINT_TYPE, this.propertiesUrlBased, this.location);
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ENDPOINT_TYPE, this.propertiesUrlBased, this.location,
+					this.getProtocolFactory(), this.idModulo);
 			
 			// Check tipo di messaggio
 			if(ServiceBinding.SOAP.equals(this.requestMsg.getServiceBinding())==false){

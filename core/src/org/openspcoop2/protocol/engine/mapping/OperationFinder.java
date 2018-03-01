@@ -29,12 +29,14 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.protocol.registry.InformationApiSource;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -60,10 +62,43 @@ public class OperationFinder {
 			IProtocolFactory<?> protocolFactory,
 			ModalitaIdentificazioneAzione modalitaIdentificazione, String pattern, 
 			boolean forceRegistryBased, boolean forcePluginBased,
-			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			Logger log, boolean portaApplicativa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
 		
 		try{
 
+			// Recupero Lista di Azioni
+//			List<String> listaAzioni = new ArrayList<String>();
+//			boolean rest = false;
+//			try {
+//				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+//				AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false);
+//				if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+//					rest = true;
+//					for (Resource r : aspc.getResourceList()) {
+//						listaAzioni.add(r.getNome());
+//					}
+//				}
+//				else {
+//					if(asps.getPortType()==null) {
+//						for (Azione a : aspc.getAzioneList()) {
+//							listaAzioni.add(a.getNome());
+//						}
+//					}
+//					else {
+//						for (PortType pt: aspc.getPortTypeList()) {
+//							if(pt.getNome().equals(asps.getPortType())) {
+//								for (Operation a : pt.getAzioneList()) {
+//									listaAzioni.add(a.getNome());
+//								}
+//								break;
+//							}
+//						}
+//					}
+//				}
+//			}catch(Throwable t) {
+//				// ignoro errori, li sollevo in altri posti
+//			}
+			
 			boolean registryBased = false;
 			boolean pluginBased = false;
 			
@@ -84,6 +119,10 @@ public class OperationFinder {
 							// URL-BASED
 							String urlInvocazionePD = transportContext.getUrlInvocazione_formBased();
 							azione = RegularExpressionEngine.getStringMatchPattern(urlInvocazionePD, pattern);
+							if(ServiceBinding.REST.equals(message.getServiceBinding())){
+								throw new DriverConfigurazioneNotFound("Identificazione '"+modalitaIdentificazione.getValue()+
+										"' non supportata per il service binding '"+ServiceBinding.REST+"'");
+							}
 						}						
 						else if(ModalitaIdentificazioneAzione.HEADER_BASED.equals(modalitaIdentificazione)){
 							// HEADER-BASED
@@ -123,14 +162,12 @@ public class OperationFinder {
 						}
 						else if(ModalitaIdentificazioneAzione.SOAP_ACTION_BASED.equals(modalitaIdentificazione)){
 							// SOAP-ACTION-BASED
+							if(message!=null && ServiceBinding.REST.equals(message.getServiceBinding())){
+								throw new DriverConfigurazioneNotFound("Identificazione '"+modalitaIdentificazione.getValue()+
+										"' non supportata per il service binding '"+ServiceBinding.REST+"'");
+							}
 							if(message!=null){
-								if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-									azione = message.castAsSoap().getSoapAction();
-								}
-								else{
-									throw new DriverConfigurazioneNotFound("Identificazione '"+ModalitaIdentificazioneAzione.SOAP_ACTION_BASED.getValue()+
-											"' non supportata per il service binding '"+ServiceBinding.REST+"'");
-								}
+								azione = message.castAsSoap().getSoapAction();
 							}
 							else{
 								// provo una soluzione veloce di vedere se è presente nell'header di trasporto o nel content-type
@@ -169,7 +206,8 @@ public class OperationFinder {
 								azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, registroServiziManager, idServizio, log);
 							}
 							else {
-								azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, registroServiziManager, idServizio, log);
+								azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, registroServiziManager, idServizio, log, 
+										protocolFactory, portaApplicativa);
 							}
 						}
 						else if(ModalitaIdentificazioneAzione.PROTOCOL_BASED.equals(modalitaIdentificazione)){
@@ -191,6 +229,7 @@ public class OperationFinder {
 			}catch(Exception e){
 				eAzione = e;
 			}
+			
 			// Se non ho riconosciuto una azione, provo con la modalita' wsdlBased se e' abilitata.
 			if(azione==null && forceRegistryBased && !registryBased ){
 				try{
@@ -200,7 +239,8 @@ public class OperationFinder {
 						azione = OperationFinder.searchOperationByWsdlInRequestMessage(message, registroServiziManager, idServizio, log);
 					}
 					else{
-						azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, registroServiziManager, idServizio, log);
+						azione = OperationFinder.searchOperationByRestInRequestMessage(transportContext, registroServiziManager, idServizio, log, 
+								protocolFactory, portaApplicativa);
 					}
 				}catch(Exception eForceRegistry){
 					log.debug("Riconoscimento forzato dell'azione non riuscito: "+eForceRegistry.getMessage(),eForceRegistry);
@@ -255,19 +295,36 @@ public class OperationFinder {
 		return wrapperUtilities.searchOperationName(isRichiesta, wrapper.getNomePortType(), msg);
 	}
 	
-	public static String searchOperationByRestInRequestMessage(TransportRequestContext transportContext, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+	public static String searchOperationByRestInRequestMessage(TransportRequestContext transportContext, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log,
+			IProtocolFactory<?> protocolFactory, boolean portaApplicativa) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		
-		String path = transportContext.getUrlInvocazione_formBased();
+		String normalizedInterfaceName = null;
+		try {
+			if(transportContext.getInterfaceName()!=null) {
+				PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
+				if(portaApplicativa){
+					normalizedInterfaceName = namingUtils.normalizePA(transportContext.getInterfaceName());
+				}
+				else {
+					normalizedInterfaceName = namingUtils.normalizePD(transportContext.getInterfaceName());
+				}
+			}
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		String path = RestUtilities.getUrlWithoutInterface(transportContext, normalizedInterfaceName);
 		HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(transportContext.getRequestType());
 		
 		try {
 			org.openspcoop2.core.registry.rest.AccordoServizioWrapper wrapper = registroServiziReader.getRestAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false);
 			ApiOperation op = wrapper.getApi().findOperation(httpMethod, path);
-			// Il path nella 'ApiOperation è normalizzato come sul registro
-			for (int i = 0; i < wrapper.getAccordoServizio().sizeResourceList(); i++) {
-				Resource r = wrapper.getAccordoServizio().getResource(i);
-				if(r.getMethod().name().equals(op.getHttpMethod().name()) && r.getPath().equals(op.getPath())){
-					return r.getNome();
+			if(op!=null) {
+				// Il path nella 'ApiOperation è normalizzato come sul registro
+				for (int i = 0; i < wrapper.getAccordoServizio().sizeResourceList(); i++) {
+					Resource r = wrapper.getAccordoServizio().getResource(i);
+					if(r.getMethod().name().equals(op.getHttpMethod().name()) && r.getPath().equals(op.getPath())){
+						return r.getNome();
+					}
 				}
 			}
 		}catch(Exception e) {

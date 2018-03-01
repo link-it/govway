@@ -656,7 +656,7 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="pa_properties" 
-                                              comment="Elenco delle informazioni che devono essere veicolate verso l'applicativo erogatore tramite dei nomi personalizzati">
+                                              comment="Elenco di proprieta associate alla porta">
                         <linkit:sql-table-constraint unique="uniq_pa_properties" index="idx_pa_properties"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"

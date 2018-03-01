@@ -110,20 +110,12 @@
     		 			<param actor="serviceVersion"/>
     		 		</name>
 					<resourceIdentification>
-	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 		<identificationModes default="interface" forceInterfaceMode="true">
 	    		 			<mode>interface</mode>
 		    		 		<mode>header</mode>
-		    		 		<mode>url</mode>
 		    		 		<mode>content</mode>
 		    		 		<mode>input</mode>
 	    		 		</identificationModes>
-	    		 		<identificationParameter>
-	    		 			<param prefix=".*/(?:" actor="providerType" suffix="_)?"/>
-	    		 			<param actor="providerName" suffix="/"/>
-	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
-	    		 			<param actor="serviceName" suffix="/"/>
-	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
-	    		 		</identificationParameter>
 						<specificResource>
 							<name>
 	    		 				<param prefix="__" actor="name" suffix="__"/>
@@ -143,22 +135,12 @@
     		 			<param actor="serviceVersion"/>
     		 		</name>
 					<resourceIdentification>
-	    		 		<identificationModes default="url" forceInterfaceMode="true">
+	    		 		<identificationModes default="interface" forceInterfaceMode="true">
 	    		 			<mode>interface</mode>
 		    		 		<mode>header</mode>
-		    		 		<mode>url</mode>
 		    		 		<mode>content</mode>
 		    		 		<mode>input</mode>
 	    		 		</identificationModes>
-	    		 		<identificationParameter>
-	    		 			<param prefix=".*/(?:" actor="subscriberType" suffix="_)?"/>
-	    		 			<param actor="subscriberName" suffix="/"/>
-	    		 			<param prefix="(?:" actor="providerType" suffix="_)?"/>
-	    		 			<param actor="providerName" suffix="/"/>
-	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
-	    		 			<param actor="serviceName" suffix="/"/>
-	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
-	    		 		</identificationParameter>
 						<specificResource>
 							<name>
 	    		 				<param prefix="__" actor="name" suffix="__"/>

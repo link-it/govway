@@ -33,8 +33,10 @@ import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -126,7 +128,8 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Properties propertiesURLBased, String locationParam) throws ConnettoreException{
+	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Properties propertiesURLBased, String locationParam,
+			IProtocolFactory<?> protocolFactory, String idModulo) throws ConnettoreException{
 		
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
 				TipiConnettore.HTTPS.toString().equals(tipoConnettore) ||
@@ -164,7 +167,18 @@ public class ConnettoreUtils {
 				
 				String location = locationParam;
 				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
-					return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext());
+					String normalizedInterfaceName = null;
+					if(msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
+						PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
+						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(idModulo)){
+							normalizedInterfaceName = namingUtils.normalizePA(msg.getTransportRequestContext().getInterfaceName());
+						}
+						else {
+							normalizedInterfaceName = namingUtils.normalizePD(msg.getTransportRequestContext().getInterfaceName());
+						}
+					}
+					return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext(),
+							normalizedInterfaceName);
 				}
 				else{
 					return TransportUtils.buildLocationWithURLBasedParameter(p, location, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
