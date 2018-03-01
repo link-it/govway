@@ -2984,11 +2984,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
+					Long idSoggetto =this.soggettiCore.getIdSoggetto(sog.getNome(), sog.getTipo());
 					DataElement de = new DataElement();
-//					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-//							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,sog.getId()+""),
-//							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sog.getNome()),
-//							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sog.getTipo()));
+					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,idSoggetto+""),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sog.getNome()),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sog.getTipo()));
 					de.setValue(this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome()));
 					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
 					e.addElement(de);
