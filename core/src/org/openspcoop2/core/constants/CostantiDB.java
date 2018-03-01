@@ -111,6 +111,8 @@ public final class CostantiDB {
     public static final String GESTIONE_ERRORE_TRASPORTO = "gestione_errore_trasporto";
     public static final String GESTIONE_ERRORE_SOAP = "gestione_errore_soap";
     
+    public static final String CONFIG_PROTOCOLLI = "config_protocolli";
+    
     public static final String MSG_DIAGN_APPENDER = "msgdiag_appender";
     public final static String MSG_DIAGN_APPENDER_COLUMN_ID = "id";
     public final static String MSG_DIAGN_APPENDER_SEQUENCE = "seq_msgdiag_appender";

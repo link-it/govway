@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
@@ -6158,6 +6159,36 @@ public class DriverConfigurazioneDB_LIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
+				// delete from config_protocolli
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_PROTOCOLLI);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				// insert into config_protocolli
+				if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0){
+					for(int k=0; k<config.getProtocolli().sizeProtocolloList();k++){
+						ConfigurazioneProtocollo configProtocollo = config.getProtocolli().getProtocollo(k);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.CONFIG_PROTOCOLLI);
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("url_pd", "?");
+						sqlQueryObject.addInsertField("url_pa", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setString(1, configProtocollo.getNome());
+						updateStmt.setString(2, configProtocollo.getUrlInvocazioneServizioPD());
+						updateStmt.setString(3, configProtocollo.getUrlInvocazioneServizioPA());
+						updateStmt.executeUpdate();
+						updateStmt.close();
+
+					}
+				}
+				
+				
 				// delete from msg diag appender
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.MSG_DIAGN_APPENDER_PROP);
@@ -6493,6 +6524,35 @@ public class DriverConfigurazioneDB_LIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
+				// delete from config_protocolli
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_PROTOCOLLI);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				// insert into config_protocolli
+				if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0){
+					for(int k=0; k<config.getProtocolli().sizeProtocolloList();k++){
+						ConfigurazioneProtocollo configProtocollo = config.getProtocolli().getProtocollo(k);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.CONFIG_PROTOCOLLI);
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("url_pd", "?");
+						sqlQueryObject.addInsertField("url_pa", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						updateStmt.setString(1, configProtocollo.getNome());
+						updateStmt.setString(2, configProtocollo.getUrlInvocazioneServizioPD());
+						updateStmt.setString(3, configProtocollo.getUrlInvocazioneServizioPA());
+						updateStmt.executeUpdate();
+						updateStmt.close();
+
+					}
+				}
+				
 				// delete from msg diag appender
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.MSG_DIAGN_APPENDER_PROP);

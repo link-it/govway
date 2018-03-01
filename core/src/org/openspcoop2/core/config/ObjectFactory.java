@@ -325,6 +325,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneProtocolli }
+     */
+    public ConfigurazioneProtocolli createConfigurazioneProtocolli() {
+        return new ConfigurazioneProtocolli();
+    }
+
+    /**
      * Create an instance of {@link RouteRegistro }
      */
     public RouteRegistro createRouteRegistro() {
@@ -469,6 +476,13 @@ public class ObjectFactory {
      */
     public GestioneErroreSoapFault createGestioneErroreSoapFault() {
         return new GestioneErroreSoapFault();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneProtocollo }
+     */
+    public ConfigurazioneProtocollo createConfigurazioneProtocollo() {
+        return new ConfigurazioneProtocollo();
     }
 
     /**

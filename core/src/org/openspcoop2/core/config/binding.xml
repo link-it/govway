@@ -479,6 +479,7 @@
     <structure field="accessoConfigurazione" usage="optional" map-as="org.openspcoop2.core.config.AccessoConfigurazione"/>
     <structure field="accessoDatiAutorizzazione" usage="optional" map-as="org.openspcoop2.core.config.AccessoDatiAutorizzazione"/>
     <structure field="accessoDatiAutenticazione" usage="optional" map-as="org.openspcoop2.core.config.AccessoDatiAutenticazione"/>
+    <structure field="protocolli" usage="optional" map-as="org.openspcoop2.core.config.ConfigurazioneProtocolli"/>
     <structure field="validazioneBuste" usage="optional" map-as="org.openspcoop2.core.config.ValidazioneBuste"/>
     <structure name="validazione-contenuti-applicativi" field="validazioneContenutiApplicativi" usage="optional" map-as="_ValidazioneContenutiApplicativi_Type"/>
     <structure field="indirizzoRisposta" usage="optional" map-as="org.openspcoop2.core.config.IndirizzoRisposta"/>
@@ -576,6 +577,18 @@
   <mapping name="accesso-dati-autenticazione" class="org.openspcoop2.core.config.AccessoDatiAutenticazione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <structure name="cache" field="cache" usage="optional" map-as="_Cache_Type"/>
+  </mapping>
+  <mapping name="protocolli" class="org.openspcoop2.core.config.ConfigurazioneProtocolli">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="protocollo" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.config.ConfigurazioneProtocollo"/>
+    </collection>
+  </mapping>
+  <mapping name="protocollo" class="org.openspcoop2.core.config.ConfigurazioneProtocollo">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="urlInvocazioneServizioPD" field="urlInvocazioneServizioPD" usage="optional" style="attribute"/>
+    <value name="urlInvocazioneServizioPA" field="urlInvocazioneServizioPA" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="validazione-buste" class="org.openspcoop2.core.config.ValidazioneBuste">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>

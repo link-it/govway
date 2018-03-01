@@ -22,6 +22,8 @@
                                 <linkit:sql-table object-name="registri" object-type="registri"/>
                                 <linkit:sql-table object-name="routing" object-type="routing"/>
                                 <linkit:sql-table object-name="configurazione" object-type="configurazione"/>
+                                <linkit:sql-comment><![CDATA[**** Protocolli ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="protocolli" object-type="protocolli"/>
                                 <linkit:sql-comment><![CDATA[**** Messaggi diagnostici Appender ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="msg-diag-appender" object-type="msg-diag-appender"/>
                                 <linkit:sql-table object-name="msg-diag-appender-prop" object-type="msg-diag-appender-prop"/>
@@ -754,6 +756,62 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    
+    
+    <xsd:element name="protocolli">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="config_protocolli"
+                        comment="Regole di configurazione dei protocolli">
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="nome"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>                  
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome del Protocollo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="urlInvocazioneServizioPD" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="url_pd"/>
+                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PD</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="urlInvocazioneServizioPA" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="url_pa"/>
+                                <linkit:sql-ddl-column-comment>URL di invocazione del servizio PA</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
     
     
     

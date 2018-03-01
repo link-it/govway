@@ -28,6 +28,8 @@ import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RoutingTable;
@@ -35,6 +37,8 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.lib.audit.AuditException;
@@ -328,5 +332,43 @@ public class ConfigurazioneCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	
+	
+	public ConfigurazioneProtocollo getConfigurazioneProtocollo(String protocollo) throws Exception {
+		
+		Configurazione config = this.getConfigurazioneGenerale();
+		ConfigurazioneProtocollo configProtocollo = null;
+		if(config.getProtocolli()!=null && config.getProtocolli().sizeProtocolloList()>0) {
+			for (ConfigurazioneProtocollo check : config.getProtocolli().getProtocolloList()) {
+				if(check.getNome().equals(protocollo)) {
+					configProtocollo = check;
+					break;
+				}
+			}
+		}
+		
+		if(configProtocollo==null) {
+			configProtocollo = new ConfigurazioneProtocollo();
+			configProtocollo.setNome(protocollo);
+		}
+		if(configProtocollo.getUrlInvocazioneServizioPD()==null || configProtocollo.getUrlInvocazioneServizioPA()==null) {
+			ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
+			IProtocolFactory<?> pFactory = pManager.getProtocolFactoryByName(protocollo);
+			String context = "";
+			if(pFactory.getManifest().getWeb().sizeContextList()>0) {
+				context = pFactory.getManifest().getWeb().getContext(0).getName();
+			}
+			
+			if(configProtocollo.getUrlInvocazioneServizioPD()==null) {
+				configProtocollo.setUrlInvocazioneServizioPD(ConfigurazioneCostanti.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context));
+			}
+			
+			if(configProtocollo.getUrlInvocazioneServizioPA()==null) {
+				configProtocollo.setUrlInvocazioneServizioPA(ConfigurazioneCostanti.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context));
+			}
+		}
+		
+		return configProtocollo;
 	}
 }

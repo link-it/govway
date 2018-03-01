@@ -118,6 +118,26 @@ CREATE TABLE configurazione
 
 
 
+-- **** Protocolli ****
+
+CREATE SEQUENCE seq_config_protocolli start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE config_protocolli
+(
+	nome VARCHAR(255) NOT NULL,
+	url_pd VARCHAR(255),
+	url_pa VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_config_protocolli') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_config_protocolli_1 UNIQUE (nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_protocolli PRIMARY KEY (id)
+);
+
+
+
+
 -- **** Messaggi diagnostici Appender ****
 
 CREATE SEQUENCE seq_msgdiag_appender start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;

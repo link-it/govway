@@ -1,6 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX index_pdd_sys_props_1;
 -- DROP INDEX index_servizi_pdd_1;
+-- DROP INDEX index_config_protocolli_1;
 DROP TABLE pdd_sys_props_init_seq;
 DROP TABLE pdd_sys_props;
 DROP TABLE servizi_pdd_filtri_init_seq;
@@ -23,6 +24,8 @@ DROP TABLE msgdiag_appender_prop_init_seq;
 DROP TABLE msgdiag_appender_prop;
 DROP TABLE msgdiag_appender_init_seq;
 DROP TABLE msgdiag_appender;
+DROP TABLE config_protocolli_init_seq;
+DROP TABLE config_protocolli;
 DROP TABLE configurazione_init_seq;
 DROP TABLE configurazione;
 DROP TABLE routing_init_seq;
@@ -40,6 +43,7 @@ DROP SEQUENCE seq_tracce_appender_prop;
 DROP SEQUENCE seq_tracce_appender;
 DROP SEQUENCE seq_msgdiag_appender_prop;
 DROP SEQUENCE seq_msgdiag_appender;
+DROP SEQUENCE seq_config_protocolli;
 DROP SEQUENCE seq_configurazione;
 DROP SEQUENCE seq_routing;
 DROP SEQUENCE seq_registri;

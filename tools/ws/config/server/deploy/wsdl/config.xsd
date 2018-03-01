@@ -586,6 +586,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-configurazione" type="accesso-configurazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autenticazione" type="accesso-dati-autenticazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="protocolli" type="configurazione-protocolli"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="indirizzo-risposta" type="indirizzo-risposta"/>
@@ -688,6 +689,18 @@
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
 		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Configurazione Protocolli -->
+	<xsd:complexType name="configurazione-protocolli">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="1" name="protocollo" type="configurazione-protocollo"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="configurazione-protocollo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="urlInvocazioneServizioPD" type="xsd:string" use="optional"/>
+		<xsd:attribute name="urlInvocazioneServizioPA" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 
 	<!-- Validazione Buste -->

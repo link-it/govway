@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="accesso-configurazione" type="{http://www.openspcoop2.org/core/config}accesso-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocolli" type="{http://www.openspcoop2.org/core/config}configurazione-protocolli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="indirizzo-risposta" type="{http://www.openspcoop2.org/core/config}indirizzo-risposta" minOccurs="0" maxOccurs="1"/>
@@ -72,6 +73,7 @@ import java.util.List;
   	"accessoConfigurazione",
   	"accessoDatiAutorizzazione",
   	"accessoDatiAutenticazione",
+  	"protocolli",
   	"validazioneBuste",
   	"validazioneContenutiApplicativi",
   	"indirizzoRisposta",
@@ -169,6 +171,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setAccessoDatiAutenticazione(AccessoDatiAutenticazione accessoDatiAutenticazione) {
     this.accessoDatiAutenticazione = accessoDatiAutenticazione;
+  }
+
+  public ConfigurazioneProtocolli getProtocolli() {
+    return this.protocolli;
+  }
+
+  public void setProtocolli(ConfigurazioneProtocolli protocolli) {
+    this.protocolli = protocolli;
   }
 
   public ValidazioneBuste getValidazioneBuste() {
@@ -330,6 +340,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="accesso-dati-autenticazione",required=false,nillable=false)
   protected AccessoDatiAutenticazione accessoDatiAutenticazione;
+
+  @XmlElement(name="protocolli",required=false,nillable=false)
+  protected ConfigurazioneProtocolli protocolli;
 
   @XmlElement(name="validazione-buste",required=false,nillable=false)
   protected ValidazioneBuste validazioneBuste;

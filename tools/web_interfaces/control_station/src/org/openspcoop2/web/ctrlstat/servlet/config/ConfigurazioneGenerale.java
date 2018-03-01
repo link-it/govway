@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
@@ -40,6 +41,8 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneProtocolli;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
@@ -55,6 +58,9 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -217,7 +223,8 @@ public final class ConfigurazioneGenerale extends Action {
 
 					dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 							connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
-							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
+							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
+							configurazione.getProtocolli());
 
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -409,6 +416,33 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getAccessoDatiAutenticazione().setCache(null);
 				}
 				
+				newConfigurazione.setProtocolli(null); // aggiorno i protocolli
+				
+				ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
+				MapReader<String, IProtocolFactory<?>> mapPFactory = pManager.getProtocolFactories();
+				Enumeration<String> protocolName = mapPFactory.keys();
+				while (protocolName.hasMoreElements()) {
+					String protocollo = (String) protocolName.nextElement();
+										
+					String nameP = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
+					String urlInvocazionePD = null;
+					String urlInvocazionePA = null;
+					if(nameP!=null) {
+						urlInvocazionePD = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD+protocollo);
+						urlInvocazionePA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA+protocollo);
+						
+						if(newConfigurazione.getProtocolli()==null) {
+							newConfigurazione.setProtocolli(new ConfigurazioneProtocolli());	
+						}
+						
+						ConfigurazioneProtocollo configProtocollo = new ConfigurazioneProtocollo();
+						configProtocollo.setNome(nameP);
+						configProtocollo.setUrlInvocazioneServizioPD(urlInvocazionePD);
+						configProtocollo.setUrlInvocazioneServizioPA(urlInvocazionePA);
+						newConfigurazione.getProtocolli().addProtocollo(configProtocollo);
+					}
+				}
+				
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
 				if(extendedBeanList!=null && extendedBeanList.size()>0){
 					for (ExtendedInfo ei : extendedBeanList) {
@@ -427,7 +461,8 @@ public final class ConfigurazioneGenerale extends Action {
 
 				dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
-						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
+						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
+						configurazione.getProtocolli());
 
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -578,7 +613,8 @@ public final class ConfigurazioneGenerale extends Action {
 
 			dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
-					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM);
+					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
+					configurazione.getProtocolli());
 
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,

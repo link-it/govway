@@ -35,6 +35,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneProtocolli;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
@@ -49,6 +51,10 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
+import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -2585,7 +2591,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String connessione, String utilizzo, String validman,
 			String gestman, String registrazioneTracce, String dumpApplicativo, String dumpPD, String dumpPA,
 			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
-			Vector<DataElement> dati, String applicaMTOM) {
+			Vector<DataElement> dati, String applicaMTOM, ConfigurazioneProtocolli configProtocolli) throws Exception {
 		DataElement de = new DataElement();
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -3041,6 +3047,90 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValues(tipoGM);
 		de.setSelected(gestman);
 		dati.addElement(de);
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
+		MapReader<String, IProtocolFactory<?>> mapPFactory = pManager.getProtocolFactories();
+		Enumeration<String> protocolName = mapPFactory.keys();
+		while (protocolName.hasMoreElements()) {
+			String protocollo = (String) protocolName.nextElement();
+			IProtocolFactory<?> pFactory = mapPFactory.get(protocollo);
+			String context = "";
+			if(pFactory.getManifest().getWeb().sizeContextList()>0) {
+				context = pFactory.getManifest().getWeb().getContext(0).getName();
+			}
+			
+			InformazioniProtocollo infoProt = pFactory.getInformazioniProtocol();
+			
+			ConfigurazioneProtocollo configProtocollo = null;
+			if(configProtocolli!=null) {
+				for (ConfigurazioneProtocollo check : configProtocolli.getProtocolloList()) {
+					if(check.getNome().equals(protocollo)) {
+						configProtocollo = check;
+						break;
+					}
+				}
+			}
+			
+			String nameP = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
+			String urlInvocazionePD = null;
+			String urlInvocazionePA = null;
+			if(nameP!=null) {
+				urlInvocazionePD = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD+protocollo);
+				urlInvocazionePA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA+protocollo);
+			}
+			if(urlInvocazionePD==null) {
+				if(configProtocollo!=null) {
+					urlInvocazionePD = configProtocollo.getUrlInvocazioneServizioPD();
+				}
+			}
+			if(urlInvocazionePA==null) {
+				if(configProtocollo!=null) {
+					urlInvocazionePA = configProtocollo.getUrlInvocazioneServizioPA();
+				}
+			}
+			if(urlInvocazionePD==null) {
+				urlInvocazionePD = ConfigurazioneCostanti.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context);
+			}
+			if(urlInvocazionePA==null) {
+				urlInvocazionePA = ConfigurazioneCostanti.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context);
+			}
+			
+			if(mapPFactory.size()>1) {
+				de = new DataElement();
+				de.setLabel(infoProt.getLabel());
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(protocollo);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA+protocollo);
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setValue(urlInvocazionePA);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD+protocollo);
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setValue(urlInvocazionePD);
+			dati.addElement(de);
+			
+		}
+		
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI);

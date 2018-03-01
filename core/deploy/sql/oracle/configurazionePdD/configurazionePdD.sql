@@ -151,6 +151,37 @@ end;
 
 
 
+-- **** Protocolli ****
+
+CREATE SEQUENCE seq_config_protocolli MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE config_protocolli
+(
+	nome VARCHAR2(255) NOT NULL,
+	url_pd VARCHAR2(255),
+	url_pa VARCHAR2(255),
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_config_protocolli_1 UNIQUE (nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_protocolli PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_config_protocolli
+BEFORE
+insert on config_protocolli
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_config_protocolli.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
 -- **** Messaggi diagnostici Appender ****
 
 CREATE SEQUENCE seq_msgdiag_appender MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;

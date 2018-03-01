@@ -56,6 +56,8 @@ import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
+import org.openspcoop2.core.config.ConfigurazioneProtocolli;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
@@ -5939,6 +5941,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 
 
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_PROTOCOLLI);
+				sqlQueryObject.addSelectField("*");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm1 = con.prepareStatement(sqlQuery);
+				rs1 = stm1.executeQuery();
+				while(rs1.next()){
+					ConfigurazioneProtocollo configurazioneProtocollo = new ConfigurazioneProtocollo();
+					configurazioneProtocollo.setNome(rs1.getString("nome"));
+					configurazioneProtocollo.setUrlInvocazioneServizioPD(rs1.getString("url_pd"));
+					configurazioneProtocollo.setUrlInvocazioneServizioPA(rs1.getString("url_pa"));
+					if(config.getProtocolli()==null) {
+						config.setProtocolli(new ConfigurazioneProtocolli());
+					}
+					config.getProtocolli().addProtocollo(configurazioneProtocollo);
+				}
+				rs1.close();
+				stm1.close();
 
 				String msg_diag_severita = rs.getString("msg_diag_severita");
 				String msg_diag_severita_log4j = rs.getString("msg_diag_severita_log4j");

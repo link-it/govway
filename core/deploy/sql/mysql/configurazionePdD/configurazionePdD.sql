@@ -112,6 +112,26 @@ CREATE TABLE configurazione
 
 
 
+-- **** Protocolli ****
+
+CREATE TABLE config_protocolli
+(
+	nome VARCHAR(255) NOT NULL,
+	url_pd VARCHAR(255),
+	url_pa VARCHAR(255),
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_config_protocolli_1 UNIQUE (nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_protocolli PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+-- index
+CREATE UNIQUE INDEX index_config_protocolli_1 ON config_protocolli (nome);
+
+
+
 -- **** Messaggi diagnostici Appender ****
 
 CREATE TABLE msgdiag_appender

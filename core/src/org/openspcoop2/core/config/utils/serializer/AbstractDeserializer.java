@@ -64,8 +64,8 @@ import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
-import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.RouteGateway;
 import org.openspcoop2.core.config.Openspcoop2;
@@ -85,6 +85,7 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
+import org.openspcoop2.core.config.ConfigurazioneProtocolli;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.Attachments;
@@ -94,6 +95,7 @@ import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
 import org.openspcoop2.core.config.MessageSecurityFlow;
@@ -2874,69 +2876,6 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
-	 Object: correlazione-applicativa-elemento
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(String fileName) throws DeserializerException {
-		return (CorrelazioneApplicativaElemento) this.xmlToObj(fileName, CorrelazioneApplicativaElemento.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(File file) throws DeserializerException {
-		return (CorrelazioneApplicativaElemento) this.xmlToObj(file, CorrelazioneApplicativaElemento.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(InputStream in) throws DeserializerException {
-		return (CorrelazioneApplicativaElemento) this.xmlToObj(in, CorrelazioneApplicativaElemento.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(byte[] in) throws DeserializerException {
-		return (CorrelazioneApplicativaElemento) this.xmlToObj(in, CorrelazioneApplicativaElemento.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElementoFromString(String in) throws DeserializerException {
-		return (CorrelazioneApplicativaElemento) this.xmlToObj(in.getBytes(), CorrelazioneApplicativaElemento.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: system-properties
 	 =================================================================================
 	*/
@@ -2994,6 +2933,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public SystemProperties readSystemPropertiesFromString(String in) throws DeserializerException {
 		return (SystemProperties) this.xmlToObj(in.getBytes(), SystemProperties.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: correlazione-applicativa-elemento
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(String fileName) throws DeserializerException {
+		return (CorrelazioneApplicativaElemento) this.xmlToObj(fileName, CorrelazioneApplicativaElemento.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(File file) throws DeserializerException {
+		return (CorrelazioneApplicativaElemento) this.xmlToObj(file, CorrelazioneApplicativaElemento.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(InputStream in) throws DeserializerException {
+		return (CorrelazioneApplicativaElemento) this.xmlToObj(in, CorrelazioneApplicativaElemento.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElemento(byte[] in) throws DeserializerException {
+		return (CorrelazioneApplicativaElemento) this.xmlToObj(in, CorrelazioneApplicativaElemento.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @return Object type {@link org.openspcoop2.core.config.CorrelazioneApplicativaElemento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CorrelazioneApplicativaElemento readCorrelazioneApplicativaElementoFromString(String in) throws DeserializerException {
+		return (CorrelazioneApplicativaElemento) this.xmlToObj(in.getBytes(), CorrelazioneApplicativaElemento.class);
 	}	
 	
 	
@@ -4197,6 +4199,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: configurazione-protocolli
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocolli readConfigurazioneProtocolli(String fileName) throws DeserializerException {
+		return (ConfigurazioneProtocolli) this.xmlToObj(fileName, ConfigurazioneProtocolli.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocolli readConfigurazioneProtocolli(File file) throws DeserializerException {
+		return (ConfigurazioneProtocolli) this.xmlToObj(file, ConfigurazioneProtocolli.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocolli readConfigurazioneProtocolli(InputStream in) throws DeserializerException {
+		return (ConfigurazioneProtocolli) this.xmlToObj(in, ConfigurazioneProtocolli.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocolli readConfigurazioneProtocolli(byte[] in) throws DeserializerException {
+		return (ConfigurazioneProtocolli) this.xmlToObj(in, ConfigurazioneProtocolli.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocolli}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocolli readConfigurazioneProtocolliFromString(String in) throws DeserializerException {
+		return (ConfigurazioneProtocolli) this.xmlToObj(in.getBytes(), ConfigurazioneProtocolli.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: validazione-buste
 	 =================================================================================
 	*/
@@ -4758,6 +4823,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public InvocazioneServizio readInvocazioneServizioFromString(String in) throws DeserializerException {
 		return (InvocazioneServizio) this.xmlToObj(in.getBytes(), InvocazioneServizio.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-protocollo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocollo readConfigurazioneProtocollo(String fileName) throws DeserializerException {
+		return (ConfigurazioneProtocollo) this.xmlToObj(fileName, ConfigurazioneProtocollo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocollo readConfigurazioneProtocollo(File file) throws DeserializerException {
+		return (ConfigurazioneProtocollo) this.xmlToObj(file, ConfigurazioneProtocollo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocollo readConfigurazioneProtocollo(InputStream in) throws DeserializerException {
+		return (ConfigurazioneProtocollo) this.xmlToObj(in, ConfigurazioneProtocollo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocollo readConfigurazioneProtocollo(byte[] in) throws DeserializerException {
+		return (ConfigurazioneProtocollo) this.xmlToObj(in, ConfigurazioneProtocollo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.config.ConfigurazioneProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneProtocollo readConfigurazioneProtocolloFromString(String in) throws DeserializerException {
+		return (ConfigurazioneProtocollo) this.xmlToObj(in.getBytes(), ConfigurazioneProtocollo.class);
 	}	
 	
 	

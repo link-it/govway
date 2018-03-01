@@ -291,6 +291,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_RISPOSTE = "Risposte";
 	public final static String LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO = "Indirizzo Telematico";
 	public final static String LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS = "Manifest Attachments";
+	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE = "URL di Invocazione dei Servizi";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache";
@@ -364,6 +365,10 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD = "statoServizioPD";
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA = "statoServizioPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM = "statoServizioIM";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME = "protocolConfigName";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = "protocolConfigUrlPD";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "protocolConfigUrlPA";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA = "statoLog4jDiagnostica";
 	public final static String PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP = "statoLog4jOpenspcoop";
@@ -471,6 +476,10 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA = "Porta Applicativa";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM = "Integration Manager";
 	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME = "Nome";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = "Fruizione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "Erogazione";
+	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL = "Log4j XML Diagnostici";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE = "openspcoop2_msgDiagnostico.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL = "Log4J Diagnostici";
@@ -528,6 +537,25 @@ public class ConfigurazioneCostanti {
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato";
 	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";
 	
+	
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE = "PROTOCOLLO";
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX = "http://localhost:8080/openspcoop2/"+DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE;
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX+"PD/";
+	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(String context) {
+		String c = "";
+		if(!"".equals(context)) {
+			c = context +"/";
+		}
+		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
+	}
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX+"PA/";
+	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(String context) {
+		String c = "";
+		if(!"".equals(context)) {
+			c = context +"/";
+		}
+		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
+	}
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL = TipoAutenticazione.SSL.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC = TipoAutenticazione.BASIC.getValue();
