@@ -347,8 +347,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = "Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI = "Ruoli";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave; Protocollo";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; Protocollo di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI = "Porte Applicative di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG_DI = "Applicativi Erogatori di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG = "Applicativi Erogatori";
@@ -421,6 +421,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING = "Configurazione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED = "Force Interface";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = "register-input";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = "header-based";
@@ -465,7 +467,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = PortaApplicativaAzioneIdentificazione.CONTENT_BASED.toString();
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = PortaApplicativaAzioneIdentificazione.INPUT_BASED.toString();
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED.toString();
-	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.toString();
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED = PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.toString();
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = PortaApplicativaAzioneIdentificazione.PROTOCOL_BASED.toString();
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY = PortaApplicativaAzioneIdentificazione.DELEGATED_BY.toString();
 	

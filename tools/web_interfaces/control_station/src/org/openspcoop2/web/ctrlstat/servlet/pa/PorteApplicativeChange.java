@@ -70,6 +70,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -82,6 +83,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
  * porteAppChange
@@ -395,23 +397,35 @@ public final class PorteApplicativeChange extends Action {
 			
 			String nomeBreadCrumb = oldNomePA;
 			if(parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) {
-				List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList = apsCore.mappingServiziPorteAppList(idServizioCheck, idAspsLong, null);
-				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = null;
-				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativaTmp : mappingServiziPorteAppList) {
-					if(mappingErogazionePortaApplicativaTmp.getIdPortaApplicativa().getNome().equals(oldNomePA)) {
-						mappingErogazionePortaApplicativa = mappingErogazionePortaApplicativaTmp;
-						break;
-					}
-				}
+//				List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList = apsCore.mappingServiziPorteAppList(idServizioCheck, idAspsLong, null);
+//				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = null;
+//				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativaTmp : mappingServiziPorteAppList) {
+//					if(mappingErogazionePortaApplicativaTmp.getIdPortaApplicativa().getNome().equals(oldNomePA)) {
+//						mappingErogazionePortaApplicativa = mappingErogazionePortaApplicativaTmp;
+//						break;
+//					}
+//				}
+//				
+//				if(mappingErogazionePortaApplicativa.isDefault()) {
+//					nomeBreadCrumb = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+//				} else {
+//					nomeBreadCrumb = mappingErogazionePortaApplicativa.getNome(); 
+//				}
 				
-				if(mappingErogazionePortaApplicativa.isDefault()) {
-					nomeBreadCrumb = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
-				} else {
-					nomeBreadCrumb = mappingErogazionePortaApplicativa.getNome(); 
+				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+				if(datiInvocazione) {
+					lstParm.remove(lstParm.size()-1);
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteApplicativeHelper.getLabelIdServizio(asps),null));
+					nomeBreadCrumb=null;
+				}
+				else {
+					nomeBreadCrumb = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
 				}
 			}
 			
-			lstParm.add(new Parameter(nomeBreadCrumb , null));
+			if(nomeBreadCrumb!=null) {
+				lstParm.add(new Parameter(nomeBreadCrumb , null));
+			}
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -751,7 +765,9 @@ public final class PorteApplicativeChange extends Action {
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
-						statoPorta,modeaz,  azid, patternAzione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault);
+						statoPorta,modeaz,  azid, patternAzione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
+						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null));
 
 				pd.setDati(dati);
 
@@ -914,7 +930,9 @@ public final class PorteApplicativeChange extends Action {
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
-						statoPorta,modeaz,  azid, azione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault);
+						statoPorta,modeaz,  azid, azione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
+						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null));
 
 				pd.setDati(dati);
 
@@ -986,7 +1004,7 @@ public final class PorteApplicativeChange extends Action {
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) ||
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED))) ||
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))) ||
 							!azid.equals("")) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
 
@@ -996,14 +1014,30 @@ public final class PorteApplicativeChange extends Action {
 						paa.setId(-2l);
 					}
 				}
-				paa.setNome(azione);
+				
 				paa.setIdentificazione(PortaApplicativaAzioneIdentificazione.toEnumConstant(modeaz));
-				paa.setPattern(azione);
-
+				
+				if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) ||
+						modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) ||
+						modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED)
+						) {
+					paa.setNome(null);
+					paa.setPattern(azione);
+				}
+				else if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)
+						) {
+					paa.setNome(azione);
+					paa.setPattern(null);
+				}
+				else {
+					paa.setNome(null);
+					paa.setPattern(null);
+				}
+				
 				//FORCE WSDL BASED
 				if(!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
-						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED)){
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED)){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
 						paa.setForceInterfaceBased(StatoFunzionalita.ABILITATO);
@@ -1056,15 +1090,36 @@ public final class PorteApplicativeChange extends Action {
 		
 			switch (parentPA) {
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
-				idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
-				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-				int idServizio = Integer.parseInt(idAsps);
-				asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-				Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
-				List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
-				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-				apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
+				
+				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+				if(datiInvocazione) {
+					idLista = Liste.SERVIZI;
+					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+					boolean [] permessi = new boolean[2];
+					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+					permessi[0] = pu.isServizi();
+					permessi[1] = pu.isAccordiCooperazione();
+					List<AccordoServizioParteSpecifica> listaS = null;
+					String superUser   = ServletUtils.getUserLoginFromSession(session);
+					if(apsCore.isVisioneOggettiGlobale(superUser)){
+						listaS = apsCore.soggettiServizioList(null, ricerca,permessi);
+					}else{
+						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi);
+					}
+					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+					apsHelper.prepareServiziList(ricerca, listaS);
+				}
+				else {			
+					idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
+					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+					int idServizio = Integer.parseInt(idAsps);
+					asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
+					IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+					Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
+					List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
+					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+					apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
+				}
 				break;
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
 				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;

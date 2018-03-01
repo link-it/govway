@@ -372,21 +372,23 @@ public final class PorteDelegateChange extends Action {
 			String nomeBreadCrumb = oldNomePD;
 			
 			if(parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE) {
-				List<MappingFruizionePortaDelegata> mappingServiziPorteAppList = apsCore.serviziFruitoriMappingList(Long.parseLong(idFruizione), idSoggettoFruitore, idServizioCheck, null);
-						
-				MappingFruizionePortaDelegata mappingFruizionePortaDelegata = null;
-				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegataTmp : mappingServiziPorteAppList) {
-					if(mappingFruizionePortaDelegataTmp.getIdPortaDelegata().getNome().equals(oldNomePD)) {
-						mappingFruizionePortaDelegata = mappingFruizionePortaDelegataTmp;
-						break;
-					}
-				}
+//				List<MappingFruizionePortaDelegata> mappingServiziPorteAppList = apsCore.serviziFruitoriMappingList(Long.parseLong(idFruizione), idSoggettoFruitore, idServizioCheck, null);
+//						
+//				MappingFruizionePortaDelegata mappingFruizionePortaDelegata = null;
+//				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegataTmp : mappingServiziPorteAppList) {
+//					if(mappingFruizionePortaDelegataTmp.getIdPortaDelegata().getNome().equals(oldNomePD)) {
+//						mappingFruizionePortaDelegata = mappingFruizionePortaDelegataTmp;
+//						break;
+//					}
+//				}
+//				
+//				if(mappingFruizionePortaDelegata.isDefault()) {
+//					nomeBreadCrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+//				} else {
+//					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
+//				}
 				
-				if(mappingFruizionePortaDelegata.isDefault()) {
-					nomeBreadCrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
-				} else {
-					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
-				}
+				nomeBreadCrumb = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pde);
 			}
 			
 			
@@ -965,11 +967,11 @@ public final class PorteDelegateChange extends Action {
 			// se l azione e' settata allora creo il bean
 			if (((azione != null) || (azid != null) || modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
-							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)) &&
+							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)) &&
 							(!azione.equals("") || !azid.equals("") || 
 									(modeaz != null && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) || 
 											modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
-											modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))))) {
+											modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))))) {
 				PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 
 				if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
@@ -1018,7 +1020,7 @@ public final class PorteDelegateChange extends Action {
 
 				//FORCE WSDL BASED
 				if(!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)){
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
 						pdAzione.setForceInterfaceBased(StatoFunzionalita.ABILITATO);

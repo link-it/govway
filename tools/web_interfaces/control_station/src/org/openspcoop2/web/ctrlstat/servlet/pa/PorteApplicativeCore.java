@@ -795,10 +795,28 @@ public class PorteApplicativeCore extends ControlStationCore {
 	public String getLabelRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException {
 		MappingErogazionePortaApplicativa mapping = this.getMappingErogazionePortaApplicativa(pa);
 		if(mapping.isDefault()) {
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+			//return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+			return "(*)";
 		}
 		else {
-			return mapping.getNome();
+			//return mapping.getNome();
+			List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+			if(listaAzioni.size() > 0) {
+				StringBuffer sb = new StringBuffer();
+				for (String string : listaAzioni) {
+					if(sb.length() >0)
+						sb.append(", ");
+					
+					sb.append(string);
+				}
+				if(sb.length()>50)
+					return sb.toString().substring(0, 47)+"...";
+				else 
+					return sb.toString();
+			}
+			else {
+				return "???";
+			}
 		}
 	}
 	

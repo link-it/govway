@@ -399,6 +399,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			if ((modeaz != null) && !modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
 					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) &&
 					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) &&
+					!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY) &&
 					(azione.indexOf(" ") != -1)) {
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
@@ -884,7 +885,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			boolean isSupportatoAutenticazioneSoggetti,
 			String autorizzazioneAutenticati,String autorizzazioneRuoli,String autorizzazioneRuoliTipologia,
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc, ServiceBinding serviceBinding,
-			String statoPorta, String modeaz, String azid, String patternAzione, String forceWsdlBased, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault) throws Exception {
+			String statoPorta, String modeaz, String azid, String patternAzione, String forceWsdlBased, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault,
+			boolean ricercaPortaAzioneDelegata, String nomePortaDelegante) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1202,7 +1204,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					if (!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED.equals(modeaz) && 
 							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
 							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED.equals(modeaz) && 
-							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED.equals(modeaz) ){
+							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED.equals(modeaz) ){
 						de.setType(DataElementType.TEXT_EDIT);
 					}else
 						de.setType(DataElementType.HIDDEN);
@@ -1216,7 +1218,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				if( modeaz!= null && (
 							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
 							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
-							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED))
+							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))
 					){
 		
 					de.setType(DataElementType.CHECKBOX);
@@ -1292,6 +1294,23 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				dati.addElement(deLabel);
 			}
 			
+			if(this.isModalitaCompleta()) {
+				if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY))){
+					de = new DataElement();
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE);
+					de.setType(DataElementType.TEXT);
+					de.setValue(nomePortaDelegante);
+					dati.addElement(de);
+				}
+				else {
+					DataElement deLabel = new DataElement();
+					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA);
+					deLabel.setType(DataElementType.TEXT);
+					deLabel.setValue(ricercaPortaAzioneDelegata ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
+					dati.addElement(deLabel);
+				}
+			}
+			
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
 			de.setType(DataElementType.HIDDEN);
@@ -1303,7 +1322,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				if( modeaz!= null && (
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
-						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED))
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))
 				){
 					DataElement deLabel = new DataElement();
 					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
@@ -1312,6 +1331,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					dati.addElement(deLabel);
 				}
 			}
+			
 		}
 		
 		

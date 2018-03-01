@@ -688,10 +688,28 @@ public class PorteDelegateCore extends ControlStationCore {
 	public String getLabelRegolaMappingFruizionePortaDelegata(PortaDelegata pd) throws DriverConfigurazioneException {
 		MappingFruizionePortaDelegata mapping = this.getMappingFruizionePortaDelegata(pd);
 		if(mapping.isDefault()) {
-			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+			//return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+			return "(*)";
 		}
 		else {
-			return mapping.getNome();
+			//return mapping.getNome();
+			List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+			if(listaAzioni.size() > 0) {
+				StringBuffer sb = new StringBuffer();
+				for (String string : listaAzioni) {
+					if(sb.length() >0)
+						sb.append(", ");
+					
+					sb.append(string);
+				}
+				if(sb.length()>50)
+					return sb.toString().substring(0, 47)+"...";
+				else 
+					return sb.toString();
+			}
+			else {
+				return "???";
+			}
 		}
 	}
 }

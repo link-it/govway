@@ -470,7 +470,8 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
-						statoPorta, modeaz,  azid,  azione, forceWsdlBased,false,false);
+						statoPorta, modeaz,  azid,  azione, forceWsdlBased,false,false,
+						false,null);
 
 				pd.setDati(dati);
 
@@ -512,7 +513,8 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
-						statoPorta, modeaz,  azid, azione, forceWsdlBased, false,false);
+						statoPorta, modeaz,  azid, azione, forceWsdlBased, false,false,
+						false,null);
 
 				pd.setDati(dati);
 
@@ -606,7 +608,7 @@ public final class PorteApplicativeAdd extends Action {
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) ||
-							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED))) ||
+							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))) ||
 							!azid.equals("")) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
 
@@ -616,14 +618,30 @@ public final class PorteApplicativeAdd extends Action {
 						paa.setId(-2l);
 					}
 				}
-				paa.setNome(azione);
+				
 				paa.setIdentificazione(PortaApplicativaAzioneIdentificazione.toEnumConstant(modeaz));
-				paa.setPattern(azione);
+				
+				if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) ||
+						modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) ||
+						modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED)
+						) {
+					paa.setNome(null);
+					paa.setPattern(azione);
+				}
+				else if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)
+						) {
+					paa.setNome(azione);
+					paa.setPattern(null);
+				}
+				else {
+					paa.setNome(null);
+					paa.setPattern(null);
+				}
 
 				//FORCE WSDL BASED
 				if(!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) && 
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
-						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED)){
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED)){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
 						paa.setForceInterfaceBased(StatoFunzionalita.ABILITATO);

@@ -44,6 +44,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -62,7 +63,6 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -274,7 +274,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 
 				@SuppressWarnings("unused")
-				IDServizio idService = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, 
+				IDServizio idService = this.idServizioFactory.getIDServizioFromValues(tiposervizio, nomeservizio, 
 						tipoErogatore, nomeErogatore, versioneInt);
 
 				try {
@@ -529,7 +529,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			long idAccordoServizioParteComuneLong = Long.parseLong(idAccordo);
 			AccordoServizioParteComune accordoServizioParteComune = this.apcCore.getAccordoServizio(idAccordoServizioParteComuneLong);
 			
-			IDServizio idAccordoServizioParteSpecifica = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, 
+			IDServizio idAccordoServizioParteSpecifica = this.idServizioFactory.getIDServizioFromValues(tiposervizio, nomeservizio, 
 					tipoErogatore, nomeErogatore, versioneInt);
 			
 			long idAccordoServizioParteSpecificaLong = idInt;
@@ -725,7 +725,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			int idInt = 0;
 			if (!nomeservizio.equals("")) {
 				IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
-				IDServizio idserv = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, ids, versioneservizio);
+				IDServizio idserv = this.idServizioFactory.getIDServizioFromValues(tiposervizio, nomeservizio, ids, versioneservizio);
 				AccordoServizioParteSpecifica myServ = this.apsCore.getServizio(idserv);
 				idInt = myServ.getId().intValue();
 			} else {
@@ -819,7 +819,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(idfru);
 				int idProv = mySogg.getId().intValue();
 
-				IDServizio idserv = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+				IDServizio idserv = this.idServizioFactory.getIDServizioFromAccordo(asps);
 				long idFru = this.apsCore.getServizioFruitore(idserv, idProv);
 				if ((idFru != 0) && (tipoOp.equals(TipoOperazione.ADD) || ((tipoOp.equals(TipoOperazione.CHANGE)) && (myIdInt != idFru)))) {
 					this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_GI_AGRAVE_UN_FRUITORE_DEL_SERVIZIO_CON_LO_STESSO_SOGGETTO);
@@ -1186,6 +1186,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 			if(showConfigurazione) {
+				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE);
 				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
 			}
 			
@@ -1294,6 +1295,40 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				// colonna configurazioni
 				if(showConfigurazione) {
+					
+					// Utilizza la configurazione come parent
+					ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
+										
+					IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps);
+					
+					Parameter paIdSogg = null;
+					Parameter paNomePorta = null;
+					Parameter paIdPorta = null;
+					Parameter paIdAsps = null;
+					Parameter paConfigurazioneDati = null;
+					if(!isPddEsterna){
+						IDPortaApplicativa idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
+						PortaApplicativa paDefault = this.porteApplicativeCore.getPortaApplicativa(idPA);
+						
+						paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
+						paNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, paDefault.getNome());
+						paIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+paDefault.getId());
+						paIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
+						paConfigurazioneDati = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
+					}
+					
+					de = new DataElement();
+					if(isPddEsterna){
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					}
+					else{					
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,paIdSogg, paNomePorta, paIdPorta,paIdAsps,paConfigurazioneDati);
+						ServletUtils.setDataElementVisualizzaLabel(de);						
+					}
+					e.addElement(de);
+					
+					
 					de = new DataElement();
 					if(isPddEsterna){
 						de.setType(DataElementType.TEXT);
@@ -1310,7 +1345,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							//List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),asps.getVersione(),
 							//		asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
 							Search searchForCount = new Search(true,1);
-							IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps); 
 							this.apsCore.mappingServiziPorteAppList(idServizio, asps.getId(), searchForCount);
 							//int numPA = lista1.size();
 							int numPA = searchForCount.getNumEntries(Liste.CONFIGURAZIONE_EROGAZIONE);
@@ -1598,7 +1632,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //									serv.getTipoSoggettoErogatore(), serv.getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
 //									ricerca);
 						Search searchForCount = new Search(true,1);
-						IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+						IDServizio idServizioFromAccordo = this.idServizioFactory.getIDServizioFromAccordo(asps); 
 						//long idSoggetto = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
 						IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getNome(), fru.getTipo());
 						this.apsCore.serviziFruitoriMappingList(fru.getId(), idSoggettoFruitore , idServizioFromAccordo, searchForCount);
@@ -1740,7 +1774,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto le label delle colonne
 			List<String> listaLabel = new ArrayList<String>();
 
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE);
+			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE); // spostata direttamente nell'elenco delle erogazioni
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
@@ -1780,22 +1814,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				Parameter pIdProvider = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, paAssociata.getIdSoggetto() + "");
 				Parameter pIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+paAssociata.getId());
 				
+				@SuppressWarnings("unused")
 				Parameter pConfigurazioneDati = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
 				Parameter pConfigurazioneAltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
 
-				// nome mapping
-				DataElement de = new DataElement();
-				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-				if(mapping.isDefault()) {
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneDati);
-				}
-				de.setValue(mapping.isDefault() ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT : mapping.getNome());
-				de.setIdToRemove(paAssociata.getNome());
-				//de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
-				e.addElement(de);
+				// spostata direttamente nell'elenco delle erogazioni
+//				// nome mapping
+//				DataElement de = new DataElement();
+//				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+//				if(mapping.isDefault()) {
+//					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneDati);
+//				}
+//				de.setValue(mapping.isDefault() ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT : mapping.getNome());
+//				de.setIdToRemove(paAssociata.getNome());
+//				//de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
+//				e.addElement(de);
 				
 				// azioni
-				de = new DataElement();
+				DataElement de = new DataElement();
 				if(!mapping.isDefault()) {
 					List<String> listaAzioni = paAssociata.getAzione()!= null ?  paAssociata.getAzione().getAzioneDelegataList() : new ArrayList<String>();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
@@ -1818,6 +1854,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				} else {
 					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_DEFAULT);
 				}
+				de.setIdToRemove(paAssociata.getNome());
 				e.addElement(de);
 				
 				// servizi applicativi  
@@ -3459,58 +3496,60 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			
 			
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALTRE_INFORMAZIONI);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(
-					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST,
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo),
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo)
-					);
-			if(contaListe){
-				try{
-					// BugFix OP-674
-					//int num = this.apsCore.serviziFruitoriList(Integer.parseInt(id), new Search(true)).size();
-					Search searchForCount = new Search(true,1);
-					this.apsCore.serviziFruitoriList(Integer.parseInt(id), searchForCount);
-					int num = searchForCount.getNumEntries(Liste.SERVIZI_FRUITORI);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, (long) num);
-				}catch(Exception e){
-					this.log.error("Calcolo numero fruitori non riuscito",e);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+			if(this.isModalitaCompleta()) {
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALTRE_INFORMAZIONI);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(
+						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST,
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizioEffettivo),
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizioEffettivo)
+						);
+				if(contaListe){
+					try{
+						// BugFix OP-674
+						//int num = this.apsCore.serviziFruitoriList(Integer.parseInt(id), new Search(true)).size();
+						Search searchForCount = new Search(true,1);
+						this.apsCore.serviziFruitoriList(Integer.parseInt(id), searchForCount);
+						int num = searchForCount.getNumEntries(Liste.SERVIZI_FRUITORI);
+						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, (long) num);
+					}catch(Exception e){
+						this.log.error("Calcolo numero fruitori non riuscito",e);
+						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+					}
+				}else{
+					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI);
 				}
-			}else{
-				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI);
-			}
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(
-					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
-			if(contaListe){
-				try{
-					// BugFix OP-674
-					//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
-					Search searchForCount = new Search(true,1);
-					this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
-					int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
-				}catch(Exception e){
-					this.log.error("Calcolo numero Allegati non riuscito",e);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(
+						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
+				if(contaListe){
+					try{
+						// BugFix OP-674
+						//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
+						Search searchForCount = new Search(true,1);
+						this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
+						int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
+						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
+					}catch(Exception e){
+						this.log.error("Calcolo numero Allegati non riuscito",e);
+						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+					}
+				}else{
+					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
 				}
-			}else{
-				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
+				dati.addElement(de);
 			}
-			dati.addElement(de);
 
 		}
 
@@ -4640,7 +4679,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				IDPortaDelegata idPD = null;
 				IDSoggetto idSoggettoFruitoreObject = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
 				if(isModalitaAvanzata==false){
-					IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+					IDServizio idServizioObject = this.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
 							asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore(),asps.getVersione());
 					idPD = this.porteDelegateCore.getIDPortaDelegataAssociataDefault(idServizioObject, idSoggettoFruitoreObject);
 				}
@@ -4678,7 +4717,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //									asps.getServizio().getTipoSoggettoErogatore(), asps.getServizio().getNomeSoggettoErogatore(), asps.getIdSoggetto(), 
 //									new Search(true)).size();
 							Search searchForCount = new Search(true,1);
-							IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+							IDServizio idServizioFromAccordo = this.idServizioFactory.getIDServizioFromAccordo(asps); 
 							//long idSoggetto = this.soggettiCore.getIdSoggetto(fruitore.getNome(), fruitore.getTipo());
 							IDSoggetto idSoggettoFr = new IDSoggetto(fruitore.getNome(), fruitore.getTipo());
 							this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFr, idServizioFromAccordo, searchForCount);

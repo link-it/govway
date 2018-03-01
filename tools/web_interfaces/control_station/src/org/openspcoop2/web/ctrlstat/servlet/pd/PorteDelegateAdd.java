@@ -634,7 +634,7 @@ public final class PorteDelegateAdd extends Action {
 			if (((!azione.equals("") || 
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
-							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED))) ||
+							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))) ||
 							!azid.equals("")) {
 				PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 
@@ -684,7 +684,7 @@ public final class PorteDelegateAdd extends Action {
 
 				//FORCE WSDL BASED
 				if(!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
-						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED)){
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)){
 
 					if(forceWsdlBased != null && (ServletUtils.isCheckBoxEnabled(forceWsdlBased))){
 						pdAzione.setForceInterfaceBased(StatoFunzionalita.ABILITATO);

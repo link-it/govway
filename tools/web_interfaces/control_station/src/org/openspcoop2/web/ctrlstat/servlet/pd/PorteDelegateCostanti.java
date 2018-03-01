@@ -437,7 +437,8 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED = PortaDelegataAzioneIdentificazione.CONTENT_BASED.toString();
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED = PortaDelegataAzioneIdentificazione.INPUT_BASED.toString();
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED = PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED.toString();
-	public final static String PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED = PortaDelegataAzioneIdentificazione.INTERFACE_BASED.toString();
+	public final static String PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED = PortaDelegataAzioneIdentificazione.INTERFACE_BASED.toString();
+	public final static String PARAMETRO_PORTE_DELEGATE_MODE_DELEGATED_BY = PortaDelegataAzioneIdentificazione.DELEGATED_BY.toString();
 
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "nuova";
