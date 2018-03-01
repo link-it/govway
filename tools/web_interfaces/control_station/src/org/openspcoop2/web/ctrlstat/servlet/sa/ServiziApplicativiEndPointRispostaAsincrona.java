@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -55,6 +56,7 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -231,7 +233,19 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 							(endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
-			lstParm.add(new Parameter("Risposta asincrona di " + nomeservizioApplicativo,null));
+			
+			String labelPerPorta = null;
+			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
+				PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
+				PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+
+						porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+			}
+			else {
+				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+nomeservizioApplicativo;
+			}
+			
+			lstParm.add(new Parameter(labelPerPorta,null));
 			
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati

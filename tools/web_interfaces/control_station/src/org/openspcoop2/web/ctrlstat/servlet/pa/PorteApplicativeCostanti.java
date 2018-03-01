@@ -351,8 +351,11 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; Protocollo di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI = "Porte Applicative di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG_DI = "Applicativi Erogatori di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG_DI = "Soggetti di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG_DI = "Ruoli di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGGIO = "Trattamento Messaggio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "Message Security";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_CONFIG_DI = "Message-Security di ";

@@ -47,15 +47,12 @@ import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -2013,36 +2010,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-			lstParam.add(new Parameter(servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
-			lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, 
+			lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI_DI + servizioTmpTile, 
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST ,pIdServizio,pNomeServizio, pTipoServizio, pIdsoggErogatore));
-			
-			// nome dellaporta
-			PortaApplicativa portaApplicativa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, portaApplicativa.getNome());
-			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, ""+portaApplicativa.getId());
-			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, asps.getId()+ "");
-			Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, portaApplicativa.getIdSoggetto() + "");
-			
-			IDServizio idServizioCheck = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-			List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList = this.apsCore.mappingServiziPorteAppList(idServizioCheck, asps.getId(), null);
-			MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = null;
-			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativaTmp : mappingServiziPorteAppList) {
-				if(mappingErogazionePortaApplicativaTmp.getIdPortaApplicativa().getNome().equals(portaApplicativa.getNome())) {
-					mappingErogazionePortaApplicativa = mappingErogazionePortaApplicativaTmp;
-					break;
-				}
-			}
-			
-			String paLabel = "";
-			if(mappingErogazionePortaApplicativa.isDefault()) {
-				paLabel = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
-			} else {
-				paLabel = mappingErogazionePortaApplicativa.getNome(); 
-			}
-			
-			lstParam.add(new Parameter(paLabel,  
-					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps));
 			
 			break;
 		case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO:

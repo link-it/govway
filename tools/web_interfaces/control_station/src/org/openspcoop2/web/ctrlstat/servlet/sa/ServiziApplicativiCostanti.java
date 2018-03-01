@@ -155,6 +155,9 @@ public class ServiziApplicativiCostanti {
 	
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI = "Servizi Applicativi di ";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI = "Ruoli di ";
+	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI = "Invocazione Servizio di ";	
+	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI = "Risposta Asincrona di ";
+	
 	
 	/* DEFAULT VALUE PARAMETRI */
 	

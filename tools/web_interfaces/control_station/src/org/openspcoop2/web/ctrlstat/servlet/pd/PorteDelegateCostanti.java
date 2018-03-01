@@ -301,7 +301,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI = "Porte Delegate di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG_DI = "Servizi Applicativi di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG_DI = "Ruoli di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_CONFIG_DI = "Message-Security di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Message-Security request-flow di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Message-Security response-flow di ";

@@ -2255,7 +2255,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
-
+			
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG_DI+
@@ -2933,19 +2933,26 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG_DI+
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+
 						this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(myPA);
 			}
 			else {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG_DI+idporta;
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;
 			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, 
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
+			
+			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG;
 			
 			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
-				lstParam.add(new Parameter(labelPerPorta,null));
+				lstParam.add(new Parameter(labelPag,null));
 			}else{
-				lstParam.add(new Parameter(labelPerPorta,
+				lstParam.add(new Parameter(labelPag,
 						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST ,
 						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
 						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
@@ -2978,6 +2985,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
+//					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+//							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,sog.getId()+""),
+//							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,sog.getNome()),
+//							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,sog.getTipo()));
 					de.setValue(this.getLabelNomeSoggetto(protocollo, sog.getTipo() , sog.getNome()));
 					de.setIdToRemove(sog.getTipo() + "/" + sog.getNome());
 					e.addElement(de);
@@ -3458,20 +3469,27 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG_DI+
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+
 						this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
 			}
 			else {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG_DI+idporta;
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;
 			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, 
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
+			
+			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG;
 			
 			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
-				lstParam.add(new Parameter(labelPerPorta,null));
+				lstParam.add(new Parameter(labelPagLista,null));
 			}
 			else{
-				lstParam.add(new Parameter(labelPerPorta,
+				lstParam.add(new Parameter(labelPagLista,
 						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST,
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id),
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),

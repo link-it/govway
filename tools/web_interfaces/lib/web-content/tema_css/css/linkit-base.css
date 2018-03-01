@@ -710,7 +710,7 @@ span.modalitaImg {
    	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-	min-width: 154px;
+	min-width: 184px;
 	padding-right: 12px;
 	cursor: pointer;
 }  
@@ -718,7 +718,7 @@ span.modalitaImg {
 #menuModalita_menu {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
-	min-width: 154px;
+	min-width: 184px;
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
