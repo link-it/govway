@@ -132,6 +132,7 @@ public final class PorteDelegateWSResponseChange extends Action {
 			//			if (valore == null) {
 			if(	porteDelegateHelper.isEditModeInProgress()){
 				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				MessageSecurity ws = pde.getMessageSecurity();
 				if(ws.getResponseFlow()!=null){
