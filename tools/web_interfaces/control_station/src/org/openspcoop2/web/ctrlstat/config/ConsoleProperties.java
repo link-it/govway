@@ -704,10 +704,6 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.gestioneWsdl.autoMappingInAccordo.estrazioneSchemiInWsdlTypes");
 	}
 	
-	public Boolean isMenuPorteApplicative_ProtocolProperties_VisualizzaListaValoriPredefiniti() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.pa.protocolProperties.visualizzaListaValoriPredefiniti");
-	}
-	
 	public Boolean isMenuVisualizzaFlagPrivato() throws UtilsException{
 		return this.readBooleanProperty(true, "menu.visualizzaFlagPrivato");
 	}
@@ -762,10 +758,6 @@ public class ConsoleProperties {
 	
 	public Boolean isElenchiMenuVisualizzazionePulsantiImportExportPackage() throws UtilsException{
 		return this.readBooleanProperty(true, "elenchi_menu.visualizzazionePulsantiImportExportPackage");
-	}
-	
-	public Boolean isElenchiMenuVisualizzazioneCampiInserimentoStrutturaMessaggiWsdl() throws UtilsException{
-		return this.readBooleanProperty(true, "elenchi_menu.accordiServizioParteComune.strutturaWsdlMessaggi.visualizzaCampi");
 	}
 	
 

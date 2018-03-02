@@ -465,7 +465,6 @@ public class ControlStationCore {
 	}
 	
 	/** Opzioni di visualizzazione */
-	private boolean showSelectList_PA_ProtocolProperties = true;
 	private boolean showCorrelazioneAsincronaInAccordi = false;
 	private boolean showFlagPrivato = false;
 	private boolean showAllConnettori = false;
@@ -486,13 +485,9 @@ public class ControlStationCore {
 	private boolean enableAutoMappingWsdlIntoAccordo = false;
 	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
 	private boolean showMTOMVisualizzazioneCompleta = false;
-	private boolean showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = false;
 	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
 	private boolean showConfigurazioneTracciamentoDiagnostica = true;
 	
-	public boolean isShowSelectList_PA_ProtocolProperties() {
-		return this.showSelectList_PA_ProtocolProperties;
-	}
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
 	}
@@ -546,9 +541,6 @@ public class ControlStationCore {
 	}
 	public boolean isShowMTOMVisualizzazioneCompleta() {
 		return this.showMTOMVisualizzazioneCompleta;
-	}
-	public boolean isShowAccordoParteComuneInformazioniStrutturaMessaggiWsdl() {
-		return this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl;
 	}
 	public boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() {
 		return this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
@@ -1289,7 +1281,6 @@ public class ControlStationCore {
 		this.indirizzoGestione = core.indirizzoGestione;
 		
 		/** Opzioni di visualizzazione */
-		this.showSelectList_PA_ProtocolProperties = core.showSelectList_PA_ProtocolProperties;
 		this.showCorrelazioneAsincronaInAccordi = core.showCorrelazioneAsincronaInAccordi;
 		this.showFlagPrivato = core.showFlagPrivato;
 		this.showAllConnettori = core.showAllConnettori;
@@ -1308,7 +1299,6 @@ public class ControlStationCore {
 		this.enableAutoMappingWsdlIntoAccordo = core.enableAutoMappingWsdlIntoAccordo;
 		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
-		this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = core.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl;
 		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
 
@@ -1530,7 +1520,6 @@ public class ControlStationCore {
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
 			this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_visualizzaStatoLista();
 			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
-			this.showSelectList_PA_ProtocolProperties = consoleProperties.isMenuPorteApplicative_ProtocolProperties_VisualizzaListaValoriPredefiniti();
 			this.showFlagPrivato = consoleProperties.isMenuVisualizzaFlagPrivato();
 			this.showAllConnettori = consoleProperties.isMenuVisualizzaListaCompletaConnettori();
 			this.showDebugOptionConnettore = consoleProperties.isMenuVisualizzaOpzioneDebugConnettore();
@@ -1547,7 +1536,6 @@ public class ControlStationCore {
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
 			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
-			this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = consoleProperties.isElenchiMenuVisualizzazioneCampiInserimentoStrutturaMessaggiWsdl();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
 			

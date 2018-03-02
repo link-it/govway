@@ -133,7 +133,7 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteApplicativeHelper.getSize(), porteApplicativeCore.isShowSelectList_PA_ProtocolProperties(), nome, valore, dati);
+				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteApplicativeHelper.getSize(), nome, valore, dati);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -156,7 +156,7 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteApplicativeHelper.getSize(), porteApplicativeCore.isShowSelectList_PA_ProtocolProperties(),  nome, valore,dati);
+				dati = porteApplicativeHelper.addProprietaProtocolloToDati(TipoOperazione.CHANGE, porteApplicativeHelper.getSize(), nome, valore,dati);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
 

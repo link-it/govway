@@ -48,7 +48,6 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
@@ -972,7 +971,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE);
+			if(ServiceBinding.SOAP.equals(serviceBinding)) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE);
+			}
+			else {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE);
+			}
 			PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
 			de.setValue(prefix+utils.normalizePA(nomePorta));
 			de.setType(DataElementType.TEXT);
@@ -2197,9 +2201,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 			// setto le label delle colonne
 			String valueLabel = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE;
-			if(this.core.isShowSelectList_PA_ProtocolProperties()){
-				valueLabel = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_KEYWORD;
-			}
 			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME, valueLabel };
 			this.pd.setLabels(labels);
 
@@ -3168,7 +3169,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 	public  Vector<DataElement>  addProprietaProtocolloToDati(TipoOperazione tipoOp,
 			int size,
-			boolean isShowSelectList_PA_ProtocolProperties  , String nome, String valore, Vector<DataElement> dati) {
+			String nome, String valore, Vector<DataElement> dati) {
 
 		DataElement de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
@@ -3189,39 +3190,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		de.setSize(size);
 		dati.addElement(de);
 
-		String[] values = { 
-
-				ProprietaProtocolloValore.TIPO_MITTENTE.toString(),
-				ProprietaProtocolloValore.MITTENTE.toString(),
-				ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_MITTENTE.toString(),
-
-				ProprietaProtocolloValore.TIPO_DESTINATARIO.toString(),
-				ProprietaProtocolloValore.DESTINATARIO.toString(),
-				ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_DESTINATARIO.toString(),
-
-				ProprietaProtocolloValore.TIPO_SERVIZIO.toString(),
-				ProprietaProtocolloValore.SERVIZIO.toString(),
-				ProprietaProtocolloValore.VERSIONE_SERVIZIO.toString(),
-
-				ProprietaProtocolloValore.AZIONE.toString(),
-
-				ProprietaProtocolloValore.IDENTIFICATIVO.toString(),
-
-				ProprietaProtocolloValore.IDENTIFICATIVO_CORRELAZIONE_APPLICATIVA.toString()
-		};
 		de = new DataElement();
-		if(isShowSelectList_PA_ProtocolProperties){
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_KEYWORD);
-			de.setValues(values);
-			de.setType(DataElementType.SELECT);
-			de.setSelected(valore);
-		}
-		else{
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);
-		}
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_VALORE);
+		de.setValue(valore);
 		de.setSize(size);
 		dati.addElement(de);
 

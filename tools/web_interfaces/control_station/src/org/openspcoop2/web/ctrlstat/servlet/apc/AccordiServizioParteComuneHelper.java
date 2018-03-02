@@ -1298,9 +1298,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 
-			boolean isStrutturaMSG = this.core.isShowAccordoParteComuneInformazioniStrutturaMessaggiWsdl();
-
-			if(this.isModalitaAvanzata() && isStrutturaMSG){
+			
+			if(this.isModalitaAvanzata()){
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL);
@@ -1940,26 +1939,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setSize(this.getSize());
 				dati.addElement(de);
 
-				boolean isStrutturaMSG = this.core.isShowAccordoParteComuneInformazioniStrutturaMessaggiWsdl();
-				if(isStrutturaMSG){
+				// Informazione WSDL
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL);
+				dati.addElement(de);
 
-					// Informazione WSDL
-					de = new DataElement();
-					de.setType(DataElementType.TITLE);
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL);
-					dati.addElement(de);
-
-					// Style
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_STYLE);
-					de.setType(DataElementType.SELECT);
-					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_STYLE);
-					de.setValues(AccordiServizioParteComuneCostanti.PORT_TYPES_STYLE);
-					de.setLabels(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES_STYLE);
-					de.setSelected(servizioStyle);
-					dati.addElement(de);
-				}
-
+				// Style
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_STYLE);
+				de.setType(DataElementType.SELECT);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_STYLE);
+				de.setValues(AccordiServizioParteComuneCostanti.PORT_TYPES_STYLE);
+				de.setLabels(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES_STYLE);
+				de.setSelected(servizioStyle);
+				dati.addElement(de);
 			}
 			return dati;
 		} catch (Exception e) {
@@ -4135,23 +4129,28 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			IDSoggetto soggettoReferente = null;
 			Soggetto sRef = null;
 			//if (gestioneWSBL.equals(Costanti.CHECK_BOX_ENABLED)) {
-			if(referente!=null && !referente.equals("") && !referente.equals("-")){
-				boolean trovatoProv = this.soggettiCore.existsSoggetto(Integer.parseInt(referente));
-				if (!trovatoProv) {
-					this.pd.setMessage("Il Soggetto referente dev'essere scelto tra quelli definiti nel pannello Soggetti");
-					return false;
-				}else{
-					sRef = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
-					// Visibilita rispetto all'accordo
-					boolean visibile = false;
-					if(visibilitaAccordoServizio==visibile){
-						if(sRef.getPrivato()!=null && sRef.getPrivato()==true){
-							this.pd.setMessage("Non e' possibile utilizzare un soggetto referente con visibilita' privata, in un accordo di servizio con visibilita' pubblica.");
-							return false;
+			if(checkReferente) {
+				if(referente!=null && !referente.equals("") && !referente.equals("-")){
+					boolean trovatoProv = this.soggettiCore.existsSoggetto(Integer.parseInt(referente));
+					if (!trovatoProv) {
+						this.pd.setMessage("Il Soggetto referente dev'essere scelto tra quelli definiti nel pannello Soggetti");
+						return false;
+					}else{
+						sRef = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
+						// Visibilita rispetto all'accordo
+						boolean visibile = false;
+						if(visibilitaAccordoServizio==visibile){
+							if(sRef.getPrivato()!=null && sRef.getPrivato()==true){
+								this.pd.setMessage("Non e' possibile utilizzare un soggetto referente con visibilita' privata, in un accordo di servizio con visibilita' pubblica.");
+								return false;
+							}
 						}
+						soggettoReferente = new IDSoggetto(sRef.getTipo(),sRef.getNome());
 					}
-					soggettoReferente = new IDSoggetto(sRef.getTipo(),sRef.getNome());
 				}
+			}
+			else {
+				soggettoReferente = this.apcCore.getSoggettoOperativo(ServletUtils.getUserLoginFromSession(this.session), tipoProtocollo);
 			}
 			//	}
 
@@ -5581,7 +5580,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE,
 					protocolFactory, serviceBinding, messageType, hiddenMessageType));
 						
-			if(TipoOperazione.CHANGE.equals(tipoOperazione) || !hiddenMessageType) {
+			if( (TipoOperazione.CHANGE.equals(tipoOperazione) && !this.isModalitaStandard()) || !hiddenMessageType) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RICHIESTA);
@@ -5591,7 +5590,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST,
 					protocolFactory, serviceBinding, messageTypeRichiesta, hiddenMessageType));
 			
-			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+			if(tipoOperazione.equals(TipoOperazione.CHANGE)  && !this.isModalitaStandard()) {
 				de = new DataElement();
 				de.setValue(idRisorsa.intValue()+"");
 				de.setType(DataElementType.HIDDEN);
@@ -5657,7 +5656,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				
 			}
 			
-			if(TipoOperazione.CHANGE.equals(tipoOperazione) || !hiddenMessageType) {
+			if( (TipoOperazione.CHANGE.equals(tipoOperazione) && !this.isModalitaStandard()) || !hiddenMessageType) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RISPOSTA);
@@ -5667,7 +5666,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE,
 					protocolFactory, serviceBinding, messageTypeRisposta, hiddenMessageType));
 			
-			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+			if(tipoOperazione.equals(TipoOperazione.CHANGE)  && !this.isModalitaStandard()) {
 				// link risposta
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
