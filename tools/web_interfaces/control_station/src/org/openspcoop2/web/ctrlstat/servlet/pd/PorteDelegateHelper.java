@@ -1728,9 +1728,14 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM);
 
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
+			
+			if(this.isModalitaAvanzata())
+				labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
+			
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 				labelsList.add(extendedServletList.getListTitle(this));
 			}
+			
 			labelsList.add(PorteDelegateCostanti.LABEL_COLUMN_PORTE_DELEGATE_STATO_PORTA);
 			
 			String[] labels = labelsList.toArray(new String[labelsList.size()]);
@@ -1880,6 +1885,19 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					else 
 						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.addElement(de);
+					
+					// Protocol Properties
+					if(this.isModalitaAvanzata()){
+						de = new DataElement();
+						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST, pIdSoggPD, pIdPD);
+						if (contaListe) {
+							int numProp = pd.sizeProprietaList();
+							ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+					}
 
 					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
 						de = new DataElement();
@@ -3014,19 +3032,204 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		return "";
 	}
 
-	public void preparePorteDelPropList(String nomePorta, Search ricerca, List<Proprieta> lista) {
-		// TODO Auto-generated method stub
+	public void preparePorteDelPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+
+			int idLista = Liste.PORTE_DELEGATE_RUOLI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI+
+						this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI+idporta;
+			}
+			
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, idporta);
+
+			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(labelPerPorta,null));
+			}
+			else{
+				lstParam.add(new Parameter(labelPerPorta,
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFruizione	));
+				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA, null));
+
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES, search);
+			}
+			
+			// setto le label delle colonne
+			String valueLabel = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE;
+			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME, valueLabel };
+			this.pd.setLabels(labels);
+			
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<Proprieta> it = lista.iterator();
+				while (it.hasNext()) {
+					Proprieta ssp = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					DataElement de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
+					de.setValue(ssp.getNome());
+					de.setIdToRemove(ssp.getNome());
+					e.addElement(de);
+
+					de = new DataElement();
+					if(ssp.getValore()!=null)
+						de.setValue(ssp.getValore().toString());
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	public Vector<DataElement> addProprietaProtocolloToDati(TipoOperazione tipoOp, int size, String nome, String valore,
+			Vector<DataElement> dati) {
+		DataElement de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setValue(nome);
+		if(TipoOperazione.ADD.equals(tipoOp)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.TEXT);
+		}
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setSize(size);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
+		de.setValue(valore);
+		de.setSize(size);
+		dati.addElement(de);
+
+		return dati;
 		
 	}
 
-	public Vector<DataElement> addProprietaProtocolloToDati(TipoOperazione change, int size, String nome, String valore,
-			Vector<DataElement> dati) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public boolean porteAppPropCheckData(TipoOperazione tipoOp) throws Exception {
+		try {
+			String idPorta = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			int idInt = Integer.parseInt(idPorta);
+			String nome = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
+			String valore = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
 
-	public boolean porteAppPropCheckData(TipoOperazione change) {
-		// TODO Auto-generated method stub
-		return false;
+			// Campi obbligatori
+			if (nome.equals("") || valore.equals("")) {
+				String tmpElenco = "";
+				if (nome.equals("")) {
+					tmpElenco = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME;
+				}
+				if (valore.equals("")) {
+					if (tmpElenco.equals("")) {
+						tmpElenco = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE;
+					} else {
+						tmpElenco = tmpElenco + ", " + PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE;
+					}
+				}
+				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				return false;
+			}
+
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				return false;
+			}
+
+			// Se tipoOp = add, controllo che la property non sia gia'
+			// stata
+			// registrata per la porta applicativa
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = false;
+				PortaDelegata portaDelegata = this.porteDelegateCore.getPortaDelegata(idInt);
+				String nomeporta = portaDelegata.getNome();
+
+				for (int i = 0; i < portaDelegata.sizeProprietaList(); i++) {
+					Proprieta tmpProp = portaDelegata.getProprieta(i);
+					if (nome.equals(tmpProp.getNome())) {
+						giaRegistrato = true;
+						break;
+					}
+				}
+
+				if (giaRegistrato) {
+					this.pd.setMessage(MessageFormat.format(
+							PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY, nome,
+							nomeporta));
+					return false;
+				}
+			}
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
 	}
 }

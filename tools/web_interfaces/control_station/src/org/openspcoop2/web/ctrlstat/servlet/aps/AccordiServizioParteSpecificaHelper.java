@@ -2440,6 +2440,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM);
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
 			if(this.isModalitaAvanzata()) {
+				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE);
 			}
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
@@ -2611,6 +2612,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				else 
 					de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 				e.addElement(de);
+				
+				// Protocol Properties
+				if(this.isModalitaAvanzata()){
+					de = new DataElement();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST, pIdSoggPD, pIdPD,pIdAsps,pIdFruitore);
+					if (contaListe) {
+						int numProp = pdAssociata.sizeProprietaList();
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+				}
 			
 				// Altro
 				if(this.isModalitaAvanzata()){

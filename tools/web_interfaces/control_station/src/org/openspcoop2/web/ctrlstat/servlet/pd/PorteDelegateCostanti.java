@@ -511,4 +511,5 @@ public class PorteDelegateCostanti {
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX = "Indicare un nome per l'autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX = "Indicare un nome per l'autenticazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE = "Non &egrave; possibile eliminare tutte le azioni associate alla configurazione";
+	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY = "La property {0} &egrave; gi&agrave; stata associata alla porta delegata {1}";
 }
