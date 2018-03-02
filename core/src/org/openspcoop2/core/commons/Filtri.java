@@ -59,6 +59,8 @@ public final class Filtri
 	
 	public final static String FILTRO_UTENTE = "filtroUtente";
 	
+	public final static String FILTRO_AZIONE = "filtroAzione";
+	
 	
 	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {

@@ -4154,4 +4154,28 @@ public class ConsoleHelper {
 		return true;
 	}
 	
+	public void addFilterAzione(List<String> azioni, String azione) throws Exception{
+		this.addFilterAzione(azioni.toArray(new String[azioni.size()]), azione);		  
+	}
+	
+	public void addFilterAzione(String []azioni, String azione) throws Exception{
+		try {
+			String [] values = new String[azioni.length + 1];
+			String [] labels = new String[azioni.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA;
+			for (int i =0; i < azioni.length ; i ++) {
+				labels[i+1] = azioni[i];
+				values[i+1] = azioni[i];
+			}
+			
+			String selectedValue = StringUtils.isNotEmpty(azione) ? azione : CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA;
+			
+			this.pd.addFilter(Filtri.FILTRO_AZIONE, CostantiControlStation.LABEL_PARAMETRO_AZIONE, selectedValue, values, labels, false, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 }

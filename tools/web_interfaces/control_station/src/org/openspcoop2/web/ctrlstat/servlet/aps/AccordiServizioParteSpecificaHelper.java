@@ -28,6 +28,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -42,6 +43,8 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -1735,15 +1738,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio));
 
+			// Prendo il nome e il tipo del servizio
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
+			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
+			
 			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
-			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
-
+			
+			List<String> azioni = this.porteApplicativeCore.getAzioni(asps, apc, false, true, new ArrayList<String>());
+			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
+			this.addFilterAzione(azioni, filtroAzione);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
-			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
-
+			this.pd.setSearch("");
+			
+			lista = this.impostaFiltroAzione(filtroAzione, lista,ricerca, idLista);
+			
 			// Utilizza la configurazione come parent
 			ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 			
@@ -1761,45 +1774,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto i dati come campi hidden nel pd per portarmeli dietro
 			this.pd.addHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio);
 
-			// Prendo il nome e il tipo del servizio
-			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
-			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
+
 
 			String servizioTmpTile = this.getLabelIdServizio(asps);
-			@SuppressWarnings("unused")
-			Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
-			@SuppressWarnings("unused")
-			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
-			@SuppressWarnings("unused")
-			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 			
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
 
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-			//lstParm.add(new Parameter(servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
+			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI_DI + servizioTmpTile, null));
 			
-			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
-			if (search.equals("")) {
-				this.pd.setSearchDescription("");
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI_DI + servizioTmpTile, null));
-			}else {
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI_DI + servizioTmpTile, 
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST ,
-						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ id)
-						));
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
-			}
-
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParm );
-
-			// controllo eventuali risultati ricerca
-			if (!search.equals("")) {
-				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI, search);
-			}
 
 			boolean visualizzaMTOM = true;
 			switch (serviceBinding) {
@@ -2077,6 +2064,36 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	
 	
+	private List<MappingErogazionePortaApplicativa> impostaFiltroAzione(String filtroAzione, List<MappingErogazionePortaApplicativa> lista, ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
+			MappingErogazionePortaApplicativa mappingTmp = null; 
+			
+			for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+				PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+				if(paAssociata.getAzione() != null && paAssociata.getAzione().getAzioneDelegataList().contains(filtroAzione)) {
+					mappingTmp = mappingErogazionePortaApplicativa;
+					break;
+				}
+			}
+			if(mappingTmp == null) {
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+					if(mappingErogazionePortaApplicativa.isDefault()) {
+						mappingTmp = mappingErogazionePortaApplicativa;
+						break;
+					}
+				}
+			}
+			List<MappingErogazionePortaApplicativa> newList = new ArrayList<>();
+			newList.add(mappingTmp);
+			this.pd.setNumEntries(1);
+			return newList;
+		} else {
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			return lista;
+		}
+	}
+
+
 	public void serviziFruitoriPorteDelegateList(List<PortaDelegata> lista, String idServizio, String idSoggettoFruitore, String idFruzione, ISearch ricerca)
 			throws Exception {
 		try {
