@@ -821,12 +821,15 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 
 			// setto le label delle colonne
-			int totEl = this.isModalitaCompleta() ? 6 : 4;
+			int totEl = this.isModalitaCompleta() ? 5 : 3;
 			if( showProtocolli ) {
 				totEl++;
 			}
 			if(!this.isModalitaStandard()) {
 				totEl++; // connettore column
+			}
+			if(this.isModalitaCompleta()) {
+				totEl++; // connettore servizi applicativi
 			}
 			String[] labels = new String[totEl];
 			int i = 0;
@@ -847,9 +850,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(this.isModalitaCompleta()) {
 				labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			}
-			else {
-				labels[i++] = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
-			}
+//			else {
+//				labels[i++] = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+//			}
 			if(this.isModalitaCompleta()) {
 				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
 				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
@@ -972,27 +975,29 @@ public class SoggettiHelper extends ConnettoriHelper {
 				
 				
 				//Servizi Appicativi
-				de = new DataElement();
-				if (pddEsterna) {
-					de.setType(DataElementType.TEXT);
-					de.setValue("-");
+				if(this.isModalitaCompleta()) {
+					de = new DataElement();
+					if (pddEsterna) {
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					}
+					else {
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
+						if (contaListe) {
+							// BugFix OP-674
+							//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
+							Search searchForCount = new Search(true,1);
+							this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+							this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
+							//int numSA = lista1.size();
+							int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+					}
+					e.addElement(de);
 				}
-				else {
-					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
-					if (contaListe) {
-						// BugFix OP-674
-						//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
-						Search searchForCount = new Search(true,1);
-						this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-						this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
-						//int numSA = lista1.size();
-						int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-				}
-				e.addElement(de);
 				
 				if(this.isModalitaCompleta()) {
 					de = new DataElement();
@@ -1116,9 +1121,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 			
 			// setto le label delle colonne
-			int totEl = this.isModalitaCompleta() ? 4 : 2;
+			int totEl = this.isModalitaCompleta() ? 3 : 1;
 			if( showProtocolli ) {
 				totEl++;
+			}
+			if(this.isModalitaCompleta()) {
+				totEl++; // connettore servizi applicativi
 			}
 			String[] labels = new String[totEl];
 			int i = 0;
@@ -1129,9 +1137,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(this.isModalitaCompleta()) {
 				labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			}
-			else {
-				labels[i++] = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
-			}
+//			else {
+//				labels[i++] = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+//			}
 			if(this.isModalitaCompleta()) {
 				labels[i++] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
 				labels[i++] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
@@ -1170,21 +1178,23 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 				
 				//Servizi Appicativi
-				de = new DataElement();
-				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
-				if (contaListe) {
-					// BugFix OP-674
-					//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
-					Search searchForCount = new Search(true,1);
-					this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-					this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
-					//int numSA = lista1.size();
-					int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
-					ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
+				if(this.isModalitaCompleta()) {
+					de = new DataElement();
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,elem.getId()+""));
+					if (contaListe) {
+						// BugFix OP-674
+						//List<ServizioApplicativo> lista1 = this.saCore.soggettiServizioApplicativoList(new Search(true), elem.getId());
+						Search searchForCount = new Search(true,1);
+						this.setFilterRuoloServizioApplicativo(searchForCount, Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+						this.saCore.soggettiServizioApplicativoList(searchForCount, elem.getId());
+						//int numSA = lista1.size();
+						int numSA = searchForCount.getNumEntries(Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO);
+						ServletUtils.setDataElementVisualizzaLabel(de,(long)numSA);
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+				}
 				
 				if(this.isModalitaCompleta()) {
 					//Porte Applicative
