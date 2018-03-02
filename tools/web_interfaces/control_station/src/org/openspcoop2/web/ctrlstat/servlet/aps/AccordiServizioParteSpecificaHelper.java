@@ -1020,9 +1020,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_VIEW,
-							pIdAllegato,pId,pNomeDoc);
-					de.setValue(Costanti.LABEL_VISUALIZZA);
+					if(this.core.isShowAllegati()) {
+						de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_VIEW,
+								pIdAllegato,pId,pNomeDoc);
+						de.setValue(Costanti.LABEL_VISUALIZZA);
+					}
+					else {
+						Parameter pIdAccordo = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ACCORDO, asps.getId() + "");
+						Parameter pTipoDoc = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_DOCUMENTO, "asps");
+						de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT,
+								pIdAllegato,pId,pNomeDoc,pIdAccordo,pTipoDoc);
+						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_DOWNLOAD.toLowerCase());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -3844,13 +3853,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		if( this.apsCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(asps.getStatoPackage())){
 			this.pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 
-			de = new DataElement();
-			de.setLabel("");
-			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-			de.setValue(oldwsdl);
-			de.setRows(30);
-			de.setCols(110);
-			dati.addElement(de);
+			if(this.core.isShowInterfacceAPI()) {
+				de = new DataElement();
+				de.setLabel("");
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				de.setValue(oldwsdl);
+				de.setRows(30);
+				de.setCols(110);
+				dati.addElement(de);
+			}
 			
 			if(oldwsdl != null && !oldwsdl.isEmpty()){
 				DataElement saveAs = new DataElement();
@@ -3867,13 +3878,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		else{
 
 			if(oldwsdl != null && !oldwsdl.isEmpty()){
-				de = new DataElement();
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setValue(oldwsdl);
-				de.setRows(30);
-				de.setCols(110);
-				//de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_ATTUALE);
-				dati.addElement(de);
+				if(this.core.isShowInterfacceAPI()) {
+					de = new DataElement();
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setValue(oldwsdl);
+					de.setRows(30);
+					de.setCols(110);
+					//de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_ATTUALE);
+					dati.addElement(de);
+				}
 
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
@@ -4026,13 +4039,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			if(wsdl != null && !wsdl.isEmpty()){
 				this.pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
-				de = new DataElement();
-				de.setLabel("");
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setValue( wsdl);
-				de.setRows(30);
-				de.setCols(110);
-				dati.addElement(de);
+				
+				if(this.core.isShowInterfacceAPI()) {
+					de = new DataElement();
+					de.setLabel("");
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setValue( wsdl);
+					de.setRows(30);
+					de.setCols(110);
+					dati.addElement(de);
+				}
 				
 				if(wsdl != null && !wsdl.isEmpty()){
 					DataElement saveAs = new DataElement();
@@ -4058,13 +4074,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		else{
 
 			if(wsdl != null && !wsdl.isEmpty()){
-				de = new DataElement();
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setValue(wsdl);
-				de.setRows(30);
-				de.setCols(110);
-				//de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_ATTUALE );
-				dati.addElement(de);
+				if(this.core.isShowInterfacceAPI()) {
+					de = new DataElement();
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setValue(wsdl);
+					de.setRows(30);
+					de.setCols(110);
+					//de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_WSDL_ATTUALE );
+					dati.addElement(de);
+				}
 
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);
@@ -4947,23 +4965,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setSize( getSize());
 		dati.addElement(de);
 
-		if(errore!=null){
-			de = new DataElement();
-			de.setValue(errore);
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_THE_FILE);
-			de.setType(DataElementType.TEXT );
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DOCUMENTO);
-			de.setSize( getSize());
-			dati.addElement(de);
-		}
-		else{
-			de = new DataElement();
-			de.setLabel("");
-			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-			de.setValue(contenutoAllegato.toString());
-			de.setRows(30);
-			de.setCols(80);
-			dati.addElement(de);
+		if(this.core.isShowAllegati()) {
+			if(errore!=null){
+				de = new DataElement();
+				de.setValue(errore);
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_THE_FILE);
+				de.setType(DataElementType.TEXT );
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DOCUMENTO);
+				de.setSize( getSize());
+				dati.addElement(de);
+			}
+			else{
+				de = new DataElement();
+				de.setLabel("");
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				de.setValue(contenutoAllegato.toString());
+				de.setRows(30);
+				de.setCols(80);
+				dati.addElement(de);
+			}
 		}
 		
 		DataElement saveAs = new DataElement();

@@ -1080,14 +1080,27 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					de.setUrl(
-							AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_VIEW,
-
-							new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO,doc.getId()+""),
-							new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO,ac.getId()+""),
-							new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO,doc.getFile())
-							);
-					ServletUtils.setDataElementVisualizzaLabel(de);
+					if(this.core.isShowAllegati()) {
+						de.setUrl(
+								AccordiCooperazioneCostanti.SERVLET_NAME_AC_ALLEGATI_VIEW,
+	
+								new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO,doc.getId()+""),
+								new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO,ac.getId()+""),
+								new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO,doc.getFile())
+								);
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					}
+					else {
+						Parameter pTipoDoc = new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_DOCUMENTO, "ac");
+						de.setUrl(
+								ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT,
+								new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ALLEGATO,doc.getId()+""),
+								new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID_ACCORDO,ac.getId()+""),
+								new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME_DOCUMENTO,doc.getFile()),
+								pTipoDoc
+								);
+						de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_DOWNLOAD.toLowerCase());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -1158,23 +1171,25 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		if(tipoOp.equals(TipoOperazione.OTHER)){
-			if(errore!=null){
-				de = new DataElement();
-				de.setValue(errore);
-				de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
-				de.setType(DataElementType.TEXT);
-				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO  );
-				de.setSize( getSize());
-				dati.addElement(de);
-			}
-			else{
-				de = new DataElement();
-				de.setLabel("");//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setValue(contenutoAllegato.toString());
-				de.setRows(30);
-				de.setCols(80);
-				dati.addElement(de);
+			if(this.core.isShowAllegati()) {
+				if(errore!=null){
+					de = new DataElement();
+					de.setValue(errore);
+					de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
+					de.setType(DataElementType.TEXT);
+					de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO  );
+					de.setSize( getSize());
+					dati.addElement(de);
+				}
+				else{
+					de = new DataElement();
+					de.setLabel("");//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setValue(contenutoAllegato.toString());
+					de.setRows(30);
+					de.setCols(80);
+					dati.addElement(de);
+				}
 			}
 			
 			DataElement saveAs = new DataElement();

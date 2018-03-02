@@ -696,6 +696,14 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti.finale.ripristinoStatoOperativo");
 	}
 	
+	public Boolean isConsoleInterfacceAPI_visualizza() throws UtilsException{
+		return this.readBooleanProperty(true, "console.interfacceAPI.visualizza");
+	}
+	
+	public Boolean isConsoleAllegati_visualizza() throws UtilsException{
+		return this.readBooleanProperty(true, "console.allegati.visualizza");
+	}
+	
 	public Boolean isEnableAutoMappingWsdlIntoAccordo() throws UtilsException{
 		return this.readBooleanProperty(true, "console.gestioneWsdl.autoMappingInAccordo");
 	}

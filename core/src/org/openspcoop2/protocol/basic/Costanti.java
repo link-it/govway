@@ -212,6 +212,9 @@ public class Costanti {
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL = "wsdl";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_INTERFACCIA_DEFINITORIA = "InterfacciaDefinitoria.xsd";
+	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0 = "InterfacciaOpenAPI.json";
+	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0 = "InterfacciaSwagger.json";
+	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WADL = "Interfaccia.wadl";
 	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL = "InterfacciaConcettuale.wsdl";
 	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_EROGATORE_WSDL = "InterfacciaLogicaErogatore.wsdl";
 	public final static String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_LOGICO_FRUITORE_WSDL = "InterfacciaLogicaFruitore.wsdl";

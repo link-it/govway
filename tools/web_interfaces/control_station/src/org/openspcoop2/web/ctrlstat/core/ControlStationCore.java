@@ -482,6 +482,8 @@ public class ControlStationCore {
 	private boolean showGestioneWorkflowStatoDocumenti = false;
 	private boolean gestioneWorkflowStatoDocumenti_visualizzaStatoLista = false;
 	private boolean gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = false;
+	private boolean showInterfacceAPI = false;
+	private boolean showAllegati = false;
 	private boolean enableAutoMappingWsdlIntoAccordo = false;
 	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
 	private boolean showMTOMVisualizzazioneCompleta = false;
@@ -532,6 +534,12 @@ public class ControlStationCore {
 	}
 	public boolean isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() {
 		return this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
+	}
+	public boolean isShowInterfacceAPI() {
+		return this.showInterfacceAPI;
+	}
+	public boolean isShowAllegati() {
+		return this.showAllegati;
 	}
 	public boolean isEnableAutoMappingWsdlIntoAccordo() {
 		return this.enableAutoMappingWsdlIntoAccordo;
@@ -1296,6 +1304,8 @@ public class ControlStationCore {
 		this.showGestioneWorkflowStatoDocumenti = core.showGestioneWorkflowStatoDocumenti;
 		this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = core.gestioneWorkflowStatoDocumenti_visualizzaStatoLista;
 		this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
+		this.showInterfacceAPI = core.showInterfacceAPI;
+		this.showAllegati = core.showAllegati;
 		this.enableAutoMappingWsdlIntoAccordo = core.enableAutoMappingWsdlIntoAccordo;
 		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
@@ -1520,6 +1530,8 @@ public class ControlStationCore {
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
 			this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_visualizzaStatoLista();
 			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
+			this.showInterfacceAPI = consoleProperties.isConsoleInterfacceAPI_visualizza();
+			this.showAllegati = consoleProperties.isConsoleAllegati_visualizza();
 			this.showFlagPrivato = consoleProperties.isMenuVisualizzaFlagPrivato();
 			this.showAllConnettori = consoleProperties.isMenuVisualizzaListaCompletaConnettori();
 			this.showDebugOptionConnettore = consoleProperties.isMenuVisualizzaOpzioneDebugConnettore();

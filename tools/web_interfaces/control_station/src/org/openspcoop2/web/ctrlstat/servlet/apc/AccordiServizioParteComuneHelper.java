@@ -505,12 +505,22 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_VIEW, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO, doc.getId()+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, as.getId()+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_NOME_DOCUMENTO, doc.getFile()),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-					de.setValue(Costanti.LABEL_VISUALIZZA);
+					if(this.core.isShowAllegati()) {
+						de.setValue(Costanti.LABEL_VISUALIZZA);
+						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_VIEW, 
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO, doc.getId()+""),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, as.getId()+""),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_NOME_DOCUMENTO, doc.getFile()),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
+					}
+					else {
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD.toLowerCase());
+						de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ALLEGATO, doc.getId()+""),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, as.getId()+""),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+								new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE));
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -651,23 +661,25 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			if(TipoOperazione.OTHER.equals(tipoOperazione)){
 
-				if(errore!=null){
-					de = new DataElement();
-					de.setValue(errore);
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
-					de.setType(DataElementType.TEXT);
-					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO_VIEW);
-					de.setSize(this.getSize());
-					dati.addElement(de);
-				}
-				else{
-					de = new DataElement();
-					de.setLabel("");//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
-					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					de.setValue(contenutoAllegato.toString());
-					de.setRows(30);
-					de.setCols(80);
-					dati.addElement(de);
+				if(this.core.isShowAllegati()) {
+					if(errore!=null){
+						de = new DataElement();
+						de.setValue(errore);
+						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
+						de.setType(DataElementType.TEXT);
+						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO_VIEW);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+					}
+					else{
+						de = new DataElement();
+						de.setLabel("");//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
+						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+						de.setValue(contenutoAllegato.toString());
+						de.setRows(30);
+						de.setCols(80);
+						dati.addElement(de);
+					}
 				}
 				
 				DataElement saveAs = new DataElement();
@@ -2457,13 +2469,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		if(this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(statoPackage)){
 			this.pd.disableEditMode();
 
-			de = new DataElement();
-			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-			de.setValue(oldwsdl);
-			de.setRows(30);
-			de.setCols(110);
-			de.setLabel("");
-			dati.addElement(de);
+			if(this.core.isShowInterfacceAPI()) {
+				de = new DataElement();
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(oldwsdl);
+				de.setRows(30);
+				de.setCols(110);
+				de.setLabel("");
+				dati.addElement(de);
+			}
 			
 			if(oldwsdl != null && !oldwsdl.isEmpty()){
 				DataElement saveAs = new DataElement();
@@ -2480,13 +2495,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		else{
 			//			de.setLabel(label.replace(" di ", " di <BR/>")+"<BR/>Attuale:");
 			if(oldwsdl != null && !oldwsdl.isEmpty()){
-				de = new DataElement();
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setValue(oldwsdl);
-				de.setRows(30);
-				de.setCols(110);
-				//de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE );
-				dati.addElement(de);
+				if(this.core.isShowInterfacceAPI()) {
+					de = new DataElement();
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(oldwsdl);
+					de.setRows(30);
+					de.setCols(110);
+					//de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE );
+					dati.addElement(de);
+				}
 				
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_DOWNLOAD);

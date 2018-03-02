@@ -173,7 +173,25 @@ public class DocumentoExporter extends HttpServlet {
 						docBytes = as.getByteWsdlDefinitorio();
 					}
 					else if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE.equals(tipoDocumentoDaScaricare) ){
-						fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL;
+						if(as.getFormatoSpecifica()!=null) {
+							switch (as.getFormatoSpecifica()) {
+							case WSDL_11:
+								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL;
+								break;
+							case OPEN_API_3:
+								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_OPENAPI_3_0;
+								break;
+							case SWAGGER_2:
+								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SWAGGER_2_0;
+								break;
+							case WADL:
+								fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WADL;
+								break;
+							}
+						}
+						else {
+							fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_CONCETTUALE_WSDL;
+						}
 						docBytes = as.getByteWsdlConcettuale();
 					}
 					else if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE.equals(tipoDocumentoDaScaricare) ){
