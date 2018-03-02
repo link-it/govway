@@ -303,7 +303,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE = "modeCreazione";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.PARAMETRO_SOGGETTO;
-	public final static String PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED = "forceWsdlBased";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE = "modeaz";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
@@ -428,7 +428,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING = "Configurazione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED = "Force Interface";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "Force Interface";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
 	

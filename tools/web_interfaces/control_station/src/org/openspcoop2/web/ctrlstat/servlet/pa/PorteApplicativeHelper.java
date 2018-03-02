@@ -932,6 +932,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, nomePorta);
 		}
 		
+		// servicebinding hidden
+		dati.add(this.getServiceBindingDataElement(serviceBinding));
+		
+		
 		// *************** Nome/Descrizione *********************
 		
 		DataElement de = new DataElement();
@@ -943,10 +947,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		}
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
-		
-		// servicebinding hidden
-		dati.add(this.getServiceBindingDataElement(serviceBinding));
-		
+				
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 		de.setValue(nomePorta);
@@ -1218,7 +1219,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		
 				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
 				de = new DataElement();
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
 				if( modeaz!= null && (
 							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
 							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
@@ -1234,7 +1235,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(forceWsdlBased);
 				}
-				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
 				dati.addElement(de);
 			}
 		
@@ -1316,10 +1317,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(forceWsdlBased);
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
 			dati.addElement(de);
 			
 			if(this.isModalitaCompleta()) {
@@ -1329,7 +1330,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))
 				){
 					DataElement deLabel = new DataElement();
-					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_WSDL_BASED);
+					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setValue(ServletUtils.isCheckBoxEnabled(forceWsdlBased) ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
 					dati.addElement(deLabel);

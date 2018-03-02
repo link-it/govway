@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -114,7 +115,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			int numCorrelazioneRes,String forceWsdlBased, String applicaMTOM,
 			boolean riusoId,
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,ServiceBinding serviceBinding,
-			String statoPorta, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault) throws Exception {
+			String statoPorta, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault,
+			boolean ricercaPortaAzioneDelegata, String nomePortaDelegante) throws Exception {
 
 
 
@@ -126,7 +128,28 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		
 		boolean isConfigurazione = parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE; 
-		boolean nascondiNome = TipoOperazione.CHANGE.equals(tipoOp) && (isConfigurazione && !usataInConfigurazioneDefault);
+		
+		boolean datiInvocazione = false;
+		boolean datiAltro = false;
+		if(isConfigurazione) {
+			if(usataInConfigurazioneDefault) {
+				datiInvocazione = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+			}
+			datiAltro = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO));
+			
+			DataElement de = new DataElement();
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(datiInvocazione+"");
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(datiAltro+"");
+			dati.addElement(de);
+		}
+		
 
 		int alternativeSize = 80;
 		
@@ -161,7 +184,12 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		// *************** Dati Generali: Nome/Descrizione *********************
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI);
+		if(datiInvocazione) {
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
+		}
+		else {
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI);
+		}
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -169,26 +197,36 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 		de.setValue(nomePorta);
 		
-		if(!nascondiNome) {
-			if(isConfigurazione) {
-				de.setType(DataElementType.HIDDEN);
-			}
-			else {				
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}
-		} else {
+		if(isConfigurazione) {
 			de.setType(DataElementType.HIDDEN);
+		}
+		else {				
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
 		}
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
 		de.setSize(alternativeSize);
 		dati.addElement(de);
 		
-		if(TipoOperazione.CHANGE.equals(tipoOp) && isConfigurazione && usataInConfigurazioneDefault) {
+		if(datiInvocazione) {
+			
+			ConfigurazioneProtocollo configProt = this.confCore.getConfigurazioneProtocollo(protocollo);
+			
+			String prefix = configProt.getUrlInvocazioneServizioPD();
+			prefix = prefix.trim();
+			if(prefix.endsWith("/")==false) {
+				prefix = prefix + "/";
+			}
+			
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+			if(ServiceBinding.SOAP.equals(serviceBinding)) {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE);
+			}
+			else {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE);
+			}
 			PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
-			de.setValue(utils.normalizePD(nomePorta));
+			de.setValue(prefix+utils.normalizePD(nomePorta));
 			de.setType(DataElementType.TEXT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA+"___LABEL");
 			dati.addElement(de);
@@ -197,45 +235,55 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 		de.setValue(descr);
-		if(!nascondiNome && !isConfigurazione) {
-			de.setType(DataElementType.TEXT_EDIT);
-		} else {
+		if(isConfigurazione) {
 			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setType(DataElementType.TEXT_EDIT);
 		}
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 		de.setSize(alternativeSize);
 		dati.addElement(de);
 		
-		List<String> statoValues = new ArrayList<>();
-		statoValues.add(CostantiConfigurazione.ABILITATO.toString());
-		statoValues.add(CostantiConfigurazione.DISABILITATO.toString());
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
-		de.setValues(statoValues);
-		if(statoPorta==null || "".equals(statoPorta)){
-			statoPorta = CostantiConfigurazione.ABILITATO.toString();
-		}
-		de.setSelected(statoPorta);
-		de.setType(DataElementType.SELECT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
+		if(!isConfigurazione || datiAltro) {
+			List<String> statoValues = new ArrayList<>();
+			statoValues.add(CostantiConfigurazione.ABILITATO.toString());
+			statoValues.add(CostantiConfigurazione.DISABILITATO.toString());
+			de.setValues(statoValues);
+			if(statoPorta==null || "".equals(statoPorta)){
+				statoPorta = CostantiConfigurazione.ABILITATO.toString();
+			}
+			de.setSelected(statoPorta);
+			de.setType(DataElementType.SELECT);
+		}
+		else {
+			de.setValue(statoPorta);
+			de.setType(DataElementType.HIDDEN);
+		}
 		dati.addElement(de);
 
 		
 		// *************** Dati Servizio *********************
 		
-		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		if(!isConfigurazione) {
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 		
 		
 		
 		// *************** Soggetto Erogatore *********************
 		
-		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE);
-		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		if(!isConfigurazione) {
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+		}
 
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
@@ -251,23 +299,27 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			de.setValue(soggid); 
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO);
-			de.setType(DataElementType.TEXT);
-			String tipoSoggetto = soggid.split("/")[0];
-			String nomeSoggetto = soggid.split("/")[1];
-			de.setValue(this.getLabelNomeSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
+			if(this.isModalitaCompleta()) {
+				de = new DataElement();
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO);
+				de.setType(DataElementType.TEXT);
+				String tipoSoggetto = soggid.split("/")[0];
+				String nomeSoggetto = soggid.split("/")[1];
+				de.setValue(this.getLabelNomeSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
+			}
 		}
 		dati.addElement(de);
 
 
 		// *************** Servizio *********************
 		
-		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO);
-		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		if(!isConfigurazione) {
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+		}
 
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
@@ -283,13 +335,15 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			de.setValue(servid); 
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-			de.setType(DataElementType.TEXT);
-			for (int i = 0; i < serviziList.length; i++) {
-				if(serviziList[i]!=null && serviziList[i].equals(servid)){
-					de.setValue(serviziListLabel[i]);
-					break;
+			if(this.isModalitaCompleta()) {
+				de = new DataElement();
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setType(DataElementType.TEXT);
+				for (int i = 0; i < serviziList.length; i++) {
+					if(serviziList[i]!=null && serviziList[i].equals(servid)){
+						de.setValue(serviziListLabel[i]);
+						break;
+					}
 				}
 			}
 		}
@@ -329,16 +383,22 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 		}
 		
-	
-		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
-		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		if(!isConfigurazione || datiInvocazione) {
+			de = new DataElement();
+			if(datiInvocazione) {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE_MODALITA);
+			}
+			else {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
+			}
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+		}
 
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
-		if(!usataInConfigurazioni || usataInConfigurazioneDefault) {
+		if(!usataInConfigurazioni || datiInvocazione) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoModeAzione);
 			de.setLabels(tipoModeAzioneLabel); 
@@ -351,70 +411,181 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		dati.addElement(de);
 		
-		if(!usataInConfigurazioni || usataInConfigurazioneDefault) {
+		boolean addHiddenAzione = false;
+		
+		if(!usataInConfigurazioni || datiInvocazione) {
 	
-			if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+			if(!usataInConfigurazioni && PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_DELEGATED_BY.equals(modeaz)) {
+				
+				// azione non modificabile, metto la lista delle azioni
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-				de.setType(DataElementType.SELECT);
-				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
-				de.setValues(azioniList);
-				de.setLabels(azioniListLabel);
-				de.setSelected(azid);
-				dati.addElement(de);
-			} else {
-	
-				de = new DataElement();
-				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
-						|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED)
-						|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
-					de.setValue(patternAzione);
-					de.setRequired(true);
-				} else {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-					de.setValue(azione);
-				}
-	
-				if (!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED.equals(modeaz) && 
-						!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
-						!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED.equals(modeaz) ){
-					de.setType(DataElementType.TEXT_EDIT);
-				}else
-					de.setType(DataElementType.HIDDEN);
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
-				de.setSize(alternativeSize);
+				de.setValue(azione);
 				dati.addElement(de);
+				
+				addHiddenAzione = true;
+				
 			}
-	
-			// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
+			else {
+			
+				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+					de = new DataElement();
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					de.setType(DataElementType.SELECT);
+					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
+					de.setValues(azioniList);
+					de.setLabels(azioniListLabel);
+					de.setSelected(azid);
+					dati.addElement(de);
+				} else {
+		
+					de = new DataElement();
+					if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
+							|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+						de.setValue(patternAzione);
+						de.setRequired(true);
+					}
+					else if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED))) {
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+						de.setValue(patternAzione);
+						de.setRequired(true);
+					} 
+					else {
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+						de.setValue(azione);
+					}
+		
+					if (!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED.equals(modeaz) && 
+							!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
+							!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED.equals(modeaz) ){
+						de.setType(DataElementType.TEXT_EDIT);
+					}else
+						de.setType(DataElementType.HIDDEN);
+					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+					de.setSize(alternativeSize);
+					dati.addElement(de);
+				}
+		
+				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
+				de = new DataElement();
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+				if( modeaz!= null && (
+							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
+							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
+					){
+		
+					de.setType(DataElementType.CHECKBOX);
+					if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
+						de.setSelected(true);
+					}
+				}
+				else{
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(forceWsdlBased);
+				}
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+				dati.addElement(de);
+				
+			}
+		
+		} else {
+			
+			addHiddenAzione = true;
+			
+		}
+		
+		if(addHiddenAzione) {
+			
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
-			if( this.isModalitaAvanzata() &&
-					modeaz!= null && (
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
+			de.setValue(azid);
+			dati.addElement(de);
+			
+			if(this.isModalitaCompleta()) {
+				DataElement deLabel = new DataElement();
+				deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
+				deLabel.setType(DataElementType.TEXT);
+				deLabel.setValue(modeaz);
+				dati.addElement(deLabel);
+			}
+			
+			de = new DataElement();
+			if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
+					|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
+				de.setValue(patternAzione);
+			} 
+			else if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED)
+					) {
+				de.setValue(patternAzione);
+			} 
+			else {
+				de.setValue(azione);
+			}
+			de.setType(DataElementType.HIDDEN);
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			dati.addElement(de);
+			
+			if(this.isModalitaCompleta()) {
+				DataElement deLabel = new DataElement();
+				deLabel.setType(DataElementType.TEXT);
+				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
+						|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+					deLabel.setValue(patternAzione);
+				} 
+				else if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED)
+						) {
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					deLabel.setValue(patternAzione);
+				} 
+				else {
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					deLabel.setValue(azione);
+				}
+				dati.addElement(deLabel);
+			}
+			
+			if(this.isModalitaCompleta()) {
+				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_DELEGATED_BY))){
+					de = new DataElement();
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA);
+					de.setType(DataElementType.TEXT);
+					de.setValue(nomePortaDelegante);
+					dati.addElement(de);
+				}
+				else {
+					DataElement deLabel = new DataElement();
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA);
+					deLabel.setType(DataElementType.TEXT);
+					deLabel.setValue(ricercaPortaAzioneDelegata ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
+					dati.addElement(deLabel);
+				}
+			}
+			
+			de = new DataElement();
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(forceWsdlBased);
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+			dati.addElement(de);
+			
+			if(this.isModalitaCompleta()) {
+				if( modeaz!= null && (
 						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
 						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
 				){
-	
-				de.setType(DataElementType.CHECKBOX);
-				if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
-					de.setSelected(true);
+					DataElement deLabel = new DataElement();
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+					deLabel.setType(DataElementType.TEXT);
+					deLabel.setValue(ServletUtils.isCheckBoxEnabled(forceWsdlBased) ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
+					dati.addElement(deLabel);
 				}
 			}
-			else{
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(forceWsdlBased);
-			}
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
-			dati.addElement(de);
-		
-		} else {
-			// azione non modificabile, metto la lista delle azioni
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
-			de.setValue(azione);
-			dati.addElement(de);
+			
 		}
 		
 		
@@ -498,7 +669,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			de.setValue(integrazione);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
 			de.setSize(alternativeSize);
-			if(this.isModalitaStandard()){
+			if(this.isModalitaStandard() || (isConfigurazione && !datiAltro)){
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 			}else{
@@ -514,25 +685,15 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
-		if(this.core.isShowJ2eeOptions()){
-//			if(configurazioneStandardNonApplicabile){
-//				de.setType(DataElementType.TEXT);
-//				if(stateless!=null && !"".equals(stateless)){
-//					de.setValue(stateless);
-//				}
-//				else{
-//					de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT);
-//				}
-//			}else{
-				de.setType(DataElementType.SELECT);
-				de.setValues(tipoStateless);
-				de.setSelected(stateless);
-//			}
-			deIntegrazione.addElement(de);
-		}else{
+		if(!this.core.isShowJ2eeOptions() || (isConfigurazione && !datiAltro)){
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(stateless);
 			dati.addElement(de);
+		}else {
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoStateless);
+			de.setSelected(stateless);
+			deIntegrazione.addElement(de);
 		}
 		
 
@@ -579,7 +740,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
 		de.setSize(alternativeSize);
-		if (this.isModalitaStandard() || localForwardShow==false) {
+		if (this.isModalitaStandard() || localForwardShow==false || (isConfigurazione && !datiAltro)) {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(localForward);
 			dati.addElement(de);
@@ -593,13 +754,15 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 		if(deIntegrazione.size()>0){
 			
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
-			dati.addElement(de);
-			
-			for (int i = 0; i < deIntegrazione.size(); i++) {
-				dati.addElement(deIntegrazione.get(i));
+			if(!isConfigurazione || datiAltro) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
+				dati.addElement(de);
+				
+				for (int i = 0; i < deIntegrazione.size(); i++) {
+					dati.addElement(deIntegrazione.get(i));
+				}
 			}
 		}
 		
@@ -718,7 +881,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		// *************** Asincroni *********************
 		
-		if (this.isModalitaStandard()) {
+		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
+		
+		if (this.isModalitaStandard() || !supportoAsincroni) {
 
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
@@ -773,7 +938,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		// ***************  SOAP With Attachments *********************
 
-		if (this.isModalitaAvanzata()) {
+		if (this.isModalitaAvanzata() && (!isConfigurazione || datiAltro) ) {
 		
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
@@ -2148,7 +2313,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI+idporta;
 			}
 			lstParam.add(new Parameter(labelPerPorta,
-					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pIdSoggetto, pId, pNomePorta));
+					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pIdSoggetto, pId, pNomePorta, pIdAsps, pIdFrizione));
 
 			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 			if(search.equals("")){
@@ -2459,7 +2624,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI+idporta;
 			}
 			lstParam.add(new Parameter(labelPerPorta,
-						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFrizione	));
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFrizione, pIdFrizione	));
 
 			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 			if(search.equals("")){

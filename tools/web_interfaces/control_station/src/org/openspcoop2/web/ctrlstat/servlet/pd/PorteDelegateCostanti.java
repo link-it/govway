@@ -239,6 +239,7 @@ public class PorteDelegateCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO = "Soggetto";
 	
+	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE = "Dati Invocazione";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI = "Dati Generali";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO = "Dati Servizio";
 	public final static String LABEL_COLUMN_PORTE_DELEGATE_STATO_PORTA = "Abilitato";
@@ -290,12 +291,15 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO = "riusoIdMessaggio";
 	public final static String PARAMETRO_PORTE_DELEGATE_VALORE = "valore";
 	public final static String PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY = "messageSecurity";
-	public final static String PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED = "forceWsdlBased";
+	public final static String PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
 	public final static String PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE = "identificazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE = "modeCreazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_MAPPING = "mapping";
 	public final static String PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
+	
+	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
+	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO = "configurazioneAltro";
 	
 	public final static String PARAMETRO_PORTE_DELEGATE_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PORTE_DELEGATE_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_MTOM_RISPOSTA;
@@ -347,6 +351,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DATI_INVOCAZIONE = "Dati Invocazione";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE = "URL";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE = "Base URL";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
@@ -367,10 +374,13 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "Versione Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI = CostantiControlStation.LABEL_PARAMETRO_AZIONI;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE = "Configurazione";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML = "Elemento xml";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_BR = "Elemento xml<BR/>(Il campo vuoto indica qualsiasi elemento)";
@@ -392,7 +402,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Identificazione fallita";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO = "Riuso ID";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATO = CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED = "Force Interface";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED = "Force Interface";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PORTA_DELEGANTE = "Porta Delegante";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_ABILITATO = "abilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_DISABILITATO = "disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM;

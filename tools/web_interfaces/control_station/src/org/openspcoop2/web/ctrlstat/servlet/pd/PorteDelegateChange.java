@@ -58,6 +58,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
@@ -72,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -140,7 +142,7 @@ public final class PorteDelegateChange extends Action {
 			String ricsim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
 			String ricasim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
 			String scadcorr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA);
-			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
+			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
 			
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
@@ -162,6 +164,12 @@ public final class PorteDelegateChange extends Action {
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
+			String postBackElementName = porteDelegateHelper.getPostBackElementName();
+			if(postBackElementName!=null && PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE.equals(postBackElementName)) {
+				// ho cambiato modalita', elimino il valore
+				azione = null;
+			}
+			
 			// Prendo nome e tipo del soggetto
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
@@ -336,8 +344,6 @@ public final class PorteDelegateChange extends Action {
 						applicaMTOM = Costanti.CHECK_BOX_ENABLED;
 			}
 			
-			String postBackElementName = porteDelegateHelper.getPostBackElementName();
-			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
 			if (postBackElementName != null) {
 				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID)) {
@@ -388,11 +394,20 @@ public final class PorteDelegateChange extends Action {
 //					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
 //				}
 				
-				nomeBreadCrumb = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pde);
+				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+				if(datiInvocazione) {
+					lstParam.remove(lstParam.size()-1);
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
+					nomeBreadCrumb=null;
+				}
+				else {
+					nomeBreadCrumb = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pde);
+				}
 			}
 			
-			
-			lstParam.add(new Parameter(nomeBreadCrumb , null));
+			if(nomeBreadCrumb!=null) {
+				lstParam.add(new Parameter(nomeBreadCrumb , null));
+			}
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -713,7 +728,9 @@ public final class PorteDelegateChange extends Action {
 						numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,riusoID,
 						servS, as,serviceBinding,
-						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault);
+						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault,
+						StatoFunzionalita.ABILITATO.equals(pde.getRicercaPortaAzioneDelegata()), 
+						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null));
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 				
@@ -866,7 +883,9 @@ public final class PorteDelegateChange extends Action {
 						statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,
 						servS, as,serviceBinding,
-						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault);
+						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault,
+						StatoFunzionalita.ABILITATO.equals(pde.getRicercaPortaAzioneDelegata()), 
+						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null));
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 
@@ -965,7 +984,10 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setServizio(pdServizio);
 
 			// se l azione e' settata allora creo il bean
-			if (((azione != null) || (azid != null) || modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
+			if(modeaz!=null && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_DELEGATED_BY)) {
+				// non modifico paAzione
+			}
+			else if (((azione != null) || (azid != null) || modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED) ||
 							modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)) &&
 							(!azione.equals("") || !azid.equals("") || 
@@ -1069,15 +1091,28 @@ public final class PorteDelegateChange extends Action {
 			
 			switch (parentPD) {
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE:
-				idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
-				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+				
 				int idAspsInt = Integer.parseInt(idAsps);
 				asps = apsCore.getAccordoServizioParteSpecifica(idAspsInt);
 				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 				
-				List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-				apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
+				
+				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+				if(datiInvocazione) {
+					idLista = Liste.SERVIZI_FRUITORI;
+					ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+					
+					List<Fruitore> listaFruitori = apsCore.serviziFruitoriList(idAspsInt, ricerca);
+					apsHelper.prepareServiziFruitoriList(listaFruitori, idAsps, ricerca);
+				}
+				else {
+					idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
+					ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+					
+					List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
+					apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
+				}
 				
 				break;
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO:

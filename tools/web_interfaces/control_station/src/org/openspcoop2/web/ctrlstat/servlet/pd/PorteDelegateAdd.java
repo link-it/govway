@@ -142,7 +142,7 @@ public final class PorteDelegateAdd extends Action {
 			String statoValidazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
 			String tipoValidazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
 			String autorizzazioneContenuti = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
-			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
+			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
 			String applicaMTOM = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
 
 			String autorizzazioneAutenticati = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
@@ -473,7 +473,8 @@ public final class PorteDelegateAdd extends Action {
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,false,
 						servS,as,serviceBinding,
-						statoPorta,false,false);
+						statoPorta,false,false,
+						false,null);
 
 				pd.setDati(dati);
 
@@ -520,7 +521,8 @@ public final class PorteDelegateAdd extends Action {
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
 						forceWsdlBased,applicaMTOM,false,
 						servS,as,serviceBinding,
-						statoPorta,false,false);
+						statoPorta,false,false,
+						false,null);
 
 				pd.setDati(dati);
 
