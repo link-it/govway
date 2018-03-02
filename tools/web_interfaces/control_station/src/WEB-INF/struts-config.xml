@@ -1280,7 +1280,13 @@
             <forward name="porteDelegateValidazioneContenutiError" path="/jsplib/info.jsp"/>
         </action>
     
-    
+       	<!--  Porte Delegate (Abilitazione) -->
+
+        <action path="/porteDelegateAbilitazione" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateAbilitazione"
+            scope="request" validate="true">
+            <forward name="porteDelegateAbilitazioneOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateAbilitazioneError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     	<!--  Porte Applicative -->
@@ -1655,6 +1661,14 @@
             <forward name="porteApplicativeValidazioneContenutiOk" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeValidazioneContenutiCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeValidazioneContenutiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+      	<!--  Porte Applicative (Abilitazione) -->
+
+        <action path="/porteApplicativeAbilitazione" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeAbilitazione"
+            scope="request" validate="true">
+            <forward name="porteApplicativeAbilitazioneOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeAbilitazioneError" path="/jsplib/info.jsp"/>
         </action>
     
     

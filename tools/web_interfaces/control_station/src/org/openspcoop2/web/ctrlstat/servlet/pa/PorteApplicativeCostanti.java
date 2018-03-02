@@ -75,6 +75,9 @@ public class PorteApplicativeCostanti {
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = "porteApplicativeValidazioneContenuti";
 	public final static ForwardParams TIPO_OPERAZIONE_VALIDAZIONE_CONTENUTI = ForwardParams.OTHER("");
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE = "porteApplicativeAbilitazione";
+	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
+	
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"Add.do";
@@ -236,6 +239,8 @@ public class PorteApplicativeCostanti {
 	}
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI+".do";
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE +".do";
 
 	/* LABEL GENERALI */
 	
@@ -302,6 +307,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE = "modeaz";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = "abilita";
 	
 	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
@@ -417,6 +423,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO = "Disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT = "Default";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_DEFAULT = "*";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX = "Specific";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE = "Mode";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
@@ -433,6 +440,9 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = "soap-action-based";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = "interface-based";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = "protocol-based";
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
 	
 	/* DEFAULT VALUE PARAMETRI */
 	

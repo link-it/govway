@@ -224,6 +224,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_AZIONE);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
+		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE);
 		/** Permessi associati alla gestione delle porte delegate */
 		this.permessiPorteDelegate = new PermessiUtente();
 		this.permessiPorteDelegate.setServizi(true);
@@ -248,6 +249,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_AZIONE);
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO);
 		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
+		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE);
 		/** Permessi associati alla gestione delle porte applicative */
 		this.permessiPorteApplicative = new PermessiUtente();
 		this.permessiPorteApplicative.setServizi(true);

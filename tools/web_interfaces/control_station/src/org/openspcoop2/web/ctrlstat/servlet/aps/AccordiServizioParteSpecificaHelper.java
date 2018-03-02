@@ -2025,9 +2025,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.CHECKBOX);
 				boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
-				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO;
+				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO_TOOLTIP : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO_TOOLTIP;
 				de.setToolTip(statoMapping);
 				de.setSelected(statoPA);
+				Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
+				Parameter pEndEditMode = new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END);
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita, pEndEditMode);
 				e.addElement(de);
 				
 				dati.addElement(e);
@@ -2583,9 +2586,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.CHECKBOX);
 				boolean statoPD = pdAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
-				String statoMapping = statoPD ? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO : PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO;
+				String statoMapping = statoPD ? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO_TOOLTIP : PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO_TOOLTIP;
 				de.setToolTip(statoMapping);
 				de.setSelected(statoPD);
+				Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
+				Parameter pEndEditMode = new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END);
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita, pEndEditMode);
 				e.addElement(de);
 				
 				dati.addElement(e);
@@ -5000,7 +5006,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	
 	public Vector<DataElement> addConfigurazioneErogazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome,
-			String azione, String[] azioniDisponibiliList, 
+			String[] azioni, String[] azioniDisponibiliList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String nomeSA, String [] saSoggetti, 
@@ -5025,12 +5031,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		// Azione
 		de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
 		de.setValues(azioniDisponibiliList);
-		de.setSelected(azione);
-		de.setType(DataElementType.SELECT);
-		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE);
-		de.setPostBack(true, true);
+		de.setSelezionati(azioni);
+		de.setType(DataElementType.MULTI_SELECT);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
 		de.setRequired(true); 
 		dati.addElement(de);
 		
@@ -5038,12 +5043,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		// Nome
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
-		if (nome == null) {
-			de.setValue("");
-		} else {
-			de.setValue(nome);
-		}
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setValue(nome);
+		de.setType(DataElementType.HIDDEN);
 		de.setRequired(true);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
 		dati.addElement(de);
@@ -5092,17 +5093,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return dati;
 	}
 
-	public boolean configurazioneErogazioneCheckData(TipoOperazione tipoOp, String nome, String azione,
+	public boolean configurazioneErogazioneCheckData(TipoOperazione tipoOp, String nome, String[] azioni,
 			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
 			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
-		if(azione == null || azione.equals("") || azione.equals("-")) {
+		
+		if(azioni == null || azioni.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
 			return false;
 		}
+		for (String azioneTmp : azioni) {
+			if(azioneTmp == null || azioneTmp.equals("") || azioneTmp.equals("-")) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
+				return false;
+			}
+		}
 		
-		if(azioniOccupate.contains(azione)) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
-			return false;			
+		for (String azioneTmp : azioni) {
+			if(azioniOccupate.contains(azioneTmp)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+				return false;			
+			}
 		}
 		
 		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
@@ -5159,17 +5169,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return true;
 	}
 	
-	public boolean configurazioneFruizioneCheckData(TipoOperazione tipoOp, String nome, String azione,
+	public boolean configurazioneFruizioneCheckData(TipoOperazione tipoOp, String nome, String [] azioni,
 			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
 			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
-		if(azione == null || azione.equals("") || azione.equals("-")) {
+		
+		if(azioni == null || azioni.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
 			return false;
 		}
+		for (String azioneTmp : azioni) {
+			if(azioneTmp == null || azioneTmp.equals("") || azioneTmp.equals("-")) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
+				return false;
+			}
+		}
 		
-		if(azioniOccupate.contains(azione)) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
-			return false;			
+		for (String azioneTmp : azioni) {
+			if(azioniOccupate.contains(azioneTmp)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+				return false;			
+			}
 		}
 		
 		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
@@ -5224,7 +5243,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 	public Vector<DataElement> addConfigurazioneFruizioneToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String nome,
-			String azione, String[] azioniDisponibiliList, String idAsps,
+			String [] azioni, String[] azioniDisponibiliList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
 			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, List<String> saList,
@@ -5242,12 +5261,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		// Azione
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
 		de.setValues(azioniDisponibiliList);
-		de.setSelected(azione);
-		de.setType(DataElementType.SELECT);
-		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
-		de.setPostBack(true, true);
+		de.setSelezionati(azioni); 
+		de.setType(DataElementType.MULTI_SELECT);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
+//		de.setPostBack(true, true);
 		de.setRequired(true); 
 		dati.addElement(de);
 		
@@ -5255,12 +5274,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		// Nome
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
-		if (nome == null) {
-			de.setValue("");
-		} else {
-			de.setValue(nome);
-		}
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setValue(nome);
+		de.setType(DataElementType.HIDDEN);
 		de.setRequired(true);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 		dati.addElement(de);

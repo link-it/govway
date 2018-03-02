@@ -69,6 +69,9 @@ public class PorteDelegateCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = "porteDelegateValidazioneContenuti";
 	public final static ForwardParams TIPO_OPERAZIONE_VALIDAZIONE_CONTENUTI = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE = "porteDelegateAbilitazione";
+	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */
 
@@ -210,6 +213,9 @@ public class PorteDelegateCostanti {
 	}
 	
 	public final static String SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI+".do";
+	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE+".do";
+	
 	/* LABEL GENERALI */
 
 	public final static String LABEL_PORTE_DELEGATE = "Porte Delegate";
@@ -248,6 +254,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA = "localForwardPA";
 	public final static String PARAMETRO_PORTE_DELEGATE_STATELESS = "stateless";
 	public final static String PARAMETRO_PORTE_DELEGATE_AZIONE = CostantiControlStation.PARAMETRO_AZIONE;
+	public final static String PARAMETRO_PORTE_DELEGATE_AZIONI = CostantiControlStation.PARAMETRO_AZIONI;
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_AZIONE = "modeaz";
 	public final static String PARAMETRO_PORTE_DELEGATE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA = "ricsim";
@@ -286,11 +293,14 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.PARAMETRO_PORTE_APPLICA_MTOM;
 
 	public final static String PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
+	public final static String PARAMETRO_PORTE_DELEGATE_ABILITA = "abilita";
 	
 	public final static String ATTRIBUTO_PORTE_DELEGATE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
 	public final static int ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO;
 	public final static int ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
+	
+	
 	
 	
 	/* LABEL PARAMETRI */
@@ -379,6 +389,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO = "Disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT = "Default";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_DEFAULT = "*";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX = "Specific";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE = "Mode";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "Nuova";
@@ -391,6 +402,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED = "input-based";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED = "soap-action-based";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED = "interface-based";
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
 	
 	/* DEFAULT VALUE PARAMETRI */
 	

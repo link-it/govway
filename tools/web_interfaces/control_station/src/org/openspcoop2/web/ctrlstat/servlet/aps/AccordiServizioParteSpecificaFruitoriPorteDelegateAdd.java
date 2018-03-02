@@ -110,7 +110,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String idSoggFruitoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
 			
-			String azione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			//String azione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			String [] azioni = apsHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
 			String nome = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 		
 			String modeCreazione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE);
@@ -163,6 +164,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String[] listaMappingLabels = null;
 			String[] listaMappingValues = null;
 			List<String> azioniOccupate = new ArrayList<>();
+			String nomeNuovaConfigurazione = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX + "1";
+			int idxConfigurazione = 0;
 			int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
 			if(listaMappingFruizioneSize > 0) {
 				for (int i = 0; i < listaMappingFruizione.size(); i++) {
@@ -194,12 +197,29 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: mappingFruizionePortaDelegata.getNome();
 					listaMappingValues[i] = mappingFruizionePortaDelegata.getNome();
 					
+					// calcolo del nome automatico
+					if(!mappingFruizionePortaDelegata.isDefault())  {
+						int idx = mappingFruizionePortaDelegata.getNome().indexOf(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX);
+						if(idx > -1) {
+							String idxTmp = mappingFruizionePortaDelegata.getNome().substring(idx + PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX.length());
+							int idxMax = -1;
+							try {
+								idxMax = Integer.parseInt(idxTmp);
+							}catch(Exception e) {
+								idxMax = 0;
+							}
+							idxConfigurazione = Math.max(idxConfigurazione, idxMax);
+						}
+					}
+					
 					// colleziono le azioni gia' configurate
 					PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
 					if(portaDelegata.getAzione() != null && portaDelegata.getAzione().getAzioneDelegataList() != null)
 						azioniOccupate.addAll(portaDelegata.getAzione().getAzioneDelegataList());
 				}
 			}
+			
+			nomeNuovaConfigurazione = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX + (++ idxConfigurazione);
 
 			AccordoServizioParteComune as = null;
 			ServiceBinding serviceBinding = null;
@@ -210,14 +230,14 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 
 			// Prendo le azioni  disponibili
-			boolean addTrattinoSelezioneNonEffettuata = true;
+			boolean addTrattinoSelezioneNonEffettuata = false;
 			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
-			List<String> azioni = porteDelegateCore.getAzioni(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
+			List<String> azioniS = porteDelegateCore.getAzioni(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
-			if(azioni!=null && azioni.size()>0) {
-				azioniDisponibiliList = new String[azioni.size()];
-				for (int i = 0; i < azioni.size(); i++) {
-					azioniDisponibiliList[i] = "" + azioni.get(i);
+			if(azioniS!=null && azioniS.size()>0) {
+				azioniDisponibiliList = new String[azioniS.size()];
+				for (int i = 0; i < azioniS.size(); i++) {
+					azioniDisponibiliList[i] = azioniS.get(i);
 				}
 			}
 			
@@ -225,10 +245,6 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE)){
-					nome = null;
-				}
-
 				if(postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE)){
 					// 
 				}
@@ -281,18 +297,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				}
 				else {
 				
-					if(azione == null) {
-						azione = "-";
+					if(azioni == null) {
+						azioni = new String[0];
 					}
 	
 					if(nome == null) {
-						if(azione.equals("-")) {
-							nome = "";
-						} else {
-							// nome mapping suggerito coincide con l'azione scelta
-							nome =  azione;
-						}
-	
+						// nome mapping calcolato in base al numero id configurazioni non di default presenti
+						nome = nomeNuovaConfigurazione;
 	
 						if(identificazione == null)
 							identificazione = PortaApplicativaAzioneIdentificazione.DELEGATED_BY.toString();
@@ -319,7 +330,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					
 	
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
-					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azioniDisponibiliList, idAsps, idSoggettoFruitore,
+					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
 							mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
@@ -336,7 +347,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azione, asps, azioniOccupate,modeCreazione,null,true);
+			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azioni, asps, azioniOccupate,modeCreazione,null,true);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,lstParm); 
@@ -348,7 +359,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 
-				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azione, azioniDisponibiliList, idAsps, idSoggettoFruitore,
+				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
 						mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
@@ -367,15 +378,16 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			PortaDelegata portaDelegataDefault = porteDelegateCore.getPortaDelegata(mappingDefault.getIdPortaDelegata());
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(idServizio2.getTipo());
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+		
 			Subscription subscription = null;
 			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				PortaDelegata portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
-						portaDelegataDefault, portaDelegataDaCopiare, nome, azione);
+						portaDelegataDefault, portaDelegataDaCopiare, nome, azioni);
 			}
 			else {
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
-						portaDelegataDefault, nome, azione);
+						portaDelegataDefault, nome, azioni);
 			}
 			
 			PortaDelegata portaDelegata = subscription.getPortaDelegata();

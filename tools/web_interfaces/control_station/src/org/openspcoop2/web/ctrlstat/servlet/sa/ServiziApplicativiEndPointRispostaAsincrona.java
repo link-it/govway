@@ -48,12 +48,18 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -677,8 +683,29 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			List<ServizioApplicativo> lista = null;
-			if(!useIdSogg){
-				int idLista = Liste.SERVIZIO_APPLICATIVO;
+			int idLista = -1;
+			switch (parentSA) { 
+			case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE:
+				idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
+				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+				int idServizio = Integer.parseInt(idAsps);
+				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
+				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+				Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
+				List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
+				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+				apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
+				break;
+			case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO:
+				idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
+				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
+				saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
+				break;
+			case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE:
+			default:
+				idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
 				if(saCore.isVisioneOggettiGlobale(superUser)){
@@ -686,13 +713,11 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				}else{
 					lista = saCore.soggettiServizioApplicativoList(superUser, ricerca);
 				}
-			}else {
-				int idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
-				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				lista = saCore.soggettiServizioApplicativoList(ricerca,soggLong);
+				saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
+				break;
 			}
 			
-			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
+			
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
