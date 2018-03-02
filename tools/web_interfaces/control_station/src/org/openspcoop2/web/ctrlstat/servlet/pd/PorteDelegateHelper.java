@@ -3055,7 +3055,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
-			int idLista = Liste.PORTE_DELEGATE_RUOLI;
+			int idLista = Liste.PORTE_DELEGATE_PROP;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
