@@ -1993,7 +1993,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pIdPorta,pIdAsps);
 					if (contaListe) {
-						int numProp = paAssociata.sizeProprietaIntegrazioneProtocolloList();
+						int numProp = paAssociata.sizeProprietaList();
 						ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);

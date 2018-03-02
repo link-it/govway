@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.core.config.model;
 
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
+import org.openspcoop2.core.config.Proprieta;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -28,29 +28,29 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model PortaApplicativaProprietaIntegrazioneProtocollo 
+ * Model Proprieta 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PortaApplicativaProprietaIntegrazioneProtocolloModel extends AbstractModel<PortaApplicativaProprietaIntegrazioneProtocollo> {
+public class ProprietaModel extends AbstractModel<Proprieta> {
 
-	public PortaApplicativaProprietaIntegrazioneProtocolloModel(){
+	public ProprietaModel(){
 	
 		super();
 	
-		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa-proprieta-integrazione-protocollo",PortaApplicativaProprietaIntegrazioneProtocollo.class);
-		this.VALORE = new Field("valore",java.lang.String.class,"porta-applicativa-proprieta-integrazione-protocollo",PortaApplicativaProprietaIntegrazioneProtocollo.class);
+		this.NOME = new Field("nome",java.lang.String.class,"proprieta",Proprieta.class);
+		this.VALORE = new Field("valore",java.lang.String.class,"proprieta",Proprieta.class);
 	
 	}
 	
-	public PortaApplicativaProprietaIntegrazioneProtocolloModel(IField father){
+	public ProprietaModel(IField father){
 	
 		super(father);
 	
-		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa-proprieta-integrazione-protocollo",PortaApplicativaProprietaIntegrazioneProtocollo.class);
-		this.VALORE = new ComplexField(father,"valore",java.lang.String.class,"porta-applicativa-proprieta-integrazione-protocollo",PortaApplicativaProprietaIntegrazioneProtocollo.class);
+		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"proprieta",Proprieta.class);
+		this.VALORE = new ComplexField(father,"valore",java.lang.String.class,"proprieta",Proprieta.class);
 	
 	}
 	
@@ -62,8 +62,8 @@ public class PortaApplicativaProprietaIntegrazioneProtocolloModel extends Abstra
 	 
 
 	@Override
-	public Class<PortaApplicativaProprietaIntegrazioneProtocollo> getModeledClass(){
-		return PortaApplicativaProprietaIntegrazioneProtocollo.class;
+	public Class<Proprieta> getModeledClass(){
+		return Proprieta.class;
 	}
 	
 	@Override

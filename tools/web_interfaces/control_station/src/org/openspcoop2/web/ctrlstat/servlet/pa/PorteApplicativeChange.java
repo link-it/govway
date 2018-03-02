@@ -260,7 +260,7 @@ public final class PorteApplicativeChange extends Action {
 			if(pa.getCorrelazioneApplicativaRisposta() != null)
 				numCorrelazioneRes = pa.getCorrelazioneApplicativaRisposta().sizeElementoList();
 
-			int numProprProt = pa.sizeProprietaIntegrazioneProtocolloList();
+			int numProprProt = pa.sizeProprietaList();
 
 			// Stato MTOM
 			boolean isMTOMAbilitatoReq = false;

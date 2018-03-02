@@ -72,6 +72,7 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-delegata-servizio-applicativo"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="local-forward" type="porta-delegata-local-forward"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
 				
@@ -184,7 +185,7 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-applicativa-servizio-applicativo"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="soggetti" type="porta-applicativa-autorizzazione-soggetti"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
-			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta-integrazione-protocollo" type="porta-applicativa-proprieta-integrazione-protocollo"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
 				
@@ -276,11 +277,6 @@
 	<!-- PortaApplicativa.ServizioApplicativo -->
 	<xsd:complexType name="porta-applicativa-servizio-applicativo">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-	</xsd:complexType>
-	<!-- openspcoop-property -->
-	<xsd:complexType name="porta-applicativa-proprieta-integrazione-protocollo">
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="valore" type="xsd:string" use="required"/> <!-- Non e' possibile altrimenti avere la possibilita' di indicare qualsiasi valore type="ProprietaProtocolloValore" -->
 	</xsd:complexType>
 	<!-- PortaApplicativa Autorizzazione per Soggetti -->
 	<xsd:complexType name="porta-applicativa-autorizzazione-soggetti">
@@ -444,6 +440,12 @@
 		<xsd:attribute default="disabilitato" name="accept-mtom-message" type="StatoFunzionalita" use="optional">
 			
 		</xsd:attribute> <!-- il default e' il true/false a seconda della funzionalita' packaging/unpackaging MTOM -->
+	</xsd:complexType>
+
+	<!-- Proprieta -->
+	<xsd:complexType name="proprieta">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="required"/> 
 	</xsd:complexType>
 
 	<!-- GestioneErrore -->

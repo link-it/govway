@@ -93,6 +93,7 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_AZIONI = "pa_azioni";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
+    public static final String PORTE_DELEGATE_PROP = "pd_properties";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = "pd_ws_request";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = "pd_ws_response";
     public static final String PORTE_DELEGATE_MTOM_REQUEST = "pd_mtom_request";

@@ -46,6 +46,7 @@ import java.util.List;
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -92,6 +93,7 @@ import java.util.List;
   	"servizioApplicativo",
   	"ruoli",
   	"localForward",
+  	"proprieta",
   	"mtomProcessor",
   	"messageSecurity",
   	"validazioneContenutiApplicativi",
@@ -214,6 +216,30 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setLocalForward(PortaDelegataLocalForward localForward) {
     this.localForward = localForward;
+  }
+
+  public void addProprieta(Proprieta proprieta) {
+    this.proprieta.add(proprieta);
+  }
+
+  public Proprieta getProprieta(int index) {
+    return this.proprieta.get( index );
+  }
+
+  public Proprieta removeProprieta(int index) {
+    return this.proprieta.remove( index );
+  }
+
+  public List<Proprieta> getProprietaList() {
+    return this.proprieta;
+  }
+
+  public void setProprietaList(List<Proprieta> proprieta) {
+    this.proprieta=proprieta;
+  }
+
+  public int sizeProprietaList() {
+    return this.proprieta.size();
   }
 
   public MtomProcessor getMtomProcessor() {
@@ -636,6 +662,36 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="local-forward",required=false,nillable=false)
   protected PortaDelegataLocalForward localForward;
+
+  @XmlElement(name="proprieta",required=true,nillable=false)
+  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaList
+   * @return List<Proprieta>
+  */
+  @Deprecated
+  public List<Proprieta> getProprieta() {
+  	return this.proprieta;
+  }
+
+  /**
+   * @deprecated Use method setProprietaList
+   * @param proprieta List<Proprieta>
+  */
+  @Deprecated
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.proprieta=proprieta;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprieta() {
+  	return this.proprieta.size();
+  }
 
   @XmlElement(name="mtom-processor",required=false,nillable=false)
   protected MtomProcessor mtomProcessor;

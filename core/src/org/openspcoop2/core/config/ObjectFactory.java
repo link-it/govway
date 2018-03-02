@@ -59,6 +59,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Proprieta }
+     */
+    public Proprieta createProprieta() {
+        return new Proprieta();
+    }
+
+    /**
      * Create an instance of {@link AccessoDatiAutorizzazione }
      */
     public AccessoDatiAutorizzazione createAccessoDatiAutorizzazione() {
@@ -504,13 +511,6 @@ public class ObjectFactory {
      */
     public IdPortaApplicativa createIdPortaApplicativa() {
         return new IdPortaApplicativa();
-    }
-
-    /**
-     * Create an instance of {@link PortaApplicativaProprietaIntegrazioneProtocollo }
-     */
-    public PortaApplicativaProprietaIntegrazioneProtocollo createPortaApplicativaProprietaIntegrazioneProtocollo() {
-        return new PortaApplicativaProprietaIntegrazioneProtocollo();
     }
 
     /**

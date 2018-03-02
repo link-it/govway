@@ -1987,9 +1987,9 @@ public class ConfigurazionePdD  {
 
 		if(proprietaPresentiBustaRicevuta!=null && (proprietaPresentiBustaRicevuta.size()>0) ){
 
-			for(int i=0; i<pa.sizeProprietaIntegrazioneProtocolloList(); i++){
-				String nome = pa.getProprietaIntegrazioneProtocollo(i).getNome();
-				String value = pa.getProprietaIntegrazioneProtocollo(i).getValore();
+			for(int i=0; i<pa.sizeProprietaList(); i++){
+				String nome = pa.getProprieta(i).getNome();
+				String value = pa.getProprieta(i).getValore();
 				this.log.debug("ProprietaProtocollo della PA["+pa.getNome()+"] nome["+nome+"] valore["+value+"]");
 
 				//System.out.println("Esamino ["+nome+"]["+value+"]");
@@ -2057,9 +2057,9 @@ public class ConfigurazionePdD  {
 
 			// Proprieta' non presenti nella busta ricevuta
 			// Controllo se la PA richiedeva un filtro per protocol properties.
-			for(int i=0; i<pa.sizeProprietaIntegrazioneProtocolloList(); i++){
-				String nome = pa.getProprietaIntegrazioneProtocollo(i).getNome();
-				String value = pa.getProprietaIntegrazioneProtocollo(i).getValore();
+			for(int i=0; i<pa.sizeProprietaList(); i++){
+				String nome = pa.getProprieta(i).getNome();
+				String value = pa.getProprieta(i).getValore();
 				this.log.debug("ProtocolProperty della PA["+pa.getNome()+"] nome["+nome+"] valore["+value+"]");
 
 				//System.out.println("Esamino ["+nome+"]["+value+"]");

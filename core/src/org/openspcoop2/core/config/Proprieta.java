@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class for porta-applicativa-proprieta-integrazione-protocollo complex type.
+/** <p>Java class for proprieta complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-applicativa-proprieta-integrazione-protocollo">
+ * &lt;complexType name="proprieta">
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
@@ -46,12 +46,12 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "porta-applicativa-proprieta-integrazione-protocollo")
+@XmlType(name = "proprieta")
 
-@XmlRootElement(name = "porta-applicativa-proprieta-integrazione-protocollo")
+@XmlRootElement(name = "proprieta")
 
-public class PortaApplicativaProprietaIntegrazioneProtocollo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public PortaApplicativaProprietaIntegrazioneProtocollo() {
+public class Proprieta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public Proprieta() {
   }
 
   public Long getId() {

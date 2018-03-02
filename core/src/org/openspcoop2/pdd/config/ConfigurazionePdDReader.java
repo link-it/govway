@@ -2615,8 +2615,8 @@ public class ConfigurazionePdDReader {
 
 		// PROTOCOL-PROPERTIES
 		java.util.Properties protocol_properties = new java.util.Properties();
-		for(int i=0;i<pa.sizeProprietaIntegrazioneProtocolloList();i++){
-			protocol_properties.put(pa.getProprietaIntegrazioneProtocollo(i).getNome(),pa.getProprietaIntegrazioneProtocollo(i).getValore());
+		for(int i=0;i<pa.sizeProprietaList();i++){
+			protocol_properties.put(pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore());
 		}
 
 		// Autenticazione
@@ -2879,8 +2879,8 @@ public class ConfigurazionePdDReader {
 
 		// PROTOCOL-PROPERTIES
 		java.util.Properties protocol_properties = new java.util.Properties();
-		for(int i=0;i<pa.sizeProprietaIntegrazioneProtocolloList();i++){
-			protocol_properties.put(pa.getProprietaIntegrazioneProtocollo(i).getNome(),pa.getProprietaIntegrazioneProtocollo(i).getValore());
+		for(int i=0;i<pa.sizeProprietaList();i++){
+			protocol_properties.put(pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore());
 		}
 
 		// Autenticazione

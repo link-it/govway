@@ -41,6 +41,9 @@
     </collection>
     <structure name="ruoli" field="ruoli" usage="optional" map-as="_AutorizzazioneRuoli_Type"/>
     <structure field="localForward" usage="optional" map-as="org.openspcoop2.core.config.PortaDelegataLocalForward"/>
+    <collection field="proprieta" create-type="java.util.ArrayList">
+      <structure name="proprieta" map-as="_Proprieta_Type"/>
+    </collection>
     <structure name="mtom-processor" field="mtomProcessor" usage="optional" map-as="_MtomProcessor_Type"/>
     <structure name="message-security" field="messageSecurity" usage="optional" map-as="_MessageSecurity_Type"/>
     <structure name="validazione-contenuti-applicativi" field="validazioneContenutiApplicativi" usage="optional" map-as="_ValidazioneContenutiApplicativi_Type"/>
@@ -110,8 +113,8 @@
     </collection>
     <structure field="soggetti" usage="optional" map-as="org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti"/>
     <structure name="ruoli" field="ruoli" usage="optional" map-as="_AutorizzazioneRuoli_Type"/>
-    <collection field="proprietaIntegrazioneProtocollo" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo"/>
+    <collection field="proprieta" create-type="java.util.ArrayList">
+      <structure name="proprieta" map-as="_Proprieta_Type"/>
     </collection>
     <structure name="mtom-processor" field="mtomProcessor" usage="optional" map-as="_MtomProcessor_Type"/>
     <structure name="message-security" field="messageSecurity" usage="optional" map-as="_MessageSecurity_Type"/>
@@ -167,11 +170,6 @@
   <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.PortaApplicativaServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-  </mapping>
-  <mapping name="proprieta-integrazione-protocollo" class="org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo">
-    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="valore" field="valore" usage="required" style="attribute"/>
   </mapping>
   <mapping name="soggetti" class="org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
@@ -305,6 +303,17 @@
     <value name="stato" field="stato" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="tipo" field="tipo" default="xsd" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="accept-mtom-message" field="acceptMtomMessage" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="proprieta" class="org.openspcoop2.core.config.Proprieta" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="valore" field="valore" usage="required" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Proprieta_Type" class="org.openspcoop2.core.config.Proprieta" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="valore" field="valore" usage="required" style="attribute"/>
   </mapping>
   <mapping name="componente-cooperazione" class="org.openspcoop2.core.config.GestioneErrore" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>

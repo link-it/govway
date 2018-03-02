@@ -46,6 +46,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
 		this.LOCAL_FORWARD = new org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel(new Field("local-forward",org.openspcoop2.core.config.PortaDelegataLocalForward.class,"porta-delegata",PortaDelegata.class));
+		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-delegata",PortaDelegata.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new Field("message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-delegata",PortaDelegata.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-delegata",PortaDelegata.class));
@@ -86,6 +87,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
 		this.LOCAL_FORWARD = new org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel(new ComplexField(father,"local-forward",org.openspcoop2.core.config.PortaDelegataLocalForward.class,"porta-delegata",PortaDelegata.class));
+		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-delegata",PortaDelegata.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new ComplexField(father,"message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-delegata",PortaDelegata.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-delegata",PortaDelegata.class));
@@ -129,6 +131,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public org.openspcoop2.core.config.model.AutorizzazioneRuoliModel RUOLI = null;
 	 
 	public org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel LOCAL_FORWARD = null;
+	 
+	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA = null;
 	 
 	public org.openspcoop2.core.config.model.MtomProcessorModel MTOM_PROCESSOR = null;
 	 

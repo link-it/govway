@@ -46,7 +46,7 @@ import java.util.List;
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="soggetti" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetti" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="proprieta-integrazione-protocollo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-proprieta-integrazione-protocollo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -94,7 +94,7 @@ import java.util.List;
   	"servizioApplicativo",
   	"soggetti",
   	"ruoli",
-  	"proprietaIntegrazioneProtocollo",
+  	"proprieta",
   	"mtomProcessor",
   	"messageSecurity",
   	"validazioneContenutiApplicativi",
@@ -219,28 +219,28 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     this.ruoli = ruoli;
   }
 
-  public void addProprietaIntegrazioneProtocollo(PortaApplicativaProprietaIntegrazioneProtocollo proprietaIntegrazioneProtocollo) {
-    this.proprietaIntegrazioneProtocollo.add(proprietaIntegrazioneProtocollo);
+  public void addProprieta(Proprieta proprieta) {
+    this.proprieta.add(proprieta);
   }
 
-  public PortaApplicativaProprietaIntegrazioneProtocollo getProprietaIntegrazioneProtocollo(int index) {
-    return this.proprietaIntegrazioneProtocollo.get( index );
+  public Proprieta getProprieta(int index) {
+    return this.proprieta.get( index );
   }
 
-  public PortaApplicativaProprietaIntegrazioneProtocollo removeProprietaIntegrazioneProtocollo(int index) {
-    return this.proprietaIntegrazioneProtocollo.remove( index );
+  public Proprieta removeProprieta(int index) {
+    return this.proprieta.remove( index );
   }
 
-  public List<PortaApplicativaProprietaIntegrazioneProtocollo> getProprietaIntegrazioneProtocolloList() {
-    return this.proprietaIntegrazioneProtocollo;
+  public List<Proprieta> getProprietaList() {
+    return this.proprieta;
   }
 
-  public void setProprietaIntegrazioneProtocolloList(List<PortaApplicativaProprietaIntegrazioneProtocollo> proprietaIntegrazioneProtocollo) {
-    this.proprietaIntegrazioneProtocollo=proprietaIntegrazioneProtocollo;
+  public void setProprietaList(List<Proprieta> proprieta) {
+    this.proprieta=proprieta;
   }
 
-  public int sizeProprietaIntegrazioneProtocolloList() {
-    return this.proprietaIntegrazioneProtocollo.size();
+  public int sizeProprietaList() {
+    return this.proprieta.size();
   }
 
   public MtomProcessor getMtomProcessor() {
@@ -672,34 +672,34 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected AutorizzazioneRuoli ruoli;
 
-  @XmlElement(name="proprieta-integrazione-protocollo",required=true,nillable=false)
-  protected List<PortaApplicativaProprietaIntegrazioneProtocollo> proprietaIntegrazioneProtocollo = new ArrayList<PortaApplicativaProprietaIntegrazioneProtocollo>();
+  @XmlElement(name="proprieta",required=true,nillable=false)
+  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
 
   /**
-   * @deprecated Use method getProprietaIntegrazioneProtocolloList
-   * @return List<PortaApplicativaProprietaIntegrazioneProtocollo>
+   * @deprecated Use method getProprietaList
+   * @return List<Proprieta>
   */
   @Deprecated
-  public List<PortaApplicativaProprietaIntegrazioneProtocollo> getProprietaIntegrazioneProtocollo() {
-  	return this.proprietaIntegrazioneProtocollo;
+  public List<Proprieta> getProprieta() {
+  	return this.proprieta;
   }
 
   /**
-   * @deprecated Use method setProprietaIntegrazioneProtocolloList
-   * @param proprietaIntegrazioneProtocollo List<PortaApplicativaProprietaIntegrazioneProtocollo>
+   * @deprecated Use method setProprietaList
+   * @param proprieta List<Proprieta>
   */
   @Deprecated
-  public void setProprietaIntegrazioneProtocollo(List<PortaApplicativaProprietaIntegrazioneProtocollo> proprietaIntegrazioneProtocollo) {
-  	this.proprietaIntegrazioneProtocollo=proprietaIntegrazioneProtocollo;
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.proprieta=proprieta;
   }
 
   /**
-   * @deprecated Use method sizeProprietaIntegrazioneProtocolloList
+   * @deprecated Use method sizeProprietaList
    * @return lunghezza della lista
   */
   @Deprecated
-  public int sizeProprietaIntegrazioneProtocollo() {
-  	return this.proprietaIntegrazioneProtocollo.size();
+  public int sizeProprieta() {
+  	return this.proprieta.size();
   }
 
   @XmlElement(name="mtom-processor",required=false,nillable=false)

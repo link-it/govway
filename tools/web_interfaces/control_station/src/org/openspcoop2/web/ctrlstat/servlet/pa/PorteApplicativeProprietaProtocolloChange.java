@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -119,8 +119,8 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
-				for (int i = 0; i < pa.sizeProprietaIntegrazioneProtocolloList(); i++) {
-					PortaApplicativaProprietaIntegrazioneProtocollo ssp = pa.getProprietaIntegrazioneProtocollo(i);
+				for (int i = 0; i < pa.sizeProprietaList(); i++) {
+					Proprieta ssp = pa.getProprieta(i);
 					if (nome.equals(ssp.getNome())) {
 						if(ssp.getValore()!=null){
 							valore = ssp.getValore().toString();
@@ -170,17 +170,17 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 
 			// Modifico i dati della property della porta applicativa nel
 			// db
-			for (int i = 0; i < pa.sizeProprietaIntegrazioneProtocolloList(); i++) {
-				PortaApplicativaProprietaIntegrazioneProtocollo ssp = pa.getProprietaIntegrazioneProtocollo(i);
+			for (int i = 0; i < pa.sizeProprietaList(); i++) {
+				Proprieta ssp = pa.getProprieta(i);
 				if (nome.equals(ssp.getNome())) {
-					pa.removeProprietaIntegrazioneProtocollo(i);
+					pa.removeProprieta(i);
 					break;
 				}
 			}
-			PortaApplicativaProprietaIntegrazioneProtocollo ssp = new PortaApplicativaProprietaIntegrazioneProtocollo();
+			Proprieta ssp = new Proprieta();
 			ssp.setNome(nome);
 			ssp.setValore(valore);
-			pa.addProprietaIntegrazioneProtocollo(ssp);
+			pa.addProprieta(ssp);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
@@ -193,7 +193,7 @@ public final class PorteApplicativeProprietaProtocolloChange extends Action {
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			List<PortaApplicativaProprietaIntegrazioneProtocollo> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
+			List<Proprieta> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
 
 			porteApplicativeHelper.preparePorteAppPropList(nomePorta, ricerca, lista);
 

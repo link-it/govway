@@ -56,6 +56,7 @@ public final class Liste
 	
 	public final static int PORTE_DELEGATE;
 	public final static int PORTE_DELEGATE_BY_SOGGETTO;
+	public final static int PORTE_DELEGATE_PROP;
 	public final static int PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
 	public final static int PORTE_DELEGATE_AZIONI;
 	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST;
@@ -149,6 +150,7 @@ public final class Liste
     	PORTE_APPLICATIVE_EXTENDED = numeroListe ++;
     	PORTE_DELEGATE = numeroListe ++;
     	PORTE_DELEGATE_BY_SOGGETTO= numeroListe ++;
+    	PORTE_DELEGATE_PROP= numeroListe ++;
     	PORTE_DELEGATE_SERVIZIO_APPLICATIVO = numeroListe ++;
     	PORTE_DELEGATE_AZIONI = numeroListe ++;
     	PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = numeroListe ++;

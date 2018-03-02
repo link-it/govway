@@ -66,7 +66,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -833,6 +833,12 @@ public class ValidazioneSemantica {
 			}
 		}
 
+		// Valida SetProtocolProperties
+		for (int j=0; j<pd.sizeProprietaList();j++) {
+			Proprieta ssp = pd.getProprieta(j);
+			validaProtocolProperty(ssp, "PortaDelegata_"+idPortaDelegata);
+		}
+		
 		// Valida MessageSecurity
 		MessageSecurity messageSecurity = pd.getMessageSecurity();
 		if (messageSecurity != null)
@@ -1178,9 +1184,9 @@ public class ValidazioneSemantica {
 		}
 		
 		// Valida SetProtocolProperties
-		for (int j=0; j<pa.sizeProprietaIntegrazioneProtocolloList();j++) {
-			PortaApplicativaProprietaIntegrazioneProtocollo ssp = pa.getProprietaIntegrazioneProtocollo(j);
-			validaProtocolProperty(ssp, idPortaApplicativa);
+		for (int j=0; j<pa.sizeProprietaList();j++) {
+			Proprieta ssp = pa.getProprieta(j);
+			validaProtocolProperty(ssp, "PortaApplicativa_"+idPortaApplicativa);
 		}
 
 		// Valida MessageSecurity
@@ -2830,14 +2836,14 @@ public class ValidazioneSemantica {
 					CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP);
 	}
 
-	private  void validaProtocolProperty(PortaApplicativaProprietaIntegrazioneProtocollo ssp, String oggetto) throws DriverConfigurazioneException {
+	private  void validaProtocolProperty(Proprieta ssp, String oggetto) throws DriverConfigurazioneException {
 		// Controlli sui valori definiti nell'xsd.
 
 		if(ssp.getNome()==null){
-			this.errori.add("Esiste una ProprietaProtocollo della porta applicativa "+oggetto+" che non contiene la definizione del nome");
+			this.errori.add("Esiste una ProprietaProtocollo della porta "+oggetto+" che non contiene la definizione del nome");
 		}
 		if(ssp.getValore()==null){
-			this.errori.add("Esiste una ProprietaProtocollo della porta applicativa "+oggetto+" che non contiene la definizione del valore");
+			this.errori.add("Esiste una ProprietaProtocollo della porta "+oggetto+" che non contiene la definizione del valore");
 		}
 		
 		// XSD: valore: mittente, tipoMittente, destinatario, tipoDestinatario, servizio, tipoServizio, azione, identificativo

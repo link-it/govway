@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -103,10 +103,10 @@ public final class PorteApplicativeProprietaProtocolloDel extends Action {
 				// nome = de.getValue();
 				nome = idsToRemove.get(i);
 
-				for (int j = 0; j < pa.sizeProprietaIntegrazioneProtocolloList(); j++) {
-					PortaApplicativaProprietaIntegrazioneProtocollo ssp = pa.getProprietaIntegrazioneProtocollo(j);
+				for (int j = 0; j < pa.sizeProprietaList(); j++) {
+					Proprieta ssp = pa.getProprieta(j);
 					if (nome.equals(ssp.getNome())) {
-						pa.removeProprietaIntegrazioneProtocollo(j);
+						pa.removeProprieta(j);
 						break;
 					}
 				}
@@ -126,7 +126,7 @@ public final class PorteApplicativeProprietaProtocolloDel extends Action {
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			List<PortaApplicativaProprietaIntegrazioneProtocollo> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
+			List<Proprieta> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
 
 			porteApplicativeHelper.preparePorteAppPropList(pa.getNome(), ricerca, lista);
 

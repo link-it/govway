@@ -46,7 +46,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new Field("soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
-		this.PROPRIETA_INTEGRAZIONE_PROTOCOLLO = new org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel(new Field("proprieta-integrazione-protocollo",org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo.class,"porta-applicativa",PortaApplicativa.class));
+		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new Field("message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-applicativa",PortaApplicativa.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-applicativa",PortaApplicativa.class));
@@ -88,7 +88,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new ComplexField(father,"soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
-		this.PROPRIETA_INTEGRAZIONE_PROTOCOLLO = new org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel(new ComplexField(father,"proprieta-integrazione-protocollo",org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo.class,"porta-applicativa",PortaApplicativa.class));
+		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new ComplexField(father,"message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-applicativa",PortaApplicativa.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-applicativa",PortaApplicativa.class));
@@ -134,7 +134,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	 
 	public org.openspcoop2.core.config.model.AutorizzazioneRuoliModel RUOLI = null;
 	 
-	public org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel PROPRIETA_INTEGRAZIONE_PROTOCOLLO = null;
+	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA = null;
 	 
 	public org.openspcoop2.core.config.model.MtomProcessorModel MTOM_PROCESSOR = null;
 	 

@@ -41,9 +41,9 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -691,8 +691,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idInt);
 				String nomeporta = pa.getNome();
 
-				for (int i = 0; i < pa.sizeProprietaIntegrazioneProtocolloList(); i++) {
-					PortaApplicativaProprietaIntegrazioneProtocollo tmpProp = pa.getProprietaIntegrazioneProtocollo(i);
+				for (int i = 0; i < pa.sizeProprietaList(); i++) {
+					Proprieta tmpProp = pa.getProprieta(i);
 					if (nome.equals(tmpProp.getNome())) {
 						giaRegistrato = true;
 						break;
@@ -2036,7 +2036,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pIdPorta, pIdAsps);
 						if (contaListe) {
-							int numProp = pa.sizeProprietaIntegrazioneProtocolloList();
+							int numProp = pa.sizeProprietaList();
 							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numProp));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
@@ -2137,7 +2137,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 	}
 
 	// Prepara la lista di  properties delle porte applicative
-	public void preparePorteAppPropList(String nomePorta, ISearch ricerca, List<PortaApplicativaProprietaIntegrazioneProtocollo> lista)
+	public void preparePorteAppPropList(String nomePorta, ISearch ricerca, List<Proprieta> lista)
 			throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
@@ -2208,9 +2208,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (lista != null) {
-				Iterator<PortaApplicativaProprietaIntegrazioneProtocollo> it = lista.iterator();
+				Iterator<Proprieta> it = lista.iterator();
 				while (it.hasNext()) {
-					PortaApplicativaProprietaIntegrazioneProtocollo ssp = it.next();
+					Proprieta ssp = it.next();
 
 					Vector<DataElement> e = new Vector<DataElement>();
 

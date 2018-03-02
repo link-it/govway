@@ -84,7 +84,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -1713,6 +1713,24 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " associazioni ServizioApplicativo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 
+				// set prop
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_PROP);
+				sqlQueryObject.addInsertField("id_porta", "?");
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("valore", "?");
+				sqlQuery = sqlQueryObject.createSQLInsert();
+				stm = con.prepareStatement(sqlQuery);
+				for (i = 0; i < aPD.sizeProprietaList(); i++) {
+					Proprieta propProtocollo = aPD.getProprieta(i);
+					stm.setLong(1, aPD.getId());
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+				}
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
 				// Ruoli
 				n=0;
 				if(aPD.getRuoli()!=null && aPD.getRuoli().sizeRuoloList()>0){
@@ -2270,6 +2288,42 @@ public class DriverConfigurazioneDB_LIB {
 
 				
 				
+				/*Proprieta associate alla Porta Delegata*/
+
+				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
+				//cancello le proprieta per poi sincronizzarle con la lista passata
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta associate alla Porta Delegata "+idPortaDelegata);
+				// set prop
+				int newProps = 0;
+				for (i = 0; i < aPD.sizeProprietaList(); i++) {
+					Proprieta propProtocollo = aPD.getProprieta(i);
+
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_PROP);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+
+					stm.setLong(1, idPortaDelegata);
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+					stm.close();
+					newProps++;
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
 				// Ruoli
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -2490,6 +2544,19 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " correlazione per la rispsota associate alla PortaDelegata[" + idPortaDelegata + "]");
+
+				// cancello le prop
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
@@ -3261,7 +3328,7 @@ public class DriverConfigurazioneDB_LIB {
 			DriverConfigurazioneDB_LIB.log.error(e1.getMessage(),e1);
 		}
 
-		PortaApplicativaProprietaIntegrazioneProtocollo propProtocollo = null;
+		Proprieta propProtocollo = null;
 
 		MtomProcessor mtomProcessor = aPA.getMtomProcessor();
 		MTOMProcessorType mtomMode_request = null;
@@ -3713,8 +3780,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("valore", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
-				for (i = 0; i < aPA.sizeProprietaIntegrazioneProtocolloList(); i++) {
-					propProtocollo = aPA.getProprietaIntegrazioneProtocollo(i);
+				for (i = 0; i < aPA.sizeProprietaList(); i++) {
+					propProtocollo = aPA.getProprieta(i);
 					stm.setLong(1, idPortaApplicativa);
 					stm.setString(2, propProtocollo.getNome());
 					stm.setString(3, propProtocollo.getValore());
@@ -4298,8 +4365,8 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
 				int newProps = 0;
-				for (i = 0; i < aPA.sizeProprietaIntegrazioneProtocolloList(); i++) {
-					propProtocollo = aPA.getProprietaIntegrazioneProtocollo(i);
+				for (i = 0; i < aPA.sizeProprietaList(); i++) {
+					propProtocollo = aPA.getProprieta(i);
 
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_PROP);

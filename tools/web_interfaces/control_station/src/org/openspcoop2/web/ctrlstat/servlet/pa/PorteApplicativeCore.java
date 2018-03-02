@@ -33,8 +33,8 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -239,7 +239,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 
 	
 
-	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<Proprieta> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteAppPropList";
 		DriverControlStationDB driver = null;

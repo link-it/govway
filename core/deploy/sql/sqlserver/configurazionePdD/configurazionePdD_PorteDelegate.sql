@@ -114,6 +114,25 @@ CREATE INDEX INDEX_PD_SA ON porte_delegate_sa (id_porta);
 
 
 
+CREATE TABLE pd_properties
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT uniq_pd_properties_1 UNIQUE (id_porta,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_properties PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX INDEX_PD_PROP ON pd_properties (id_porta);
+
+
+
 CREATE TABLE pd_mtom_request
 (
 	id_porta BIGINT NOT NULL,
