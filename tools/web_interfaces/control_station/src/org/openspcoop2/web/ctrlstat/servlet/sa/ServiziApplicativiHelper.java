@@ -1357,17 +1357,25 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 
 			// setto la barra del titolo
+			
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
+			if(this.isModalitaCompleta()==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
+			}
+			
 			if(!useIdSogg){
 				this.pd.setSearchLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 				if (search.equals("")) {
 					this.pd.setSearchDescription("");
 					ServletUtils.setPageDataTitle(this.pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,null),
+							new Parameter(labelApplicativi,null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
 				}
 				else{
 					ServletUtils.setPageDataTitle(this.pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,null),
+							new Parameter(labelApplicativi,null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
 				}
@@ -1380,9 +1388,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				this.pd.setSearchLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 				if(search.equals("")){
 					this.pd.setSearchDescription("");
-					lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tmpTitle,null));
+					lstParam.add(new Parameter(labelApplicativiDi + tmpTitle,null));
 				}else{
-					lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tmpTitle,
+					lstParam.add(new Parameter(labelApplicativiDi + tmpTitle,
 							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST ,
 							new Parameter( ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider)));
 					lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
@@ -1393,7 +1401,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			// controllo eventuali risultati ricerca
 			if (!search.equals("")) {
-				ServletUtils.enabledPageDataSearch(this.pd, ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI, search);
+				ServletUtils.enabledPageDataSearch(this.pd, labelApplicativi, search);
 			}
 
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
@@ -1893,11 +1901,18 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				listSA.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider));
 			}
 			
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
+			if(this.isModalitaCompleta()==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
+			}
+			
 			if(!useIdSogg){
 				if (search.equals("")) {
 					this.pd.setSearchDescription("");
 					ServletUtils.setPageDataTitle(this.pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,null),
+							new Parameter(labelApplicativi,null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
@@ -1907,7 +1922,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 				else{
 					ServletUtils.setPageDataTitle(this.pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,null),
+							new Parameter(labelApplicativi,null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
@@ -1920,7 +1935,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 				lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null));
 				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+				lstParam.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,idProvider)));
 

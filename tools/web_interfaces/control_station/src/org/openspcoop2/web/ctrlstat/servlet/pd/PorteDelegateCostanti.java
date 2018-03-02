@@ -328,6 +328,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI = "Porte Delegate di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG_DI = "Applicativi di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG = "Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG_DI = "Servizi Applicativi di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG_DI = "Ruoli di ";
@@ -395,8 +397,10 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitata";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitata";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI = "Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI = "Ruoli";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO = "Applicativo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Identificazione fallita";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO = "Riuso ID";

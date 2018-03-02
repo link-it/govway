@@ -399,28 +399,29 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			
 
-			
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
+			if(saHelper.isModalitaCompleta()==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
+			}
 			
 			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if(saHelper.isEditModeInProgress()){
 				
-				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
-				
-				
 				if(useIdSogg){
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
 									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletAdd(pd, ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI);
+					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi);
 				}
 
 				if(ruoloFruitore==null || "".equals(ruoloFruitore)){
@@ -476,13 +477,13 @@ public final class ServiziApplicativiAdd extends Action {
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
 									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletAdd(pd, ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI);
+					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi);
 				}
 
 				// preparo i campi

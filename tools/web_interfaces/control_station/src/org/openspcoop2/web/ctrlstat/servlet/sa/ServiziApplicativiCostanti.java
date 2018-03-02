@@ -79,6 +79,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_TIPOLOGIA ="Tipologia";
 	public final static String LABEL_FRUITORE ="Fruitore";
 	public final static String LABEL_EROGATORE ="Erogatore";
+	public final static String LABEL_APPLICATIVI = "Applicativi";
 	public final static String LABEL_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
 	public final static String LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO ="Autenticazione";
@@ -94,6 +95,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_RISPOSTA_ASINCRONA = "Risposta Asincrona";
 	public final static String LABEL_CONNETTORE_ABILITATO_SOLO_IM =  CostantiConfigurazione.ABILITATO + " (MessageBox)";
 	
+	public final static String LABEL_APPLICATIVI_MENU_VISUALE_AGGREGATA = "Applicativi";
 	public final static String LABEL_SA_MENU_VISUALE_AGGREGATA = "Servizi Applicativi";
 	
 	/* PARAMETRI */
@@ -153,6 +155,7 @@ public class ServiziApplicativiCostanti {
 	
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO = "Servizio Correlato";
 	
+	public final static String LABEL_PARAMETRO_APPLICATIVI_DI = "Applicativi di ";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI = "Servizi Applicativi di ";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI = "Ruoli di ";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI = "Invocazione Servizio di ";	

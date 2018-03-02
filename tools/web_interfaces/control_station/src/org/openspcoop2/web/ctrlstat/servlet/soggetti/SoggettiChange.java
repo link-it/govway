@@ -321,7 +321,8 @@ public final class SoggettiChange extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
-						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, oldtipoprov + "/" + oldnomeprov);
+						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, 
+						soggettiHelper.getLabelNomeSoggetto(this.protocollo, oldtipoprov , oldnomeprov));
 
 				if (is_router == null) 
 					this.isRouter = soggettoConfig.getRouter();
@@ -561,7 +562,8 @@ public final class SoggettiChange extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
-						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, oldtipoprov + "/" + oldnomeprov);
+						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, 
+						soggettiHelper.getLabelNomeSoggetto(this.protocollo, oldtipoprov , oldnomeprov));
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

@@ -1005,7 +1005,12 @@ public class ConsoleHelper {
 					index++;
 
 					//SA
-					entries[index][0] = ServiziApplicativiCostanti.LABEL_SA_MENU_VISUALE_AGGREGATA;
+					if(this.isModalitaCompleta()) {
+						entries[index][0] = ServiziApplicativiCostanti.LABEL_SA_MENU_VISUALE_AGGREGATA;
+					}
+					else {
+						entries[index][0] = ServiziApplicativiCostanti.LABEL_APPLICATIVI_MENU_VISUALE_AGGREGATA;
+					}
 					entries[index][1] = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST;
 					index++;
 					
@@ -3040,10 +3045,14 @@ public class ConsoleHelper {
 					de.setType(DataElementType.LINK);
 					de.setUrl(urlAutorizzazioneAutenticati);
 					if(isPortaDelegata){
+						String labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI;
+						if(!this.isModalitaCompleta()) {
+							labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;
+						}
 						if (contaListe) {
-							ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI,new Long(numAutenticati));
+							ServletUtils.setDataElementCustomLabel(de,labelApplicativi,new Long(numAutenticati));
 						} else
-							ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI);
+							ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
 					}
 					else{
 						if (contaListe) {

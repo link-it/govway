@@ -313,26 +313,29 @@ public final class ServiziApplicativiChange extends Action {
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(nomeProtocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
+			if(saHelper.isModalitaCompleta()==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
+			}
+			
 			// Se nomehid = null, devo visualizzare la pagina per la modifica
 			// dati
 			if(saHelper.isEditModeInProgress()){
-				
-				// setto la barra del titolo
-//				ServletUtils.setPageDataTitle_ServletChange(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO,
-//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,nome);
 				
 				if(useIdSogg){
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
 									new Parameter(nome, null)
 							);
 				}else {
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI, null),
+							new Parameter(labelApplicativi, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
 							new Parameter(nome, null)
 							);
@@ -713,14 +716,14 @@ public final class ServiziApplicativiChange extends Action {
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
 									new Parameter(nome, null)
 							);
 				}else {
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI, null),
+							new Parameter(labelApplicativi, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
 							new Parameter(nome, null)
 							);

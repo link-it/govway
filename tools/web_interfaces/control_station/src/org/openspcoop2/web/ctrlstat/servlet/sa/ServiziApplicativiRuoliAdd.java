@@ -133,6 +133,14 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			// Preparo il menu
 			saHelper.makeMenu();
 
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
+			if(saHelper.isModalitaCompleta()==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
+			}
+			
+			
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (saHelper.isEditModeInProgress()) {
@@ -142,13 +150,13 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
 							new Parameter( "Ruoli di " + nomeservizioApplicativo, null)
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletChange(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, 
+					ServletUtils.setPageDataTitle_ServletChange(pd, labelApplicativi, 
 							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Ruoli di " + nomeservizioApplicativo);
 				}
 
@@ -189,13 +197,13 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 					ServletUtils.setPageDataTitle(pd, 
 							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
 							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
 									new Parameter( "Ruoli di " + nomeservizioApplicativo, null)
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletChange(pd, ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, 
+					ServletUtils.setPageDataTitle_ServletChange(pd, labelApplicativi, 
 							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Ruoli di " + nomeservizioApplicativo);
 				}
 				

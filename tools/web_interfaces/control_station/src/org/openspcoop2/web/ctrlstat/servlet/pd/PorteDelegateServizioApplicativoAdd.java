@@ -148,6 +148,9 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
 			
 			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
+			if(!porteDelegateHelper.isModalitaCompleta()) {
+				labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG;
+			}
 			
 			lstParam.add(new Parameter(labelPagLista, 
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST,urlParms));

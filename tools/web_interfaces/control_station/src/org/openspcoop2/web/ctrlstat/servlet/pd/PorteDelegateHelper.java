@@ -1982,6 +1982,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
 			
 			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
+			if(!this.isModalitaCompleta()) {
+				labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG;
+			}
 			
 			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 			if(search.equals("")){
@@ -2002,7 +2005,13 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 
 			// setto le label delle colonne
-			String[] labels = {PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO };
+			String[] labels = new String[1];
+			if(this.isModalitaCompleta()) {
+				labels[0] = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
+			}
+			else {
+				labels[0] = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO;
+			}
 			this.pd.setLabels(labels);
 
 			// preparo i dati
