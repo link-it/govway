@@ -1100,6 +1100,12 @@ public abstract class BaseBean {
 						//aggiungo il field clonato nella lista
 						listClone.add(oCloned);
 					}
+					else if(oOriginale instanceof String) {
+						String sOriginale = (String) oOriginale;
+						String sCloned = new String(sOriginale.toCharArray());
+						//aggiungo il field clonato nella lista
+						listClone.add(sCloned);
+					}
 				}
 				else{
 					listClone.add(null);
