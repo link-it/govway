@@ -421,9 +421,23 @@ if (
 													else if("warn".equals(de.getSelected())){
 														image = "check_yellow.png";
 													}
-									  				 String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
+									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
 									  				 
-									  				%><div style="text-align: center;"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
+									  				// tipo link
+										      		if (!de.getUrl().equals("")) { 
+										      			String deTarget = " ";
+												  		if (!de.getTarget().equals("")) {
+												  			deTarget = " target=\""+ de.getTarget() +"\"";
+												  		} 
+												  		%><div style="text-align: center;">
+												  			<a class="<%= classLink %>" <%=deTarget %> href="<%= de.getUrl() %>">
+												  				<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
+															</a>
+														</div><%
+										      			
+										      		}else {
+									  				 	%><div style="text-align: center;"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
+										      		}
 									  			 } // enc checkbox
 									  		} // end else radio
 										} // end else image
