@@ -642,11 +642,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 			
-			boolean forceEnableConnettore = false;
-			if( (!apsHelper.isModalitaCompleta())) {
-				forceEnableConnettore = true;
-			}
-
 			//String profiloValue = profiloSoggettoErogatore;
 			//if(this.profilo!=null && !"".equals(this.profilo) && !"-".equals(this.profilo)){
 			//	profiloValue = this.profilo;
@@ -1046,6 +1041,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiAutenticati,soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo);
 
+				boolean forceEnableConnettore = false;
+				if( (apsHelper.isModalitaStandard() || generaPACheckSoggetto)) {
+					forceEnableConnettore = true;
+				}
+				
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
 						apsHelper.isModalitaCompleta()?null:
 							(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
@@ -1185,6 +1185,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo);
 
+				boolean forceEnableConnettore = false;
+				if( (apsHelper.isModalitaStandard() || generaPACheckSoggetto)) {
+					forceEnableConnettore = true;
+				}
+				
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
 						apsHelper.isModalitaCompleta()?null:
 							(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
@@ -1324,6 +1329,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+					boolean forceEnableConnettore = false;
+					if( (apsHelper.isModalitaStandard() || generaPACheckSoggetto)) {
+						forceEnableConnettore = true;
+					}
+					
 					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
 							this.provider, null, null, 
 							soggettiList, soggettiListLabel, this.accordo, this.serviceBinding, this.formatoSpecifica, accordiList, accordiListLabel, this.servcorr, 

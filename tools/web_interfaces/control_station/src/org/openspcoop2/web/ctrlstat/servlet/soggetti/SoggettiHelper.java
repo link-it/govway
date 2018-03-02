@@ -386,10 +386,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
-			if(this.core.isRegistroServiziLocale() 
-//					&& 
-//					( !this.core.isSinglePdD() || this.pddCore.isPddEsterna(pdd) )
-					){
+			boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+			
+			boolean showConnettore = !this.isModalitaStandard() && 
+					this.core.isRegistroServiziLocale() &&
+					(this.isModalitaCompleta() || this.pddCore.isPddEsterna(pdd) || multiTenant );
+				
+			if(showConnettore){
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
@@ -782,6 +785,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
+			boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+			
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			int idLista = Liste.SOGGETTI;
 			int limit = ricerca.getPageSize(idLista);
@@ -816,9 +821,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 
 			// setto le label delle colonne
-			int totEl = this.isModalitaCompleta() ? 7 : 5;
+			int totEl = this.isModalitaCompleta() ? 6 : 4;
 			if( showProtocolli ) {
 				totEl++;
+			}
+			if(!this.isModalitaStandard()) {
+				totEl++; // connettore column
 			}
 			String[] labels = new String[totEl];
 			int i = 0;
@@ -832,7 +840,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			else {
 				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO;
 			}
-			labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
+			if(!this.isModalitaStandard()) {
+				labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
+			}
 			labels[i++] = RuoliCostanti.LABEL_RUOLI;
 			if(this.isModalitaCompleta()) {
 				labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
@@ -923,22 +933,25 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 				e.addElement(de);
 
-				de = new DataElement();
-				if(this.core.isRegistroServiziLocale() 
-//						&& 
-//						( !this.core.isSinglePdD() || this.pddCore.isPddEsterna(nomePdD) )
-						){
-					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
-					ServletUtils.setDataElementVisualizzaLabel(de);
+				if(!this.isModalitaStandard()) {
+					
+					boolean showConnettore = this.core.isRegistroServiziLocale() &&
+							(this.isModalitaCompleta() || this.pddCore.isPddEsterna(nomePdD) || multiTenant );
+					
+					de = new DataElement();
+					if(showConnettore){
+						de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					}
+					else{
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					}
+					e.addElement(de);
 				}
-				else{
-					de.setType(DataElementType.TEXT);
-					de.setValue("-");
-				}
-				e.addElement(de);
 
 				
 				// Ruoli

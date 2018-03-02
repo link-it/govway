@@ -875,6 +875,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
 					
+						boolean forceEnableConnettore = false;
+						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+							forceEnableConnettore = true;
+						}
+						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
 								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,nome, tipo, user, password, initcont, urlpgk,
@@ -892,7 +897,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								listExtendedConnettore, false);
+								listExtendedConnettore, forceEnableConnettore);
 						
 					}
 					else {
@@ -1027,6 +1032,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
 				
+					boolean forceEnableConnettore = false;
+					if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+						forceEnableConnettore = true;
+					}
+					
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
 							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
@@ -1044,7 +1054,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore, false);
+							listExtendedConnettore, forceEnableConnettore);
 					
 				}
 				else {
@@ -1289,6 +1299,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
 					
+						boolean forceEnableConnettore = false;
+						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+							forceEnableConnettore = true;
+						}
+						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,
@@ -1307,7 +1322,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								listExtendedConnettore, false);
+								listExtendedConnettore, forceEnableConnettore);
 						
 					}
 					else {
