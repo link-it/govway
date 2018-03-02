@@ -178,7 +178,7 @@ public final class AccordiServizioParteComuneResourcesRisposteChange extends Act
 
 				pd.setDati(dati);
 
-				if(apcCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
+				if(  apcHelper.isModalitaStandard() || (apcCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())) ){
 					pd.disableEditMode();
 				}
 

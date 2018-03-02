@@ -450,12 +450,15 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				MediaType mediaType = response.getContent().get(contentType);
 				Schema<?> schema = mediaType.getSchema();
 
-				String type = ("response_" +method.toString() + "_" + path + "_" + contentType).replace("/", "_");
+				String name = ("response_" +method.toString() + "_" + path + "_" + contentType).replace("/", "_");
 
-				api.getDefinitions().put(type, schema);
+				api.getDefinitions().put(name, schema);
 
-				ApiBodyParameter bodyParam = new ApiBodyParameter(type);
+				ApiBodyParameter bodyParam = new ApiBodyParameter(name);
 				bodyParam.setMediaType(contentType);
+				
+				String type = getParameterType(schema, null);
+				
 				bodyParam.setElement(type);
 				apiResponse.addBodyParameter(bodyParam);
 			}

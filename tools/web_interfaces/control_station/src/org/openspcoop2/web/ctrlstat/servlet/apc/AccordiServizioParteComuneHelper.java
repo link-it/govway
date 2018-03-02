@@ -5632,30 +5632,29 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 				
 				
-				if (this.isModalitaAvanzata()) {
-					 // link parametri
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "true"),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
-							);
-					if (contaListe) {
-						// Prendo l'id del port-type
+				 // link parametri
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_PARAMETERS_LIST, 
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
+						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCE_REQUEST, "true"),
+						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
+						);
+				if (contaListe) {
+					// Prendo l'id del port-type
 
-						// BugFix OP-674
-						//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
-						Search searchForCount = new Search(true,1);
-						this.apcCore.accordiResourceParametersList(idRisorsa, true, null, searchForCount);
-						//int num = tmpLista.size();
-						int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_PARAMETERS_REQUEST);
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS+" ("+num+")");
-					} else
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS);
-					dati.addElement(de);
-				}
+					// BugFix OP-674
+					//List<Operation> tmpLista = this.apcCore.accordiPorttypeOperationList(idPortType, new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.apcCore.accordiResourceParametersList(idRisorsa, true, null, searchForCount);
+					//int num = tmpLista.size();
+					int num = searchForCount.getNumEntries(Liste.ACCORDI_API_RESOURCES_PARAMETERS_REQUEST);
+					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS+" ("+num+")");
+				} else
+					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETERS);
+				dati.addElement(de);
+				
 			}
 			
 			if(TipoOperazione.CHANGE.equals(tipoOperazione) || !hiddenMessageType) {
@@ -5978,7 +5977,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			this.pd.setDati(dati);
 
-			if(this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
+			if(this.isModalitaStandard() || (this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage()))){
 				this.pd.setAddButton(false);
 				this.pd.setRemoveButton(false);
 				this.pd.setSelect(false);
@@ -6187,7 +6186,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			this.pd.setDati(dati);
 
-			if(this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
+			if( this.isModalitaStandard() || (this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage()))){
 				this.pd.setAddButton(false);
 				this.pd.setRemoveButton(false);
 				this.pd.setSelect(false);
@@ -6352,7 +6351,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			this.pd.setDati(dati);
 
-			if(this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
+			if( this.isModalitaStandard() || (this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage()))){
 				this.pd.setAddButton(false);
 				this.pd.setRemoveButton(false);
 				this.pd.setSelect(false);
@@ -6630,7 +6629,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType));
 			
-			if (this.isModalitaAvanzata()) {
+			if (TipoOperazione.CHANGE.equals(tipoOperazione) || this.isModalitaAvanzata()) {
 				
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
