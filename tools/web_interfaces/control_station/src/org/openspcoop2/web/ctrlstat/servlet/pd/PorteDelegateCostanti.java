@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -54,6 +55,8 @@ public class PorteDelegateCostanti {
 	public final static ForwardParams TIPO_OPERAZIONE_CORRELAZIONE_APPLICATIVA = ForwardParams.OTHER("");
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteDelegateCorrelazioneApplicativaRequest";
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteDelegateCorrelazioneApplicativaResponse";
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO = "porteDelegateProprietaProtocollo";
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_MTOM = "porteDelegateMTOM";
 	public final static ForwardParams TIPO_OPERAZIONE_MTOM = ForwardParams.OTHER("");
@@ -215,6 +218,18 @@ public class PorteDelegateCostanti {
 	public final static String SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI+".do";
 	
 	public final static String SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE+".do";
+	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_ADD = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO+"Add.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_CHANGE = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO+"Change.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_DELETE = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO+"Del.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO+"List.do";
+	public final static Vector<String> SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO = new Vector<String>();
+	static{
+		PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_ADD);
+		PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_CHANGE);
+		PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_DELETE);
+		PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST);
+	}
 	
 	/* LABEL GENERALI */
 
@@ -406,6 +421,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
 	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
+	
 	/* DEFAULT VALUE PARAMETRI */
 	
 	
@@ -477,5 +495,5 @@ public class PorteDelegateCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX = "Esiste gi&agrave; una Porta Delegata con nome [{0}]";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX = "Indicare un nome per l'autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX = "Indicare un nome per l'autenticazione ''{0}''";
-  
+	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE = "Non &egrave; possibile eliminare tutte le azioni associate alla configurazione";
 }

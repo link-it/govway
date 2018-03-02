@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
@@ -63,6 +64,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -2836,5 +2838,21 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		}
 		
 		return "";
+	}
+
+	public void preparePorteDelPropList(String nomePorta, Search ricerca, List<Proprieta> lista) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Vector<DataElement> addProprietaProtocolloToDati(TipoOperazione change, int size, String nome, String valore,
+			Vector<DataElement> dati) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean porteAppPropCheckData(TipoOperazione change) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

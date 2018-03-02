@@ -510,6 +510,6 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_CON_NOME_XX = "Esiste gi&agrave; una Porta Applicativa con nome [{0}]";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_PER_IL_SERVIZIO_XX_CON_AZIONE_YY_EROGATO_DAL_SOGGETTO_ZZ = "Esiste gi&agrave; una Porta Applicativa per il Servizio [{0}] con Azione [{1}] erogato dal Soggetto{2} [{3}]";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_XX_APPARTENENTE_AL_SOGGETTO_YY = "Esiste gi&agrave; una Porta Applicativa [{0}] appartenente al Soggetto [{1}]";
-
+	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE = "Non &egrave; possibile eliminare tutte le azioni associate alla configurazione";
 
 }

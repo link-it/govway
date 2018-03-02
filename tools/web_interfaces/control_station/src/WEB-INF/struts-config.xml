@@ -1287,6 +1287,33 @@
             <forward name="porteDelegateAbilitazioneOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateAbilitazioneError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!--  Porte Delegate (Proprieta' Protocollo) -->
+               
+        <action path="/porteDelegateProprietaProtocolloAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaProtocolloAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateProprietaProtocolloAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateProprietaProtocolloList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaProtocolloList" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateProprietaProtocolloList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateProprietaProtocolloChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaProtocolloChange" 
+        	scope="request" validate="true">
+            <forward name="porteDelegateProprietaProtocolloChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateProprietaProtocolloDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateProprietaProtocolloDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateProprietaProtocolloDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateProprietaProtocolloError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     	<!--  Porte Applicative -->

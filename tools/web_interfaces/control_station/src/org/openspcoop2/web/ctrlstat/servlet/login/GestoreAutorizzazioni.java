@@ -225,6 +225,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_AZIONE);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE);
+		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO);
 		/** Permessi associati alla gestione delle porte delegate */
 		this.permessiPorteDelegate = new PermessiUtente();
 		this.permessiPorteDelegate.setServizi(true);

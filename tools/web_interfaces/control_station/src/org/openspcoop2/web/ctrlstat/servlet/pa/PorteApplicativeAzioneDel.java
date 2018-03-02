@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -123,15 +124,19 @@ public final class PorteApplicativeAzioneDel extends Action {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI+pa.getNome();
 			}
 			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
-			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
-
+			// non posso eliminare tutte le azioni
+			if(pa.getAzione().sizeAzioneDelegataList() == 0) {
+				pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
+			} else {
+				String userLogin = ServletUtils.getUserLoginFromSession(session);
+				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+			}
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
+			// ricarico la porta
+			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			// Prendo nome della porta applicativa
 			String nomePorta = pa.getNome();
-			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			List<String> listaAzioni = pa.getAzione().getAzioneDelegataList();
 			List<Parameter> listaParametriSessione = new ArrayList<>();

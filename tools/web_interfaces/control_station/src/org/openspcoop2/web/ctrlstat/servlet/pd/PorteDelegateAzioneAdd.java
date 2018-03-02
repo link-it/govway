@@ -104,7 +104,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			// multiselect
-			String[] azionis = porteDelegateHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
+			String[] azionis = porteDelegateHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();

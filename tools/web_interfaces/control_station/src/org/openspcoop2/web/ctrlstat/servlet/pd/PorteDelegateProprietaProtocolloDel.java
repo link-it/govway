@@ -32,27 +32,30 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * PorteDelegateAzioneDel
+ * porteAppPropDel
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author Giuliano Pintori (pintori@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Stefano Corallo (corallo@link.it)
+ * @author Sandra Giangrandi (sandra@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 13664 $, $Date: 2018-03-02 12:09:42 +0100 (Fri, 02 Mar 2018) $
  * 
  */
-public final class PorteDelegateAzioneDel extends Action {
+public final class PorteDelegateProprietaProtocolloDel extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -70,21 +73,15 @@ public final class PorteDelegateAzioneDel extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+ 
 
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(idPorta);
-			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
-			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
-			if(idAsps == null) 
-				idAsps = "";
-			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino il servizioApplicativo della porta applicativa dal db
+			// Elimino le properties della porta applicativa dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
 			// int[] idToRemove = new int[objTok.countTokens()];
 			//
@@ -93,69 +90,53 @@ public final class PorteDelegateAzioneDel extends Action {
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
 
-			String azione = "";
+			String nome = "";
 
 			// Prendo la porta applicativa
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
-			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
-			String nomePorta = portaDelegata.getNome();
+			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
 				// .elementAt(idToRemove[i])).elementAt(0);
-				// servizioApplicativo = de.getValue();
-				azione = idsToRemove.get(i);
-				for (int j = 0; j < portaDelegata.getAzione().sizeAzioneDelegataList(); j++) {
-					String azioneDelegata = portaDelegata.getAzione().getAzioneDelegata(j);
-					if (azione.equals(azioneDelegata)) {
-						portaDelegata.getAzione().removeAzioneDelegata(j);
+				// nome = de.getValue();
+				nome = idsToRemove.get(i);
+
+				for (int j = 0; j < pde.sizeProprietaList(); j++) {
+					Proprieta ssp = pde.getProprieta(j);
+					if (nome.equals(ssp.getNome())) {
+						pde.removeProprieta(j);
 						break;
 					}
 				}
 			}
+
+			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			String labelPerPorta = null;
-			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI_CONFIG_DI+
-						porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
-			}
-			else {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI_CONFIG_DI+nomePorta;
-			}
-			
-			// non posso eliminare tutte le azioni
-			if(portaDelegata.getAzione().sizeAzioneDelegataList() == 0) {
-				pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
-			} else {
-				String userLogin = ServletUtils.getUserLoginFromSession(session);
-				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
-			}
+			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
+
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
-			
-			// ricarico la porta dal db
-			portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
-			
-			List<String> listaAzioni = portaDelegata.getAzione().getAzioneDelegataList();
-			List<Parameter> listaParametriSessione = new ArrayList<>();
-			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta));
-			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg));
-			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps));
-			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione));
-			
-			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
-			
-			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
-					listaParametriSessione, labelPerPorta);
+
+			// Preparo la lista
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+
+			int idLista = Liste.PORTE_DELEGATE_PROP;
+
+			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+
+			List<Proprieta> lista = porteDelegateCore.porteDelPropList(Integer.parseInt(idPorta), ricerca);
+
+			porteDelegateHelper.preparePorteDelPropList(pde.getNome(), ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForward (mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
+			return ServletUtils.getStrutsForward (mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO, 
 					ForwardParams.DEL());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE,
+					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO,
 					ForwardParams.DEL());
 		}  
 	}

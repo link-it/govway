@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -47,6 +48,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -711,5 +713,9 @@ public class PorteDelegateCore extends ControlStationCore {
 				return "???";
 			}
 		}
+	}
+	public List<Proprieta> porteDelPropList(int parseInt, Search ricerca) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
