@@ -1099,7 +1099,7 @@ public class ConsoleHelper {
 						totEntries++;
 					// Se l'utente ha anche i permessi "monitoraggio", la
 					// sezione reportistica ha una voce in più
-					if (pu.isCodeMessaggi())
+					if (this.isModalitaAvanzata() && pu.isCodeMessaggi())
 						totEntries++;
 
 					// Extended Menu
@@ -1128,7 +1128,7 @@ public class ConsoleHelper {
 						i++;
 					}
 
-					if (pu.isCodeMessaggi()) {
+					if (this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
 						entries[i][0] = MonitorCostanti.LABEL_MONITOR;
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
@@ -1367,7 +1367,7 @@ public class ConsoleHelper {
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
 
 					int totEntries = 0;
-					if (pu.isCodeMessaggi() && pu.isAuditing())
+					if ((this.isModalitaAvanzata() && pu.isCodeMessaggi()) && pu.isAuditing())
 						totEntries = 2;
 					else
 						totEntries = 1;
@@ -1385,7 +1385,7 @@ public class ConsoleHelper {
 					}
 
 					String[][] entries = null;
-					if (pu.isCodeMessaggi() && pu.isAuditing())
+					if ((this.isModalitaAvanzata() && pu.isCodeMessaggi()) && pu.isAuditing())
 						entries = new String[totEntries][2];
 					else
 						entries = new String[totEntries][2];
@@ -1397,7 +1397,7 @@ public class ConsoleHelper {
 						entries[i][1] = AuditCostanti.SERVLET_NAME_AUDITING;
 						i++;
 					}
-					if (pu.isCodeMessaggi()) {
+					if (this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
 						entries[i][0] = MonitorCostanti.LABEL_MONITOR;
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
@@ -1655,7 +1655,7 @@ public class ConsoleHelper {
 						entries[i][1] = OperazioniCostanti.SERVLET_NAME_OPERAZIONI;
 						i++;
 					}
-					if (pu.isCodeMessaggi()) {
+					if (this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
 						entries[i][0] = MonitorCostanti.LABEL_MONITOR;
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;

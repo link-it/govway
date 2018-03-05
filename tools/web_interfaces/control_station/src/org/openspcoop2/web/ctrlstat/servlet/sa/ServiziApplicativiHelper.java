@@ -1811,25 +1811,39 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
-		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		
+		if(!this.isModalitaStandard()) {
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 		
 		String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
-		de.setType(DataElementType.SELECT);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
-		de.setValues(tipoGM);
-		if (this.isModalitaStandard() && isInvocazioneServizio) {
-			de.setPostBack(true);
+		
+		if(!this.isModalitaStandard()) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoGM);
+//			if (this.isModalitaStandard() && isInvocazioneServizio) {
+//				de.setPostBack(true);
+//			}
+			if(getmsg==null){
+				de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+			}else{
+				de.setSelected(getmsg);
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			if(getmsg==null){
+				de.setValue(CostantiConfigurazione.DISABILITATO.toString());
+			}else{
+				de.setValue(getmsg);
+			}
 		}
-		if(getmsg==null){
-			de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
-		}else{
-			de.setSelected(getmsg);
-		}
+		
 		dati.addElement(de);
 	}
 
