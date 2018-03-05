@@ -30,6 +30,9 @@ package org.openspcoop2.utils.rest.api;
  */
 public class ApiBodyParameter extends AbstractApiParameter {
 
+	private static String MEDIA_TYPE_ALL_1 = "*/*";
+	private static String MEDIA_TYPE_ALL_2 = "*";
+	
 	private String mediaType;
 	private Object element;
 
@@ -45,6 +48,9 @@ public class ApiBodyParameter extends AbstractApiParameter {
 	}
 	public String getMediaType() {
 		return this.mediaType;
+	}
+	public boolean isAllMediaType() {
+		return MEDIA_TYPE_ALL_1.equals(this.mediaType) || MEDIA_TYPE_ALL_2.equals(this.mediaType);
 	}
 	public void setMediaType(String mediaType) {
 		this.mediaType = mediaType;

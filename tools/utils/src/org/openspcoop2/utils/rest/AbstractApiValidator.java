@@ -93,7 +93,7 @@ public abstract class AbstractApiValidator   {
 					
 					if(requestBodyParametersList != null) {
 						for(ApiBodyParameter input: requestBodyParametersList) {
-							if(input.getMediaType().equals(httpEntity.getContentType())) {
+							if(input.isAllMediaType() || input.getMediaType().equals(httpEntity.getContentType())) {
 								contentTypeSupported = true;
 								break;
 							} 
@@ -107,7 +107,7 @@ public abstract class AbstractApiValidator   {
 							if(status==output.getHttpReturnCode() || output.isDefaultHttpReturnCode()) {
 								if(output.sizeBodyParameters()>0) {
 									for(ApiBodyParameter outputBodyParameter: output.getBodyParameters()) {
-										if(outputBodyParameter.getMediaType().equals(httpEntity.getContentType())) {
+										if(outputBodyParameter.isAllMediaType() || outputBodyParameter.getMediaType().equals(httpEntity.getContentType())) {
 											contentTypeSupported = true;
 											break;
 										} 
