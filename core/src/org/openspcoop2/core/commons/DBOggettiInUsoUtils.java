@@ -1055,6 +1055,7 @@ public class DBOggettiInUsoUtils  {
 			// Raccolgo Dati Servizio.
 			String tipoServizio = null;
 			String nomeServizio = null;
+			Integer versioneServizio = null;
 			String tipoSoggetto = null;
 			String nomeSoggetto = null;
 			long idSoggetto;
@@ -1074,6 +1075,7 @@ public class DBOggettiInUsoUtils  {
 				nomeServizio = risultato.getString("nome_servizio");
 				tipoSoggetto = risultato.getString("tipo_soggetto");
 				nomeSoggetto = risultato.getString("nome_soggetto");
+				versioneServizio = risultato.getInt("versione_servizio");
 			}
 			else{
 				throw new UtilsException("Accordo con id ["+idAccordoServizioParteSpecifica+"] non trovato");
@@ -1091,7 +1093,7 @@ public class DBOggettiInUsoUtils  {
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND servizio = ?");
+			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND servizio = ? AND versione_servizio = ?");
 			sqlQueryObject.addWhereCondition(false, "id_soggetto = ?", "id_soggetto_virtuale = ?", "tipo_soggetto_virtuale = ? AND nome_soggetto_virtuale = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
@@ -1099,10 +1101,11 @@ public class DBOggettiInUsoUtils  {
 			stmt.setLong(1, idAccordoServizioParteSpecifica);
 			stmt.setString(2, tipoServizio);
 			stmt.setString(3, nomeServizio);
-			stmt.setLong(4, idSoggetto);
+			stmt.setInt(4, versioneServizio);
 			stmt.setLong(5, idSoggetto);
-			stmt.setString(6, tipoSoggetto);
-			stmt.setString(7, nomeSoggetto);
+			stmt.setLong(6, idSoggetto);
+			stmt.setString(7, tipoSoggetto);
+			stmt.setString(8, nomeSoggetto);
 			risultato = stmt.executeQuery();
 			while (risultato.next()) {
 				
@@ -1124,7 +1127,7 @@ public class DBOggettiInUsoUtils  {
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND nome_servizio = ?");
+			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND nome_servizio = ? AND versione_servizio = ?");
 			sqlQueryObject.addWhereCondition(false, "id_soggetto_erogatore = ?", "tipo_soggetto_erogatore = ? AND nome_soggetto_erogatore = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
@@ -1132,9 +1135,10 @@ public class DBOggettiInUsoUtils  {
 			stmt.setLong(1, idAccordoServizioParteSpecifica);
 			stmt.setString(2, tipoServizio);
 			stmt.setString(3, nomeServizio);
-			stmt.setLong(4, idSoggetto);
-			stmt.setString(5, tipoSoggetto);
-			stmt.setString(6, nomeSoggetto);
+			stmt.setInt(4, versioneServizio);
+			stmt.setLong(5, idSoggetto);
+			stmt.setString(6, tipoSoggetto);
+			stmt.setString(7, nomeSoggetto);
 			risultato = stmt.executeQuery();
 			while (risultato.next()) {
 				isInUso=true;
