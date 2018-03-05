@@ -4155,7 +4155,8 @@ public class ConsoleHelper {
 	}
 	
 	public void addFilterAzione(List<String> azioni, String azione) throws Exception{
-		this.addFilterAzione(azioni.toArray(new String[azioni.size()]), azione);		  
+		String [] azioniS = azioni != null ?  azioni.toArray(new String[azioni.size()]) : new String [0];
+		this.addFilterAzione(azioniS, azione);		  
 	}
 	
 	public void addFilterAzione(String []azioni, String azione) throws Exception{

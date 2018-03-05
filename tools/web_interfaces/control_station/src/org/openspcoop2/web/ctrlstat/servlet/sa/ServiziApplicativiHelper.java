@@ -767,7 +767,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						
 				this.addEndPointToDati(dati,id,nome,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,invrif,risprif,nomeProtocollo,false,true, true,
-						parentSA);
+						parentSA,null);
 				
 				if(TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 						CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -1672,7 +1672,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
 			String getmsg,String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
-			Integer parentSA) throws Exception{
+			Integer parentSA, ServiceBinding serviceBinding) throws Exception{
 
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
 		IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
@@ -1704,6 +1704,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 		}
+		
+		//controllo aggiunta sezione trattamento messaggio appare se c'e' almeno un elemento sui 4 previsti che puo' essere visualizzato.
+		showTitleTrattamentoMessaggio = showTitleTrattamentoMessaggio && (
+				(!this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP))) ||
+				(!this.isModalitaStandard() && config.isSupportoSbustamentoProtocollo()) || 
+				!this.isModalitaStandard()				
+				);
 
 		if(showTitleTrattamentoMessaggio){
 			de = new DataElement();
@@ -1715,14 +1722,24 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
-		de.setType(DataElementType.SELECT);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
-		de.setValues(tipoSbustamentoSOAP);
-		if(sbustamento==null){
-			de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
-		}else{
-			de.setSelected(sbustamento);
+		if(!this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP))) {
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoSbustamentoSOAP);
+			if(sbustamento==null){
+				de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+			}else{
+				de.setSelected(sbustamento);
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			if(sbustamento==null){
+				de.setValue(CostantiConfigurazione.DISABILITATO.toString());
+			}else{
+				de.setValue(sbustamento);
+			}
 		}
+		
 		dati.addElement(de);
 
 		String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
@@ -1733,7 +1750,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO);
 		}
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
-		if(config.isSupportoSbustamentoProtocollo()) {
+		if(!this.isModalitaStandard() &&  config.isSupportoSbustamentoProtocollo()) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoSbustamentoInformazioniProtocollo);
 			if(sbustamentoInformazioniProtocolloRichiesta==null){

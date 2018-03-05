@@ -50,7 +50,9 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -58,6 +60,7 @@ import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -240,12 +243,19 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
 			
+			ServiceBinding serviceBinding = null;
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
 				PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
 				PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+
 						porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+				
+				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(soggettiCore);
+				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
+				AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
+				serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			}
 			else {
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+nomeservizioApplicativo;
@@ -530,7 +540,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA);
+						parentSA,serviceBinding);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -579,7 +589,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA);
+						parentSA,serviceBinding);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
