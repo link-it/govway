@@ -2321,7 +2321,8 @@ public class DriverRegistroServiziDB_LIB {
 				}
 
 				//if (connettore.getNome() == null || connettore.getNome().equals("")) {
-				connettore.setNome("CNT_SF_" + tipoSoggetto+"/"+nomeSoggetto + "_" + servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() + "_" + servizio.getTipo() +"/"+servizio.getNome());
+				connettore.setNome("CNT_SF_" + tipoSoggetto+"/"+nomeSoggetto + "_" + servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() + "_" + 
+						servizio.getTipo() +"/"+servizio.getNome()+"/"+servizio.getVersione());
 				//}
 				
 				DriverRegistroServiziDB_LIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
@@ -2435,7 +2436,8 @@ public class DriverRegistroServiziDB_LIB {
 				// modifico i dati del connettore
 				//aggiorno nome
 				DriverRegistroServiziDB_LIB.log.debug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+connettore.getNome()+"]...");
-				String newNomeConnettore = "CNT_SF_" + tipoSoggetto+"/"+nomeSoggetto + "_" + servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() + "_" + servizio.getTipo() +"/"+servizio.getNome();
+				String newNomeConnettore = "CNT_SF_" + tipoSoggetto+"/"+nomeSoggetto + "_" + servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() + "_" + 
+						servizio.getTipo() +"/"+servizio.getNome()+"/"+servizio.getVersione();
 				connettore.setNome(newNomeConnettore);
 				DriverRegistroServiziDB_LIB.log.debug("nuovo nome connettore ["+newNomeConnettore+"]");
 				DriverRegistroServiziDB_LIB.CRUDConnettore(2, connettore, con);
@@ -2552,7 +2554,7 @@ public class DriverRegistroServiziDB_LIB {
 		if (azioneValue == null || azioneValue.equals(""))
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] Azione non valida.");
 
-		String nomeConnettore = "CNT_SAZIONE_" + servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() +"_"+ servizio.getTipo() +"/"+servizio.getNome()+"_"+azioneValue;
+		String nomeConnettore = "CNT_SAZIONE_" + servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() +"_"+ servizio.getTipo() +"/"+servizio.getNome()+"/"+servizio.getVersione()+"_"+azioneValue;
 		if (connettore == null) {
 			connettore = new Connettore();
 		}
