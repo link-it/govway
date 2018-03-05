@@ -294,9 +294,9 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			permessi[1] = pu.isAccordiCooperazione();
 			List<AccordoServizioParteSpecifica> lista = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
-				lista = apsCore.soggettiServizioList(null, ricerca,permessi);
+				lista = apsCore.soggettiServizioList(null, ricerca,permessi, session);
 			}else{
-				lista = apsCore.soggettiServizioList(superUser, ricerca, permessi);
+				lista = apsCore.soggettiServizioList(superUser, ricerca, permessi, session);
 			}
 
 			apsHelper.prepareServiziList(ricerca, lista);

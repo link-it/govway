@@ -395,6 +395,10 @@ public class ServletUtils {
 		session.setAttribute(objectName,obj);
 	}
 
+	public static void removeObjectFromSession(HttpSession session,String objectName){
+		session.removeAttribute(objectName);
+	}
+	
 	public static <T> T getObjectFromSession(HttpSession session,Class<T> objectClass, String objectName){
 		Object obj = session.getAttribute(objectName);
 

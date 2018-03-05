@@ -331,6 +331,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			porteDelegateCore = new PorteDelegateCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			boolean multiTenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant();
 			
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
@@ -1768,9 +1776,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			List<AccordoServizioParteSpecifica> listaServizi = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
-				listaServizi = apsCore.soggettiServizioList(null, ricerca,permessi);
+				listaServizi = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
 			}else{
-				listaServizi = apsCore.soggettiServizioList(superUser, ricerca,permessi);
+				listaServizi = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori);
 			}
 
 			apsHelper.prepareServiziList(ricerca, listaServizi);

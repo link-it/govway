@@ -1102,9 +1102,9 @@ public final class PorteApplicativeChange extends Action {
 					List<AccordoServizioParteSpecifica> listaS = null;
 					String superUser   = ServletUtils.getUserLoginFromSession(session);
 					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						listaS = apsCore.soggettiServizioList(null, ricerca,permessi);
+						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
 					}else{
-						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi);
+						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
 					}
 					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 					apsHelper.prepareServiziList(ricerca, listaS);

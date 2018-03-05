@@ -154,6 +154,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_SERVIZIO_APPLICATIVO_EROGATORE = "Servizio Applicativo Erogatore";
 	public final static String LABEL_APS_SERVIZIO_APPLICATIVO_FRUITORE = "Servizio Applicativo Fruitore";
 	public final static String LABEL_APS_SOGGETTO_EROGATORE = "Soggetto Erogatore";
+	public final static String LABEL_APS_SOGGETTO_FRUITORE = "Soggetto Fruitore";
 	public final static String LABEL_APS_WSDL_IMPLEMENTATIVO_DI = "WSDL Implementativo di ";
 	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Attenzione";
 	public final static String LABEL_WSDL_CHANGE_CLEAR = "Se si desidera eliminare un documento precedentemente caricato cliccare su 'Invi&agrave; senza selezionare alcun file"; //fornirne un'altra versione";
@@ -172,9 +173,15 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_APPLICATIVO_ESTERNO_PREFIX = "Dominio Esterno - ";
 	
 	public final static String LABEL_APS_MENU_VISUALE_AGGREGATA = "Erogazioni";
+	public final static String LABEL_APS_FRUIZIONI_MENU_VISUALE_AGGREGATA = "Fruizioni";
 	public static final String LABEL_N_D = "N.D.";
 	
 	/* PARAMETRI */
+	
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE = "tipologiaErogazione";
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_MULTI_TENANT = "multiTenant";
 	
 	public final static String PARAMETRO_APS_ID = CostantiControlStation.PARAMETRO_ID;
 	public final static String PARAMETRO_APS_MY_ID = CostantiControlStation.PARAMETRO_ID_FRUIZIONE;

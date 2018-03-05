@@ -867,6 +867,8 @@ public class ConsoleHelper {
 
 			boolean isModalitaAvanzata = this.isModalitaAvanzata();
 			
+			boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+			
 			List<IExtendedMenu> extendedMenu = this.core.getExtendedMenu();
 
 			Vector<MenuEntry> menu = new Vector<MenuEntry>();
@@ -893,7 +895,12 @@ public class ConsoleHelper {
 
 					// ASPC e ASPS
 					if(this.core.isRegistroServiziLocale()){
-						totEntries +=2;
+						if(multiTenant) {
+							totEntries +=2;
+						}
+						else {
+							totEntries +=3;
+						}
 					}
 				}
 
@@ -974,9 +981,26 @@ public class ConsoleHelper {
 						index++;
 
 						//ASPS
-						entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
-						entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
-						index++;
+						if(multiTenant) {
+							entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
+							entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST+"?"+
+									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE+"="+
+									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_MULTI_TENANT;
+							index++;
+						}
+						else {
+							entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
+							entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST+"?"+
+									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE+"="+
+									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE;
+							index++;
+							
+							entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUIZIONI_MENU_VISUALE_AGGREGATA;
+							entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST+"?"+
+									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE+"="+
+									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE;
+							index++;
+						}
 					}
 				}
 

@@ -30,11 +30,13 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -72,15 +74,39 @@ public final class AccordiServizioParteSpecificaList extends Action {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			// Preparo il menu
 			apsHelper.makeMenu();
-
+			
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.SERVIZI;
-
+						
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
+			String tipologia = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			if(tipologia==null) {
+				// guardo se sto entrando da altri link fuori dal menu di sinistra
+				// in tal caso e' gia' impostato
+				tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			}
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+					ServletUtils.setObjectIntoSession(session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
+							AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+					ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+				}
+				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					ServletUtils.setObjectIntoSession(session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
+							AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+					ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
+					gestioneFruitori = true;
+				}
+				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_MULTI_TENANT.equals(tipologia)) {
+					ServletUtils.removeObjectFromSession(session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				}
+			}
+			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 			
@@ -90,9 +116,9 @@ public final class AccordiServizioParteSpecificaList extends Action {
 			
 			List<AccordoServizioParteSpecifica> lista = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
-				lista = apsCore.soggettiServizioList(null, ricerca,permessi);
+				lista = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
 			}else{
-				lista = apsCore.soggettiServizioList(superUser, ricerca,permessi);
+				lista = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori);
 			}
 
 			apsHelper.prepareServiziList(ricerca, lista);

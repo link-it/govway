@@ -85,10 +85,12 @@ public final class UtenteChange extends Action {
 			String changeModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA);
 			String tipoModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
 			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
+			
+			String first = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
 
 			UtentiCore utentiCore = new UtentiCore();
 
-			if(multiTenant==null && tipogui==null) {
+			if(multiTenant==null && first==null) {
 				if(ServletUtils.getUserFromSession(session).isPermitMultiTenant()) {
 					multiTenant = Costanti.CHECK_BOX_ENABLED;
 				}

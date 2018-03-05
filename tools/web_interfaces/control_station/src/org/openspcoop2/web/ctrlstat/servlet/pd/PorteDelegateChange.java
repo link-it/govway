@@ -84,6 +84,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
  * porteDelegateChange
@@ -1100,11 +1101,44 @@ public final class PorteDelegateChange extends Action {
 				
 				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				if(datiInvocazione) {
-					idLista = Liste.SERVIZI_FRUITORI;
-					ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 					
-					List<Fruitore> listaFruitori = apsCore.serviziFruitoriList(idAspsInt, ricerca);
-					apsHelper.prepareServiziFruitoriList(listaFruitori, idAsps, ricerca);
+					String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+					boolean gestioneFruitori = false;
+					if(tipologia!=null) {
+						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+							gestioneFruitori = true;
+						}
+					}
+					if(gestioneFruitori) {
+						
+						idLista = Liste.SERVIZI;
+						
+						ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
+						
+						String superUser =   ServletUtils.getUserLoginFromSession(session); 
+						PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+						boolean [] permessi = new boolean[2];
+						permessi[0] = pu.isServizi();
+						permessi[1] = pu.isAccordiCooperazione();
+						List<AccordoServizioParteSpecifica> lista2 = null;
+						if(apsCore.isVisioneOggettiGlobale(superUser)){
+							lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
+						}else{
+							lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori);
+						}
+
+						apsHelper.prepareServiziList(ricerca, lista2);
+						
+					}
+					else {
+					
+						idLista = Liste.SERVIZI_FRUITORI;
+						ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
+						
+						List<Fruitore> listaFruitori = apsCore.serviziFruitoriList(idAspsInt, ricerca);
+						apsHelper.prepareServiziFruitoriList(listaFruitori, idAsps, ricerca);
+						
+					}
 				}
 				else {
 					idLista = Liste.CONFIGURAZIONE_FRUIZIONE;

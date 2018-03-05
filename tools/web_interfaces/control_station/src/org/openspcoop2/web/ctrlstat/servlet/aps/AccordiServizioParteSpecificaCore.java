@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
@@ -72,6 +74,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -833,7 +836,18 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 	
 	
-	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente, HttpSession session) throws DriverRegistroServiziException {
+		boolean gestioneFruitori = false;
+		String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		if(tipologia!=null) {
+			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
+			}
+		}
+		return soggettiServizioList(superuser, ricerca, permessiUtente, gestioneFruitori);
+
+	}
+	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente, boolean gestioneFruitori) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "soggettiServizioList";
 		DriverControlStationDB driver = null;
@@ -844,7 +858,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().soggettiServizioList(superuser, ricerca,permessiUtente);
+			return driver.getDriverRegistroServiziDB().soggettiServizioList(superuser, ricerca,permessiUtente, gestioneFruitori);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

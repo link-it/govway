@@ -80,6 +80,7 @@ public class UtentiCostanti {
 	
 	/* PARAMETRI */
 	
+	public final static String PARAMETRO_UTENTI_FIRST = "first";
 	public final static String PARAMETRO_UTENTI_USERNAME = "nomesu";
 	public final static String PARAMETRO_UTENTI_PASSWORD = "pwsu";
 	public final static String PARAMETRO_UTENTI_CONFERMA_PASSWORD = "confpwsu";

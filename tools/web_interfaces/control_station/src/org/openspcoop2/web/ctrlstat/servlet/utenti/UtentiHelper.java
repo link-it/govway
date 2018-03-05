@@ -430,7 +430,11 @@ public class UtentiHelper extends ConsoleHelper {
 			String changepw, String nomeUtente, String modalitaDisponibili, String multiTenant) throws DriverUsersDBException{
 
 		DataElement de = new DataElement();
-
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue("false");
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_INFO_UTENTE);
 		de.setType(DataElementType.TITLE);

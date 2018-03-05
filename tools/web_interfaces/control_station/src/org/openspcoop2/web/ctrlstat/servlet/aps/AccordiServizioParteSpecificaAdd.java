@@ -343,6 +343,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
@@ -1462,13 +1470,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// cancello i file temporanei
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
 			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
-
+			
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			List<AccordoServizioParteSpecifica> listaAccordi = null;
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				listaAccordi = apsCore.soggettiServizioList(null, ricerca,permessi);
+				listaAccordi = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
 			}else{
-				listaAccordi = apsCore.soggettiServizioList(userLogin, ricerca, permessi);
+				listaAccordi = apsCore.soggettiServizioList(userLogin, ricerca, permessi, gestioneFruitori);
 			}
 
 			apsHelper.prepareServiziList(ricerca, listaAccordi);
