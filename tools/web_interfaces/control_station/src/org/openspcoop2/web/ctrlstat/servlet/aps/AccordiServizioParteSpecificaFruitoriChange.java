@@ -136,6 +136,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 
 		try {
+			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
+			
 			// prendo i dati hidden del pdold e li metto nel pd attuale
 			PageData pdOld = ServletUtils.getPageDataFromSession(session);
 			pd.setHidden(pdOld.getHidden());
@@ -247,6 +249,17 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String backToStato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
 			String actionConfirm = apsHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			boolean connettoreOnly = gestioneFruitori;
+			String mappingID = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_ONLY_MAPPING_ID);
+			boolean forceEnableConnettore =  gestioneFruitori;
+						
 			boolean validazioneDocumenti = true;
 			String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 			if(apsHelper.isEditModeInProgress()){
@@ -431,7 +444,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				}
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
@@ -672,9 +690,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
 
-					if (apsHelper.isModalitaAvanzata()) {
+					if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,
-								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
 								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
@@ -690,7 +708,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								listExtendedConnettore, false);
+								listExtendedConnettore, forceEnableConnettore);
 					}else{
 						//spostato nell'helper
 					}
@@ -757,7 +775,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				}
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
@@ -789,9 +812,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 						asps, servFru);
 
-				if (apsHelper.isModalitaAvanzata()) {
+				if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
@@ -807,7 +830,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore, false);
+							listExtendedConnettore, forceEnableConnettore);
 				}else{
 					//spostato nell'helper
 				}
@@ -829,7 +852,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					// setto la barra del titolo
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					if(gestioneFruitori) {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+					}
+					else {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					}
 					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
@@ -980,7 +1008,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					if(gestioneFruitori) {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+					}
+					else {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					}
 					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
@@ -1012,9 +1045,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
 
-					if (apsHelper.isModalitaAvanzata()) {
+					if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,
 								nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas,
@@ -1032,7 +1065,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								listExtendedConnettore, false);
+								listExtendedConnettore, forceEnableConnettore);
 					}else{
 						//spostato nell'helper
 					}

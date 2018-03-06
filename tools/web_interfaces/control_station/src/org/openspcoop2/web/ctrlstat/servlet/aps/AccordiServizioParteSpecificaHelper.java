@@ -2618,6 +2618,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<String> listaLabel = new ArrayList<String>();
 
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
+			if(gestioneFruitori) {
+				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
+			}
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY);
@@ -2691,6 +2694,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				de.setIdToRemove(pdAssociata.getNome());
 				e.addElement(de);
+				
+				if(gestioneFruitori) {
+					
+					Fruitore fru = asps.getFruitore(0);
+					Long idSoggettoLong = fru.getIdSoggetto();
+					if(idSoggettoLong==null) {
+						idSoggettoLong = this.soggettiCore.getIdSoggetto(fru.getNome(), fru.getTipo());
+					}
+					
+					Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+"");
+					Parameter pMyId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, fru.getId() + "");				
+					
+					de = new DataElement();
+					de.setUrl(
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
+							pId,	pMyId, pIdSoggettoErogatore,
+							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoLong + ""),
+							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_ONLY_MAPPING_ID,
+									mapping.getTableId()+""));
+
+					ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+				}
 				
 				// Controllo Accessi
 				de = new DataElement();
@@ -4489,6 +4515,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		boolean showPortiAccesso = this.apcCore.showPortiAccesso(protocollo, serviceBinding, interfaceType);
 		
+		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		boolean gestioneFruitori = false;
+		if(tipologia!=null) {
+			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
+			}
+		}
+		
 		if (tipoOp.equals(TipoOperazione.ADD)) {
 
 			DataElement de = new DataElement();
@@ -4648,12 +4682,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 		} else {
 					
-			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORE);
-			dati.addElement(de);
+			if(!gestioneFruitori) {
+				DataElement de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORE);
+				dati.addElement(de);
+			}
 			
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
 			de.setValue(idSoggettoFruitore);
 			de.setType(DataElementType.HIDDEN);
@@ -4675,7 +4711,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String [] split = nomeSoggetto.split("/");
 				IDSoggetto idSoggetto = new IDSoggetto(split[0], split[1]);
 				de.setValue(this.getLabelNomeSoggetto(protocollo, idSoggetto.getTipo(), idSoggetto.getNome()));
-				de.setType(DataElementType.TEXT);
+				if(!gestioneFruitori) {
+					de.setType(DataElementType.TEXT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
 				dati.addElement(de);
 			}
 			
@@ -4712,7 +4753,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
 			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-				if(StatiAccordo.finale.toString().equals(oldStato)==false ){
+				if(gestioneFruitori) {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(stato);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_STATO);
+				}
+				else if(StatiAccordo.finale.toString().equals(oldStato)==false ){
 					de.setType(DataElementType.SELECT);
 					de.setValues(StatiAccordo.toArray());
 					de.setLabels(StatiAccordo.toLabel());
@@ -4787,7 +4833,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 
 
-			if(serviceBinding.equals(ServiceBinding.SOAP) && interfaceType.equals(org.openspcoop2.protocol.manifest.constants.InterfaceType.WSDL_11) && showPortiAccesso){
+			if(!gestioneFruitori && serviceBinding.equals(ServiceBinding.SOAP) && interfaceType.equals(org.openspcoop2.protocol.manifest.constants.InterfaceType.WSDL_11) && showPortiAccesso){
 				if (this.isModalitaAvanzata()) {
 	
 					de = new DataElement();

@@ -214,7 +214,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);	
-
+		
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
@@ -224,6 +224,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 		TipoOperazione tipoOp = TipoOperazione.ADD;
 
 		try {
+			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
+			
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 
@@ -1219,7 +1221,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-						apsHelper.isModalitaCompleta()?null:
+						(apsHelper.isModalitaCompleta() || !multitenant)?null:
 							(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 						this.url, this.nome,
 						tipoJms, this.user,
@@ -1374,7 +1376,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-						apsHelper.isModalitaCompleta()?null:
+						(apsHelper.isModalitaCompleta() || !multitenant)?null:
 							(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 						this.url, this.nome, this.tipo, this.user,
 						this.password, this.initcont, this.urlpgk,
@@ -1463,7 +1465,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			if(asps.getConfigurazioneServizio()==null)
 				asps.setConfigurazioneServizio(new ConfigurazioneServizio());
-			if(apsHelper.isModalitaCompleta() || !generaPortaApplicativa) {
+			if(apsHelper.isModalitaCompleta() || (!generaPortaApplicativa && !gestioneFruitori)) {
 				asps.getConfigurazioneServizio().setConnettore(connettore);
 			}
 
@@ -1485,6 +1487,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				fruitore.setTipo(this.tipoSoggettoFruitore);
 				fruitore.setNome(this.nomeSoggettoFruitore);
 				fruitore.setStatoPackage(this.statoPackage);
+				fruitore.setConnettore(connettore);
 				asps.addFruitore(fruitore);
 			}
 			
@@ -1557,7 +1560,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							saFruitoriList);
 
 					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-							apsHelper.isModalitaCompleta()?null:
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:
 								(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,

@@ -154,6 +154,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 
 		try {
+			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
+			
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 
@@ -909,7 +911,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}
 						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
-								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
 								httpsurl, httpstipologia, httpshostverify,
@@ -1077,7 +1079,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 					
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
-							apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl, httpstipologia,
@@ -1358,7 +1360,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						}
 						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-								apsHelper.isModalitaCompleta()?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,
 								nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl,

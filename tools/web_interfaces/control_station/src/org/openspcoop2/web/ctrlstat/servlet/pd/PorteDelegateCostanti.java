@@ -374,6 +374,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "Tipo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "Versione Servizio";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE = "Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;
