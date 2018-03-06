@@ -200,13 +200,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String erogazioneSoggetto,String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale, String erogazioneAutorizzazione,
 			String erogazioneAutorizzazioneAutenticati,String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,boolean isSupportatoAutenticazione,
-			boolean generaPACheckSoggetto, List<ExtendedConnettore> listExtendedConnettore)
+			boolean generaPACheckSoggetto, List<ExtendedConnettore> listExtendedConnettore,
+			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
+			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch
+			)
 					throws Exception {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
 		try{
 
+			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			// ripristina dello stato solo in modalita change
 			if(backToStato != null && tipoOp.equals(TipoOperazione.CHANGE)){
 				return true;
@@ -512,8 +523,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoErogatore);
 					String labelServizio = this.getLabelNomeServizio(protocollo, tiposervizio, nomeservizio, versioneInt);
 					String labelSoggetto = this.getLabelNomeSoggetto(protocollo, tipoErogatore, nomeErogatore);
+					String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI;
+					if(gestioneFruitori) {
+						msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI_FRUIZIONE;
+					}
 					this.pd.setMessage(MessageFormat.format(
-							AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI,
+							msg,
 							labelServizio, labelSoggetto));
 					return false;
 				}
@@ -633,13 +648,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			if(tipoOp.equals(TipoOperazione.ADD)){
 
-				if(this.controlloAccessiCheck(tipoOp, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
-						erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, 
-						erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
-						isSupportatoAutenticazione, false, null, null)==false){
-					return false;
+				if(gestioneFruitori) {
+					
+					if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+							fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
+							fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
+							true, true, null, null)==false){
+						return false;
+					}
+					
 				}
+				else {
 				
+					if(this.controlloAccessiCheck(tipoOp, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
+							erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, 
+							erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
+							isSupportatoAutenticazione, false, null, null)==false){
+						return false;
+					}
+			
+				}
 			}
 			
 			
@@ -956,12 +984,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
+			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			String tmpTitle = this.getLabelIdServizio(asps);
 
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
 
-			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+			if(gestioneFruitori) {
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+			}
+			else {
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+			}
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 			if(search.equals("")){
@@ -2893,8 +2934,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String erogazioneRuolo,String erogazioneAutenticazione,String erogazioneAutenticazioneOpzionale,String erogazioneAutorizzazione, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			List<String> soggettiAutenticati, List<String> soggettiAutenticatiLabel, String soggettoAutenticato,
-			String tipoProtocollo, List<String> listaTipiProtocollo) throws Exception{
+			String tipoProtocollo, List<String> listaTipiProtocollo,
+			String[] soggettiFruitoriList, String[] soggettiFruitoriListLabel, String providerSoggettoFruitore, String tipoSoggettoFruitore, String nomeSoggettoFruitore,
+			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
+			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
+			List<String> saList) throws Exception{
 
+		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		boolean gestioneFruitori = false;
+		if(tipologia!=null) {
+			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
+			}
+		}
+		
 		String tipoServizioEffettivo = oldTipoServizio!=null ? oldTipoServizio : tipoServizio; 
 		String nomeServizioEffettivo = oldTipoServizio!=null ? oldNomeServizio : nomeServizio; 
 		
@@ -3487,6 +3540,37 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
+		
+		//Sezione Soggetto Fruitore
+		if(gestioneFruitori) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_FRUITORE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_FRUITORE);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(soggettiFruitoriList);
+				de.setLabels(soggettiFruitoriListLabel);
+				de.setPostBack(true);
+				de.setSelected(providerSoggettoFruitore);
+			} else {
+				de.setValue(providerSoggettoFruitore);
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROVIDER_FRUITORE);
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE_AS_TEXT);
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, tipoSoggettoFruitore, nomeSoggettoFruitore));
+			}
+			dati.addElement(de);
+		}
+		
 		if(serviceBinding.equals(ServiceBinding.SOAP) && interfaceType.equals(org.openspcoop2.protocol.manifest.constants.InterfaceType.WSDL_11) && showPortiAccesso){
 
 			if(isModalitaAvanzata){
@@ -3645,6 +3729,23 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
+			
+		}
+		
+		if(tipoOp.equals(TipoOperazione.ADD) && gestioneFruitori) {
+			
+			// Controllo Accesso Fruizione
+			
+			this.controlloAccessi(dati);
+			
+			this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
+			
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+					fruizioneAutenticazione, fruizioneAutorizzazione, null, 
+					fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
+					fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
+					fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
+					false, true, contaListe, true, false);
 			
 		}
 

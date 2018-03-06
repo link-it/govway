@@ -286,7 +286,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					validazioneDocumenti = false;
 				}
 			}
-
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
@@ -404,6 +404,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Servizio
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 
+			String providerSoggettoFruitore = null;
+			String tipoSoggettoFruitore = null;
+			String nomeSoggettoFruitore = null;
+			if(gestioneFruitori) {
+				// In questa modalità ci deve essere solo un fruitore
+				Fruitore fruitore = asps.getFruitore(0);
+				providerSoggettoFruitore = fruitore.getId()+"";
+				tipoSoggettoFruitore = fruitore.getTipo();
+				nomeSoggettoFruitore = fruitore.getNome();
+			}
+			
 			String tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
 			
 			String tmpTitle = apsHelper.getLabelIdServizio(asps);
@@ -591,7 +602,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				}
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(tmpTitle, null));
 
@@ -879,7 +895,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
 							null,null,null,null,null,null,null,
-							tipoProtocollo,null);
+							tipoProtocollo,null,
+							null, null, providerSoggettoFruitore, tipoSoggettoFruitore, nomeSoggettoFruitore,
+							null, null, null, null, null,
+							null, null, null, null,
+							null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
 					
@@ -978,7 +998,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					null,null,null,null,null,
 					null, null, null, null,false,
-					generaPACheckSoggetto, listExtendedConnettore);
+					generaPACheckSoggetto, listExtendedConnettore,
+					null,null,null,null,null,
+					null, null, null, null);
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -1007,7 +1029,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				}
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(tmpTitle, null));
 
@@ -1036,7 +1063,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 						null,null,null,null,false,
 						null,null,null,null,null,null,null,
-						tipoProtocollo,null);
+						tipoProtocollo,null,
+						null, null, providerSoggettoFruitore, tipoSoggettoFruitore, nomeSoggettoFruitore,
+						null, null, null, null, null,
+						null, null, null, null,
+						null);
 
 				if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
 				
@@ -1103,7 +1134,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					// setto la barra del titolo
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					if(gestioneFruitori) {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+					}
+					else {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					}
 					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(tmpTitle, null));
 
@@ -1274,7 +1310,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					// setto la barra del titolo
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					if(gestioneFruitori) {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+					}
+					else {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					}
 					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(tmpTitle, null));
 
@@ -1303,7 +1344,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,generaPACheckSoggetto,asParteComuneCompatibili,
 							null,null,null,null,false,
 							null,null,null,null,null,null,null,
-							tipoProtocollo,null);
+							tipoProtocollo,null,
+							null, null, providerSoggettoFruitore, tipoSoggettoFruitore, nomeSoggettoFruitore,
+							null, null, null, null, null,
+							null, null, null, null,
+							null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
 					

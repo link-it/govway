@@ -1950,7 +1950,11 @@ public class ConsoleHelper {
 		if(servizioApplicativoList!=null && servizioApplicativoList.length>0){
 		
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVIZIO_APPLICATIVO );
+			String labelApplicativo = CostantiControlStation.LABEL_PARAMETRO_SERVIZIO_APPLICATIVO;
+			if(!this.isModalitaCompleta()) {
+				labelApplicativo = CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO;
+			}
+			de.setLabel(labelApplicativo );
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 			de.setValues(servizioApplicativoList);

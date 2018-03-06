@@ -42,6 +42,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -51,14 +52,17 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
@@ -73,6 +77,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Implementation;
+import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
@@ -93,6 +98,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -136,6 +142,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private boolean httpshostverify, httpsstato;
 	private String nomeSoggettoErogatore = "";
 	private String tipoSoggettoErogatore = "";
+	String providerSoggettoFruitore = null;
+	private String nomeSoggettoFruitore = "";
+	private String tipoSoggettoFruitore = "";
 	private boolean privato = false;
 	private String statoPackage = "";
 	private String versione;
@@ -181,6 +190,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String erogazioneAutorizzazione;
 	private String erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch;
 	private String erogazioneSoggettoAutenticato; 
+	
+	private String fruizioneServizioApplicativo;
+	private String fruizioneRuolo;
+	private String fruizioneAutenticazione;
+	private String fruizioneAutenticazioneOpzionale;
+	private String fruizioneAutorizzazione;
+	private String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
 	
 	private String tipoProtocollo;
 	
@@ -323,7 +339,19 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.versione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
 			this.nomeSA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
 			
-
+			
+			this.providerSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
+			
+			this.fruizioneServizioApplicativo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUIZIONE_NOME_SA);
+			this.fruizioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
+			this.fruizioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
+			this.fruizioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			this.fruizioneAutorizzazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
+			this.fruizioneAutorizzazioneAutenticati = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
+			this.fruizioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
+			this.fruizioneAutorizzazioneRuoliTipologia = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
+			this.fruizioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
+			
 
 			if(apsHelper.isMultipart()){
 				this.decodeRequestValidazioneDocumenti = true;
@@ -340,6 +368,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
@@ -436,9 +465,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String[] soggettiListLabel = null;
 			String[] accordiList = null;
 			String[] accordiListLabel = null;
+			String[] soggettiFruitoriList = null;
+			String[] soggettiFruitoriListLabel = null;
 			// int totSogg = 0, totAcc = 0;
 
-			boolean generaPACheckSoggetto = true;
+			boolean generaPortaApplicativa = !gestioneFruitori;
+			boolean generaPortaDelegata = gestioneFruitori;
 			boolean accordoPrivato = false;
 			String uriAccordo = null;
 			IDSoggetto soggettoReferente = null;
@@ -548,6 +580,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.provider = null;
 					this.tiposervizio = null;
 
+					this.providerSoggettoFruitore = null;
+					
 					// reset protocol properties
 					apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
 					apsHelper.deleteProtocolPropertiesBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
@@ -751,16 +785,20 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			} else {
 				if(soggettoReferente != null ){
 					Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggettoReferente);
-					this.provider = soggetto.getId() + "";
-					this.nomeSoggettoErogatore = soggetto.getNome();
-					this.tipoSoggettoErogatore = soggetto.getTipo();
+					for (Soggetto soggettoCheck : list) {
+						if(soggettoCheck.getTipo().equals(soggetto.getTipo()) && soggettoCheck.getNome().equals(soggetto.getNome())) {
+							this.provider = soggetto.getId() + "";
+							this.nomeSoggettoErogatore = soggetto.getNome();
+							this.tipoSoggettoErogatore = soggetto.getTipo();
+							break;
+						}
+					}
 				}
 			}
-
+			
 			if(this.tiposervizio == null){
 				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(this.tipoProtocollo,this.serviceBinding);
 			}
-
 
 
 			// Lista dei servizi applicativi per la creazione automatica
@@ -799,6 +837,94 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 			
+			// calcolo soggetti fruitori
+			List<Soggetto> listFruitori = null;
+			if(gestioneFruitori) {
+				Search searchSoggettiFruitori = new Search(true);
+				searchSoggettiFruitori.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, this.tipoProtocollo);
+				searchSoggettiFruitori.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+				if(apsCore.isVisioneOggettiGlobale(userLogin)){
+					listFruitori = soggettiCore.soggettiRegistroList(null, searchSoggettiFruitori);
+				}else{
+					listFruitori = soggettiCore.soggettiRegistroList(userLogin, searchSoggettiFruitori);
+				}
+	
+				if (listFruitori.size() > 0) {
+					List<String> soggettiListTmp = new ArrayList<String>();
+					List<String> soggettiListLabelTmp = new ArrayList<String>();
+					for (Soggetto soggetto : listFruitori) {
+						soggettiListTmp.add(soggetto.getId().toString());
+						soggettiListLabelTmp.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo() , soggetto.getNome()));
+					}
+	
+					if(soggettiListTmp.size()>0){
+						soggettiFruitoriList = soggettiListTmp.toArray(new String[1]);
+						soggettiFruitoriListLabel = soggettiListLabelTmp.toArray(new String[1]);
+					}
+					else {
+						pd.setMessage("Non esistono soggetti nel dominio interno", Costanti.MESSAGE_TYPE_INFO);
+						pd.disableEditMode();
+
+						Vector<DataElement> dati = new Vector<DataElement>();
+
+						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+						pd.setDati(dati);
+
+						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+						return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
+								ForwardParams.ADD());
+					}
+				}
+			}
+			
+			if(gestioneFruitori) {
+				if ((this.providerSoggettoFruitore != null) && !this.providerSoggettoFruitore.equals("")) {
+					long idFruitore = Long.parseLong(this.providerSoggettoFruitore);
+					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idFruitore);
+					this.nomeSoggettoFruitore = soggetto.getNome();
+					this.tipoSoggettoFruitore = soggetto.getTipo();
+					//profiloSoggettoErogatore = soggetto.getVersioneProtocollo();
+				}
+				else {
+					Soggetto soggetto = listFruitori.get(0);
+					this.providerSoggettoFruitore = soggetto.getId()+"";
+					this.nomeSoggettoFruitore = soggetto.getNome();
+					this.tipoSoggettoFruitore = soggetto.getTipo();
+				}
+			}
+			
+			// ServiziApplicativi
+			List<String> saFruitoriList = new ArrayList<String>();
+			saFruitoriList.add("-");
+			if(gestioneFruitori && this.nomeSoggettoFruitore!=null && this.tipoSoggettoFruitore!=null){
+				try{
+					
+					IDSoggetto idSoggettoSelected = new IDSoggetto(this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
+					
+					String auth = this.fruizioneAutenticazione;
+					if(auth==null || "".equals(auth)){
+						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					}
+					List<ServizioApplicativo> oldSilList = null;
+					if(apsCore.isVisioneOggettiGlobale(userLogin)){
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,null,
+								org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth));
+					}
+					else {
+						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,userLogin,
+								org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth));
+					}
+					if(oldSilList!=null && oldSilList.size()>0){
+						for (int i = 0; i < oldSilList.size(); i++) {
+							saFruitoriList.add(oldSilList.get(i).getNome());		
+						}
+					}
+				}catch(DriverConfigurazioneNotFound dNotFound){}
+
+			}
+			
 			List<String> soggettiAutenticati = new ArrayList<String>();
 			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
 			// lista soggetti autenticati per la creazione automatica
@@ -833,7 +959,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				IDSoggetto idSoggettoEr = new IDSoggetto(this.tipoSoggettoErogatore, this.nomeSoggettoErogatore);
 				Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
 				if(pddCore.isPddEsterna(soggetto.getPortaDominio())){
-					generaPACheckSoggetto = false;
+					generaPortaApplicativa = false;
 				}
 			}
 
@@ -851,7 +977,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				}
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 
 				// setto la barra del titolo
@@ -1020,6 +1151,24 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.erogazioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
 				}
 				
+				if(gestioneFruitori) {
+					if(this.fruizioneServizioApplicativo==null || "".equals(this.fruizioneServizioApplicativo))
+						this.fruizioneServizioApplicativo = "-";
+					if(this.fruizioneRuolo==null || "".equals(this.fruizioneRuolo))
+						this.fruizioneRuolo = "-";
+					if(this.fruizioneAutenticazione==null || "".equals(this.fruizioneAutenticazione))
+						this.fruizioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					if(this.fruizioneAutorizzazione==null || "".equals(this.fruizioneAutorizzazione)){
+						String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteDelegate();
+						this.fruizioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
+						if(TipoAutorizzazione.isAuthenticationRequired(tipoAutorizzazione))
+							this.fruizioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+						if(TipoAutorizzazione.isRolesRequired(tipoAutorizzazione))
+							this.fruizioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+						this.fruizioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
+					}
+				}
+				
 				// default
 				if(this.httpsalgoritmo==null || "".equals(this.httpsalgoritmo)){
 					this.httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
@@ -1054,20 +1203,24 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
-						saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
+						saSoggetti,this.nomeSA,generaPortaApplicativa,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 						soggettiAutenticati,soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
-						this.tipoProtocollo, listaTipiProtocollo);
+						this.tipoProtocollo, listaTipiProtocollo,
+						soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
+						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+						saFruitoriList);
 
 				boolean forceEnableConnettore = false;
-				if( (apsHelper.isModalitaStandard() || generaPACheckSoggetto)) {
+				if( (apsHelper.isModalitaStandard() || generaPortaApplicativa)) {
 					forceEnableConnettore = true;
 				}
 				
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
 						apsHelper.isModalitaCompleta()?null:
-							(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+							(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 						this.url, this.nome,
 						tipoJms, this.user,
 						this.password, this.initcont, this.urlpgk,
@@ -1135,10 +1288,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 					null,this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,
 					this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,erogazioneIsSupportatoAutenticazioneSoggetti,
-					generaPACheckSoggetto, listExtendedConnettore);
+					generaPortaApplicativa, listExtendedConnettore,
+					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch);
 
 			if(isOk){
-				if(generaPACheckSoggetto && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
+				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
 					if(saSoggetti==null || saSoggetti.length==0 || (saSoggetti.length==1 && "-".equals(saSoggetti[0]))){
 						pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PRIMA_DI_POTER_DEFINIRE_UN_ACCORDO_PARTE_SPECIFICA_DEVE_ESSERE_CREATO_UN_SERVIZIO_APPLICATIVO_EROGATO_DAL_SOGGETTO_X_Y,
 								this.tipoSoggettoErogatore, this.nomeSoggettoErogatore));
@@ -1178,7 +1333,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+				}
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 
 				// setto la barra del titolo
@@ -1198,20 +1358,24 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
-						saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
+						saSoggetti,this.nomeSA,generaPortaApplicativa,null,
 						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 						soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
-						this.tipoProtocollo, listaTipiProtocollo);
+						this.tipoProtocollo, listaTipiProtocollo,
+						soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
+						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+						saFruitoriList);
 
 				boolean forceEnableConnettore = false;
-				if( (apsHelper.isModalitaStandard() || generaPACheckSoggetto)) {
+				if( (apsHelper.isModalitaStandard() || generaPortaApplicativa)) {
 					forceEnableConnettore = true;
 				}
 				
 				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
 						apsHelper.isModalitaCompleta()?null:
-							(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+							(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 						this.url, this.nome, this.tipo, this.user,
 						this.password, this.initcont, this.urlpgk,
 						this.provurl, this.connfact, this.sendas,
@@ -1299,7 +1463,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			if(asps.getConfigurazioneServizio()==null)
 				asps.setConfigurazioneServizio(new ConfigurazioneServizio());
-			if(apsHelper.isModalitaCompleta() || !generaPACheckSoggetto) {
+			if(apsHelper.isModalitaCompleta() || !generaPortaApplicativa) {
 				asps.getConfigurazioneServizio().setConnettore(connettore);
 			}
 
@@ -1316,6 +1480,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// stato
 			asps.setStatoPackage(this.statoPackage);
 
+			if(gestioneFruitori) {
+				Fruitore fruitore = new Fruitore();
+				fruitore.setTipo(this.tipoSoggettoFruitore);
+				fruitore.setNome(this.nomeSoggettoFruitore);
+				asps.addFruitore(fruitore);
+			}
+			
 			//			Spostato sopra a livello di edit in progress			
 			//			// Se l'accordo Comune che si riferisce ha stato operativo o finale modifico lo stato in operativo
 			//			if(as.getStatoPackage().equals(StatiAccordo.operativo.toString()) || as.getStatoPackage().equals(StatiAccordo.finale.toString())){
@@ -1334,7 +1505,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					if(gestioneFruitori) {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+					}
+					else {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					}
 					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
 
 					// setto la barra del titolo
@@ -1349,7 +1525,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					boolean forceEnableConnettore = false;
-					if( (apsHelper.isModalitaStandard() || generaPACheckSoggetto)) {
+					if( (apsHelper.isModalitaStandard() || generaPortaApplicativa)) {
 						forceEnableConnettore = true;
 					}
 					
@@ -1359,15 +1535,19 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
-							saSoggetti,this.nomeSA,generaPACheckSoggetto,null,
+							saSoggetti,this.nomeSA,generaPortaApplicativa,null,
 							this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 							this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 							soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
-							this.tipoProtocollo, listaTipiProtocollo);
+							this.tipoProtocollo, listaTipiProtocollo,
+							soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
+							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+							saFruitoriList);
 
 					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
 							apsHelper.isModalitaCompleta()?null:
-								(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+								(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
@@ -1407,7 +1587,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 
 			// Creo Porta Applicativa (opzione??)
-			if(generaPACheckSoggetto){
+			if(generaPortaApplicativa){
 
 				IDSoggetto soggettoErogatore = new IDSoggetto(this.tipoSoggettoErogatore,this.nomeSoggettoErogatore);
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.tiposervizio, this.nomeservizio, soggettoErogatore, 
@@ -1471,6 +1651,34 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				listaOggettiDaCreare.add(portaApplicativa);						
 				listaOggettiDaCreare.add(mappingErogazione);
 
+			}
+			
+			if(generaPortaDelegata){
+				
+				IDSoggetto idFruitore = new IDSoggetto(this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
+				IDSoggetto soggettoErogatore = new IDSoggetto(this.tipoSoggettoErogatore,this.nomeSoggettoErogatore);
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.tiposervizio, this.nomeservizio, soggettoErogatore, 
+						(this.versione==null || "".equals(this.versione))? 1 : Integer.parseInt(this.versione));
+				ServiceBinding serviceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding()) ?
+						ServiceBinding.REST : ServiceBinding.SOAP;
+				Subscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+						createDefaultSubscription(serviceBinding, idFruitore, idServizio);
+				
+				PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();
+				MappingFruizionePortaDelegata mappingFruizione = subscriptionDefault.getMapping();
+				portaDelegata.setIdSoggetto((long) idProv);
+
+				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
+						this.fruizioneAutenticazione, this.fruizioneAutenticazioneOpzionale,
+						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+						this.fruizioneServizioApplicativo, this.fruizioneRuolo);
+							
+				// Verifico prima che la porta delegata non esista già
+				if (!porteDelegateCore.existsPortaDelegata(mappingFruizione.getIdPortaDelegata())){
+					listaOggettiDaCreare.add(portaDelegata);
+				}
+				listaOggettiDaCreare.add(mappingFruizione);
+				
 			}
 
 			//imposto properties custom

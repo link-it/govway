@@ -120,6 +120,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_PROTOCOLLO = "Modalità";
 	public final static String LABEL_PARAMETRO_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
+	public final static String LABEL_PARAMETRO_APPLICATIVO = "Applicativo";
 	public final static String LABEL_PARAMETRO_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_MESSAGE_SECURITY = "Message-Security";
 	public final static String LABEL_PARAMETRO_RICHIESTA = "Richiesta";
