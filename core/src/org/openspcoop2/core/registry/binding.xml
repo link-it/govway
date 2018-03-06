@@ -427,22 +427,23 @@
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
     <collection field="configurazioneAzione" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.core.registry.ConfigurazioneServizioAzione"/>
+      <structure name="configurazione-azione" map-as="_ConfigurazioneServizioAzione_Type"/>
     </collection>
   </mapping>
-  <mapping name="configurazione-azione" class="org.openspcoop2.core.registry.ConfigurazioneServizioAzione">
+  <mapping name="configurazione-azione" class="org.openspcoop2.core.registry.ConfigurazioneServizioAzione" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="required" map-as="_Connettore_Type"/>
-    <collection field="configurazioneFruitore" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore"/>
+    <collection field="azione" create-type="java.util.ArrayList">
+      <value name="azione" type="java.lang.String"/>
     </collection>
-    <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
-  <mapping name="configurazione-fruitore" class="org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore">
+
+  <mapping type-name="_ConfigurazioneServizioAzione_Type" class="org.openspcoop2.core.registry.ConfigurazioneServizioAzione" abstract="true">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="required" map-as="_Connettore_Type"/>
-    <value name="tipo" field="tipo" usage="required" style="attribute"/>
-    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <collection field="azione" create-type="java.util.ArrayList">
+      <value name="azione" type="java.lang.String"/>
+    </collection>
   </mapping>
   <mapping name="fruitore" class="org.openspcoop2.core.registry.Fruitore">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
@@ -450,6 +451,9 @@
       <value name="servizio-applicativo" type="java.lang.String"/>
     </collection>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
+    <collection field="configurazioneAzione" create-type="java.util.ArrayList">
+      <structure name="configurazione-azione" map-as="_ConfigurazioneServizioAzione_Type"/>
+    </collection>
     <collection field="protocolProperty" create-type="java.util.ArrayList">
       <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
     </collection>

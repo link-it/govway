@@ -1,7 +1,10 @@
 DELETE FROM acc_serv_componenti;
 DELETE FROM acc_serv_composti;
-DELETE FROM servizi_azioni;
+DELETE FROM servizi_fruitori_azione;
+DELETE FROM servizi_fruitori_azioni;
 DELETE FROM servizi_fruitori;
+DELETE FROM servizi_azione;
+DELETE FROM servizi_azioni;
 DELETE FROM servizi;
 DELETE FROM accordi_coop_partecipanti;
 DELETE FROM accordi_cooperazione;

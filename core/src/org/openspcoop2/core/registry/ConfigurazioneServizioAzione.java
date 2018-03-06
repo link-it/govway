@@ -21,7 +21,6 @@ package org.openspcoop2.core.registry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -39,9 +38,8 @@ import java.util.List;
  * &lt;complexType name="configurazione-servizio-azione">
  * 		&lt;sequence>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="configurazione-fruitore" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione-fruitore" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -55,7 +53,7 @@ import java.util.List;
 @XmlType(name = "configurazione-servizio-azione", 
   propOrder = {
   	"connettore",
-  	"configurazioneFruitore"
+  	"azione"
   }
 )
 
@@ -87,36 +85,28 @@ public class ConfigurazioneServizioAzione extends org.openspcoop2.utils.beans.Ba
     this.connettore = connettore;
   }
 
-  public void addConfigurazioneFruitore(ConfigurazioneServizioAzioneFruitore configurazioneFruitore) {
-    this.configurazioneFruitore.add(configurazioneFruitore);
+  public void addAzione(java.lang.String azione) {
+    this.azione.add(azione);
   }
 
-  public ConfigurazioneServizioAzioneFruitore getConfigurazioneFruitore(int index) {
-    return this.configurazioneFruitore.get( index );
+  public java.lang.String getAzione(int index) {
+    return this.azione.get( index );
   }
 
-  public ConfigurazioneServizioAzioneFruitore removeConfigurazioneFruitore(int index) {
-    return this.configurazioneFruitore.remove( index );
+  public java.lang.String removeAzione(int index) {
+    return this.azione.remove( index );
   }
 
-  public List<ConfigurazioneServizioAzioneFruitore> getConfigurazioneFruitoreList() {
-    return this.configurazioneFruitore;
+  public List<java.lang.String> getAzioneList() {
+    return this.azione;
   }
 
-  public void setConfigurazioneFruitoreList(List<ConfigurazioneServizioAzioneFruitore> configurazioneFruitore) {
-    this.configurazioneFruitore=configurazioneFruitore;
+  public void setAzioneList(List<java.lang.String> azione) {
+    this.azione=azione;
   }
 
-  public int sizeConfigurazioneFruitoreList() {
-    return this.configurazioneFruitore.size();
-  }
-
-  public java.lang.String getNome() {
-    return this.nome;
-  }
-
-  public void setNome(java.lang.String nome) {
-    this.nome = nome;
+  public int sizeAzioneList() {
+    return this.azione.size();
   }
 
   private static final long serialVersionUID = 1L;
@@ -129,38 +119,35 @@ public class ConfigurazioneServizioAzione extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="connettore",required=true,nillable=false)
   protected Connettore connettore;
 
-  @XmlElement(name="configurazione-fruitore",required=true,nillable=false)
-  protected List<ConfigurazioneServizioAzioneFruitore> configurazioneFruitore = new ArrayList<ConfigurazioneServizioAzioneFruitore>();
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="azione",required=true,nillable=false)
+  protected List<java.lang.String> azione = new ArrayList<java.lang.String>();
 
   /**
-   * @deprecated Use method getConfigurazioneFruitoreList
-   * @return List<ConfigurazioneServizioAzioneFruitore>
+   * @deprecated Use method getAzioneList
+   * @return List<java.lang.String>
   */
   @Deprecated
-  public List<ConfigurazioneServizioAzioneFruitore> getConfigurazioneFruitore() {
-  	return this.configurazioneFruitore;
+  public List<java.lang.String> getAzione() {
+  	return this.azione;
   }
 
   /**
-   * @deprecated Use method setConfigurazioneFruitoreList
-   * @param configurazioneFruitore List<ConfigurazioneServizioAzioneFruitore>
+   * @deprecated Use method setAzioneList
+   * @param azione List<java.lang.String>
   */
   @Deprecated
-  public void setConfigurazioneFruitore(List<ConfigurazioneServizioAzioneFruitore> configurazioneFruitore) {
-  	this.configurazioneFruitore=configurazioneFruitore;
+  public void setAzione(List<java.lang.String> azione) {
+  	this.azione=azione;
   }
 
   /**
-   * @deprecated Use method sizeConfigurazioneFruitoreList
+   * @deprecated Use method sizeAzioneList
    * @return lunghezza della lista
   */
   @Deprecated
-  public int sizeConfigurazioneFruitore() {
-  	return this.configurazioneFruitore.size();
+  public int sizeAzione() {
+  	return this.azione.size();
   }
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="nome",required=true)
-  protected java.lang.String nome;
 
 }

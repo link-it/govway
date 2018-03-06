@@ -10023,9 +10023,64 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			rs.close();
 			stm.close();
+			
+			if(accordoServizioParteSpecifica.sizeFruitoreList()>0) {
+				for (Fruitore fruitoreLetto : accordoServizioParteSpecifica.getFruitoreList()) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_fruizione = ?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, fruitoreLetto.getId());
 
+					this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, fruitoreLetto.getId()));
+					rs = stm.executeQuery();
 
-			ConfigurazioneServizioAzione azione = null;
+					while (rs.next()) {
+						ConfigurazioneServizioAzione conf = new ConfigurazioneServizioAzione();
+
+						idConnettore = rs.getLong("id_connettore"); // recuper id del
+						// connettore
+						conf.setConnettore(getConnettore(idConnettore, con));
+
+						// aggiungo il fruitore al servizio da restituire
+						conf.setId(rs.getLong("id"));
+						fruitoreLetto.addConfigurazioneAzione(conf);
+
+					}
+					rs.close();
+					stm.close();
+					
+					
+					if(fruitoreLetto.sizeConfigurazioneAzioneList()>0) {
+						for (ConfigurazioneServizioAzione conf : fruitoreLetto.getConfigurazioneAzioneList()) {
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONE);
+							sqlQueryObject.addSelectField("*");
+							sqlQueryObject.addWhereCondition("id_fruizione_azioni = ?");
+							sqlQuery = sqlQueryObject.createSQLQuery();
+							stm = con.prepareStatement(sqlQuery);
+							stm.setLong(1, conf.getId());
+
+							this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, conf.getId()));
+							rs = stm.executeQuery();
+
+							while (rs.next()) {
+								
+								conf.addAzione(rs.getString("nome_azione"));
+
+							}
+							rs.close();
+							stm.close();
+							
+						}
+					}
+				}
+			}
+
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_AZIONI);
@@ -10039,21 +10094,45 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
-				azione = new ConfigurazioneServizioAzione();
-
-				azione.setNome(rs.getString("nome_azione"));
+				ConfigurazioneServizioAzione conf = new ConfigurazioneServizioAzione();
 
 				idConnettore = rs.getLong("id_connettore"); // recuper id del
 				// connettore
-				azione.setConnettore(getConnettore(idConnettore, con));
+				conf.setConnettore(getConnettore(idConnettore, con));
 
 				// aggiungo il fruitore al servizio da restituire
-				azione.setId(rs.getLong("id"));
-				accordoServizioParteSpecifica.getConfigurazioneServizio().addConfigurazioneAzione(azione);
+				conf.setId(rs.getLong("id"));
+				accordoServizioParteSpecifica.getConfigurazioneServizio().addConfigurazioneAzione(conf);
 
 			}
 			rs.close();
 			stm.close();
+			
+			
+			if(accordoServizioParteSpecifica.getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0) {
+				for (ConfigurazioneServizioAzione conf : accordoServizioParteSpecifica.getConfigurazioneServizio().getConfigurazioneAzioneList()) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_AZIONE);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_servizio_azioni = ?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, conf.getId());
+
+					this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, conf.getId()));
+					rs = stm.executeQuery();
+
+					while (rs.next()) {
+						
+						conf.addAzione(rs.getString("nome_azione"));
+
+					}
+					rs.close();
+					stm.close();
+					
+				}
+			}
 
 
 			// imposto uri accordo di servizio parte comune
@@ -13866,13 +13945,35 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 
 			//Svuoto il db del registro servizi
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI_AZIONE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_AZIONE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_AZIONI);
 			updateString = sqlQueryObject.createSQLDelete();

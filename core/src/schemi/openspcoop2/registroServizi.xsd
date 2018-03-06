@@ -1007,7 +1007,7 @@
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="configurazione-servizio" type="configurazione-servizio" maxOccurs="1" minOccurs="0" />
-			<xsd:element ref="fruitore" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element minOccurs="0" ref="fruitore" maxOccurs="unbounded" />
 			<!-- Allegati -->
 			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
 			<!-- Specifiche Semiformale -->
@@ -1213,16 +1213,8 @@
 	<xsd:complexType name="configurazione-servizio-azione">
 		<xsd:sequence>
 			<xsd:element ref="connettore" maxOccurs="1" minOccurs="1" />
-			<xsd:element name="configurazione-fruitore" type="configurazione-servizio-azione-fruitore" maxOccurs="unbounded" minOccurs="0"/>		
+			<xsd:element name="azione" type="xsd:string" maxOccurs="unbounded" minOccurs="1"/>		
 		</xsd:sequence>
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-	</xsd:complexType>
-	<xsd:complexType name="configurazione-servizio-azione-fruitore">
-		<xsd:sequence>
-			<xsd:element ref="connettore" maxOccurs="1" minOccurs="1" />
-		</xsd:sequence>
-		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	
 	
@@ -1235,6 +1227,7 @@
 			<!-- end-extensions -->
 			<!-- Connettore -->
 			<xsd:element ref="connettore" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="configurazione-azione" type="configurazione-servizio-azione" maxOccurs="unbounded" minOccurs="0"/>		
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>

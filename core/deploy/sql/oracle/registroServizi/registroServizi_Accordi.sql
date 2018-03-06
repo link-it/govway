@@ -555,6 +555,65 @@ end;
 
 
 
+CREATE SEQUENCE seq_servizi_azioni MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE servizi_azioni
+(
+	id_servizio NUMBER NOT NULL,
+	id_connettore NUMBER NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_servizi_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
+	CONSTRAINT fk_servizi_azioni_2 FOREIGN KEY (id_servizio) REFERENCES servizi(id),
+	CONSTRAINT pk_servizi_azioni PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_servizi_azioni_1 ON servizi_azioni (id_servizio);
+CREATE TRIGGER trg_servizi_azioni
+BEFORE
+insert on servizi_azioni
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_servizi_azioni.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_servizi_azione MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE servizi_azione
+(
+	nome_azione VARCHAR2(255) NOT NULL,
+	id_servizio_azioni NUMBER NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_servizi_azione_1 UNIQUE (nome_azione,id_servizio_azioni),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_servizi_azione_1 FOREIGN KEY (id_servizio_azioni) REFERENCES servizi_azioni(id),
+	CONSTRAINT pk_servizi_azione PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_servizi_azione
+BEFORE
+insert on servizi_azione
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_servizi_azione.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
 CREATE SEQUENCE seq_servizi_fruitori MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
 CREATE TABLE servizi_fruitori
@@ -597,30 +656,58 @@ end;
 
 
 
-CREATE SEQUENCE seq_servizi_azioni MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_servizi_fruitori_azioni MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE servizi_azioni
+CREATE TABLE servizi_fruitori_azioni
 (
-	nome_azione VARCHAR2(255) NOT NULL,
-	id_servizio NUMBER NOT NULL,
+	id_fruizione NUMBER NOT NULL,
 	id_connettore NUMBER NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_servizi_azioni_1 UNIQUE (nome_azione,id_servizio),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_servizi_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
-	CONSTRAINT fk_servizi_azioni_2 FOREIGN KEY (id_servizio) REFERENCES servizi(id),
-	CONSTRAINT pk_servizi_azioni PRIMARY KEY (id)
+	CONSTRAINT fk_servizi_fruitori_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
+	CONSTRAINT fk_servizi_fruitori_azioni_2 FOREIGN KEY (id_fruizione) REFERENCES servizi_fruitori(id),
+	CONSTRAINT pk_servizi_fruitori_azioni PRIMARY KEY (id)
 );
 
-CREATE TRIGGER trg_servizi_azioni
+-- index
+CREATE INDEX index_serv_fru_azioni_1 ON servizi_fruitori_azioni (id_fruizione);
+CREATE TRIGGER trg_servizi_fruitori_azioni
 BEFORE
-insert on servizi_azioni
+insert on servizi_fruitori_azioni
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_servizi_azioni.nextval INTO :new.id
+      SELECT seq_servizi_fruitori_azioni.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_servizi_fruitori_azione MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE servizi_fruitori_azione
+(
+	nome_azione VARCHAR2(255) NOT NULL,
+	id_fruizione_azioni NUMBER NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_serv_fru_azione_1 UNIQUE (nome_azione,id_fruizione_azioni),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_servizi_fruitori_azione_1 FOREIGN KEY (id_fruizione_azioni) REFERENCES servizi_fruitori_azioni(id),
+	CONSTRAINT pk_servizi_fruitori_azione PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_servizi_fruitori_azione
+BEFORE
+insert on servizi_fruitori_azione
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_servizi_fruitori_azione.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

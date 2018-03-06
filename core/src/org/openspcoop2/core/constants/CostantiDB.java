@@ -58,8 +58,11 @@ public final class CostantiDB {
     public static final String RUOLI	= "ruoli";
     public static final String SOGGETTI_RUOLI = "soggetti_ruoli";
     public static final String SERVIZI = "servizi";
-    public static final String SERVIZI_FRUITORI = "servizi_fruitori";
     public static final String SERVIZI_AZIONI = "servizi_azioni";
+    public static final String SERVIZI_AZIONE = "servizi_azione";
+    public static final String SERVIZI_FRUITORI = "servizi_fruitori";
+    public static final String SERVIZI_FRUITORI_AZIONI = "servizi_fruitori_azioni";
+    public static final String SERVIZI_FRUITORI_AZIONE = "servizi_fruitori_azione";
     public static final String ACCORDI = "accordi";
     public static final String ACCORDI_AZIONI = "accordi_azioni";
     public static final String PORT_TYPE = "port_type";

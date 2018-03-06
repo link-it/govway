@@ -35,8 +35,11 @@
                                 <linkit:sql-table object-name="accordi-coop-partecipanti" object-type="accordi-coop-partecipanti"/>
                                 <linkit:sql-comment><![CDATA[**** Accordi di Servizio Parte Specifica ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="servizi" object-type="servizi"/>
-                                <linkit:sql-table object-name="servizi-fruitori" object-type="servizi-fruitori"/>
                                 <linkit:sql-table object-name="servizi-azioni" object-type="servizi-azioni"/>
+                                <linkit:sql-table object-name="servizi-azione" object-type="servizi-azione"/>
+                                <linkit:sql-table object-name="servizi-fruitori" object-type="servizi-fruitori"/>
+                                <linkit:sql-table object-name="servizi-fruitori-azioni" object-type="servizi-fruitori-azioni"/>
+                                <linkit:sql-table object-name="servizi-fruitori-azione" object-type="servizi-fruitori-azione"/>
                                 <linkit:sql-comment><![CDATA[**** Accordi di Servizio Composti ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="acc-serv-composti" object-type="acc-serv-composti"/>
                                 <linkit:sql-table object-name="acc-serv-componenti" object-type="acc-serv-componenti"/>
@@ -2066,7 +2069,106 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
         </xsd:complexType>
     </xsd:element>
     
+    <xsd:element name="servizi-azioni">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi_azioni"
+                        comment="Definisce configurazioni personalizzazione per alcune azioni di un servizio">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="servizi"
+                            reference-object-type="servizi"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_servizio"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="connettori">
+                            <linkit:sql-table-fk-field name="id_connettore"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_servizio"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_servizio" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio fruito [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_connettore" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore [FK logica verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     
+    <xsd:element name="servizi-azione">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi_azione"
+                        comment="Definisce l'elenco delle azioni personalizzazione nella tabella servizi_azioni">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="servizi-azioni"
+                            reference-object-type="servizi-azioni"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_servizio_azioni"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="nome_azione"/>
+                            <linkit:sql-table-unique-field name="id_servizio_azioni"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome_azione" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo unico dell'azione all'interno del servizio</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_servizio_azioni" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio_azioni"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione del servizio [FK logica verso tabella servizi_azioni(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     
     
     
@@ -2185,52 +2287,41 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
         </xsd:complexType>
     </xsd:element>
     
-    
-    <xsd:element name="servizi-azioni">
+        
+    <xsd:element name="servizi-fruitori-azioni">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="servizi_azioni"
-                                              comment="Definisce configurazioni personalizzazione per alcune azioni di un servizio">
+                    <linkit:sql-table-mapping name="servizi_fruitori_azioni"
+                        comment="Definisce configurazioni personalizzazione per alcune azioni di una fruizione di servizio">
+                        <linkit:sql-table-constraint unique="uniq_serv_fru_azioni" index="index_serv_fru_azioni"/>
                         <linkit:sql-table-foreign-key
-                            reference-object-name="servizi"
-                            reference-object-type="servizi"
+                            reference-object-name="servizi-fruitori"
+                            reference-object-type="servizi-fruitori"
                             reference-primary-key="true">
-                            <linkit:sql-table-fk-field name="id_servizio"/>
+                            <linkit:sql-table-fk-field name="id_fruizione"/>
                         </linkit:sql-table-foreign-key>
                         <linkit:sql-table-foreign-key reference-table="connettori">
                             <linkit:sql-table-fk-field name="id_connettore"/>
                             <linkit:sql-table-fk-reference-column name="id"/>
                         </linkit:sql-table-foreign-key>
-                        <linkit:sql-table-unique create-index="true">
-                            <linkit:sql-table-unique-field name="nome_azione"/>
-                            <linkit:sql-table-unique-field name="id_servizio"/>
-                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_fruizione"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="nome_azione" type="xsd:string">
+                <xsd:element name="id_fruizione" type="xsd:long">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="nome_azione"/>
-                                <linkit:sql-ddl-column-comment>Identificativo unico dell'azione all'interno del servizio</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="id_servizio" type="xsd:long">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="id_servizio"/>
-                                <linkit:sql-ddl-column-comment>Identificativo del servizio fruito [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="id_fruizione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della fruizione del servizio [FK logica verso tabella servizi_fruitori(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -2249,6 +2340,57 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    <xsd:element name="servizi-fruitori-azione">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi_fruitori_azione"
+                        comment="Definisce l'elenco delle azioni personalizzazione nella tabella servizi_fruitori_azioni">
+                        <linkit:sql-table-constraint unique="uniq_serv_fru_azione" index="index_serv_fru_azione"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="servizi-fruitori-azioni"
+                            reference-object-type="servizi-fruitori-azioni"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_fruizione_azioni"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="nome_azione"/>
+                            <linkit:sql-table-unique-field name="id_fruizione_azioni"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="nome_azione" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome_azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo unico dell'azione all'interno del servizio</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_fruizione_azioni" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_fruizione_azioni"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione della fruizione di servizio [FK logica verso tabella servizi_fruitori_azioni(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
     
     
     

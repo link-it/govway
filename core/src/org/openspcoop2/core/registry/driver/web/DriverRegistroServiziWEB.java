@@ -49,7 +49,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
-import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
@@ -2700,6 +2699,22 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				if( (checkFr.getNome()==null) || (checkFr.getTipo()==null)){
 					throw new DriverRegistroServiziException("Definizione di un fruitore senza nome o tipo");
 				}
+				for(int j=0;j<checkFr.sizeConfigurazioneAzioneList();j++){
+					ConfigurazioneServizioAzione checkAz = checkFr.getConfigurazioneAzione(i);
+					if( (checkAz.sizeAzioneList()<=0) || (checkAz.getConnettore()==null)){
+						throw new DriverRegistroServiziException("Definizione di un azione senza nome o connettore");
+					}
+					// controllo connettore
+					if(checkAz.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAz.getConnettore().getTipo())){
+						boolean connettoreNonDefinito = false;
+						if( checkAz.getConnettore().getTipo() == null ){
+							connettoreNonDefinito = true;
+						}
+						if(connettoreNonDefinito){
+							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getAzioneList()+" della fruizione del servizio non corretta");
+						}
+					}
+				}
 				// Controllo pre-esistenza del soggetto fruitore
 				String idSoggettoFruitore_string = checkFr.getTipo() + checkFr.getNome();
 				IDSoggetto idSoggettoFruitore = new IDSoggetto(checkFr.getTipo(),checkFr.getNome());
@@ -2711,7 +2726,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			if(asps.getConfigurazioneServizio()!=null){
 				for(int i=0;i<asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
 					ConfigurazioneServizioAzione checkAz = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-					if( (checkAz.getNome()==null) || (checkAz.getConnettore()==null)){
+					if( (checkAz.sizeAzioneList()<=0) || (checkAz.getConnettore()==null)){
 						throw new DriverRegistroServiziException("Definizione di un azione senza nome o connettore");
 					}
 					// controllo connettore
@@ -2721,23 +2736,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 							connettoreNonDefinito = true;
 						}
 						if(connettoreNonDefinito){
-							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getNome()+" del servizio non corretta");
-						}
-					}
-					for(int j=0;j<checkAz.sizeConfigurazioneFruitoreList();j++){
-						ConfigurazioneServizioAzioneFruitore checkAzFr = checkAz.getConfigurazioneFruitore(j);
-						if( (checkAzFr.getNome()==null) || (checkAzFr.getTipo()==null) || (checkAzFr.getConnettore()==null)){
-							throw new DriverRegistroServiziException("Definizione di un fruitore di una azione senza nome o connettore");
-						}
-						// controllo connettore
-						if(checkAzFr.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAzFr.getConnettore().getTipo())){
-							boolean connettoreNonDefinito = false;
-							if( checkAzFr.getConnettore().getTipo() == null ){
-								connettoreNonDefinito = true;
-							}
-							if(connettoreNonDefinito){
-								throw new DriverRegistroServiziException("Definizione del punto di accesso del fruitore "+checkAzFr.getTipo()+checkAzFr.getNome()+" dell'azione "+checkAz.getNome()+" del servizio non corretta");
-							}
+							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getAzioneList()+" del servizio non corretta");
 						}
 					}
 				}
@@ -2881,6 +2880,22 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				if( (checkFr.getNome()==null) || (checkFr.getTipo()==null)){
 					throw new DriverRegistroServiziException("Definizione di un fruitore senza nome o tipo");
 				}
+				for(int j=0;j<checkFr.sizeConfigurazioneAzioneList();j++){
+					ConfigurazioneServizioAzione checkAz = checkFr.getConfigurazioneAzione(j);
+					if( (checkAz.sizeAzioneList()<=0) || (checkAz.getConnettore()==null)){
+						throw new DriverRegistroServiziException("Definizione di un fruitore senza nome o connettore");
+					}
+					// controllo connettore
+					if(checkAz.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAz.getConnettore().getTipo())){
+						boolean connettoreNonDefinito = false;
+						if( checkAz.getConnettore().getTipo() == null ){
+							connettoreNonDefinito = true;
+						}
+						if(connettoreNonDefinito){
+							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getAzioneList()+" della fruizione del servizio non corretta");
+						}
+					}
+				}
 				// Controllo pre-esistenza del soggetto fruitore
 				/*String idSoggettoFruitore_string = checkFr.getTipo() + checkFr.getNome();
 				IDSoggetto idSoggettoFruitore = new IDSoggetto(checkFr.getTipo(),checkFr.getNome());
@@ -2893,7 +2908,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			if(asps.getConfigurazioneServizio()!=null){
 				for(int i=0;i<asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
 					ConfigurazioneServizioAzione checkAz = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-					if( (checkAz.getNome()==null) || (checkAz.getConnettore()==null)){
+					if( (checkAz.sizeAzioneList()<=0) || (checkAz.getConnettore()==null)){
 						throw new DriverRegistroServiziException("Definizione di un fruitore senza nome o connettore");
 					}
 					// controllo connettore
@@ -2903,23 +2918,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 							connettoreNonDefinito = true;
 						}
 						if(connettoreNonDefinito){
-							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getNome()+" del servizio non corretta");
-						}
-					}
-					for(int j=0;j<checkAz.sizeConfigurazioneFruitoreList();j++){
-						ConfigurazioneServizioAzioneFruitore checkAzFr = checkAz.getConfigurazioneFruitore(j);
-						if( (checkAzFr.getNome()==null) || (checkAzFr.getNome()==null) || (checkAzFr.getConnettore()==null)){
-							throw new DriverRegistroServiziException("Definizione di un fruitore di una azione senza nome/tipo o connettore");
-						}
-						// controllo connettore
-						if(checkAzFr.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAzFr.getConnettore().getTipo())){
-							boolean connettoreNonDefinito = false;
-							if( checkAzFr.getConnettore().getTipo() == null ){
-								connettoreNonDefinito = true;
-							}
-							if(connettoreNonDefinito){
-								throw new DriverRegistroServiziException("Definizione del punto di accesso del fruitore "+checkAzFr.getTipo()+checkAzFr.getNome()+" dell'azione "+checkAz.getNome()+" del servizio non corretta");
-							}
+							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getAzioneList()+" del servizio non corretta");
 						}
 					}
 				}

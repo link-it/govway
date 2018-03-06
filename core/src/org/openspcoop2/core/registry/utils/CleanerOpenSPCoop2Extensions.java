@@ -32,7 +32,6 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
-import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.BindingUse;
 
@@ -172,13 +171,6 @@ public class CleanerOpenSPCoop2Extensions {
 					if(servizioAzione.getConnettore()!=null){
 						this.clean(servizioAzione.getConnettore());
 					}
-					if(servizioAzione.sizeConfigurazioneFruitoreList()>0){
-						for (ConfigurazioneServizioAzioneFruitore servizioAzioneFruitore : servizioAzione.getConfigurazioneFruitoreList()) {
-							if(servizioAzioneFruitore.getConnettore()!=null){
-								this.clean(servizioAzioneFruitore.getConnettore());
-							}
-						}
-					}
 				}
 			}
 			
@@ -187,6 +179,14 @@ public class CleanerOpenSPCoop2Extensions {
 		if(accordo.sizeFruitoreList()>0){
 			for (Fruitore fruitore : accordo.getFruitoreList()) {
 				this.clean(fruitore);
+				
+				if(fruitore.sizeConfigurazioneAzioneList()>0){
+					for (ConfigurazioneServizioAzione servizioAzione : fruitore.getConfigurazioneAzioneList()) {
+						if(servizioAzione.getConnettore()!=null){
+							this.clean(servizioAzione.getConnettore());
+						}
+					}
+				}
 			}
 		}
 		

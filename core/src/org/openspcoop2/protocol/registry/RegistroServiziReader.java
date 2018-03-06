@@ -46,6 +46,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
@@ -1823,46 +1824,7 @@ public class RegistroServiziReader {
 		String nomeFruitore = idSoggetto.getNome();
 		String tipoFruitore = idSoggetto.getTipo();
 
-		if(azione != null){
-			if(servizio.getConfigurazioneServizio()!=null){
-				for(int i=0; i<servizio.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
-					if(azione.equals(servizio.getConfigurazioneServizio().getConfigurazioneAzione(i).getNome())){
-						org.openspcoop2.core.registry.ConfigurazioneServizioAzione azSPC = 
-							servizio.getConfigurazioneServizio().getConfigurazioneAzione(i);
-	
-						// Cerco il connettore nel fruitore di un azione
-						for(int j=0; j<azSPC.sizeConfigurazioneFruitoreList();j++){
-							if( (azSPC.getConfigurazioneFruitore(i).getTipo() != null) && 
-									(azSPC.getConfigurazioneFruitore(i).getNome() != null) ){
-								if( (azSPC.getConfigurazioneFruitore(i).getTipo().equals(tipoFruitore)) && 
-										(azSPC.getConfigurazioneFruitore(i).getNome().equals(nomeFruitore)) ){
-									if(azSPC.getConfigurazioneFruitore(i).getConnettore()!=null){
-										if (azSPC.getConfigurazioneFruitore(i).getConnettore().getTipo() != null)
-											connector = azSPC.getConfigurazioneFruitore(i).getConnettore().mappingIntoConnettoreConfigurazione();
-										else
-											connector = this.getConnettore(idService,azSPC.getConfigurazioneFruitore(i).getConnettore().getNome(),nomeRegistro);
-									}
-									break;
-								}
-							}
-						}
-						if(connector!=null && !CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo()))
-							break;
-	
-						//	Uso il connettore dell'azione
-						if(azSPC.getConnettore()!=null){
-							if (azSPC.getConnettore().getTipo() != null)
-								connector = azSPC.getConnettore().mappingIntoConnettoreConfigurazione();
-							else
-								connector = getConnettore(idService,connector.getNome(),nomeRegistro);
-						}
-						break;
-					}
-				}
-			}
-		}
-
-		//Cerco il connettore nel soggetto fruitore
+		//Cerco il connettore nel soggetto fruitore (e nelle azioni)
 		if(connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())){
 			for(int i=0; i<servizio.sizeFruitoreList(); i++){
 				org.openspcoop2.core.registry.Fruitore f = servizio.getFruitore(i);
@@ -1870,11 +1832,37 @@ public class RegistroServiziReader {
 						(f.getNome() != null) ){
 					if( (f.getTipo().equals(tipoFruitore)) && 
 							(f.getNome().equals(nomeFruitore)) ){
+						
+						for(int j=0; j<f.sizeConfigurazioneAzioneList();j++){
+							boolean findAzione = false;
+							ConfigurazioneServizioAzione conf = f.getConfigurazioneAzione(j);
+							if(conf!=null && conf.sizeAzioneList()>0) {
+								for (String azioneCheck : conf.getAzioneList()) {
+									if(azione.equals(azioneCheck)){
+										findAzione = true;
+									}
+								}
+							}
+							if(findAzione){
+								//	Uso il connettore dell'azione del fruitore
+								if(conf.getConnettore()!=null){
+									if (conf.getConnettore().getTipo() != null)
+										connector = conf.getConnettore().mappingIntoConnettoreConfigurazione();
+									else
+										connector = getConnettore(idService,conf.getConnettore().getNome(),nomeRegistro);
+								}
+								break;
+							}
+						}
+						
+						if(connector!=null && !CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo()))
+							break;
+						
 						if(f.getConnettore()!=null){
 							if (f.getConnettore().getTipo() != null)
 								connector = f.getConnettore().mappingIntoConnettoreConfigurazione();
 							else
-								connector = getConnettore(idService,connector.getNome(),nomeRegistro);
+								connector = getConnettore(idService,f.getConnettore().getNome(),nomeRegistro);
 						}
 						break;
 					}
@@ -1882,13 +1870,42 @@ public class RegistroServiziReader {
 			}
 		}
 
+		//Cerco il connettore nell'azione del servizio
+		if(connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())){
+			if(azione != null){
+				if(servizio.getConfigurazioneServizio()!=null){
+					for(int i=0; i<servizio.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
+						boolean findAzione = false;
+						ConfigurazioneServizioAzione conf = servizio.getConfigurazioneServizio().getConfigurazioneAzione(i);
+						if(conf!=null && conf.sizeAzioneList()>0) {
+							for (String azioneCheck : conf.getAzioneList()) {
+								if(azione.equals(azioneCheck)){
+									findAzione = true;
+								}
+							}
+						}
+						if(findAzione){
+							//	Uso il connettore dell'azione
+							if(conf.getConnettore()!=null){
+								if (conf.getConnettore().getTipo() != null)
+									connector = conf.getConnettore().mappingIntoConnettoreConfigurazione();
+								else
+									connector = getConnettore(idService,conf.getConnettore().getNome(),nomeRegistro);
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		
 		//Cerco il connettore nel servizio
 		if (connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())) {
 			if(servizio.getConfigurazioneServizio()!=null && servizio.getConfigurazioneServizio().getConnettore()!=null){
 				if (servizio.getConfigurazioneServizio().getConnettore().getTipo() != null)
 					connector = servizio.getConfigurazioneServizio().getConnettore().mappingIntoConnettoreConfigurazione();
 				else
-					connector = getConnettore(idService,connector.getNome(),nomeRegistro);
+					connector = getConnettore(idService,servizio.getConfigurazioneServizio().getConnettore().getNome(),nomeRegistro);
 			}
 		}
 

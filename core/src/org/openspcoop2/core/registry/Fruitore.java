@@ -40,6 +40,7 @@ import java.util.List;
  * 		&lt;sequence>
  * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="configurazione-azione" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -66,6 +67,7 @@ import java.util.List;
   propOrder = {
   	"servizioApplicativo",
   	"connettore",
+  	"configurazioneAzione",
   	"protocolProperty"
   }
 )
@@ -120,6 +122,30 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public void setConnettore(Connettore connettore) {
     this.connettore = connettore;
+  }
+
+  public void addConfigurazioneAzione(ConfigurazioneServizioAzione configurazioneAzione) {
+    this.configurazioneAzione.add(configurazioneAzione);
+  }
+
+  public ConfigurazioneServizioAzione getConfigurazioneAzione(int index) {
+    return this.configurazioneAzione.get( index );
+  }
+
+  public ConfigurazioneServizioAzione removeConfigurazioneAzione(int index) {
+    return this.configurazioneAzione.remove( index );
+  }
+
+  public List<ConfigurazioneServizioAzione> getConfigurazioneAzioneList() {
+    return this.configurazioneAzione;
+  }
+
+  public void setConfigurazioneAzioneList(List<ConfigurazioneServizioAzione> configurazioneAzione) {
+    this.configurazioneAzione=configurazioneAzione;
+  }
+
+  public int sizeConfigurazioneAzioneList() {
+    return this.configurazioneAzione.size();
   }
 
   public void addProtocolProperty(ProtocolProperty protocolProperty) {
@@ -266,6 +292,36 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   @XmlElement(name="connettore",required=false,nillable=false)
   protected Connettore connettore;
+
+  @XmlElement(name="configurazione-azione",required=true,nillable=false)
+  protected List<ConfigurazioneServizioAzione> configurazioneAzione = new ArrayList<ConfigurazioneServizioAzione>();
+
+  /**
+   * @deprecated Use method getConfigurazioneAzioneList
+   * @return List<ConfigurazioneServizioAzione>
+  */
+  @Deprecated
+  public List<ConfigurazioneServizioAzione> getConfigurazioneAzione() {
+  	return this.configurazioneAzione;
+  }
+
+  /**
+   * @deprecated Use method setConfigurazioneAzioneList
+   * @param configurazioneAzione List<ConfigurazioneServizioAzione>
+  */
+  @Deprecated
+  public void setConfigurazioneAzione(List<ConfigurazioneServizioAzione> configurazioneAzione) {
+  	this.configurazioneAzione=configurazioneAzione;
+  }
+
+  /**
+   * @deprecated Use method sizeConfigurazioneAzioneList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeConfigurazioneAzione() {
+  	return this.configurazioneAzione.size();
+  }
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
   protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();

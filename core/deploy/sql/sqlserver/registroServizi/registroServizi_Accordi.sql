@@ -374,6 +374,41 @@ CREATE UNIQUE INDEX index_servizi_1 ON servizi (id_soggetto,tipo_servizio,nome_s
 
 
 
+CREATE TABLE servizi_azioni
+(
+	id_servizio BIGINT NOT NULL,
+	id_connettore BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_servizi_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
+	CONSTRAINT fk_servizi_azioni_2 FOREIGN KEY (id_servizio) REFERENCES servizi(id),
+	CONSTRAINT pk_servizi_azioni PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_servizi_azioni_1 ON servizi_azioni (id_servizio);
+
+
+
+CREATE TABLE servizi_azione
+(
+	nome_azione VARCHAR(255) NOT NULL,
+	id_servizio_azioni BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_servizi_azione_1 UNIQUE (nome_azione,id_servizio_azioni),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_servizi_azione_1 FOREIGN KEY (id_servizio_azioni) REFERENCES servizi_azioni(id),
+	CONSTRAINT pk_servizi_azione PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_servizi_azione_1 ON servizi_azione (nome_azione,id_servizio_azioni);
+
+
+
 CREATE TABLE servizi_fruitori
 (
 	id_servizio BIGINT NOT NULL,
@@ -401,23 +436,38 @@ CREATE UNIQUE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id
 
 
 
-CREATE TABLE servizi_azioni
+CREATE TABLE servizi_fruitori_azioni
 (
-	nome_azione VARCHAR(255) NOT NULL,
-	id_servizio BIGINT NOT NULL,
+	id_fruizione BIGINT NOT NULL,
 	id_connettore BIGINT NOT NULL,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
-	-- unique constraints
-	CONSTRAINT unique_servizi_azioni_1 UNIQUE (nome_azione,id_servizio),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_servizi_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
-	CONSTRAINT fk_servizi_azioni_2 FOREIGN KEY (id_servizio) REFERENCES servizi(id),
-	CONSTRAINT pk_servizi_azioni PRIMARY KEY (id)
+	CONSTRAINT fk_servizi_fruitori_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
+	CONSTRAINT fk_servizi_fruitori_azioni_2 FOREIGN KEY (id_fruizione) REFERENCES servizi_fruitori(id),
+	CONSTRAINT pk_servizi_fruitori_azioni PRIMARY KEY (id)
 );
 
 -- index
-CREATE UNIQUE INDEX index_servizi_azioni_1 ON servizi_azioni (nome_azione,id_servizio);
+CREATE INDEX index_serv_fru_azioni_1 ON servizi_fruitori_azioni (id_fruizione);
+
+
+
+CREATE TABLE servizi_fruitori_azione
+(
+	nome_azione VARCHAR(255) NOT NULL,
+	id_fruizione_azioni BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT uniq_serv_fru_azione_1 UNIQUE (nome_azione,id_fruizione_azioni),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_servizi_fruitori_azione_1 FOREIGN KEY (id_fruizione_azioni) REFERENCES servizi_fruitori_azioni(id),
+	CONSTRAINT pk_servizi_fruitori_azione PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_serv_fru_azione_1 ON servizi_fruitori_azione (nome_azione,id_fruizione_azioni);
 
 
 

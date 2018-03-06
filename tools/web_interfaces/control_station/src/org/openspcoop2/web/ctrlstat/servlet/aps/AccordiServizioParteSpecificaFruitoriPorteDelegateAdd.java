@@ -46,6 +46,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -374,16 +377,33 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 
 			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
+			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
 
 			PortaDelegata portaDelegataDefault = porteDelegateCore.getPortaDelegata(mappingDefault.getIdPortaDelegata());
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(idServizio2.getTipo());
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		
+			Fruitore fruitore = null;
+			for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+				if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
+					fruitore = fruitoreCheck;
+					break;
+				}
+			}
+			
 			Subscription subscription = null;
 			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				PortaDelegata portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, portaDelegataDaCopiare, nome, azioni);
+				
+				Connettore connettore = (Connettore) fruitore.getConnettore().clone();
+				ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
+				configurazioneAzione.setConnettore(connettore);
+				for (int i = 0; i < azioni.length; i++) {
+					configurazioneAzione.addAzione(azioni[i]);
+				}
+				fruitore.addConfigurazioneAzione(configurazioneAzione);
 			}
 			else {
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
@@ -406,6 +426,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
 
+			listaOggettiDaModificare.add(asps);
+			
+			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

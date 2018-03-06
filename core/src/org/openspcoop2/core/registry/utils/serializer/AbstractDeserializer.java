@@ -24,8 +24,6 @@ import org.openspcoop2.generic_project.exception.DeserializerException;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.ResourceParameter;
 import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.ResourceRepresentation;
@@ -45,6 +43,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.RuoloSoggetto;
 import org.openspcoop2.core.registry.ResourceRepresentationXml;
@@ -311,132 +310,6 @@ public abstract class AbstractDeserializer {
 	 */
 	public ProtocolProperty readProtocolPropertyFromString(String in) throws DeserializerException {
 		return (ProtocolProperty) this.xmlToObj(in.getBytes(), ProtocolProperty.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: connettore
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Connettore readConnettore(String fileName) throws DeserializerException {
-		return (Connettore) this.xmlToObj(fileName, Connettore.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Connettore readConnettore(File file) throws DeserializerException {
-		return (Connettore) this.xmlToObj(file, Connettore.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Connettore readConnettore(InputStream in) throws DeserializerException {
-		return (Connettore) this.xmlToObj(in, Connettore.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Connettore readConnettore(byte[] in) throws DeserializerException {
-		return (Connettore) this.xmlToObj(in, Connettore.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Connettore readConnettoreFromString(String in) throws DeserializerException {
-		return (Connettore) this.xmlToObj(in.getBytes(), Connettore.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: configurazione-servizio-azione-fruitore
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @return Object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneServizioAzioneFruitore readConfigurazioneServizioAzioneFruitore(String fileName) throws DeserializerException {
-		return (ConfigurazioneServizioAzioneFruitore) this.xmlToObj(fileName, ConfigurazioneServizioAzioneFruitore.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @return Object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneServizioAzioneFruitore readConfigurazioneServizioAzioneFruitore(File file) throws DeserializerException {
-		return (ConfigurazioneServizioAzioneFruitore) this.xmlToObj(file, ConfigurazioneServizioAzioneFruitore.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @return Object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneServizioAzioneFruitore readConfigurazioneServizioAzioneFruitore(InputStream in) throws DeserializerException {
-		return (ConfigurazioneServizioAzioneFruitore) this.xmlToObj(in, ConfigurazioneServizioAzioneFruitore.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @return Object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneServizioAzioneFruitore readConfigurazioneServizioAzioneFruitore(byte[] in) throws DeserializerException {
-		return (ConfigurazioneServizioAzioneFruitore) this.xmlToObj(in, ConfigurazioneServizioAzioneFruitore.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @return Object type {@link org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ConfigurazioneServizioAzioneFruitore readConfigurazioneServizioAzioneFruitoreFromString(String in) throws DeserializerException {
-		return (ConfigurazioneServizioAzioneFruitore) this.xmlToObj(in.getBytes(), ConfigurazioneServizioAzioneFruitore.class);
 	}	
 	
 	
@@ -1634,6 +1507,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public Azione readAzioneFromString(String in) throws DeserializerException {
 		return (Azione) this.xmlToObj(in.getBytes(), Azione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: connettore
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Connettore readConnettore(String fileName) throws DeserializerException {
+		return (Connettore) this.xmlToObj(fileName, Connettore.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Connettore readConnettore(File file) throws DeserializerException {
+		return (Connettore) this.xmlToObj(file, Connettore.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Connettore readConnettore(InputStream in) throws DeserializerException {
+		return (Connettore) this.xmlToObj(in, Connettore.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Connettore readConnettore(byte[] in) throws DeserializerException {
+		return (Connettore) this.xmlToObj(in, Connettore.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @return Object type {@link org.openspcoop2.core.registry.Connettore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Connettore readConnettoreFromString(String in) throws DeserializerException {
+		return (Connettore) this.xmlToObj(in.getBytes(), Connettore.class);
 	}	
 	
 	

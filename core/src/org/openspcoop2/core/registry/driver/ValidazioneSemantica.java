@@ -41,7 +41,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
-import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
@@ -1090,84 +1089,70 @@ public class ValidazioneSemantica {
 			for(int k=0; k<serv.sizeConfigurazioneAzioneList();k++){
 				ConfigurazioneServizioAzione az = serv.getConfigurazioneAzione(k);
 				
-				if(az.getNome()==null){
-					this.errori.add("Esiste un'azione del servizio "+uriServizio+" per cui non è definito il nome");
+				if(az.sizeAzioneList()<=0){
+					this.errori.add("Esiste una configurazione delle azioni del servizio "+uriServizio+" per cui non è definito una azione");
 					continue;
 				}
 				
-				// 1. ogni azione di un servizio deve essere univoca
-				int numA = 0;
-				for (int h=0; h<serv.sizeConfigurazioneAzioneList(); h++) {
-					ConfigurazioneServizioAzione tmpSsa = serv.getConfigurazioneAzione(h);
-					if (az.getNome().equals(tmpSsa.getNome()))
-						numA++;
-				}
-				if (numA > 1)
-					this.errori.add("Non può esistere più di un'azione con nome "+az.getNome()+" nel servizio "+uriServizio);
-				
-				// L'azione deve esistere nell'accordo implementato dal servizio
-				if(this.existsAccordoServizioParteComune(asps.getAccordoServizioParteComune())){
-					AccordoServizioParteComune as = this.getAccordoServizioParteComune(asps.getAccordoServizioParteComune());
-					if(asps.getPortType()!=null){
-						if(this.existsPortType_AccordoServizioParteComune(as, asps.getPortType()) ){
-							PortType pt = this.getPortType_AccordoServizioParteComune(as, asps.getPortType());
-							if(this.existsAzione_PortType_AccordoServizio(pt, az.getNome())==false){
-								this.errori.add("Il servizio ["+uriServizio+
-										"], utilizza un'azione ["+az.getNome()+"] che non risulta definita nell'accordo di servizio ["+
-										asps.getAccordoServizioParteComune()+"] implementato dal servizio (istanziato per il servizio ["+asps.getPortType()+"])");
-							}
-						}else{
-							// Caso gestito nel seguito di questo metodo
-						}
-					}else{
-						if(this.existsAzione_AccordoServizioParteComune(as, az.getNome())==false &&
-								this.existsResource_AccordoServizioParteComune(as, az.getNome())==false){
-							this.errori.add("Il servizio ["+uriServizio+
-									"], utilizza un'azione ["+az.getNome()+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+				for (String azione : az.getAzioneList()) {
+					
+					// 1. ogni azione di un servizio deve essere univoca
+					int numA = 0;
+					for (int h=0; h<serv.sizeConfigurazioneAzioneList(); h++) {
+						ConfigurazioneServizioAzione tmpSsa = serv.getConfigurazioneAzione(h);
+						for (String azioneCheck : tmpSsa.getAzioneList()) {
+							if (azione.equals(azioneCheck))
+								numA++;	
 						}
 					}
-				}else{
-					// Caso gestito nel seguito di questo metodo
+					if (numA > 1)
+						this.errori.add("Non può esistere più di un'azione con nome "+azione+" nel servizio "+uriServizio);
+					
+					// L'azione deve esistere nell'accordo implementato dal servizio
+					if(this.existsAccordoServizioParteComune(asps.getAccordoServizioParteComune())){
+						AccordoServizioParteComune as = this.getAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+						if(ServiceBinding.SOAP.equals(as.getServiceBinding())) {
+							if(asps.getPortType()!=null){
+								if(this.existsPortType_AccordoServizioParteComune(as, asps.getPortType()) ){
+									PortType pt = this.getPortType_AccordoServizioParteComune(as, asps.getPortType());
+									if(this.existsAzione_PortType_AccordoServizio(pt, azione)==false){
+										this.errori.add("Il servizio ["+uriServizio+
+												"], utilizza un'azione ["+azione+"] che non risulta definita nell'accordo di servizio ["+
+												asps.getAccordoServizioParteComune()+"] implementato dal servizio (istanziato per il servizio ["+asps.getPortType()+"])");
+									}
+								}else{
+									// Caso gestito nel seguito di questo metodo
+								}
+							}else{
+								if(this.existsAzione_AccordoServizioParteComune(as, azione)==false){
+									this.errori.add("Il servizio ["+uriServizio+
+											"], utilizza un'azione ["+azione+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+								}
+							}
+						}
+						else {
+							if(this.existsResource_AccordoServizioParteComune(as, azione)==false){
+								this.errori.add("Il servizio ["+uriServizio+
+										"], utilizza una risorsa ["+azione+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+							}
+						}
+					}else{
+						// Caso gestito nel seguito di questo metodo
+					}
+					
 				}
 				
 				// Deve almeno o essere definito un connettore o essere definito i fruitori
-				if( (az.getConnettore()==null || CostantiRegistroServizi.DISABILITATO.equals(az.getConnettore().getTipo())) && 
-						az.sizeConfigurazioneFruitoreList()==0){
-					this.errori.add("Non può esistere un'azione con nome "+az.getNome()+" nel servizio "+uriServizio+" che non definisce ne al suo interno un connettore, ne una lista di fruitori");	
+				if( (az.getConnettore()==null || CostantiRegistroServizi.DISABILITATO.equals(az.getConnettore().getTipo())) ){
+					this.errori.add("Non può esistere una configurazione delle azioni nel servizio "+uriServizio+" che non definisce ne al suo interno un connettore");	
 				}
 				
 				// Validazione connettore azione
 				conn = az.getConnettore();
 				if(conn!=null){
-					this.validaConnettore(conn, "Azione ["+az.getNome()+"] ridefinita nel Servizio", uriServizio);
+					this.validaConnettore(conn, "Azioni ["+az.getAzioneList()+"] ridefinite nel Servizio", uriServizio);
 				}
-				
-				// 3. Se presenti fruitori deve essere controllato che il tipo/nome indicano un soggetto realmente esistente nel registro dei servizi. 
-				// Inoltre il connettore deve essere validato con le solite convenzioni.
-				for(int w=0; w<az.sizeConfigurazioneFruitoreList();w++){
-					ConfigurazioneServizioAzioneFruitore ssaf = az.getConfigurazioneFruitore(w);
-					String tipoSsaf = ssaf.getTipo();
-					String nomeSsaf = ssaf.getNome();
-					
-					if(tipoSsaf==null){
-						this.errori.add("Esiste un fruitore dell'azione "+az.getNome()+" del servizio "+uriServizio+" per cui non è definito il tipo");
-						continue;
-					}
-					if(nomeSsaf==null){
-						this.errori.add("Esiste un fruitore dell'azione "+az.getNome()+" del servizio "+uriServizio+" per cui non è definito il nome");
-						continue;
-					}
-					
-					if(this.existsSoggetto(tipoSsaf, nomeSsaf)==false){
-						this.errori.add("Il fruitore "+tipoSsaf+"/"+nomeSsaf+" dell'azione "+az.getNome()+" del servizio "+uriServizio+" non corrisponde a nessuno dei soggetti registrati");
-					}
-					conn = ssaf.getConnettore();
-					if (conn != null){
-						validaConnettore(conn, "", uriServizio);
-					}else{
-						this.errori.add("Non e' stato definito il connettore per il Fruitore ["+tipoSsaf+"/"+nomeSsaf+"] dell'azione ["+az.getNome()+"] ridefinita nel Servizio "+uriServizio);	
-					}
-				}
+
 			}
 		}
 
@@ -1203,6 +1188,76 @@ public class ValidazioneSemantica {
 			Connettore conn = fru.getConnettore();
 			if (conn != null)
 				validaConnettore(conn, "fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio", uriServizio);
+			
+			// 3. Azione di una fruizione di servizio
+			for(int j=0; j<fru.sizeConfigurazioneAzioneList();j++){
+				ConfigurazioneServizioAzione az = fru.getConfigurazioneAzione(j);
+				
+				if(az.sizeAzioneList()<=0){
+					this.errori.add("Esiste una configurazione delle azioni del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+uriServizio+" per cui non è definito una azione");
+					continue;
+				}
+				
+				for (String azione : az.getAzioneList()) {
+					
+					// 1. ogni azione di un servizio deve essere univoca
+					int numA = 0;
+					for (int h=0; h<fru.sizeConfigurazioneAzioneList(); h++) {
+						ConfigurazioneServizioAzione tmpSsa = fru.getConfigurazioneAzione(h);
+						for (String azioneCheck : tmpSsa.getAzioneList()) {
+							if (azione.equals(azioneCheck))
+								numA++;	
+						}
+					}
+					if (numA > 1)
+						this.errori.add("Non può esistere più di un'azione con nome "+azione+" nel fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+uriServizio);
+					
+					// L'azione deve esistere nell'accordo implementato dal servizio
+					if(this.existsAccordoServizioParteComune(asps.getAccordoServizioParteComune())){
+						AccordoServizioParteComune as = this.getAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+						if(ServiceBinding.SOAP.equals(as.getServiceBinding())) {
+							if(asps.getPortType()!=null){
+								if(this.existsPortType_AccordoServizioParteComune(as, asps.getPortType()) ){
+									PortType pt = this.getPortType_AccordoServizioParteComune(as, asps.getPortType());
+									if(this.existsAzione_PortType_AccordoServizio(pt, azione)==false){
+										this.errori.add("Il fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio ["+uriServizio+
+												"], utilizza un'azione ["+azione+"] che non risulta definita nell'accordo di servizio ["+
+												asps.getAccordoServizioParteComune()+"] implementato dal servizio (istanziato per il servizio ["+asps.getPortType()+"])");
+									}
+								}else{
+									// Caso gestito nel seguito di questo metodo
+								}
+							}else{
+								if(this.existsAzione_AccordoServizioParteComune(as, azione)==false){
+									this.errori.add("Il fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio ["+uriServizio+
+											"], utilizza un'azione ["+azione+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+								}
+							}
+						}
+						else {
+							if(this.existsResource_AccordoServizioParteComune(as, azione)==false){
+								this.errori.add("Il fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio ["+uriServizio+
+										"], utilizza una risorsa ["+azione+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+							}
+						}
+					}else{
+						// Caso gestito nel seguito di questo metodo
+					}
+					
+				}
+				
+				// Deve almeno o essere definito un connettore o essere definito i fruitori
+				if( (az.getConnettore()==null || CostantiRegistroServizi.DISABILITATO.equals(az.getConnettore().getTipo())) ){
+					this.errori.add("Non può esistere una configurazione delle azioni nel fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+uriServizio+" che non definisce ne al suo interno un connettore");	
+				}
+				
+				// Validazione connettore azione
+				conn = az.getConnettore();
+				if(conn!=null){
+					this.validaConnettore(conn, "Azioni ["+az.getAzioneList()+"] ridefinite nel fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del Servizio", uriServizio);
+				}
+
+			}
 			
 			// Wsdl
 			if(fru.getWsdlImplementativoErogatore()!=null){

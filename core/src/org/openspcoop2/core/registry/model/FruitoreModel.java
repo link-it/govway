@@ -42,6 +42,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	
 		this.SERVIZIO_APPLICATIVO = new Field("servizio-applicativo",java.lang.String.class,"fruitore",Fruitore.class);
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"fruitore",Fruitore.class));
+		this.CONFIGURAZIONE_AZIONE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel(new Field("configurazione-azione",org.openspcoop2.core.registry.ConfigurazioneServizioAzione.class,"fruitore",Fruitore.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"fruitore",Fruitore.class));
 		this.STATO_PACKAGE = new Field("stato-package",java.lang.String.class,"fruitore",Fruitore.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new Field("byte-wsdl-implementativo-erogatore",byte[].class,"fruitore",Fruitore.class);
@@ -62,6 +63,7 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	
 		this.SERVIZIO_APPLICATIVO = new ComplexField(father,"servizio-applicativo",java.lang.String.class,"fruitore",Fruitore.class);
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"fruitore",Fruitore.class));
+		this.CONFIGURAZIONE_AZIONE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel(new ComplexField(father,"configurazione-azione",org.openspcoop2.core.registry.ConfigurazioneServizioAzione.class,"fruitore",Fruitore.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"fruitore",Fruitore.class));
 		this.STATO_PACKAGE = new ComplexField(father,"stato-package",java.lang.String.class,"fruitore",Fruitore.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new ComplexField(father,"byte-wsdl-implementativo-erogatore",byte[].class,"fruitore",Fruitore.class);
@@ -81,6 +83,8 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	public IField SERVIZIO_APPLICATIVO = null;
 	 
 	public org.openspcoop2.core.registry.model.ConnettoreModel CONNETTORE = null;
+	 
+	public org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel CONFIGURAZIONE_AZIONE = null;
 	 
 	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
 	 

@@ -49,6 +49,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
@@ -262,7 +263,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 			}
 			boolean connettoreOnly = gestioneFruitori;
-			String mappingID = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_ONLY_MAPPING_ID);
+			String azioneConnettore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE);
 			boolean forceEnableConnettore =  gestioneFruitori;
 						
 			boolean validazioneDocumenti = true;
@@ -308,6 +309,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			Fruitore servFru = apsCore.getServizioFruitore(idServizioFruitoreInt);
 			myTipo = servFru.getTipo();
 			myNome = servFru.getNome();
+			// Prendo pero poi immagine del fruitore dall'asps
+			for (Fruitore check : asps.getFruitoreList()) {
+				if(check.getTipo().equals(myTipo) && check.getNome().equals(myNome)) {
+					servFru = check;
+					break;
+				}
+			}
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = servFru.getConnettore().getCustom();
 
@@ -336,7 +344,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
 							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
 			}
-
+			
 			// setto i dati come campi hidden nel pd per portarmeli dietro
 
 			// Preparo il menu
@@ -404,6 +412,16 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 
 			Connettore connettore = servFru.getConnettore();
+			ConfigurazioneServizioAzione configurazioneServizioAzione = null;
+			if(gestioneFruitori && azioneConnettore!=null && !"".equals(azioneConnettore)) {
+				for (ConfigurazioneServizioAzione check : servFru.getConfigurazioneAzioneList()) {
+					if(check.getAzioneList().contains(azioneConnettore)) {
+						configurazioneServizioAzione = check;
+						connettore = configurazioneServizioAzione.getConnettore();
+						break;
+					}
+				}
+			}
 
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
@@ -680,7 +698,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							idServizioFruitore,tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio, correlato,
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,
-							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
+							azioneConnettore);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
@@ -786,7 +805,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  correlato,
 						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 						null,null,null,null,null,null,null,null,null,null,
-						apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+						apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
+						azioneConnettore);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -848,7 +868,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addFruitoreToDatiAsHidden(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, idSoggettoFruitore);
 
-					if (apsHelper.isModalitaAvanzata()) {
+					if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
 								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
@@ -896,9 +916,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			// Modifico i dati del fruitore nel db
 			Connettore connettoreNew = null;
-			if (apsHelper.isModalitaAvanzata()) {
+			if (apsHelper.isModalitaAvanzata()  || connettoreOnly) {
 				connettoreNew = new Connettore();
-				connettoreNew.setNome("CNT_SF_" + fruitoreLabel + "_" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore + "_" + tiposervizio + "/" + nomeservizio);
+				connettoreNew.setNome(connettore.getNome());
 				connettoreNew.setId(connettore.getId());
 
 				String oldConnT = connettore.getTipo();
@@ -932,8 +952,17 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			}
 
 			Fruitore fruitore = new Fruitore();
+			
+			fruitore.setConfigurazioneAzioneList(servFru.getConfigurazioneAzioneList());
+			
 			fruitore.setId(new Long(idSoggettoFruitore));
-			fruitore.setConnettore(connettoreNew);
+			if(gestioneFruitori && configurazioneServizioAzione!=null) {
+				configurazioneServizioAzione.setConnettore(connettoreNew);
+				fruitore.setConnettore(servFru.getConnettore());
+			}
+			else {
+				fruitore.setConnettore(connettoreNew);
+			}
 			fruitore.setTipo(tipofru);
 			fruitore.setNome(nomefru);
 			fruitore.setByteWsdlImplementativoErogatore(servFru.getByteWsdlImplementativoErogatore());
@@ -947,6 +976,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 
 			// Elimino il vecchio fruitore ed aggiungo il nuovo
+			
 			for (int i = 0; i < serviziosp.sizeFruitoreList(); i++) {
 				Fruitore tmpFru = serviziosp.getFruitore(i);
 				if (tmpFru.getId().longValue() == servFru.getId().longValue()) {
@@ -986,7 +1016,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,
-							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()));
+							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
+							azioneConnettore);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,

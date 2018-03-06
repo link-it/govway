@@ -41,8 +41,7 @@ public class ConfigurazioneServizioAzioneModel extends AbstractModel<Configurazi
 		super();
 	
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class));
-		this.CONFIGURAZIONE_FRUITORE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneFruitoreModel(new Field("configurazione-fruitore",org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class));
-		this.NOME = new Field("nome",java.lang.String.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class);
+		this.AZIONE = new Field("azione",java.lang.String.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class);
 	
 	}
 	
@@ -51,8 +50,7 @@ public class ConfigurazioneServizioAzioneModel extends AbstractModel<Configurazi
 		super(father);
 	
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class));
-		this.CONFIGURAZIONE_FRUITORE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneFruitoreModel(new ComplexField(father,"configurazione-fruitore",org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class));
-		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class);
+		this.AZIONE = new ComplexField(father,"azione",java.lang.String.class,"configurazione-servizio-azione",ConfigurazioneServizioAzione.class);
 	
 	}
 	
@@ -60,9 +58,7 @@ public class ConfigurazioneServizioAzioneModel extends AbstractModel<Configurazi
 
 	public org.openspcoop2.core.registry.model.ConnettoreModel CONNETTORE = null;
 	 
-	public org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneFruitoreModel CONFIGURAZIONE_FRUITORE = null;
-	 
-	public IField NOME = null;
+	public IField AZIONE = null;
 	 
 
 	@Override

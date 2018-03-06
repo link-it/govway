@@ -398,16 +398,8 @@
 	<xsd:complexType name="configurazione-servizio-azione">
 		<xsd:sequence>
 			<xsd:element ref="connettore" maxOccurs="1" minOccurs="1" />
-			<xsd:element name="configurazione-fruitore" type="configurazione-servizio-azione-fruitore" maxOccurs="unbounded" minOccurs="0"/>		
+			<xsd:element name="azione" type="xsd:string" maxOccurs="unbounded" minOccurs="1"/>		
 		</xsd:sequence>
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-	</xsd:complexType>
-	<xsd:complexType name="configurazione-servizio-azione-fruitore">
-		<xsd:sequence>
-			<xsd:element ref="connettore" maxOccurs="1" minOccurs="1" />
-		</xsd:sequence>
-		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	
 	
@@ -417,6 +409,7 @@
 		<xsd:sequence>
 			<!-- Connettore -->
 			<xsd:element ref="connettore" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="configurazione-azione" type="configurazione-servizio-azione" maxOccurs="unbounded" minOccurs="0"/>		
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>

@@ -2669,8 +2669,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				// lista delle azioni
 				DataElement de = new DataElement();
+				List<String> listaAzioni = null;
 				if(!mapping.isDefault()) {
-					List<String> listaAzioni = pdAssociata.getAzione().getAzioneDelegataList();
+					listaAzioni = pdAssociata.getAzione().getAzioneDelegataList();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 					if (contaListe) {
@@ -2706,12 +2707,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					Parameter pMyId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, fru.getId() + "");				
 					
 					de = new DataElement();
+					List<Parameter> listParameter = new ArrayList<>();
+					listParameter.add(pId);
+					listParameter.add(pMyId);
+					listParameter.add(pIdSoggettoErogatore);
+					listParameter.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoLong + ""));
+					if(listaAzioni!=null && listaAzioni.size()>0) {
+						Parameter action = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE,listaAzioni.get(0));
+						listParameter.add(action);
+					}
 					de.setUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
-							pId,	pMyId, pIdSoggettoErogatore,
-							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoLong + ""),
-							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_ONLY_MAPPING_ID,
-									mapping.getTableId()+""));
+							listParameter.toArray(new Parameter[1])
+							);
 
 					ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
@@ -4499,7 +4507,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String tipoAccordo, boolean validazioneDocumenti,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
-			List<String> saList, ServiceBinding serviceBinding, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType) throws Exception {
+			List<String> saList, ServiceBinding serviceBinding, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
+			String azioneConnettore) throws Exception {
 		
 		boolean isRuoloNormale = !(correlato != null && correlato.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO));
 
@@ -4519,6 +4528,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 				gestioneFruitori = true;
 			}
+		}
+		
+		if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(azioneConnettore);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE);
+			dati.addElement(de);
 		}
 		
 		if (tipoOp.equals(TipoOperazione.ADD)) {

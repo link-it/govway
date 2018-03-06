@@ -1779,7 +1779,7 @@ public class DriverRegistroServiziDB_LIB {
 			int sizeFruitori=0;
 			int sizeAzioni=0;
 			Fruitore fruitore;
-			ConfigurazioneServizioAzione azione = null;
+
 			asps.setIdAccordo(idAccordoLong);
 			switch (type) {
 			case CREATE:
@@ -1901,11 +1901,9 @@ public class DriverRegistroServiziDB_LIB {
 				// aggiungo azioni
 				if(asps.getConfigurazioneServizio()!=null){
 					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
-					azione = null;
 					for (int i = 0; i < sizeAzioni; i++) {
-						azione = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-						DriverRegistroServiziDB_LIB.log.debug("CRUD AZIONE -----------["+azione.getNome()+"]");
-						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, azione, con, asps);
+						ConfigurazioneServizioAzione conf = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, conf, con, asps);
 					}
 				}
 				
@@ -2100,17 +2098,15 @@ public class DriverRegistroServiziDB_LIB {
 				//prima vengono cancellati le azioni esistenti e poi vengono riaggiunte
 				if(asps.getConfigurazioneServizio()!=null){
 					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
-					azione = null;
 					//cancellazione
 					DriverRegistroServiziDB_LIB.deleteAllAzioniServizio(idServizio, con);
 					//creazione
 					for (int i = 0; i < sizeAzioni; i++) {
-						azione = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-						DriverRegistroServiziDB_LIB.log.debug("CRUD AZIONE -----------["+azione.getNome()+"]");
-						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, azione, con, asps);
+						ConfigurazioneServizioAzione conf = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, conf, con, asps);
 					}
 				}
-			
+				
 
 				
 				// Documenti generici servizio
@@ -2175,10 +2171,9 @@ public class DriverRegistroServiziDB_LIB {
 				// elimino azioni
 				if(asps.getConfigurazioneServizio()!=null){
 					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
-					azione = null;
 					for (int i = 0; i < sizeAzioni; i++) {
-						azione = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
-						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(3, azione, con, asps);
+						ConfigurazioneServizioAzione conf = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(3, conf, con, asps);
 					}
 				}
 
@@ -2381,6 +2376,13 @@ public class DriverRegistroServiziDB_LIB {
 					idFruizione = selectRS.getLong("id");
 				
 				
+				// aggiungo azioni
+				int	sizeAzioni = fruitore.sizeConfigurazioneAzioneList();
+				for (int i = 0; i < sizeAzioni; i++) {
+					ConfigurazioneServizioAzione conf = fruitore.getConfigurazioneAzione(i);
+					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(1, conf, con, servizio, fruitore);
+				}
+				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, fruitore.getProtocolPropertyList(), 
 						idFruizione, ProprietariProtocolProperty.FRUITORE, con, tipoDB);
@@ -2442,7 +2444,18 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("nuovo nome connettore ["+newNomeConnettore+"]");
 				DriverRegistroServiziDB_LIB.CRUDConnettore(2, connettore, con);
 				
-				
+				//aggiorno azioni
+				//La lista delle azioni del servizio contiene tutti e soli le azioni di questo servizio
+				//prima vengono cancellati le azioni esistenti e poi vengono riaggiunte
+				sizeAzioni = fruitore.sizeConfigurazioneAzioneList();
+				//cancellazione
+				DriverRegistroServiziDB_LIB.deleteAllAzioniFruizioneServizio(idFruizione, con);
+				//creazione
+				for (int i = 0; i < sizeAzioni; i++) {
+					ConfigurazioneServizioAzione conf = fruitore.getConfigurazioneAzione(i);
+					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(1, conf, con, servizio, fruitore);
+				}
+								
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, fruitore.getProtocolPropertyList(), 
 						idFruizione, ProprietariProtocolProperty.FRUITORE, con, tipoDB);
@@ -2454,6 +2467,14 @@ public class DriverRegistroServiziDB_LIB {
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
 						idFruizione, ProprietariProtocolProperty.FRUITORE, con, tipoDB);
+				
+				
+				// elimino azioni
+				sizeAzioni = fruitore.sizeConfigurazioneAzioneList();
+				for (int i = 0; i < sizeAzioni; i++) {
+					ConfigurazioneServizioAzione conf = fruitore.getConfigurazioneAzione(i);
+					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitoreAzioni(3, conf, con, servizio, fruitore);
+				}
 				
 				// delete
 				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizioFruitore(idServizio, nomeSoggetto, tipoSoggetto, con);
@@ -2505,14 +2526,7 @@ public class DriverRegistroServiziDB_LIB {
 	}
 	
 	
-	/**
-	 * Aggiunge un fruitore di un servizio alla lista dei fruitori dei servizi
-	 * 
-	 * @param type
-	 * @param azione azione
-	 * @param con
-	 */
-	public static long CRUDAccordoServizioParteSpecificaAzioni(int type, ConfigurazioneServizioAzione azione, Connection con, AccordoServizioParteSpecifica servizio) throws DriverRegistroServiziException {
+	public static long CRUDAccordoServizioParteSpecificaAzioni(int type, ConfigurazioneServizioAzione conf, Connection con, AccordoServizioParteSpecifica servizio) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -2546,11 +2560,15 @@ public class DriverRegistroServiziDB_LIB {
 		if (idServizio <= 0)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] ID Servizio non valido.");
 
-		Connettore connettore = azione.getConnettore();
+		Connettore connettore = conf.getConnettore();
 		if (connettore == null && type != CostantiDB.CREATE && type!=CostantiDB.DELETE)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] il connettore non puo essere nullo.");
 
-		String azioneValue = azione.getNome();
+		if(conf.sizeAzioneList()<=0) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] la configurazione non contiene azioni??");
+		}
+		
+		String azioneValue = conf.getAzione(0); // prendo la prima, tanto devono essere tutte diverse tra le varie configurazioni
 		if (azioneValue == null || azioneValue.equals(""))
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] Azione non valida.");
 
@@ -2573,31 +2591,50 @@ public class DriverRegistroServiziDB_LIB {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_AZIONI);
 				sqlQueryObject.addInsertField("id_servizio", "?");
-				sqlQueryObject.addInsertField("nome_azione", "?");
 				sqlQueryObject.addInsertField("id_connettore", "?");
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
-
 				updateStmt.setLong(1, idServizio);
-				updateStmt.setString(2, azioneValue);
-				updateStmt.setLong(3, idConnettore);
-				
+				updateStmt.setLong(2, idConnettore);
 				n = updateStmt.executeUpdate();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaAzioni CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, idServizio, azioneValue, idConnettore));
-
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaAzioni CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, idServizio, idConnettore));
+				updateStmt.close();
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_AZIONI);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_servizio = ?");
-				sqlQueryObject.addWhereCondition("nome_azione = ?");
-				sqlQueryObject.addWhereCondition("id_connettore = ?");
+				sqlQueryObject.addWhereCondition("id_connettore = ?"); // idconnettore sara' univoco!
 				sqlQueryObject.setANDLogicOperator(true);
 				selectQuery = sqlQueryObject.createSQLQuery();
 				selectStmt = con.prepareStatement(selectQuery);
 				selectStmt.setLong(1, idServizio);
-				selectStmt.setString(2, azioneValue);
-				selectStmt.setLong(3, idConnettore);
-
+				selectStmt.setLong(2, idConnettore);
+				selectRS = selectStmt.executeQuery();
+				long idServizioAzione = -1;
+				if (selectRS.next()) {
+					idServizioAzione = selectRS.getLong("id");
+				}
+				selectRS.close();
+				selectStmt.close();
+				if(idServizioAzione<=0) {
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] Recuro id per idServizio["+idServizio+"] idConnettore["+idConnettore+"] non riuscito");
+				}
+				
+				for (String azione : conf.getAzioneList()) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_AZIONE);
+					sqlQueryObject.addInsertField("nome_azione", "?");
+					sqlQueryObject.addInsertField("id_servizio_azioni", "?");
+					updateQuery = sqlQueryObject.createSQLInsert();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setString(1, azione);
+					updateStmt.setLong(2, idServizioAzione);
+					n = updateStmt.executeUpdate();
+					DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaAzione CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, azione, idServizioAzione));
+					updateStmt.close();	
+				}
+				
 				break;
 
 			case 2:
@@ -2618,20 +2655,50 @@ public class DriverRegistroServiziDB_LIB {
 				// delete
 				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizioAzione(idServizio, azioneValue, con);
 				connettore.setId(idConnettore);
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_AZIONI);
-				sqlQueryObject.addWhereCondition("id_servizio=?");
-				sqlQueryObject.addWhereCondition("nome_azione=?");
-				sqlQueryObject.addWhereCondition("id_connettore=?");
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_AZIONI);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_servizio = ?");
+				sqlQueryObject.addWhereCondition("id_connettore = ?"); // idconnettore sara' univoco!
+				sqlQueryObject.setANDLogicOperator(true);
+				selectQuery = sqlQueryObject.createSQLQuery();
+				selectStmt = con.prepareStatement(selectQuery);
+				selectStmt.setLong(1, idServizio);
+				selectStmt.setLong(2, idConnettore);
+				selectRS = selectStmt.executeQuery();
+				idServizioAzione = -1;
+				if (selectRS.next()) {
+					idServizioAzione = selectRS.getLong("id");
+				}
+				selectRS.close();
+				selectStmt.close();
+				if(idServizioAzione<=0) {
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] Recuro id per idServizio["+idServizio+"] idConnettore["+idConnettore+"] non riuscito");
+				}
+					
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_AZIONE);
+				sqlQueryObject.addWhereCondition("id_servizio_azioni=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				String sqlQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(sqlQuery);
-				updateStmt.setLong(1, idServizio);
-				updateStmt.setString(2, azioneValue);
-				updateStmt.setLong(3, idConnettore);
+				updateStmt.setLong(1, idServizioAzione);
 				n=updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaAzioni DELETE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idServizio, azioneValue, idConnettore));
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaAzioni DELETE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idServizioAzione));
+
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_AZIONI);
+				sqlQueryObject.addWhereCondition("id=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(sqlQuery);
+				updateStmt.setLong(1, idServizioAzione);
+				n=updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaAzioni DELETE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery,idServizioAzione));
 
 				// elimino il connettore
 				connettore=new Connettore();
@@ -2643,18 +2710,199 @@ public class DriverRegistroServiziDB_LIB {
 
 			DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaAzioni type = " + type + " row affected =" + n);
 
-			if (CostantiDB.CREATE == type) {
-				selectRS = selectStmt.executeQuery();
-				if (selectRS.next())
-					return selectRS.getLong("id");
-			}
-
 			return n;
 
 		} catch (SQLException se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] SQLException : " + se.getMessage(),se);
 		}  catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaAzioni] Exception : " + se.getMessage(),se);
+		}finally {
+			try {
+
+				if(selectRS!=null)selectRS.close();
+				if(selectStmt!=null)selectStmt.close();
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static long CRUDAccordoServizioParteSpecificaFruitoreAzioni(int type, ConfigurazioneServizioAzione conf, Connection con, 
+			AccordoServizioParteSpecifica servizio, Fruitore fruitore) throws DriverRegistroServiziException {
+		PreparedStatement updateStmt = null;
+		String updateQuery;
+		PreparedStatement selectStmt = null;
+		String selectQuery = "";
+		ResultSet selectRS = null;
+		
+		long idFruizione = -1;
+		try{
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(servizio); 
+			IDSoggetto idFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+			idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, DriverRegistroServiziDB_LIB.tipoDB);
+		} catch (CoreException e1) {
+			DriverRegistroServiziDB_LIB.log.error("Driver Error.", e1);
+			throw new DriverRegistroServiziException(e1);
+		}
+		if (idFruizione <= 0)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] ID Servizio non valido.");
+		
+		Connettore connettore = conf.getConnettore();
+		if (connettore == null && type != CostantiDB.CREATE && type!=CostantiDB.DELETE)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] il connettore non puo essere nullo.");
+
+		if(conf.sizeAzioneList()<=0) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] la configurazione non contiene azioni??");
+		}
+		
+		String azioneValue = conf.getAzione(0); // prendo la prima, tanto devono essere tutte diverse tra le varie configurazioni
+		if (azioneValue == null || azioneValue.equals(""))
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] Azione non valida.");
+
+		String nomeConnettore = "CNT_SF_AZIONE_" + fruitore.getTipo()+"/"+fruitore.getNome()+"_"+  servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore() +"_"+ servizio.getTipo() +"/"+servizio.getNome()+"/"+servizio.getVersione()+"_"+azioneValue;
+		if (connettore == null) {
+			connettore = new Connettore();
+		}
+		connettore.setNome(nomeConnettore);
+		
+		long idConnettore = 0;
+		long n = 0;
+		try {
+			switch (type) {
+			case 1:
+				
+				DriverRegistroServiziDB_LIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
+				idConnettore = connettore.getId();
+
+				// create
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+				sqlQueryObject.addInsertField("id_fruizione", "?");
+				sqlQueryObject.addInsertField("id_connettore", "?");
+				updateQuery = sqlQueryObject.createSQLInsert();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idFruizione);
+				updateStmt.setLong(2, idConnettore);
+				n = updateStmt.executeUpdate();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaFruitoreAzioni CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, idFruizione, idConnettore));
+				updateStmt.close();
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_fruizione = ?");
+				sqlQueryObject.addWhereCondition("id_connettore = ?"); // idconnettore sara' univoco!
+				sqlQueryObject.setANDLogicOperator(true);
+				selectQuery = sqlQueryObject.createSQLQuery();
+				selectStmt = con.prepareStatement(selectQuery);
+				selectStmt.setLong(1, idFruizione);
+				selectStmt.setLong(2, idConnettore);
+				selectRS = selectStmt.executeQuery();
+				long idFruizioneAzione = -1;
+				if (selectRS.next()) {
+					idFruizioneAzione = selectRS.getLong("id");
+				}
+				selectRS.close();
+				selectStmt.close();
+				if(idFruizioneAzione<=0) {
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] Recuro id per idFruizione["+idFruizione+"] idConnettore["+idConnettore+"] non riuscito");
+				}
+				
+				for (String azione : conf.getAzioneList()) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_FRUITORI_AZIONE);
+					sqlQueryObject.addInsertField("nome_azione", "?");
+					sqlQueryObject.addInsertField("id_fruizione_azioni", "?");
+					updateQuery = sqlQueryObject.createSQLInsert();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setString(1, azione);
+					updateStmt.setLong(2, idFruizioneAzione);
+					n = updateStmt.executeUpdate();
+					DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaFruitoreAzioni CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, azione, idFruizioneAzione));
+					updateStmt.close();	
+				}
+				
+				break;
+
+			case 2:
+				// update
+				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreFruizioneServizioAzione(idFruizione, azioneValue, con);
+				if(idConnettore<0) throw new DriverRegistroServiziException("Il connettore dell'azione ["+azioneValue+"] della fruizione di Servizio e' invalido id<0");
+				connettore.setId(idConnettore);
+
+				// modifico i dati del connettore
+				//aggiorno nome
+				DriverRegistroServiziDB_LIB.log.debug("Tento aggiornamento connettore id: ["+idConnettore+"] oldNome: ["+connettore.getNome()+"]...");
+				DriverRegistroServiziDB_LIB.log.debug("nuovo nome connettore ["+connettore.getNome()+"]");
+				DriverRegistroServiziDB_LIB.CRUDConnettore(2, connettore, con);
+
+				break;
+
+			case 3:
+				// delete
+				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreFruizioneServizioAzione(idFruizione, azioneValue, con);
+				connettore.setId(idConnettore);
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_fruizione = ?");
+				sqlQueryObject.addWhereCondition("id_connettore = ?"); // idconnettore sara' univoco!
+				sqlQueryObject.setANDLogicOperator(true);
+				selectQuery = sqlQueryObject.createSQLQuery();
+				selectStmt = con.prepareStatement(selectQuery);
+				selectStmt.setLong(1, idFruizione);
+				selectStmt.setLong(2, idConnettore);
+				selectRS = selectStmt.executeQuery();
+				idFruizioneAzione = -1;
+				if (selectRS.next()) {
+					idFruizioneAzione = selectRS.getLong("id");
+				}
+				selectRS.close();
+				selectStmt.close();
+				if(idFruizioneAzione<=0) {
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] Recuro id per idFruizione["+idFruizione+"] idConnettore["+idConnettore+"] non riuscito");
+				}
+					
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI_AZIONE);
+				sqlQueryObject.addWhereCondition("id_fruizione_azioni=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				String sqlQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(sqlQuery);
+				updateStmt.setLong(1, idFruizioneAzione);
+				n=updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaFruitoreAzioni DELETE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idFruizioneAzione));
+
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+				sqlQueryObject.addWhereCondition("id=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(sqlQuery);
+				updateStmt.setLong(1, idFruizioneAzione);
+				n=updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaFruitoreAzioni DELETE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery,idFruizioneAzione));
+
+				// elimino il connettore
+				connettore=new Connettore();
+				connettore.setId(idConnettore);
+				DriverRegistroServiziDB_LIB.CRUDConnettore(3, connettore, con);
+
+				break;
+			}
+
+			DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaFruitoreAzioni type = " + type + " row affected =" + n);
+
+			return n;
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] SQLException : " + se.getMessage(),se);
+		}  catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecificaFruitoreAzioni] Exception : " + se.getMessage(),se);
 		}finally {
 			try {
 
@@ -4255,13 +4503,59 @@ public class DriverRegistroServiziDB_LIB {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_AZIONI);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_AZIONE);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id_servizio = ?");
-			sqlQueryObject.addWhereCondition("nome_azione = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_AZIONI+".id="+CostantiDB.SERVIZI_AZIONE+".id_servizio_azioni");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_AZIONI+".id_servizio = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_AZIONE+".nome_azione = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String query = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(query);
 			stm.setLong(1, idServizio);
+			stm.setString(2, azione);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				idConnettore = rs.getLong("id_connettore");
+			}
+
+			return idConnettore;
+
+		} catch (SQLException e) {
+			DriverRegistroServiziDB_LIB.log.error("Errore SQL", e);
+			throw new DriverRegistroServiziException(e);
+		}catch (Exception e) {
+			DriverRegistroServiziDB_LIB.log.error("Errore", e);
+			throw new DriverRegistroServiziException(e);
+		} finally {
+			try {
+				rs.close();
+				stm.close();
+			} catch (Exception e) {
+
+			}
+
+		}
+	}
+	
+	private static long getIdConnettoreFruizioneServizioAzione(long idFruizione, String azione, Connection con) throws DriverRegistroServiziException {
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idConnettore = -1;
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id="+CostantiDB.SERVIZI_FRUITORI_AZIONE+".id_servizio_azioni");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id_fruizione = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONE+".nome_azione = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(query);
+			stm.setLong(1, idFruizione);
 			stm.setString(2, azione);
 
 			rs = stm.executeQuery();
@@ -4407,6 +4701,7 @@ public class DriverRegistroServiziDB_LIB {
 		try {
 
 			ArrayList<Long> listaConnettori = new ArrayList<Long>();
+			ArrayList<Long> listaConfigurazioni = new ArrayList<Long>();
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_AZIONI);
@@ -4420,15 +4715,29 @@ public class DriverRegistroServiziDB_LIB {
 			//recupero i connettori da cancellare
 			while(rs.next()){
 				listaConnettori.add(rs.getLong("id_connettore"));
+				listaConfigurazioni.add(rs.getLong("id"));
 			}
 			rs.close();
 			stm.close();
 
+			//elimino prima le entry nella tab servizi_azione per rispettare le dipendenze
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_AZIONE);
+			sqlQueryObject.addWhereCondition("id_servizio_azioni=?");
+			String sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = con.prepareStatement(sqlQuery);
+			for (Long idConfigurazione : listaConfigurazioni) {
+				stm.setLong(1, idConfigurazione);
+				int n=stm.executeUpdate();
+				DriverRegistroServiziDB_LIB.log.debug("Cancellati "+n+" Azioni della configurazione del servizio "+idConfigurazione);
+			}
+			stm.close();
+						
 			//elimino prima le entry nella tab servizi_azioni per rispettare le dipendenze
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_AZIONI);
 			sqlQueryObject.addWhereCondition("id_servizio=?");
-			String sqlQuery = sqlQueryObject.createSQLDelete();
+			sqlQuery = sqlQueryObject.createSQLDelete();
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idServizio);
 			int n=stm.executeUpdate();
@@ -4479,6 +4788,99 @@ public class DriverRegistroServiziDB_LIB {
 		}
 	}
 
+	
+	private static void deleteAllAzioniFruizioneServizio(long idFruizione, Connection con) throws DriverRegistroServiziException {
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try {
+
+			ArrayList<Long> listaConnettori = new ArrayList<Long>();
+			ArrayList<Long> listaConfigurazioni = new ArrayList<Long>();
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_fruizione = ?");
+			String query = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(query);
+			stm.setLong(1, idFruizione);
+
+			rs=stm.executeQuery();
+			//recupero i connettori da cancellare
+			while(rs.next()){
+				listaConnettori.add(rs.getLong("id_connettore"));
+				listaConfigurazioni.add(rs.getLong("id"));
+			}
+			rs.close();
+			stm.close();
+
+			//elimino prima le entry nella tab servizi_azione per rispettare le dipendenze
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI_AZIONE);
+			sqlQueryObject.addWhereCondition("id_fruizione_azioni=?");
+			String sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = con.prepareStatement(sqlQuery);
+			for (Long idConfigurazione : listaConfigurazioni) {
+				stm.setLong(1, idConfigurazione);
+				int n=stm.executeUpdate();
+				DriverRegistroServiziDB_LIB.log.debug("Cancellati "+n+" Azioni della configurazione della fruizione del servizio "+idConfigurazione);
+			}
+			stm.close();
+						
+			//elimino prima le entry nella tab servizi_azioni per rispettare le dipendenze
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+			sqlQueryObject.addWhereCondition("id_fruizione=?");
+			sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idFruizione);
+			int n=stm.executeUpdate();
+			stm.close();
+			DriverRegistroServiziDB_LIB.log.debug("Cancellati "+n+" Azioni della fruizione del servizio "+idFruizione);
+
+			//cancello adesso i connettori custom
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI_CUSTOM);
+			sqlQueryObject.addWhereCondition("id_connettore=?");
+			sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = con.prepareStatement(sqlQuery);
+			for (Long idConnettore : listaConnettori) {
+				stm.setLong(1, idConnettore);
+				stm.executeUpdate();
+			}
+			stm.close();
+			DriverRegistroServiziDB_LIB.log.debug("Cancellati connettori "+listaConnettori.toString()+" associati alle azioni della fruizione del servizio "+idFruizione);
+			
+			//cancello adesso i connettori
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI);
+			sqlQueryObject.addWhereCondition("id=?");
+			sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = con.prepareStatement(sqlQuery);
+			for (Long idConnettore : listaConnettori) {
+				stm.setLong(1, idConnettore);
+				stm.executeUpdate();
+			}
+			stm.close();
+			DriverRegistroServiziDB_LIB.log.debug("Cancellati connettori "+listaConnettori.toString()+" associati ai Fruitori della fruizione del servizio "+idFruizione);
+
+
+
+		} catch (SQLException e) {
+			DriverRegistroServiziDB_LIB.log.error("Errore SQL", e);
+			throw new DriverRegistroServiziException(e);
+		}catch (Exception e) {
+			DriverRegistroServiziDB_LIB.log.error("Errore", e);
+			throw new DriverRegistroServiziException(e);
+		} finally {
+			try {
+				stm.close();
+			} catch (Exception e) {
+
+			}
+
+		}
+	}
 	
 	public static void CRUDDocumento(int type, List<Documento> documenti, long idProprietario,
 			ProprietariDocumento tipologiaProprietarioDocumento, Connection connection,

@@ -317,12 +317,5 @@ public class ObjectFactory {
         return new ResourceRepresentationJson();
     }
 
-    /**
-     * Create an instance of {@link ConfigurazioneServizioAzioneFruitore }
-     */
-    public ConfigurazioneServizioAzioneFruitore createConfigurazioneServizioAzioneFruitore() {
-        return new ConfigurazioneServizioAzioneFruitore();
-    }
-
 
  }
