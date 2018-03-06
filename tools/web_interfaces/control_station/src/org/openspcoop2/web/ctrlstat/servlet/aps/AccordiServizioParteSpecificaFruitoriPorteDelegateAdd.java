@@ -391,24 +391,28 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				}
 			}
 			
+			Connettore connettore = null;
 			Subscription subscription = null;
 			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				PortaDelegata portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, portaDelegataDaCopiare, nome, azioni);
 				
-				Connettore connettore = (Connettore) fruitore.getConnettore().clone();
-				ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
-				configurazioneAzione.setConnettore(connettore);
-				for (int i = 0; i < azioni.length; i++) {
-					configurazioneAzione.addAzione(azioni[i]);
-				}
-				fruitore.addConfigurazioneAzione(configurazioneAzione);
+				connettore = (Connettore) fruitore.getConnettore().clone();
 			}
 			else {
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, nome, azioni);
+				
+				connettore = null; // TODO
 			}
+			
+			ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
+			configurazioneAzione.setConnettore(connettore);
+			for (int i = 0; i < azioni.length; i++) {
+				configurazioneAzione.addAzione(azioni[i]);
+			}
+			fruitore.addConfigurazioneAzione(configurazioneAzione);
 			
 			PortaDelegata portaDelegata = subscription.getPortaDelegata();
 			MappingFruizionePortaDelegata mappingFruizione = subscription.getMapping();
