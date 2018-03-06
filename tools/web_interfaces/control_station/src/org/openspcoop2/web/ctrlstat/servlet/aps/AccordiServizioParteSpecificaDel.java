@@ -37,12 +37,15 @@ import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -104,6 +107,14 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
 			
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			//User utente = ServletUtils.getUserFromSession(session);
 			
 			/*
@@ -142,6 +153,10 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				List<PortaApplicativa> paGenerateAutomcaticamente = null;
 				List<IDPortaApplicativa> idPAGenerateAutomaticamente = null;
 				
+				List<PortaDelegata> pdGenerateAutomcaticamente = null;
+				List<IDPortaDelegata> idPDGenerateAutomaticamente = null;
+				IDSoggetto idSoggettoFruitore = null;
+				
 				String uri = idsToRemove.get(i);
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uri);
 
@@ -157,16 +172,23 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 						generaPACheckSoggetto = false;
 					}	
 						
-					if(generaPACheckSoggetto){
-							
-//						nomeGenerato = ss.getTipoSoggettoErogatore()+ss.getNomeSoggettoErogatore()+"/"+
-//								ss.getTipo()+asps.getPortType();
-//						// provo a vedere se esiste
-//						if(porteApplicativeCore.existsPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg))){
-//							paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg));
-//							foundPAGenerataAutomaticamente = true;
-//						}
+					if(gestioneFruitori) {
 						
+						// Verifico se esiste il mapping con la fruizione
+						idSoggettoFruitore = new IDSoggetto(asps.getFruitore(0).getTipo(),asps.getFruitore(0).getNome());
+						idPDGenerateAutomaticamente = porteDelegateCore.getIDPorteDelegateAssociate(idServizio, idSoggettoFruitore);
+						if(idPDGenerateAutomaticamente!=null && idPDGenerateAutomaticamente.size()>0){
+							for (IDPortaDelegata idPortaDeleggata : idPDGenerateAutomaticamente) {
+								if(pdGenerateAutomcaticamente==null) {
+									pdGenerateAutomcaticamente=new ArrayList<>();
+								}
+								pdGenerateAutomcaticamente.add(porteDelegateCore.getPortaDelegata(idPortaDeleggata));
+							}
+						}
+						
+					}
+					else if(generaPACheckSoggetto){
+							
 						// Verifico se esiste il mapping con l'erogazione
 						idPAGenerateAutomaticamente = porteApplicativeCore.getIDPorteApplicativeAssociate(idServizio);
 						if(idPAGenerateAutomaticamente!=null && idPAGenerateAutomaticamente.size()>0){
@@ -184,13 +206,19 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				
 				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
-				if (apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, idPAGenerateAutomaticamente)) {// accordo in uso
+				boolean inUso = false;
+				if(!gestioneFruitori) {
+					inUso = apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, idPAGenerateAutomaticamente);
+				}
+				
+				if (inUso) {// accordo in uso
 					isInUso = true;
 					msg += DBOggettiInUsoUtils.toString(idServizio, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 				} else {// accordo non in uso
 					
 					List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+					
 					if(paGenerateAutomcaticamente!=null && paGenerateAutomcaticamente.size()>0){
 						
 						for (PortaApplicativa paGenerataAutomcaticamente : paGenerateAutomcaticamente) {
@@ -240,7 +268,48 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 						}
 						
 					}
+					
+					if(pdGenerateAutomcaticamente!=null && pdGenerateAutomcaticamente.size()>0){
+						
+						for (PortaDelegata pdGenerataAutomcaticamente : pdGenerateAutomcaticamente) {
+							
+							if(extendedServlet!=null){
+								List<IExtendedBean> listExt = null;
+								try{
+									listExt = extendedServlet.extendedBeanList(TipoOperazione.DEL,apsHelper,apsCore,pdGenerataAutomcaticamente);
+								}catch(Exception e){
+									ControlStationCore.logError(e.getMessage(), e);
+								}
+								if(listExt!=null && listExt.size()>0){
+									for (IExtendedBean iExtendedBean : listExt) {
+										WrapperExtendedBean wrapper = new WrapperExtendedBean();
+										wrapper.setExtendedBean(iExtendedBean);
+										wrapper.setExtendedServlet(extendedServlet);
+										wrapper.setOriginalBean(pdGenerataAutomcaticamente);
+										wrapper.setManageOriginalBean(false);		
+										listaOggettiDaEliminare.add(wrapper);
+									}
+								}
+							}
+							
+							MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+							mappingFruizione.setIdFruitore(idSoggettoFruitore);
+							mappingFruizione.setIdServizio(idServizio);
+							IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
+							idPortaDelegata.setNome(pdGenerataAutomcaticamente.getNome());
+							mappingFruizione.setIdPortaDelegata(idPortaDelegata);
+							if(porteDelegateCore.existsMappingFruizionePortaDelegata(mappingFruizione)) {
+								listaOggettiDaEliminare.add(mappingFruizione);
+							}
+							
+							listaOggettiDaEliminare.add(pdGenerataAutomcaticamente);
+							
+						}
+						
+					}
+					
 					listaOggettiDaEliminare.add(asps);
+					
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray());
 
 				}

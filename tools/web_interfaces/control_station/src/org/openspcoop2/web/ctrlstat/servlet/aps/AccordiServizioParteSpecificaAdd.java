@@ -1484,6 +1484,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				Fruitore fruitore = new Fruitore();
 				fruitore.setTipo(this.tipoSoggettoFruitore);
 				fruitore.setNome(this.nomeSoggettoFruitore);
+				fruitore.setStatoPackage(this.statoPackage);
 				asps.addFruitore(fruitore);
 			}
 			
@@ -1496,12 +1497,22 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// Check stato
 			if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
 
+				ValidazioneStatoPackageException validazione = null;
 				try{
 					apsCore.validaStatoAccordoServizioParteSpecifica(asps);
 				}catch(ValidazioneStatoPackageException validazioneException){
+					validazione = validazioneException;
+				}
+				if(validazione==null && gestioneFruitori) {
+					try{
+						apsCore.validaStatoFruitoreAccordoServizioParteSpecifica(asps.getFruitore(0), asps);
+					}catch(ValidazioneStatoPackageException validazioneException){
+					}
+				}
+				if(validazione!=null) {
 
 					// Setto messaggio di errore
-					pd.setMessage(validazioneException.toString());
+					pd.setMessage(validazione.toString());
 
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 

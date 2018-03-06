@@ -1504,7 +1504,7 @@ public class DBMappingUtils {
 			
 			List<IDPortaDelegata> list = new ArrayList<>();
 			
-			if (rs.next()) {
+			while (rs.next()) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				String nome = rs.getString("nome_porta");
 				idPD.setNome(nome);
