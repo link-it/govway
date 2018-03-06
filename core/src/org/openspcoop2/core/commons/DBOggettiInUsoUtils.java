@@ -1055,7 +1055,7 @@ public class DBOggettiInUsoUtils  {
 			// Raccolgo Dati Servizio.
 			String tipoServizio = null;
 			String nomeServizio = null;
-			Integer versioneServizio = null;
+			int versioneServizio;
 			String tipoSoggetto = null;
 			String nomeSoggetto = null;
 			long idSoggetto;
@@ -1068,11 +1068,13 @@ public class DBOggettiInUsoUtils  {
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idAccordoServizioParteSpecifica);
+			int index = 1;
+			stmt.setLong(index++, idAccordoServizioParteSpecifica);
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
 				tipoServizio = risultato.getString("tipo_servizio");
 				nomeServizio = risultato.getString("nome_servizio");
+				versioneServizio = risultato.getInt("versione_servizio");
 				tipoSoggetto = risultato.getString("tipo_soggetto");
 				nomeSoggetto = risultato.getString("nome_soggetto");
 				versioneServizio = risultato.getInt("versione_servizio");
@@ -1098,14 +1100,15 @@ public class DBOggettiInUsoUtils  {
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idAccordoServizioParteSpecifica);
-			stmt.setString(2, tipoServizio);
-			stmt.setString(3, nomeServizio);
-			stmt.setInt(4, versioneServizio);
-			stmt.setLong(5, idSoggetto);
-			stmt.setLong(6, idSoggetto);
-			stmt.setString(7, tipoSoggetto);
-			stmt.setString(8, nomeSoggetto);
+			index = 1;
+			stmt.setLong(index++, idAccordoServizioParteSpecifica);
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+			stmt.setInt(index++, versioneServizio);
+			stmt.setLong(index++, idSoggetto);
+			stmt.setLong(index++, idSoggetto);
+			stmt.setString(index++, tipoSoggetto);
+			stmt.setString(index++, nomeSoggetto);
 			risultato = stmt.executeQuery();
 			while (risultato.next()) {
 				
@@ -1132,13 +1135,14 @@ public class DBOggettiInUsoUtils  {
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idAccordoServizioParteSpecifica);
-			stmt.setString(2, tipoServizio);
-			stmt.setString(3, nomeServizio);
-			stmt.setInt(4, versioneServizio);
-			stmt.setLong(5, idSoggetto);
-			stmt.setString(6, tipoSoggetto);
-			stmt.setString(7, nomeSoggetto);
+			index = 1;
+			stmt.setLong(index++, idAccordoServizioParteSpecifica);
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+			stmt.setInt(index++, versioneServizio);
+			stmt.setLong(index++, idSoggetto);
+			stmt.setString(index++, tipoSoggetto);
+			stmt.setString(index++, nomeSoggetto);
 			risultato = stmt.executeQuery();
 			while (risultato.next()) {
 				isInUso=true;
