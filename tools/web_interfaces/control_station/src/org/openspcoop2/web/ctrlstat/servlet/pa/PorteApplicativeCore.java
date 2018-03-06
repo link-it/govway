@@ -820,35 +820,6 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
-	public String getListaLabelRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException {
-		return getListaLabelRegolaMappingErogazionePortaApplicativa(pa, "\n ",true);
-	}
-	
-	public String getListaLabelRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa,String separatore, boolean addMinus) throws DriverConfigurazioneException {
-		MappingErogazionePortaApplicativa mapping = this.getMappingErogazionePortaApplicativa(pa);
-		if(mapping.isDefault()) {
-			//return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
-			return (addMinus ? "- " : "") + "(*)";
-		}
-		else {
-			//return mapping.getNome();
-			List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
-			if(listaAzioni.size() > 0) {
-				StringBuffer sb = new StringBuffer();
-				for (String string : listaAzioni) {
-					if(sb.length() >0)
-						sb.append(separatore);
-					
-					sb.append((addMinus ? "- " : "") + string);
-				}
-				return sb.toString();
-			}
-			else {
-				return (addMinus ? "- " : "") + "???";
-			}
-		}
-	}
-	
 	public List<IDPortaApplicativa> getAllIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getAllIdPorteApplicative";

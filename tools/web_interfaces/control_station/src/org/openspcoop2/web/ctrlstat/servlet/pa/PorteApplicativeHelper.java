@@ -56,6 +56,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
@@ -3619,5 +3620,30 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		}
 		
 		return "";
+	}
+	
+	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa,boolean abilitiazione, String separatore, boolean addMinus) throws DriverConfigurazioneException {
+		MappingErogazionePortaApplicativa mapping = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+		if(mapping.isDefault()) {
+			return abilitiazione ? PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT : PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT;
+		}
+		else {
+			//return mapping.getNome();
+			List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+			if(listaAzioni.size() > 0) {
+				StringBuffer sb = new StringBuffer();
+				for (String string : listaAzioni) {
+//					if(sb.length() >0)
+					sb.append(separatore);
+					
+					sb.append((addMinus ? "- " : "") + string);
+				}
+				sb.append(separatore);
+				return abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, sb.toString()) : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA,sb.toString());
+			}
+			else {
+				return abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, " ??? ") : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA," ??? ");
+			}
+		}
 	}
 }

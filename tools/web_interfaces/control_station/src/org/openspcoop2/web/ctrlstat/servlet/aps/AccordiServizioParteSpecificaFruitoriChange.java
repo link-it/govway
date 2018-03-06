@@ -23,7 +23,6 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.net.URLEncoder;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -77,6 +76,8 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -135,6 +136,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 		TipoOperazione tipoOp = TipoOperazione.CHANGE;
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 
+		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+		
 		try {
 			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
 			
@@ -337,8 +342,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Preparo il menu
 			apsHelper.makeMenu();
 
-			String tmpTitle = apsHelper.getLabelIdServizio(asps);
-
 			Soggetto soggettoFruitore = null;
 			if ((idSoggettoFruitore != null) && !idSoggettoFruitore.equals("")) {
 				long idSoggettoFruitoreAsInt = Long.parseLong(idSoggettoFruitore);
@@ -436,28 +439,22 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
 			
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(asps.getIdAccordo());
+			
+			// setto la barra del titolo
+			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pdOld, session);
+			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggettoFruitore,idServizio, idServizioFruitore);
 
+			if(gestioneFruitori) {
+				lstParm.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE, null));
+			}
+			else {
+				lstParm.set(lstParm.size()-1, new Parameter(fruitoreLabel, null));
+			}
+			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
 
 			if (ServletUtils.isEditModeInProgress(this.editMode)) {
-				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
-
-				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
-				}
-				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-				}
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
-						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
-						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
-						));
-				lstParm.add(new Parameter(fruitoreLabel, null));
-
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
@@ -773,23 +770,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
-
-				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
-				}
-				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-				}
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
-						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
-						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
-						));
-				lstParm.add(new Parameter(fruitoreLabel, null));
-
-				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
 				// preparo i campi
@@ -848,23 +828,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			if(actionConfirm == null){
 				if(backToStato != null){
-
-					// setto la barra del titolo
-					List<Parameter> lstParm = new ArrayList<Parameter>();
-
-					if(gestioneFruitori) {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
-					}
-					else {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-					}
-					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
-							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
-							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
-							));
-					lstParm.add(new Parameter(fruitoreLabel, null));
 
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParm );
@@ -1005,22 +968,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					// Setto messaggio di errore
 					pd.setMessage(validazioneException.toString());
-
-					List<Parameter> lstParm = new ArrayList<Parameter>();
-
-					if(gestioneFruitori) {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
-					}
-					else {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-					}
-					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tmpTitle, 
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
-							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
-							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
-							));
-					lstParm.add(new Parameter(fruitoreLabel, null));
 
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParm );

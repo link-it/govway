@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Vector;
 
@@ -124,15 +123,13 @@ public final class PorteApplicativeAbilitazione extends Action {
 			
 			// in progress segnalo l'azione che si sta effettuando
 			if(actionConferma == null) {
-				String messaggio = "";
+				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(pa, ServletUtils.isCheckBoxEnabled(changeAbilitato), "<br/>",true);
 				String breadcrumb = "";
 				// cambio solo la modalita'
 	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-	            	messaggio = MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, porteApplicativeCore.getListaLabelRegolaMappingErogazionePortaApplicativa(pa,"<br/>",true));
 	            	breadcrumb = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_ABILITAZIONE_CONFIG_DI+ labelPerPorta;
 	            }
 	            else{
-	            	messaggio = MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA, porteApplicativeCore.getListaLabelRegolaMappingErogazionePortaApplicativa(pa,"<br/>",true));
 	            	breadcrumb = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_DISABILITAZIONE_CONFIG_DI + labelPerPorta;
 	            }
 				

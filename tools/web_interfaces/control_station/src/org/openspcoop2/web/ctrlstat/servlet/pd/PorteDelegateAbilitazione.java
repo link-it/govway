@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Vector;
 
@@ -152,15 +151,13 @@ public final class PorteDelegateAbilitazione extends Action {
 			
 			// in progress segnalo l'azione che si sta effettuando
 			if(actionConferma == null) {
-				String messaggio = "";
+				String messaggio = porteDelegateHelper.getMessaggioConfermaModificaRegolaMappingFruizionePortaDelegata(oldPD,ServletUtils.isCheckBoxEnabled(changeAbilitato), "<br/>",true);
 				String breadcrumb = "";
 				// cambio solo la modalita'
 	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-	            	messaggio = MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, porteDelegateCore.getListaLabelRegolaMappingFruizionePortaDelegata(oldPD,"<br/>",true));
 	            	breadcrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_ABILITAZIONE_CONFIG_DI+ labelPerPorta;
 	            }
 	            else{
-	            	messaggio = MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA, porteDelegateCore.getListaLabelRegolaMappingFruizionePortaDelegata(oldPD,"<br/>",true));
 	            	breadcrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_DISABILITAZIONE_CONFIG_DI + labelPerPorta;
 	            }
 				

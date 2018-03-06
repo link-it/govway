@@ -714,35 +714,6 @@ public class PorteDelegateCore extends ControlStationCore {
 			}
 		}
 	}
-	public String getListaLabelRegolaMappingFruizionePortaDelegata(PortaDelegata pd) throws DriverConfigurazioneException {
-		return getListaLabelRegolaMappingFruizionePortaDelegata(pd, "\n ",true);
-	}
-	
-	public String getListaLabelRegolaMappingFruizionePortaDelegata(PortaDelegata pd,String separatore,boolean addMinus) throws DriverConfigurazioneException {
-		MappingFruizionePortaDelegata mapping = this.getMappingFruizionePortaDelegata(pd);
-		if(mapping.isDefault()) {
-			//return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
-			return (addMinus ? "- " : "") + "(*)";
-		}
-		else {
-			//return mapping.getNome();
-			List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
-			if(listaAzioni.size() > 0) {
-				StringBuffer sb = new StringBuffer();
-				for (String string : listaAzioni) {
-					if(sb.length() >0)
-						sb.append(separatore);
-					
-					sb.append((addMinus ? "- " : "") + string);
-				}
-				return sb.toString();
-			}
-			else {
-				return (addMinus ? "- " : "") + "???";
-			}
-		}
-	}
-	
 	public List<Proprieta> porteDelPropList(int idPortaDelegata, Search ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelPropList";

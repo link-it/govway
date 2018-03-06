@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
@@ -2943,8 +2944,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		}
 	}
 	
-	
-	
 	public List<Parameter> getTitoloPD(Integer parentPD, String idSoggettoFruitore, String idAsps, String idFruizione)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		List<Parameter> lstParam = new ArrayList<>();
 		
@@ -3253,6 +3252,30 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
+		}
+	}
+	
+	public String getMessaggioConfermaModificaRegolaMappingFruizionePortaDelegata(PortaDelegata pd, boolean abilitiazione, String separatore,boolean addMinus) throws DriverConfigurazioneException {
+		MappingFruizionePortaDelegata mapping = this.porteDelegateCore.getMappingFruizionePortaDelegata(pd);
+		if(mapping.isDefault()) {
+			return abilitiazione ? PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT : PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT;
+		}
+		else {
+			List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+			if(listaAzioni.size() > 0) {
+				StringBuffer sb = new StringBuffer();
+				for (String string : listaAzioni) {
+//					if(sb.length() >0)
+					sb.append(separatore);
+					
+					sb.append((addMinus ? "- " : "") + string);
+				}
+				sb.append(separatore);
+				return abilitiazione ? MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, sb.toString()) : MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA,sb.toString());
+			}
+			else {
+				return abilitiazione ? MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, " ??? ") : MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA," ??? ");
+			}
 		}
 	}
 }
