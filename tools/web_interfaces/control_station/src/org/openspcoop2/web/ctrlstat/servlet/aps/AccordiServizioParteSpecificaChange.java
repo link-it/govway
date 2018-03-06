@@ -903,7 +903,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null, null, null, null,
 							null);
 
-					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
+					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
 						boolean forceEnableConnettore = false;
 						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
@@ -1071,7 +1071,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null, null, null, null,
 						null);
 
-				if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
+				if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 				
 					boolean forceEnableConnettore = false;
 					if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
@@ -1352,7 +1352,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null, null, null, null,
 							null);
 
-					if(multiTenant || apsHelper.isModalitaCompleta() || !soggettoOperativo) {
+					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
 						boolean forceEnableConnettore = false;
 						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
