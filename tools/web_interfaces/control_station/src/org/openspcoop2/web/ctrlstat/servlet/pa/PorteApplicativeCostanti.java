@@ -444,6 +444,9 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
 	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+	
 	/* DEFAULT VALUE PARAMETRI */
 	
 	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED = CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED;
@@ -484,6 +487,11 @@ public class PorteApplicativeCostanti {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "nuova";
+	
+	/* MESSAGGI */
+	
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA ="Si sta abilitando la configurazione relativa alle azioni:<br/>{0}<br/>Procedere?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA ="Si sta disabilitando la configurazione relativa alle azioni:<br/>{0}<br/>Procedere?";
 	
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. E' necessario indicare: {0}"; 

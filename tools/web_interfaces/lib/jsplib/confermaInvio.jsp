@@ -59,10 +59,11 @@ PageData pd = (PageData) session.getAttribute("PageData");
 	</SCRIPT>
 	<jsp:include page="/jsp/confermaInvioCustom.jsp" flush="true" />
 	<SCRIPT type="text/javascript">
-	var params = generaUrl();
+	var params;
 	
 	function EseguiOp() {
 		console.log('Esegui ' + document.form.elements['actionConfirm'].value);
+		params = generaUrl();
 		
 		if(document.form.elements['actionConfirm'])
 			document.form.submit();
@@ -72,6 +73,8 @@ PageData pd = (PageData) session.getAttribute("PageData");
 	
 	function Annulla() {
 		console.log('Annulla ' + document.form.elements['actionConfirm'].value);
+		params = generaUrl();
+		
 		if(document.form.elements['actionConfirm'])
 			document.form.submit();
 		else

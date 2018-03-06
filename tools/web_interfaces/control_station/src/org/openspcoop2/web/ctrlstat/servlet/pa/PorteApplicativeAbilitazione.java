@@ -21,7 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,10 +46,16 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
@@ -90,6 +98,8 @@ public final class PorteApplicativeAbilitazione extends Action {
 			if(idAsps == null)
 				idAsps = "";
 			
+			String actionConferma = porteApplicativeHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
+			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
 			String oldNomePA = pdOld.getHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA);
@@ -103,24 +113,97 @@ public final class PorteApplicativeAbilitazione extends Action {
 
 			// Prendo la porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			// Modifico i dati della porta applicativa nel db
-			pa.setNome(nomePorta);
-			IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-			oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
-			pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 			
-			 // cambio solo la modalita'
-            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-                pa.setStato(StatoFunzionalita.ABILITATO);
-            }
-            else{
-                pa.setStato(StatoFunzionalita.DISABILITATO);
-            }
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta =	porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+			}
+			else {
+				labelPerPorta = oldNomePA;
+			}
 			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			// in progress segnalo l'azione che si sta effettuando
+			if(actionConferma == null) {
+				String messaggio = "";
+				String breadcrumb = "";
+				// cambio solo la modalita'
+	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+	            	messaggio = MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, porteApplicativeCore.getListaLabelRegolaMappingErogazionePortaApplicativa(pa,"<br/>",true));
+	            	breadcrumb = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_ABILITAZIONE_CONFIG_DI+ labelPerPorta;
+	            }
+	            else{
+	            	messaggio = MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA, porteApplicativeCore.getListaLabelRegolaMappingErogazionePortaApplicativa(pa,"<br/>",true));
+	            	breadcrumb = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_DISABILITAZIONE_CONFIG_DI + labelPerPorta;
+	            }
+				
+				List<Parameter> lstParams = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
+				lstParams.add(new Parameter(breadcrumb, null));
+				
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParams );
+				
+				pd.setMessage(messaggio, MessageType.INFO);
+				
+				// preparo i campi
+				Vector<DataElement> dati = new Vector<DataElement>();
+				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,idPorta, idsogg, null,idAsps, dati);
+				
+				DataElement de = new  DataElement();
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
+				de.setValue(nomePorta);
+				de.setType(DataElementType.HIDDEN);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+				dati.add(de);
+				
+				de = new  DataElement();
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA);
+				de.setValue(changeAbilitato);
+				de.setType(DataElementType.HIDDEN);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO);
+				dati.add(de);
+				
+				pd.setDati(dati);
+				
+				String[][] bottoni = { 
+						{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+							
+						},
+						{ Costanti.LABEL_MONITOR_BUTTON_OK,
+							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 
-			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+				pd.setBottoni(bottoni );
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+				// Forward control to the specified success URI
+				return ServletUtils.getStrutsForwardEditModeConfirm(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE, ForwardParams.OTHER(""));
+			} 
 
+			// se ho confermato effettuo la modifica altrimenti torno direttamente alla lista
+			if(actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+				// Prendo la porta applicativa
+				pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+				// Modifico i dati della porta applicativa nel db
+				pa.setNome(nomePorta);
+				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+				oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
+				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+				
+				 // cambio solo la modalita'
+	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+	                pa.setStato(StatoFunzionalita.ABILITATO);
+	            }
+	            else{
+	                pa.setStato(StatoFunzionalita.DISABILITATO);
+	            }
+				
+				String userLogin = ServletUtils.getUserLoginFromSession(session);
+	
+				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+			}
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

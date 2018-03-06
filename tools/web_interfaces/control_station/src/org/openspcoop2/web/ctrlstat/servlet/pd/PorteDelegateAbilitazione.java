@@ -21,7 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,10 +49,16 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
  * porteDelegateChange
@@ -86,7 +94,7 @@ public final class PorteDelegateAbilitazione extends Action {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			
 			String changeAbilitato = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA);
-//			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
 			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
@@ -97,6 +105,8 @@ public final class PorteDelegateAbilitazione extends Action {
 			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null)
 				idFruizione = "";
+			
+			String actionConferma = porteDelegateHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
@@ -132,23 +142,91 @@ public final class PorteDelegateAbilitazione extends Action {
 				idAspsLong = Long.parseLong(idAsps);
 			}
 			
-			long idPA = oldPD.getId();
-			PortaDelegata portaDelegata = (PortaDelegata) oldPD.clone();// new
-			portaDelegata.setId(idPA);
-			portaDelegata.setNome(nomePorta);
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(oldPD);
+			}
+			else {
+				labelPerPorta = nomePorta;
+			}
 			
-			// cambio solo la modalita'
-            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-            	portaDelegata.setStato(StatoFunzionalita.ABILITATO);
-            }
-            else{
-                portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
-            }
+			// in progress segnalo l'azione che si sta effettuando
+			if(actionConferma == null) {
+				String messaggio = "";
+				String breadcrumb = "";
+				// cambio solo la modalita'
+	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+	            	messaggio = MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, porteDelegateCore.getListaLabelRegolaMappingFruizionePortaDelegata(oldPD,"<br/>",true));
+	            	breadcrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_ABILITAZIONE_CONFIG_DI+ labelPerPorta;
+	            }
+	            else{
+	            	messaggio = MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA, porteDelegateCore.getListaLabelRegolaMappingFruizionePortaDelegata(oldPD,"<br/>",true));
+	            	breadcrumb = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_DISABILITAZIONE_CONFIG_DI + labelPerPorta;
+	            }
+				
+				List<Parameter> lstParams = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione); 
+				lstParams.add(new Parameter(breadcrumb, null));
+				
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle(pd, lstParams );
+				
+				pd.setMessage(messaggio, MessageType.INFO);
+				
+				// preparo i campi
+				Vector<DataElement> dati = new Vector<DataElement>();
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,idPorta, idsogg, null,idAsps, idFruizione, dati);
+				
+				DataElement de = new  DataElement();
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA);
+				de.setValue(nomePorta);
+				de.setType(DataElementType.HIDDEN);
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				dati.add(de);
+				
+				de = new  DataElement();
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA);
+				de.setValue(changeAbilitato);
+				de.setType(DataElementType.HIDDEN);
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO);
+				dati.add(de);
+				
+				pd.setDati(dati);
+				
+				String[][] bottoni = { 
+						{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+							
+						},
+						{ Costanti.LABEL_MONITOR_BUTTON_OK,
+							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
+				pd.setBottoni(bottoni );
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+				// Forward control to the specified success URI
+				return ServletUtils.getStrutsForwardEditModeConfirm(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE, ForwardParams.OTHER(""));
+			} 
 
-			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
-
+			// se ho confermato effettuo la modifica altrimenti torno direttamente alla lista
+			if(actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+				long idPA = oldPD.getId();
+				PortaDelegata portaDelegata = (PortaDelegata) oldPD.clone();// new
+				portaDelegata.setId(idPA);
+				portaDelegata.setNome(nomePorta);
+				
+				// cambio solo la modalita'
+	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+	            	portaDelegata.setStato(StatoFunzionalita.ABILITATO);
+	            }
+	            else{
+	                portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
+	            }
+	            String userLogin = ServletUtils.getUserLoginFromSession(session);
+				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+			}
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

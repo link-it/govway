@@ -440,6 +440,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
 	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+	
 	/* DEFAULT VALUE PARAMETRI */
 	
 	
@@ -491,6 +494,9 @@ public class PorteDelegateCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "nuova";
 	
+	// Messaggio 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA ="Si sta abilitando la configurazione relativa alle azioni:<br/>{0}<br/>Procedere?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA ="Si sta disabilitando la configurazione relativa alle azioni:<br/>{0}<br/>Procedere?";
 	
 	// Messaggi Errora
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_ALLA_PORTA_DELEGATA_DEI_SERVIZI_APPLICATIVI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati alla porta delegata dei servizi applicativi non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";

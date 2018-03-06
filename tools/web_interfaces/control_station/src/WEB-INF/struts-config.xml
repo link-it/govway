@@ -1286,6 +1286,7 @@
             scope="request" validate="true">
             <forward name="porteDelegateAbilitazioneOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateAbilitazioneError" path="/jsplib/info.jsp"/>
+            <forward name="porteDelegateAbilitazioneConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
         
         <!--  Porte Delegate (Proprieta' Protocollo) -->
@@ -1696,6 +1697,7 @@
             scope="request" validate="true">
             <forward name="porteApplicativeAbilitazioneOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeAbilitazioneError" path="/jsplib/info.jsp"/>
+            <forward name="porteApplicativeAbilitazioneConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
     
     
