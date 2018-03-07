@@ -33,9 +33,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -95,22 +100,69 @@ public final class PorteDelegateAzioneDel extends Action {
 
 			String azione = "";
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			// Prendo la porta applicativa
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
 
+			AccordoServizioParteSpecifica asps = null;
+			ConfigurazioneServizioAzione configAzioni = null; 
+			if(gestioneFruitori) {
+				Long idAspsLong = Long.parseLong(idAsps);
+				asps = aspsCore.getAccordoServizioParteSpecifica(idAspsLong);
+				
+				String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
+				
+				Fruitore fruitore = null;
+				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+					if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
+						fruitore = fruitoreCheck;
+						break;
+					}
+				}
+				for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+					ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+					if(config!=null) {
+						if(config.getAzioneList().contains(azioneGiaEsistente)) {
+							configAzioni = config;
+							break;
+						}
+					}
+				}
+			}
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
 				// .elementAt(idToRemove[i])).elementAt(0);
 				// servizioApplicativo = de.getValue();
 				azione = idsToRemove.get(i);
+				
 				for (int j = 0; j < portaDelegata.getAzione().sizeAzioneDelegataList(); j++) {
 					String azioneDelegata = portaDelegata.getAzione().getAzioneDelegata(j);
 					if (azione.equals(azioneDelegata)) {
 						portaDelegata.getAzione().removeAzioneDelegata(j);
 						break;
+					}
+				}
+				
+				if(gestioneFruitori) {
+					if(configAzioni!=null) {
+						for (int j = 0; j < configAzioni.sizeAzioneList(); j++) {
+							if(configAzioni.getAzione(j).equals(azione)) {
+								configAzioni.removeAzione(j);
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -128,8 +180,18 @@ public final class PorteDelegateAzioneDel extends Action {
 			if(portaDelegata.getAzione().sizeAzioneDelegataList() == 0) {
 				pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
 			} else {
+				
+				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+				
+				listaOggettiDaModificare.add(portaDelegata);
+				
+				if(gestioneFruitori) {
+					listaOggettiDaModificare.add(asps);
+				}
+				
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
-				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
+				
 			}
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();

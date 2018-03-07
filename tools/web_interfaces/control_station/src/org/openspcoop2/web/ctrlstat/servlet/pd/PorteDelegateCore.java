@@ -693,8 +693,8 @@ public class PorteDelegateCore extends ControlStationCore {
 	public String getLabelRegolaMappingFruizionePortaDelegata(PortaDelegata pd, int sizeSubstring) throws DriverConfigurazioneException {
 		MappingFruizionePortaDelegata mapping = this.getMappingFruizionePortaDelegata(pd);
 		if(mapping.isDefault()) {
-			//return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
-			return "(*)";
+			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+			//return "(*)";
 		}
 		else {
 			//return mapping.getNome();

@@ -798,8 +798,8 @@ public class PorteApplicativeCore extends ControlStationCore {
 	public String getLabelRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa, int sizeSubstring) throws DriverConfigurazioneException {
 		MappingErogazionePortaApplicativa mapping = this.getMappingErogazionePortaApplicativa(pa);
 		if(mapping.isDefault()) {
-			//return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
-			return "(*)";
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+			//return "(*)";
 		}
 		else {
 			//return mapping.getNome();

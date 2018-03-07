@@ -42,6 +42,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -105,6 +107,14 @@ public final class PorteDelegateAzioneAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			// multiselect
 			String[] azionis = porteDelegateHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
+			
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -239,14 +249,41 @@ public final class PorteDelegateAzioneAdd extends Action {
 						ForwardParams.ADD());
 			}
 
+			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+			
+			String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
+			
 			// aggiungo azione nel db
 			for(String azione: azionis) {
 				portaDelegata.getAzione().addAzioneDelegata(azione);
 			}
+			listaOggettiDaModificare.add(portaDelegata);
 
+			if(gestioneFruitori) {
+				Fruitore fruitore = null;
+				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+					if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
+						fruitore = fruitoreCheck;
+						break;
+					}
+				}
+				for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+					ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+					if(config!=null) {
+						if(config.getAzioneList().contains(azioneGiaEsistente)) {
+							for(String azione: azionis) {
+								config.addAzione(azione);
+							}
+							break;
+						}
+					}
+				}
+				listaOggettiDaModificare.add(asps);
+			}
+			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
 
 			// ricarico la pd
 			
