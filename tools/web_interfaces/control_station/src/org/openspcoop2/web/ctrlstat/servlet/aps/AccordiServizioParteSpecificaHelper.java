@@ -4759,7 +4759,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}
 			
-			if(this.isModalitaCompleta()) {
+			if(this.isModalitaCompleta() && !gestioneFruitori) {
 				de = new DataElement();
 				if(this.apsCore.isRegistroServiziLocale()){
 					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_VISUALIZZA_DATI_FRUITORE);
@@ -4782,7 +4782,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 						
-			if(this.core.isShowGestioneWorkflowStatoDocumenti() && this.isModalitaCompleta()){
+			if(this.core.isShowGestioneWorkflowStatoDocumenti() && this.isModalitaCompleta() && !gestioneFruitori) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);

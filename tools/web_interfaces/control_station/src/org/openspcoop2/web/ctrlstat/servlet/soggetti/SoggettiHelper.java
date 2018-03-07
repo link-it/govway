@@ -794,7 +794,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
 			addFilterProtocol(ricerca, idLista);
-			if(this.core.isGestionePddAbilitata(this)==false) {
+			if(this.core.isGestionePddAbilitata(this)==false && multiTenant) {
 				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
 				addFilterDominio(filterDominio, false);
 			}
@@ -821,8 +821,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 
 			// setto le label delle colonne
-			int totEl = this.isModalitaCompleta() ? 5 : 3;
+			int totEl = this.isModalitaCompleta() ? 4 : 2;
 			if( showProtocolli ) {
+				totEl++;
+			}
+			if(multiTenant || this.pddCore.isGestionePddAbilitata(this)) {
+				// pdd o dominio
 				totEl++;
 			}
 			if(!this.isModalitaStandard()) {
@@ -840,7 +844,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(this.pddCore.isGestionePddAbilitata(this)) {
 				labels[i++] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
 			}
-			else {
+			else if(multiTenant) {
 				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO;
 			}
 			if(!this.isModalitaStandard()) {
@@ -906,8 +910,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 					e.addElement(de);
 				}
 				
-				de = new DataElement();
 				if(this.core.isGestionePddAbilitata(this)) {
+					de = new DataElement();
 					if (pdd != null && (!nomePdD.equals("-"))){
 						if (!nomePdD.equals("-")){
 							//if (nomiPdd.contains(nomePdD)) {
@@ -926,15 +930,17 @@ public class SoggettiHelper extends ConnettoriHelper {
 					else{
 						de.setValue("-");
 					}
+					e.addElement(de);
 				}
-				else {
+				else if(multiTenant) {
+					de = new DataElement();
 					if(pddEsterna) {
 						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_LABEL);
 					}else {
 						de.setValue(SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_LABEL);
 					}
+					e.addElement(de);
 				}
-				e.addElement(de);
 
 				if(!this.isModalitaStandard()) {
 					

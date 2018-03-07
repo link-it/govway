@@ -30,6 +30,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -76,12 +77,19 @@ public final class SoggettiList extends Action {
 
 			SoggettiCore soggettiCore = new SoggettiCore();
 			
+			boolean multiTenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant();
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.SOGGETTI;
 			ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
+			
+			if(!multiTenant) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
+			}
+			
 			if(soggettiCore.isRegistroServiziLocale()){
 				List<Soggetto> lista = null;
 				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
