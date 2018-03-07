@@ -793,6 +793,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	public String getLabelRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException {
+		return getLabelRegolaMappingErogazionePortaApplicativa(pa, 50);
+	}
+	public String getLabelRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa, int sizeSubstring) throws DriverConfigurazioneException {
 		MappingErogazionePortaApplicativa mapping = this.getMappingErogazionePortaApplicativa(pa);
 		if(mapping.isDefault()) {
 			//return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
@@ -809,8 +812,8 @@ public class PorteApplicativeCore extends ControlStationCore {
 					
 					sb.append(string);
 				}
-				if(sb.length()>50)
-					return sb.toString().substring(0, 47)+"...";
+				if(sb.length()>sizeSubstring)
+					return sb.toString().substring(0, (sizeSubstring-3))+"...";
 				else 
 					return sb.toString();
 			}

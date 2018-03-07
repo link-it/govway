@@ -5384,7 +5384,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String[] azioni, String[] azioniDisponibiliList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
-			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String nomeSA, String [] saSoggetti, 
+			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, String nomeSA, String [] saSoggetti, 
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli,
 			String erogazioneRuolo, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch, List<String> soggettiAutenticati,  List<String> soggettiAutenticatiLabel, String soggettoAutenticato) throws Exception {
@@ -5445,8 +5445,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setLabels(listaMappingLabels); 
 			de.setValues(listaMappingValues);
 			de.setSelected(mapping);
+			de.setToolTip(mappingLabel);
 			de.setType(DataElementType.SELECT);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
+			de.setPostBack(true);
 			dati.addElement(de);
 		} else {
 			
@@ -5621,7 +5623,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String [] azioni, String[] azioniDisponibiliList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
 			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
-			String[] listaMappingLabels, String[] listaMappingValues, String mapping, List<String> saList,
+			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, List<String> saList,
 			String nomeSA, String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati,
 			String fruizioneAutorizzazioneRuoli, String fruizioneRuolo, String fruizioneAutorizzazioneRuoliTipologia,
@@ -5676,8 +5678,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setLabels(listaMappingLabels); 
 			de.setValues(listaMappingValues);
 			de.setSelected(mapping);
+			de.setToolTip(mappingLabel);
 			de.setType(DataElementType.SELECT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MAPPING);
+			de.setPostBack(true);
 			dati.addElement(de);
 		} else {
 			

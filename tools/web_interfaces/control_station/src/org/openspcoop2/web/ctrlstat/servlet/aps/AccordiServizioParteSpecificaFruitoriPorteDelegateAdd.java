@@ -172,6 +172,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			MappingFruizionePortaDelegata mappingSelezionato = null, mappingDefault = null;
 
+			String mappingLabel = "";
 			String[] listaMappingLabels = null;
 			String[] listaMappingValues = null;
 			List<String> azioniOccupate = new ArrayList<>();
@@ -200,12 +201,24 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				if(mappingSelezionato == null) {
 					mappingSelezionato = mappingDefault;
 				}
+				
+				if(!mappingSelezionato.isDefault()) {
+					PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
+					mappingLabel = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pdMapping,Integer.MAX_VALUE);
+				}
 
 				listaMappingLabels = new String[listaMappingFruizioneSize];
 				listaMappingValues = new String[listaMappingFruizioneSize];
 				for (int i = 0; i < listaMappingFruizione.size(); i++) {
 					MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: mappingFruizionePortaDelegata.getNome();
+					//String nomeMappingNoDefault = mappingFruizionePortaDelegata.getNome();
+					String nomeMappingNoDefault = null;
+					if(!mappingFruizionePortaDelegata.isDefault()) {
+						PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+						nomeMappingNoDefault = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pdMapping,70);
+					}
+					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? 
+							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: nomeMappingNoDefault;
 					listaMappingValues[i] = mappingFruizionePortaDelegata.getNome();
 					
 					// calcolo del nome automatico
@@ -343,7 +356,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
-							mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 							fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 				}
@@ -372,7 +385,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
-						mappingPD, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 						fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 

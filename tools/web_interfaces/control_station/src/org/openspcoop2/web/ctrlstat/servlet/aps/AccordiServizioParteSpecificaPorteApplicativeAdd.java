@@ -266,6 +266,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
 			MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
 
+			String mappingLabel = "";
 			String[] listaMappingLabels = null;
 			String[] listaMappingValues = null;
 			List<String> azioniOccupate = new ArrayList<>();
@@ -295,11 +296,23 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					mappingSelezionato = mappingDefault;
 				}
 
+				if(!mappingSelezionato.isDefault()) {
+					PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+					mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(paMapping,Integer.MAX_VALUE);
+				}
+				
 				listaMappingLabels = new String[listaMappingErogazioneSize];
 				listaMappingValues = new String[listaMappingErogazioneSize];
 				for (int i = 0; i < listaMappingErogazione.size(); i++) {
 					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-					listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: mappingErogazionePortaApplicativa.getNome();
+					//String nomeMappingNoDefault = mappingErogazionePortaApplicativa.getNome();
+					String nomeMappingNoDefault = null;
+					if(!mappingErogazionePortaApplicativa.isDefault()) {
+						PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+						nomeMappingNoDefault = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(paMapping,70);
+					}
+					listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()?
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: nomeMappingNoDefault;
 					listaMappingValues[i] = mappingErogazionePortaApplicativa.getNome();
 					
 					// calcolo del nome automatico
@@ -573,7 +586,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
 							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
-							mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
+							mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato);
 					
@@ -643,7 +656,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
 						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
-						mappingPA, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
+						mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato);
 				

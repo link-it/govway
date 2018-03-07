@@ -332,8 +332,9 @@ for (int i = 0; i < dati.size(); i++) {
 		                               							} else {
 		                               								String selSubType = !de.getSubType().equals("") ? (" size='"+de.getRows()+"' " + de.getSubType() + " ") : " ";
 		                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + de.getOnChange() + "\" " ) : " ";
+													String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
 		                               								
-		                          									%><select name="<%= deName  %>" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>"><%
+		                          									%><select name="<%= deName  %>" <%= selSubType %> <%= selEvtOnChange %> <%= selTitle %> class="<%= classInput %>"><%
 		                          									String [] values = de.getValues();
 		                                        					if (values != null) {
 		                            									String [] labels = de.getLabels();
