@@ -796,7 +796,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						}
 					}
 				}
+				// Se ancora non l'ho trovato prendo il primo della lista nel caso di gestione erogazione
+				if ((this.provider == null) || this.provider.equals("")) {
+					if(gestioneErogatori) {
+						Soggetto soggetto = list.get(0);
+						this.provider = soggetto.getId() + "";
+						this.nomeSoggettoErogatore = soggetto.getNome();
+						this.tipoSoggettoErogatore = soggetto.getTipo();
+					}
+				}
 			}
+			
 			
 			if(this.tiposervizio == null){
 				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(this.tipoProtocollo,this.serviceBinding);
