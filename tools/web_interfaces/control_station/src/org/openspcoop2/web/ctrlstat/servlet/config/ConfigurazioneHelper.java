@@ -3121,7 +3121,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(protocollo);
 			dati.addElement(de);
+									
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA+protocollo);
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setValue(urlInvocazionePA);
+			dati.addElement(de);
 			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD+protocollo);
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setValue(urlInvocazionePD);
+			dati.addElement(de);
+					
 			if(!multiTenant) {
 				IDSoggetto idSoggetto = this.soggettiCore.getSoggettoOperativo(userLogin, protocollo);
 				long idSoggettoLong = this.soggettiCore.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo());
@@ -3142,21 +3156,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,idSoggetto.getTipo()));
 				dati.addElement(de);
 			}
-						
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA+protocollo);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setValue(urlInvocazionePA);
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD+protocollo);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setValue(urlInvocazionePD);
-			dati.addElement(de);
-			
 		}
 		
 		

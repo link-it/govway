@@ -124,6 +124,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 		}
 		
+		boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+		boolean hiddenDatiDominioInterno = false;
+		if(!multiTenant) {
+			if(!gestionePdd) {
+				hiddenDatiDominioInterno = SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE.equals(dominio);
+			}
+		}
+		
 		if(gestionePdd) {
 			if(TipoOperazione.ADD.equals(tipoOp)){
 				
@@ -178,9 +186,27 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
-			if(TipoOperazione.CHANGE.equals(tipoOp) && listOperativoSolamente){
-				de.setType(DataElementType.TEXT);
+			if(!multiTenant) {
+				de.setType(DataElementType.HIDDEN);
 				de.setValue(dominio);
+			}
+			else if(TipoOperazione.CHANGE.equals(tipoOp) && listOperativoSolamente){
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dominio);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
+				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+"__LABEL");
+				String valueDom = dominio;
+				for (int i = 0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length; i++) {
+					if(SoggettiCostanti.SOGGETTI_DOMINI_VALUE[i].equals(dominio)) {
+						valueDom = SoggettiCostanti.SOGGETTI_DOMINI_LABEL[i];
+						break;
+					}
+				}
+				de.setValue(valueDom);
 			}
 			else {
 				de.setType(DataElementType.SELECT);
@@ -386,8 +412,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
-			boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
-			
 			boolean showConnettore = !this.isModalitaStandard() && 
 					this.core.isRegistroServiziLocale() &&
 					(this.isModalitaCompleta() || this.pddCore.isPddEsterna(pdd) || multiTenant );
@@ -440,7 +464,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 			}
 			else{
-				if(TipoOperazione.ADD.equals(tipoOp)){
+				if(hiddenDatiDominioInterno) {
+					showCredenziali = false;
+				}
+				else if(TipoOperazione.ADD.equals(tipoOp)){
 					showCredenziali = this.isModalitaAvanzata();
 				}
 			}
@@ -450,7 +477,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 		}
 		
-		if(TipoOperazione.CHANGE.equals(tipoOp)){
+		if(TipoOperazione.CHANGE.equals(tipoOp) && !hiddenDatiDominioInterno){
 
 			de = new DataElement();
 			de.setLabel(RuoliCostanti.LABEL_RUOLI);
