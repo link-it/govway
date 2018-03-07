@@ -767,10 +767,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			}
 			else {
 				portaApplicativa.getServizioApplicativoList().clear();
-				for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
+				PortaApplicativa portaApplicativaSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+				for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaSelezionata.getServizioApplicativoList()) {
 					IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
 					idServizioApplicativoDefault.setNome(paSADefault.getNome());
-					idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaDefault.getTipoSoggettoProprietario(), portaApplicativaDefault.getNomeSoggettoProprietario()));
+					idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaSelezionata.getTipoSoggettoProprietario(), portaApplicativaSelezionata.getNomeSoggettoProprietario()));
 					ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
 					ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
 					sa.setNome(portaApplicativa.getNome());

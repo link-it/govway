@@ -135,6 +135,14 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
@@ -384,10 +392,12 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		
 			Fruitore fruitore = null;
-			for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-				if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
-					fruitore = fruitoreCheck;
-					break;
+			if(gestioneFruitori) {
+				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+					if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
+						fruitore = fruitoreCheck;
+						break;
+					}
 				}
 			}
 			
@@ -398,21 +408,41 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, portaDelegataDaCopiare, nome, azioni);
 				
-				connettore = (Connettore) fruitore.getConnettore().clone();
+				if(gestioneFruitori) {
+					if(mappingSelezionato.isDefault()) {
+						connettore = (Connettore) fruitore.getConnettore().clone();
+					}
+					else {
+						for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+							ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+							if(config!=null) {
+								String azione = portaDelegataDaCopiare.getAzione().getAzioneDelegata(0); // prendo la prima
+								if(config.getAzioneList().contains(azione)) {
+									connettore = config.getConnettore();
+									break;
+								}
+							}
+						}
+					}
+				}
 			}
 			else {
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, nome, azioni);
 				
-				connettore = null; // TODO
+				if(gestioneFruitori) {
+					connettore = null; // TODO
+				}
 			}
 			
-			ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
-			configurazioneAzione.setConnettore(connettore);
-			for (int i = 0; i < azioni.length; i++) {
-				configurazioneAzione.addAzione(azioni[i]);
+			if(gestioneFruitori) {
+				ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
+				configurazioneAzione.setConnettore(connettore);
+				for (int i = 0; i < azioni.length; i++) {
+					configurazioneAzione.addAzione(azioni[i]);
+				}
+				fruitore.addConfigurazioneAzione(configurazioneAzione);
 			}
-			fruitore.addConfigurazioneAzione(configurazioneAzione);
 			
 			PortaDelegata portaDelegata = subscription.getPortaDelegata();
 			MappingFruizionePortaDelegata mappingFruizione = subscription.getMapping();
@@ -430,9 +460,15 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
 
-			listaOggettiDaModificare.add(asps);
+			if(gestioneFruitori) {
+				
+				listaOggettiDaModificare.add(asps);
+				
+			}
 			
-			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
+			if(listaOggettiDaModificare.size()>0) {
+				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
+			}
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

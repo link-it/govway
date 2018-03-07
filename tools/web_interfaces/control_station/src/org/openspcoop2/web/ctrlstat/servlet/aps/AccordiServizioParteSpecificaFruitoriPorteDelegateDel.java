@@ -39,6 +39,8 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -113,6 +115,14 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			// Elimino le porte applicative del servizio dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
 			// int[] idToRemove = new int[objTok.countTokens()];
@@ -139,6 +149,17 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			}
 			idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
 			idSoggettoFruitore.setNome(nomeSoggettoFruitore);
+			
+			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+			Fruitore fruitore = null;
+			if(gestioneFruitori) {
+				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+					if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
+						fruitore = fruitoreCheck;
+						break;
+					}
+				}
+			}
 			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 			String errMsg = null;
@@ -168,10 +189,38 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 					
 					// Elimino entrambi gli oggetti
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
+					
+					if(gestioneFruitori) {
+						int index = -1;
+						for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+							ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+							if(config!=null) {
+								String azione = tmpPD.getAzione().getAzioneDelegata(0); // prendo la prima
+								if(config.getAzioneList().contains(azione)) {
+									index = j;
+									break;
+								}
+							}
+						}
+						fruitore.removeConfigurazioneAzione(index);
+					}
+					
 				}else {
 					errMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT;
 				}
+				
 			}// for
+			
+			
+			if(gestioneFruitori) {
+				
+				listaOggettiDaModificare.add(asps);
+				
+			}
+			
+			if(listaOggettiDaModificare.size()>0) {
+				porteDelegateCore.performUpdateOperation(superUser, apsHelper.smista(), listaOggettiDaModificare.toArray());
+			}
 			
 			if(errMsg != null)
 				pd.setMessage(errMsg);

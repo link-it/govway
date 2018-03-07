@@ -4628,6 +4628,9 @@ public class DriverRegistroServiziDB_LIB {
 			
 				long idFruizione = listaFruizioniDaEliminare.get(i);
 				
+				//cancellazione azioni
+				DriverRegistroServiziDB_LIB.deleteAllAzioniFruizioneServizio(idFruizione, con);
+				
 				//elimino prima le entry nella tab servizi_fruitori per rispettare le dipendenze
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI);
