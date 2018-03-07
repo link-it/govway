@@ -4549,7 +4549,7 @@ public class DriverRegistroServiziDB_LIB {
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONE);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id="+CostantiDB.SERVIZI_FRUITORI_AZIONE+".id_fruizione");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id="+CostantiDB.SERVIZI_FRUITORI_AZIONE+".id_fruizione_azioni");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id_fruizione = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONE+".nome_azione = ?");
 			sqlQueryObject.setANDLogicOperator(true);
