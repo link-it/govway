@@ -4995,10 +4995,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String wsdlimplfru, String[] soggettiList, String[] soggettiListLabel, String idServ, String id, 
 			TipoOperazione tipoOp, String idSoggettoErogatoreDelServizio, String nomeprov, String tipoprov,
 			String nomeservizio, String tiposervizio, String correlato, String stato, String oldStato, String statoServizio,
-			String tipoAccordo, boolean validazioneDocumenti) throws Exception {
+			String tipoAccordo, boolean validazioneDocumenti,
+			String azioneConnettore) throws Exception {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
+		if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(azioneConnettore);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE);
+			dati.addElement(de);
+		}
+		
 		if (tipoOp.equals(TipoOperazione.ADD)) {
 			// in caso di add allora visualizzo la lista dei soggetti
 			DataElement de = new DataElement();
@@ -5194,14 +5203,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		}
 
-		if (!isModalitaAvanzata) {
-			DataElement de = new DataElement();
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			de.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO);
-			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
-		}
-
 		return dati;
 	}
 
@@ -5210,8 +5211,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String oldStatoPackage, String idServizio, String idServizioFruitore, String idSoggettoErogatoreDelServizio,
 			String nomeservizio, String tiposervizio, String idSoggettoFruitore){
 
-		boolean isModalitaAvanzata = this.isModalitaAvanzata();
-
+	
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
 			DataElement de = new DataElement();
 			de.setValue(idServizioFruitore);
@@ -5224,15 +5224,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 		}
-
-		if (!isModalitaAvanzata) {
-			DataElement de = new DataElement();
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			de.setValue(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO);
-			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
-		}
-
+		
 		return dati;
 	}
 

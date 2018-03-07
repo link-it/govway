@@ -990,7 +990,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					&& StatiAccordo.finale.toString().equals(stato) && this.core.isShowGestioneWorkflowStatoDocumenti() ){
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 					de.setType(DataElementType.HIDDEN);
-					de.setSelected(true);
+					de.setValue(Costanti.CHECK_BOX_ENABLED);
 				}
 				else{
 					de.setLabel(null);
@@ -1000,13 +1000,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}else{
 				if(forceEnabled) {
 					de.setType(DataElementType.HIDDEN);
-					de.setSelected(true);
+					de.setValue(Costanti.CHECK_BOX_ENABLED);
 				}
 				else {
 					de.setType(DataElementType.CHECKBOX);
-				}
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-					de.setSelected(true);
+					if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+						de.setSelected(true);
+					}
 				}
 				de.setPostBack(true);
 				//				de.setOnClick("AbilitaEndPointHTTP(\"" + tipoOp + "\")");
@@ -1019,7 +1019,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (endpointtype.equals(TipiConnettore.HTTP.toString())) {
 				de.setValue(TipiConnettore.HTTP.toString());
 			}
-			else if (endpointtype.equals(TipiConnettore.HTTP.toString())) {
+			else if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				de.setValue(TipiConnettore.HTTPS.toString());
 			} 
 			else {
@@ -1599,7 +1599,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			if (endpointtype.equals(TipiConnettore.HTTP.toString())) {
 				de.setValue(TipiConnettore.HTTP.toString());
-			} else {
+			}
+			else if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+				de.setValue(TipiConnettore.HTTPS.toString());
+			}else {
 				de.setValue(TipiConnettore.DISABILITATO.toString());
 			}
 			de.setType(DataElementType.HIDDEN);

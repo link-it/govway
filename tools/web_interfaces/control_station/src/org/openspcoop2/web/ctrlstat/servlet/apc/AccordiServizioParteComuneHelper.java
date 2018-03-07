@@ -80,6 +80,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
@@ -3987,7 +3988,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String tipoprov = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO);
 			// String nomeservizio = this.getParameter("nomeservizio");
 			// String tiposervizio = this.getParameter("tiposervizio");
-			String endpointtype = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_ENDPOINT_TYPE);
+			String endpointtype = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 
 			if (!this.endPointCheckData(listExtendedConnettore)) {
 				return false;

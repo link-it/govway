@@ -374,7 +374,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_EROGATORI_NOME_SOGGETTO = "nomeprov";
 	public final static String PARAMETRO_APC_EROGATORI_TIPO_SERVIZIO = "tiposervizio";
 	public final static String PARAMETRO_APC_EROGATORI_NOME_SERVIZIO = "nomeservizio";
-	public final static String PARAMETRO_APC_EROGATORI_ENDPOINT_TYPE = "endpointtype";
+
 	public final static String PARAMETRO_APC_EROGATORI_NOME_ACCORDO = "nomeAccordo";
 	public final static String PARAMETRO_APC_EROGATORI_CORRELATO = "correlato";
 	public final static String PARAMETRO_APC_EROGATORI_ID_FRUITORE = "myId";
