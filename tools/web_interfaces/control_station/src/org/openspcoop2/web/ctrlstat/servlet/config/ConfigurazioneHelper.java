@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -57,6 +58,7 @@ import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -65,6 +67,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * ConfigurazioneHelper
@@ -3077,6 +3080,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			
+			User user = ServletUtils.getUserFromSession(this.session);
+			boolean multiTenant = user.isPermitMultiTenant();
+			String userLogin = user.getLogin();
+			
 			String nameP = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
 			String urlInvocazionePD = null;
 			String urlInvocazionePA = null;
@@ -3115,6 +3122,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(protocollo);
 			dati.addElement(de);
 			
+			if(!multiTenant) {
+				IDSoggetto idSoggetto = this.soggettiCore.getSoggettoOperativo(userLogin, protocollo);
+				long idSoggettoLong = this.soggettiCore.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo());
+						
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO+protocollo);
+				de.setValue(this.getLabelNomeSoggetto(protocollo, idSoggetto.getTipo(), idSoggetto.getNome()));
+				de.setType(DataElementType.TEXT);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO_VISUALIZZA_DATI);
+				de.setType(DataElementType.LINK);
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,idSoggettoLong+""),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,idSoggetto.getNome()),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,idSoggetto.getTipo()));
+				dati.addElement(de);
+			}
+						
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA+protocollo);

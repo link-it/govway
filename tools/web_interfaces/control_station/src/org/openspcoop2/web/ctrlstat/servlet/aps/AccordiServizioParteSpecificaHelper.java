@@ -764,80 +764,76 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idInt);
 			
+			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			boolean connettoreOnly = gestioneFruitori;
 			
 			// Se il connettore e' disabilitato devo controllare che il
 			// connettore del soggetto non sia disabilitato se è di tipo operativo
-			if (endpointtype.equals(TipiConnettore.DISABILITATO.getNome())) {
-				String eptypeprov = TipiConnettore.DISABILITATO.getNome();
-
-				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Long.parseLong(idSoggettoFruitore));
-				if(this.pddCore.isPddEsterna(soggetto.getPortaDominio())==false){
-					// sto attivando una fruizione su un soggetto operativo
-
-					Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
-					if ((connettore != null) && (connettore.getTipo() != null)) {
-						eptypeprov = connettore.getTipo();
-					}
-					if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
-					
-						org.openspcoop2.core.registry.Soggetto soggettoErogatore = 
-								this.soggettiCore.getSoggettoRegistro(new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()));
-						connettore = soggettoErogatore.getConnettore();
+			if (this.isModalitaAvanzata() || connettoreOnly) {
+				if (endpointtype.equals(TipiConnettore.DISABILITATO.getNome())) {
+					String eptypeprov = TipiConnettore.DISABILITATO.getNome();
+	
+					org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(Long.parseLong(idSoggettoFruitore));
+					if(this.pddCore.isPddEsterna(soggetto.getPortaDominio())==false){
+						// sto attivando una fruizione su un soggetto operativo
+	
+						Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
 						if ((connettore != null) && (connettore.getTipo() != null)) {
 							eptypeprov = connettore.getTipo();
 						}
-		
 						if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
-							if(tipoOp.equals(TipoOperazione.CHANGE)){
-								this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
+						
+							org.openspcoop2.core.registry.Soggetto soggettoErogatore = 
+									this.soggettiCore.getSoggettoRegistro(new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()));
+							connettore = soggettoErogatore.getConnettore();
+							if ((connettore != null) && (connettore.getTipo() != null)) {
+								eptypeprov = connettore.getTipo();
 							}
-							else{
-								if(this.isModalitaAvanzata()){
-									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE);
+			
+							if (eptypeprov.equals(TipiConnettore.DISABILITATO.getNome())) {
+								if(tipoOp.equals(TipoOperazione.CHANGE)){
+									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_DISABILITARE_IL_CONNETTORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
 								}
 								else{
-									this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
+									if(this.isModalitaAvanzata()){
+										this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_ESSERE_DEFINITO_IL_CONNETTORE_BR_IN_ALTERNATIVA_È_POSSIBILE_CONFIGURARE_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE_PRIMA_DI_PROCEDERE_CON_LA_CREAZIONE_DEL_FRUITORE);
+									}
+									else{
+										this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_PER_POTER_AGGIUNGERE_IL_FRUITORE_DEVE_PRIMA_ESSERE_DEFINITO_UN_CONNETTORE_SUL_SERVIZIO_O_SUL_SOGGETTO_EROGATORE);
+									}
 								}
+								return false;
 							}
-							return false;
+							
 						}
 						
 					}
 					
 				}
-				
-			}
 			
-			// // Controllo che il provider appartenga alla lista di
-			// // providers disponibili
-			// boolean trovatoProv = false;
-			// for (int i = 0; i < soggettiList.length; i++) {
-			// String tmpSogg = soggettiList[i];
-			// if (tmpSogg.equals(provider)) {
-			// trovatoProv = true;
-			// }
-			// }
-			// if (!trovatoProv) {
-			// this.pd.setMessage("Il soggetto dev'essere scelto tra
-			// quelli definiti nel pannello Soggetti");
-			// return false;
-			// }
 
-			// Controllo dell'end-point
-			// Non li puo' prendere dalla servtlet
-			if (!this.endPointCheckData(endpointtype, url, nome, tipo,
-					user, password, initcont, urlpgk, provurl, connfact,
-					sendas, httpsurl, httpstipologia, httpshostverify,
-					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
-					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,autenticazioneHttp,
-					proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					listExtendedConnettore)) {
-				return false;
+				// Controllo dell'end-point
+				// Non li puo' prendere dalla servtlet
+				if (!this.endPointCheckData(endpointtype, url, nome, tipo,
+						user, password, initcont, urlpgk, provurl, connfact,
+						sendas, httpsurl, httpstipologia, httpshostverify,
+						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
+						httpstipokey, httpspwdkey, httpspwdprivatekey,
+						httpsalgoritmokey, tipoconn,autenticazioneHttp,
+						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						listExtendedConnettore)) {
+					return false;
+				}
 			}
 
 			// 2 fruitori dello stesso servizio non possono avere lo stesso

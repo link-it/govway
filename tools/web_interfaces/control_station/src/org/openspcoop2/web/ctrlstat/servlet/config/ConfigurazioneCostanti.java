@@ -291,7 +291,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_RISPOSTE = "Risposte";
 	public final static String LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO = "Indirizzo Telematico";
 	public final static String LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS = "Manifest Attachments";
-	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE = "URL di Invocazione dei Servizi";
+	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE = "Modalit&agrave;"; //"URL di Invocazione dei Servizi";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache";
@@ -367,6 +367,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM = "statoServizioIM";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME = "protocolConfigName";
+	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO = "protocolConfigSoggetto";
 	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = "protocolConfigUrlPD";
 	public final static String PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "protocolConfigUrlPA";
 	
@@ -477,8 +478,10 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM = "Integration Manager";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME = "Nome";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = "Fruizione";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "Erogazione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO = "Soggetto";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO_VISUALIZZA_DATI = "Visualizza Dati Soggetto";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = "Base URLFruizione";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "Base URL Erogazione";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL = "Log4j XML Diagnostici";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE = "openspcoop2_msgDiagnostico.log";
