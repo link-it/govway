@@ -69,6 +69,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -76,6 +77,7 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * soggettiChange
@@ -179,6 +181,7 @@ public final class SoggettiChange extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(soggettiCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(soggettiCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(soggettiCore);
+			UtentiCore utentiCore = new UtentiCore(soggettiCore);
 
 			String nomePddGestioneLocale = null;
 			if(pddCore.isGestionePddAbilitata(soggettiHelper)==false){
@@ -753,6 +756,39 @@ public final class SoggettiChange extends Action {
 			// eseguo l'aggiornamento
 			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), soggettoUpdateUtilities.getOggettiDaAggiornare().toArray());
 
+			// NOTA: volutamente dopo avere effettuato l'update sopra, faccio la verifica delle utenze. Altrimenti il soggetto non e' ancora modificato
+			// Check Utenza per multi-tenant
+			if(soggettiCore.isSinglePdD()) {
+				
+				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+				
+				boolean operativo = !pddCore.isPddEsterna(this.pdd);
+				if(operativo) {
+					// check utenze che hanno il protocollo
+					
+					User userPerCheck = new User();
+					userPerCheck.addProtocolloSupportato(this.protocollo);
+					boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
+					if(forceEnableMultitenant) {
+						List<String> usersList = utentiCore.getUsersByProtocolloSupportato(this.protocollo, true);
+						if(usersList!=null && usersList.size()>0) {
+							for (String user : usersList) {
+								User u = utentiCore.getUser(user);
+								if(u.isPermitMultiTenant()==false) {
+									u.setPermitMultiTenant(true);
+									listaOggettiDaModificare.add(u);
+								}
+							}
+						}
+					}
+					
+				}
+				
+				if(listaOggettiDaModificare.size()>0) {
+					soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), listaOggettiDaModificare.toArray());
+				}
+			}
+			
 			// preparo lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

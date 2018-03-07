@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -76,8 +77,17 @@ public class UtentiHelper extends ConsoleHelper {
 	public Vector<DataElement> addUtentiToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
-			String changepwd, String [] modalitaGateway, String multiTenant) throws Exception{
+			String changepwd, String [] modalitaGateway, String multiTenant, boolean forceEnableMultitenant) throws Exception{
 
+		
+		boolean onlyUser = ServletUtils.isCheckBoxEnabled(isUtenti) &&
+				!ServletUtils.isCheckBoxEnabled(isServizi) &&
+				!ServletUtils.isCheckBoxEnabled(isAccordiCooperazione) &&
+				!ServletUtils.isCheckBoxEnabled(isDiagnostica) &&
+				!ServletUtils.isCheckBoxEnabled(isSistema) &&
+				!ServletUtils.isCheckBoxEnabled(isMessaggi) &&
+				!ServletUtils.isCheckBoxEnabled(isAuditing);
+		
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_INFORMAZIONI_UTENTE);
 		de.setType(DataElementType.TITLE);
@@ -99,12 +109,158 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT);
-		de.setType(DataElementType.CHECKBOX);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
-		de.setSelected(ServletUtils.isCheckBoxEnabled(multiTenant));
+		if(onlyUser) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(Costanti.CHECK_BOX_DISABLED);
+		}
+		else if(forceEnableMultitenant) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(Costanti.CHECK_BOX_ENABLED);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT+"__LABEL");
+			// forceEnableMultitenant
+			de.setValue(CostantiConfigurazione.ABILITATO.getValue());
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(multiTenant));
+		}
 		de.setSize(this.getSize());
 		dati.addElement(de);
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PERMESSI_GESTIONE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
 
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI);
+		de.setType(DataElementType.CHECKBOX);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
+		ServletUtils.setCheckBox(de, isServizi);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
+		de.setType(DataElementType.CHECKBOX);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
+		ServletUtils.setCheckBox(de, isAccordiCooperazione);
+		de.setPostBack(true);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		if (singlePdD) {
+			de.setType(DataElementType.CHECKBOX);
+			ServletUtils.setCheckBox(de, isDiagnostica);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		de.setPostBack(true);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
+		de.setType(DataElementType.CHECKBOX);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
+		ServletUtils.setCheckBox(de, isSistema);
+		de.setPostBack(true);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI);
+		de.setType(DataElementType.CHECKBOX);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
+		ServletUtils.setCheckBox(de, isMessaggi);
+		de.setPostBack(true);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
+		de.setType(DataElementType.CHECKBOX);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
+		ServletUtils.setCheckBox(de, isUtenti);
+		de.setPostBack(true);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING);
+		de.setType(DataElementType.CHECKBOX);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
+		ServletUtils.setCheckBox(de, isAuditing);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+
+
+		
+		if(!onlyUser) {
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_MODALITA_GATEWAY);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			List<String> protocolliRegistratiConsole = this.core.getProtocolli();
+			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+				String protocolloName = protocolliRegistratiConsole.get(i);
+				de = new DataElement();
+				de.setLabel(this.getLabelProtocollo(protocolloName));
+				de.setType(DataElementType.CHECKBOX);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+				ServletUtils.setCheckBox(de, modalitaGateway[i]);
+				de.setPostBack(true);
+				dati.addElement(de);
+			}
+		}
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
+		de.setType(DataElementType.SELECT);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
+		boolean permitInterfaceComplete = false;
+		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+			User user = this.utentiCore.getUser(nomesu);
+			permitInterfaceComplete = user.isPermitInterfaceComplete();
+		}
+		String[] tipiInterfacce=null;
+		String[] tipiInterfacceLabel=null;
+		if(permitInterfaceComplete) {
+			tipiInterfacce = new String[3];			
+		}
+		else {
+			tipiInterfacce = new String[2];
+		}
+		tipiInterfacce[0]=InterfaceType.STANDARD.toString();
+		tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
+		if(permitInterfaceComplete) {
+			tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
+		}
+		tipiInterfacceLabel = new String[tipiInterfacce.length];
+		for (int i = 0; i < tipiInterfacce.length; i++) {
+			tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
+		}
+		de.setValues(tipiInterfacce);
+		de.setLabels(tipiInterfacceLabel);
+		de.setSelected(interfaceType.toString());
+		dati.addElement(de);
+
+
+		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
 		de.setType(DataElementType.TITLE);
@@ -149,117 +305,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 		}
 		
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODALITA_GATEWAY);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
 		
-		List<String> protocolliRegistratiConsole = this.core.getProtocolli();
-		for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
-			String protocolloName = protocolliRegistratiConsole.get(i);
-			de = new DataElement();
-			de.setLabel(this.getLabelProtocollo(protocolloName));
-			de.setType(DataElementType.CHECKBOX);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
-			ServletUtils.setCheckBox(de, modalitaGateway[i]);
-			dati.addElement(de);
-		}
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
-		de.setType(DataElementType.SELECT);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-		boolean permitInterfaceComplete = false;
-		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
-			User user = this.utentiCore.getUser(nomesu);
-			permitInterfaceComplete = user.isPermitInterfaceComplete();
-		}
-		String[] tipiInterfacce=null;
-		String[] tipiInterfacceLabel=null;
-		if(permitInterfaceComplete) {
-			tipiInterfacce = new String[3];			
-		}
-		else {
-			tipiInterfacce = new String[2];
-		}
-		tipiInterfacce[0]=InterfaceType.STANDARD.toString();
-		tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
-		if(permitInterfaceComplete) {
-			tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
-		}
-		tipiInterfacceLabel = new String[tipiInterfacce.length];
-		for (int i = 0; i < tipiInterfacce.length; i++) {
-			tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
-		}
-		de.setValues(tipiInterfacce);
-		de.setLabels(tipiInterfacceLabel);
-		de.setSelected(interfaceType.toString());
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PERMESSI_GESTIONE);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI);
-		de.setType(DataElementType.CHECKBOX);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
-		ServletUtils.setCheckBox(de, isServizi);
-		dati.addElement(de);
-		
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
-		de.setType(DataElementType.CHECKBOX);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
-		ServletUtils.setCheckBox(de, isAccordiCooperazione);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-		if (singlePdD) {
-			de.setType(DataElementType.CHECKBOX);
-			ServletUtils.setCheckBox(de, isDiagnostica);
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue("");
-		}
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
-		de.setType(DataElementType.CHECKBOX);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
-		ServletUtils.setCheckBox(de, isSistema);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI);
-		de.setType(DataElementType.CHECKBOX);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
-		ServletUtils.setCheckBox(de, isMessaggi);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
-		de.setType(DataElementType.CHECKBOX);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
-		ServletUtils.setCheckBox(de, isUtenti);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING);
-		de.setType(DataElementType.CHECKBOX);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
-		ServletUtils.setCheckBox(de, isAuditing);
-		dati.addElement(de);
-
 		return dati;
 
 	}
@@ -427,7 +473,7 @@ public class UtentiHelper extends ConsoleHelper {
 	}
 
 	public void addUtenteChangeToDati(Vector<DataElement> dati,InterfaceType interfaceType,
-			String changepw, String nomeUtente, String modalitaDisponibili, String multiTenant) throws DriverUsersDBException{
+			String changepw, String nomeUtente, String modalitaDisponibili, String multiTenant, boolean forceEnableMultitenant) throws DriverUsersDBException{
 
 		DataElement de = new DataElement();
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
@@ -494,16 +540,49 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		dati.addElement(de);
 		
+		boolean onlyViewMultiTenant = true; // e' stato deciso che l'utenza diretta deve vedere questa info solo come view, sarà il gestore delle utenze a modificarlo nel caso.
+		User userCollegato = ServletUtils.getUserFromSession(this.session);
+		if(nomeUtente.equals(userCollegato.getLogin())) {
+			// se l'utente collegato e' anche amministratore delle utenze allora posso farlo modificare
+			if(userCollegato.getPermessi().isUtenti()) {
+				onlyViewMultiTenant = false;
+			}
+		}
+		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
 		if(utente.hasOnlyPermessiUtenti()) {
 			de.setType(DataElementType.HIDDEN);
+			de.setValue(ServletUtils.isCheckBoxEnabled(multiTenant)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
+		}
+		if(onlyViewMultiTenant || forceEnableMultitenant) {
+			de.setType(DataElementType.HIDDEN);
+			if(forceEnableMultitenant) {
+				de.setValue(Costanti.CHECK_BOX_ENABLED);
+			}
+			else {
+				de.setValue(ServletUtils.isCheckBoxEnabled(multiTenant)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
+			}
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT+"__LABEL");
+			if(onlyViewMultiTenant) {
+				de.setValue(ServletUtils.isCheckBoxEnabled(multiTenant)?CostantiConfigurazione.ABILITATO.getValue():CostantiConfigurazione.DISABILITATO.getValue());
+			}
+			else {
+				// forceEnableMultitenant
+				de.setValue(CostantiConfigurazione.ABILITATO.getValue());
+			}
+			de.setSize(this.getSize());
 		}
 		else {
 			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(multiTenant));
 		}
-		de.setName(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
-		de.setSelected(ServletUtils.isCheckBoxEnabled(multiTenant));
 		de.setSize(this.getSize());
 		dati.addElement(de);
 
@@ -944,7 +1023,9 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// setto le label delle colonne
-			String[] labels = { UtentiCostanti.LABEL_UTENTE, UtentiCostanti.LABEL_MODALITA_INTERFACCIA, UtentiCostanti.LABEL_MODALITA_GATEWAY, 
+			String[] labels = { UtentiCostanti.LABEL_UTENTE, UtentiCostanti.LABEL_MODALITA_INTERFACCIA, 
+					UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT, 
+					UtentiCostanti.LABEL_MODALITA_GATEWAY, 
 					UtentiCostanti.LABEL_PERMESSI_GESTIONE, UtentiCostanti.LABEL_CAMBIA_IDENTITA };
 			this.pd.setLabels(labels);
 
@@ -973,6 +1054,20 @@ public class UtentiHelper extends ConsoleHelper {
 					}
 					else {
 						de.setValue(mySU.getInterfaceType().toString().toLowerCase());
+					}
+					e.addElement(de);
+					
+					// multi-tenant
+					if(mySU.hasOnlyPermessiUtenti()) {
+						de.setValue("-");
+					}
+					else {
+						if(mySU.isPermitMultiTenant()) {
+							de.setValue(CostantiConfigurazione.ABILITATO.getValue());
+						}
+						else {
+							de.setValue(CostantiConfigurazione.DISABILITATO.getValue());
+						}
 					}
 					e.addElement(de);
 					

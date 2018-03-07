@@ -20,10 +20,15 @@
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -181,5 +186,41 @@ public class UtentiCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	
+	public boolean isForceEnableMultiTenant(User u, boolean checkProtocolliCaricatiManager) throws Exception {
+		
+		List<String> protocolli = null;
+		if(u.getProtocolliSupportati()!=null && u.getProtocolliSupportati().size()>0) {
+			protocolli = u.getProtocolliSupportati();
+		}
+		else {
+			if(!checkProtocolliCaricatiManager) {
+				protocolli = new ArrayList<>();
+			}
+			else {
+				protocolli = this.getProtocolli();
+			}
+		}
+		
+		for (String protocollo : protocolli) {
+			
+			Search s = new Search();
+			s.setPageSize(Liste.SOGGETTI, 2); // serve solo per il count
+			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+			List<org.openspcoop2.core.registry.Soggetto> lista = null;
+			if(this.isVisioneOggettiGlobale(u.getLogin())){
+				lista = this.soggettiRegistroList(null, s);
+			}else{
+				lista = this.soggettiRegistroList(u.getLogin(), s);
+			}
+			if(lista!=null && lista.size()>1) {
+				return true;
+			}
+			
+		}
+		
+		return false;
 	}
 }

@@ -116,6 +116,19 @@ public final class UtentiAdd extends Action {
 			
 			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
 			
+			// Check multitenant
+			User userPerCheck = new User();
+			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+				String protocolloName = protocolliRegistratiConsole.get(i);
+				if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
+					userPerCheck.addProtocolloSupportato(protocolloName);
+				} 
+			}
+			boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
+			if(forceEnableMultitenant) {
+				multiTenant = Costanti.CHECK_BOX_ENABLED;
+			}
+			
 			// Preparo il menu
 			utentiHelper.makeMenu();
 	
@@ -148,7 +161,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, multiTenant);
+						null,modalitaScelte, multiTenant, forceEnableMultitenant);
 				
 				pd.setDati(dati);
 		
@@ -178,7 +191,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, multiTenant);
+						null,modalitaScelte, multiTenant, forceEnableMultitenant);
 				
 				pd.setDati(dati);
 	

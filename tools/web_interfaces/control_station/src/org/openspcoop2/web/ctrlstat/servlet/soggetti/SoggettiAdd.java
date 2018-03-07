@@ -60,6 +60,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -67,6 +68,7 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * soggettiAdd
@@ -166,6 +168,7 @@ public final class SoggettiAdd extends Action {
 
 			SoggettiCore soggettiCore = new SoggettiCore();
 			PddCore pddCore = new PddCore(soggettiCore);
+			UtentiCore utentiCore = new UtentiCore(soggettiCore);
 
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
@@ -524,6 +527,38 @@ public final class SoggettiAdd extends Action {
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
 			// eseguo le operazioni
 			soggettiCore.performCreateOperation(userLogin, soggettiHelper.smista(), sog);
+			
+			// Check Utenza per multi-tenant
+			if(this.singlePdD) {
+				
+				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+				
+				boolean operativo = !pddCore.isPddEsterna(this.pdd);
+				if(operativo) {
+					// check utenze che hanno il protocollo
+					
+					User userPerCheck = new User();
+					userPerCheck.addProtocolloSupportato(this.protocollo);
+					boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
+					if(forceEnableMultitenant) {
+						List<String> usersList = utentiCore.getUsersByProtocolloSupportato(this.protocollo, true);
+						if(usersList!=null && usersList.size()>0) {
+							for (String user : usersList) {
+								User u = utentiCore.getUser(user);
+								if(u.isPermitMultiTenant()==false) {
+									u.setPermitMultiTenant(true);
+									listaOggettiDaModificare.add(u);
+								}
+							}
+						}
+					}
+					
+				}
+				
+				if(listaOggettiDaModificare.size()>0) {
+					soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), listaOggettiDaModificare.toArray());
+				}
+			}
 			
 			// cancello file temporanei
 			soggettiHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties); 

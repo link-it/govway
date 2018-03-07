@@ -134,6 +134,8 @@ public final class UtentiChange extends Action {
 			User user = utentiCore.getUser(nomesu);
 			//Prendo i vecchi dati dell'utente
 			
+			// Check multitenant
+						
 			List<String> oldProtocolliSupportati = user.getProtocolliSupportati();
 			boolean oldHasOnlyPermessiUtenti = user.hasOnlyPermessiUtenti();
 			List<String> protocolliSupportati = null;
@@ -167,6 +169,24 @@ public final class UtentiChange extends Action {
 				else {
 					multiTenant = Costanti.CHECK_BOX_DISABLED;
 				}
+			}
+			
+			boolean forceEnableMultitenant = false;
+			if(!first) {
+				User userPerCheck = new User();
+				for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+					String protocolloName = protocolliRegistratiConsole.get(i);
+					if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
+						userPerCheck.addProtocolloSupportato(protocolloName);
+					} 
+				}
+				forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
+			}
+			else {
+				forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(user, true);
+			}
+			if(forceEnableMultitenant) {
+				multiTenant = Costanti.CHECK_BOX_ENABLED;
 			}
 			
 //			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
@@ -219,7 +239,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, multiTenant);
+						changepwd,modalitaScelte, multiTenant, forceEnableMultitenant);
 
 				pd.setDati(dati);
 
@@ -251,7 +271,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, multiTenant);
+						changepwd,modalitaScelte, multiTenant, forceEnableMultitenant);
 
 				pd.setDati(dati);
 

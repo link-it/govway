@@ -89,9 +89,11 @@ public final class UtenteChange extends Action {
 			String first = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
 
 			UtentiCore utentiCore = new UtentiCore();
-
+			
+			User user = ServletUtils.getUserFromSession(session);
+			
 			if(multiTenant==null && first==null) {
-				if(ServletUtils.getUserFromSession(session).isPermitMultiTenant()) {
+				if(user.isPermitMultiTenant()) {
 					multiTenant = Costanti.CHECK_BOX_ENABLED;
 				}
 				else {
@@ -111,13 +113,19 @@ public final class UtenteChange extends Action {
 			
 			if(tipoModalita == null) {
 				// prelevo il vecchio valore del protocollo
-				protocolloSelezionatoUtente = ServletUtils.getUserFromSession(session).getProtocolloSelezionato();
+				protocolloSelezionatoUtente = user.getProtocolloSelezionato();
 			} else {
 				// il caso all viene gestito impostando il valore del protocollo selezionato = null;
 				if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL))
 					protocolloSelezionatoUtente  = tipoModalita;
 			}
 						
+			// Check multitenant
+			boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(user, true);
+			if(forceEnableMultitenant) {
+				multiTenant = Costanti.CHECK_BOX_ENABLED;
+			}
+
 
 			// Preparo il menu
 			utentiHelper.makeMenu();
@@ -154,7 +162,7 @@ public final class UtenteChange extends Action {
 
 						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant);
+						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant, forceEnableMultitenant);
 
 						pd.setDati(dati);
 
@@ -253,12 +261,12 @@ public final class UtenteChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			} else {
 				// provengo dalla maschera di modifica utente
-				// preparo i campi
+				// preparo i campio
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant);
+				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant, forceEnableMultitenant);
 
 				pd.setDati(dati);
 			}
