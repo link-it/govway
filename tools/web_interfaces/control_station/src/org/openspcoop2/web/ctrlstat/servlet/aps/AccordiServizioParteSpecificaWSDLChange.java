@@ -159,6 +159,14 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			int idServ = Integer.parseInt(this.id);
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
@@ -229,8 +237,12 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			if (ServletUtils.isEditModeInProgress(this.editMode) && apsHelper.isEditModeInProgress()) {
 
 				List<Parameter> lstParm = new ArrayList<Parameter>();
-
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				}
 				lstParm.add(parameterAPSChange);
 				lstParm.add(new Parameter(label , null));
 
@@ -260,7 +272,12 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			if (!isOk) {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				}
+				else {
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				}
 				lstParm.add(parameterAPSChange);
 				lstParm.add(new Parameter(label , null));
 
@@ -299,8 +316,17 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			// visualizzo la schermata di modifica del servizio
 			// setto la barra del titolo
+			
+			Parameter p = null;
+			if(gestioneFruitori) {
+				p = new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+			}
+			else {
+				p = new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+			}
+			
 			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST),
+					p,
 					new Parameter(tmpTitle, null)					);
 
 			AccordoServizioParteSpecifica aspsT = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(this.id));

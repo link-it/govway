@@ -2667,7 +2667,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String[] providersList, String[] providersListLabel,boolean privato,
 			boolean isServizioComposto,String[] accordiCooperazioneEsistenti,String[] accordiCooperazioneEsistentiLabel,String accordoCooperazione,
 			String stato,String oldStato,String tipoAccordo,boolean validazioneDocumenti,
-			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used, boolean asWithAllegati,
+			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used, boolean asWithAllegatiXSD,
 			IProtocolFactory<?> protocolFactory,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType
 			) throws Exception {
@@ -3340,7 +3340,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.addElement(de);
 						}
 						
-						if(asWithAllegati){
+						if(asWithAllegatiXSD){
 							DataElement saveAs = new DataElement();
 							saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION);
 							saveAs.setType(DataElementType.LINK);
@@ -3360,6 +3360,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 						de.setValue(labelWsdlCon);
 						dati.addElement(de);
+						
+						if(asWithAllegatiXSD){
+							DataElement saveAs = new DataElement();
+							saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION);
+							saveAs.setType(DataElementType.LINK);
+							saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE),
+									new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION));
+							dati.add(saveAs);
+						}
 					}	
 				}
 			}else{

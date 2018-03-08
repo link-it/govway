@@ -280,8 +280,10 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_VISIBILITA_SERVIZIO = "Visibilit&agrave; Servizio";
 	public final static String LABEL_PARAMETRO_APS_VERSIONE_PROTOCOLLO = "Versione Protocollo";
 	public final static String LABEL_PARAMETRO_APS_VALIDAZIONE_DOCUMENTI_ESTESA = "Validazione Documenti";
-	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE = "WSDL Implementativo Erogatore"; 
-	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE = "WSDL Implementativo Fruitore";
+	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE_COMPATTO = "WSDL Impl. Erogatore"; 
+	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE_COMPATTO = "WSDL Impl. Fruitore";
+	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE_ESTESO = "WSDL Implementativo Erogatore"; 
+	public final static String LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE_ESTESO = "WSDL Implementativo Fruitore";
 	public final static String LABEL_PARAMETRO_APS_NOME_PA = "Nome";
 	public final static String LABEL_PARAMETRO_APS_NOME_SA = "ServizioApplicativo";
 	public final static String LABEL_PARAMETRO_APS_NOME_SERVIZIO_APPLICATIVO_EROGATORE = "Nome";

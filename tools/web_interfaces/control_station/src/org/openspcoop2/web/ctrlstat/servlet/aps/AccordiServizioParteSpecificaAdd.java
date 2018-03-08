@@ -1020,10 +1020,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					//					this.accordo = "";
 					this.servcorr = "";
 					// this.servpub = "";
-					if(this.wsdlimpler.getValue() == null)
-						this.wsdlimpler.setValue(new byte[1]);
-					if(this.wsdlimplfru.getValue() == null)
-						this.wsdlimplfru.setValue(new byte[1]); 
+//					if(this.wsdlimpler.getValue() == null)
+//						this.wsdlimpler.setValue(new byte[1]);
+//					if(this.wsdlimplfru.getValue() == null)
+//						this.wsdlimplfru.setValue(new byte[1]); 
 					this.tipoconn = "";
 					this.url = "";
 					this.nome = "";

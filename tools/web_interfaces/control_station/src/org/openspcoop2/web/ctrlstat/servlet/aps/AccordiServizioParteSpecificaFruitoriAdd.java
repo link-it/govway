@@ -520,10 +520,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 					if (this.idSoggettoFruitore == null) {
 						this.idSoggettoFruitore = "";
-						if(this.wsdlimpler.getValue() == null)
-							this.wsdlimpler.setValue(new byte[1]);
-						if(this.wsdlimplfru.getValue() == null)
-							this.wsdlimplfru.setValue(new byte[1]); 
+//						if(this.wsdlimpler.getValue() == null)
+//							this.wsdlimpler.setValue(new byte[1]);
+//						if(this.wsdlimplfru.getValue() == null)
+//							this.wsdlimplfru.setValue(new byte[1]); 
 						this.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 						this.tipoconn = "";
 						this.url = "";

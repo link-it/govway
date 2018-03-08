@@ -301,7 +301,9 @@ public class ConsoleHelper {
 				InterfaceType.STANDARD); 
 	}
 
-
+	private boolean errorInit = false;
+	private Exception eErrorInit;
+	
 	public ConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
 		this.pd = pd;
@@ -371,6 +373,8 @@ public class ConsoleHelper {
 			this.size = ConsoleProperties.getInstance().getConsoleLunghezzaLabel();
 		} catch (Exception e) {
 			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
+			this.errorInit = true;
+			this.eErrorInit = e;
 		}
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
@@ -461,7 +465,14 @@ public class ConsoleHelper {
 	//		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
 	//	}
 
+	private void checkErrorInit() throws Exception {
+		if(this.errorInit) {
+			throw new Exception("Inizializzazione fallita: "+this.eErrorInit.getMessage(),this.eErrorInit);
+		}
+	}
+	
 	public Enumeration<?> getParameterNames() throws Exception {
+		this.checkErrorInit();
 		if(this.multipart){
 			throw new Exception("Not Implemented");
 		}
@@ -471,6 +482,7 @@ public class ConsoleHelper {
 	}
 	
 	public String [] getParameterValues(String parameterName) throws Exception {
+		this.checkErrorInit();
 		if(this.multipart){
 			throw new Exception("Not Implemented");
 		}
@@ -488,6 +500,10 @@ public class ConsoleHelper {
 	}
 
 	public <T> T getParameter(String parameterName, Class<T> type, T defaultValue) throws Exception {
+		
+		this.checkErrorInit();
+		
+		
 		T toReturn = null;
 
 		if(type == byte[].class){
@@ -531,6 +547,10 @@ public class ConsoleHelper {
 	}
 	
 	public byte[] getBinaryParameterContent(String parameterName) throws Exception {
+		
+		this.checkErrorInit();
+		
+		
 		if(this.multipart){
 			if(this.mapParametriReaded.containsKey(parameterName)) {
 				return (byte[]) this.mapParametriReaded.get(parameterName);
@@ -555,6 +575,9 @@ public class ConsoleHelper {
 	}
 
 	public String getFileNameParameter(String parameterName) throws Exception {
+		
+		this.checkErrorInit();
+				
 		if(this.multipart){
 			return this.mapNomiFileParametri.get(parameterName);
 		} else 
@@ -563,6 +586,9 @@ public class ConsoleHelper {
 	}
 	
 	public BinaryParameter getBinaryParameter(String parameterName) throws Exception {
+		
+		this.checkErrorInit();
+				
 		BinaryParameter bp = new BinaryParameter();
 		bp.setName(parameterName); 
 		String filename = null;
@@ -651,6 +677,9 @@ public class ConsoleHelper {
 	 * @throws Exception
 	 */
 	public void deleteBinaryProtocolPropertiesTmpFiles(ProtocolProperties protocolProperties) throws Exception{
+		
+		this.checkErrorInit();
+				
 		if(protocolProperties!= null)
 			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 				AbstractProperty<?> property = protocolProperties.getProperty(i);
@@ -676,6 +705,9 @@ public class ConsoleHelper {
 	 * @throws Exception
 	 */
 	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId) throws Exception{
+		
+		this.checkErrorInit();
+				
 		if(protocolProperties!= null)
 			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 				AbstractProperty<?> property = protocolProperties.getProperty(i);
@@ -703,6 +735,9 @@ public class ConsoleHelper {
 	 * @throws Exception
 	 */
 	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId, String aliasId) throws Exception{
+		
+		this.checkErrorInit();
+				
 		if(protocolProperties!= null)
 			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 				AbstractProperty<?> property = protocolProperties.getProperty(i);
@@ -729,6 +764,9 @@ public class ConsoleHelper {
 	 * @throws Exception
 	 */
 	public void deleteProtocolPropertiesBinaryParameters(BinaryParameter ... parameters) throws Exception{
+		
+		this.checkErrorInit();
+				
 		File file = null;
 		if(this.idBinaryParameterRicevuti != null && this.idBinaryParameterRicevuti.size() >0){
 			for (String bp : this.idBinaryParameterRicevuti) {
@@ -761,6 +799,9 @@ public class ConsoleHelper {
 	 * @throws Exception
 	 */
 	public void deleteBinaryParameters(BinaryParameter ... parameters) throws Exception{
+		
+		this.checkErrorInit();
+				
 		if(parameters != null && parameters.length >0){
 			for (BinaryParameter binaryParameter : parameters) {
 				this.deleteBinaryParameter(binaryParameter);
@@ -769,6 +810,9 @@ public class ConsoleHelper {
 	}
 	
 	private void deleteBinaryParameter(BinaryParameter bp) throws Exception{
+		
+		this.checkErrorInit();
+				
 		File file = null;
 		if(StringUtils.isNotBlank(bp.getId())){
 			file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  bp.getId() + CostantiControlStation.TEMP_FILE_SUFFIX);
@@ -785,6 +829,8 @@ public class ConsoleHelper {
 
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			String propertyId, BinaryParameter contenutoDocumentoParameter) throws Exception {
+		
+		this.checkErrorInit();
 		
 		String editMode = this.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 		String postBackElementName = this.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
@@ -849,6 +895,9 @@ public class ConsoleHelper {
 		return properties;
 	}
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws Exception {
+		
+		this.checkErrorInit();
+				
 		return estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType, null , null);
 	}
 

@@ -70,7 +70,7 @@ public class AccordoServizioUtils {
 
 
 	
-	public Schema buildSchema(AccordoServizioParteComune as,boolean fromBytes) throws DriverRegistroServiziException {
+	public Schema buildSchema(AccordoServizioParteComune as,boolean fromBytes) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		XSDSchemaCollection schemaCollections = this.buildSchemaCollection(as, fromBytes);
 		try{
 			return schemaCollections.buildSchema(this.logger);
@@ -78,7 +78,7 @@ public class AccordoServizioUtils {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
-	public XSDSchemaCollection buildSchemaCollection(AccordoServizioParteComune as,boolean fromBytes) throws DriverRegistroServiziException {
+	public XSDSchemaCollection buildSchemaCollection(AccordoServizioParteComune as,boolean fromBytes) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 
 		boolean definitorioPresente = false;
 		if(fromBytes){
@@ -193,7 +193,7 @@ public class AccordoServizioUtils {
 		
 		
 		if( (schemiInWsdl.size()<=0) && (schemiInWsdlFruitore.size()<=0) && (!definitorioPresente) && as.sizeAllegatoList()==0 && as.sizeSpecificaSemiformaleList()==0){
-			throw new DriverRegistroServiziException("L'accordo di servizio parte comune non contiene schemi XSD");
+			throw new DriverRegistroServiziNotFound("L'accordo di servizio parte comune non contiene schemi XSD");
 		}
 
 		Hashtable<String, byte[]> resources = new Hashtable<String, byte[]>();
