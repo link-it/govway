@@ -263,9 +263,16 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					gestioneFruitori = true;
 				}
 			}
-			boolean connettoreOnly = gestioneFruitori;
+			//boolean connettoreOnly = gestioneFruitori;
 			String azioneConnettore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE);
 			boolean forceEnableConnettore =  gestioneFruitori;
+			if(endpointtype!=null && !"".equals(endpointtype)) {
+				if(forceEnableConnettore) {
+					if(TipiConnettore.DISABILITATO.toString().equals(endpointtype)) {
+						forceEnableConnettore = false;
+					}
+				}
+			}
 						
 			boolean validazioneDocumenti = true;
 			String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
@@ -488,6 +495,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						tipoconn = connettore.getTipo();
 					} else
 						endpointtype = connettore.getTipo();
+					
+					if(forceEnableConnettore) {
+						if(TipiConnettore.DISABILITATO.toString().equals(endpointtype)) {
+							forceEnableConnettore = false;
+						}
+					}
 				}
 
 				if(connettoreDebug==null && props!=null){
@@ -707,28 +720,25 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
 
-					if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
-						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,
-								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
-								url, nome,
-								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-								httpstipologia, httpshostverify, httpspath, httpstipo,
-								httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
-								httpspwdprivatekeytrust, httpspathkey, httpstipokey,
-								httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
-								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
-								idSoggettoErogatoreDelServizio, null, null, null, null,
-								oldStatoPackage, true,
-								isConnettoreCustomUltimaImmagineSalvata, 
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								listExtendedConnettore, forceEnableConnettore);
-					}else{
-						//spostato nell'helper
-					}
+					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							url, nome,
+							tipo, user, password, initcont, urlpgk, provurl,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
+							httpstipologia, httpshostverify, httpspath, httpstipo,
+							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
+							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
+							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
+							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
+							idSoggettoErogatoreDelServizio, null, null, null, null,
+							oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							listExtendedConnettore, forceEnableConnettore);
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -813,28 +823,25 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 						asps, servFru);
 
-				if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
-							url, nome,
-							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-							httpstipologia, httpshostverify, httpspath, httpstipo,
-							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
-							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
-							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
-							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
-							idSoggettoErogatoreDelServizio, null, null, null, null,
-							oldStatoPackage, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore, forceEnableConnettore);
-				}else{
-					//spostato nell'helper
-				}
+				//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
+				dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+						(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+						url, nome,
+						tipo, user, password, initcont, urlpgk, provurl,
+						connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
+						httpstipologia, httpshostverify, httpspath, httpstipo,
+						httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
+						httpspwdprivatekeytrust, httpspathkey, httpstipokey,
+						httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
+						tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
+						idSoggettoErogatoreDelServizio, null, null, null, null,
+						oldStatoPackage, true,
+						isConnettoreCustomUltimaImmagineSalvata, 
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						listExtendedConnettore, forceEnableConnettore);
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -870,23 +877,20 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati = apsHelper.addFruitoreToDatiAsHidden(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, idSoggettoFruitore);
 
-					if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
-						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
-								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-								httpstipologia, httpshostverify, httpspath, httpstipo,
-								httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
-								httpspwdprivatekeytrust, httpspathkey, httpstipokey,
-								httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
-								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
-								idSoggettoErogatoreDelServizio, null, null, null, null,
-								oldStatoPackage,
-								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
-								);
-					}else{
-						//spostato nell'helper
-					}
+					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
+					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
+							tipo, user, password, initcont, urlpgk, provurl,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
+							httpstipologia, httpshostverify, httpspath, httpstipo,
+							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
+							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
+							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
+							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
+							idSoggettoErogatoreDelServizio, null, null, null, null,
+							oldStatoPackage,
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
+							);
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -918,40 +922,40 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			// Modifico i dati del fruitore nel db
 			Connettore connettoreNew = null;
-			if (apsHelper.isModalitaAvanzata()  || connettoreOnly) {
-				connettoreNew = new Connettore();
-				connettoreNew.setNome(connettore.getNome());
-				connettoreNew.setId(connettore.getId());
+			//if (apsHelper.isModalitaAvanzata()  || connettoreOnly) {
+			connettoreNew = new Connettore();
+			connettoreNew.setNome(connettore.getNome());
+			connettoreNew.setId(connettore.getId());
 
-				String oldConnT = connettore.getTipo();
-				if ((connettore.getCustom()!=null && connettore.getCustom()) && 
-						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)){
-					// mantengo vecchie proprieta connettore custom
-					for(int i=0; i<connettore.sizePropertyList(); i++){
-						connettoreNew.addProperty(connettore.getProperty(i));
-					}
-					oldConnT = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+			String oldConnT = connettore.getTipo();
+			if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)){
+				// mantengo vecchie proprieta connettore custom
+				for(int i=0; i<connettore.sizePropertyList(); i++){
+					connettoreNew.addProperty(connettore.getProperty(i));
 				}
-				apsHelper.fillConnettore(connettoreNew, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
-						nome, tipo, user, password,
-						initcont, urlpgk, provurl, connfact,
-						sendas, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo,
-						httpspwd, httpsalgoritmo, httpsstato,
-						httpskeystore, httpspwdprivatekeytrust,
-						httpspathkey, httpstipokey,
-						httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey,
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
+				oldConnT = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 			}
-			else{
-				connettoreNew = connettore;
-			}
+			apsHelper.fillConnettore(connettoreNew, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+					nome, tipo, user, password,
+					initcont, urlpgk, provurl, connfact,
+					sendas, httpsurl, httpstipologia,
+					httpshostverify, httpspath, httpstipo,
+					httpspwd, httpsalgoritmo, httpsstato,
+					httpskeystore, httpspwdprivatekeytrust,
+					httpspathkey, httpstipokey,
+					httpspwdkey, httpspwdprivatekey,
+					httpsalgoritmokey,
+					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					listExtendedConnettore);
+//			}
+//			else{
+//				connettoreNew = connettore;
+//			}
 
 			Fruitore fruitore = new Fruitore();
 			
@@ -1025,30 +1029,30 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
 							asps, servFru);
 
-					if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
-						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
-								url,
-								nome, tipo, user, password, initcont, urlpgk,
-								provurl, connfact, sendas,
-								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
-								httpstipologia, httpshostverify, httpspath,
-								httpstipo, httpspwd, httpsalgoritmo, httpsstato,
-								httpskeystore, httpspwdprivatekeytrust,
-								httpspathkey, httpstipokey, httpspwdkey,
-								httpspwdprivatekey, httpsalgoritmokey,
-								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
-								idSoggettoErogatoreDelServizio, null, null, null, null,
-								oldStatoPackage, true,
-								isConnettoreCustomUltimaImmagineSalvata, 
-								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-								listExtendedConnettore, forceEnableConnettore);
-					}else{
-						//spostato nell'helper
-					}
+					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							url,
+							nome, tipo, user, password, initcont, urlpgk,
+							provurl, connfact, sendas,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
+							httpstipologia, httpshostverify, httpspath,
+							httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+							httpskeystore, httpspwdprivatekeytrust,
+							httpspathkey, httpstipokey, httpspwdkey,
+							httpspwdprivatekey, httpsalgoritmokey,
+							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
+							idSoggettoErogatoreDelServizio, null, null, null, null,
+							oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							listExtendedConnettore, forceEnableConnettore);
+//					}else{
+//						//spostato nell'helper
+//					}
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

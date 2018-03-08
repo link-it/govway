@@ -764,18 +764,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idInt);
 			
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
-			}
-			boolean connettoreOnly = gestioneFruitori;
+//			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+//			boolean gestioneFruitori = false;
+//			if(tipologia!=null) {
+//				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+//					gestioneFruitori = true;
+//				}
+//			}
+//			boolean connettoreOnly = gestioneFruitori;
 			
 			// Se il connettore e' disabilitato devo controllare che il
 			// connettore del soggetto non sia disabilitato se è di tipo operativo
-			if (this.isModalitaAvanzata() || connettoreOnly) {
+			//if (this.isModalitaAvanzata() || connettoreOnly) {
+			if (this.isModalitaAvanzata() || TipoOperazione.CHANGE.equals(tipoOp)) {
 				if (endpointtype.equals(TipiConnettore.DISABILITATO.getNome())) {
 					String eptypeprov = TipiConnettore.DISABILITATO.getNome();
 	
@@ -817,7 +818,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					
 				}
 			
-
+	
 				// Controllo dell'end-point
 				// Non li puo' prendere dalla servtlet
 				if (!this.endPointCheckData(endpointtype, url, nome, tipo,
@@ -835,6 +836,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					return false;
 				}
 			}
+			
 
 			// 2 fruitori dello stesso servizio non possono avere lo stesso
 			// provider

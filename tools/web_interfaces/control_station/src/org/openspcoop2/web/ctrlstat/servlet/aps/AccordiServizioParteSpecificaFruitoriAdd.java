@@ -788,28 +788,30 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String pdd = sogFru.getPortaDominio();
 
 			// soggetto erogatore servizio
-			Soggetto sogEr = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
-			String nomeErogatore = sogEr.getNome();
-			String tipoErogatore = sogEr.getTipo();
+//			Soggetto sogEr = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
+//			String nomeErogatore = sogEr.getNome();
+//			String tipoErogatore = sogEr.getTipo();
 
-			Connettore connettore = new Connettore();
-			connettore.setNome("CNT_SF_" + tipoFruitore + "/" + nomeFruitore + "_" + tipoErogatore + "/" + nomeErogatore + "_" + tiposervizio + "/" + nomeservizio);
-
-			apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
-					this.nome, this.tipo, this.user, this.password,
-					this.initcont, this.urlpgk, this.provurl, this.connfact,
-					this.sendas, this.httpsurl, this.httpstipologia,
-					this.httpshostverify, this.httpspath, this.httpstipo,
-					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-					this.httpskeystore, this.httpspwdprivatekeytrust,
-					this.httpspathkey, this.httpstipokey,
-					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey,
-					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-					listExtendedConnettore);
+			Connettore connettore = null;
+			if (apsHelper.isModalitaAvanzata()) {
+				connettore = new Connettore();
+				
+				apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+						this.nome, this.tipo, this.user, this.password,
+						this.initcont, this.urlpgk, this.provurl, this.connfact,
+						this.sendas, this.httpsurl, this.httpstipologia,
+						this.httpshostverify, this.httpspath, this.httpstipo,
+						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+						this.httpskeystore, this.httpspwdprivatekeytrust,
+						this.httpspathkey, this.httpstipokey,
+						this.httpspwdkey, this.httpspwdprivatekey,
+						this.httpsalgoritmokey,
+						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+						listExtendedConnettore);
+			}
 
 			Fruitore fruitore = new Fruitore();
 			fruitore.setId(new Long(idProv));
