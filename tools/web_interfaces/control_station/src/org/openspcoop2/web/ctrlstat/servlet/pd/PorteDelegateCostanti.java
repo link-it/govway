@@ -294,6 +294,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE = "identificazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE = "modeCreazione";
+	public final static String PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE = "modeCreazioneConnettore";
 	public final static String PARAMETRO_PORTE_DELEGATE_MAPPING = "mapping";
 	public final static String PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	
@@ -408,6 +409,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED = "Force Interface";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PORTA_DELEGANTE = "Porta Delegante";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_ABILITATO = "abilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_DISABILITATO = "disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM = CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM;

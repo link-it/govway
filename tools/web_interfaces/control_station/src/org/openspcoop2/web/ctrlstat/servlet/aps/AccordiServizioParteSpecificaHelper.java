@@ -5380,7 +5380,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	public Vector<DataElement> addConfigurazioneErogazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome,
 			String[] azioni, String[] azioniDisponibiliList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
-			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, String nomeSA, String [] saSoggetti, 
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli,
@@ -5447,7 +5447,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
 			de.setPostBack(true);
 			dati.addElement(de);
-		} else {
+		} 
+		
+		// mode Connettore
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE);
+		if(this.isModalitaStandard()) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modeCreazione);
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore));
+			de.setPostBack(true);
+		}
+		dati.addElement(de);
+		
+		if(!modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 			
 			// Controllo Accesso
 			
@@ -5619,7 +5636,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	public Vector<DataElement> addConfigurazioneFruizioneToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String nome,
 			String [] azioni, String[] azioniDisponibiliList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
-			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione,
+			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, List<String> saList,
 			String nomeSA, String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati,
@@ -5680,7 +5697,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MAPPING);
 			de.setPostBack(true);
 			dati.addElement(de);
-		} else {
+		}
+		
+		// mode Connettore
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_CONNETTORE);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE);
+		if(this.isModalitaStandard()) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modeCreazione);
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore));
+			de.setPostBack(true);
+		}
+		dati.addElement(de);
+		
+		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			
 			this.controlloAccessi(dati);
 		

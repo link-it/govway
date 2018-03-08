@@ -161,6 +161,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 				}
 			}
 			
+			boolean updateASPS = false;
+			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 			String errMsg = null;
 			for (int i = 0; i < idsToRemove.size(); i++) {
@@ -202,7 +204,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 								}
 							}
 						}
-						fruitore.removeConfigurazioneAzione(index);
+						if(index>=0) {
+							updateASPS = true;
+							fruitore.removeConfigurazioneAzione(index);
+						}
 					}
 					
 				}else {
@@ -212,7 +217,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			}// for
 			
 			
-			if(gestioneFruitori) {
+			if(gestioneFruitori && updateASPS) {
 				
 				listaOggettiDaModificare.add(asps);
 				

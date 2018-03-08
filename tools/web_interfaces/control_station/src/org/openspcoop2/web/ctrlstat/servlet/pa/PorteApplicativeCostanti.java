@@ -301,6 +301,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE = "identificazione";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE = "modeCreazione";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE = "modeCreazioneConnettore";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.PARAMETRO_SOGGETTO;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
@@ -431,6 +432,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "Force Interface";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = "register-input";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = "header-based";

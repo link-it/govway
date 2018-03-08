@@ -137,6 +137,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			
 			String nome = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
 			String modeCreazione = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE);
+			String modeCreazioneConnettore = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE);
 			String identificazione = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE);
 			String mappingPA = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
 
@@ -378,9 +379,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			boolean initConnettore = false;
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE)){
+				if(postBackElementName.equalsIgnoreCase(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE)){
 					// devo resettare il connettore
-					if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						initConnettore = true;
 					}
 				}
@@ -487,7 +488,15 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					
 					if(modeCreazione == null)
 						modeCreazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA;
+					
+					if(modeCreazioneConnettore == null) {
+						modeCreazioneConnettore = Costanti.CHECK_BOX_DISABLED;
+					}
 	
+					if(mappingPA==null) {
+						mappingPA = listaMappingValues[listaMappingValues.length-1]; // sono ordinati all'incontrario
+					}
+					
 					if(erogazioneRuolo==null || "".equals(erogazioneRuolo))
 						erogazioneRuolo = "-";
 					if(erogazioneAutenticazione==null || "".equals(erogazioneAutenticazione)) {
@@ -525,7 +534,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						erogazioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
 					} 
 					// solo in modalita' nuova
-					if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA) && initConnettore) {
+					if(initConnettore) {
 						tipoconn = "";
 						url = "";
 						nomeCodaJms = "";
@@ -585,14 +594,14 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 	
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
-							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
+							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 							mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato);
 					
 //					apsHelper.isModalitaCompleta()?null:(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX)
 					
-					if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 								url, nomeCodaJms,
@@ -627,7 +636,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.configurazioneErogazioneCheckData(TipoOperazione.ADD, nome, azioni, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti);
 			// controllo endpoint
-			if(isOk && modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				isOk = apsHelper.endPointCheckData(endpointtype, url, nome, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -655,12 +664,12 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 
 				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
-						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
+						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 						mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato);
 				
-				if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
@@ -710,24 +719,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			MappingErogazionePortaApplicativa mappingErogazione = implementation.getMapping();
 			portaApplicativa.setIdSoggetto((long) soggInt);
 			
-			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
-				
-				IDSoggetto idSoggettoAutenticatoErogazione = null;
-				if(erogazioneSoggettoAutenticato != null && !"".equals(erogazioneSoggettoAutenticato) && !"-".equals(erogazioneSoggettoAutenticato)) {
-					String [] splitSoggetto = erogazioneSoggettoAutenticato.split("/");
-					if(splitSoggetto != null) {
-						idSoggettoAutenticatoErogazione = new IDSoggetto();
-						if(splitSoggetto.length == 2) {
-							idSoggettoAutenticatoErogazione.setTipo(splitSoggetto[0]);
-							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[1]);
-						} else {
-							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[0]);
-						}
-					}
-				}
-				
+			Connettore connettore = null;
+			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				// Connettore
-				Connettore connettore = new Connettore();
+				connettore = new Connettore();
 				// this.nomeservizio);
 				if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 					connettore.setTipo(tipoconn);
@@ -749,28 +744,51 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore);
+			}
+			
+			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
+							
+				String nomeServizioApplicativoErogatore = portaApplicativaDefault.getServizioApplicativo(0).getNome();
 				
-				String nomeServizioApplicativoErogatore = portaApplicativa.getNome();
-				ServizioApplicativo sa = new ServizioApplicativo();
-				sa.setNome(nomeServizioApplicativoErogatore);
-				sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
-				sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
-				sa.setIdSoggetto((long) soggInt);
-				sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
-				sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
+				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+									
+					nomeServizioApplicativoErogatore = portaApplicativa.getNome();
+					
+					ServizioApplicativo sa = new ServizioApplicativo();
+					sa.setNome(nomeServizioApplicativoErogatore);
+					sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
+					sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+					sa.setIdSoggetto((long) soggInt);
+					sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
+					sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
+					
+					RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
+					rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
+					sa.setRispostaAsincrona(rispostaAsinc);
+					
+					InvocazioneServizio invServizio = new InvocazioneServizio();
+					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
+					invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
+					sa.setInvocazioneServizio(invServizio);
+					
+					listaOggettiDaCreare.add(sa);
+				}
 				
-				RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
-				rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-				rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
-				sa.setRispostaAsincrona(rispostaAsinc);
-				
-				InvocazioneServizio invServizio = new InvocazioneServizio();
-				invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-				invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
-				invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
-				sa.setInvocazioneServizio(invServizio);
-				
-				listaOggettiDaCreare.add(sa);
+				IDSoggetto idSoggettoAutenticatoErogazione = null;
+				if(erogazioneSoggettoAutenticato != null && !"".equals(erogazioneSoggettoAutenticato) && !"-".equals(erogazioneSoggettoAutenticato)) {
+					String [] splitSoggetto = erogazioneSoggettoAutenticato.split("/");
+					if(splitSoggetto != null) {
+						idSoggettoAutenticatoErogazione = new IDSoggetto();
+						if(splitSoggetto.length == 2) {
+							idSoggettoAutenticatoErogazione.setTipo(splitSoggetto[0]);
+							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[1]);
+						} else {
+							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[0]);
+						}
+					}
+				}
 				
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
@@ -779,19 +797,34 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				
 			}
 			else {
+				
 				portaApplicativa.getServizioApplicativoList().clear();
-				PortaApplicativa portaApplicativaSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-				for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaSelezionata.getServizioApplicativoList()) {
-					IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
-					idServizioApplicativoDefault.setNome(paSADefault.getNome());
-					idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaSelezionata.getTipoSoggettoProprietario(), portaApplicativaSelezionata.getNomeSoggettoProprietario()));
-					ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
-					ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
-					sa.setNome(portaApplicativa.getNome());
-					PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
-					paSa.setNome(sa.getNome());
-					portaApplicativa.getServizioApplicativoList().add(paSa);
-					listaOggettiDaCreare.add(sa);
+				
+				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+					PortaApplicativa portaApplicativaSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaSelezionata.getServizioApplicativoList()) {
+						IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
+						idServizioApplicativoDefault.setNome(paSADefault.getNome());
+						idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaSelezionata.getTipoSoggettoProprietario(), portaApplicativaSelezionata.getNomeSoggettoProprietario()));
+						ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
+						ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
+						sa.setNome(portaApplicativa.getNome());
+						sa.getInvocazioneServizio().setConnettore(connettore.mappingIntoConnettoreConfigurazione());
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setNome(sa.getNome());
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+						listaOggettiDaCreare.add(sa);
+					}
+				}
+				else {
+					
+					// assegno sempre il connettore della pa di default in caso di eredita'
+					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setNome(paSADefault.getNome());
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+					}
+					
 				}
 			}
 			

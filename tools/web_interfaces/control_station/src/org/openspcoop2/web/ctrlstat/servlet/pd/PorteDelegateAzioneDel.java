@@ -116,6 +116,7 @@ public final class PorteDelegateAzioneDel extends Action {
 
 			AccordoServizioParteSpecifica asps = null;
 			ConfigurazioneServizioAzione configAzioni = null; 
+			boolean updateASPS = false;
 			if(gestioneFruitori) {
 				Long idAspsLong = Long.parseLong(idAsps);
 				asps = aspsCore.getAccordoServizioParteSpecifica(idAspsLong);
@@ -160,6 +161,7 @@ public final class PorteDelegateAzioneDel extends Action {
 						for (int j = 0; j < configAzioni.sizeAzioneList(); j++) {
 							if(configAzioni.getAzione(j).equals(azione)) {
 								configAzioni.removeAzione(j);
+								updateASPS = true;
 								break;
 							}
 						}
@@ -185,7 +187,7 @@ public final class PorteDelegateAzioneDel extends Action {
 				
 				listaOggettiDaModificare.add(portaDelegata);
 				
-				if(gestioneFruitori) {
+				if(gestioneFruitori && updateASPS) {
 					listaOggettiDaModificare.add(asps);
 				}
 				

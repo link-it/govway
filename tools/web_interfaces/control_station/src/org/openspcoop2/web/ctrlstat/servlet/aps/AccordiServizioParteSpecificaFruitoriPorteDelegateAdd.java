@@ -69,7 +69,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
@@ -130,6 +129,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String nome = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 		
 			String modeCreazione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE);
+			String modeCreazioneConnettore = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE);
 			String identificazione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE);
 			String mappingPD = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MAPPING);
 
@@ -377,9 +377,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			boolean initConnettore = false;
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
-				if(postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE)){
+				if(postBackElementName.equalsIgnoreCase(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE)){
 					// devo resettare il connettore
-					if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						initConnettore = true;
 					}
 				}
@@ -446,7 +446,15 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					
 					if(modeCreazione == null)
 						modeCreazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA;
-	
+										
+					if(modeCreazioneConnettore == null) {
+						modeCreazioneConnettore = Costanti.CHECK_BOX_DISABLED;
+					}
+						
+					if(mappingPD==null) {
+						mappingPD = listaMappingValues[listaMappingValues.length-1]; // sono ordinati all'incontrario
+					}
+						
 					if(fruizioneServizioApplicativo==null || "".equals(fruizioneServizioApplicativo))
 						fruizioneServizioApplicativo = "-";
 					if(fruizioneRuolo==null || "".equals(fruizioneRuolo))
@@ -463,7 +471,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						fruizioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
 					}
 					// solo in modalita' nuova
-					if(gestioneFruitori &&  modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA) && initConnettore) {
+					if(gestioneFruitori && initConnettore) {
 						tipoconn = "";
 						url = "";
 						nomeCodaJms = "";
@@ -523,12 +531,12 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 	
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
-							identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
+							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 							fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 					
-					if(gestioneFruitori &&  modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+					if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 								url, nomeCodaJms,
@@ -564,7 +572,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azioni, asps, azioniOccupate,modeCreazione,null,true);
 			
 			// controllo endpoint
-			if(isOk && gestioneFruitori && modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+			if(isOk && gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				isOk = apsHelper.endPointCheckData(endpointtype, url, nome, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -591,12 +599,12 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 
 				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
-						identificazione, asps, as, serviceBinding, modeCreazione, listaMappingLabels, listaMappingValues,
+						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 						fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 				
-				if(gestioneFruitori && modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA)) {
+				if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
@@ -633,72 +641,56 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(idServizio2.getTipo());
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		
-			Fruitore fruitore = null;
-			if(gestioneFruitori) {
-				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-					if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
-						fruitore = fruitoreCheck;
-						break;
-					}
-				}
+			Connettore connettore = null;
+			if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+				connettore = new Connettore();
+				// this.nomeservizio);
+				if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
+					connettore.setTipo(tipoconn);
+				else
+					connettore.setTipo(endpointtype);
+
+				apsHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
+						nomeCodaJms, tipoJms, user, password,
+						initcont, urlpgk, url, connfact,
+						tipoSendas, httpsurl, httpstipologia,
+						httpshostverify, httpspath, httpstipo,
+						httpspwd, httpsalgoritmo, httpsstato,
+						httpskeystore, httpspwdprivatekeytrust,
+						httpspathkey, httpstipokey,
+						httpspwdkey, httpspwdprivatekey,
+						httpsalgoritmokey,
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						listExtendedConnettore);
 			}
 			
-			Connettore connettore = null;
+			
 			Subscription subscription = null;
 			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				PortaDelegata portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, portaDelegataDaCopiare, nome, azioni);
 				
-				if(gestioneFruitori) {
-					if(mappingSelezionato.isDefault()) {
-						connettore = (Connettore) fruitore.getConnettore().clone();
-					}
-					else {
-						for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
-							ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
-							if(config!=null) {
-								String azione = portaDelegataDaCopiare.getAzione().getAzioneDelegata(0); // prendo la prima
-								if(config.getAzioneList().contains(azione)) {
-									connettore = config.getConnettore();
-									break;
-								}
-							}
-						}
-					}
-				}
 			}
 			else {
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, nome, azioni);
 				
-				if(gestioneFruitori) {
-					connettore = new Connettore();
-					// this.nomeservizio);
-					if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
-						connettore.setTipo(tipoconn);
-					else
-						connettore.setTipo(endpointtype);
-
-					apsHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
-							nomeCodaJms, tipoJms, user, password,
-							initcont, urlpgk, url, connfact,
-							tipoSendas, httpsurl, httpstipologia,
-							httpshostverify, httpspath, httpstipo,
-							httpspwd, httpsalgoritmo, httpsstato,
-							httpskeystore, httpspwdprivatekeytrust,
-							httpspathkey, httpstipokey,
-							httpspwdkey, httpspwdprivatekey,
-							httpsalgoritmokey,
-							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							listExtendedConnettore);
-				}
 			}
 			
-			if(gestioneFruitori) {
+			if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+				
+				Fruitore fruitore = null;
+				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+					if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
+						fruitore = fruitoreCheck;
+						break;
+					}
+				}
+				
 				ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
 				configurazioneAzione.setConnettore(connettore);
 				for (int i = 0; i < azioni.length; i++) {
@@ -723,7 +715,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
 
-			if(gestioneFruitori) {
+			if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				
 				listaOggettiDaModificare.add(asps);
 				

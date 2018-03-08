@@ -91,7 +91,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			 * validation done in porteDomAdd.java
 			 */
 			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			int idServizio = Integer.parseInt(id);
+			long idServizioLong = Long.parseLong(id);
 			String objToRemove = apsHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			// gli id contenuti nell'array sono i nomi delle porte applicative
 			// da rimuovere
@@ -118,8 +118,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			// }
 
 			// Prendo l'id del soggetto erogatore del servizio
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 
@@ -135,12 +135,12 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
 				// controllo se il mapping e' di default, se lo e' salto questo elemento
 				
-				boolean isDefault = apsCore.isDefaultMappingErogazione(idServizio2, idPortaApplicativa );
+				boolean isDefault = apsCore.isDefaultMappingErogazione(idServizio, idPortaApplicativa );
 				
 				if(!isDefault) {
 					//cancello il mapping
 					MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
-					mappingErogazione.setIdServizio(idServizio2);
+					mappingErogazione.setIdServizio(idServizio);
 					mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
 					listaOggettiDaEliminare.add(mappingErogazione);
 					
@@ -175,7 +175,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
 			
-			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), ricerca);
+			List<MappingErogazionePortaApplicativa> lista = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), ricerca);
 			apsHelper.prepareServiziConfigurazioneList(lista, id, null, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

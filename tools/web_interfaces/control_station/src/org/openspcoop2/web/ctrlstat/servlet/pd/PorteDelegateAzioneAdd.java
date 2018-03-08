@@ -260,6 +260,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			listaOggettiDaModificare.add(portaDelegata);
 
 			if(gestioneFruitori) {
+				boolean updateASPS = false;
 				Fruitore fruitore = null;
 				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
 					if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
@@ -274,11 +275,14 @@ public final class PorteDelegateAzioneAdd extends Action {
 							for(String azione: azionis) {
 								config.addAzione(azione);
 							}
+							updateASPS = true;
 							break;
 						}
 					}
 				}
-				listaOggettiDaModificare.add(asps);
+				if(updateASPS) {
+					listaOggettiDaModificare.add(asps);
+				}
 			}
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);

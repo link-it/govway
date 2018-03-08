@@ -2689,7 +2689,7 @@ public class DriverConfigurazioneDB_LIB {
 				// connettore risp
 				//il nome del connettore deve essere univoco Connettore[RISP | INV]_nomeSA+tipoSoggetto+nomeSoggetto
 				connettoreRisp = new Connettore();
-				connettoreRisp.setNome("ConnettoreRISP_" + aSA.getNome()+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario());
+				connettoreRisp.setNome("ConnettoreRISP_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario());
 				connettoreRisp.setTipo(TipiConnettore.DISABILITATO.getNome());
 				//Creo il connettore disabilitato
 				idConnettoreRisp = DriverConfigurazioneDB_LIB.CRUDConnettore(1, connettoreRisp, con);
@@ -2705,7 +2705,7 @@ public class DriverConfigurazioneDB_LIB {
 				// connettore inv
 				connettoreInv = new Connettore();
 				// connettoreInv.addProperty(prop);
-				connettoreInv.setNome("ConnettoreINV_" + aSA.getNome()+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario());
+				connettoreInv.setNome("ConnettoreINV_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario());
 				connettoreInv.setTipo(TipiConnettore.DISABILITATO.getNome());
 				idConnettoreInv = DriverConfigurazioneDB_LIB.CRUDConnettore(1, connettoreInv, con);
 
@@ -2959,16 +2959,14 @@ public class DriverConfigurazioneDB_LIB {
 				// connettore risp asinc				
 				RispostaAsincrona rispAsin = aSA.getRispostaAsincrona();
 				connettoreRisp = rispAsin != null ? rispAsin.getConnettore() : new Connettore();
-				//String nomeConnettoreRisp = "ConnettoreRISP_"+oldNomeSA+oldTipoProprietario+oldNomeProprietario;
-				String newNomeConnettoreRisp = "ConnettoreRISP_"+nomeSA+tipoProprietario+nomeProprietario;
+				String newNomeConnettoreRisp = "ConnettoreRISP_"+nomeSA+"_"+tipoProprietario+nomeProprietario;
 				//idConnettoreRisp = DBUtils.getIdConnettore(nomeConnettoreRisp, con, tipoDB);
 				idConnettoreRisp = DriverConfigurazioneDB_LIB.getIdConnettore_SA_RISP(idServizioApplicativo, con);
 				
 				// connettore inv servizio
 				InvocazioneServizio invServ = aSA.getInvocazioneServizio();
 				connettoreInv = invServ != null ? invServizio.getConnettore() : new Connettore();
-				//String nomeConnettoreInv = "ConnettoreINV_"+oldNomeSA+oldTipoProprietario+oldNomeProprietario;
-				String newNomeConnettoreInv = "ConnettoreINV_"+nomeSA+tipoProprietario+nomeProprietario;
+				String newNomeConnettoreInv = "ConnettoreINV_"+nomeSA+"_"+tipoProprietario+nomeProprietario;
 				//idConnettoreInv = DBUtils.getIdConnettore(nomeConnettoreInv, con, tipoDB);
 				idConnettoreInv = DriverConfigurazioneDB_LIB.getIdConnettore_SA_INV(idServizioApplicativo, con);
 				
@@ -3216,7 +3214,7 @@ public class DriverConfigurazioneDB_LIB {
 					connettoreRisp = new Connettore();
 					connettoreRisp.setTipo(TipiConnettore.DISABILITATO.getNome());
 				}
-				nomeConnettoreRisp = "ConnettoreRISP_" + aSA.getNome()+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario();
+				nomeConnettoreRisp = "ConnettoreRISP_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario();
 				connettoreRisp.setNome(nomeConnettoreRisp);
 				idConnettoreRisp = DBUtils.getIdConnettore(nomeConnettoreRisp, con, DriverConfigurazioneDB_LIB.tipoDB);
 				DriverConfigurazioneDB_LIB.log.debug("Recupero connettore asincrono id["+idConnettoreRisp+"]");
@@ -3231,7 +3229,7 @@ public class DriverConfigurazioneDB_LIB {
 					connettoreInv = new Connettore();
 					connettoreInv.setTipo(TipiConnettore.DISABILITATO.getNome());
 				}
-				nomeConnettoreInv = "ConnettoreINV_" + aSA.getNome()+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario();
+				nomeConnettoreInv = "ConnettoreINV_" + aSA.getNome()+"_"+aSA.getTipoSoggettoProprietario()+aSA.getNomeSoggettoProprietario();
 				connettoreInv.setNome(nomeConnettoreInv);
 				idConnettoreInv = DBUtils.getIdConnettore(nomeConnettoreInv, con, DriverConfigurazioneDB_LIB.tipoDB);
 				DriverConfigurazioneDB_LIB.log.debug("Recupero connettore invocazione servizio id["+idConnettoreInv+"]");
