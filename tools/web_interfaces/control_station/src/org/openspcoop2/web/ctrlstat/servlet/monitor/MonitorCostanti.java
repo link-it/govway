@@ -76,7 +76,7 @@ public class MonitorCostanti {
 	public final static String LABEL_MONITOR_SOGGETTO_DESTINATARIO = "Soggetto Destinatario";
 	public final static String LABEL_MONITOR_SERVIZIO = "Servizio";
 	public final static String LABEL_MONITOR_AZIONE = "Azione";
-	public final static String LABEL_MONITOR_RICERCA = "Ricerca";
+	//public final static String LABEL_MONITOR_RICERCA = "Ricerca";
 	public final static String LABEL_MONITOR_STATO_PORTA_DOMINIO = "Stato Porta di Dominio";
 	public final static String LABEL_MONITOR_NESSUNA_INFORMAZIONE_PRESENTE = "Nessuna informazione presente!";
 	public final static String LABEL_MONITOR_TOTALE_MESSAGGI = "Totale Messaggi";

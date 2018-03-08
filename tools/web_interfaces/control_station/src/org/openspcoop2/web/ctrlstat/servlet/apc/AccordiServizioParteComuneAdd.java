@@ -425,7 +425,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(ServletUtils.isEditModeInProgress(this.editMode)){ // && apcHelper.isEditModeInProgress()){
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, labelAccordoServizio);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, labelAccordoServizio,
+						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue());
 
 				if(this.nome==null){
 					this.nome = "";
@@ -556,7 +559,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if (!isOk) {
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, labelAccordoServizio);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, labelAccordoServizio,
+						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue());
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -695,7 +701,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					pd.setMessage(validazioneException.toString());
 
 					// setto la barra del titolo
-					ServletUtils.setPageDataTitle_ServletAdd(pd, labelAccordoServizio);
+					ServletUtils.setPageDataTitle_ServletAdd(pd, labelAccordoServizio,
+							AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue());
 
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();

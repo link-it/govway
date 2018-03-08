@@ -413,15 +413,14 @@ public final class ServiziApplicativiAdd extends Action {
 				
 				if(useIdSogg){
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
-									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+									ServletUtils.getParameterAggiungi()
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi);
+					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
 				}
 
 				if(ruoloFruitore==null || "".equals(ruoloFruitore)){
@@ -475,15 +474,14 @@ public final class ServiziApplicativiAdd extends Action {
 				// setto la barra del titolo
 				if(useIdSogg){
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
-									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+									ServletUtils.getParameterAggiungi()
 							);
 				}else {
-					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi);
+					ServletUtils.setPageDataTitle_ServletAdd(pd, labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
 				}
 
 				// preparo i campi

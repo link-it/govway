@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.audit;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -44,7 +43,6 @@ import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -103,12 +101,7 @@ public   class Auditing extends Action {
 			// Se datainizio == null, devo visualizzare la pagina con il pulsante
 			if (auditingHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
-
-				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_REPORTISTICA, null));
-				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, null));
-
-				ServletUtils.setPageDataTitle(pd, lstParam);
+				ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
 
 				// preparo i campi
 				Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(
@@ -132,12 +125,7 @@ public   class Auditing extends Action {
 				pd.setMessage(msg);
 
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
-
-				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_REPORTISTICA, null));
-				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, null));
-
-				ServletUtils.setPageDataTitle(pd, lstParam);
+				ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING);
 
 				// preparo i campi
 				Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportToDati(

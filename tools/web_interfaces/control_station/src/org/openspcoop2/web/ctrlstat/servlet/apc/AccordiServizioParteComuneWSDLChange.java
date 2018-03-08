@@ -315,8 +315,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 				// setto la barra del titolo				
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
@@ -346,8 +345,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
@@ -398,8 +396,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 							// setto la barra del titolo
 							ServletUtils.setPageDataTitle(pd, 
-									new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),null),
-									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+									new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
 											AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 													AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 													AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
@@ -601,8 +598,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			// visualizzo il form di modifica accordo come in accordiChange
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),null),
-					new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+					new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
 							AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),

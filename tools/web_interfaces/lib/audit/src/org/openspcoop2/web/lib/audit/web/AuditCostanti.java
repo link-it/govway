@@ -100,7 +100,6 @@ public class AuditCostanti {
 	public final static String LABEL_AUDIT_VISUALIZZA = "Visualizza";
 	public final static String LABEL_AUDIT_COMPORTAMENTO_DI_DEFAULT = "Comportamento di Default";
 	public final static String LABEL_AUDIT_AZIONE = "Azione";
-	public final static String LABEL_AUDIT_REPORTISTICA = "Reportistica";
 	public final static String LABEL_AUDIT_OPERAZIONI = "Operazioni";
 	public final static String LABEL_AUDIT_OPERAZIONE = "Operazione";
 	public final static String LABEL_AUDIT_DETTAGLIO = "Dettaglio";

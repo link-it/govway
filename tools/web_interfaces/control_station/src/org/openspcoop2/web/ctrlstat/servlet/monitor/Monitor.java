@@ -1273,8 +1273,7 @@ public final class Monitor extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR));
-			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR_RICERCA, MonitorCostanti.SERVLET_NAME_MONITOR,
+			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
 					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
 			lstParam.add(new Parameter(methodName, null));
 
@@ -1737,8 +1736,7 @@ public final class Monitor extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR));
-			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR_RICERCA, MonitorCostanti.SERVLET_NAME_MONITOR,
+			lstParam.add(new Parameter(MonitorCostanti.LABEL_MONITOR, MonitorCostanti.SERVLET_NAME_MONITOR,
 					this.createSearchString(monitorFormBean).toArray(new Parameter[lstParam.size()])));
 			lstParam.add(new Parameter(methodName, null));
 

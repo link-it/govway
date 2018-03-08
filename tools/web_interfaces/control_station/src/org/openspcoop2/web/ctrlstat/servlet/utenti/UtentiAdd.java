@@ -141,7 +141,7 @@ public final class UtentiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
+						ServletUtils.getParameterAggiungi());
 	
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -181,7 +181,7 @@ public final class UtentiAdd extends Action {
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
+						ServletUtils.getParameterAggiungi());
 	
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

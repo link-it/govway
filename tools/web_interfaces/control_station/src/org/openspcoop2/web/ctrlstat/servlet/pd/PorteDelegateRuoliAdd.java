@@ -45,7 +45,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -156,7 +155,7 @@ public final class PorteDelegateRuoliAdd extends Action {
 			
 			lstParam.add(new Parameter(labelPagLista, 
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST,urlParms));
-			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			// Se servizioApplicativohid = null, devo visualizzare la pagina per
 			// l'inserimento dati

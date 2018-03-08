@@ -115,7 +115,7 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesAdd extends Action
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES_LIST,
 						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, oa.getId()+"")
 						));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
@@ -156,7 +156,7 @@ public final class ConfigurazioneDiagnosticaAppenderPropertiesAdd extends Action
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES_LIST,
 						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, oa.getId()+"")
 						));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

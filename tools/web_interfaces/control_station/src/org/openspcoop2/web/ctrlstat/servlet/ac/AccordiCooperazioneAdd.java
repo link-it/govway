@@ -61,7 +61,6 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -251,11 +250,10 @@ public final class AccordiCooperazioneAdd extends Action {
 			// dati
 			if (ServletUtils.isEditModeInProgress(this.editMode)) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
-
-				ServletUtils.setPageDataTitle(pd, lstParam);
+				
+				// setto la barra del titolo
+				ServletUtils.setPageDataTitle_ServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
+						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -331,11 +329,8 @@ public final class AccordiCooperazioneAdd extends Action {
 
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParam = new ArrayList<Parameter>();
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
-
-				ServletUtils.setPageDataTitle(pd, lstParam);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
+						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -401,11 +396,8 @@ public final class AccordiCooperazioneAdd extends Action {
 					pd.setMessage(validazioneException.toString());
 
 					// setto la barra del titolo
-					List<Parameter> lstParam = new ArrayList<Parameter>();
-					lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
-					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
-
-					ServletUtils.setPageDataTitle(pd, lstParam);
+					ServletUtils.setPageDataTitle_ServletAdd(pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE,
+							AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST);
 
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();

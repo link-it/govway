@@ -519,13 +519,11 @@ public class PddHelper extends ConsoleHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,null), 
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST),
+						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,PddCostanti.SERVLET_NAME_PDD_SINGLEPDD_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
 			}
 
@@ -612,13 +610,11 @@ public class PddHelper extends ConsoleHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,PddCostanti.SERVLET_NAME_PDD_LIST));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,null), 
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PddCostanti.SERVLET_NAME_PDD_LIST),
+						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,PddCostanti.SERVLET_NAME_PDD_LIST), 
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
 			}
 
@@ -749,14 +745,12 @@ public class PddHelper extends ConsoleHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,t2URL),
+						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,t2URL),
 						new Parameter(t3Label,null));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,null), 
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, t2URL),
+						new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO,t2URL), 
 						new Parameter(t3Label, PddCostanti.SERVLET_NAME_PDD_SOGGETTI_LIST+"?"+PddCostanti.PARAMETRO_PDD_ID+"="+id),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
 			}

@@ -835,13 +835,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd,
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 
@@ -1141,13 +1139,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 

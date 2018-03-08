@@ -1006,14 +1006,12 @@ public class UtentiHelper extends ConsoleHelper {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null),
-						new Parameter(UtentiCostanti.LABEL_UTENTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+						new Parameter(UtentiCostanti.LABEL_UTENTI, UtentiCostanti.SERVLET_NAME_UTENTI_LIST));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd,
 						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null),
-						new Parameter(UtentiCostanti.LABEL_UTENTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
+						new Parameter(UtentiCostanti.LABEL_UTENTI, UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));	
 			}
 

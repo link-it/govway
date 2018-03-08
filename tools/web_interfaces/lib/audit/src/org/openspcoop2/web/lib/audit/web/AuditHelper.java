@@ -870,15 +870,12 @@ public class AuditHelper {
 			// setto la barra del titolo
 			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
 			GeneralLink tl1 = new GeneralLink();
-			tl1.setLabel(AuditCostanti.LABEL_AUDIT_REPORTISTICA);
+			tl1.setLabel(AuditCostanti.LABEL_AUDIT);
+			tl1.setUrl(AuditCostanti.SERVLET_NAME_AUDITING);
 			titlelist.addElement(tl1);
 			GeneralLink tl2 = new GeneralLink();
-			tl2.setLabel(AuditCostanti.LABEL_AUDIT);
-			tl2.setUrl(AuditCostanti.SERVLET_NAME_AUDITING);
+			tl2.setLabel(AuditCostanti.LABEL_AUDIT_OPERAZIONI);
 			titlelist.addElement(tl2);
-			GeneralLink tl3 = new GeneralLink();
-			tl3.setLabel(AuditCostanti.LABEL_AUDIT_OPERAZIONI);
-			titlelist.addElement(tl3);
 			this.pd.setTitleList(titlelist);
 
 			this.pd.setSearch("off");
@@ -1133,7 +1130,6 @@ public class AuditHelper {
 			}
 			}
 
-			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_REPORTISTICA, null));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_OPERAZIONI, AuditCostanti.SERVLET_NAME_AUDITING, params));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_DETTAGLIO +" di " + singleOp.getId(), 

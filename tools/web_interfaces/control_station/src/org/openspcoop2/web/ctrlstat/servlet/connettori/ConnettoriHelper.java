@@ -114,12 +114,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			ServletUtils.setPageDataTitle(pd, 
 					// t1
-					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null),
+					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST), 
 					// t2
-					new Parameter(
-						Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST), 
-					// t3
 					new Parameter(
 						"Connettore del servizio "+IDServizioFactory.getInstance().getUriFromAccordo(asps), 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE+
@@ -141,18 +137,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			ServletUtils.setPageDataTitle(pd, 
 					// t1
-					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS,null), 
+					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST), 
 					// t2
-					new Parameter(
-						Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST), 
-					// t3
 					new Parameter(
 						"Fruitori del servizio " + IDServizioFactory.getInstance().getUriFromAccordo(asps),
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST+
 						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id + 
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE+"=" + idSoggErogatore),
-					// t4
+					// t3
 					new Parameter(
 						"Connettore del fruitore "+tipofru + "/" + nomefru,
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE+
@@ -170,12 +162,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			ServletUtils.setPageDataTitle(pd, 
 					// t1
-					new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO,null), 
+					new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST), 
 					// t2
-					new Parameter(
-							Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST), 
-					// t3
 					new Parameter(
 						"Connettore del servizio applicativo (InvocazioneServizio) " + nomeservizioApplicativo+" del soggetto "+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario(),
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT+
@@ -192,11 +180,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			ServletUtils.setPageDataTitle(pd, 
 					// t1
-					new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, null),
+					new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST), 
 					// t2
-					new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-								 ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST), 
-					// t3
 					new Parameter(			 
 						"Connettore del servizio applicativo (RispostaAsincrona) " + nomeservizioApplicativo+" del soggetto "+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario(),
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA+
@@ -216,11 +201,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			ServletUtils.setPageDataTitle(pd, 
 					// t1
-					new Parameter(SoggettiCostanti.LABEL_SOGGETTI,null), 
+					new Parameter(SoggettiCostanti.LABEL_SOGGETTI,SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST), 
 					// t2
-					new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-								  SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST), 
-					// t3
 					new Parameter(
 						"Connettore del soggetto " + tipoprov1 + "/" + nomeprov1,
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT+
@@ -253,7 +235,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					);
 		}
 		ServletUtils.appendPageDataTitle(pd,
-				new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
+				ServletUtils.getParameterAggiungi());
 	}
 
 	

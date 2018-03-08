@@ -414,7 +414,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggFruitoreDelServizio, idAsps, idFruizione);
 
-			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			lstParm.add(ServletUtils.getParameterAggiungi());
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati

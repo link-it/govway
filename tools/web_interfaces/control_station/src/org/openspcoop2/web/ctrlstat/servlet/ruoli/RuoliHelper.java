@@ -238,13 +238,11 @@ public class RuoliHelper extends ConsoleHelper{
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(RuoliCostanti.LABEL_RUOLI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+						new Parameter(RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd,
-						new Parameter(RuoliCostanti.LABEL_RUOLI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,RuoliCostanti.SERVLET_NAME_RUOLI_LIST),
+						new Parameter(RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 

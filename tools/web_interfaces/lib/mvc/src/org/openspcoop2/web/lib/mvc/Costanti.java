@@ -86,8 +86,8 @@ public class Costanti {
 	
 	/** PAGE DATA TITLE */
 	
-	public final static String PAGE_DATA_TITLE_LABEL_AGGIUNGI = "Aggiungi";
-	public final static String PAGE_DATA_TITLE_LABEL_ELENCO = "Elenco";
+	protected final static String PAGE_DATA_TITLE_LABEL_AGGIUNGI = "Aggiungi"; // Utilizzato solo dalle utility interne
+	//public final static String PAGE_DATA_TITLE_LABEL_ELENCO = "Elenco"; // DEPRECATO
 	public final static String PAGE_DATA_TITLE_LABEL_VISUALIZZA = "Visualizza";
 	public final static String PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA = "Risultati ricerca";
 	public final static String PAGE_DATA_TITLE_LABEL_ELIMINA = "Elimina";

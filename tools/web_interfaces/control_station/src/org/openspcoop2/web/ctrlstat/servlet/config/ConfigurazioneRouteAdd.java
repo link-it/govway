@@ -138,7 +138,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROUTING));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINAZIONI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROTTE_ROUTING_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
@@ -171,7 +171,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROUTING));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINAZIONI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROTTE_ROUTING_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

@@ -2647,7 +2647,6 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 
 			ServletUtils.setPageDataTitle(this.pd, 
-					new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
 					new Parameter(ArchiviCostanti.LABEL_TRACCIAMENTO,ArchiviCostanti.SERVLET_NAME_ARCHIVI_TRACCIAMENTO,
 							pDs, pProfColl, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg),
 					new Parameter(ArchiviCostanti.LABEL_TRACCE,null));
@@ -3536,7 +3535,6 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 //					+ "&"+ArchiviCostanti.PARAMETRO_ARCHIVI_ID_MESSAGGIO+"=" + (identificativoMessaggio == null ? "" : identificativoMessaggio);
 
 			ServletUtils.setPageDataTitle(this.pd, 
-					new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
 					new Parameter(ArchiviCostanti.LABEL_DIAGNOSTICA,ArchiviCostanti.SERVLET_NAME_ARCHIVI_DIAGNOSTICA,
 							pDs, pSev,pIdFun, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg),
 					new Parameter(ArchiviCostanti.LABEL_MESSAGGI,null));

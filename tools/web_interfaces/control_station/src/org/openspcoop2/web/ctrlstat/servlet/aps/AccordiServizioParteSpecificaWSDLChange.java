@@ -230,8 +230,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(parameterAPSChange);
 				lstParm.add(new Parameter(label , null));
 
@@ -261,8 +260,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			if (!isOk) {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(parameterAPSChange);
 				lstParm.add(new Parameter(label , null));
 
@@ -302,8 +300,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			// visualizzo la schermata di modifica del servizio
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null),
-					new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST),
+					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST),
 					new Parameter(tmpTitle, null)					);
 
 			AccordoServizioParteSpecifica aspsT = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(this.id));

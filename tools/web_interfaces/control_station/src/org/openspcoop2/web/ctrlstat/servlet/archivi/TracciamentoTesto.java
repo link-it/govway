@@ -139,7 +139,6 @@ public class TracciamentoTesto extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
 					new Parameter(ArchiviCostanti.LABEL_TRACCIAMENTO,ArchiviCostanti.SERVLET_NAME_ARCHIVI_TRACCIAMENTO,
 							pDs, pProfColl, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg),
 					new Parameter(ArchiviCostanti.LABEL_TRACCE,ArchiviCostanti.SERVLET_NAME_ARCHIVI_TRACCIAMENTO, pEditMode, 

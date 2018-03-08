@@ -326,8 +326,7 @@ public final class ServiziApplicativiChange extends Action {
 				
 				if(useIdSogg){
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
@@ -335,8 +334,7 @@ public final class ServiziApplicativiChange extends Action {
 							);
 				}else {
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(labelApplicativi, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
+							new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
 							new Parameter(nome, null)
 							);
 				}
@@ -714,8 +712,7 @@ public final class ServiziApplicativiChange extends Action {
 				
 				if(useIdSogg){
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
 									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
 									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
@@ -723,8 +720,7 @@ public final class ServiziApplicativiChange extends Action {
 							);
 				}else {
 					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(labelApplicativi, null),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
+							new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
 							new Parameter(nome, null)
 							);
 				}

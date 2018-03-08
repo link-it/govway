@@ -217,8 +217,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			if (ServletUtils.isEditModeInProgress(this.editMode)) {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
@@ -253,8 +252,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			if (!isOk) {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
@@ -321,8 +319,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
 
-			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
-			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + titleServizio, 
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),

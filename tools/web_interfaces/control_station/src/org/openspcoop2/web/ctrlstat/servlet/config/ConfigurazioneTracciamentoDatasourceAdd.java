@@ -39,7 +39,6 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -108,7 +107,7 @@ public final class ConfigurazioneTracciamentoDatasourceAdd extends Action {
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
@@ -140,7 +139,7 @@ public final class ConfigurazioneTracciamentoDatasourceAdd extends Action {
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 				
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

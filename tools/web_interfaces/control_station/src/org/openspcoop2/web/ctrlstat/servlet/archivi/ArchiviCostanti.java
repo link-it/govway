@@ -29,7 +29,6 @@ import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -115,7 +114,6 @@ public class ArchiviCostanti {
 	public final static String LABEL_ARCHIVI_EXPORT = "Esporta";
 	public final static String LABEL_ARCHIVI_ELIMINA = "Elimina";
 	public final static String LABEL_DOWNLOAD = "Download";
-	public final static String LABEL_REPORTISTICA = CostantiControlStation.LABEL_STRUMENTI;
 	public final static String LABEL_DIAGNOSTICA = "Diagnostica";
 	public final static String LABEL_TRACCIAMENTO = "Tracciamento";
 	public final static String LABEL_MESSAGGI = "Messaggi";

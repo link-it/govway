@@ -370,13 +370,12 @@ public final class PorteDelegateAdd extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
 								PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
 								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
 								),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+								ServletUtils.getParameterAggiungi()
 						);
 
 				// preparo i campi
@@ -490,13 +489,12 @@ public final class PorteDelegateAdd extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle,
 								PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
 								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
 								),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+								ServletUtils.getParameterAggiungi()
 						);
 
 				// preparo i campi

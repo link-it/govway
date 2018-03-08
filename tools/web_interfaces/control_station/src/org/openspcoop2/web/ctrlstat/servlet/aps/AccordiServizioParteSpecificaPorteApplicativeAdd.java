@@ -451,7 +451,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idSoggettoErogatoreDelServizio, idAsps);
 
-			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			lstParm.add(ServletUtils.getParameterAggiungi());
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati

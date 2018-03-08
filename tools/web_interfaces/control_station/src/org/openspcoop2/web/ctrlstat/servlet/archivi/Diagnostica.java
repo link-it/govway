@@ -39,14 +39,13 @@ import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 //import org.openspcoop2.web.lib.users.dao.User;
 
@@ -158,9 +157,7 @@ public final class Diagnostica extends Action {
 				if(archiviHelper.isEditModeInProgress()){
 	
 					// setto la barra del titolo
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
-							new Parameter(ArchiviCostanti.LABEL_DIAGNOSTICA,null));
+					ServletUtils.setPageDataTitle_ServletFirst(pd, ArchiviCostanti.LABEL_DIAGNOSTICA, ArchiviCostanti.SERVLET_NAME_ARCHIVI_DIAGNOSTICA);
 	
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();
@@ -185,9 +182,7 @@ public final class Diagnostica extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
-						new Parameter(ArchiviCostanti.LABEL_DIAGNOSTICA,null));
+				ServletUtils.setPageDataTitle_ServletFirst(pd, ArchiviCostanti.LABEL_DIAGNOSTICA, ArchiviCostanti.SERVLET_NAME_ARCHIVI_DIAGNOSTICA);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

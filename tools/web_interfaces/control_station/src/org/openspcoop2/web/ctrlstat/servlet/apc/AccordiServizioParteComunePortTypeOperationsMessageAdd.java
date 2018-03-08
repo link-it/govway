@@ -39,7 +39,6 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -130,12 +129,9 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 			Parameter pTipoMsg  = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_TYPE, 
 					AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_INPUT);
 
-			// Se idhid = null, devo visualizzare la pagina per l'inserimento
-			// dati
+			// setto la barra del titolo	
 			List<Parameter> listaParametri = new ArrayList<Parameter>();
-
-			listaParametri.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null));
-			listaParametri.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+			listaParametri.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST , AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)));
 
 			listaParametri.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST,
@@ -150,13 +146,10 @@ public class AccordiServizioParteComunePortTypeOperationsMessageAdd extends Acti
 			String labelMessage = AccordiServizioParteComuneCostanti.LABEL_OPERATION_MESSAGE_INPUT;
 			if(!isMessageInput){
 				labelMessage = AccordiServizioParteComuneCostanti.LABEL_OPERATION_MESSAGE_OUTPUT;
-			}
-
-			// setto la barra del titolo			
-		 
-				listaParametri.add(	new Parameter(labelMessage + " di " + nomeop,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_LIST,
-						pIdAccordo,pNomeAccordo,pNomePt, pNomePt ,pNomeOp, pTipoMsg,AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)));
-				listaParametri.add (new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			}		
+			listaParametri.add(	new Parameter(labelMessage + " di " + nomeop,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE_LIST,
+					pIdAccordo,pNomeAccordo,pNomePt, pNomePt ,pNomeOp, pTipoMsg,AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)));
+			listaParametri.add (ServletUtils.getParameterAggiungi());
 			
 			
 			if(apcHelper.isEditModeInProgress()){

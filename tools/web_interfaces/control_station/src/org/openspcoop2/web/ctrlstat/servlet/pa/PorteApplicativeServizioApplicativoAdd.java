@@ -199,7 +199,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)
 					));
-			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			// Se servizioApplicativohid = null, devo visualizzare la pagina per
 			// l'inserimento dati

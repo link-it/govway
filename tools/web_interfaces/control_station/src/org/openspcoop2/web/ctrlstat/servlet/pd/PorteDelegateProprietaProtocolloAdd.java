@@ -38,7 +38,6 @@ import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -116,7 +115,7 @@ public final class PorteDelegateProprietaProtocolloAdd extends Action {
 					new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps),
 					new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione)
 					 ));
-			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati

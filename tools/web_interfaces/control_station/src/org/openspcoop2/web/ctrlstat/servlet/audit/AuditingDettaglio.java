@@ -104,7 +104,6 @@ public final class AuditingDettaglio extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_REPORTISTICA, null));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDITING));
 			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_OPERAZIONI, AuditCostanti.SERVLET_NAME_AUDITING,
 					pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto, pEnd));

@@ -102,7 +102,7 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
@@ -135,7 +135,7 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

@@ -315,9 +315,7 @@ public final class AccordiCooperazioneChange extends Action {
 			if (ServletUtils.isEditModeInProgress(this.editMode)) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -389,9 +387,7 @@ public final class AccordiCooperazioneChange extends Action {
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -426,9 +422,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
-				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-						AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
+				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 				lstParam.add(new Parameter(titleAS, null));
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -518,9 +512,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 					// setto la barra del titolo
 					List<Parameter> lstParam = new ArrayList<Parameter>();
-					lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
-					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-							AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
+					lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST));
 					lstParam.add(new Parameter(titleAS, null));
 
 					ServletUtils.setPageDataTitle(pd, lstParam);

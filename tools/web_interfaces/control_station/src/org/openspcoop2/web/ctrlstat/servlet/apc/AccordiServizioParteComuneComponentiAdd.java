@@ -43,7 +43,6 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -153,9 +152,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
-
-				lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), null));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+				lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), 
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						));
@@ -164,8 +161,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, "" + idAccordo),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						));
-
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)); 
+				lstParam.add(ServletUtils.getParameterAggiungi()); 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi
@@ -201,9 +197,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
-
-				lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), null));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+				lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), 
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						));
@@ -212,8 +206,7 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, "" + idAccordo),
 						AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 						));
-
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)); 
+				lstParam.add(ServletUtils.getParameterAggiungi()); 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				// preparo i campi

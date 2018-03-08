@@ -122,7 +122,7 @@ public final class PddAdd extends Action {
 					implementazione = PddCostanti.DEFAULT_PDD_IMPLEMENTAZIONE;
 	
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_LIST);
 	
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -153,7 +153,7 @@ public final class PddAdd extends Action {
 			if (!isOk) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_LIST);
 	
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

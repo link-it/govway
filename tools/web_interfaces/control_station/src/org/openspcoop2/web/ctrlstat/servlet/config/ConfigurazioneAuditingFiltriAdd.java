@@ -118,7 +118,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 						AuditCostanti.SERVLET_NAME_AUDIT));
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_FILTRI, 
 						AuditCostanti.SERVLET_NAME_AUDIT_FILTRI_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
@@ -169,7 +169,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 						AuditCostanti.SERVLET_NAME_AUDIT));
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_FILTRI, 
 						AuditCostanti.SERVLET_NAME_AUDIT_FILTRI_LIST));
-				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null));
+				lstParam.add(ServletUtils.getParameterAggiungi());
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 

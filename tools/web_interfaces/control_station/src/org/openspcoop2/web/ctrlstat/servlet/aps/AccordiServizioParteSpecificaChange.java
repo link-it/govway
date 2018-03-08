@@ -605,12 +605,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
 				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
 				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(tmpTitle, null));
 
 				// setto la barra del titolo
@@ -1032,12 +1031,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
 				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
 				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				lstParm.add(new Parameter(tmpTitle, null));
 
 				// setto la barra del titolo
@@ -1137,12 +1135,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
 					if(gestioneFruitori) {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					}
 					else {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					}
-					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(tmpTitle, null));
 
 					// setto la barra del titolo
@@ -1313,12 +1310,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
 					if(gestioneFruitori) {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, null));
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					}
 					else {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					}
-					lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					lstParm.add(new Parameter(tmpTitle, null));
 
 					// setto la barra del titolo

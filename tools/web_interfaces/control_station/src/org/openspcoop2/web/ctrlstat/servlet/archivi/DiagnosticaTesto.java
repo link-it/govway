@@ -130,7 +130,6 @@ public final class DiagnosticaTesto extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(ArchiviCostanti.LABEL_REPORTISTICA,null),
 					new Parameter(ArchiviCostanti.LABEL_DIAGNOSTICA,ArchiviCostanti.SERVLET_NAME_ARCHIVI_DIAGNOSTICA,
 							pDs, pSev,pIdFun, pDataI, pDataF, pTipoM, pNomeM, pTipoD, pNomeD, pTipoS, pNomeS, pAzione, pCorrAppl, pProt, pIdentMsg),
 							new Parameter(ArchiviCostanti.LABEL_MESSAGGI,ArchiviCostanti.SERVLET_NAME_ARCHIVI_DIAGNOSTICA,

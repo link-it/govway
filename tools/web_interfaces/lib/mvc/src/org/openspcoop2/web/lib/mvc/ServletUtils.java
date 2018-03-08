@@ -158,18 +158,25 @@ public class ServletUtils {
 
 
 
-	/* ------ PAGE DATA ---- */
+	/* ------ PAGE DATA (TITLE) ---- */
 
-	public static void setPageDataTitle_ServletAdd(PageData pd,String t1Label){
+	public static Parameter getParameterAggiungi() {
+		return new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null);
+	}
+	
+	public static void setPageDataTitle_ServletFirst(PageData pd,String t1Label, String t1Url){
 		setPageDataTitle(pd, 
-				new Parameter(t1Label,null), 
+				new Parameter(t1Label,t1Url));
+	}
+	public static void setPageDataTitle_ServletAdd(PageData pd,String t1Label, String t1Url){
+		setPageDataTitle(pd, 
+				new Parameter(t1Label,t1Url), 
 				new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI,null));
 	}	
-	public static void setPageDataTitle_ServletChange(PageData pd,String t1Label, String t2Url, String t3Label){
+	public static void setPageDataTitle_ServletChange(PageData pd,String t1Label, String t1Url, String t2Label){
 		setPageDataTitle(pd, 
-				new Parameter(t1Label,null), 
-				new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,t2Url),
-				new Parameter(t3Label,null));
+				new Parameter(t1Label,t1Url),
+				new Parameter(t2Label,null));
 	}
 
 	public static void setPageDataTitle(PageData pd, List<Parameter> listaParametri){
@@ -205,6 +212,12 @@ public class ServletUtils {
 		pd.setTitleList(titlelist);
 	}
 
+	
+	
+	
+	
+	/* ------ PAGE DATA (SEARCH) ---- */
+	
 	public static void enabledPageDataSearch(PageData pd,String soggetto,String search){
 		pd.setSearch(Costanti.SEARCH_ENABLED);
 		pd.setSearchDescription(soggetto+" contenenti la stringa '" + search + "'");

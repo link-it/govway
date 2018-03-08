@@ -297,7 +297,7 @@ public final class SoggettiAdd extends Action {
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -384,7 +384,7 @@ public final class SoggettiAdd extends Action {
 			if (!isOk) {
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

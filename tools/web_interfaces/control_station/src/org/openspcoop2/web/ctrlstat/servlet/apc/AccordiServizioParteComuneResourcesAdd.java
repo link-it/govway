@@ -191,8 +191,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -201,7 +200,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+						ServletUtils.getParameterAggiungi()
 						);
 
 				// preparo i campi
@@ -283,8 +282,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -293,7 +291,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 										AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+						ServletUtils.getParameterAggiungi()
 						);
 
 				// preparo i campi

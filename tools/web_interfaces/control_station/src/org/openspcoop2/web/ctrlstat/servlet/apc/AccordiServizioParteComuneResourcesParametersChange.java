@@ -179,8 +179,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			
 			List<Parameter> listaLinkPageDataTitle = new ArrayList<Parameter>();
 			
-			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null));
-			listaLinkPageDataTitle.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));

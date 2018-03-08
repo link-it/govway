@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -87,7 +86,6 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			String elencoLabel = OperazioniCostanti.getTipoOperazioneLabelFromValue(formBean.getTipo());
 
-			lstParam.add(new Parameter(CostantiControlStation.LABEL_STRUMENTI, null));
 			lstParam.add(new Parameter(OperazioniCostanti.LABEL_OPERAZIONI, OperazioniCostanti.SERVLET_NAME_OPERAZIONI, pUtente, pOperazione));
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
@@ -232,12 +230,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			boolean hasPermessiUtenti = permessi.isUtenti();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
-
-			lstParam.add(new Parameter(CostantiControlStation.LABEL_STRUMENTI, null));
-			lstParam.add(new Parameter(OperazioniCostanti.LABEL_OPERAZIONI, null));
-
-			ServletUtils.setPageDataTitle(this.pd, lstParam);
+			ServletUtils.setPageDataTitle_ServletFirst(this.pd, OperazioniCostanti.LABEL_OPERAZIONI, OperazioniCostanti.SERVLET_NAME_OPERAZIONI);
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -418,7 +411,6 @@ public class OperazioniHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(CostantiControlStation.LABEL_STRUMENTI, null));
 			lstParam.add(new Parameter(OperazioniCostanti.LABEL_OPERAZIONI, OperazioniCostanti.SERVLET_NAME_OPERAZIONI,lstUrlParam));
 
 			String elencoLabel = OperazioniCostanti.getTipoOperazioneLabelFromValue(formBean.getTipo());

@@ -252,8 +252,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -261,8 +260,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						);
 			}else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -439,8 +437,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -448,8 +445,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						);
 			}else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -732,8 +728,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -747,8 +742,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						);
 			}else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -1450,8 +1444,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -1459,8 +1452,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						);
 			}else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -2002,8 +1994,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -2011,8 +2002,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						);
 			}else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -4403,13 +4393,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(termine, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+						new Parameter(termine, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST));
 			}
 			else{
 				ServletUtils.setPageDataTitle(this.pd,
-						new Parameter(termine, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST),
+						new Parameter(termine, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 			
@@ -4841,8 +4829,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), null));
-			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+			lstParam.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo), 
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST,
 					AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 					));
@@ -5011,8 +4998,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			List<Parameter> listaParametri = new ArrayList<Parameter>();
 
 
-			listaParametri.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null));
-			listaParametri.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+			listaParametri.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST , AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)));
 
 			listaParametri.add(new Parameter(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + labelASTitle,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST,
@@ -5318,8 +5304,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -5327,8 +5312,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						);
 			}else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -5907,8 +5891,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (search.equals("")) {
 				this.pd.setSearchDescription("");
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -5921,8 +5904,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						);
 			}else{
 				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -6090,8 +6072,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			List<Parameter> listaLinkPageDataTitle = new ArrayList<Parameter>();
 			
-			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null));
-			listaLinkPageDataTitle.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));
@@ -6248,8 +6229,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			List<Parameter> listaLinkPageDataTitle = new ArrayList<Parameter>();
 			
-			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null));
-			listaLinkPageDataTitle.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+			listaLinkPageDataTitle.add(new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()));

@@ -394,12 +394,11 @@ public final class PorteApplicativeAdd extends Action {
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
 								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
 								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+								ServletUtils.getParameterAggiungi()
 						);
 				
 				// preparo i campi
@@ -487,12 +486,11 @@ public final class PorteApplicativeAdd extends Action {
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+						new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
 						new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI + tmpTitle, 
 								PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST ,
 								new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg)),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+								ServletUtils.getParameterAggiungi()
 						);
 
 				// preparo i campi

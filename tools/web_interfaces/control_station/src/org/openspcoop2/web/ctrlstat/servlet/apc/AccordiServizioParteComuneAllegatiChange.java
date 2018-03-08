@@ -47,7 +47,6 @@ import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -122,8 +121,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -177,8 +175,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
+						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),

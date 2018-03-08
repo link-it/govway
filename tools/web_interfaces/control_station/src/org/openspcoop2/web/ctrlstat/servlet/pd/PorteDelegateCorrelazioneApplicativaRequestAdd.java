@@ -41,7 +41,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -134,7 +133,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI, // + nome,
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,pId,pIdSoggetto,pIdAsps,pIdFrizione, pNome));
 			
-			lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI , null));
+			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
