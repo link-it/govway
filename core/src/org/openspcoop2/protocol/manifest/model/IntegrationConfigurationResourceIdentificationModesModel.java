@@ -40,7 +40,7 @@ public class IntegrationConfigurationResourceIdentificationModesModel extends Ab
 	
 		super();
 	
-		this.MODE = new Field("mode",java.lang.String.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class);
+		this.MODE = new org.openspcoop2.protocol.manifest.model.IntegrationConfigurationResourceIdentificationModeModel(new Field("mode",org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class));
 		this.DEFAULT = new Field("default",java.lang.String.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class);
 		this.FORCE_INTERFACE_MODE = new Field("forceInterfaceMode",boolean.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class);
 	
@@ -50,7 +50,7 @@ public class IntegrationConfigurationResourceIdentificationModesModel extends Ab
 	
 		super(father);
 	
-		this.MODE = new ComplexField(father,"mode",java.lang.String.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class);
+		this.MODE = new org.openspcoop2.protocol.manifest.model.IntegrationConfigurationResourceIdentificationModeModel(new ComplexField(father,"mode",org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class));
 		this.DEFAULT = new ComplexField(father,"default",java.lang.String.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class);
 		this.FORCE_INTERFACE_MODE = new ComplexField(father,"forceInterfaceMode",boolean.class,"IntegrationConfigurationResourceIdentificationModes",IntegrationConfigurationResourceIdentificationModes.class);
 	
@@ -58,7 +58,7 @@ public class IntegrationConfigurationResourceIdentificationModesModel extends Ab
 	
 	
 
-	public IField MODE = null;
+	public org.openspcoop2.protocol.manifest.model.IntegrationConfigurationResourceIdentificationModeModel MODE = null;
 	 
 	public IField DEFAULT = null;
 	 

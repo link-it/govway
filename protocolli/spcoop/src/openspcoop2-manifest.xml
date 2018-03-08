@@ -21,7 +21,7 @@
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes forceInterfaceMode="true">
-	    		 			<mode>protocol</mode>
+	    		 			<mode name="protocol" />
 	    		 		</identificationModes>
 						<specificResource>
 							<name>
@@ -43,12 +43,12 @@
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="url" forceInterfaceMode="true">
-	    		 			<mode>interface</mode>
-		    		 		<mode>header</mode>
-		    		 		<mode>url</mode>
-		    		 		<mode>content</mode>
-		    		 		<mode>input</mode>
-		    		 		<mode>soapAction</mode>
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" />
+		    		 		<mode name="url" />
+		    		 		<mode name="content" />
+		    		 		<mode name="input" />
+		    		 		<mode name="soapAction" />
 	    		 		</identificationModes>
 	    		 		<identificationParameter>
 	    		 			<param prefix=".*/(?:" actor="subscriberType" suffix="_)?"/>

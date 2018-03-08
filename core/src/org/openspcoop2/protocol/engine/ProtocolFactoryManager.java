@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
 import org.openspcoop2.protocol.manifest.Integration;
 import org.openspcoop2.protocol.manifest.IntegrationConfiguration;
 import org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName;
+import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
 import org.openspcoop2.protocol.manifest.IntegrationError;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
@@ -924,23 +925,23 @@ public class ProtocolFactoryManager {
 				throw new Exception("BindingIntegration"+prefix+", resource identification default mode undefined for protocol ["+protocolManifest+"]");
 			}
 			else {
-				defaultR = integrationConfig.getResourceIdentification().getIdentificationModes().getMode(0);
+				defaultR = integrationConfig.getResourceIdentification().getIdentificationModes().getMode(0).getName();
 			}
 		}
 		boolean defaultFound = false;
-		for (ResourceIdentificationType mode : integrationConfig.getResourceIdentification().getIdentificationModes().getModeList()) {
+		for (IntegrationConfigurationResourceIdentificationMode mode : integrationConfig.getResourceIdentification().getIdentificationModes().getModeList()) {
 			if(!soap) {
-				if(ResourceIdentificationType.SOAP_ACTION.equals(mode)) {
-					throw new Exception("BindingIntegration"+prefix+", resource identification mode '"+mode+"' not permit in rest binding, founded in protocol ["+protocolManifest+"]");
+				if(ResourceIdentificationType.SOAP_ACTION.equals(mode.getName())) {
+					throw new Exception("BindingIntegration"+prefix+", resource identification mode '"+mode.getName()+"' not permit in rest binding, founded in protocol ["+protocolManifest+"]");
 				}
 			}
 			if(!impl) {
-				if(ResourceIdentificationType.PROTOCOL.equals(mode)) {
-					throw new Exception("BindingIntegration"+prefix+", resource identification mode '"+mode+"' not permit in subscription binding, founded in protocol ["+protocolManifest+"]");
+				if(ResourceIdentificationType.PROTOCOL.equals(mode.getName())) {
+					throw new Exception("BindingIntegration"+prefix+", resource identification mode '"+mode.getName()+"' not permit in subscription binding, founded in protocol ["+protocolManifest+"]");
 				}
 			}
 			if(defaultR!=null) {
-				if(mode.equals(defaultR)) {
+				if(mode.getName().equals(defaultR)) {
 					defaultFound = true;
 				}
 			}

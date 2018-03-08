@@ -249,7 +249,7 @@ public class PorteApplicativeCostanti {
 
 	public final static String LABEL_PA_MENU_VISUALE_AGGREGATA = "Porte Applicative";
 	
-	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "Dati Invocazione";
+	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "URL Invocazione";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_GENERALI = "Dati Generali";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_SERVIZIO = "Dati Servizio";
 	public final static String LABEL_COLUMN_PORTE_APPLICATIVE_STATO_PORTA = "Abilitato";
@@ -339,7 +339,6 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.LABEL_PARAMETRO_AZIONI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DATI_INVOCAZIONE = "Dati Invocazione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE = "URL";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE = "Base URL";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE = "Configurazione";

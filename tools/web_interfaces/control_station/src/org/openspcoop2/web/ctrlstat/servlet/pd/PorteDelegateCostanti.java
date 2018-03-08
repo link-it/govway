@@ -238,7 +238,7 @@ public class PorteDelegateCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO = "Soggetto";
 	
-	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE = "Dati Invocazione";
+	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE = "URL Invocazione";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI = "Dati Generali";
 	public final static String LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO = "Dati Servizio";
 	public final static String LABEL_COLUMN_PORTE_DELEGATE_STATO_PORTA = "Abilitato";
@@ -352,7 +352,6 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DATI_INVOCAZIONE = "Dati Invocazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE = "URL";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE = "Base URL";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";

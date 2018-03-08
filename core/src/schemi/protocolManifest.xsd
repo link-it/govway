@@ -107,10 +107,14 @@
        </xsd:complexType>
        <xsd:complexType name="IntegrationConfigurationResourceIdentificationModes">
               <xsd:sequence>
-                     <xsd:element name="mode" type="ResourceIdentificationType" minOccurs="1" maxOccurs="unbounded"/>
+                     <xsd:element name="mode" type="IntegrationConfigurationResourceIdentificationMode" minOccurs="1" maxOccurs="unbounded"/>
               </xsd:sequence>
               <xsd:attribute name="default" type="ResourceIdentificationType" use="optional" />
               <xsd:attribute name="forceInterfaceMode" type="xsd:boolean" use="required" />
+       </xsd:complexType>
+       <xsd:complexType name="IntegrationConfigurationResourceIdentificationMode">
+             <xsd:attribute name="name" type="ResourceIdentificationType" use="required" />
+             <xsd:attribute name="onlyAdvancedMode" type="xsd:boolean" use="optional" default="false" />
        </xsd:complexType>
        <xsd:complexType name="IntegrationConfigurationResourceIdentificationSpecificResource">
               <xsd:sequence>

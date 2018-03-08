@@ -31,6 +31,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 
 /**
  * Interfaccia di Configurazione dei componenti di integration, valori prelevati dal file openspcoop2-manifest
@@ -53,7 +54,7 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaCopiare,
 			String ruleName, String ... azione ) throws ProtocolException;
 	
-	public List<PortaDelegataAzioneIdentificazione> getAllSubscriptionIdentificationResourceModes(ServiceBinding serviceBinding) throws ProtocolException;
+	public List<PortaDelegataAzioneIdentificazione> getAllSubscriptionIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException;
 	
 	
 	// IMPLEMENTATION
@@ -67,6 +68,6 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaCopiare,
 			String ruleName, String ... azione ) throws ProtocolException;
 	
-	public List<PortaApplicativaAzioneIdentificazione> getAllImplementationIdentificationResourceModes(ServiceBinding serviceBinding) throws ProtocolException;
+	public List<PortaApplicativaAzioneIdentificazione> getAllImplementationIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException;
 	
 }

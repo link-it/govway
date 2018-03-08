@@ -123,7 +123,7 @@ public abstract class AbstractIntegrationConfiguration implements java.io.Serial
 		}
 		return bf.toString();
 	}
-	
+
 }
 
 

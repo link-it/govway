@@ -33,9 +33,11 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.ImplementationUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.protocol.manifest.IntegrationConfiguration;
+import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
 import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Implementation;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 
 /**
  * ImplementationConfiguration
@@ -77,7 +79,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		PortaApplicativaAzione pdAzione = new PortaApplicativaAzione();
 		ResourceIdentificationType defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getDefault();
 		if(defaultIdentification==null) {
-			defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getMode(0);
+			defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getMode(0).getName();
 		}
 		boolean setPattern = false;
 		switch (defaultIdentification) {
@@ -131,10 +133,18 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		
 	}
 	
-	public List<PortaApplicativaAzioneIdentificazione> supportedIdentificationModes() throws ProtocolException{
+	public List<PortaApplicativaAzioneIdentificazione> supportedIdentificationModes(ConsoleInterfaceType consoleType) throws ProtocolException{
 		List<PortaApplicativaAzioneIdentificazione> list = new ArrayList<PortaApplicativaAzioneIdentificazione>();
-		for (ResourceIdentificationType type : 
+		for (IntegrationConfigurationResourceIdentificationMode mode : 
 			this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getModeList()) {
+			
+			if(mode.isOnlyAdvancedMode()) {
+				if(ConsoleInterfaceType.STANDARD.equals(consoleType)) {
+					continue;
+				}
+			}
+			
+			ResourceIdentificationType type = mode.getName();
 			switch (type) {
 			case CONTENT:
 				list.add(PortaApplicativaAzioneIdentificazione.CONTENT_BASED);		

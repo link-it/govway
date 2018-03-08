@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Implementation;
 import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 
 /**
  * Classe che implementa, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolConfiguration} 
@@ -114,7 +115,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	}
 	
 	@Override
-	public List<PortaDelegataAzioneIdentificazione> getAllSubscriptionIdentificationResourceModes(ServiceBinding serviceBinding) throws ProtocolException{
+	public List<PortaDelegataAzioneIdentificazione> getAllSubscriptionIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException{
 		if(serviceBinding==null){
 			throw new ProtocolException("Service Binding undefined");
 		}
@@ -123,12 +124,12 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 			if(this.subscriptionConfigurationRest==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.subscriptionConfigurationRest.supportedIdentificationModes();
+			return this.subscriptionConfigurationRest.supportedIdentificationModes(consoleType);
 		case SOAP:
 			if(this.subscriptionConfigurationSoap==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.subscriptionConfigurationSoap.supportedIdentificationModes();
+			return this.subscriptionConfigurationSoap.supportedIdentificationModes(consoleType);
 		}
 		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 	}
@@ -187,7 +188,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	}
 	
 	@Override
-	public List<PortaApplicativaAzioneIdentificazione> getAllImplementationIdentificationResourceModes(ServiceBinding serviceBinding) throws ProtocolException{
+	public List<PortaApplicativaAzioneIdentificazione> getAllImplementationIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException{
 		if(serviceBinding==null){
 			throw new ProtocolException("Service Binding undefined");
 		}
@@ -196,12 +197,12 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 			if(this.implementationConfigurationRest==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.implementationConfigurationRest.supportedIdentificationModes();
+			return this.implementationConfigurationRest.supportedIdentificationModes(consoleType);
 		case SOAP:
 			if(this.implementationConfigurationSoap==null) {
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
-			return this.implementationConfigurationSoap.supportedIdentificationModes();
+			return this.implementationConfigurationSoap.supportedIdentificationModes(consoleType);
 		}
 		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 	}

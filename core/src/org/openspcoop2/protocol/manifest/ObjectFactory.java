@@ -311,6 +311,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IntegrationConfigurationResourceIdentificationMode }
+     */
+    public IntegrationConfigurationResourceIdentificationMode createIntegrationConfigurationResourceIdentificationMode() {
+        return new IntegrationConfigurationResourceIdentificationMode();
+    }
+
+    /**
      * Create an instance of {@link SoapHeaderBypassMustUnderstand }
      */
     public SoapHeaderBypassMustUnderstand createSoapHeaderBypassMustUnderstand() {

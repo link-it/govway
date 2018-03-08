@@ -34,9 +34,11 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mapping.SubscriptionUtils;
 import org.openspcoop2.protocol.manifest.IntegrationConfiguration;
+import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
 import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 
 /**
  * SubscriptionConfiguration
@@ -78,7 +80,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 		ResourceIdentificationType defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getDefault();
 		if(defaultIdentification==null) {
-			defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getMode(0);
+			defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getMode(0).getName();
 		}
 		boolean setPattern = false;
 		switch (defaultIdentification) {
@@ -131,10 +133,18 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		
 	}
 	
-	public List<PortaDelegataAzioneIdentificazione> supportedIdentificationModes() throws ProtocolException{
+	public List<PortaDelegataAzioneIdentificazione> supportedIdentificationModes(ConsoleInterfaceType consoleType) throws ProtocolException{
 		List<PortaDelegataAzioneIdentificazione> list = new ArrayList<PortaDelegataAzioneIdentificazione>();
-		for (ResourceIdentificationType type : 
+		for (IntegrationConfigurationResourceIdentificationMode mode : 
 			this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getModeList()) {
+			
+			if(mode.isOnlyAdvancedMode()) {
+				if(ConsoleInterfaceType.STANDARD.equals(consoleType)) {
+					continue;
+				}
+			}
+			
+			ResourceIdentificationType type = mode.getName();
 			switch (type) {
 			case CONTENT:
 				list.add(PortaDelegataAzioneIdentificazione.CONTENT_BASED);		

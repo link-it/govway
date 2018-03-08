@@ -72,6 +72,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -396,15 +397,25 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			dati.addElement(de);
 		}
 
+		boolean viewOnlyModeDatiAzione = datiInvocazione && modeaz!=null && !"".equals(modeaz) && this.isModalitaStandard() &&
+				!azTmp.contains(modeaz);
+		// se true viewOnlyModeDatiAzione e' stato usato un valore modificato in avanzato e non supportato in standard
+		
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 		if(!usataInConfigurazioni || datiInvocazione) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoModeAzione);
-			de.setLabels(tipoModeAzioneLabel); 
-			de.setSelected(modeaz);
-			de.setPostBack(true);
+			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1)) {
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getPortaDelegataAzioneIdentificazioneLabel(modeaz));
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoModeAzione);
+				de.setLabels(tipoModeAzioneLabel); 
+				de.setSelected(modeaz);
+				de.setPostBack(true);
+			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(modeaz); 
@@ -461,7 +472,13 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					if (!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED.equals(modeaz) && 
 							!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
 							!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED.equals(modeaz) ){
-						de.setType(DataElementType.TEXT_EDIT);
+						if(viewOnlyModeDatiAzione) {
+							de.setType(DataElementType.TEXT);
+							de.setRequired(false);
+						}
+						else {
+							de.setType(DataElementType.TEXT_EDIT);
+						}
 					}else
 						de.setType(DataElementType.HIDDEN);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
@@ -477,9 +494,20 @@ public class PorteDelegateHelper extends ConsoleHelper {
 							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
 					){
 		
-					de.setType(DataElementType.CHECKBOX);
-					if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
-						de.setSelected(true);
+					if(viewOnlyModeDatiAzione) {
+						de.setType(DataElementType.TEXT);
+						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
+							de.setValue(CostantiConfigurazione.ABILITATO.getValue());
+						}
+						else {
+							de.setValue(CostantiConfigurazione.DISABILITATO.getValue());
+						}
+					}
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
+							de.setSelected(true);
+						}
 					}
 				}
 				else{
@@ -1011,7 +1039,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			List<PortaDelegataAzioneIdentificazione> listaModalita = new ArrayList<PortaDelegataAzioneIdentificazione>();
 			if(serviceBindingListProtocollo != null && serviceBindingListProtocollo.size() > 0) {
 				for (ServiceBinding serviceBinding2 : serviceBindingListProtocollo) {
-					List<PortaDelegataAzioneIdentificazione> listaModalitaTmp = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding2);
+					List<PortaDelegataAzioneIdentificazione> listaModalitaTmp = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
+							createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding2,
+									ProtocolPropertiesUtilities.getTipoInterfaccia(this));
 					
 					for (PortaDelegataAzioneIdentificazione tipoTmp : listaModalitaTmp) {
 						if(!listaModalita.contains(tipoTmp))
@@ -1021,7 +1051,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 			return listaModalita;
 		} else {
-			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding);
+			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
+					createProtocolIntegrationConfiguration().getAllSubscriptionIdentificationResourceModes(serviceBinding,
+							ProtocolPropertiesUtilities.getTipoInterfaccia(this));
 		}
 	}
 

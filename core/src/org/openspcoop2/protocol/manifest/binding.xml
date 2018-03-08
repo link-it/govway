@@ -91,10 +91,15 @@
   <mapping name="identificationModes" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationModes">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <collection field="mode" create-type="java.util.ArrayList">
-      <value name="mode" type="org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType" enum-value-method="toString" />
+      <structure map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode"/>
     </collection>
     <value name="default" field="_default" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="forceInterfaceMode" field="forceInterfaceMode" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="mode" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="name" field="name" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="onlyAdvancedMode" field="onlyAdvancedMode" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="specificResource" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationSpecificResource">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>

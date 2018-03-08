@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -39,7 +38,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="IntegrationConfigurationResourceIdentificationModes">
  * 		&lt;sequence>
- * 			&lt;element name="mode" type="{http://www.openspcoop2.org/protocol/manifest}ResourceIdentificationType" minOccurs="1" maxOccurs="unbounded"/>
+ * 			&lt;element name="mode" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentificationMode" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="default" type="{http://www.openspcoop2.org/protocol/manifest}ResourceIdentificationType" use="optional"/>
  * 		&lt;attribute name="forceInterfaceMode" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
@@ -65,46 +64,23 @@ public class IntegrationConfigurationResourceIdentificationModes extends org.ope
   public IntegrationConfigurationResourceIdentificationModes() {
   }
 
-  public void set_value_mode(List<String> list) {
-    if(list!=null){
-    	this.mode = new ArrayList<ResourceIdentificationType>();
-    	for (Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
-    		String value = iterator.next();
-    		this.mode.add((ResourceIdentificationType) ResourceIdentificationType.toEnumConstantFromString(value));
-    	}
-    }
-  }
-
-  public List<String> get_value_mode() {
-    if(this.mode==null){
-    	return null;
-    }else{
-    	List<String> list = new ArrayList<java.lang.String>();
-    	for (Iterator<ResourceIdentificationType> iterator = this.mode.iterator(); iterator.hasNext();) {
-    		ResourceIdentificationType enumObject = iterator.next();
-    		list.add(enumObject.toString());
-    	}
-    	return list;
-    }
-  }
-
-  public void addMode(ResourceIdentificationType mode) {
+  public void addMode(IntegrationConfigurationResourceIdentificationMode mode) {
     this.mode.add(mode);
   }
 
-  public ResourceIdentificationType getMode(int index) {
+  public IntegrationConfigurationResourceIdentificationMode getMode(int index) {
     return this.mode.get( index );
   }
 
-  public ResourceIdentificationType removeMode(int index) {
+  public IntegrationConfigurationResourceIdentificationMode removeMode(int index) {
     return this.mode.remove( index );
   }
 
-  public List<ResourceIdentificationType> getModeList() {
+  public List<IntegrationConfigurationResourceIdentificationMode> getModeList() {
     return this.mode;
   }
 
-  public void setModeList(List<ResourceIdentificationType> mode) {
+  public void setModeList(List<IntegrationConfigurationResourceIdentificationMode> mode) {
     this.mode=mode;
   }
 
@@ -148,27 +124,24 @@ public class IntegrationConfigurationResourceIdentificationModes extends org.ope
 
 
 
-  @javax.xml.bind.annotation.XmlTransient
-  protected List<java.lang.String> _value_mode;
-
   @XmlElement(name="mode",required=true,nillable=false)
-  protected List<ResourceIdentificationType> mode = new ArrayList<ResourceIdentificationType>();
+  protected List<IntegrationConfigurationResourceIdentificationMode> mode = new ArrayList<IntegrationConfigurationResourceIdentificationMode>();
 
   /**
    * @deprecated Use method getModeList
-   * @return List<ResourceIdentificationType>
+   * @return List<IntegrationConfigurationResourceIdentificationMode>
   */
   @Deprecated
-  public List<ResourceIdentificationType> getMode() {
+  public List<IntegrationConfigurationResourceIdentificationMode> getMode() {
   	return this.mode;
   }
 
   /**
    * @deprecated Use method setModeList
-   * @param mode List<ResourceIdentificationType>
+   * @param mode List<IntegrationConfigurationResourceIdentificationMode>
   */
   @Deprecated
-  public void setMode(List<ResourceIdentificationType> mode) {
+  public void setMode(List<IntegrationConfigurationResourceIdentificationMode> mode) {
   	this.mode=mode;
   }
 

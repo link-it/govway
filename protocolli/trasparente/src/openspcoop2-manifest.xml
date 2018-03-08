@@ -23,12 +23,12 @@
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="url" forceInterfaceMode="true">
-	    		 			<mode>interface</mode>
-		    		 		<mode>header</mode>
-		    		 		<mode>url</mode>
-		    		 		<mode>content</mode>
-		    		 		<mode>input</mode>
-		    		 		<mode>soapAction</mode>
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" />
+		    		 		<mode name="url" />
+		    		 		<mode name="content" />
+		    		 		<mode name="input" />
+		    		 		<mode name="soapAction" />
 	    		 		</identificationModes>
 	    		 		<identificationParameter>
 		    		 		<param prefix=".*/(?:" actor="providerType" suffix="_)?"/>
@@ -57,12 +57,12 @@
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="url" forceInterfaceMode="true">
-	    		 			<mode>interface</mode>
-		    		 		<mode>header</mode>
-		    		 		<mode>url</mode>
-		    		 		<mode>content</mode>
-		    		 		<mode>input</mode>
-		    		 		<mode>soapAction</mode>
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" />
+		    		 		<mode name="url" />
+		    		 		<mode name="content" />
+		    		 		<mode name="input" />
+		    		 		<mode name="soapAction" />
 	    		 		</identificationModes>
 	    		 		<identificationParameter>
 	    		 			<param prefix=".*/(?:" actor="subscriberType" suffix="_)?"/>
@@ -111,10 +111,10 @@
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="interface" forceInterfaceMode="true">
-	    		 			<mode>interface</mode>
-		    		 		<mode>header</mode>
-		    		 		<mode>content</mode>
-		    		 		<mode>input</mode>
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" onlyAdvancedMode="true" />
+		    		 		<mode name="content" onlyAdvancedMode="true" />
+		    		 		<mode name="input" onlyAdvancedMode="true" />
 	    		 		</identificationModes>
 						<specificResource>
 							<name>
@@ -136,10 +136,10 @@
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="interface" forceInterfaceMode="true">
-	    		 			<mode>interface</mode>
-		    		 		<mode>header</mode>
-		    		 		<mode>content</mode>
-		    		 		<mode>input</mode>
+	    		 			<mode name="interface" />
+		    		 		<mode name="header" onlyAdvancedMode="true" />
+		    		 		<mode name="content" onlyAdvancedMode="true" />
+		    		 		<mode name="input" onlyAdvancedMode="true" />
 	    		 		</identificationModes>
 						<specificResource>
 							<name>
