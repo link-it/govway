@@ -228,7 +228,7 @@ public class DBMappingUtils {
 						//sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE +".nome_porta", search, true, true));
 			} 
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default",false);
+			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default",true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".nome");
 			sqlQueryObject.setSortType(true);
 			if(ricerca != null) {
@@ -1164,7 +1164,7 @@ public class DBMappingUtils {
 						//sqlQueryObject.getWhereLikeCondition(CostantiDB.PORTE_DELEGATE +".nome_porta", search, true, true));
 			} 
 			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default",false);
+			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default",true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
 			sqlQueryObject.setSortType(true);
 			if(ricerca != null) {
