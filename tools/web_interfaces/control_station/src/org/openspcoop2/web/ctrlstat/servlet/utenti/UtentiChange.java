@@ -41,14 +41,13 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -204,7 +203,6 @@ public final class UtentiChange extends Action {
 				//						nomesu);
 
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(nomesu,null));
 
@@ -259,7 +257,6 @@ public final class UtentiChange extends Action {
 				//						nomesu);
 
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI, UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(nomesu,null));
 
@@ -403,7 +400,6 @@ public final class UtentiChange extends Action {
 				//						nomesu);
 
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI, UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(nomesu,null));
 

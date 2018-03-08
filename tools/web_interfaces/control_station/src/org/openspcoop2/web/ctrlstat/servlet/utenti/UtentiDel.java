@@ -50,7 +50,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -341,12 +340,7 @@ public final class UtentiDel extends Action {
 				utentiHelper.makeMenu();
 	
 				// setto la barra del titolo
-//				ServletUtils.setPageDataTitle_ServletChange(pd, UtentiCostanti.LABEL_UTENTI, 
-//						UtentiCostanti.SERVLET_NAME_UTENTI_LIST,
-//						Costanti.PAGE_DATA_TITLE_LABEL_ELIMINA);
-				
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELIMINA,null));
 				

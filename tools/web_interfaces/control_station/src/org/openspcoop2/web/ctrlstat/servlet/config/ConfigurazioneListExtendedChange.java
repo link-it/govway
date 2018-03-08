@@ -83,7 +83,7 @@ public final class ConfigurazioneListExtendedChange extends AbstractServletListE
 	@Override
 	protected List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
 		List<Parameter> lstParam = new ArrayList<Parameter>();
-		lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+		lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 		return lstParam;
 	}
 

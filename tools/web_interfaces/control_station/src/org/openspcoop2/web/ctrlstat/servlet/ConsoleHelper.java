@@ -1204,7 +1204,7 @@ public class ConsoleHelper {
 					entries = new String[dimensioneEntries][2];
 
 					int index = 0;
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE;
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MENU;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
 					index++;
 					if(aliases!=null && aliases.size()>0){

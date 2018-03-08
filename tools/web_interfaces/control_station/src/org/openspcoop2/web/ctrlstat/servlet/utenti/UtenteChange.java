@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -143,7 +142,6 @@ public final class UtenteChange extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 					new Parameter(UtentiCostanti.LABEL_UTENTE, null));
 
 			User myS = null;

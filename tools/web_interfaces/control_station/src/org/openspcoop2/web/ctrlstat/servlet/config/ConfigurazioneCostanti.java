@@ -256,7 +256,9 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE = "Configurazione";
 	
-	public final static String LABEL_CONFIGURAZIONE_GENERALE = "Generale";
+	public final static String LABEL_CONFIGURAZIONE_GENERALE_MENU = "Generale";
+	
+	public final static String LABEL_CONFIGURAZIONE_GENERALE = "Configurazione Generale";
 	
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_TRACCIAMENTO = "Elenco Appender Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI = "Elenco Appender Messaggi Diagnostici";

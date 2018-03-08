@@ -96,7 +96,6 @@ public class AuditCostanti {
 	public final static String LABEL_AUDIT_FILTRO_GENERICO = "Filtro Generico";
 	public final static String LABEL_AUDIT_FILTRO_CONTENUTO = "Filtro per Contenuto";
 	public final static String LABEL_AUDIT_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_AUDIT_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_AUDIT_VISUALIZZA = "Visualizza";
 	public final static String LABEL_AUDIT_COMPORTAMENTO_DI_DEFAULT = "Comportamento di Default";
 	public final static String LABEL_AUDIT_AZIONE = "Azione";

@@ -105,7 +105,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					// setto la barra del titolo
 					List<Parameter> lstParam = new ArrayList<Parameter>();
 
-					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+					//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA, 
 							 null));
 
@@ -330,7 +330,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
 			if(confCore.isSinglePdD()){
-				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+				//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				if(aliases.size()>1){
 					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA, 
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD));

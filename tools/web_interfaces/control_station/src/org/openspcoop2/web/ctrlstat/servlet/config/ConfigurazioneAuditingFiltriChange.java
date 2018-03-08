@@ -116,7 +116,6 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 
-				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE, null));
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, 
 						AuditCostanti.SERVLET_NAME_AUDIT));
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_FILTRI, 
@@ -169,7 +168,6 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 
-				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE, null));
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, 
 						AuditCostanti.SERVLET_NAME_AUDIT));
 				lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT_FILTRI, 

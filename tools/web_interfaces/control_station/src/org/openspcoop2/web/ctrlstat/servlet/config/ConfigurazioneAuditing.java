@@ -21,8 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +43,6 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -93,12 +90,7 @@ public final class ConfigurazioneAuditing extends Action {
 			confHelper.makeMenu();
 
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
-
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null));
-			lstParam.add(new Parameter(AuditCostanti.LABEL_AUDIT, null));
-
-			ServletUtils.setPageDataTitle(pd, lstParam);
+			ServletUtils.setPageDataTitle_ServletFirst(pd, AuditCostanti.LABEL_AUDIT, AuditCostanti.SERVLET_NAME_AUDIT);
 
 			// Se idhid != null, modifico i dati dell'audit nel db
 			if (!confHelper.isEditModeInProgress()) {

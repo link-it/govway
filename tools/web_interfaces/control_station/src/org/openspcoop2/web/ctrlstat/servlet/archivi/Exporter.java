@@ -44,7 +44,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -118,6 +117,7 @@ public final class Exporter extends Action {
 			
 			// Recuperi eventuali identificativi logici degli oggetti
 			Parameter provenienza = null;
+			String urlTitle = null;
 			List<?> identificativi = null;
 			List<String> protocolli = new ArrayList<String>();
 			switch (archiveType) {
@@ -179,11 +179,13 @@ public final class Exporter extends Action {
 				}
 				break;
 			case CONFIGURAZIONE:
-				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null);
+				//provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null); e' al primo livello
 				protocolli = archiviCore.getProtocolli(session);
 				if(tipoConfigurazione==null){
 					tipoConfigurazione = ArchiveType.ALL.toString();
 				}
+				// al primo livello il link non ci vuole
+				//urlTitle = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 				break;
 			default:
 				throw new Exception("Archive type ["+servletSourceExport+"] non supportato");
@@ -318,10 +320,16 @@ public final class Exporter extends Action {
 			archiviHelper.makeMenu();
 			
 			
-			// setto la barra del titolo			
-			ServletUtils.setPageDataTitle(pd, 
-					provenienza,
-					new Parameter(ArchiviCostanti.LABEL_ARCHIVI_EXPORT,null));
+			// setto la barra del titolo	
+			if(provenienza!=null) {
+				ServletUtils.setPageDataTitle(pd, 
+						provenienza,
+						new Parameter(ArchiviCostanti.LABEL_ARCHIVI_EXPORT,urlTitle));
+			}
+			else {
+				ServletUtils.setPageDataTitle(pd, 
+						new Parameter(ArchiviCostanti.LABEL_ARCHIVI_EXPORT,urlTitle));
+			}
 		
 			Vector<DataElement> dati = new Vector<DataElement>();
 			

@@ -49,7 +49,6 @@ import org.openspcoop2.protocol.sdk.archive.ImportMode;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -321,7 +320,6 @@ public final class Importer extends Action {
 					nomeFunzionalita = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;	
 				}
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(nomeFunzionalita,null));
 
 				// preparo i campi
@@ -521,7 +519,6 @@ public final class Importer extends Action {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(ArchiviCostanti.LABEL_ARCHIVI_IMPORT,null));
 
 				// preparo i campi

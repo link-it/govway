@@ -35,10 +35,9 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -139,7 +138,6 @@ public final class UtentiAdd extends Action {
 //				ServletUtils.setPageDataTitle_ServletAdd(pd, UtentiCostanti.LABEL_UTENTI);
 				
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						ServletUtils.getParameterAggiungi());
 	
@@ -179,7 +177,6 @@ public final class UtentiAdd extends Action {
 //				ServletUtils.setPageDataTitle_ServletAdd(pd, UtentiCostanti.LABEL_UTENTI);
 				
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE,null),
 						new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST),
 						ServletUtils.getParameterAggiungi());
 	
