@@ -414,7 +414,7 @@ if (
 										    	}
 									  		} else { 
 									  			 if (de.getType().equals("checkbox")) {
-												 	String image = "check_red.png";
+												 	String image = "disabled_red.png";
 												 	if("yes".equals(de.getSelected())){
 														image = "check_green.png";
 													}
