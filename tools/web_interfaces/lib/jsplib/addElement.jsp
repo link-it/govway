@@ -67,8 +67,10 @@ var path = '<%= request.getContextPath()%>';
 <script type="text/javascript" src="js/jquery.timepicker-table.js"></script>
 <style type="text/css">@import url(css/ui.core.css);</style>
 <style type="text/css">@import url(css/ui.theme.css);</style>
+<style type="text/css">@import url(css/ui.dialog.css);</style>
 <style type="text/css">@import url(css/ui.slider.css);</style>
 <script type="text/javascript" src="js/ui.core.js"></script>
+<script type="text/javascript" src="js/ui.dialog.js"></script>
 <script type="text/javascript" src="js/ui.slider.js"></script>
 <script>
 var nr = 0;
@@ -127,5 +129,6 @@ function CheckDati() {
 		<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
 	</tbody>
 </table>
+<jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>

@@ -27,6 +27,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -582,8 +583,8 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
 		de.setValue(descr);
 		de.setType(DataElementType.TEXT_EDIT);
-		if( !modificheAbilitate && (descr==null || "".equals(descr)) )
-			de.setValue(" ");
+		if( !modificheAbilitate && StringUtils.isBlank(descr))
+			de.setValue("");
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
 		de.setSize(getSize());
 		dati.addElement(de);

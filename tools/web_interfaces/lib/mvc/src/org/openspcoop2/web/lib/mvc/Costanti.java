@@ -160,6 +160,7 @@ public class Costanti {
 	public final static String PARAMETRO_ACTION_CONFIRM = "actionConfirm";
 	
 	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
+	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma";
 	public final static String LABEL_MONITOR_BUTTON_ANNULLA = "Annulla";
 	
 	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX = "EseguiConferma(";
@@ -171,6 +172,9 @@ public class Costanti {
 	public final static String PARAMETRO_ACTION_CONFIRM_VALUE_OK = "ok";
 	public final static String PARAMETRO_ACTION_CONFIRM_VALUE_NO = "no";
 	
+	public final static String HTML_MODAL_SPAN_PREFIX = "<p class=\"contenutoModal\"><span>";
+	public final static String HTML_MODAL_SPAN_SUFFIX = "</span></p>";
+	
 	
 	/** PARAMETRI BINARI **/
 	
@@ -181,6 +185,7 @@ public class Costanti {
 	
 	public final static MessageType MESSAGE_TYPE_ERROR = MessageType.ERROR;
 	public final static MessageType MESSAGE_TYPE_INFO = MessageType.INFO;
+	public final static MessageType MESSAGE_TYPE_CONFIRM = MessageType.CONFIRM;
 	
 	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";

@@ -3655,27 +3655,30 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		return "";
 	}
 	
-	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa,boolean abilitiazione, String separatore, boolean addMinus) throws DriverConfigurazioneException {
+	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa,boolean abilitiazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
 		MappingErogazionePortaApplicativa mapping = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+		String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+		String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+		
 		if(mapping.isDefault()) {
-			return abilitiazione ? PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT : PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT;
+			return pre + ( abilitiazione ? PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT : PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT)  + post;
 		}
 		else {
 			//return mapping.getNome();
 			List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
 			if(listaAzioni.size() > 0) {
 				StringBuffer sb = new StringBuffer();
+				sb.append(post);
+				sb.append("<ul class=\"contenutoModal\">");
 				for (String string : listaAzioni) {
-//					if(sb.length() >0)
-					sb.append(separatore);
-					
-					sb.append((addMinus ? "- " : "") + string);
+					sb.append((listElement ? "<li>" : "") + string + (listElement ? "</li>" : ""));
 				}
-				sb.append(separatore);
-				return abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, sb.toString()) : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA,sb.toString());
+				sb.append("</ul>");
+				sb.append(pre);
+				return pre + ( abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, sb.toString()) : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA,sb.toString()))  + post;
 			}
 			else {
-				return abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, " ??? ") : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA," ??? ");
+				return pre + ( abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, " ??? ") : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA," ??? "))  + post;
 			}
 		}
 	}

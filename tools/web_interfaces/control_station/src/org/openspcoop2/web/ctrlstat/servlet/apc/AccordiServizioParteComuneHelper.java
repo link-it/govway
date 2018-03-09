@@ -29,6 +29,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -2896,8 +2897,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setType(DataElementType.TEXT_EDIT);
 		}else{
 			de.setType(DataElementType.TEXT);
-			if( !modificheAbilitate && (descr==null || "".equals(descr)) )
-				de.setValue(" ");
+			if( !modificheAbilitate && StringUtils.isBlank(descr))
+				de.setValue("");
 		}
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
 		de.setSize(this.getSize());

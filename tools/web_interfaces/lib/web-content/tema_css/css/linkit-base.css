@@ -951,14 +951,29 @@ div.prop-slider{
 
 /* finestra modal di conferma */
 
-.contenutoModal {
+.contenutoEliminazioneModal {
 	padding: 20px;
 }
 
-.contenutoModal img {
+.contenutoEliminazioneModal img {
 	vertical-align: text-bottom;
 }
 
-.contenutoModal span {
+.contenutoEliminazioneModal span {
 	font-weight: bold;
 }
+
+#confermaModalBody {
+	padding: 10px 20px 20px	0px;
+}
+
+.contenutoModal ul {
+	margin-left: 20px;
+}
+
+.contenutoModal ul li{
+	 padding: 4px 4px 4px 0px;
+	 list-style-type: disc;
+}
+
+   

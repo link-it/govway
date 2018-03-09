@@ -96,12 +96,19 @@ public class MonitorCostanti {
 	public final static String LABEL_MONITOR_DETTAGLI_CONSEGNA = "Dettagli Consegna";
 	public final static String LABEL_MONITOR_IDMESSAGGIO = "IDMessaggio";
 	public final static String LABEL_MONITOR_INTEGRATION_MANAGER = "IntegrationManager";
+	
+	
 	/*LABEL PULSANTI */
 
-	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
-	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_1 = "EseguiOp(1)";
-	public final static String LABEL_MONITOR_BUTTON_ANNULLA = "Annulla";
-	public final static String LABEL_MONITOR_BUTTON_ANNULLA_1 = "Annulla(1)"; 
+//	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma"; // TODO cancellami
+	
+//	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
+//	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_1 = "EseguiOp(1)";
+//	public final static String LABEL_MONITOR_BUTTON_ANNULLA = "Annulla";
+//	public final static String LABEL_MONITOR_BUTTON_ANNULLA_1 = "Annulla(1)"; 
+//	
+//	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_PARAM = "EseguiOp({0})";
+//	public final static String LABEL_MONITOR_BUTTON_ANNULLA_OPERAZIONE_PARAM = "Annulla({0})";
 	
 	/* PARAMETRI */
 	

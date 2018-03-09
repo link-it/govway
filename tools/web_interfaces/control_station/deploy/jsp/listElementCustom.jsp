@@ -29,7 +29,7 @@ String nomeServlet = listElement.getOggetto();
 String nomeServletAdd = nomeServlet+"Add.do";
 String nomeServletDel = nomeServlet+"Del.do";
 String nomeServletList = nomeServlet+"List.do";
-if (nomeServlet == "monitor" || nomeServlet == "monitorSinglePdD") {
+if (nomeServlet == "monitor") {
 	nomeServletAdd = nomeServlet+".do";
 	nomeServletDel = nomeServlet+".do";
 	nomeServletList = nomeServlet+".do";

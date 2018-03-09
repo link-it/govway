@@ -372,7 +372,6 @@ if (
 <!--Funzioni di utilita -->
 <script type="text/javascript" src="js/ui.core.js"></script>
 <script type="text/javascript" src="js/ui.dialog.js"></script>
-<!-- <script type="text/javascript" src="js/jquery.confirm-1.2.js"></script> -->
 <script type="text/javascript">
 function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {
@@ -415,11 +414,12 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 			<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
 		</tbody>
 	</table>
-	<div id="confermaModal" title="Conferma Operazione">
- 		<p class="contenutoModal">
+	<div id="confermaEliminazioneModal" title="Conferma Operazione">
+ 		<p class="contenutoEliminazioneModal">
  			<img src="images/tema_link/alert_orange.png"/>
  			<span>Eliminare gli elementi selezionati?</span>
  		</p>
 	</div>
+<jsp:include page="/jsplib/conferma.jsp" flush="true" />
 </body>
 </html>

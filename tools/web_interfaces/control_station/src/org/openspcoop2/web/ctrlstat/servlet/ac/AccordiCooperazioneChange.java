@@ -279,7 +279,8 @@ public final class AccordiCooperazioneChange extends Action {
 			}else{
 				referente = "-";
 			}
-			if(ac.getVersione()!=null)
+			
+			if(versione == null && ac.getVersione()!=null)
 				versione = ac.getVersione().intValue()+"";
 			
 			IDAccordo idAcOLD = acHelper.getIDAccordoFromValues(nome, referente, versione);
@@ -435,6 +436,10 @@ public final class AccordiCooperazioneChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
 
 				dati = acHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
+				
+				dati = acHelper.addAccordiCooperazioneToDati(dati, nome, descr, id,
+						tipoOp, referente, versione, providersList, providersListLabel,
+						privato,statoPackage,oldStatoPackage,tipoProtocollo, listaTipiProtocollo,used);
 
 				dati = acHelper.addAccordiCooperazioneToDatiAsHidden(dati, nome, descr, id,
 						tipoOp, referente, versione, providersList, providersListLabel,
@@ -443,7 +448,9 @@ public final class AccordiCooperazioneChange extends Action {
 				String msg = "Attenzione, esistono Accordi di Servizio Composto che riferiscono l''Accordo di Cooperazione [{0}] che si sta modificando, continuare?";
 				String uriAccordo = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoOLD);
 
-				pd.setMessage(MessageFormat.format(msg, uriAccordo),Costanti.MESSAGE_TYPE_INFO);
+				String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+				String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+				pd.setMessage(pre + MessageFormat.format(msg, uriAccordo) + post, Costanti.MESSAGE_TYPE_CONFIRM);
 
 				String[][] bottoni = { 
 						{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
@@ -451,7 +458,7 @@ public final class AccordiCooperazioneChange extends Action {
 							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
 							
 						},
-						{ Costanti.LABEL_MONITOR_BUTTON_OK,
+						{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
 							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
 							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 
@@ -461,7 +468,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return  ServletUtils.getStrutsForwardEditModeConfirm(mapping,
+				return  ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE,
 						ForwardParams.CHANGE());
 			}

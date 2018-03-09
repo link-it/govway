@@ -74,6 +74,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -90,6 +91,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -421,7 +423,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			}
 
 			//se passo dal link diretto di ripristino stato imposto il nuovo stato
-			if(backToStato != null)
+			if(backToStato != null  && (actionConfirm == null || actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)))
 				statoPackage = backToStato;
 
 
@@ -905,6 +907,37 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
+					
+					dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
+							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  correlato,
+							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
+							null,null,null,null,null,null,null,null,null,null,
+							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
+							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD);
+
+					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
+							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
+							asps, servFru);
+
+					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							url, nome,
+							tipo, user, password, initcont, urlpgk, provurl,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
+							httpstipologia, httpshostverify, httpspath, httpstipo,
+							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
+							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
+							httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
+							tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
+							idSoggettoErogatoreDelServizio, null, null, null, null,
+							oldStatoPackage, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							listExtendedConnettore, forceEnableConnettore);
 
 					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, idSoggettoFruitore, "", "", soggettiList, soggettiListLabel, idServizio,
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio,  correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
@@ -927,12 +960,23 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
 							);
+					
+					// backtostato per chiudere la modifica dopo la conferma
+					DataElement de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+					de.setValue(backToStato);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
+					dati.addElement(de);
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 					String msg = "&Egrave; stato richiesto di ripristinare lo stato dell soggetto fruitore [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
-					pd.setMessage(MessageFormat.format(msg, fruitoreLabel), Costanti.MESSAGE_TYPE_INFO);
+				
+					String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+					String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+					pd.setMessage(pre + MessageFormat.format(msg, fruitoreLabel) + post, Costanti.MESSAGE_TYPE_CONFIRM);
 					
 					pd.setDati(dati);
 
@@ -942,15 +986,18 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
 
 							},
-							{ Costanti.LABEL_MONITOR_BUTTON_OK,
+							{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
 								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
 								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 
-					pd.setBottoni(bottoni );
+					pd.setBottoni(bottoni);
+					
+					// disabilito la form
+					pd.disableEditMode();
 
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-					return ServletUtils.getStrutsForwardEditModeConfirm(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
+					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 							ForwardParams.CHANGE());
 
 				}

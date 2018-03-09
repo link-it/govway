@@ -410,8 +410,8 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
 
 							// salvo lo stato dell'invio
-							apcHelper.addAccordiWSDLChangeToDatiAsHidden(dati, this.id,this.tipoAccordo,this.tipo,label,
-									null,as.getStatoPackage(),this.validazioneDocumenti);
+							apcHelper.addAccordiWSDLChangeToDati(dati, this.id,this.tipoAccordo,this.tipo,label,
+									oldwsdl,as.getStatoPackage(),this.validazioneDocumenti,tipologiaDocumentoScaricare);
 
 							pd.setDati(dati);
 
@@ -428,8 +428,10 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							}
 							String msg = "Attenzione, l'accordo ["+uriAccordo+"] contiene la definizione di "+oggetto+" e "+(as.sizeAllegatoList()+as.sizeSpecificaSemiformaleList())+" allegati. <BR/>"+
 									"Il caricamento della specifica comporter&agrave; l'aggiornamento dei "+updateOggetti+"/allegati esistenti e/o la creazione di nuovi "+updateOggetti+"/allegati. Procedere?";
-								
-							pd.setMessage(msg, Costanti.MESSAGE_TYPE_INFO);
+							
+							String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+							String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+							pd.setMessage(pre + msg + post, Costanti.MESSAGE_TYPE_CONFIRM);
 
 							// Bottoni
 							String[][] bottoni = { 
@@ -438,7 +440,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 										Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
 
 									},
-									{ Costanti.LABEL_MONITOR_BUTTON_OK,
+									{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
 										Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
 										Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 
@@ -446,7 +448,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-							return ServletUtils.getStrutsForwardEditModeConfirm(mapping, 
+							return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 									AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 						}
 					} 

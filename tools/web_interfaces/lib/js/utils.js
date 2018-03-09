@@ -22,8 +22,8 @@
 	    return str;
 	}
  	
- 	if($( "#confermaModal" ).length > 0){
- 		$( "#confermaModal" ).dialog({
+ 	if($( "#confermaEliminazioneModal" ).length > 0){
+ 		$( "#confermaEliminazioneModal" ).dialog({
  	      resizable: false,
  	     dialogClass: "no-close",
  	     autoOpen: false,
@@ -47,7 +47,7 @@
 		if($("#rem_btn").length==1){
 		    $("#rem_btn").click(function(){
 		    	if($("input[name=selectcheckbox]:checked").length > 0)
-		    		$( "#confermaModal" ).dialog( "open" );
+		    		$( "#confermaEliminazioneModal" ).dialog( "open" );
 			    //RemoveEntries();
 			});
 		

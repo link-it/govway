@@ -119,7 +119,8 @@ String pageDescription = pd.getPageDescription();
 		}
 		%>
 		<%
-		if (!message.equals("")) {
+		// messaggio in cima alla pagina solo se non e' un messaggio di conferma
+		if (!message.equals("") && !messageType.equals(MessageType.CONFIRM.toString())) {
 		  %>
 		  	<tr>
 				<td>

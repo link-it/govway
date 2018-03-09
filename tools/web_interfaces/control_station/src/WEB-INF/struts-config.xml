@@ -317,7 +317,6 @@
             <forward name="accordiServizioParteComuneChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteComuneChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteComuneError" path="/jsplib/info.jsp"/>
-            <forward name="accordiServizioParteComuneChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
         <action path="/accordiServizioParteComuneDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneDel"
             scope="request" validate="true">
@@ -330,7 +329,6 @@
             <forward name="accordiServizioParteComuneWSDLChangeOk" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteComuneWSDLChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteComuneError" path="/jsplib/info.jsp"/>
-              <forward name="accordiServizioParteComuneWSDLChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
 
 		<!--  Accordi di Servizio Parte Comune Azioni -->
@@ -638,7 +636,6 @@
             <forward name="accordiServizioParteSpecificaChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
-            <forward name="accordiServizioParteSpecificaChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaDel"
             scope="request" validate="true">
@@ -709,7 +706,6 @@
             <forward name="accordiServizioParteSpecificaFruitoriChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
-             <forward name="accordiServizioParteSpecificaFruitoriChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaFruitoriDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriDel" 
             scope="request" validate="true">
@@ -785,7 +781,6 @@
             <forward name="accordiCooperazioneChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiCooperazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiCooperazioneError" path="/jsplib/info.jsp"/>
-            <forward name="accordiCooperazioneChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
         <action path="/accordiCooperazioneDel" type="org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneDel" 
         	scope="request" validate="true">
@@ -1286,7 +1281,6 @@
             scope="request" validate="true">
             <forward name="porteDelegateAbilitazioneOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateAbilitazioneError" path="/jsplib/info.jsp"/>
-            <forward name="porteDelegateAbilitazioneConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
         
         <!--  Porte Delegate (Proprieta' Protocollo) -->
@@ -1697,7 +1691,6 @@
             scope="request" validate="true">
             <forward name="porteApplicativeAbilitazioneOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeAbilitazioneError" path="/jsplib/info.jsp"/>
-            <forward name="porteApplicativeAbilitazioneConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
     
     
@@ -2170,7 +2163,6 @@
         <action path="/monitor" type="org.openspcoop2.web.ctrlstat.servlet.monitor.Monitor" 
         	scope="request" validate="true">
             <forward name="monitorForm" path="/jsplib/addElement.jsp"/>
-            <forward name="monitorConfirmForm" path="/jsplib/confermaRimozione.jsp"/>
             <forward name="monitorOk" path="/jsplib/listElement.jsp"/>
             <forward name="monitorCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="monitorStatoPddOk" path="/jsplib/addElement.jsp"/>
@@ -2216,7 +2208,6 @@
             <forward name="protocolPropertyBinaryPropertyChangeOk" path="/jsplib/addElement.jsp"/>
             <forward name="protocolPropertyBinaryPropertyChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="protocolPropertyBinaryPropertyChangeError" path="/jsplib/info.jsp"/>
-            <forward name="protocolPropertyBinaryPropertyChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
 
     	<!-- About  -->

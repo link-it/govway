@@ -602,50 +602,55 @@ public final class Monitor extends Action {
 					ServletUtils.addListElementIntoSession(session, MonitorCostanti.OBJECT_NAME_MONITOR);
 					
 					if(stato.getTotMessaggi()>0){
+						
+						String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+						String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+						pd.setMessage(pre + msg + post, Costanti.MESSAGE_TYPE_CONFIRM);
 
-						String[][] bottoni = { { MonitorCostanti.LABEL_MONITOR_BUTTON_OK, MonitorCostanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_1 },
-								{ MonitorCostanti.LABEL_MONITOR_BUTTON_ANNULLA, MonitorCostanti.LABEL_MONITOR_BUTTON_ANNULLA_1 } };
+						String[][] bottoni = { 
+								{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+									Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+									Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+
+								},
+								{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
+									Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+									Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 						pd.setBottoni(bottoni);
 						
 						Vector<DataElement>dati = new Vector<DataElement>();
 						dati.add(ServletUtils.getDataElementForEditModeFinished());
 						pd.setDati(dati);
 						
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
-						return ServletUtils.getStrutsForwardEditModeConfirm(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
-								MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
-
-						//						return mapping.findForward("MonitorConfirmForm");
-
-					}else{
-						
+						this.showForm(  session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
+					}	
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeInProgress(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 								MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
-						//						return mapping.findForward("MonitorForm");
-					}
 
 				} else {
-					IDOperazione [] idOperazione = null;
-					boolean auditDisabiltato = false;
-					try{
-						idOperazione = core.performAuditRequest(new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
-					}catch(AuditDisabilitatoException disabilitato){
-						auditDisabiltato = true;
+					if(actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+						IDOperazione [] idOperazione = null;
+						boolean auditDisabiltato = false;
+						try{
+							idOperazione = core.performAuditRequest(new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+						}catch(AuditDisabilitatoException disabilitato){
+							auditDisabiltato = true;
+						}
+						try{
+							long n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd());
+							pd.setMessage("Eliminate " + n + " Richieste Pendenti.", Costanti.MESSAGE_TYPE_INFO);
+							if(!auditDisabiltato){
+								core.performAuditComplete(idOperazione, new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+							}
+						}catch(Exception e){
+							if(!auditDisabiltato){
+								core.performAuditError(idOperazione, e.getMessage(), new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+							}
+							throw e;
+						}	
+					
 					}
-					try{
-						long n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd());
-						pd.setMessage("Eliminate " + n + " Richieste Pendenti.", Costanti.MESSAGE_TYPE_INFO);
-						if(!auditDisabiltato){
-							core.performAuditComplete(idOperazione, new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
-						}
-					}catch(Exception e){
-						if(!auditDisabiltato){
-							core.performAuditError(idOperazione, e.getMessage(), new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
-						}
-						throw e;
-					}	
 
 					this.showForm(  session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
 

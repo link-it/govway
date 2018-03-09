@@ -3439,8 +3439,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 			de.setSize(getSize());
 			de.setValue(descrizione!=null ? descrizione : "");
-			if( !modificaAbilitata && (descrizione==null || "".equals(descrizione)) )
-				de.setValue(" ");
+			if( !modificaAbilitata && StringUtils.isBlank(descrizione))
+				de.setValue("");
+			
 			dati.addElement(de);
 			
 		}

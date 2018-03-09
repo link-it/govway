@@ -30,6 +30,7 @@ package org.openspcoop2.web.lib.mvc;
 public enum MessageType {
 
 	INFO("info"),
+	CONFIRM("confirm"),
 	ERROR("errors");
 	
 	private String value;
