@@ -58,8 +58,10 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
@@ -1658,13 +1660,20 @@ public class ImporterArchiveUtils {
 			StringBuffer warningInfoStatoFinale = new StringBuffer("");
 			if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getStatoPackage()==null){
 				if(this.gestioneWorkflowStatiAccordi){
+					boolean gestioneWsdlImplementativo = false;
 					try{
+						IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByServiceType(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getTipo());
+						gestioneWsdlImplementativo = protocol.createProtocolConfiguration().
+								isSupportoPortiAccessoAccordiParteSpecifica(toMessageServiceBinding(accordoServizioParteComune.getServiceBinding()),
+										formatoSpecifica2InterfaceType(accordoServizioParteComune.getFormatoSpecifica()));
 						archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setStatoPackage(StatiAccordo.finale.toString());
-						this.importerEngine.validaStatoAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica());
+						this.importerEngine.validaStatoAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica(),
+								gestioneWsdlImplementativo, false);
 					}catch(ValidazioneStatoPackageException validazioneException){
 						try{
 							archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setStatoPackage(StatiAccordo.operativo.toString());
-							this.importerEngine.validaStatoAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica());
+							this.importerEngine.validaStatoAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica(),
+									gestioneWsdlImplementativo, false);
 						}catch(ValidazioneStatoPackageException validazioneExceptionLevelOperativo){
 							warningInfoStatoFinale.append("\n\t\t(WARNING) Accordo salvato con stato '").append(StatiAccordo.bozza.toString()).append("':\n\t\t\t");
 							warningInfoStatoFinale.append(validazioneException.toString("\n\t\t\t - ","\n\t\t\t - "));
@@ -1749,7 +1758,36 @@ public class ImporterArchiveUtils {
 			detail.setException(e);
 		}
 	}
-	
+	private ServiceBinding toMessageServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
+		if(serviceBinding == null)
+			return null;
+		
+		switch (serviceBinding) {
+		case REST:
+			return ServiceBinding.REST;
+		case SOAP:
+		default:
+			return ServiceBinding.SOAP;
+		}			
+	}
+	private InterfaceType formatoSpecifica2InterfaceType(org.openspcoop2.core.registry.constants.FormatoSpecifica formatoSpecifica) {
+		if(formatoSpecifica == null)
+			return null;
+		
+		switch (formatoSpecifica) {
+		case SWAGGER_2:
+			return InterfaceType.SWAGGER_2;
+		case OPEN_API_3:
+			return InterfaceType.OPEN_API_3;
+		case WADL:
+			return InterfaceType.WADL;
+
+			
+		case WSDL_11:
+		default:
+			return InterfaceType.WSDL_11;
+		}			
+	}
 	
 	
 	

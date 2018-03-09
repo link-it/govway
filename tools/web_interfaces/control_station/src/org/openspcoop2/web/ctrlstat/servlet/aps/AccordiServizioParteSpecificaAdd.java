@@ -1507,8 +1507,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				ValidazioneStatoPackageException validazione = null;
 				try{
 					boolean gestioneWsdlImplementativo = apcCore.showPortiAccesso(this.tipoProtocollo, this.serviceBinding, this.formatoSpecifica);
-					boolean checkConnettoreSuFruizione = gestioneFruitori;
-					apsCore.validaStatoAccordoServizioParteSpecifica(asps, gestioneWsdlImplementativo, checkConnettoreSuFruizione);
+					boolean checkConnettore = !gestioneFruitori && !gestioneErogatori;
+					apsCore.validaStatoAccordoServizioParteSpecifica(asps, gestioneWsdlImplementativo, checkConnettore);
 				}catch(ValidazioneStatoPackageException validazioneException){
 					validazione = validazioneException;
 				}
