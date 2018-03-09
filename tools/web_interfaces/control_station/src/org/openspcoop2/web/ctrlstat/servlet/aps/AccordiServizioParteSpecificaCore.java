@@ -390,7 +390,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public void validaStatoAccordoServizioParteSpecifica(AccordoServizioParteSpecifica serv) throws DriverRegistroServiziException,ValidazioneStatoPackageException{
+	public void validaStatoAccordoServizioParteSpecifica(AccordoServizioParteSpecifica serv, boolean gestioneWsdlImplementativo, boolean checkConnettore) throws DriverRegistroServiziException,ValidazioneStatoPackageException{
 		Connection con = null;
 		String nomeMetodo = "validaStatoAccordoServizioParteSpecifica";
 		DriverRegistroServiziDB driver = null;
@@ -401,7 +401,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverRegistroServiziDB(con, ControlStationCore.log, this.tipoDB);
 
-			driver.validaStatoAccordoServizioParteSpecifica(serv);
+			driver.validaStatoAccordoServizioParteSpecifica(serv, gestioneWsdlImplementativo, checkConnettore);
 			
 		} catch (ValidazioneStatoPackageException e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] ValidazioneStatoPackageException :" + e.getMessage(), e);

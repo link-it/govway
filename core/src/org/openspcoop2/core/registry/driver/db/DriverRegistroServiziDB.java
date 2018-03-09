@@ -19874,7 +19874,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	public void validaStatoAccordoServizioParteSpecifica(AccordoServizioParteSpecifica servizio) throws ValidazioneStatoPackageException{
+	public void validaStatoAccordoServizioParteSpecifica(AccordoServizioParteSpecifica servizio, boolean gestioneWsdlImplementativo, boolean checkConnettore) throws ValidazioneStatoPackageException{
 
 		ValidazioneStatoPackageException erroreValidazione =
 				new ValidazioneStatoPackageException("Servizio",servizio.getStatoPackage(),null);
@@ -19913,8 +19913,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				
 				else if(StatiAccordo.finale.toString().equals(servizio.getStatoPackage())){
+					AccordoServizioParteComune as = null;
 					try{
-						AccordoServizioParteComune as = this.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(servizio.getAccordoServizioParteComune()));
+						as = this.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(servizio.getAccordoServizioParteComune()));
 						if(StatiAccordo.finale.toString().equals(as.getStatoPackage())==false){
 							erroreValidazione.addErroreValidazione("accordo di servizio ["+this.idAccordoFactory.getUriFromAccordo(as)+"] in uno stato non finale ["+as.getStatoPackage()+"]");
 						}
@@ -19922,17 +19923,23 @@ IDriverWS ,IMonitoraggioRisorsa{
 						erroreValidazione.addErroreValidazione("accordo di servizio non definito");
 					}
 
-					if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio())){
-						String wsdlImplementativoFruitore = (servizio.getByteWsdlImplementativoFruitore()!=null ? new String(servizio.getByteWsdlImplementativoFruitore()) : null);
-						wsdlImplementativoFruitore = wsdlImplementativoFruitore!=null && !"".equals(wsdlImplementativoFruitore.trim().replaceAll("\n", "")) ? wsdlImplementativoFruitore : null;
-						if(	wsdlImplementativoFruitore == null){
-							erroreValidazione.addErroreValidazione("WSDL Implementativo fruitore non definito");
-						}
-					}else{
-						String wsdlImplementativoErogatore = (servizio.getByteWsdlImplementativoErogatore()!=null ? new String(servizio.getByteWsdlImplementativoErogatore()) : null);
-						wsdlImplementativoErogatore = wsdlImplementativoErogatore!=null && !"".equals(wsdlImplementativoErogatore.trim().replaceAll("\n", "")) ? wsdlImplementativoErogatore : null;
-						if(	wsdlImplementativoErogatore == null){
-							erroreValidazione.addErroreValidazione("WSDL Implementativo erogatore non definito");
+					if(as!=null) {
+						if(ServiceBinding.SOAP.equals(as.getServiceBinding()) && gestioneWsdlImplementativo) {
+						
+							if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio())){
+								String wsdlImplementativoFruitore = (servizio.getByteWsdlImplementativoFruitore()!=null ? new String(servizio.getByteWsdlImplementativoFruitore()) : null);
+								wsdlImplementativoFruitore = wsdlImplementativoFruitore!=null && !"".equals(wsdlImplementativoFruitore.trim().replaceAll("\n", "")) ? wsdlImplementativoFruitore : null;
+								if(	wsdlImplementativoFruitore == null){
+									erroreValidazione.addErroreValidazione("WSDL Implementativo fruitore non definito");
+								}
+							}else{
+								String wsdlImplementativoErogatore = (servizio.getByteWsdlImplementativoErogatore()!=null ? new String(servizio.getByteWsdlImplementativoErogatore()) : null);
+								wsdlImplementativoErogatore = wsdlImplementativoErogatore!=null && !"".equals(wsdlImplementativoErogatore.trim().replaceAll("\n", "")) ? wsdlImplementativoErogatore : null;
+								if(	wsdlImplementativoErogatore == null){
+									erroreValidazione.addErroreValidazione("WSDL Implementativo erogatore non definito");
+								}
+							}
+							
 						}
 					}
 
@@ -19943,16 +19950,20 @@ IDriverWS ,IMonitoraggioRisorsa{
 						erroreValidazione.addErroreValidazione("Accordo di servizio parte specifica possiede un connettore ("+servizio.getConnettore().getTipo()+") non utilizzabile nella rete SPC");
 					}
 					else */
-					if(servizio.getConfigurazioneServizio().getConnettore()==null || CostantiDB.CONNETTORE_TIPO_DISABILITATO.equals(servizio.getConfigurazioneServizio().getConnettore().getTipo())){
-						// check connettore del soggetto erogatore: un servizio puo' essere finale con jms: il check sara' poi al momento dell'esportazione nei package cnipa
-						Soggetto soggettoErogatore = this.getSoggetto(new IDSoggetto(servizio.getTipoSoggettoErogatore(),servizio.getNomeSoggettoErogatore()));
-						/*if(soggettoErogatore.getConnettore()!=null && !CostantiDB.CONNETTORE_TIPO_DISABILITATO.equals(soggettoErogatore.getConnettore().getTipo()) && 
-								!CostantiDB.CONNETTORE_TIPO_HTTP.equals(soggettoErogatore.getConnettore().getTipo()) && !CostantiDB.CONNETTORE_TIPO_HTTPS.equals(soggettoErogatore.getConnettore().getTipo())){
-							erroreValidazione.addErroreValidazione("Accordo di servizio parte specifica non possiede un connettore e soggetto erogatore "+servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore()+" possiede un connettore ("+soggettoErogatore.getConnettore().getTipo()+") non utilizzabile nella rete SPC");
-						}
-						else */
-						if(soggettoErogatore.getConnettore()==null || CostantiDB.CONNETTORE_TIPO_DISABILITATO.equals(soggettoErogatore.getConnettore().getTipo()) ){
-							erroreValidazione.addErroreValidazione("Sia l'Accordo di servizio parte specifica che il soggetto erogatore non possiedono un connettore");
+					
+					if(checkConnettore) {
+						
+						if(servizio.getConfigurazioneServizio().getConnettore()==null || CostantiDB.CONNETTORE_TIPO_DISABILITATO.equals(servizio.getConfigurazioneServizio().getConnettore().getTipo())){
+							// check connettore del soggetto erogatore: un servizio puo' essere finale con jms: il check sara' poi al momento dell'esportazione nei package cnipa
+							Soggetto soggettoErogatore = this.getSoggetto(new IDSoggetto(servizio.getTipoSoggettoErogatore(),servizio.getNomeSoggettoErogatore()));
+							/*if(soggettoErogatore.getConnettore()!=null && !CostantiDB.CONNETTORE_TIPO_DISABILITATO.equals(soggettoErogatore.getConnettore().getTipo()) && 
+									!CostantiDB.CONNETTORE_TIPO_HTTP.equals(soggettoErogatore.getConnettore().getTipo()) && !CostantiDB.CONNETTORE_TIPO_HTTPS.equals(soggettoErogatore.getConnettore().getTipo())){
+								erroreValidazione.addErroreValidazione("Accordo di servizio parte specifica non possiede un connettore e soggetto erogatore "+servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore()+" possiede un connettore ("+soggettoErogatore.getConnettore().getTipo()+") non utilizzabile nella rete SPC");
+							}
+							else */
+							if(soggettoErogatore.getConnettore()==null || CostantiDB.CONNETTORE_TIPO_DISABILITATO.equals(soggettoErogatore.getConnettore().getTipo()) ){
+								erroreValidazione.addErroreValidazione("Sia l'Accordo di servizio parte specifica che il soggetto erogatore non possiedono un connettore");
+							}
 						}
 					}
 				}

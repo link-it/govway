@@ -335,9 +335,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
+			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 					gestioneFruitori = true;
+				}
+				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+					gestioneErogatori = true;
 				}
 			}
 			
@@ -1300,7 +1304,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
 
 				try{
-					apsCore.validaStatoAccordoServizioParteSpecifica(asps);
+					boolean gestioneWsdlImplementativo = apcCore.showPortiAccesso(tipoProtocollo, serviceBinding, formatoSpecifica);
+					boolean checkConnettore = !gestioneFruitori && !gestioneErogatori;
+					apsCore.validaStatoAccordoServizioParteSpecifica(asps, gestioneWsdlImplementativo, checkConnettore);
 				}catch(ValidazioneStatoPackageException validazioneException){
 
 					// Setto messaggio di errore
