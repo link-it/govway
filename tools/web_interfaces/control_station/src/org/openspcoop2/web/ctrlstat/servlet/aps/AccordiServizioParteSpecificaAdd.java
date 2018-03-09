@@ -1223,7 +1223,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						saFruitoriList);
 
 				boolean forceEnableConnettore = false;
-				if( (apsHelper.isModalitaStandard() || generaPortaApplicativa)) {
+				if( gestioneFruitori || generaPortaApplicativa ) {
 					forceEnableConnettore = true;
 				}
 				
@@ -1375,7 +1375,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						saFruitoriList);
 
 				boolean forceEnableConnettore = false;
-				if( (apsHelper.isModalitaStandard() || generaPortaApplicativa)) {
+				if( gestioneFruitori || generaPortaApplicativa ) {
 					forceEnableConnettore = true;
 				}
 				
@@ -1541,7 +1541,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					boolean forceEnableConnettore = false;
-					if( (apsHelper.isModalitaStandard() || generaPortaApplicativa)) {
+					if( gestioneFruitori || generaPortaApplicativa ) {
 						forceEnableConnettore = true;
 					}
 					

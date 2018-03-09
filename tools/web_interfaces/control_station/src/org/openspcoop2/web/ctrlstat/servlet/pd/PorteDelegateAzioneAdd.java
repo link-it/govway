@@ -108,14 +108,6 @@ public final class PorteDelegateAzioneAdd extends Action {
 			// multiselect
 			String[] azionis = porteDelegateHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
-			}
-			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -259,30 +251,28 @@ public final class PorteDelegateAzioneAdd extends Action {
 			}
 			listaOggettiDaModificare.add(portaDelegata);
 
-			if(gestioneFruitori) {
-				boolean updateASPS = false;
-				Fruitore fruitore = null;
-				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-					if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
-						fruitore = fruitoreCheck;
+			boolean updateASPS = false;
+			Fruitore fruitore = null;
+			for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+				if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
+					fruitore = fruitoreCheck;
+					break;
+				}
+			}
+			for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+				ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+				if(config!=null) {
+					if(config.getAzioneList().contains(azioneGiaEsistente)) {
+						for(String azione: azionis) {
+							config.addAzione(azione);
+						}
+						updateASPS = true;
 						break;
 					}
 				}
-				for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
-					ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
-					if(config!=null) {
-						if(config.getAzioneList().contains(azioneGiaEsistente)) {
-							for(String azione: azionis) {
-								config.addAzione(azione);
-							}
-							updateASPS = true;
-							break;
-						}
-					}
-				}
-				if(updateASPS) {
-					listaOggettiDaModificare.add(asps);
-				}
+			}
+			if(updateASPS) {
+				listaOggettiDaModificare.add(asps);
 			}
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);

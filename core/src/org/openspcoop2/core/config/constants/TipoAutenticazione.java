@@ -118,7 +118,18 @@ public enum TipoAutenticazione implements IEnumeration , Serializable , Cloneabl
 	public static List<String> getLabels(){
 		List<String> l = new ArrayList<>();
 		for (TipoAutenticazione tmp : values()) {
-			l.add(tmp.getLabel());
+			if(TipoAutenticazione.BASIC.equals(tmp)) {
+				l.add(CostantiConfigurazione.LABEL_CREDENZIALE_BASIC);
+			}
+			else if(TipoAutenticazione.SSL.equals(tmp)) {
+				l.add(CostantiConfigurazione.LABEL_CREDENZIALE_SSL);
+			}
+			else if(TipoAutenticazione.PRINCIPAL.equals(tmp)) {
+				l.add(CostantiConfigurazione.LABEL_CREDENZIALE_PRINCIPAL);
+			}
+			else {
+				l.add(tmp.getLabel());
+			}
 		}
 		return l;
 	}

@@ -242,14 +242,6 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							parametersPOST, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
-			}
 			
 			// Preparo il menu
 			apsHelper.makeMenu();
@@ -471,7 +463,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						fruizioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
 					}
 					// solo in modalita' nuova
-					if(gestioneFruitori && initConnettore) {
+					if(initConnettore) {
 						tipoconn = "";
 						url = "";
 						nomeCodaJms = "";
@@ -536,7 +528,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 							fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 					
-					if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 								url, nomeCodaJms,
@@ -572,7 +564,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azioni, asps, azioniOccupate,modeCreazione,null,true);
 			
 			// controllo endpoint
-			if(isOk && gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				isOk = apsHelper.endPointCheckData(endpointtype, url, nome, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -604,7 +596,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 						fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo);
 				
-				if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
@@ -642,7 +634,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		
 			Connettore connettore = null;
-			if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				connettore = new Connettore();
 				// this.nomeservizio);
 				if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
@@ -681,7 +673,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				
 			}
 			
-			if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				
 				Fruitore fruitore = null;
 				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
@@ -715,7 +707,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
 
-			if(gestioneFruitori && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				
 				listaOggettiDaModificare.add(asps);
 				

@@ -1154,6 +1154,13 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE);
 		if(!usataInConfigurazioni || datiInvocazione) {
 			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(modeaz);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE+"__LABEL");
 				de.setType(DataElementType.TEXT);
 				de.setValue(this.getPortaApplicativaAzioneIdentificazioneLabel(modeaz));
 			}

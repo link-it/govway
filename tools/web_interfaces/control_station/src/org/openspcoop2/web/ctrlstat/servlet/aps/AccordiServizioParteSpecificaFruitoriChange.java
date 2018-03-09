@@ -140,7 +140,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+		if(parentPD == null) 
+			parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		
 		try {
 			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
@@ -421,7 +422,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			Connettore connettore = servFru.getConnettore();
 			ConfigurazioneServizioAzione configurazioneServizioAzione = null;
-			if(gestioneFruitori && azioneConnettore!=null && !"".equals(azioneConnettore)) {
+			if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
 				for (ConfigurazioneServizioAzione check : servFru.getConfigurazioneAzioneList()) {
 					if(check.getAzioneList().contains(azioneConnettore)) {
 						configurazioneServizioAzione = check;
@@ -468,9 +469,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			
 			// setto la barra del titolo
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pdOld, session);
-			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggettoFruitore,idServizio, idServizioFruitore);
+			// Per il titolo utilizzo sempre e comunque il tipo PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE
+			//List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggettoFruitore,idServizio, idServizioFruitore);
+			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, idSoggettoFruitore,idServizio, idServizioFruitore);
 
-			if(gestioneFruitori) {
+			if(gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD)) {
 				lstParm.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE, null));
 			}
 			else {
@@ -713,7 +716,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,
 							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-							azioneConnettore);
+							azioneConnettore, parentPD);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
@@ -817,7 +820,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 						null,null,null,null,null,null,null,null,null,null,
 						apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-						azioneConnettore);
+						azioneConnettore, parentPD);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -962,7 +965,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			fruitore.setConfigurazioneAzioneList(servFru.getConfigurazioneAzioneList());
 			
 			fruitore.setId(new Long(idSoggettoFruitore));
-			if(gestioneFruitori && configurazioneServizioAzione!=null) {
+			if(configurazioneServizioAzione!=null) {
 				configurazioneServizioAzione.setConnettore(connettoreNew);
 				fruitore.setConnettore(servFru.getConnettore());
 			}
@@ -1023,7 +1026,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,
 							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-							azioneConnettore);
+							azioneConnettore, parentPD);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1076,7 +1079,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			if(gestioneFruitori) {
+			if(gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD)) {
 				int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 				ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 				IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);

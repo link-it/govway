@@ -114,14 +114,6 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
-
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
-			}
 			
 			// Elimino le porte applicative del servizio dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
@@ -152,12 +144,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			
 			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
 			Fruitore fruitore = null;
-			if(gestioneFruitori) {
-				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-					if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
-						fruitore = fruitoreCheck;
-						break;
-					}
+			for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+				if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
+					fruitore = fruitoreCheck;
+					break;
 				}
 			}
 			
@@ -192,22 +182,21 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 					// Elimino entrambi gli oggetti
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
 					
-					if(gestioneFruitori) {
-						int index = -1;
-						for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
-							ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
-							if(config!=null) {
-								String azione = tmpPD.getAzione().getAzioneDelegata(0); // prendo la prima
-								if(config.getAzioneList().contains(azione)) {
-									index = j;
-									break;
-								}
+					// Connettore della fruizione
+					int index = -1;
+					for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+						ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+						if(config!=null) {
+							String azione = tmpPD.getAzione().getAzioneDelegata(0); // prendo la prima
+							if(config.getAzioneList().contains(azione)) {
+								index = j;
+								break;
 							}
 						}
-						if(index>=0) {
-							updateASPS = true;
-							fruitore.removeConfigurazioneAzione(index);
-						}
+					}
+					if(index>=0) {
+						updateASPS = true;
+						fruitore.removeConfigurazioneAzione(index);
 					}
 					
 				}else {
@@ -217,7 +206,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			}// for
 			
 			
-			if(gestioneFruitori && updateASPS) {
+			if(updateASPS) {
 				
 				listaOggettiDaModificare.add(asps);
 				

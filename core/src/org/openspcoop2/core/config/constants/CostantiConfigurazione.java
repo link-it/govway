@@ -99,6 +99,10 @@ public class CostantiConfigurazione {
     /** tipo di porta autenticazione: principal */
     public final static CredenzialeTipo CREDENZIALE_PRINCIPAL = CredenzialeTipo.PRINCIPAL;
     
+	public final static String LABEL_CREDENZIALE_BASIC = "http-basic";
+	public final static String LABEL_CREDENZIALE_SSL = "https";
+	public final static String LABEL_CREDENZIALE_PRINCIPAL = "principal";
+    
     /** tipo di porta autenticazione */
     public final static String AUTENTICAZIONE_NONE = "none";
     public final static String AUTENTICAZIONE_BASIC = "basic";

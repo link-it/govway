@@ -406,6 +406,13 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 		if(!usataInConfigurazioni || datiInvocazione) {
 			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(modeaz);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE+"__LABEL");
 				de.setType(DataElementType.TEXT);
 				de.setValue(this.getPortaDelegataAzioneIdentificazioneLabel(modeaz));
 			}

@@ -40,7 +40,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -100,43 +99,32 @@ public final class PorteDelegateAzioneDel extends Action {
 
 			String azione = "";
 
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			boolean gestioneFruitori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
-			}
-			
 			// Prendo la porta applicativa
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
 
-			AccordoServizioParteSpecifica asps = null;
 			ConfigurazioneServizioAzione configAzioni = null; 
 			boolean updateASPS = false;
-			if(gestioneFruitori) {
-				Long idAspsLong = Long.parseLong(idAsps);
-				asps = aspsCore.getAccordoServizioParteSpecifica(idAspsLong);
-				
-				String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
-				
-				Fruitore fruitore = null;
-				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-					if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
-						fruitore = fruitoreCheck;
-						break;
-					}
+			Long idAspsLong = Long.parseLong(idAsps);
+			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			
+			String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
+			
+			Fruitore fruitore = null;
+			for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+				if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
+					fruitore = fruitoreCheck;
+					break;
 				}
-				for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
-					ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
-					if(config!=null) {
-						if(config.getAzioneList().contains(azioneGiaEsistente)) {
-							configAzioni = config;
-							break;
-						}
+			}
+			for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+				ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+				if(config!=null) {
+					if(config.getAzioneList().contains(azioneGiaEsistente)) {
+						configAzioni = config;
+						break;
 					}
 				}
 			}
@@ -156,17 +144,16 @@ public final class PorteDelegateAzioneDel extends Action {
 					}
 				}
 				
-				if(gestioneFruitori) {
-					if(configAzioni!=null) {
-						for (int j = 0; j < configAzioni.sizeAzioneList(); j++) {
-							if(configAzioni.getAzione(j).equals(azione)) {
-								configAzioni.removeAzione(j);
-								updateASPS = true;
-								break;
-							}
+				if(configAzioni!=null) {
+					for (int j = 0; j < configAzioni.sizeAzioneList(); j++) {
+						if(configAzioni.getAzione(j).equals(azione)) {
+							configAzioni.removeAzione(j);
+							updateASPS = true;
+							break;
 						}
 					}
 				}
+
 			}
 			
 			String labelPerPorta = null;
@@ -187,7 +174,7 @@ public final class PorteDelegateAzioneDel extends Action {
 				
 				listaOggettiDaModificare.add(portaDelegata);
 				
-				if(gestioneFruitori && updateASPS) {
+				if(updateASPS) {
 					listaOggettiDaModificare.add(asps);
 				}
 				

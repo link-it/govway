@@ -113,10 +113,6 @@ public final class PorteDelegateChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-
 		try {
 			
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
@@ -159,6 +155,22 @@ public final class PorteDelegateChange extends Action {
 			ServiceBinding serviceBinding = null;
 			if(StringUtils.isNotEmpty(serviceBindingS))
 				serviceBinding = ServiceBinding.valueOf(serviceBindingS);
+			
+			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+						
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+			if(parentPD == null) {
+				if(datiInvocazione) {
+					parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE;
+					ServletUtils.setObjectIntoSession(session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
+				}
+				else {
+					parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+				}
+			}
+			
+			
 			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
@@ -397,7 +409,6 @@ public final class PorteDelegateChange extends Action {
 //					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
 //				}
 				
-				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				if(datiInvocazione) {
 					lstParam.remove(lstParam.size()-1);
 					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
@@ -1101,7 +1112,6 @@ public final class PorteDelegateChange extends Action {
 				
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 				
-				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				if(datiInvocazione) {
 					
 					String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
