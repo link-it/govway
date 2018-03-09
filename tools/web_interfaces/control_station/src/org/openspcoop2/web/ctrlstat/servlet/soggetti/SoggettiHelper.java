@@ -854,7 +854,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				// pdd o dominio
 				totEl++;
 			}
-			if(!this.isModalitaStandard()) {
+			if(multiTenant || this.isModalitaCompleta()) {
 				totEl++; // connettore column
 			}
 			if(this.isModalitaCompleta()) {
@@ -872,7 +872,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			else if(multiTenant) {
 				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO;
 			}
-			if(!this.isModalitaStandard()) {
+			if(multiTenant || this.isModalitaCompleta()) {
 				labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
 			}
 			labels[i++] = RuoliCostanti.LABEL_RUOLI;
@@ -967,7 +967,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					e.addElement(de);
 				}
 
-				if(!this.isModalitaStandard()) {
+				if(multiTenant || this.isModalitaCompleta()) {
 					
 					boolean showConnettore = this.core.isRegistroServiziLocale() &&
 							(this.isModalitaCompleta() || this.pddCore.isPddEsterna(nomePdD) || multiTenant );

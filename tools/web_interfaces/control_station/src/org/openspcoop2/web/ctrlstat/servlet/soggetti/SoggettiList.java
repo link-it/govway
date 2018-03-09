@@ -86,7 +86,7 @@ public final class SoggettiList extends Action {
 			ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			if(!multiTenant) {
+			if(!multiTenant && !soggettiHelper.isModalitaCompleta()) {
 				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
 			}
 			

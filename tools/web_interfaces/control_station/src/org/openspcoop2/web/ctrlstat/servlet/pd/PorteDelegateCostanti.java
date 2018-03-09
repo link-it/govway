@@ -300,6 +300,7 @@ public class PorteDelegateCostanti {
 	
 	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO = "configurazioneAltro";
+	public final static String PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
 	
 	public final static String PARAMETRO_PORTE_DELEGATE_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PORTE_DELEGATE_MTOM_RISPOSTA = CostantiControlStation.PARAMETRO_MTOM_RISPOSTA;
@@ -375,6 +376,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "Versione Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE = "Connettore";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI = "Connettore di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;

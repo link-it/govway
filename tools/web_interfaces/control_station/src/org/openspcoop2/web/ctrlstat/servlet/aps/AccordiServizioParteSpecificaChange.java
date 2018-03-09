@@ -905,9 +905,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
 						boolean forceEnableConnettore = false;
-						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
-							forceEnableConnettore = true;
-						}
+//						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+//							forceEnableConnettore = true;
+//						}
 						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
 								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
@@ -1072,9 +1072,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 				
 					boolean forceEnableConnettore = false;
-					if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
-						forceEnableConnettore = true;
-					}
+//					if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+//						forceEnableConnettore = true;
+//					}
 					
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
 							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
@@ -1351,9 +1351,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
 						boolean forceEnableConnettore = false;
-						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
-							forceEnableConnettore = true;
-						}
+//						if( apsHelper.isModalitaStandard() && !TipiConnettore.DISABILITATO.getNome().equals(endpointtype) ) {
+//							forceEnableConnettore = true;
+//						}
 						
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 								(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,

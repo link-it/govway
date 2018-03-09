@@ -224,6 +224,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_PROVIDER_FRUITORE_AS_TEXT =  "providerFruitoreAsText";
 	public final static String PARAMETRO_APS_PROVIDER_TEXT =  "providerText";
 	public final static String PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE =  "fruitoreViewConnettoreAzione";
+	public final static String PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA =  "fruitoreViewConnettoreAzioneIdPorta";
 	public final static String PARAMETRO_APS_SERVIZIO_CORRELATO_LABEL = "servcorrLabel";
 	public final static String PARAMETRO_APS_PRIVATO_LABEL = "privatoLabel";
 	public final static String PARAMETRO_APS_PROFILO = "profilo";

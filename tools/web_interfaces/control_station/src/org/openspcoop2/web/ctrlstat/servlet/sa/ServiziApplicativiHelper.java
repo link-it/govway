@@ -767,7 +767,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						
 				this.addEndPointToDati(dati,id,nome,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,invrif,risprif,nomeProtocollo,false,true, true,
-						parentSA,null);
+						parentSA,null,null);
 				
 				if(TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 						CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -1669,7 +1669,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
 			String getmsg,String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
-			Integer parentSA, ServiceBinding serviceBinding) throws Exception{
+			Integer parentSA, ServiceBinding serviceBinding,
+			String accessoDaAPSParametro) throws Exception{
 
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
 		IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
@@ -1681,6 +1682,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 		dati.addElement(de);
 
+		if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(accessoDaAPSParametro);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			dati.addElement(de);
+		}
+		
 		boolean showFromConfigurazione = false;
 		if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
 			showFromConfigurazione = true;
@@ -2057,7 +2066,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			break;
 		case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE:
 		default:
-			lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
+			lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
 			break;
 		}
 		return lstParam;

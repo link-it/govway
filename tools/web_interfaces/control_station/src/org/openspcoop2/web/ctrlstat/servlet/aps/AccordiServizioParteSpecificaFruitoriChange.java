@@ -39,7 +39,9 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -78,11 +80,13 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -92,6 +96,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
  * serviziFruitoriChange
@@ -266,12 +271,22 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			}
 			//boolean connettoreOnly = gestioneFruitori;
 			String azioneConnettore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE);
+			String azioneConnettoreIdPorta = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
 			boolean forceEnableConnettore =  gestioneFruitori;
 			if(endpointtype!=null && !"".equals(endpointtype)) {
 				if(forceEnableConnettore) {
 					if(TipiConnettore.DISABILITATO.toString().equals(endpointtype)) {
 						forceEnableConnettore = false;
 					}
+				}
+			}
+			
+			boolean accessoDaListaAPS = false;
+			String accessoDaAPSParametro = null;
+			if(gestioneFruitori) {
+				accessoDaAPSParametro = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS);
+				if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
+					accessoDaListaAPS = true;
 				}
 			}
 						
@@ -474,7 +489,25 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, idSoggettoFruitore,idServizio, idServizioFruitore);
 
 			if(gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD)) {
-				lstParm.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE, null));
+								
+				String labelPerPorta = null;
+				if(accessoDaListaAPS) {
+					labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE;
+				}
+				else {
+					PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+					PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(azioneConnettoreIdPorta)); 
+					labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+
+							porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
+				}
+				
+				Parameter pConnettore = new Parameter(labelPerPorta, null);
+				if(accessoDaListaAPS) {
+					lstParm.set(lstParm.size()-1, pConnettore);
+				}
+				else {
+					lstParm.add(pConnettore);
+				}
 			}
 			else {
 				lstParm.set(lstParm.size()-1, new Parameter(fruitoreLabel, null));
@@ -716,7 +749,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,
 							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-							azioneConnettore, parentPD);
+							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
@@ -820,7 +853,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 						null,null,null,null,null,null,null,null,null,null,
 						apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-						azioneConnettore, parentPD);
+						azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1026,7 +1059,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null,null,null,null,null,null,null,null,null,
 							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-							azioneConnettore, parentPD);
+							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1079,7 +1112,29 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			if(gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD)) {
+			if(accessoDaListaAPS) {
+				
+				int idLista = Liste.SERVIZI;
+				
+				ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
+				
+				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
+				
+				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+				boolean [] permessi = new boolean[2];
+				permessi[0] = pu.isServizi();
+				permessi[1] = pu.isAccordiCooperazione();
+				List<AccordoServizioParteSpecifica> lista2 = null;
+				if(apsCore.isVisioneOggettiGlobale(superUser)){
+					lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
+				}else{
+					lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori);
+				}
+
+				apsHelper.prepareServiziList(ricerca, lista2);
+				
+			}
+			else if(gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD)) {
 				int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 				ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 				IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
@@ -1099,7 +1154,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				idSoggettoFruitoreObj.setNome(nomeSoggettoFruitore);
 				List<MappingFruizionePortaDelegata> lista = apsCore.serviziFruitoriMappingList(idServizioFruitoreInt, idSoggettoFruitoreObj , idServizioFromAccordo, ricerca);
 				apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggettoFruitore, idServizioFruitore, ricerca);
-			} else{
+			} 
+			else{
 				int idLista = Liste.SERVIZI_FRUITORI;
 				ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 				List<Fruitore> lista = apsCore.serviziFruitoriList(idServizioInt, ricerca);

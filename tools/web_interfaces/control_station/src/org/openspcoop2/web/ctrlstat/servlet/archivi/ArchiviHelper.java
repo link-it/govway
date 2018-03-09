@@ -1783,7 +1783,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				}
 				
 				this.addEndPointToDati(dati,"","",sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,null,null,protocollo,false,true, showSection, null,null);
+						getmsg,null,null,protocollo,false,true, showSection, null,null, null);
 				
 				if(CostantiConfigurazione.ABILITATO.equals(getmsg)){
 					

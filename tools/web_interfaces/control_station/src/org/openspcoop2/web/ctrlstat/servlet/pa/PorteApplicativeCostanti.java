@@ -269,6 +269,7 @@ public class PorteApplicativeCostanti {
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO = "configurazioneAltro";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE = CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = CostantiControlStation.PARAMETRO_ELEMENTO_XML;
@@ -353,6 +354,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Applicativo Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = "Connettore";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI = "Connettore di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";

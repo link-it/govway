@@ -35,6 +35,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -62,11 +63,14 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -74,6 +78,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
  * servizioApplicativoEndPointRisposta
@@ -106,7 +111,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 		
 		try {
-
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
 			String nomeservizioApplicativo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
@@ -211,7 +215,31 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
 			
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			@SuppressWarnings("unused")
+			boolean gestioneErogatori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+					gestioneErogatori = true;
+				}
+			}
 
+			boolean accessoDaListaAPS = false;
+			String accessoDaAPSParametro = null;
+			// nell'erogazione vale sempre
+			//if(gestioneErogatori) {
+			accessoDaAPSParametro = saHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
+				accessoDaListaAPS = true;
+			}
+			//}
+			
+			boolean forceEnabled = false;
+			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
+				forceEnabled = true;
+			}
+			
+			
 			// Preparo il menu
 			saHelper.makeMenu();
 			
@@ -241,15 +269,22 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					ServletExtendedConnettoreUtils.getExtendedConnettore(connra, ConnettoreServletType.SERVIZIO_APPLICATIVO_RISPOSTA_ASINCRONA, saHelper, 
 							(endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
+			
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
 			
 			ServiceBinding serviceBinding = null;
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
-				PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
-				PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
-				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+
-						porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+				
+				if(accessoDaListaAPS) {
+					labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
+				}
+				else {
+					PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
+					PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+					labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI+
+							porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+				}
 				
 				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(soggettiCore);
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
@@ -261,6 +296,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+nomeservizioApplicativo;
 			}
 			
+			if(accessoDaListaAPS) {
+				lstParm.remove(lstParm.size()-1);
+			}
 			lstParm.add(new Parameter(labelPerPorta,null));
 			
 			// Se nomehid = null, devo visualizzare la pagina per la
@@ -493,7 +531,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpshostverify = true;
 				}
 				
-				
 				// file
 				if(responseInputMode==null && props!=null){
 					
@@ -540,7 +577,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA,serviceBinding);
+						parentSA,serviceBinding, accessoDaAPSParametro);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -561,7 +598,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore, false);
+						listExtendedConnettore, forceEnabled);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
@@ -589,7 +626,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA,serviceBinding);
+						parentSA,serviceBinding, accessoDaAPSParametro);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -610,7 +647,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore, false);
+						listExtendedConnettore, forceEnabled);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
@@ -696,16 +733,38 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			int idLista = -1;
 			switch (parentSA) { 
 			case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE:
-				idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
-				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				int idServizio = Integer.parseInt(idAsps);
-				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
-				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-				Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
-				List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
-				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-				apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
+				if(accessoDaListaAPS) {
+					idLista = Liste.SERVIZI;
+					ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+					if(gestioneErogatori) {
+						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+					}
+					boolean [] permessi = new boolean[2];
+					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+					permessi[0] = pu.isServizi();
+					permessi[1] = pu.isAccordiCooperazione();
+					List<AccordoServizioParteSpecifica> listaS = null;
+					AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+					if(apsCore.isVisioneOggettiGlobale(superUser)){
+						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
+					}else{
+						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+					}
+					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+					apsHelper.prepareServiziList(ricerca, listaS);
+				}
+				else {
+					idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
+					ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+					int idServizio = Integer.parseInt(idAsps);
+					AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+					AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
+					IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+					Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
+					List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
+					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+					apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
+				}
 				break;
 			case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO:
 				idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
@@ -726,8 +785,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 				break;
 			}
-			
-			
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
@@ -738,5 +795,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_RISPOSTA_ASINCRONA);
 		} 
+
 	}
 }
