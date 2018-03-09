@@ -73,9 +73,11 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
@@ -83,6 +85,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -346,7 +349,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}
 
 		//se passo dal link diretto di ripristino stato imposto il nuovo stato
-		if(this.backToStato != null)
+		if(this.backToStato != null && (this.actionConfirm == null || this.actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)))
 			this.statoPackage = this.backToStato;
 
 		String uriAS = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
@@ -668,9 +671,24 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
+				dati = apcHelper.addAccordiToDatiAsHidden(dati, nome, this.descr, this.profcoll, null, null, null, null, 
+						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id,						
+						tipoOp, this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione, this.referente,this.versione, providersList, providersListLabel,
+						this.privato,this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel,
+						this.accordoCooperazioneId, this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, 
+						listaTipiProtocollo, used, this.serviceBinding,this.messageType,this.interfaceType);
+				
+				// backtostato per chiudere la modifica dopo la conferma
+				DataElement de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+				de.setValue(this.backToStato);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
+				dati.addElement(de);
+				
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-
+				
 				pd.setDati(dati);
 
 				String uriAccordo = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
@@ -697,6 +715,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 
 				pd.setBottoni(bottoni );
+				
+				// disabilito la form
+				pd.disableEditMode();
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
