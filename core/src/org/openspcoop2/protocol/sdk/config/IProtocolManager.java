@@ -22,6 +22,8 @@ package org.openspcoop2.protocol.sdk.config;
 
 import java.util.Map;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
@@ -240,7 +242,31 @@ public interface IProtocolManager extends IComponentFactory {
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext,
     		IRegistryReader registryReader) throws ProtocolException;
-    
+	
+	
+	
+	
+	
+	/* *********** CONNETTORE ******************* */
+	
+	/**
+	 * Indica se la PdD deve inoltrare tutte le richieste verso il dominio esterno ad un connettore statico
+	 * 
+	 * @return true se la PdD deve inoltrare tutte le richieste verso il dominio esterno ad un connettore statico
+	 * @throws ProtocolException
+	 */
+	public boolean isStaticRoute()  throws ProtocolException;
+	
+	/**
+	 * Ritorna il connettore che la PdD deve utilizzare per la spedizione verso il dominio esterno rappresentato dai dati forniti nei parametri.
+	 * Permette di personalizzare a livello di protocollo il connettore utilizzato dalla PdD indipendentemente da quanto descritto nel registro.
+	 * 
+	 * @param idSoggettoMittente soggettoFruitore
+	 * @param idServizio servizio
+	 * @return Connettore da utilizzare per la spedizione verso il dominio esterno, indipendentemente da quanto descritto nel registro.
+	 */
+	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
+			IRegistryReader registryReader) throws ProtocolException;
 	
 	
     

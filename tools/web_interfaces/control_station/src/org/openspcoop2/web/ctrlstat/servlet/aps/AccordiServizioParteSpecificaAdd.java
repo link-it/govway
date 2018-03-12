@@ -465,6 +465,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				this.tipoProtocollo = apsCore.getProtocolloDefault(session, listaTipiProtocollo);
 			}
 			
+			boolean connettoreStatic = false;
+			if(gestioneFruitori) {
+				connettoreStatic = apsCore.isConnettoreStatic(this.tipoProtocollo);
+			}
+			
 			String[] ptList = null;
 			// Prendo la lista di soggetti e la metto in un array
 			// Prendo la lista di accordi e la metto in un array
@@ -1230,7 +1235,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				// Controllo se richiedere il connettore
 				
-				boolean connettoreStatic = this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore);
 				if(!connettoreStatic) {
 					boolean forceEnableConnettore = false;
 					if( gestioneFruitori || generaPortaApplicativa ) {
@@ -1311,7 +1315,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					generaPortaApplicativa, listExtendedConnettore,
 					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-					this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore));
+					this.tipoProtocollo);
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
@@ -1386,7 +1390,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saFruitoriList);
 
-				boolean connettoreStatic = this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore);
 				if(!connettoreStatic) {
 					boolean forceEnableConnettore = false;
 					if( gestioneFruitori || generaPortaApplicativa ) {
@@ -1460,7 +1463,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Connettore
 			Connettore connettore = null;
-			boolean connettoreStatic = this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore);
 			if(!connettoreStatic) {
 				connettore = new Connettore();
 				// this.nomeservizio);
@@ -1755,26 +1757,4 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 		}  
 	}
 	
-	private boolean isConnettoreStatic(boolean gestioneFruitori, AccordiServizioParteSpecificaHelper apsHelper, AccordiServizioParteSpecificaCore apsCore) throws Exception {
-		// Controllo se richiedere il connettore
-		boolean connettoreStatic = false;
-		if(gestioneFruitori) {
-			IDServizio idServizio = null;
-			IDSoggetto idSoggettoMittente = null; 
-			if(this.provider!=null && !"".equals(this.provider) && 
-					this.tiposervizio!=null && !"".equals(this.tiposervizio) &&
-					this.nomeservizio!=null && !"".equals(this.nomeservizio)
-					){
-				idServizio = apsHelper.getIDServizioFromValues(this.tiposervizio, this.nomeservizio, this.provider, this.versione);
-			}
-			if(this.tipoSoggettoFruitore!=null && !"".equals(this.tipoSoggettoFruitore) 
-					&&  this.nomeSoggettoFruitore!=null && !"".equals(this.nomeSoggettoFruitore)){
-				idSoggettoMittente = new IDSoggetto(this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
-			}
-			if(idServizio!=null && idSoggettoMittente!=null) {
-				connettoreStatic = apsCore.isConnettoreStatic(this.tipoProtocollo, idSoggettoMittente, idServizio);
-			}
-		}
-		return connettoreStatic;
-	}
 }

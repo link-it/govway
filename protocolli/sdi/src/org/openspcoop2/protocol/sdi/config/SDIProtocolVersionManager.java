@@ -21,8 +21,6 @@
 
 package org.openspcoop2.protocol.sdi.config;
 
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.config.BasicVersionManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -30,7 +28,6 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 /**
  * Classe che implementa, in base al protocollo SdI, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolVersionManager} 
@@ -145,19 +142,7 @@ public class SDIProtocolVersionManager extends SDIProtocolManager implements IPr
 	
 	
 	
-	
-	
-	/* *********** CONNETTORE ******************* */
-	
-	@Override
-	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
-			IRegistryReader registryReader) throws ProtocolException{
-		return this.basicVersionManager.getStaticRoute(idSoggettoMittente, idServizio, registryReader);
-	}
-	
-	
-	
-	
+
 	
 	/* *********** ALTRO ******************* */
     

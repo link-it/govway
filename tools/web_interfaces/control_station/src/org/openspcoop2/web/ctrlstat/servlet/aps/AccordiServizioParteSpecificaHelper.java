@@ -203,7 +203,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean generaPACheckSoggetto, List<ExtendedConnettore> listExtendedConnettore,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
-			boolean connettoreStatic
+			String protocollo
 			)
 					throws Exception {
 
@@ -385,6 +385,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Controllo dell'end-point
 			// Non li puo' prendere dalla servtlet
+			boolean connettoreStatic = false;
+			if(gestioneFruitori) {
+				connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
+			}
 			if(!connettoreStatic) {
 				if (!this.endPointCheckData(endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
@@ -529,7 +533,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					)
 				){
 				if (this.apsCore.existServizio(nomeservizio, tiposervizio, versioneInt, idSoggettoErogatore) > 0) {
-					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoErogatore);
 					String labelServizio = this.getLabelNomeServizio(protocollo, tiposervizio, nomeservizio, versioneInt);
 					String labelSoggetto = this.getLabelNomeSoggetto(protocollo, tipoErogatore, nomeErogatore);
 					String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI;
@@ -575,8 +578,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoErogatore);
-
+			
 			// Controllo che non esistano altri accordi di servizio parte specifica con stesso nome, versione e soggetto
 			if (tipoOp.equals(TipoOperazione.ADD)){
 				if(this.apsCore.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
@@ -1551,9 +1553,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						// Controllo se richiedere il connettore
 						boolean connettoreStatic = false;
 						if(gestioneFruitori) {
-							if(idServizio!=null && idFruitore!=null) {
-								connettoreStatic = this.apsCore.isConnettoreStatic(protocollo, idFruitore, idServizio);
-							}
+							connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
 						}
 						
 						de = new DataElement();
@@ -2747,11 +2747,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Controllo se richiedere il connettore
 			boolean connettoreStatic = false;
 			if(gestioneFruitori) {
-				IDServizio idServizioObject = this.idServizioFactory.getIDServizioFromAccordo(asps);
-				IDSoggetto idSoggettoMittente = new IDSoggetto(soggFruitore.getTipo(), soggFruitore.getNome());
-				if(idServizioObject!=null && idSoggettoMittente!=null) {
-					connettoreStatic = this.apsCore.isConnettoreStatic(protocollo, idSoggettoMittente, idServizioObject);
-				}
+				connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
 			}
 			
 			// setto la barra del titolo
@@ -5828,6 +5824,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String fruizioneAutorizzazioneRuoli, String fruizioneRuolo, String fruizioneAutorizzazioneRuoliTipologia,
 			String fruizioneAutorizzazioneRuoliMatch, String fruizioneServizioApplicativo) throws Exception{
 		
+		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		boolean gestioneFruitori = false;
+		if(tipologia!=null) {
+			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
+			}
+		}
+		
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		DataElement de = new DataElement();
@@ -5884,11 +5888,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
+		// Controllo se richiedere il connettore
+		boolean connettoreStatic = false;
+		if(gestioneFruitori) {
+			connettoreStatic = this.apsCore.isConnettoreStatic(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore()));
+		}
+		
 		// mode Connettore
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_CONNETTORE);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE);
-		if(this.isModalitaStandard()) {
+		if(this.isModalitaStandard() || connettoreStatic) {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(modeCreazione);
 		}

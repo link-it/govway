@@ -416,7 +416,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 					this.core.isRegistroServiziLocale() &&
 					(this.isModalitaCompleta() || this.pddCore.isPddEsterna(pdd) || multiTenant );
 				
+			if(!showConnettore) {
+				// guardo se fosse previsto un connettore static
+				boolean connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
+				if(connettoreStatic) {
+					showConnettore = true; // e' l'unico modo di indicare un connettore da utilizzare come info di registro (es. nel pmode per eDelivery)
+				}
+			}
+			
 			if(showConnettore){
+				
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,

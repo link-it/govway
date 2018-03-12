@@ -125,6 +125,7 @@ import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -862,11 +863,14 @@ public class InoltroBuste extends GenericLib{
 			Exception eForwardRoute = null;
 			if(functionAsRouter==false){
 				try{
-					org.openspcoop2.core.registry.Connettore connettoreProtocol = 
-							protocolFactory.createProtocolVersionManager(profiloGestione).getStaticRoute(soggettoFruitore,idServizio,
-									protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
-					if(connettoreProtocol!=null) {
-						connettore = connettoreProtocol.mappingIntoConnettoreConfigurazione();
+					IProtocolManager pm = protocolFactory.createProtocolManager();
+					if(pm.isStaticRoute()) {
+						org.openspcoop2.core.registry.Connettore connettoreProtocol = 
+								pm.getStaticRoute(soggettoFruitore,idServizio,
+										protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
+						if(connettoreProtocol!=null) {
+							connettore = connettoreProtocol.mappingIntoConnettoreConfigurazione();
+						}
 					}
 				}catch(Exception e){
 					eForwardRoute = e;

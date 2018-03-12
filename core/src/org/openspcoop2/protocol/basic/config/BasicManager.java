@@ -23,6 +23,8 @@ package org.openspcoop2.protocol.basic.config;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -194,7 +196,27 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
     		IRegistryReader registryReader) throws ProtocolException{
     	return msg;
     }
-	 
+	
+	
+	
+	
+	
+	/* *********** CONNETTORE ******************* */
+	
+    @Override
+	public boolean isStaticRoute()  throws ProtocolException{
+    	return false;
+    }
+    
+	@Override
+	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
+			IRegistryReader registryReader) throws ProtocolException{
+		return null;
+	}
+	
+	
+	
+	
 	
 	
 	/* *********** ALTRO ******************* */

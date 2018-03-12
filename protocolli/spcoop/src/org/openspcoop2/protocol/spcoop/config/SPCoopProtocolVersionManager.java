@@ -21,15 +21,12 @@
 
 package org.openspcoop2.protocol.spcoop.config;
 
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 
 /**
@@ -272,18 +269,7 @@ public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implemen
 	public boolean isGenerazioneErroreMessaggioOnewayDuplicato(){
 		return SPCoopCostanti.PROFILO_CNIPA_LINEE_GUIDA_11_BUSTA_EGOV_11.equals(this.versione);
 	}
-	
-	
-	
-	
-	
-	/* *********** CONNETTORE ******************* */
-	
-	@Override
-	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
-			IRegistryReader registryReader) throws ProtocolException{
-		return null;
-	}
+
 	
 	
 	

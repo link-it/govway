@@ -20,13 +20,9 @@
 
 package org.openspcoop2.protocol.sdk.config;
 
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 /**
  * Interfaccia del Manager del Protocollo con filtro sulla versione
@@ -167,23 +163,7 @@ public interface IProtocolVersionManager extends IProtocolManager {
 	 * @return Indicazione se in caso di messaggio con profilo oneway duplicato, debba essere generato un errore di protocollo o meno
 	 */
 	public boolean isGenerazioneErroreMessaggioOnewayDuplicato();
-	
-	
-	
-	
-	
-	/* *********** CONNETTORE ******************* */
-	
-	/**
-	 * Ritorna il connettore che la PdD deve utilizzare per la spedizione verso il dominio esterno rappresentato dai dati forniti nei parametri.
-	 * Permette di personalizzare a livello di protocollo il connettore utilizzato dalla PdD indipendentemente da quanto descritto nel registro.
-	 * 
-	 * @param idSoggettoMittente soggettoFruitore
-	 * @param idServizio servizio
-	 * @return Connettore da utilizzare per la spedizione verso il dominio esterno, indipendentemente da quanto descritto nel registro.
-	 */
-	public org.openspcoop2.core.registry.Connettore getStaticRoute(IDSoggetto idSoggettoMittente, IDServizio idServizio,
-			IRegistryReader registryReader) throws ProtocolException;
+
 	
 	
 	

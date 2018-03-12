@@ -37,7 +37,6 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -49,7 +48,6 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
@@ -67,7 +65,7 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -97,27 +95,9 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 
 	
-	public boolean isConnettoreStatic(String protocollo, IDSoggetto idSoggettoMittente, IDServizio idServizio) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "isConnettoreStatic";
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			DriverRegistroServiziDB driver = new DriverRegistroServiziDB(con, ControlStationCore.log, this.tipoDB);
-			
-			IProtocolFactory<?> pf = this.protocolFactoryManager.getProtocolFactoryByName(protocollo);
-			IRegistryReader registryReader = pf.getRegistryReader(driver);
-			Connettore c= pf.createProtocolVersionManager(null).
-					getStaticRoute(idSoggettoMittente, idServizio, registryReader);
-			return c!=null && !TipiConnettore.DISABILITATO.getNome().equals(c.getNome());
-			
-		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
+	public boolean isConnettoreStatic(String protocollo) throws ProtocolException   {
+		
+		return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolVersionManager(null).isStaticRoute();
 	}
 	
 	
