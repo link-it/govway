@@ -351,11 +351,17 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}else{
 				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 			}
-			if (esito.isClientIdentified() == false) {
+			if (esito.isClientAuthenticated()==false || esito.isClientIdentified() == false) {
 				if(errori.length()>0 || tipoAutenticazione.length>1)
 					errori.append("\n");
 				try{
-					errori.append("(Autenticazione " +tipoAutenticazione[i]+") "+ esito.getErroreIntegrazione().getDescrizione(protocolFactory));
+					if(esito.getErroreIntegrazione()!=null) {
+						errori.append("(Autenticazione " +tipoAutenticazione[i]+") "+ esito.getErroreIntegrazione().getDescrizione(protocolFactory));
+					}
+					else {
+						// l'errore puo' non esserci se l'identificazione non e' obbligatoria nella modalita' scelta.
+						errori.append("(Autenticazione " +tipoAutenticazione[i]+") non ha identificato alcun servizio applicativo");
+					}
 				}catch(Exception e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione dell'errore: "+e.getMessage(),e);
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

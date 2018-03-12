@@ -50,12 +50,16 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     	String principal = credenziali.getPrincipal();
 
 		// Controllo credenziali fornite
-    	if( principal==null ){
+    	if( principal==null || "".equals(principal) ){
     		esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
+    		esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
 		}
 		
+    	// Essendoci il principal del chiamante, il client e' stato autenticato dal container
+    	esito.setClientAuthenticated(true);
+    	
     	IDSoggetto idSoggetto = null;
 		try{
 			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoByCredenzialiPrincipal(principal, null); // all registry
@@ -72,13 +76,15 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		}
 		
 		if(idSoggetto == null){
-			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
+			// L'identificazione in ssl non e' obbligatoria
+			//esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientIdentified(false);
 			return esito;
 		}
-		
-		esito.setClientIdentified(true);
-		esito.setIdSoggetto(idSoggetto);
+		else {
+			esito.setClientIdentified(true);
+			esito.setIdSoggetto(idSoggetto);
+		}
 		
 		return esito;
 		

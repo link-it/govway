@@ -54,9 +54,15 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		String user = credenziali.getUsername();
 		String password = credenziali.getPassword();
 
+		// NOTA: in http-basic il processo di autenticazione ed il processo di identificazione sono unito a differenza di ssl/principal
+		//       le credenziali devono essere verificate all'interno della base dati del registro, che in ugual maniera permette anche di identificare l'attore
+		//		 Nel caso optional, la transazione continuera' correttamente, ma verra' comunque segnalato le credenziali errate nei diagnostici.
+		//		 a differenza dei casi ssl/principal dove credenziali che non corrispondono ad alcun attore, non comportano una segnalazione nei diagnostici.
+		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali non fornite",user,password));
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
 		}
@@ -70,6 +76,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
 			return esito;
@@ -77,12 +84,15 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		if(idServizioApplicativo == null){
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali fornite non corrette",user,password));
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
 		}
-		
-		esito.setClientIdentified(true);
-		esito.setIdServizioApplicativo(idServizioApplicativo);
+		else {
+			esito.setClientAuthenticated(true);
+			esito.setClientIdentified(true);
+			esito.setIdServizioApplicativo(idServizioApplicativo);
+		}
 		
 		return esito;
 		

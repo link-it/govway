@@ -42,7 +42,10 @@ public abstract class EsitoAutenticazione implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** Indicazione se il client e' autenticato */
-	private boolean clientIdentified;
+	private boolean clientAuthenticated = false;
+
+	/** Indicazione se il client e' identificato */
+	private boolean clientIdentified = false;
 	
 	/** Dettagli aggiuntivi */
 	private String details;
@@ -52,20 +55,19 @@ public abstract class EsitoAutenticazione implements java.io.Serializable {
 	private boolean noCache = false;
 	
 		
-	/**
-	 * Ritorna l'indicazione se il chiamante è autenticato
-	 * 
-	 * @return indicazione se il chiamante è autenticato
-	 */
+	
+	public boolean isClientAuthenticated() {
+		return this.clientAuthenticated;
+	}
+
+	public void setClientAuthenticated(boolean clientAuthenticated) {
+		this.clientAuthenticated = clientAuthenticated;
+	}
+	
 	public boolean isClientIdentified() {
 		return this.clientIdentified;
 	}
-	
-	/**
-	 * Imposta l'indicazione se il chiamante è autenticato
-	 * 
-	 * @param clientIdentified indicazione se il chiamante è autenticato
-	 */
+
 	public void setClientIdentified(boolean clientIdentified) {
 		this.clientIdentified = clientIdentified;
 	}
@@ -85,7 +87,7 @@ public abstract class EsitoAutenticazione implements java.io.Serializable {
 		this.noCache = true; // per default quando si imposta una eccezione di processamento il risultato non sarà salvato. Se si vuole cacharlo richiamare il metodo setNoCache(false);
 	}
 	
-	public String getHeader(){
+	protected String getHeader(){
 		if(this.clientIdentified){
 			return "AUTENTICATO";
 		}

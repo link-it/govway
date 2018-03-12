@@ -102,6 +102,7 @@ public class CostantiConfigurazione {
 	public final static String LABEL_CREDENZIALE_BASIC = "http-basic";
 	public final static String LABEL_CREDENZIALE_SSL = "https";
 	public final static String LABEL_CREDENZIALE_PRINCIPAL = "principal";
+	public final static String LABEL_CREDENZIALE_DISABILITATO = "disabilitato";
     
     /** tipo di porta autenticazione */
     public final static String AUTENTICAZIONE_NONE = "none";

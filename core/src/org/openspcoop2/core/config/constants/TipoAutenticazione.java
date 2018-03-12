@@ -35,14 +35,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  */
 public enum TipoAutenticazione implements IEnumeration , Serializable , Cloneable {
 
-	DISABILITATO (CostantiConfigurazione.AUTENTICAZIONE_NONE,"disabilitato"),
-	SSL (CostantiConfigurazione.AUTENTICAZIONE_SSL,"ssl"),
-	BASIC (CostantiConfigurazione.AUTENTICAZIONE_BASIC,"basic"),
-//	SSL_BASIC (CostantiConfigurazione.AUTENTICAZIONE_SSL_BASIC,"ssl-basic"),
-	PRINCIPAL (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL,"principal");
-//	PRINCIPAL_SSL_BASIC (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_SSL_BASIC,"principal-ssl-basic"),
-//	PRINCIPAL_SSL(CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_SSL,"principal-ssl"),
-//	PRINCIPAL_BASIC (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_BASIC,"principal-basic");
+	DISABILITATO (CostantiConfigurazione.AUTENTICAZIONE_NONE,CostantiConfigurazione.LABEL_CREDENZIALE_DISABILITATO),
+	SSL (CostantiConfigurazione.AUTENTICAZIONE_SSL,CostantiConfigurazione.LABEL_CREDENZIALE_SSL),
+	BASIC (CostantiConfigurazione.AUTENTICAZIONE_BASIC,CostantiConfigurazione.LABEL_CREDENZIALE_BASIC),
+	PRINCIPAL (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL,CostantiConfigurazione.LABEL_CREDENZIALE_PRINCIPAL);
 	
 	/** Value */
 	private String value;
@@ -118,18 +114,7 @@ public enum TipoAutenticazione implements IEnumeration , Serializable , Cloneabl
 	public static List<String> getLabels(){
 		List<String> l = new ArrayList<>();
 		for (TipoAutenticazione tmp : values()) {
-			if(TipoAutenticazione.BASIC.equals(tmp)) {
-				l.add(CostantiConfigurazione.LABEL_CREDENZIALE_BASIC);
-			}
-			else if(TipoAutenticazione.SSL.equals(tmp)) {
-				l.add(CostantiConfigurazione.LABEL_CREDENZIALE_SSL);
-			}
-			else if(TipoAutenticazione.PRINCIPAL.equals(tmp)) {
-				l.add(CostantiConfigurazione.LABEL_CREDENZIALE_PRINCIPAL);
-			}
-			else {
-				l.add(tmp.getLabel());
-			}
+			l.add(tmp.getLabel());
 		}
 		return l;
 	}

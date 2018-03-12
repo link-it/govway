@@ -2101,21 +2101,35 @@ public class RicezioneBuste {
 						}else{
 							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 						}
-						if (esito.isClientIdentified() == false) {
+						
+						if(esito.isClientAuthenticated() == false) {
 							erroreCooperazione = esito.getErroreCooperazione();
 							erroreIntegrazione = esito.getErroreIntegrazione();
 							eAutenticazione = esito.getEccezioneProcessamento();
 							msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, credenziali.toString(true)); // Aggiungo la password se presente
+						}
+						else {
+							if(esito.isClientIdentified()) {
+								soggettoAutenticato = true;
+								soggettoFruitore = esito.getIdSoggetto();
+								msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
+								msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
+							}
+							else {
+								// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria
+								erroreCooperazione = esito.getErroreCooperazione();
+								erroreIntegrazione = esito.getErroreIntegrazione();
+								eAutenticazione = esito.getEccezioneProcessamento();
+							}
+						}
+						
+						if (erroreIntegrazione != null || erroreCooperazione!=null) {
 							if(autenticazioneOpzionale==false){
 								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
 							}
 						}
-						else{
+						else {
 							msgDiag.logPersonalizzato("autenticazioneEffettuata");
-							soggettoAutenticato = true;
-							soggettoFruitore = esito.getIdSoggetto();
-							msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
-							msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
 						}
 						
 					} catch (Exception e) {

@@ -1318,18 +1318,31 @@ public class RicezioneContenutiApplicativi {
 				}else{
 					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 				}
-				if (esito.isClientIdentified() == false) {
+				
+				if(esito.isClientAuthenticated() == false) {
 					errore = esito.getErroreIntegrazione();
 					eAutenticazione = esito.getEccezioneProcessamento();
 					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenziali.toString(true)); // Aggiungo la password se presente
+				}
+				else {
+					if(esito.isClientIdentified()) {
+						servizioApplicativo = esito.getIdServizioApplicativo().getNome();
+						msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
+					}
+					else {
+						// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria
+						errore = esito.getErroreIntegrazione();
+						eAutenticazione = esito.getEccezioneProcessamento();
+					}
+				}
+				
+				if(errore!=null) {
 					if(autenticazioneOpzionale==false){
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
 					}
 				}
-				else{
+				else {
 					msgDiag.logPersonalizzato("autenticazioneEffettuata");
-					servizioApplicativo = esito.getIdServizioApplicativo().getNome();
-					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 				}
 				
 			} catch (Exception e) {

@@ -50,12 +50,17 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	String subject = credenziali.getSubject();
 
 		// Controllo credenziali fornite
-    	if( subject==null ){
+    	if( subject==null || "".equals(subject) ){
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali non fornite",subject));
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
 		}
+    	
+    	// Essendoci l'identita' del chiamante, il client e' stato autenticato o da un frontend o dall'application server stesso
+    	esito.setClientAuthenticated(true);
 		
+    	// Provo a identificare il chiamante rispetto ad una entita' del registro
 		IDServizioApplicativo idServizioApplicativo = null;
 		try{
 			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
@@ -71,13 +76,14 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		}
 		
 		if(idServizioApplicativo == null){
-			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette",subject));
+			// L'identificazione in ssl non e' obbligatoria
+			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette",subject));
 			esito.setClientIdentified(false);
-			return esito;
 		}
-		
-		esito.setClientIdentified(true);
-		esito.setIdServizioApplicativo(idServizioApplicativo);
+		else {
+			esito.setClientIdentified(true);
+			esito.setIdServizioApplicativo(idServizioApplicativo);
+		}
 		
 		return esito;
 		

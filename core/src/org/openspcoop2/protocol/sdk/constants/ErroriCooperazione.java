@@ -118,10 +118,10 @@ public enum ErroriCooperazione {
 	MESSAGE_SECURITY("E' occorso un errore durante la gestione della Sicurezza sul Messaggio",
 			null),
 			
-	AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE("Identificazione fallita, credenziali non fornite",
+	AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE("Autenticazione fallita, credenziali non fornite",
 			CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO),
 	
-	AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE("Identificazione fallita, credenziali fornite non corrette",
+	AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE("Autenticazione fallita, credenziali fornite non corrette",
 			CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO),
 	
 	AUTORIZZAZIONE_FALLITA("Il Mittente non è autorizzato a fruire del servizio richiesto",

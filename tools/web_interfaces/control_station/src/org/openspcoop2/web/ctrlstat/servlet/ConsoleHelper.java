@@ -3331,10 +3331,13 @@ public class ConsoleHelper {
 				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati) && 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)){
 					if(isSupportatoAutenticazione && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)==false){
-						this.pd.setMessage(MessageFormat.format(
-								CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_MODALITA_DI_AUTENTICAZIONE_OBBLIGATORIA_NON_E_POSSIBILE_SELEZIONARE_ENTRAMBE_LE_MODALITA_DI_AUTORIZZAZIONE,
-								labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));
-						return false;
+						// Rilasso questo vincolo alla solta autenticazione di tipo http-basic, poiche' nelle altre l'identificazione di un applicativo o soggetto non e' obbligatoria
+						if(TipoAutenticazione.BASIC.equals(autenticazione)){
+							this.pd.setMessage(MessageFormat.format(
+									CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_MODALITA_DI_AUTENTICAZIONE_BASIC_OBBLIGATORIA_NON_E_POSSIBILE_SELEZIONARE_ENTRAMBE_LE_MODALITA_DI_AUTORIZZAZIONE,
+									labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));
+							return false;
+						}
 					}
 				}
 				

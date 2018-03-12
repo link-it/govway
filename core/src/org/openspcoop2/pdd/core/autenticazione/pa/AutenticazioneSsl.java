@@ -49,12 +49,16 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		
     	String subject = credenziali.getSubject();
 
-		// Controllo credenziali fornite
-    	if( subject==null ){
+    	// Controllo credenziali fornite
+    	if( subject==null || "".equals(subject) ){
     		esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
-			esito.setClientIdentified(false);
+    		esito.setClientAuthenticated(false);
+    		esito.setClientIdentified(false);
 			return esito;
 		}
+    	
+    	// Essendoci l'identita' del chiamante, il client e' stato autenticato o da un frontend o dall'application server stesso
+    	esito.setClientAuthenticated(true);
 		
     	IDSoggetto idSoggetto = null;
 		try{
@@ -72,13 +76,15 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		}
 		
 		if(idSoggetto == null){
-			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
+			// L'identificazione in ssl non e' obbligatoria
+			// esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientIdentified(false);
 			return esito;
 		}
-		
-		esito.setClientIdentified(true);
-		esito.setIdSoggetto(idSoggetto);
+		else {
+			esito.setClientIdentified(true);
+			esito.setIdSoggetto(idSoggetto);
+		}
 		
 		return esito;
 		

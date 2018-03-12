@@ -54,9 +54,15 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		String user = credenziali.getUsername();
 		String password = credenziali.getPassword();
 
+		// NOTA: in http-basic il processo di autenticazione ed il processo di identificazione sono unito a differenza di ssl/principal
+		//       le credenziali devono essere verificate all'interno della base dati del registro, che in ugual maniera permette anche di identificare l'attore
+		//		 Nel caso optional, la transazione continuera' correttamente, ma verra' comunque segnalato le credenziali errate nei diagnostici.
+		//		 a differenza dei casi ssl/principal dove credenziali che non corrispondono ad alcun attore, non comportano una segnalazione nei diagnostici.
+		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
 			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
 		}
@@ -71,6 +77,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita",e);
 			esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			esito.setEccezioneProcessamento(e);
 			return esito;
@@ -78,12 +85,15 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		if(idSoggetto == null){
 			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
 		}
-		
-		esito.setClientIdentified(true);
-		esito.setIdSoggetto(idSoggetto);
+		else {
+			esito.setClientAuthenticated(true);
+			esito.setClientIdentified(true);
+			esito.setIdSoggetto(idSoggetto);
+		}
 		
 		return esito;
 		

@@ -50,12 +50,16 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     	String principal = credenziali.getPrincipal();
 
 		// Controllo credenziali fornite
-    	if( principal==null ){
+    	if( principal==null || "".equals(principal) ){
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali non fornite",principal));
+			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			return esito;
 		}
 		
+    	// Essendoci il principal del chiamante, il client e' stato autenticato dal container
+    	esito.setClientAuthenticated(true);
+    	
 		IDServizioApplicativo idServizioApplicativo = null;
 		try{
 			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
@@ -71,13 +75,15 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		}
 		
 		if(idServizioApplicativo == null){
-			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette",principal));
+			// L'identificazione in ssl non e' obbligatoria
+			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette",principal));
 			esito.setClientIdentified(false);
 			return esito;
 		}
-		
-		esito.setClientIdentified(true);
-		esito.setIdServizioApplicativo(idServizioApplicativo);
+		else {
+			esito.setClientIdentified(true);
+			esito.setIdServizioApplicativo(idServizioApplicativo);
+		}
 		
 		return esito;
 		
