@@ -74,6 +74,7 @@
 			<include name="stub/cxf/openspcoop2_registryStub_cxf.jar"/>
 			<include name="stub/cxf/openspcoop2_configStub_cxf.jar"/>
 			<include name="stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
+			<include name="stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 			<include name="swagger/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>

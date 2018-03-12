@@ -97,6 +97,7 @@
 		<if>
 			<or>
 				<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+				<isfalse value="${build_pddLoader_consoleIntegrataEAR}"/>
 			</or>
 			<then>
 				<antcall target="set_property">

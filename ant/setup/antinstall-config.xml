@@ -159,7 +159,7 @@
 
     </page>
 
-    <page name="preinstallazione4_eDeliveryDBCompatible" type="input" displayText="Cooperazione Applicativa" ifProperty="(${antinstaller_as}==mysql) OR (${antinstaller_as}==oracle)">
+    <page name="preinstallazione4_eDeliveryDBCompatible" type="input" displayText="Cooperazione Applicativa" ifProperty="(${antinstaller_tipo_database}==mysql) OR (${antinstaller_tipo_database}==oracle)">
 
         <comment displayText="Protocolli attivi" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
@@ -183,7 +183,7 @@
 
     </page>
 
-    <page name="preinstallazione4_eDeliveryDBNotCompatible" type="input" displayText="Cooperazione Applicativa" ifProperty="(${antinstaller_as}!=mysql) AND (${antinstaller_as}!=oracle)">
+    <page name="preinstallazione4_eDeliveryDBNotCompatible" type="input" displayText="Cooperazione Applicativa" ifProperty="(${antinstaller_tipo_database}!=mysql) AND (${antinstaller_tipo_database}!=oracle)">
 
         <comment displayText="Protocolli attivi" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
@@ -234,7 +234,7 @@
 
     <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
         
-         <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>
+         <checkbox defaultValue="false" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>
 
     </page>
 

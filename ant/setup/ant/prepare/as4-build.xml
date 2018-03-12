@@ -29,6 +29,8 @@
 		</delete>
 		<delete dir="${deploy_sw}/as4"/>
 		<delete dir="it"/>
+		<delete dir="eu"/>
+		<delete dir="backend"/>
 		
 	</target>
 	
