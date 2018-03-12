@@ -71,7 +71,17 @@
 	<property name="src_loaderConsole" value="${loaderConsole}/src" />
 	<property name="required_lib_loaderConsole" value="${required_lib}"/>
 	<import file="${loaderConsole}/build.xml"/>
+		
+	<!-- Trasparente -->
+	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>
+	<property name="src_trasparente" value="${trasparente}/src" />
+	<import file="${trasparente}/build.xml" />
 	
+	<!-- AS4 -->
+	<property name="as4" value="${rootDir}/protocolli/as4"/>
+	<property name="src_as4" value="${as4}/src" />
+	<import file="${as4}/build.xml" />
+
 	<!-- SPCoop -->
 	<property name="spcoop" value="${rootDir}/protocolli/spcoop"/>
 	<property name="src_spcoop" value="${spcoop}/src" />
@@ -81,11 +91,6 @@
 	<property name="sdi" value="${rootDir}/protocolli/sdi"/>
 	<property name="src_sdi" value="${sdi}/src" />
 	<import file="${sdi}/build.xml" />
-	
-	<!-- Trasparente -->
-	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>
-	<property name="src_trasparente" value="${trasparente}/src" />
-	<import file="${trasparente}/build.xml" />
 	
 	<!-- SPCoop BackwardCompatibility -->
 	<property name="backwardCompatibility" value="${spcoop}/tools/backward_compatibility"/>

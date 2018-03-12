@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="OpenSPCoop2 Installer v2.3.1" defaultImageResource="/logoSetup.png"
+<installer name="OpenSPCoop2 Installer v3.0" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -8,7 +8,7 @@
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
 
-    <page type="input" name="intro" displayText="Installer Porta di Dominio OpenSPCoop2 v2.3.1">
+    <page type="input" name="intro" displayText="Installer Porta di Dominio OpenSPCoop2 v3.0">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software OpenSPCoop2 e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
@@ -33,6 +33,8 @@
         <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
             <option value="postgresql" text="PostgreSQL"/>
             <option value="mysql" text="MySQL"/>
+	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
+  	    <option value="mysql" text="MariaDB"/>
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
@@ -157,19 +159,44 @@
 
     </page>
 
-    <page name="preinstallazione4" type="input" displayText="Cooperazione Applicativa">
+    <page name="preinstallazione4_eDeliveryDBCompatible" type="input" displayText="Cooperazione Applicativa" ifProperty="(${antinstaller_as}==mysql) OR (${antinstaller_as}==oracle)">
 
         <comment displayText="Protocolli attivi" bold="true"/>
+        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
-        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="Proxy Trasparente"/>
+	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="SdI (Fatturazione Elettronica)"/>
          
 
 		<comment displayText=""/>	
         <!-- <comment displayText="Soggetto della PdD" bold="true"/> -->
-        <hidden property="antinstaller_tiposoggetto_spcoop" value="SPC"/>
-        <hidden property="antinstaller_tiposoggetto_sdi" value="SDI"/>
-        <hidden property="antinstaller_tiposoggetto_trasparente" value="PROXY"/>
+        <hidden property="antinstaller_tiposoggetto_trasparente" value="gw"/>
+        <hidden property="antinstaller_tiposoggetto_as4" value="as4"/>
+        <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
+        <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
+        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto della PdD" regex="^[0-9A-Za-z]+$"/>
+        
+        <!--
+        <comment displayText=""/>
+         <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="true" displayText="Compatibilità OpenSPCoop-v1"/>
+         -->
+
+    </page>
+
+    <page name="preinstallazione4_eDeliveryDBNotCompatible" type="input" displayText="Cooperazione Applicativa" ifProperty="(${antinstaller_as}!=mysql) AND (${antinstaller_as}!=oracle)">
+
+        <comment displayText="Protocolli attivi" bold="true"/>
+        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
+        <checkbox defaultValue="true" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
+        <hidden property="antinstaller_protocollo_as4" value="false"/>
+	<checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="SdI (Fatturazione Elettronica)"/>
+
+		<comment displayText=""/>	
+        <!-- <comment displayText="Soggetto della PdD" bold="true"/> -->
+        <hidden property="antinstaller_tiposoggetto_trasparente" value="gw"/>
+        <hidden property="antinstaller_tiposoggetto_as4" value="as4"/>
+        <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
+        <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
         <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto della PdD" regex="^[0-9A-Za-z]+$"/>
         
         <!--

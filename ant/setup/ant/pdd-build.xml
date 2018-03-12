@@ -77,6 +77,7 @@
 		  altrimenti se abilitati verrano scelto nell'ordine:
 		  - trasparente
 		  - spcoop
+		  - as4
 		  - sdi
 		-->
 		<if>
@@ -145,27 +146,48 @@
 								</antcall>
 							</then>
 							<else>
-								<if>
-									<istrue value="${antinstaller_protocollo_sdi}"/>
-									<then>
-										<antcall target="set_property">
-										    <param name="file" value="${file}"/>
-											<param name="token" value="org.openspcoop2.pdd.services.defaultProtocol"/>
-											<param name="value" value="sdi"/>
-										</antcall>
-										<antcall target="set_property">
-										    <param name="file" value="${file}"/>
-											<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-											<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
-											<param name="value" value="OpenSPCoopPdD"/>
-										</antcall>
-										<antcall target="set_property">
-										    <param name="file" value="${file}"/>
-											<param name="token" value="org.openspcoop2.pdd.identificativoPorta.tipo"/>
-											<param name="value" value="${antinstaller_tiposoggetto_sdi}"/>
-										</antcall>
-									</then>
-								</if>
+								<istrue value="${antinstaller_protocollo_as4}"/>
+								<then>
+									<antcall target="set_property">
+									    <param name="file" value="${file}"/>
+										<param name="token" value="org.openspcoop2.pdd.services.defaultProtocol"/>
+										<param name="value" value="as4"/>
+									</antcall>
+									<antcall target="set_property">
+									    <param name="file" value="${file}"/>
+										<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
+										<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
+										<param name="value" value="OpenSPCoopPdD"/>
+									</antcall>
+									<antcall target="set_property">
+									    <param name="file" value="${file}"/>
+										<param name="token" value="org.openspcoop2.pdd.identificativoPorta.tipo"/>
+										<param name="value" value="${antinstaller_tiposoggetto_as4}"/>
+									</antcall>
+								</then>
+								<else>
+									<if>
+										<istrue value="${antinstaller_protocollo_sdi}"/>
+										<then>
+											<antcall target="set_property">
+											    <param name="file" value="${file}"/>
+												<param name="token" value="org.openspcoop2.pdd.services.defaultProtocol"/>
+												<param name="value" value="sdi"/>
+											</antcall>
+											<antcall target="set_property">
+											    <param name="file" value="${file}"/>
+												<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
+												<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
+												<param name="value" value="OpenSPCoopPdD"/>
+											</antcall>
+											<antcall target="set_property">
+											    <param name="file" value="${file}"/>
+												<param name="token" value="org.openspcoop2.pdd.identificativoPorta.tipo"/>
+												<param name="value" value="${antinstaller_tiposoggetto_sdi}"/>
+											</antcall>
+										</then>
+									</if>
+								</else>
 							</else>
 						</if>
 					</else>
@@ -227,6 +249,28 @@
 			</then>
 		</if>
 		<if>
+			<istrue value="${antinstaller_protocollo_as4}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.as4.identificativoPorta.dominio"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
+					<param name="value" value="OpenSPCoopPdD"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.as4.identificativoPorta.tipo"/>
+					<param name="value" value="${antinstaller_tiposoggetto_as4}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.as4.identificativoPorta.nome"/>
+					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
+					<param name="value" value="OpenSPCoop"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
 				<antcall target="set_property">
@@ -274,8 +318,25 @@
 			</then>
 		</if>
 
-		<!-- NOTA: TODO Gestire l'aggiunta degli header separati da ',' usati sia per backward compatibility che sdi che in futuro ... -->
+		<!-- NOTA: TODO Gestire l'aggiunta degli header separati da ',' usati sia per backward compatibility che sdi che as4 che in futuro ... -->
 		
+		<!-- PROTOCOL AS4-->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.init"/>
+					<param name="value" value="as4"/>
+				</antcall>	
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.exit"/>
+					<param name="value" value="as4"/>
+				</antcall>	
+			</then>
+		</if>
+
 		<!-- PROTOCOL SDI-->
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}"/>
@@ -447,6 +508,23 @@
 					</then>
 				</if>
 				
+				<!-- PROTOCOL AS4-->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.init.as4"/>
+							<param name="value" value="org.openspcoop2.protocol.as4.services.InitHandler"/>
+						</antcall>	
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.exit.as4"/>
+							<param name="value" value="org.openspcoop2.protocol.as4.services.ExitHandler"/>
+						</antcall>	
+					</then>
+				</if>
+
 				<!-- PROTOCOL SDI-->
 				<if>
 					<istrue value="${antinstaller_protocollo_sdi}"/>

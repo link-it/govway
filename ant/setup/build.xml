@@ -66,13 +66,15 @@
 			antinstaller_oracle_mode=SID/serviceName
 			
 		Cooperazione Applicativa
+			antinstaller_protocollo_trasparente=true
 			antinstaller_protocollo_spcoop=true
+			antinstaller_protocollo_as4=true
 			antinstaller_protocollo_sdi=false
-			antinstaller_protocollo_trasparente=false
 			antinstaller_nomesoggetto=NOMESOGGETTO
-			antinstaller_tiposoggetto_spcoop=SPC
-			antinstaller_tiposoggetto_sdi=SDI
-			antinstaller_tiposoggetto_trasparente=PROXY
+			antinstaller_tiposoggetto_trasparente=gw
+			antinstaller_tiposoggetto_spcoop=spc
+			antinstaller_tiposoggetto_as4=as4
+			antinstaller_tiposoggetto_sdi=sdi
 			
 		Configurazione Avanzata
 			antinstaller_stateful=false
@@ -232,6 +234,17 @@
 				    <param name="file" value="*.properties"/>
 				</antcall>
 				
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
 				<!-- spcoop -->
 				<if>
 					<istrue value="${antinstaller_protocollo_spcoop}" />
@@ -239,6 +252,17 @@
 						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+						    </fileset>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						    <fileset dir="${deploy_sw}">
+						      <include name="openspcoop2_as4-protocol_*.jar"/>
 						    </fileset>
 						</copy>
 					</then>
@@ -254,17 +278,7 @@
 						</copy>
 					</then>
 				</if>
-				<!-- trasparente -->
-				<if>
-					<istrue value="${antinstaller_protocollo_trasparente}" />
-					<then>
-						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-						    </fileset>
-						</copy>
-					</then>
-				</if>
+
 	
 				<!-- openspcoop2sec -->
 				<if>
@@ -337,6 +351,17 @@
 		    <param name="dir" value="${tomcat_war}/WEB-INF/classes"/>
 		    <param name="file" value="*.properties"/>
 		</antcall>
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy todir="${tomcat_war}/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- spcoop -->
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}" />
@@ -348,6 +373,17 @@
 				</copy>
 			</then>
 		</if>
+		<!-- as4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<copy todir="${tomcat_war}/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_as4-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- sdi -->
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}" />
@@ -355,17 +391,6 @@
 				<copy todir="${tomcat_war}/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_sdi-protocol_*.jar"/>
-				    </fileset>
-				</copy>
-			</then>
-		</if>
-		<!-- trasparente -->
-		<if>
-			<istrue value="${antinstaller_protocollo_trasparente}" />
-			<then>
-				<copy todir="${tomcat_war}/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
 				    </fileset>
 				</copy>
 			</then>
@@ -403,6 +428,32 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
                            files="${antinstaller_tipo_database}/OpenSPCoop2.sql init.sql"/>
 		</concat>
 		
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/init_soggetto_trasparente.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/init_soggetto_trasparente.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_trasparente}"/>
+					<param name="sql_idporta" value="${antinstaller_nomesoggetto}PdD"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_trasparente}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				  <header filtering="no" trimleading="yes">
+
+-- Protocol trasparente
+					      	
+				  </header>					
+				  <filelist dir="${tmp_sql}"
+		                           files="init_soggetto_trasparente.sql"/>
+				</concat>
+				<delete file="${tmp_sql}/init_soggetto_trasparente.sql" failonerror="false"/>
+			</then>
+		</if>
+
 		<!-- spcoop -->
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}" />
@@ -429,6 +480,32 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			</then>
 		</if>
 		
+		<!-- as4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/init_soggetto_as4.sql" overwrite="true"/>
+				<antcall target="sql_settings_by_protocol">
+				    <param name="file" value="${tmp_sql}/init_soggetto_as4.sql"/>
+					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
+					<param name="sql_tipo" value="${antinstaller_tiposoggetto_as4}"/>
+					<param name="sql_idporta" value="${antinstaller_nomesoggetto}PdD"/>
+					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_as4}${antinstaller_nomesoggetto},c=it"/>
+					<param name="sql_protocollo_versione" value="1.0"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				  <header filtering="no" trimleading="yes">
+
+-- Protocol as4
+				      	
+				  </header>
+				  <filelist dir="${tmp_sql}"
+		                           files="init_soggetto_as4.sql"/>
+				</concat>
+				<delete file="${tmp_sql}/init_soggetto_as4.sql" failonerror="false"/>
+			</then>
+		</if>
+
 		<!-- sdi -->
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}" />
@@ -452,32 +529,6 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		                           files="init_soggetto_sdi.sql"/>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_sdi.sql" failonerror="false"/>
-			</then>
-		</if>
-
-		<!-- trasparente -->
-		<if>
-			<istrue value="${antinstaller_protocollo_trasparente}" />
-			<then>
-				<copy file="${deploy_sql}/init_soggetto.sql" tofile="${tmp_sql}/init_soggetto_trasparente.sql" overwrite="true"/>
-				<antcall target="sql_settings_by_protocol">
-				    <param name="file" value="${tmp_sql}/init_soggetto_trasparente.sql"/>
-					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
-					<param name="sql_tipo" value="${antinstaller_tiposoggetto_trasparente}"/>
-					<param name="sql_idporta" value="${antinstaller_nomesoggetto}PdD"/>
-					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_trasparente}${antinstaller_nomesoggetto},c=it"/>
-					<param name="sql_protocollo_versione" value="1.0"/>
-				</antcall>
-				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
-				  <header filtering="no" trimleading="yes">
-
--- Protocol trasparente
-					      	
-				  </header>					
-				  <filelist dir="${tmp_sql}"
-		                           files="init_soggetto_trasparente.sql"/>
-				</concat>
-				<delete file="${tmp_sql}/init_soggetto_trasparente.sql" failonerror="false"/>
 			</then>
 		</if>
 			
@@ -609,6 +660,17 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<param name="dir" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes"/>
 		    <param name="file" value="*.cfg"/>
 		</antcall>
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- spcoop -->
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
@@ -620,6 +682,17 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				</copy>
 			</then>
 		</if>
+		<!-- as4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_as4-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- sdi -->
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}"/>
@@ -627,17 +700,6 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_sdi-protocol_*.jar"/>
-				    </fileset>
-				</copy>
-			</then>
-		</if>
-		<!-- trasparente -->
-		<if>
-			<istrue value="${antinstaller_protocollo_trasparente}" />
-			<then>
-				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
 				    </fileset>
 				</copy>
 			</then>
@@ -669,6 +731,17 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<param name="dir" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes"/>
 		    <param name="file" value="*.properties"/>
 		</antcall>
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- spcoop -->
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
@@ -680,6 +753,17 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				</copy>
 			</then>
 		</if>
+		<!-- as4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_as4-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 		<!-- sdi -->
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}"/>
@@ -687,17 +771,6 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_sdi-protocol_*.jar"/>
-				    </fileset>
-				</copy>
-			</then>
-		</if>
-		<!-- trasparente -->
-		<if>
-			<istrue value="${antinstaller_protocollo_trasparente}" />
-			<then>
-				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
 				    </fileset>
 				</copy>
 			</then>

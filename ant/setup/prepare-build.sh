@@ -11,9 +11,10 @@ CORE=${ROOT}/core
 WEB_LIB=${ROOT}/tools/web_interfaces/lib
 PDD_CONSOLE=${ROOT}/tools/web_interfaces/control_station
 LOADER_CONSOLE=${ROOT}/tools/web_interfaces/loader
-SPCOOP_PROTOCOL=${ROOT}/protocolli/spcoop
-SDI_PROTOCOL=${ROOT}/protocolli/sdi
 TRASPARENTE_PROTOCOL=${ROOT}/protocolli/trasparente
+SPCOOP_PROTOCOL=${ROOT}/protocolli/spcoop
+AS4_PROTOCOL=${ROOT}/protocolli/as4
+SDI_PROTOCOL=${ROOT}/protocolli/sdi
 SPCOOP_BACKWARD_COMPATIBILITY=${ROOT}/protocolli/spcoop/tools/backward_compatibility
 
 # Core
@@ -59,22 +60,28 @@ then
         cp ${LOADER_CONSOLE}/local_env.xml.template ${LOADER_CONSOLE}/local_env.xml
 fi
 
+# Protocollo Trasparente
+if [ ! -f ${TRASPARENTE_PROTOCOL}/local_env.xml  ]
+then
+        cp ${TRASPARENTE_PROTOCOL}/local_env.xml.template ${TRASPARENTE_PROTOCOL}/local_env.xml
+fi
+
 # Protocollo SPCoop
 if [ ! -f ${SPCOOP_PROTOCOL}/local_env.xml  ]
 then
         cp ${SPCOOP_PROTOCOL}/local_env.xml.template ${SPCOOP_PROTOCOL}/local_env.xml
 fi
 
+# Protocollo AS4
+if [ ! -f ${AS4_PROTOCOL}/local_env.xml  ]
+then
+        cp ${AS4_PROTOCOL}/local_env.xml.template ${AS4_PROTOCOL}/local_env.xml
+fi
+
 # Protocollo SDI
 if [ ! -f ${SDI_PROTOCOL}/local_env.xml  ]
 then
         cp ${SDI_PROTOCOL}/local_env.xml.template ${SDI_PROTOCOL}/local_env.xml
-fi
-
-# Protocollo Trasparente
-if [ ! -f ${TRASPARENTE_PROTOCOL}/local_env.xml  ]
-then
-        cp ${TRASPARENTE_PROTOCOL}/local_env.xml.template ${TRASPARENTE_PROTOCOL}/local_env.xml
 fi
 
 # Modulo di BackwardCompatibility SPCoop

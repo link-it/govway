@@ -9,9 +9,10 @@
 	<import file="./ant/prepare/shared-jar-build.xml" />
 	<import file="./ant/prepare/pdd-build.xml" />
 	<import file="./ant/prepare/sql-build.xml" />
-	<import file="./ant/prepare/spcoop-build.xml" />
-	<import file="./ant/prepare/sdi-build.xml" />
 	<import file="./ant/prepare/trasparente-build.xml" />
+	<import file="./ant/prepare/spcoop-build.xml" />
+	<import file="./ant/prepare/as4-build.xml" />
+	<import file="./ant/prepare/sdi-build.xml" />
 	<import file="./ant/prepare/loader-build.xml" />
 	<import file="./ant/prepare/pddConsole-build.xml" />
 	<import file="./ant/prepare/backwardCompatibility-build.xml" />
@@ -26,9 +27,10 @@
 	<target name="prepare_software" depends="clean_prepare,init_prepare">
 		<antcall target="prepare_shared_jar_setup" />
 		<antcall target="prepare_pdd_setup" />
-		<antcall target="prepare_spcoop_setup" />
-		<antcall target="prepare_sdi_setup" />
 		<antcall target="prepare_trasparente_setup" />
+		<antcall target="prepare_spcoop_setup" />
+		<antcall target="prepare_as4_setup" />
+		<antcall target="prepare_sdi_setup" />
 		<antcall target="prepare_loader_setup" />
 		<antcall target="prepare_pddConsole_setup" />
 		<antcall target="prepare_backwardCompatibility_setup" />
@@ -49,14 +51,17 @@
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
-			<include name="commons/*"/>
-			<include name="jax/jaxb*"/>
-			<include name="cxf/*"/>
+			<exclude name="axis14/*"/>
 			<exclude name="cxf/geronimo-servlet_3.0_spec-1.0.jar"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
 			<include name="saaj/*"/>
+			<include name="jackson/*"/>
+			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
 			<include name="jibx/*"/>
 			<include name="jminix/*"/>
+			<include name="json/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="opensaml/*"/>
@@ -69,6 +74,7 @@
 			<include name="stub/cxf/openspcoop2_registryStub_cxf.jar"/>
 			<include name="stub/cxf/openspcoop2_configStub_cxf.jar"/>
 			<include name="stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
+			<include name="swagger/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>
 		</fileset>

@@ -1,0 +1,36 @@
+
+<project name="prepare-setup-as4" basedir=".">
+	
+	<description>
+        	PREPARE SETUP AS4
+	</description>
+
+	
+	<!-- Protocollo SDI -->
+	<target name="prepare_as4_setup">
+		
+		<if>
+			<not>
+				<available file="${as4}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${as4}/local_env.xml.template" tofile="${as4}/local_env.xml" />
+			</then>
+		</if>
+				
+		<antcall target="compile_as4_plugin" >
+	    	<param name="dist" value="${deploy_sw}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_as4" value="${src_as4}"/>
+	 	</antcall>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/as4" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/as4"/>
+		<delete dir="it"/>
+		
+	</target>
+	
+	
+</project>
