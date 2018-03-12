@@ -21,6 +21,7 @@ package org.openspcoop2.protocol.manifest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -38,6 +39,7 @@ import java.util.List;
  * 		&lt;sequence>
  * 			&lt;element name="param" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationElementName" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="useInUrl" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -84,6 +86,18 @@ public class IntegrationConfigurationName extends org.openspcoop2.utils.beans.Ba
     return this.param.size();
   }
 
+  public boolean isUseInUrl() {
+    return this.useInUrl;
+  }
+
+  public boolean getUseInUrl() {
+    return this.useInUrl;
+  }
+
+  public void setUseInUrl(boolean useInUrl) {
+    this.useInUrl = useInUrl;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -117,5 +131,9 @@ public class IntegrationConfigurationName extends org.openspcoop2.utils.beans.Ba
   public int sizeParam() {
   	return this.param.size();
   }
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="useInUrl",required=false)
+  protected boolean useInUrl = true;
 
 }

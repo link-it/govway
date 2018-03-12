@@ -92,6 +92,7 @@
               <xsd:sequence>
                      <xsd:element name="param" type="IntegrationConfigurationElementName" maxOccurs="unbounded" />
               </xsd:sequence>
+              <xsd:attribute name="useInUrl" type="xsd:boolean" use="optional" default="true"/>
        </xsd:complexType>
        <xsd:complexType name="IntegrationConfigurationElementName">
               <xsd:attribute name="prefix" type="xsd:string" use="optional" />
@@ -372,6 +373,7 @@
               <xsd:attribute name="version" type="xsd:boolean" use="optional" default="true"/>
               <xsd:attribute name="protocolEnvelopeManagement" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="faultChoice" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="correlationReuseProtocolId" type="xsd:boolean" use="optional" default="false"/>
        </xsd:complexType>
        
        <xsd:complexType name="ServiceTypes">

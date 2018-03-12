@@ -67,6 +67,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -384,6 +385,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 					gestioneFruitori = true;
 				}
+			}
+			
+			PddTipologia pddTipologiaSoggettoAutenticati = null;
+			if(gestioneErogatori) {
+				pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
 			}
 			
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
@@ -797,7 +803,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				// Se ancora non l'ho trovato prendo il primo della lista nel caso di gestione erogazione
 				if ((this.provider == null) || this.provider.equals("")) {
-					if(gestioneErogatori) {
+					if( (gestioneErogatori || gestioneFruitori) && list!=null && list.size()>0) {
 						Soggetto soggetto = list.get(0);
 						this.provider = soggetto.getId() + "";
 						this.nomeSoggettoErogatore = soggetto.getNome();
@@ -948,9 +954,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
 			 
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
 			}else{
-				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
+				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, pddTipologiaSoggettoAutenticati);
 			}
 			
 			if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
@@ -973,7 +979,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					generaPortaApplicativa = false;
 				}
 			}
-
+			
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
@@ -1135,9 +1141,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					 
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
-						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale );
+						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
 					}else{
-						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale);
+						listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, userLogin, credenziale, pddTipologiaSoggettoAutenticati);
 					}
 					
 					if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
@@ -1222,32 +1228,37 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saFruitoriList);
 
-				boolean forceEnableConnettore = false;
-				if( gestioneFruitori || generaPortaApplicativa ) {
-					forceEnableConnettore = true;
-				}
+				// Controllo se richiedere il connettore
 				
-				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-						(apsHelper.isModalitaCompleta() || !multitenant)?null:
-							(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
-						this.url, this.nome,
-						tipoJms, this.user,
-						this.password, this.initcont, this.urlpgk,
-						this.provurl, this.connfact, tipoSendas,
-						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-						this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
-						this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
-						this.httpspwdprivatekeytrust, this.httpspathkey,
-						this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
-						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, 
-						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						listExtendedConnettore, forceEnableConnettore);
-
+				boolean connettoreStatic = this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore);
+				if(!connettoreStatic) {
+					boolean forceEnableConnettore = false;
+					if( gestioneFruitori || generaPortaApplicativa ) {
+						forceEnableConnettore = true;
+					}
+					
+					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:
+								(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+							this.url, this.nome,
+							tipoJms, this.user,
+							this.password, this.initcont, this.urlpgk,
+							this.provurl, this.connfact, tipoSendas,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+							this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
+							this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
+							this.httpspwdprivatekeytrust, this.httpspathkey,
+							this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
+							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+							null, null, null, null, null, null, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							listExtendedConnettore, forceEnableConnettore);
+				}
+					
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
@@ -1299,7 +1310,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,erogazioneIsSupportatoAutenticazioneSoggetti,
 					generaPortaApplicativa, listExtendedConnettore,
 					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
-					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch);
+					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+					this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore));
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
@@ -1374,31 +1386,34 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saFruitoriList);
 
-				boolean forceEnableConnettore = false;
-				if( gestioneFruitori || generaPortaApplicativa ) {
-					forceEnableConnettore = true;
+				boolean connettoreStatic = this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore);
+				if(!connettoreStatic) {
+					boolean forceEnableConnettore = false;
+					if( gestioneFruitori || generaPortaApplicativa ) {
+						forceEnableConnettore = true;
+					}
+					
+					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+							(apsHelper.isModalitaCompleta() || !multitenant)?null:
+								(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+							this.url, this.nome, this.tipo, this.user,
+							this.password, this.initcont, this.urlpgk,
+							this.provurl, this.connfact, this.sendas,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+							this.httpshostverify, this.httpspath, this.httpstipo,
+							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+							this.httpskeystore, this.httpspwdprivatekeytrust,
+							this.httpspathkey, this.httpstipokey,
+							this.httpspwdkey, this.httpspwdprivatekey,
+							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+							null, null, null, null, null, null, true,
+							isConnettoreCustomUltimaImmagineSalvata, 
+							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+							listExtendedConnettore, forceEnableConnettore);
 				}
-				
-				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-						(apsHelper.isModalitaCompleta() || !multitenant)?null:
-							(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
-						this.url, this.nome, this.tipo, this.user,
-						this.password, this.initcont, this.urlpgk,
-						this.provurl, this.connfact, this.sendas,
-						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-						this.httpshostverify, this.httpspath, this.httpstipo,
-						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-						this.httpskeystore, this.httpspwdprivatekeytrust,
-						this.httpspathkey, this.httpstipokey,
-						this.httpspwdkey, this.httpspwdprivatekey,
-						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, 
-						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-						listExtendedConnettore, forceEnableConnettore);
 
 				// aggiunta campi custom
 				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1444,28 +1459,32 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				asps.setPortType(this.portType);
 
 			// Connettore
-			Connettore connettore = new Connettore();
-			// this.nomeservizio);
-			if (this.endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
-				connettore.setTipo(this.tipoconn);
-			else
-				connettore.setTipo(this.endpointtype);
-
-			apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
-					this.nome, this.tipo, this.user, this.password,
-					this.initcont, this.urlpgk, this.url, this.connfact,
-					this.sendas, this.httpsurl, this.httpstipologia,
-					this.httpshostverify, this.httpspath, this.httpstipo,
-					this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-					this.httpskeystore, this.httpspwdprivatekeytrust,
-					this.httpspathkey, this.httpstipokey,
-					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey,
-					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-					listExtendedConnettore);
+			Connettore connettore = null;
+			boolean connettoreStatic = this.isConnettoreStatic(gestioneFruitori, apsHelper, apsCore);
+			if(!connettoreStatic) {
+				connettore = new Connettore();
+				// this.nomeservizio);
+				if (this.endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
+					connettore.setTipo(this.tipoconn);
+				else
+					connettore.setTipo(this.endpointtype);
+	
+				apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+						this.nome, this.tipo, this.user, this.password,
+						this.initcont, this.urlpgk, this.url, this.connfact,
+						this.sendas, this.httpsurl, this.httpstipologia,
+						this.httpshostverify, this.httpspath, this.httpstipo,
+						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+						this.httpskeystore, this.httpspwdprivatekeytrust,
+						this.httpspathkey, this.httpstipokey,
+						this.httpspwdkey, this.httpspwdprivatekey,
+						this.httpsalgoritmokey,
+						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+						listExtendedConnettore);
+			}
 
 			if(asps.getConfigurazioneServizio()==null)
 				asps.setConfigurazioneServizio(new ConfigurazioneServizio());
@@ -1541,11 +1560,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAps);
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-					boolean forceEnableConnettore = false;
-					if( gestioneFruitori || generaPortaApplicativa ) {
-						forceEnableConnettore = true;
-					}
 					
 					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, null, null,  
 							this.provider, null, null, 
@@ -1563,26 +1577,35 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saFruitoriList);
 
-					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-							(apsHelper.isModalitaCompleta() || !multitenant)?null:
-								(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
-							this.url, this.nome, this.tipo, this.user,
-							this.password, this.initcont, this.urlpgk,
-							this.provurl, this.connfact, this.sendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
-							this.httpshostverify, this.httpspath, this.httpstipo,
-							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-							this.httpskeystore, this.httpspwdprivatekeytrust,
-							this.httpspathkey, this.httpstipokey,
-							this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, null, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							listExtendedConnettore, forceEnableConnettore);
+					if(!connettoreStatic) {
+					
+						boolean forceEnableConnettore = false;
+						if( gestioneFruitori || generaPortaApplicativa ) {
+							forceEnableConnettore = true;
+						}
+						
+						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+								(apsHelper.isModalitaCompleta() || !multitenant)?null:
+									(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+								this.url, this.nome, this.tipo, this.user,
+								this.password, this.initcont, this.urlpgk,
+								this.provurl, this.connfact, this.sendas,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
+								this.httpshostverify, this.httpspath, this.httpstipo,
+								this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+								this.httpskeystore, this.httpspwdprivatekeytrust,
+								this.httpspathkey, this.httpstipokey,
+								this.httpspwdkey, this.httpspwdprivatekey,
+								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+								null, null, null, null, null, null, true,
+								isConnettoreCustomUltimaImmagineSalvata, 
+								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+								listExtendedConnettore, forceEnableConnettore);
+						
+					}
 
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -1730,5 +1753,28 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.ADD());
 		}  
+	}
+	
+	private boolean isConnettoreStatic(boolean gestioneFruitori, AccordiServizioParteSpecificaHelper apsHelper, AccordiServizioParteSpecificaCore apsCore) throws Exception {
+		// Controllo se richiedere il connettore
+		boolean connettoreStatic = false;
+		if(gestioneFruitori) {
+			IDServizio idServizio = null;
+			IDSoggetto idSoggettoMittente = null; 
+			if(this.provider!=null && !"".equals(this.provider) && 
+					this.tiposervizio!=null && !"".equals(this.tiposervizio) &&
+					this.nomeservizio!=null && !"".equals(this.nomeservizio)
+					){
+				idServizio = apsHelper.getIDServizioFromValues(this.tiposervizio, this.nomeservizio, this.provider, this.versione);
+			}
+			if(this.tipoSoggettoFruitore!=null && !"".equals(this.tipoSoggettoFruitore) 
+					&&  this.nomeSoggettoFruitore!=null && !"".equals(this.nomeSoggettoFruitore)){
+				idSoggettoMittente = new IDSoggetto(this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
+			}
+			if(idServizio!=null && idSoggettoMittente!=null) {
+				connettoreStatic = apsCore.isConnettoreStatic(this.tipoProtocollo, idSoggettoMittente, idServizio);
+			}
+		}
+		return connettoreStatic;
 	}
 }

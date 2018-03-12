@@ -38,10 +38,12 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -96,6 +98,19 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 
+			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneErogatori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+					gestioneErogatori = true;
+				}
+			}
+			
+			PddTipologia pddTipologiaSoggettoAutenticati = null;
+			if(gestioneErogatori) {
+				pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
+			}
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -142,9 +157,9 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
 			List<org.openspcoop2.core.registry.Soggetto> list = null;
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione);
+				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 			}else{
-				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione);
+				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 			}
 
 			PortaApplicativaAutorizzazioneSoggetti soggetti = pa.getSoggetti(); 

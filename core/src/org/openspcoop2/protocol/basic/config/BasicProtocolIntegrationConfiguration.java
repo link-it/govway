@@ -134,6 +134,23 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 	}
 	
+	@Override
+	public boolean useInterfaceNameInSubscriptionInvocationURL(ServiceBinding serviceBinding) throws ProtocolException{
+		switch (serviceBinding) {
+		case REST:
+			if(this.subscriptionConfigurationRest==null) {
+				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
+			}
+			return this.subscriptionConfigurationRest.useInterfaceNameInInvocationURL();
+		case SOAP:
+			if(this.subscriptionConfigurationSoap==null) {
+				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
+			}
+			return this.subscriptionConfigurationSoap.useInterfaceNameInInvocationURL();
+		}
+		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
+	}
+	
 	
 	// IMPLEMENTATION
 	
@@ -203,6 +220,23 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 			}
 			return this.implementationConfigurationSoap.supportedIdentificationModes(consoleType);
+		}
+		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
+	}
+	
+	@Override
+	public boolean useInterfaceNameInImplementationInvocationURL(ServiceBinding serviceBinding) throws ProtocolException{
+		switch (serviceBinding) {
+		case REST:
+			if(this.implementationConfigurationRest==null) {
+				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
+			}
+			return this.implementationConfigurationRest.useInterfaceNameInInvocationURL();
+		case SOAP:
+			if(this.implementationConfigurationSoap==null) {
+				throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
+			}
+			return this.implementationConfigurationSoap.useInterfaceNameInInvocationURL();
 		}
 		throw new ProtocolException("Service Binding '"+serviceBinding+"' unsupported");
 	}

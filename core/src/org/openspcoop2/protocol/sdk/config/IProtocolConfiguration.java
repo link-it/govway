@@ -228,6 +228,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se se il protocollo, per la tipologia SOAP, supporta la scelta del fault
 	 */
 	public boolean isSupportoSceltaFault();
+	
+	/**
+	 * Ritorna l'indicazione se il protocollo, per la correlazione applicativa, supporta il riuso dell'id di protocollo
+	 * 
+	 * @return True se se il protocollo, per la correlazione applicativa, supporta il riuso dell'id di protocollo
+	 */
+	public boolean isAbilitatoRiusoIdCorrelazioneApplicativa();
 		
 	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo

@@ -214,10 +214,20 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			
 			ConfigurazioneProtocollo configProt = this.confCore.getConfigurazioneProtocollo(protocollo);
 			
+			boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInInvocationURL(protocollo, serviceBinding);
+			
 			String prefix = configProt.getUrlInvocazioneServizioPD();
 			prefix = prefix.trim();
-			if(prefix.endsWith("/")==false) {
-				prefix = prefix + "/";
+			if(useInterfaceNameInInvocationURL) {
+				if(prefix.endsWith("/")==false) {
+					prefix = prefix + "/";
+				}
+			}
+			
+			String urlInvocazione = prefix;
+			if(useInterfaceNameInInvocationURL) {
+				PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
+				urlInvocazione = urlInvocazione + utils.normalizePD(nomePorta);
 			}
 			
 			de = new DataElement();
@@ -227,8 +237,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			else {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE);
 			}
-			PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
-			de.setValue(prefix+utils.normalizePD(nomePorta));
+			de.setValue(urlInvocazione);
 			de.setType(DataElementType.TEXT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA+"___LABEL");
 			dati.addElement(de);
@@ -1063,11 +1072,22 @@ public class PorteDelegateHelper extends ConsoleHelper {
 							ProtocolPropertiesUtilities.getTipoInterfaccia(this));
 		}
 	}
+	
+	public boolean useInterfaceNameInInvocationURL(String protocollo, ServiceBinding serviceBinding) throws ProtocolException{
+		return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
+				createProtocolIntegrationConfiguration().useInterfaceNameInSubscriptionInvocationURL(serviceBinding);
+	}
+	
+	public boolean reuseIdProtocol(String protocollo) throws ProtocolException{
+		return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
+				createProtocolConfiguration().isAbilitatoRiusoIdCorrelazioneApplicativa();
+	}
 
 
 	public Vector<DataElement> addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione tipoOp,
 			PageData pd,   String elemxml, String mode,
-			String pattern, String gif, String riusoIdMessaggio, Vector<DataElement> dati, String idcorr) {
+			String pattern, String gif, String riusoIdMessaggio, Vector<DataElement> dati, String idcorr,
+			String protocollo) throws ProtocolException {
 
 		DataElement de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
@@ -1128,10 +1148,16 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			String[] tipiRiusoIdMessaggio = { CostantiConfigurazione.DISABILITATO.toString(), CostantiConfigurazione.ABILITATO.toString()};
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO);
-			de.setType(DataElementType.SELECT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO);
-			de.setValues(tipiRiusoIdMessaggio);
-			de.setSelected(riusoIdMessaggio);
+			if(this.reuseIdProtocol(protocollo)) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipiRiusoIdMessaggio);
+				de.setSelected(riusoIdMessaggio);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(CostantiConfigurazione.DISABILITATO.toString());
+			}
 			dati.addElement(de);
 
 		}

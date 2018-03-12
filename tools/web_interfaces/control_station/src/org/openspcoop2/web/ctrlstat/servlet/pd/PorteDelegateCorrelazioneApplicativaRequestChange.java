@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -110,6 +111,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				idFruizione = "";
 			
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -117,6 +119,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			// Prendo il nome della porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = pde.getNome();
+			
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pde.getTipoSoggettoProprietario());
 
 			// Prendo il nome originario della correlazione applicativa
 			String elemxmlOrig = "";
@@ -189,7 +193,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
 				
-				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd,   elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString);
+				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd,  
+						elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString, protocollo);
 
 				pd.setDati(dati);
 
@@ -213,7 +218,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
 				
-				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd, elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString);
+				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd, 
+						elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString, protocollo);
 
 				pd.setDati(dati);
 

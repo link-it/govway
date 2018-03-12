@@ -6808,7 +6808,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @param credenziale
 	 * @return tutti i soggetti con i tipi indicati che utilizzano le credenziali indicate
 	 */
-	public List<Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser, CredenzialeTipo credenziale) throws DriverRegistroServiziException {
+	public List<Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser, CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverRegistroServiziException {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
@@ -6830,8 +6830,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 		
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			if(pddTipologia!=null) {
+				sqlQueryObject.addFromTable(CostantiDB.PDD);
+			}
 			sqlQueryObject.setSelectDistinct(true);
-			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"id", "idTableSoggetto");
 			sqlQueryObject.addSelectField("tipo_soggetto");
 			sqlQueryObject.addSelectField("nome_soggetto");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -6839,9 +6842,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addWhereINCondition("tipo_soggetto", true, tipiSoggetto.toArray(new String[1]));
 			}
 			if (superuser!=null && !superuser.equals(""))
-				sqlQueryObject.addWhereCondition("superuser = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 			if(credenziale != null) {
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
+			}
+			if(pddTipologia!=null) {
+				if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+					ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObjectPdd.setANDLogicOperator(false);
+					sqlQueryObjectPdd.addWhereIsNullCondition("server");
+					sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+					sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+				}
+				else {
+					sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+				}
 			}
 			
 			sqlQueryObject.addOrderBy("nome_soggetto");
@@ -6858,6 +6873,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(credenziale != null) {
 				stmt.setString(index++, credenziale.toString());
 			}
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			
 			risultato = stmt.executeQuery();
 			
@@ -6866,7 +6884,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			while (risultato.next()) {
 
 				sog = new Soggetto();
-				sog.setId(risultato.getLong("id"));
+				sog.setId(risultato.getLong("idTableSoggetto"));
 				sog.setNome(risultato.getString("nome_soggetto"));
 				sog.setTipo(risultato.getString("tipo_soggetto"));
 				soggetti.add(sog);

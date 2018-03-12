@@ -20,7 +20,7 @@
     		 			<param actor="serviceVersion"/>
     		 		</name>
 					<resourceIdentification>
-	    		 		<identificationModes forceInterfaceMode="true">
+	    		 		<identificationModes forceInterfaceMode="false">
 	    		 			<mode name="protocol" />
 	    		 		</identificationModes>
 						<specificResource>

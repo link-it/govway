@@ -245,6 +245,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isAbilitatoRiusoIdCorrelazioneApplicativa() {
+		return this.registroManifest.getService().isCorrelationReuseProtocolId();
+	}
+	
+	@Override
 	public List<String> getTipiSoggetti() throws ProtocolException {
 		List<String> tipi = new ArrayList<String>();
 		List<OrganizationType> l = this.registroManifest.getOrganization().getTypes().getTypeList();

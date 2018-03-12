@@ -52,6 +52,10 @@ public abstract class AbstractIntegrationConfiguration implements java.io.Serial
 		this.integrationConfiguration = integrationConfiguration;
 	}
 	
+	protected boolean useInterfaceNameInInvocationURL() {
+		return this.integrationConfiguration.getName().isUseInUrl();
+	}
+	
 	protected String getNome(IDServizio idServizio, IDSoggetto idSoggetto, String name, String ruleName,
 			List<IntegrationConfigurationElementName> list) throws ProtocolException {
 		StringBuffer bf = new StringBuffer();

@@ -14,7 +14,7 @@
     		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
     		<integration>
     		 	<implementation>
-    		 		<name>
+    		 		<name useInUrl="false">
     		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
@@ -22,21 +22,9 @@
     		 			<param actor="serviceVersion"/>
     		 		</name>
 					<resourceIdentification>
-	    		 		<identificationModes default="url" forceInterfaceMode="true">
-	    		 			<mode name="interface" />
-		    		 		<mode name="header" />
-		    		 		<mode name="url" />
-		    		 		<mode name="content" />
-		    		 		<mode name="input" />
-		    		 		<mode name="soapAction" />
+	    		 		<identificationModes forceInterfaceMode="false">
+	    		 			<mode name="protocol" />
 	    		 		</identificationModes>
-	    		 		<identificationParameter>
-	    		 			<param prefix=".*/(?:" actor="providerType" suffix="_)?"/>
-	    		 			<param actor="providerName" suffix="/"/>
-	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
-	    		 			<param actor="serviceName" suffix="/"/>
-	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
-	    		 		</identificationParameter>
 						<specificResource>
 							<name>
 	    		 				<param prefix="__" actor="name" suffix="__"/>
@@ -103,7 +91,7 @@
     		  binary="true" mimeMultipart="true">
     		  <integration>
     		 	<implementation>
-    		 		<name>
+    		 		<name useInUrl="false">
     		 			<param actor="providerType" suffix="_"/>
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
@@ -111,11 +99,8 @@
     		 			<param actor="serviceVersion"/>
     		 		</name>
 					<resourceIdentification>
-	    		 		<identificationModes default="interface" forceInterfaceMode="true">
-	    		 			<mode name="interface" />
-		    		 		<mode name="header" onlyAdvancedMode="true" />
-		    		 		<mode name="content" onlyAdvancedMode="true" />
-		    		 		<mode name="input" onlyAdvancedMode="true" />
+	    		 		<identificationModes forceInterfaceMode="false">
+	    		 			<mode name="protocol" />
 	    		 		</identificationModes>
 						<specificResource>
 							<name>

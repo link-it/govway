@@ -56,6 +56,8 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 	
 	public List<PortaDelegataAzioneIdentificazione> getAllSubscriptionIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException;
 	
+	public boolean useInterfaceNameInSubscriptionInvocationURL(ServiceBinding serviceBinding) throws ProtocolException;
+	
 	
 	// IMPLEMENTATION
 	
@@ -70,4 +72,5 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 	
 	public List<PortaApplicativaAzioneIdentificazione> getAllImplementationIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException;
 	
+	public boolean useInterfaceNameInImplementationInvocationURL(ServiceBinding serviceBinding) throws ProtocolException;
 }

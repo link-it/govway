@@ -41,6 +41,7 @@ public class IntegrationConfigurationNameModel extends AbstractModel<Integration
 		super();
 	
 		this.PARAM = new org.openspcoop2.protocol.manifest.model.IntegrationConfigurationElementNameModel(new Field("param",org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName.class,"IntegrationConfigurationName",IntegrationConfigurationName.class));
+		this.USE_IN_URL = new Field("useInUrl",boolean.class,"IntegrationConfigurationName",IntegrationConfigurationName.class);
 	
 	}
 	
@@ -49,12 +50,15 @@ public class IntegrationConfigurationNameModel extends AbstractModel<Integration
 		super(father);
 	
 		this.PARAM = new org.openspcoop2.protocol.manifest.model.IntegrationConfigurationElementNameModel(new ComplexField(father,"param",org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName.class,"IntegrationConfigurationName",IntegrationConfigurationName.class));
+		this.USE_IN_URL = new ComplexField(father,"useInUrl",boolean.class,"IntegrationConfigurationName",IntegrationConfigurationName.class);
 	
 	}
 	
 	
 
 	public org.openspcoop2.protocol.manifest.model.IntegrationConfigurationElementNameModel PARAM = null;
+	 
+	public IField USE_IN_URL = null;
 	 
 
 	@Override

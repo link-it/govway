@@ -41,6 +41,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * 		&lt;attribute name="protocolEnvelopeManagement" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="faultChoice" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="correlationReuseProtocolId" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -119,6 +120,18 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.faultChoice = faultChoice;
   }
 
+  public boolean isCorrelationReuseProtocolId() {
+    return this.correlationReuseProtocolId;
+  }
+
+  public boolean getCorrelationReuseProtocolId() {
+    return this.correlationReuseProtocolId;
+  }
+
+  public void setCorrelationReuseProtocolId(boolean correlationReuseProtocolId) {
+    this.correlationReuseProtocolId = correlationReuseProtocolId;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -141,5 +154,9 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="faultChoice",required=false)
   protected boolean faultChoice = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="correlationReuseProtocolId",required=false)
+  protected boolean correlationReuseProtocolId = false;
 
 }

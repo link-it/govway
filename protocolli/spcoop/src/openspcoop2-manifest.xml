@@ -20,7 +20,7 @@
     		 			<param actor="serviceVersion"/>
     		 		</name>
 					<resourceIdentification>
-	    		 		<identificationModes forceInterfaceMode="true">
+	    		 		<identificationModes forceInterfaceMode="false">
 	    		 			<mode name="protocol" />
 	    		 		</identificationModes>
 						<specificResource>
@@ -116,7 +116,7 @@
             </types>
         </organization>
 
-        <service apiReferent="true" version="false" protocolEnvelopeManagement="true" faultChoice="true">
+        <service apiReferent="true" version="false" protocolEnvelopeManagement="true" faultChoice="true" correlationReuseProtocolId="true">
             <types>
                 <type name="spc" protocol="SPC"/>
                 <type name="test" protocol="TEST"/>

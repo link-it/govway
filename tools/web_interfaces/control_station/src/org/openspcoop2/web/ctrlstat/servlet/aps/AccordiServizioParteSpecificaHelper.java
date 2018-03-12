@@ -202,7 +202,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String erogazioneAutorizzazioneAutenticati,String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,boolean isSupportatoAutenticazione,
 			boolean generaPACheckSoggetto, List<ExtendedConnettore> listExtendedConnettore,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
-			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch
+			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
+			boolean connettoreStatic
 			)
 					throws Exception {
 
@@ -384,19 +385,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Controllo dell'end-point
 			// Non li puo' prendere dalla servtlet
-			if (!this.endPointCheckData(endpointtype, url, nome, tipo,
-					user, password, initcont, urlpgk, provurl, connfact,
-					sendas, httpsurl, httpstipologia, httpshostverify,
-					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
-					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
-					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,autenticazioneHttp,
-					proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					listExtendedConnettore)) {
-				return false;
+			if(!connettoreStatic) {
+				if (!this.endPointCheckData(endpointtype, url, nome, tipo,
+						user, password, initcont, urlpgk, provurl, connfact,
+						sendas, httpsurl, httpstipologia, httpshostverify,
+						httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
+						httpskeystore, httpspwdprivatekeytrust, httpspathkey,
+						httpstipokey, httpspwdkey, httpspwdprivatekey,
+						httpsalgoritmokey, tipoconn,autenticazioneHttp,
+						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						listExtendedConnettore)) {
+					return false;
+				}
 			}
 
 			// Controllo che i campi "checkbox" abbiano uno dei valori
@@ -453,7 +456,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Se il connettore e' disabilitato devo controllare che il
 			// connettore del soggetto non sia disabilitato se è di tipo operativo
-			if(!gestioneFruitori && !gestioneErogatori) {
+			if(!gestioneFruitori && !gestioneErogatori && !connettoreStatic) {
 				if (endpointtype.equals(TipiConnettore.DISABILITATO.getNome())) {
 					String eptypeprov = TipiConnettore.DISABILITATO.getNome();
 	
@@ -1155,6 +1158,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean showFruitori = false;
 			boolean showConnettorePA = false;
 			boolean showConnettorePD = false;
+			boolean gestioneFruitori = false;
 			
 			if(tipologia==null) {
 				String filterDominio = null;
@@ -1181,6 +1185,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					showConnettorePA = true;
 				}
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
 					showConfigurazionePD = true;
 					//showSoggettoFruitore = true;
 					showSoggettoFruitore = false; // si e' deciso che non si fa vedere essendo solo uno
@@ -1542,18 +1547,32 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					
 					// connettore	
 					if(showConnettorePD) {
+						
+						// Controllo se richiedere il connettore
+						boolean connettoreStatic = false;
+						if(gestioneFruitori) {
+							if(idServizio!=null && idFruitore!=null) {
+								connettoreStatic = this.apsCore.isConnettoreStatic(protocollo, idFruitore, idServizio);
+							}
+						}
+						
 						de = new DataElement();
-						List<Parameter> listParameter = new ArrayList<>();
-						listParameter.add(pId);
-						listParameter.add(pIdFruitore);
-						listParameter.add(pIdSoggettoErogatore);
-						listParameter.add(pIdProviderFruitore);
-						listParameter.add(pConnettoreDaListaAPS);
-						de.setUrl(
-								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
-								listParameter.toArray(new Parameter[1])
-								);
-						ServletUtils.setDataElementVisualizzaLabel(de);
+						if(!connettoreStatic) {
+							List<Parameter> listParameter = new ArrayList<>();
+							listParameter.add(pId);
+							listParameter.add(pIdFruitore);
+							listParameter.add(pIdSoggettoErogatore);
+							listParameter.add(pIdProviderFruitore);
+							listParameter.add(pConnettoreDaListaAPS);
+							de.setUrl(
+									AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
+									listParameter.toArray(new Parameter[1])
+									);
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						}
+						else {
+							de.setValue("-");
+						}
 						e.addElement(de);
 					}
 					
@@ -2725,13 +2744,23 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 			this.pd.setSearchDescription("");
 						
+			// Controllo se richiedere il connettore
+			boolean connettoreStatic = false;
+			if(gestioneFruitori) {
+				IDServizio idServizioObject = this.idServizioFactory.getIDServizioFromAccordo(asps);
+				IDSoggetto idSoggettoMittente = new IDSoggetto(soggFruitore.getTipo(), soggFruitore.getNome());
+				if(idServizioObject!=null && idSoggettoMittente!=null) {
+					connettoreStatic = this.apsCore.isConnettoreStatic(protocollo, idSoggettoMittente, idServizioObject);
+				}
+			}
+			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParm );
 
 			List<String> listaLabel = new ArrayList<String>();
 
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
-			if(this.isModalitaAvanzata()) {
+			if(this.isModalitaAvanzata() && !connettoreStatic) {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
 			}
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
@@ -2816,7 +2845,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				//if(gestioneFruitori) {
 				// connettore	
-				if(this.isModalitaAvanzata()) {
+				if(this.isModalitaAvanzata() && !connettoreStatic) {
 					de = new DataElement();
 					if(!gestioneFruitori && mapping.isDefault()) {
 						de.setValue("-");

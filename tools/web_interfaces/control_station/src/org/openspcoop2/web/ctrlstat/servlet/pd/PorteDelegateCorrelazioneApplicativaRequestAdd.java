@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -103,6 +104,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 				idFruizione = "";
 			
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore( );
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -110,6 +112,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 			// Prendo il nome della porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 			String nome = pde.getNome();
+			
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pde.getTipoSoggettoProprietario());
 
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
@@ -148,7 +152,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, idFruizione, dati);
 
 				dati = porteDelegateHelper. addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.ADD , pd,  
-						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null);
+						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null, protocollo);
 
 				pd.setDati(dati);
 
@@ -172,7 +176,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, idFruizione, dati);
 
 				dati = porteDelegateHelper.	addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.ADD, pd, 
-						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null);
+						elemxml, mode, pattern, gif, riusoIdentificativoMessaggio, dati, null, protocollo);
 
 				pd.setDati(dati);
 

@@ -68,6 +68,7 @@
     <collection field="param" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName"/>
     </collection>
+    <value name="useInUrl" field="useInUrl" default="true" usage="optional" style="attribute"/>
   </mapping>
 
   <mapping type-name="_IntegrationConfigurationName_Type" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationName" abstract="true">
@@ -75,6 +76,7 @@
     <collection field="param" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName"/>
     </collection>
+    <value name="useInUrl" field="useInUrl" default="true" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="param" class="org.openspcoop2.protocol.manifest.IntegrationConfigurationElementName">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
@@ -359,6 +361,7 @@
     <value name="version" field="version" default="true" usage="optional" style="attribute"/>
     <value name="protocolEnvelopeManagement" field="protocolEnvelopeManagement" default="false" usage="optional" style="attribute"/>
     <value name="faultChoice" field="faultChoice" default="false" usage="optional" style="attribute"/>
+    <value name="correlationReuseProtocolId" field="correlationReuseProtocolId" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="types" class="org.openspcoop2.protocol.manifest.ServiceTypes">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>

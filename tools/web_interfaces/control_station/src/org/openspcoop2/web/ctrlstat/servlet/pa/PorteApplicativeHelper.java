@@ -967,10 +967,20 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			
 			ConfigurazioneProtocollo configProt = this.confCore.getConfigurazioneProtocollo(protocollo);
 			
+			boolean useInterfaceNameInInvocationURL = this.useInterfaceNameInInvocationURL(protocollo, serviceBinding);
+			
 			String prefix = configProt.getUrlInvocazioneServizioPA();
 			prefix = prefix.trim();
-			if(prefix.endsWith("/")==false) {
-				prefix = prefix + "/";
+			if(useInterfaceNameInInvocationURL) {
+				if(prefix.endsWith("/")==false) {
+					prefix = prefix + "/";
+				}
+			}
+			
+			String urlInvocazione = prefix;
+			if(useInterfaceNameInInvocationURL) {
+				PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
+				urlInvocazione = urlInvocazione + utils.normalizePA(nomePorta);
 			}
 			
 			de = new DataElement();
@@ -980,8 +990,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			else {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE);
 			}
-			PorteNamingUtils utils = new PorteNamingUtils(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo));
-			de.setValue(prefix+utils.normalizePA(nomePorta));
+			de.setValue(urlInvocazione);
 			de.setType(DataElementType.TEXT);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA+"___LABEL");
 			dati.addElement(de);
@@ -1779,9 +1788,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 							ProtocolPropertiesUtilities.getTipoInterfaccia(this));
 		}
 	}
-
-
-
+	
+	public boolean useInterfaceNameInInvocationURL(String protocollo, ServiceBinding serviceBinding) throws ProtocolException{
+		return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
+				createProtocolIntegrationConfiguration().useInterfaceNameInImplementationInvocationURL(serviceBinding);
+	}
+	
 	public void preparePorteAppList(ISearch ricerca, List<PortaApplicativa> lista, int idLista)
 			throws Exception {
 		try {

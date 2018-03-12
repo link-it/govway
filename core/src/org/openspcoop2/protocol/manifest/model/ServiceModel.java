@@ -45,6 +45,7 @@ public class ServiceModel extends AbstractModel<Service> {
 		this.VERSION = new Field("version",boolean.class,"Service",Service.class);
 		this.PROTOCOL_ENVELOPE_MANAGEMENT = new Field("protocolEnvelopeManagement",boolean.class,"Service",Service.class);
 		this.FAULT_CHOICE = new Field("faultChoice",boolean.class,"Service",Service.class);
+		this.CORRELATION_REUSE_PROTOCOL_ID = new Field("correlationReuseProtocolId",boolean.class,"Service",Service.class);
 	
 	}
 	
@@ -57,6 +58,7 @@ public class ServiceModel extends AbstractModel<Service> {
 		this.VERSION = new ComplexField(father,"version",boolean.class,"Service",Service.class);
 		this.PROTOCOL_ENVELOPE_MANAGEMENT = new ComplexField(father,"protocolEnvelopeManagement",boolean.class,"Service",Service.class);
 		this.FAULT_CHOICE = new ComplexField(father,"faultChoice",boolean.class,"Service",Service.class);
+		this.CORRELATION_REUSE_PROTOCOL_ID = new ComplexField(father,"correlationReuseProtocolId",boolean.class,"Service",Service.class);
 	
 	}
 	
@@ -71,6 +73,8 @@ public class ServiceModel extends AbstractModel<Service> {
 	public IField PROTOCOL_ENVELOPE_MANAGEMENT = null;
 	 
 	public IField FAULT_CHOICE = null;
+	 
+	public IField CORRELATION_REUSE_PROTOCOL_ID = null;
 	 
 
 	@Override
