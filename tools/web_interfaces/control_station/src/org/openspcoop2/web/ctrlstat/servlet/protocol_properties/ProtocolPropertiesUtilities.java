@@ -110,6 +110,9 @@ public class ProtocolPropertiesUtilities {
 			case NOTE:
 				dati = getTitle(dati,item, size,DataElementType.NOTE);
 				break;
+			case SUBTITLE:
+				dati = getTitle(dati,item, size,DataElementType.SUBTITLE);
+				break;
 			case TITLE:
 				dati = getTitle(dati,item, size,DataElementType.TITLE);
 				break;

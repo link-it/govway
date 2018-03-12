@@ -35,6 +35,9 @@ public class ProtocolPropertiesFactory {
 	public static BaseConsoleItem newTitleItem(String id, String label) throws ProtocolException{
 		return new BaseConsoleItem(id, label, ConsoleItemType.TITLE);
 	}
+	public static BaseConsoleItem newSubTitleItem(String id, String label) throws ProtocolException{
+		return new BaseConsoleItem(id, label, ConsoleItemType.SUBTITLE);
+	}
 	public static BaseConsoleItem newNoteItem(String id, String label) throws ProtocolException{
 		return new BaseConsoleItem(id, label, ConsoleItemType.NOTE);
 	}

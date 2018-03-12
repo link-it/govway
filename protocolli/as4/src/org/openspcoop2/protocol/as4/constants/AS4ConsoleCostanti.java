@@ -33,13 +33,17 @@ package org.openspcoop2.protocol.as4.constants;
 
 public class AS4ConsoleCostanti {
    
+	private static final String AS4_TITLE_LABEL = "eDelivery";
 	private static final String AS4_PREFIX_TITLE_LABEL = "eDelivery - ";
 	
 	
 	// Soggetti
 	
-	public static final String AS4_SOGGETTI_LABEL = AS4_PREFIX_TITLE_LABEL+"Party Info";
+	public static final String AS4_SOGGETTI_LABEL = AS4_TITLE_LABEL;
 	public static final String AS4_SOGGETTI_ID = "as4SoggettiTitleId";
+	
+	public static final String AS4_SOGGETTI_PARTY_INFO_LABEL = "Party Info";
+	public static final String AS4_SOGGETTI_PARTY_INFO_ID = "as4SoggettiPartyInfoSubTitleId";
 	
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_ID_LABEL = "Id";
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_ID_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE;
@@ -51,6 +55,12 @@ public class AS4ConsoleCostanti {
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_LABEL = "Type Value";
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_VALUE;
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_DEFAULT_VALUE = "urn:oasis:names:tc:ebcore:partyid-type:unregistered";
+	
+	public static final String AS4_SOGGETTI_PARTY_ENDPOINT_LABEL = "Party Endpoint";
+	public static final String AS4_SOGGETTI_PARTY_ENDPOINT_ID = "as4SoggettiPartyEndpointSubTitleId";
+	
+	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL = "Endpoint";
+	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ENDPOINT;
 	
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_LABEL = "Common Name";
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME;

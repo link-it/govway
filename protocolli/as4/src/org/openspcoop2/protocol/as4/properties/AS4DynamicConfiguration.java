@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.as4.properties;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,8 +80,33 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		super(factory);
 	}
 
-	/*** SOGGETTO ***/
+	/*** SOGGETTO 
+	 * @throws ProtocolException ***/
 
+//	private boolean isOperativo(IRegistryReader registryReader, IDSoggetto id) throws ProtocolException {
+//		try {
+//			
+//			org.openspcoop2.core.registry.Soggetto soggetto = registryReader.getSoggetto(id);
+//			if(soggetto.getPortaDominio()==null || "".equals(soggetto.getPortaDominio())) {
+//				return false;
+//			}
+//			else {
+//				List<String> list = registryReader.findIdPorteDominio(true);
+//				if(list!=null) {
+//					for (String nomeOperativa : list) {
+//						if(nomeOperativa.equals(soggetto.getPortaDominio())) {
+//							return true;
+//						}
+//					}
+//				}
+//				return false;
+//			}
+//			
+//		}catch(Exception e) {
+//			throw new ProtocolException(e.getMessage(),e);
+//		}
+//	}
+//	
 	@Override
 	public ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDSoggetto id)
@@ -88,10 +114,17 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
 		
+		//boolean soggettoOperativo = this.isOperativo(registryReader, id);
+		
 		BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
 				AS4ConsoleCostanti.AS4_SOGGETTI_ID, 
 				AS4ConsoleCostanti.AS4_SOGGETTI_LABEL);
 		configuration.addConsoleItem(titolo );
+		
+		BaseConsoleItem subTitleInfo = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_SOGGETTI_PARTY_INFO_ID, 
+				AS4ConsoleCostanti.AS4_SOGGETTI_PARTY_INFO_LABEL);
+		configuration.addConsoleItem(subTitleInfo );
 		
 		AbstractConsoleItem<?> userMessagePartyIdItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
@@ -122,13 +155,30 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		userMessagePartyTypeValueItem.setRequired(true);
 		configuration.addConsoleItem(userMessagePartyTypeValueItem);
 		
+		BaseConsoleItem subTitleEndpoint = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID, 
+				AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL);
+		configuration.addConsoleItem(subTitleEndpoint );
+		
+		StringConsoleItem userMessagePartyEndpointItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.TEXT_EDIT,
+						AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID, 
+						AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL);
+		userMessagePartyEndpointItem.setDefaultValue("http://HOST:PORT/domibus/services/msh");
+		//userMessagePartyEndpointItem.setRequired(!soggettoOperativo);
+		userMessagePartyEndpointItem.setRequired(true);
+		configuration.addConsoleItem(userMessagePartyEndpointItem);
+		
 		StringConsoleItem userMessagePartyCNItem = (StringConsoleItem)
 				ProtocolPropertiesFactory.newConsoleItem(
 						ConsoleItemValueType.STRING,
 						ConsoleItemType.TEXT_EDIT,
 						AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_ID, 
 						AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_LABEL);
-		userMessagePartyTypeValueItem.setDefaultValue(id.getNome());
+		userMessagePartyCNItem.setDefaultValue(id.getNome());
+		//userMessagePartyCNItem.setRequired(!soggettoOperativo);
 		userMessagePartyCNItem.setRequired(true);
 		configuration.addConsoleItem(userMessagePartyCNItem);
 			
@@ -178,6 +228,18 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			uri.toString();
 		}catch(Exception e) {
 			throw new ProtocolException("Deve essere indicata una URI valida per il parametro '"+AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_TYPE_VALUE_LABEL+"'");
+		}
+		
+		// La proprietà AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID deve essere una url
+		StringProperty userMessagePartyEndpointValueItem = (StringProperty) 
+				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID);
+		if(userMessagePartyEndpointValueItem.getValue()!=null) {
+			try {
+				URL url = new URL(userMessagePartyEndpointValueItem.getValue());
+				url.toString();
+			}catch(Exception e) {
+				throw new ProtocolException("Deve essere indicata una URL valida per il parametro '"+AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL+"'");
+			}
 		}
 		
 		

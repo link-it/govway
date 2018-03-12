@@ -29,7 +29,6 @@ import java.util.Map;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
@@ -46,9 +45,9 @@ public class Soggetto  {
 	private String ebmsUserMessagePartyId;
 	private String ebmsUserMessagePartyIdTypeName;
 	private String ebmsUserMessagePartyIdTypeValue;
+	private String ebmsUserMessagePartyEndpoint;
 	private String ebmsUserMessagePartyCN;
 	
-	private String location;
 	private List<APS> aps;
 
 	public Soggetto(org.openspcoop2.core.registry.Soggetto base, Map<IDAccordo, API> accordi, int indiceInizialeLeg, int indiceInizialeProcess) throws Exception {
@@ -60,6 +59,8 @@ public class Soggetto  {
 				this.ebmsUserMessagePartyIdTypeValue = prop.getValue();
 			} else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE)) {
 				this.ebmsUserMessagePartyId = prop.getValue();
+			} else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ENDPOINT)) {
+				this.ebmsUserMessagePartyEndpoint = prop.getValue();
 			} else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME)) {
 				this.ebmsUserMessagePartyCN = prop.getValue();
 			}
@@ -67,13 +68,6 @@ public class Soggetto  {
 
 		if(base.getConnettore() == null || TipiConnettore.DISABILITATO.getNome().equals(base.getConnettore().getTipo())) {
 			throw getException("Connettore non definito",base);
-		}
-		if(base.getConnettore() != null) {
-			for(Property prop: this.base.getConnettore().getPropertyList()) {
-				if(prop.getNome().equals("location")) {
-					this.location = prop.getValore();
-				}
-			}
 		}
 
 		if(this.ebmsUserMessagePartyIdTypeName == null)
@@ -85,11 +79,11 @@ public class Soggetto  {
 		if(this.ebmsUserMessagePartyId== null)
 			throw getException("nessuna property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE+" trovata", base);
 		
+		if(this.ebmsUserMessagePartyEndpoint== null)
+			throw getException("nessuna property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ENDPOINT+" trovata", base);
+		
 		if(this.ebmsUserMessagePartyCN== null)
 			throw getException("nessuna property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME+" trovata", base);
-
-		if(this.location== null)
-			throw getException("nessuna property location trovata", base);
 		
 		
 		this.aps = new ArrayList<>();
@@ -145,12 +139,12 @@ public class Soggetto  {
 		this.ebmsUserMessagePartyCN = ebmsUserMessagePartyCN;
 	}
 
-	public String getLocation() {
-		return this.location;
+	public String getEbmsUserMessagePartyEndpoint() {
+		return this.ebmsUserMessagePartyEndpoint;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setEbmsUserMessagePartyEndpoint(String ebmsUserMessagePartyEndpoint) {
+		this.ebmsUserMessagePartyEndpoint = ebmsUserMessagePartyEndpoint;
 	}
 
 	public int sizeAzioni() {

@@ -24,7 +24,7 @@
 			</partyIdTypes>
 			<#list soggetti as soggetto>
 			<party name="${soggetto.ebmsUserMessagePartyCN}"
-				    endpoint="${soggetto.location}"
+				    endpoint="${soggetto.ebmsUserMessagePartyEndpoint}"
 					allowChunking="false">
 				<identifier partyId="${soggetto.ebmsUserMessagePartyId}" partyIdType="${soggetto.ebmsUserMessagePartyIdTypeName}"/>
 			</party>

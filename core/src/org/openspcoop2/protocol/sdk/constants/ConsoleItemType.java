@@ -30,7 +30,7 @@ package org.openspcoop2.protocol.sdk.constants;
  */
 public enum ConsoleItemType {
 
-	TITLE, NOTE,
+	TITLE, SUBTITLE, NOTE,
 	HIDDEN, 
 	TEXT, TEXT_EDIT, TEXT_AREA, TEXT_AREA_NO_EDIT,
 	SELECT, CHECKBOX,
