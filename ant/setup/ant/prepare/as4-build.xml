@@ -19,7 +19,7 @@
 		</if>
 				
 		<antcall target="compile_as4_plugin" >
-	    	<param name="dist" value="${deploy_sw}"/>
+	    		<param name="dist" value="${deploy_sw}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_as4" value="${src_as4}"/>
 	 	</antcall>
@@ -31,6 +31,8 @@
 		<delete dir="it"/>
 		<delete dir="eu"/>
 		<delete dir="backend"/>
+
+		<copy file="${stub_as4}/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar" todir="${deploy_sw}"/>
 		
 	</target>
 	
