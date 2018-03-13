@@ -1282,6 +1282,38 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
 				dati.addElement(de);
+				
+				if( modeaz!= null && (
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
+						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))
+				){
+					de = new DataElement();
+					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY);
+					if(ServiceBinding.REST.equals(serviceBinding)) {
+						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+					}
+					else {
+						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+					}
+					List<String> azioni = this.porteApplicativeCore.getAzioni(asps, aspc, false, true, new ArrayList<String>());
+					StringBuffer bf = new StringBuffer();
+					for (String az : azioni) {
+						if(bf.length()>0) {
+							bf.append("\n");
+						}
+						bf.append(az);
+					}
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					if(azioni.size()<=5) {
+						de.setRows(azioni.size());
+					}
+					else {
+						de.setRows(5);
+					}
+					de.setValue(bf.toString());
+					dati.addElement(de);
+				}
 			}
 		
 		}

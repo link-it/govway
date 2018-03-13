@@ -533,6 +533,37 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
 				dati.addElement(de);
 				
+				if( modeaz!= null && (
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
+						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
+				){
+					de = new DataElement();
+					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LIST_AZIONI_READ_ONLY);
+					if(ServiceBinding.REST.equals(serviceBinding)) {
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
+					}
+					else {
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
+					}
+					List<String> azioni = this.porteDelegateCore.getAzioni(asps, aspc, false, true, new ArrayList<String>());
+					StringBuffer bf = new StringBuffer();
+					for (String az : azioni) {
+						if(bf.length()>0) {
+							bf.append("\n");
+						}
+						bf.append(az);
+					}
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					if(azioni.size()<=5) {
+						de.setRows(azioni.size());
+					}
+					else {
+						de.setRows(5);
+					}
+					de.setValue(bf.toString());
+					dati.addElement(de);
+				}
+				
 			}
 		
 		} else {

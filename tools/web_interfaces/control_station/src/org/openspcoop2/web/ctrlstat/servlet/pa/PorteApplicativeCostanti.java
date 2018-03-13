@@ -310,6 +310,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = "abilita";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
 	
 	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
@@ -447,6 +448,7 @@ public class PorteApplicativeCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP = "Tutte le azioni sono state ridefinite";
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";

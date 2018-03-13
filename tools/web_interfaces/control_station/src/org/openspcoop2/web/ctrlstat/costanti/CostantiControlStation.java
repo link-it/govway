@@ -184,6 +184,9 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_AZIONE = "Azione";
 	public final static String LABEL_PARAMETRO_AZIONI = "Azioni";
 	public final static String LABEL_PARAMETRO_AZIONI_CONFIG_DI = "Azioni di ";
+	public static final String LABEL_PARAMETRO_RISORSA = "Risorsa";
+	public final static String LABEL_PARAMETRO_RISORSE = "Risorse";
+	public final static String LABEL_PARAMETRO_RISORSE_CONFIG_DI = "Risorse di ";
 	public final static String LABEL_PARAMETRO_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_STATO = "Stato";

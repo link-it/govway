@@ -291,6 +291,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_VALORE = "valore";
 	public final static String PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY = "messageSecurity";
 	public final static String PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
+	public final static String PARAMETRO_PORTE_DELEGATE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
 	public final static String PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE = "identificazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE = "modeCreazione";
@@ -440,6 +441,7 @@ public class PorteDelegateCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP = "Tutte le azioni sono state ridefinite";
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";

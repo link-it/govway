@@ -1996,6 +1996,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setSearch("");
 			
 			lista = this.impostaFiltroAzioneMappingErogazione(filtroAzione, lista,ricerca, idLista);
+			boolean allActionRedefined = false;
+			if(lista.size()>1) {
+				allActionRedefined = this.allActionsRedefinedMappingErogazione(azioni, lista);
+			}
 			
 			// Utilizza la configurazione come parent
 			ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
@@ -2144,13 +2148,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //						de.setValue("-");
 //					}
 //					else {
-						PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
-						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,
-								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
-								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					//}
+					PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
+					ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
 				}
 				
@@ -2244,7 +2247,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
 					else 
-						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);				
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);			
 					e.addElement(de);
 				}
 				
@@ -2307,10 +2310,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.CHECKBOX);
 				boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
 				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO_TOOLTIP : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO_TOOLTIP;
+				boolean url = true;
+				if(mapping.isDefault() && allActionRedefined) {
+					statoPA = false;
+					statoMapping = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP;
+					url = false;
+				}
 				de.setToolTip(statoMapping);
 				de.setSelected(statoPA);
-				Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita);
+				if(url) {
+					Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita);
+				}
 				e.addElement(de);
 				
 				dati.addElement(e);
@@ -2326,7 +2337,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	
 	
-	private List<MappingErogazionePortaApplicativa> impostaFiltroAzioneMappingErogazione(String filtroAzione, List<MappingErogazionePortaApplicativa> lista, ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	private List<MappingErogazionePortaApplicativa> impostaFiltroAzioneMappingErogazione(String filtroAzione, List<MappingErogazionePortaApplicativa> lista, 
+			ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
 			MappingErogazionePortaApplicativa mappingTmp = null; 
 			
@@ -2355,7 +2367,34 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 	
-	private List<MappingFruizionePortaDelegata> impostaFiltroAzioneMappingFruizione(String filtroAzione, List<MappingFruizionePortaDelegata> lista, ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	private boolean allActionsRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		boolean all = true;
+		if(azioni!=null && azioni.size()>0) {
+			for (String azione : azioni) {
+				if(lista==null || lista.size()<=0) {
+					all  = false;
+					break;
+				}
+				boolean found = false;
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+					PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+					if(paAssociata.getAzione() != null && paAssociata.getAzione().getAzioneDelegataList().contains(azione)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					all  = false;
+					break;
+				}
+			}
+		}
+		return all;
+	}
+	
+	private List<MappingFruizionePortaDelegata> impostaFiltroAzioneMappingFruizione(String filtroAzione, List<MappingFruizionePortaDelegata> lista, 
+			ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
 			MappingFruizionePortaDelegata mappingTmp = null; 
 			
@@ -2382,6 +2421,32 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 			return lista;
 		}
+	}
+	
+	private boolean allActionsRedefinedMappingFruizione(List<String> azioni, List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		boolean all = true;
+		if(azioni!=null && azioni.size()>0) {
+			for (String azione : azioni) {
+				if(lista==null || lista.size()<=0) {
+					all  = false;
+					break;
+				}
+				boolean found = false;
+				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : lista) {
+					PortaDelegata pdAssociata = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+					if(pdAssociata.getAzione() != null && pdAssociata.getAzione().getAzioneDelegataList().contains(azione)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					all  = false;
+					break;
+				}
+			}
+		}
+		return all;
 	}
 
 
@@ -2691,6 +2756,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			ServletUtils.setObjectIntoSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 			
 			lista = this.impostaFiltroAzioneMappingFruizione(filtroAzione, lista,ricerca, idLista);
+			boolean allActionRedefined = false;
+			if(lista.size()>1) {
+				allActionRedefined = this.allActionsRedefinedMappingFruizione(azioni, lista);
+			}
 			
 			boolean visualizzaMTOM = true;
 			boolean visualizzaSicurezza = true;
@@ -2838,6 +2907,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				de.setIdToRemove(pdAssociata.getNome());
 				e.addElement(de);
+
 				
 				//if(gestioneFruitori) {
 				// connettore	
@@ -3027,10 +3097,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de.setType(DataElementType.CHECKBOX);
 				boolean statoPD = pdAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
 				String statoMapping = statoPD ? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO_TOOLTIP : PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO_TOOLTIP;
+				boolean url = true;
+				if(mapping.isDefault() && allActionRedefined) {
+					statoPD = false;
+					statoMapping = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP;
+					url = false;
+				}
 				de.setToolTip(statoMapping);
 				de.setSelected(statoPD);
-				Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
+				if(url) {
+					Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
+				}
 				e.addElement(de);
 				
 				dati.addElement(e);
