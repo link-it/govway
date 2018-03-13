@@ -1146,10 +1146,10 @@ public class XMLDataConverter {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(driver.getTipoDB());
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addSelectField("message_type");
+			sqlQueryObject.addSelectField("service_binding");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo = "+CostantiDB.ACCORDI+".id");
-			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+"id = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id = ?");
 			String query = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(query);
 			stm.setLong(1, idServizioAsLong);
@@ -1157,7 +1157,7 @@ public class XMLDataConverter {
 			rs=stm.executeQuery();
 
 			if(rs.next()){
-				return ServiceBinding.toEnumConstant(rs.getString("message_type"),true);
+				return ServiceBinding.toEnumConstant(rs.getString("service_binding"),true);
 			}
 
 			throw new DriverConfigurazioneException("Accordo Parte Specifica non trovato ["+idServizio+"] (Lettura ServiceBinding)");
