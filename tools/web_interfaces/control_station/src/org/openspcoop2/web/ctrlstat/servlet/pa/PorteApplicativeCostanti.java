@@ -337,16 +337,11 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA = "idCorr";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "Servizio";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE_MODALITA = "Modalità Identificazione Azione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.LABEL_PARAMETRO_AZIONI;
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_URL_INVOCAZIONE = "URL";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE = "Base URL";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE = "Opzioni Avanzate";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";
@@ -446,12 +441,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = "interface-based";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = "protocol-based";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP = "Tutte le azioni sono state ridefinite";
-	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
@@ -494,13 +484,7 @@ public class PorteApplicativeCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "nuova";
 	
-	/* MESSAGGI */
-	
-	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA ="Si sta abilitando la configurazione relativa alle azioni:{0}Procedere?"; 
-	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT ="Si sta abilitando la configurazione di default, procedere?"; 
-	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA ="Si sta disabilitando la configurazione relativa alle azioni:{0}Procedere?";
-	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT ="Si sta disabilitando la configurazione di default, procedere?";
-	
+
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. E' necessario indicare: {0}"; 
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_VIRTUALE_DEVE_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SOGGETTI = "Il Soggetto virtuale deve essere scelto tra quelli definiti nel pannello Soggetti";

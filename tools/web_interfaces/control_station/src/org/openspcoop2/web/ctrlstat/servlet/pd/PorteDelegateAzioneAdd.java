@@ -46,11 +46,11 @@ import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -142,6 +142,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			}
 			
 			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
 			IDSoggetto idSoggettoFruitore = soggettiCore.getIdSoggettoRegistro(soggInt); 
 			
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
@@ -175,11 +176,11 @@ public final class PorteDelegateAzioneAdd extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI_CONFIG_DI+
+				labelPerPorta = porteDelegateHelper.getLabelAzioniDi(serviceBinding)+
 						porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
 			}
 			else {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI_CONFIG_DI+nomePorta;
+				labelPerPorta = porteDelegateHelper.getLabelAzioniDi(serviceBinding)+nomePorta;
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta,
@@ -204,11 +205,11 @@ public final class PorteDelegateAzioneAdd extends Action {
 				
 				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
-					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
+					pd.setMessage(porteDelegateHelper.getLabelAllAzioniConfigurate(serviceBinding), Costanti.MESSAGE_TYPE_INFO);
 					pd.disableEditMode();
 				}
 				else {
-					dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
+					dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis, serviceBinding);
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, idFruizione, dati);
 				}
 				pd.setDati(dati);
@@ -230,7 +231,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
+				dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis, serviceBinding);
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, idFruizione, dati);
 
 				pd.setDati(dati);
@@ -293,7 +294,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			
 			lstParam =  porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
-					listaParametriSessione, labelPerPorta);
+					listaParametriSessione, labelPerPorta, serviceBinding);
 			
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

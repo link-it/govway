@@ -1982,6 +1982,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
 			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
+			ServiceBinding serviceBindingMessage = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
 			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 			int limit = ricerca.getPageSize(idLista);
@@ -1989,7 +1990,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			List<String> azioni = this.porteApplicativeCore.getAzioni(asps, apc, false, true, new ArrayList<String>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
-			this.addFilterAzione(azioni, filtroAzione);
+			this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -2052,7 +2053,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<String> listaLabel = new ArrayList<String>();
 
 			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE); // spostata direttamente nell'elenco delle erogazioni
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+			listaLabel.add(this.getLabelAzioni(serviceBindingMessage));
 			if(this.isModalitaAvanzata()) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 			}
@@ -2309,11 +2310,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.CHECKBOX);
 				boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
-				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ABILITATO_TOOLTIP : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO_TOOLTIP;
+				String statoMapping = statoPA ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP;
 				boolean url = true;
 				if(mapping.isDefault() && allActionRedefined) {
 					statoPA = false;
-					statoMapping = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP;
+					statoMapping = this.getLabelAllAzioniRidefiniteTooltip(serviceBindingMessage);
 					url = false;
 				}
 				de.setToolTip(statoMapping);
@@ -2743,10 +2744,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idServizio));
 			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
+			ServiceBinding serviceBindingMessage = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
 			List<String> azioni = this.porteApplicativeCore.getAzioni(asps, apc, false, true, new ArrayList<String>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
-			this.addFilterAzione(azioni, filtroAzione);
+			this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -2824,7 +2826,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			List<String> listaLabel = new ArrayList<String>();
 
-			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
+			listaLabel.add(this.getLabelAzioni(serviceBindingMessage));
 			if(this.isModalitaAvanzata() && !connettoreStatic) {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
 			}
@@ -3096,11 +3098,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.CHECKBOX);
 				boolean statoPD = pdAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
-				String statoMapping = statoPD ? PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO_TOOLTIP : PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO_TOOLTIP;
+				String statoMapping = statoPD ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP;
 				boolean url = true;
 				if(mapping.isDefault() && allActionRedefined) {
 					statoPD = false;
-					statoMapping = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP;
+					statoMapping = this.getLabelAllAzioniRidefiniteTooltip(serviceBindingMessage);
 					url = false;
 				}
 				de.setToolTip(statoMapping);
@@ -5662,7 +5664,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		// Azione
 		de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+		de.setLabel(this.getLabelAzioni(serviceBinding));
 		de.setValues(azioniDisponibiliList);
 		de.setSelezionati(azioni);
 		de.setType(DataElementType.MULTI_SELECT);
@@ -5919,7 +5921,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		// Azione
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
+		de.setLabel(this.getLabelAzioni(serviceBinding));
 		de.setValues(azioniDisponibiliList);
 		de.setSelezionati(azioni); 
 		de.setType(DataElementType.MULTI_SELECT);

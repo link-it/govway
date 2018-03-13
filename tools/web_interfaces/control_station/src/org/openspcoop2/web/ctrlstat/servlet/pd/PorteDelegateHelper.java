@@ -397,10 +397,20 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		if(!isConfigurazione || datiInvocazione) {
 			de = new DataElement();
 			if(datiInvocazione) {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE_MODALITA);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTA_RISORSA_MODALITA);
+				}
+				else {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTA_AZIONE_MODALITA);
+				}
 			}
 			else {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISORSA);
+				}
+				else {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+				}
 			}
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
@@ -539,12 +549,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				){
 					de = new DataElement();
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LIST_AZIONI_READ_ONLY);
-					if(ServiceBinding.REST.equals(serviceBinding)) {
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
-					}
-					else {
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI);
-					}
+					de.setLabel(this.getLabelAzioni(serviceBinding));
 					List<String> azioni = this.porteDelegateCore.getAzioni(asps, aspc, false, true, new ArrayList<String>());
 					StringBuffer bf = new StringBuffer();
 					for (String az : azioni) {
@@ -3344,29 +3349,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		}
 	}
 	
-	public String getMessaggioConfermaModificaRegolaMappingFruizionePortaDelegata(PortaDelegata pd, boolean abilitiazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+	public String getMessaggioConfermaModificaRegolaMappingFruizionePortaDelegata(PortaDelegata pd, ServiceBinding serviceBinding, boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
 		MappingFruizionePortaDelegata mapping = this.porteDelegateCore.getMappingFruizionePortaDelegata(pd);
-		String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
-		String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
-		if(mapping.isDefault()) {
-			return pre + ( abilitiazione ? PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT : PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT )  + post;
-		}
-		else {
-			List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
-			if(listaAzioni.size() > 0) {
-				StringBuffer sb = new StringBuffer();
-				sb.append(post);
-				sb.append("<ul class=\"contenutoModal\">");
-				for (String string : listaAzioni) {
-					sb.append((listElement ? "<li>" : "") + string + (listElement ? "</li>" : ""));
-				}
-				sb.append("</ul>");
-				sb.append(pre);
-				return pre + (  abilitiazione ? MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, sb.toString()) : MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA,sb.toString()))  + post;
-			}
-			else {
-				return pre + ( abilitiazione ? MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, " ??? ") : MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA," ??? "))  + post;
-			}
-		}
+		List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+		return this.getMessaggioConfermaModificaRegolaMapping(mapping.isDefault(), listaAzioni, serviceBinding, abilitazione, multiline, listElement);
 	}
 }

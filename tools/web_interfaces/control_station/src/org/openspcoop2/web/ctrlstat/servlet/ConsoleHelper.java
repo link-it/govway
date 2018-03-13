@@ -61,6 +61,7 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -3703,16 +3704,67 @@ public class ConsoleHelper {
 		return true;
 	}
 
-	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,String[] azioniDisponibiliList, String[] azioni) {
+	public String getMessaggioConfermaModificaRegolaMapping(boolean isDefault,List<String> listaAzioni,ServiceBinding serviceBinding, 
+			boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+		String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+		String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+		
+		if(isDefault) {
+			return pre + ( abilitazione ? CostantiControlStation.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT : CostantiControlStation.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT)  + post;
+		}
+		else {
+			//return mapping.getNome();
+			if(listaAzioni!=null && listaAzioni.size() > 0) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(post);
+				sb.append("<ul class=\"contenutoModal\">");
+				for (String string : listaAzioni) {
+					sb.append((listElement ? "<li>" : "") + string + (listElement ? "</li>" : ""));
+				}
+				sb.append("</ul>");
+				sb.append(pre);
+				return pre + ( abilitazione ? MessageFormat.format(getLabelAzioneConfermaAbilitazione(serviceBinding), sb.toString()) : MessageFormat.format(getLabelAzioneConfermaDisabilitazione(serviceBinding),sb.toString()))  + post;
+			}
+			else {
+				return pre + ( abilitazione ? MessageFormat.format(getLabelAzioneConfermaAbilitazione(serviceBinding), " ??? ") : MessageFormat.format(getLabelAzioneConfermaDisabilitazione(serviceBinding)," ??? "))  + post;
+			}
+		}
+	}
+	private String getLabelAzioneConfermaAbilitazione(ServiceBinding serviceBinding) {
+		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_RISORSE : CostantiControlStation.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_AZIONI;
+	}
+	private String getLabelAzioneConfermaDisabilitazione(ServiceBinding serviceBinding) {
+		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_RISORSE : CostantiControlStation.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_AZIONI;
+	}
+	public String getLabelAzione(ServiceBinding serviceBinding) {
+		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.LABEL_PARAMETRO_RISORSA : CostantiControlStation.LABEL_PARAMETRO_AZIONE;
+	}
+	public String getLabelAzioni(ServiceBinding serviceBinding) {
+		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.LABEL_PARAMETRO_RISORSE : CostantiControlStation.LABEL_PARAMETRO_AZIONI;
+	}
+	public String getLabelAzioniDi(ServiceBinding serviceBinding) {
+		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.LABEL_PARAMETRO_RISORSE_CONFIG_DI : CostantiControlStation.LABEL_PARAMETRO_AZIONI_CONFIG_DI;
+	}
+	public String getLabelAllAzioniRidefiniteTooltip(ServiceBinding serviceBinding) {
+		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.LABEL_PARAMETRO_DEFAULT_ALL_RISORSE_RIDEFINITE_TOOLTIP : CostantiControlStation.LABEL_PARAMETRO_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP;
+	}
+	public String getLabelAllAzioniConfigurate(ServiceBinding serviceBinding) {
+		return ServiceBinding.REST.equals(serviceBinding) ? CostantiControlStation.LABEL_AGGIUNTA_RISORSE_COMPLETATA : CostantiControlStation.LABEL_AGGIUNTA_AZIONI_COMPLETATA;
+	}
+	
+	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,
+			String[] azioniDisponibiliList, String[] azioni, ServiceBinding serviceBinding) {
+		
+		String label = this.getLabelAzioni(serviceBinding);
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONI);
+		de.setLabel(label);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Azione
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONI);
+		de.setLabel(label);
 		de.setValues(azioniDisponibiliList);
 		de.setSelezionati(azioni);
 		de.setType(DataElementType.MULTI_SELECT);
@@ -3724,14 +3776,17 @@ public class ConsoleHelper {
 	}
 	
 	// Prepara la lista di azioni delle porte
-	public void preparePorteAzioneList(List<String> listaAzioni, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, String nomePorta, String objectName, List<Parameter> listaParametriSessione,
-			String labelPerPorta) throws Exception {
+	public void preparePorteAzioneList(List<String> listaAzioni, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
+			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
+			String labelPerPorta, ServiceBinding serviceBinding) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
 
 			// setto la barra del titolo
 
-			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+			String label = this.getLabelAzione(serviceBinding);
+			
+			this.pd.setSearchLabel(label);
 			this.pd.setSearchDescription("");
 			
 			lstParametriBreadcrumbs.add(new Parameter(labelPerPorta,null));
@@ -3740,7 +3795,7 @@ public class ConsoleHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParametriBreadcrumbs.toArray(new Parameter[lstParametriBreadcrumbs.size()]));
 
 			// setto le label delle colonne
-			String[] labels = { CostantiControlStation.LABEL_PARAMETRO_AZIONE};
+			String[] labels = { label };
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -4234,12 +4289,12 @@ public class ConsoleHelper {
 		return true;
 	}
 	
-	public void addFilterAzione(List<String> azioni, String azione) throws Exception{
+	public void addFilterAzione(List<String> azioni, String azione, ServiceBinding serviceBinding) throws Exception{
 		String [] azioniS = azioni != null ?  azioni.toArray(new String[azioni.size()]) : new String [0];
-		this.addFilterAzione(azioniS, azione);		  
+		this.addFilterAzione(azioniS, azione, serviceBinding);		  
 	}
 	
-	public void addFilterAzione(String []azioni, String azione) throws Exception{
+	public void addFilterAzione(String []azioni, String azione, ServiceBinding serviceBinding) throws Exception{
 		try {
 			String [] values = new String[azioni.length + 1];
 			String [] labels = new String[azioni.length + 1];
@@ -4252,7 +4307,9 @@ public class ConsoleHelper {
 			
 			String selectedValue = StringUtils.isNotEmpty(azione) ? azione : CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA;
 			
-			this.pd.addFilter(Filtri.FILTRO_AZIONE, CostantiControlStation.LABEL_PARAMETRO_AZIONE, selectedValue, values, labels, false, this.getSize());
+			this.pd.addFilter(Filtri.FILTRO_AZIONE, 
+					this.getLabelAzione(serviceBinding),
+					selectedValue, values, labels, false, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

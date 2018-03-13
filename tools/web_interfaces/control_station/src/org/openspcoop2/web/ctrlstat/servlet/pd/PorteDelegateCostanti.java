@@ -379,11 +379,6 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE = "Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI = "Connettore di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE_MODALITA = "Modalità Identificazione Azione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE = CostantiControlStation.LABEL_PARAMETRO_AZIONE;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI = CostantiControlStation.LABEL_PARAMETRO_AZIONI;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_AZIONI_CONFIG_DI;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
@@ -438,16 +433,10 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED = "input-based";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED = "soap-action-based";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED = "interface-based";
-	
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP = "Tutte le azioni sono state ridefinite";
-	
+
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
-	
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
@@ -499,13 +488,7 @@ public class PorteDelegateCostanti {
 
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "nuova";
-	
-	// Messaggio 
-	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA ="Si sta abilitando la configurazione relativa alle azioni:{0}Procedere?"; 
-	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT ="Si sta abilitando la configurazione di default, procedere?"; 
-	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA ="Si sta disabilitando la configurazione relativa alle azioni:{0}Procedere?";
-	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT ="Si sta disabilitando la configurazione di default, procedere?";
-	
+		
 	// Messaggi Errora
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_ALLA_PORTA_DELEGATA_DEI_SERVIZI_APPLICATIVI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati alla porta delegata dei servizi applicativi non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY = "Esiste gi&agrave; una Porta Delegata con nome [{0}] associata al Soggetto [{1}]";

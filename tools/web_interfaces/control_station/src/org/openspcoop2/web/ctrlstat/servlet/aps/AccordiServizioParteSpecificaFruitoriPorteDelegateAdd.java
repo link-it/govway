@@ -419,7 +419,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
-					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
+					pd.setMessage(porteDelegateHelper.getLabelAllAzioniConfigurate(serviceBinding), Costanti.MESSAGE_TYPE_INFO);
 					pd.disableEditMode();
 				}
 				else {

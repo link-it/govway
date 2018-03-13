@@ -44,11 +44,11 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -155,6 +155,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			}
 			
 			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
 			
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
@@ -187,11 +188,11 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI+
+				labelPerPorta = porteApplicativeHelper.getLabelAzioniDi(serviceBinding)+
 						porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
 			}
 			else {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI+nomePorta;
+				labelPerPorta = porteApplicativeHelper.getLabelAzioniDi(serviceBinding)+nomePorta;
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta,
@@ -215,11 +216,11 @@ public final class PorteApplicativeAzioneAdd extends Action {
 				
 				if(azioniDisponibiliList==null || azioniDisponibiliList.length <= sogliaAzioni) {
 					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
-					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
+					pd.setMessage(porteApplicativeHelper.getLabelAllAzioniConfigurate(serviceBinding), Costanti.MESSAGE_TYPE_INFO);
 					pd.disableEditMode();
 				}
 				else {
-					dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
+					dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis, serviceBinding);
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				}
 				pd.setDati(dati);
@@ -241,7 +242,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis);
+				dati = porteApplicativeHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis, serviceBinding);
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps,  dati);
 
 				pd.setDati(dati);
@@ -273,7 +274,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			
 			lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			porteApplicativeHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
-					listaParametriSessione, labelPerPorta);
+					listaParametriSessione, labelPerPorta, serviceBinding);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

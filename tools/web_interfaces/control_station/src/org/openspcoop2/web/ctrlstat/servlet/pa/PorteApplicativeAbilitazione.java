@@ -37,11 +37,15 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -104,13 +108,18 @@ public final class PorteApplicativeAbilitazione extends Action {
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 
 			// Prendo la porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
+			
 			// in progress segnalo l'azione che si sta effettuando
 			if(actionConferma == null) {
-				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(pa, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
+				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(pa, serviceBinding, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
 
 				pd.setMessage(messaggio, MessageType.CONFIRM);
 				
@@ -181,8 +190,6 @@ public final class PorteApplicativeAbilitazione extends Action {
 				else {			
 					idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-					int idServizio = Integer.parseInt(idAsps);
-					AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 					IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 					Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
 					List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);

@@ -187,6 +187,18 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_RISORSA = "Risorsa";
 	public final static String LABEL_PARAMETRO_RISORSE = "Risorse";
 	public final static String LABEL_PARAMETRO_RISORSE_CONFIG_DI = "Risorse di ";
+	public final static String LABEL_PARAMETRO_PORTA_AZIONE_MODALITA = "Modalità Identificazione Azione";
+	public final static String LABEL_PARAMETRO_PORTA_RISORSA_MODALITA = "Modalità Identificazione Risorsa";
+	public final static String LABEL_PARAMETRO_PORTA_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
+	public final static String LABEL_PARAMETRO_PORTA_QUALSIASI_RISORSA = "Tutte le risorse del servizio";
+	public final static String LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP = "Configurazione abilitata (Clicca per disabilitare)";
+	public final static String LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP = "Configurazione disabilitata (Clicca per abilitare)";
+	public final static String LABEL_PARAMETRO_PORTA_CONFERMA_ABILITAZIONE_CONFIG_DI = "Conferma abilitazione di ";
+	public final static String LABEL_PARAMETRO_PORTA_CONFERMA_DISABILITAZIONE_CONFIG_DI = "Conferma disabilitazione di ";
+	public final static String LABEL_PARAMETRO_DEFAULT_ALL_AZIONI_RIDEFINITE_TOOLTIP = "Tutte le azioni sono state ridefinite";
+	public final static String LABEL_PARAMETRO_DEFAULT_ALL_RISORSE_RIDEFINITE_TOOLTIP = "Tutte le risorse sono state ridefinite";
+	public final static String LABEL_AGGIUNTA_AZIONI_COMPLETATA = "Tutti le azioni disponibili sono già state gestite come configurazioni ad hoc";
+	public final static String LABEL_AGGIUNTA_RISORSE_COMPLETATA = "Tutti le risorse disponibili sono già state gestite come configurazioni ad hoc";
 	public final static String LABEL_PARAMETRO_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_STATO = "Stato";
@@ -195,6 +207,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE = "Tipo Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI = "Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI = "Validazione di ";
+
 	
 	/** PARAMETERS **/
 	
@@ -337,6 +350,14 @@ public class CostantiControlStation {
 	public final static String TEMP_FILE_PREFIX = "__pddconsole__";
 	public final static String TEMP_FILE_SUFFIX = ".tmp"; 
 	
+	
+	/** MESSAGGI */
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_AZIONI ="Si sta abilitando la configurazione relativa alle azioni:{0}Procedere?"; 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_RISORSE ="Si sta abilitando la configurazione relativa alle risorse:{0}Procedere?"; 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT ="Si sta abilitando la configurazione di default, procedere?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_AZIONI ="Si sta disabilitando la configurazione relativa alle azioni:{0}Procedere?";
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_RISORSE ="Si sta disabilitando la configurazione relativa alle risorse:{0}Procedere?";
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT ="Si sta disabilitando la configurazione di default, procedere?";
 	
 	/** MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_CON_ELEMENTO_XML_DEFINITA_GIA_ESISTENTE = "Esiste gi&agrave; una correlazione applicativa con elemento [{0}] definita nella {1}";

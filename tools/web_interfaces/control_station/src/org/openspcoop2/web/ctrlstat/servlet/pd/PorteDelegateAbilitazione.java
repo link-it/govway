@@ -39,11 +39,15 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -112,7 +116,8 @@ public final class PorteDelegateAbilitazione extends Action {
 			// Prendo nome e tipo del soggetto
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			
 			IDSoggetto idSoggettoFruitore = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
@@ -136,9 +141,13 @@ public final class PorteDelegateAbilitazione extends Action {
 				idAspsLong = Long.parseLong(idAsps);
 			}
 			
+			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
+			
 			// in progress segnalo l'azione che si sta effettuando
 			if(actionConferma == null) {
-				String messaggio = porteDelegateHelper.getMessaggioConfermaModificaRegolaMappingFruizionePortaDelegata(oldPD,ServletUtils.isCheckBoxEnabled(changeAbilitato), true, true);
+				String messaggio = porteDelegateHelper.getMessaggioConfermaModificaRegolaMappingFruizionePortaDelegata(oldPD,serviceBinding,ServletUtils.isCheckBoxEnabled(changeAbilitato), true, true);
 				
 				pd.setMessage(messaggio, MessageType.CONFIRM);
 				
@@ -184,10 +193,9 @@ public final class PorteDelegateAbilitazione extends Action {
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE:
 				idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 				ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
-				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
 				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 				
-				List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
+				List<MappingFruizionePortaDelegata> listaMapping = aspsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 				apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
 				

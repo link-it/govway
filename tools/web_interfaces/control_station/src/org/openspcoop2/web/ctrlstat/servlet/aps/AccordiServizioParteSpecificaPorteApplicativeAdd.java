@@ -481,7 +481,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				if(azioniDisponibiliList==null || azioniDisponibiliList.length<= sogliaAzioni) {
 					// si controlla 1 poiche' c'e' il trattino nelle azioni disponibili
 					
-					pd.setMessage(AccordiServizioParteSpecificaCostanti.LABEL_AGGIUNTA_AZIONI_COMPLETATA, Costanti.MESSAGE_TYPE_INFO);
+					pd.setMessage(porteApplicativeHelper.getLabelAllAzioniConfigurate(serviceBinding), Costanti.MESSAGE_TYPE_INFO);
 
 					pd.disableEditMode();
 					

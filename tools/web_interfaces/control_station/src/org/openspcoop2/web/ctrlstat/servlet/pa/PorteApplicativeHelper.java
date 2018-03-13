@@ -1145,10 +1145,20 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		if(!isConfigurazione || datiInvocazione) {
 			de = new DataElement();
 			if(datiInvocazione) {
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE_MODALITA);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTA_RISORSA_MODALITA);
+				}
+				else {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTA_AZIONE_MODALITA);
+				}
 			}
 			else {
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISORSA);
+				}
+				else {
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+				}
 			}
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
@@ -1290,12 +1300,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				){
 					de = new DataElement();
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY);
-					if(ServiceBinding.REST.equals(serviceBinding)) {
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
-					}
-					else {
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI);
-					}
+					de.setLabel(this.getLabelAzioni(serviceBinding));
 					List<String> azioni = this.porteApplicativeCore.getAzioni(asps, aspc, false, true, new ArrayList<String>());
 					StringBuffer bf = new StringBuffer();
 					for (String az : azioni) {
@@ -2913,84 +2918,6 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 	}
 	
 	
-	// Prepara la lista di sil delle porte applicative
-	public void preparePorteAppAzioneList(String idPorta) throws Exception {
-		try {
-
-			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
-			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
-			if(idAsps == null)
-				idAsps = "";
-
-			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-
-			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
-
-			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			String idporta = myPA.getNome();
-			List<String> azioneDelegataList = myPA.getAzione().getAzioneDelegataList();
-
-			// setto la barra del titolo
-			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
-
-			this.pd.setSearchDescription("");
-			
-			String labelPerPorta = null;
-			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI+
-						this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(myPA);
-			}
-			else {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONI_CONFIG_DI+idporta;
-			}
-			
-			lstParam.add(new Parameter(labelPerPorta,null));
-
-			// setto la barra del titolo
-			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
-
-			// setto le label delle colonne
-			String[] labels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_AZIONE};
-			this.pd.setLabels(labels);
-
-			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
-
-			if (azioneDelegataList != null) {
-				Iterator<String> it = azioneDelegataList.iterator();
-				while (it.hasNext()) {
-					String nomeAzione = it.next();
-
-					Vector<DataElement> e = new Vector<DataElement>();
-
-					DataElement de = new DataElement();
-//					de.setUrl(
-//							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-//							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, ""+sa.getId()),
-//							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, ""+idsogg),
-//							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
-					de.setValue(nomeAzione);
-					de.setIdToRemove(nomeAzione);
-					e.addElement(de);
-
-					dati.addElement(e);
-				}
-				this.pd.setNumEntries(azioneDelegataList.size());
-			}
-
-			
-			this.pd.setDati(dati);
-			this.pd.setAddButton(true);
-
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
-		}
-	}
 	
 	// Prepara la lista di soggetti associati alla pa
 	public void preparePorteAppSoggettoList(String nomePorta, ISearch ricerca, List<PortaApplicativaAutorizzazioneSoggetto> lista) throws Exception {
@@ -3699,31 +3626,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 		return "";
 	}
 	
-	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa,boolean abilitiazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+	public String getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(PortaApplicativa pa, ServiceBinding serviceBinding,boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
 		MappingErogazionePortaApplicativa mapping = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-		String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
-		String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
-		
-		if(mapping.isDefault()) {
-			return pre + ( abilitiazione ? PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT : PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT)  + post;
-		}
-		else {
-			//return mapping.getNome();
-			List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
-			if(listaAzioni.size() > 0) {
-				StringBuffer sb = new StringBuffer();
-				sb.append(post);
-				sb.append("<ul class=\"contenutoModal\">");
-				for (String string : listaAzioni) {
-					sb.append((listElement ? "<li>" : "") + string + (listElement ? "</li>" : ""));
-				}
-				sb.append("</ul>");
-				sb.append(pre);
-				return pre + ( abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, sb.toString()) : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA,sb.toString()))  + post;
-			}
-			else {
-				return pre + ( abilitiazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA, " ??? ") : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA," ??? "))  + post;
-			}
-		}
+		List<String> listaAzioni = pa.getAzione()!= null ?  pa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+		return this.getMessaggioConfermaModificaRegolaMapping(mapping.isDefault(), listaAzioni, serviceBinding, abilitazione, multiline, listElement);
 	}
 }

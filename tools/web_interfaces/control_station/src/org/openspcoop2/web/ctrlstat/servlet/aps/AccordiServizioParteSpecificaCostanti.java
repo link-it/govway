@@ -163,7 +163,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_WSDL_ATTUALE = "Attuale";
 	public final static String LABEL_WSDL_NUOVO = "Nuovo WSDL";
 	public final static String LABEL_AGGIUNTA_FRUITORI_COMPLETATA = "Tutti i soggetti sono già stati aggiunti come fruitori";
-	public final static String LABEL_AGGIUNTA_AZIONI_COMPLETATA = "Tutti le azioni disponibili sono già state gestite come configurazioni ad hoc";
 	public final static String LABEL_APS_VERSIONE_APS = "Versione Accordo Servizio Parte Specifica";
 	public static final String LABEL_APS_SOGGETTO = "Soggetto";
 	public static final String LABEL_APS_TIPO_SERVIZIO = "Tipo Servizio";
