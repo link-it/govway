@@ -230,7 +230,8 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 	public Vector<DataElement> addProtocolPropertyChangeToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String protocollo, String id, String nome,
 			String idProprietario, ProprietariProtocolProperty tipoProprietario, String tipoAccordo, String nomeProprietario,String nomeParentProprietario, String urlChange, String label,
-			BinaryParameter contenutoDocumento, StringBuffer contenutoDocumentoStringBuffer, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem) { 
+			BinaryParameter contenutoDocumento, StringBuffer contenutoDocumentoStringBuffer, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem,
+			boolean readOnly) { 
 
 		/* ID */
 		DataElement de = new DataElement();
@@ -330,7 +331,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				dati.addElement(de);
 			}
 
-			if(id != null){
+			if(id != null && !"".equals(id)){
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(ProtocolPropertiesCostanti.LABEL_DOWNLOAD);
 				saveAs.setType(DataElementType.LINK);
@@ -341,12 +342,14 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				dati.add(saveAs);
 			}
 
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(ProtocolPropertiesCostanti.LABEL_AGGIORNAMENTO);
-			de.setValue("");
-			de.setSize(this.getSize());
-			dati.addElement(de);
+			if(!readOnly) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(ProtocolPropertiesCostanti.LABEL_AGGIORNAMENTO);
+				de.setValue("");
+				de.setSize(this.getSize());
+				dati.addElement(de);
+			}
 
 		}else {
 			de = new DataElement();
@@ -356,14 +359,16 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			dati.addElement(de);
 		}
 
-		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.LABEL_CONTENUTO_NUOVO +":");
-		de.setValue("");
-		de.setType(DataElementType.FILE);
-		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-		de.setSize(this.getSize());
-		de.setRequired(binaryConsoleItem.isRequired()); 
-		dati.addElement(de);
+		if(!readOnly) {
+			de = new DataElement();
+			de.setLabel(ProtocolPropertiesCostanti.LABEL_CONTENUTO_NUOVO +":");
+			de.setValue("");
+			de.setType(DataElementType.FILE);
+			de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			de.setSize(this.getSize());
+			de.setRequired(binaryConsoleItem.isRequired()); 
+			dati.addElement(de);
+		}
 
 		de = new DataElement();
 		de.setType(DataElementType.HIDDEN);
@@ -377,17 +382,23 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		de.setValue(contenutoDocumento.getId());
 		dati.addElement(de);
 
-		if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
-			de = new DataElement();
-			de.setBold(true);
-			de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);
-			de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR);
-			de.setType(DataElementType.NOTE);
-			de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN);
-			de.setSize(this.getSize());
-			dati.addElement(de);
+		if(!readOnly) {
+			if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
+				de = new DataElement();
+				de.setBold(true);
+				de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);
+				de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR);
+				de.setType(DataElementType.NOTE);
+				de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+			}
 		}
 
+		if(readOnly) {
+			this.pd.disableEditMode();
+		}
+		
 		return dati;
 	}
 

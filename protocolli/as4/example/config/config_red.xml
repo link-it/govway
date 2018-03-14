@@ -6,31 +6,63 @@
     <soggetto tipo="as4" nome="Red">
         
         <!-- Esempio SOAP -->
-        <porta-delegata nome="SoapExample/testXml" autenticazione="none" autorizzazione="none"
+        <porta-delegata nome="SoapExample/1/test" autenticazione="none" autorizzazione="none"
             integrazione="trasporto,urlBased,soap" stateless="abilitato">
             <soggetto-erogatore tipo="as4" nome="Blue"/>
-            <servizio tipo="as4" nome="SoapExample"/>
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="test"/>
+        </porta-delegata>
+        <porta-delegata nome="SoapExample/1/testCompress" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="testCompress"/>
+        </porta-delegata>
+	<porta-delegata nome="SoapExample/1/testXml" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="testXml"/>
         </porta-delegata>
-        <porta-delegata nome="SoapExample/test" autenticazione="none" autorizzazione="none"
-            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+
+        <!-- Esempio REST v1 -->
+        <porta-delegata nome="RestExample/1/test" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
             <soggetto-erogatore tipo="as4" nome="Blue"/>
-            <servizio tipo="as4" nome="SoapExample"/>
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="test"/>
+        </porta-delegata>
+        <porta-delegata nome="RestExample/1/testCompress" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testCompress"/>
+        </porta-delegata>
+	<porta-delegata nome="RestExample/1/testJson" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testJson"/>
         </porta-delegata>
 
-        <!-- Esempio REST -->
-        <porta-delegata nome="RestExample/test" autenticazione="none" autorizzazione="none"
+	<!-- Esempio REST v2 -->
+        <porta-delegata nome="RestExample/2/test" autenticazione="none" autorizzazione="none"
             integrazione="trasporto,urlBased" stateless="abilitato">
             <soggetto-erogatore tipo="as4" nome="Blue"/>
-            <servizio tipo="as4" nome="RestExample"/>
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="test"/>
         </porta-delegata>
-        <porta-delegata nome="RestExample/test2" autenticazione="none" autorizzazione="none"
+        <porta-delegata nome="RestExample/2/testCompress" autenticazione="none" autorizzazione="none"
             integrazione="trasporto,urlBased" stateless="abilitato">
             <soggetto-erogatore tipo="as4" nome="Blue"/>
-            <servizio tipo="as4" nome="RestExample"/>
-            <azione nome="test2"/>
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testCompress"/>
+        </porta-delegata>
+	<porta-delegata nome="RestExample/2/testJson" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testJson"/>
         </porta-delegata>
          
     </soggetto>

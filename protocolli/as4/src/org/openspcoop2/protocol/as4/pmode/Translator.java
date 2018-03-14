@@ -37,9 +37,7 @@ import org.openspcoop2.protocol.as4.pmode.beans.API;
 import org.openspcoop2.protocol.as4.pmode.beans.APS;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.resources.TemplateUtils;
 
 import eu.domibus.configuration.Payload;
@@ -57,23 +55,48 @@ public class Translator {
 	private Template template;
 	private Template templatePayloadDefault;
 	private Template templatePayloadProfileDefault;
+	private Template templatePayloadProfileDefault_complete;
 	private PModeRegistryReader reader;
 
 
-	public Translator(IRegistryReader driver, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public Translator() throws ProtocolException {
+		this(null);
+	}
+	public Translator(PModeRegistryReader pmodeRegistryReader) throws ProtocolException {
 		try {
-			this.template = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-template.ftl");
+			this.templatePayloadProfileDefault_complete = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-payloadProfileDefault-template.ftl");
 			this.templatePayloadDefault = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-payloadDefault.ftl");
 			this.templatePayloadProfileDefault = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-payloadProfileDefault.ftl");
-			this.reader = new PModeRegistryReader(driver, protocolFactory);
+			if(pmodeRegistryReader!=null) {
+				this.template = TemplateUtils.getTemplate("/org/openspcoop2/protocol/as4/pmode", "pmode-template.ftl");
+				this.reader = pmodeRegistryReader;
+			}
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
+	
+	private void checkInitDriver() throws ProtocolException {
+		if(this.reader==null) {
+			throw new ProtocolException("Translator initialized without IRegistryReader. Use different constructor");
+		}
+	}
 
+	public byte[] translatePayloadProfileDefaultAsCompleteXml() throws ProtocolException {
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			StringWriter writer = new StringWriter();
+			this.templatePayloadProfileDefault_complete.process(map, writer);
+			String s = writer.toString();
+			return s.getBytes();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
 	public List<Payload> translatePayloadDefault() throws ProtocolException {
 		try {
-			Map<String, Object> map = this.buildMap();
+			Map<String, Object> map = new HashMap<String, Object>();
 			StringWriter writer = new StringWriter();
 			this.templatePayloadDefault.process(map, writer);
 			String s = writer.toString();
@@ -108,7 +131,7 @@ public class Translator {
 
 	public List<PayloadProfile> translatePayloadProfileDefault() throws ProtocolException {
 		try {
-			Map<String, Object> map = this.buildMap();
+			Map<String, Object> map = new HashMap<String, Object>();
 			StringWriter writer = new StringWriter();
 			this.templatePayloadProfileDefault.process(map, writer);
 			String s = writer.toString();
@@ -172,6 +195,9 @@ public class Translator {
 	}
 
 	private Map<String, Object> buildMap() throws Exception {
+		
+		this.checkInitDriver();
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("policies", this.reader.findAllPolicies());
 		List<APC> apcList = this.reader.findAllAPC();

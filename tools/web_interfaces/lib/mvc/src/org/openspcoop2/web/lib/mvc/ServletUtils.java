@@ -215,6 +215,12 @@ public class ServletUtils {
 	
 	
 	
+	/* ------ PAGE DATA (DISABLE EDIT MODE) ---- */
+	
+	public static void disableEditMode(PageData pd){
+		pd.disableEditMode();
+	}
+	
 	
 	/* ------ PAGE DATA (SEARCH) ---- */
 	

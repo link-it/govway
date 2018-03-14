@@ -33,6 +33,7 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 	
 	private String fileName = null;
 	private String fileId = null;
+	private boolean readOnly = false; // vale solo in change
 
 	protected BinaryConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
 		this(id, label, type, null, null);
@@ -58,6 +59,14 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 
 	public void setFileId(String fileId) {
 		this.fileId = fileId;
+	}
+	
+	public boolean isReadOnly() {
+		return this.readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 
 }

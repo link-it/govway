@@ -30,6 +30,7 @@ import java.sql.DriverManager;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
+import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
 import org.openspcoop2.protocol.as4.pmode.Translator;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -77,7 +78,8 @@ public class ClientTest {
 					new DriverRegistroServiziDB(con, log, tipoDatabase.getNome());
 			IRegistryReader rr = p.getRegistryReader(driverOp2);
 			
-			Translator t = new Translator(rr, p);
+			PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(rr, p); 
+			Translator t = new Translator(pModeRegistryReader);
 			File f  = File.createTempFile("configPMODE", ".xml");
 			FileOutputStream fout = new FileOutputStream(f);
 			Writer out = new OutputStreamWriter(fout);

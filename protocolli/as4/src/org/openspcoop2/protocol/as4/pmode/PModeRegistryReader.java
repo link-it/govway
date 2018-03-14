@@ -67,6 +67,19 @@ public class PModeRegistryReader {
 		this.tipo = protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault();
 		this.log = LoggerWrapperFactory.getLogger(PModeRegistryReader.class);
 	}
+
+	private Translator translatorInstance;
+	private synchronized void initTranslator() throws ProtocolException {
+		if(this.translatorInstance==null) {
+			this.translatorInstance = new Translator(this);
+		}
+	}
+	private Translator getTranslator() throws ProtocolException {
+		if(this.translatorInstance==null) {
+			this.initTranslator();
+		}
+		return this.translatorInstance;
+	}
 	
 	public List<APC> findAllAPC() throws Exception {
 		
@@ -94,7 +107,9 @@ public class PModeRegistryReader {
 				contents.add(apc.getEbmsServicePayloadProfile());
 		}
 		
-		return new PayloadProfiles(contents);
+		return new PayloadProfiles(contents, 
+				this.getTranslator().translatePayloadDefault(),
+				this.getTranslator().translatePayloadProfileDefault());
 	}
 	
 	public List<Policy> findAllPolicies() throws Exception {
@@ -216,7 +231,8 @@ public class PModeRegistryReader {
 		for(IDAccordo idAccordo: allId) {
 			AccordoServizioParteComune apc = this.registryReader.getAccordoServizioParteComune(idAccordo);
 			String nomeApc = "Servizio_" + i++;
-			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile));
+			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile, 
+					this.getTranslator().translatePayloadProfileDefault()));
 			if(ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
 				if(apc.sizeAzioneList()>0) {
 					indexAzione+= apc.sizeAzioneList();

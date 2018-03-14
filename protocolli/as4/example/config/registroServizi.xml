@@ -7,34 +7,65 @@
         utilizzo-senza-azione="false" versione="1" service-binding="soap">
 	<soggetto-referente tipo="as4" nome="Blue" />
         <port-type nome="GestioneFileSOAP" profilo-collaborazione="oneway">
-            <azione nome="testXml">
+	    <azione nome="test" soap-action="http://test">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:test"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
+	    </azione>
+	    <azione nome="testCompress" soap-action="http://testCompress">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:testCompress"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="true"/>
+	    </azione>
+            <azione nome="testXml" soap-action="http://testXml">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:testXml"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="XmlProfile"/>
-		<protocol-property name="ebmsActionCompressPayload" value="true"/>
-	    </azione>
-	    <azione nome="test">
-		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:test"/>
-		<protocol-property name="ebmsActionCompressPayload" value="true"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
 	    </azione>
         </port-type>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
 	<protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-SOAP" />
-	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/test.xml"/>
+	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/xmlProfile.xml"/>
     </accordo-servizio-parte-comune>
 
-    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
+    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="sincrono"
         utilizzo-senza-azione="false" versione="1" service-binding="rest">
 	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
-		<protocol-property name="ebmsActionCompressPayload" value="false"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>
-        <resource nome="test2" path="test2">
-        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test2"/>
-		<protocol-property name="ebmsActionCompressPayload" value="false"/>
+        <resource nome="testCompress" path="testCompress">
+        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:testCompress"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="true"/>
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
 	<protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-REST" />
+    </accordo-servizio-parte-comune>
+
+    <!-- 
+	La versione 2 non serializza il tipo 'ebmsUserMessageCollaborationInfoServiceType'
+	In questa maniera viene compreso il servizio differente su domibus
+	Inoltre su questa versione, nell'implementazione, viene utilizzato il 'eSensPolicy'.
+	Infine in questa versione viene definito una nuova operazione Json che utilizza il profilo payload JsonProfile
+    -->    
+    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="sincrono"
+        utilizzo-senza-azione="false" versione="2" service-binding="rest">
+	<soggetto-referente tipo="as4" nome="Blue" />
+        <resource nome="test">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
+        </resource>
+        <resource nome="testCompress" path="testCompress">
+        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:testCompress"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="true"/>
+        </resource>
+	<resource nome="testJson" path="testJson" method="POST">
+        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:testJson"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="JsonProfile"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
+        </resource>
+	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
+	<!-- <protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-REST" /> -->
+	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/jsonProfile.xml"/>
     </accordo-servizio-parte-comune>
 
 
@@ -68,6 +99,12 @@
 
 	<accordo-servizio-parte-specifica tipo="as4" nome="RestExample"
             accordo-servizio-parte-comune="as4/Blue:RestExample:1">
+            <fruitore tipo="as4" nome="Red"/>
+	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy" />
+        </accordo-servizio-parte-specifica>
+
+	<accordo-servizio-parte-specifica tipo="as4" nome="RestExample"
+            accordo-servizio-parte-comune="as4/Blue:RestExample:2" versione="2">
             <fruitore tipo="as4" nome="Red"/>
 	    <protocol-property name="ebmsSecurityProfile" value="eSensPolicy" />
         </accordo-servizio-parte-specifica>

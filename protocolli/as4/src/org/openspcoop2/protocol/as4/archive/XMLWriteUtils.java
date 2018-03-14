@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.as4.archive;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
+import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
 import org.openspcoop2.protocol.as4.pmode.Translator;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -52,7 +53,8 @@ public class XMLWriteUtils {
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
 		
-		this.translator = new Translator(registryReader, protocolFactory);
+		PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, protocolFactory); 
+		this.translator = new Translator(pModeRegistryReader);
 	}
 
 	

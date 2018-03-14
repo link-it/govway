@@ -92,7 +92,9 @@
 		</agreements>
 		<services>
 		<#list apcList as apc>
-			<service name="${apc.id}" value="${apc.ebmsUserMessageCollaborationInfoServiceName}" type="${apc.ebmsUserMessageCollaborationInfoServiceType}"/>
+			<service name="${apc.id}" value="${apc.ebmsUserMessageCollaborationInfoServiceName}" 
+			<#if apc.ebmsUserMessageCollaborationInfoServiceType?has_content>type="${apc.ebmsUserMessageCollaborationInfoServiceType}"</#if> 
+				/>
 		</#list>
 		</services>
 		<actions>

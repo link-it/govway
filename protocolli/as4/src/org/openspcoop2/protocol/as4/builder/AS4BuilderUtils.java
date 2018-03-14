@@ -25,27 +25,90 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
+import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.as4.pmode.Translator;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.as4.utils.AS4PropertiesUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfile;
 import eu.domibus.configuration.PayloadProfiles;
 
 /**
- * AS4PayloadProfilesUtils
+ * AS4BuilderUtils
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13576 $, $Date: 2018-01-26 12:39:34 +0100 (Fri, 26 Jan 2018) $
  */
-public class AS4PayloadProfilesUtils {
+public class AS4BuilderUtils {
 
-	public static PayloadProfiles read(IRegistryReader registryReader, IProtocolFactory<?> protocolFactory, 
+	public static String readPropertyInfoAction(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
+		return _readProperty(aspc, nomePortType, azione, AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION);
+	}
+	public static String readPropertyPayloadProfile(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
+		return _readProperty(aspc, nomePortType, azione, AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE);
+	}
+	private static String _readProperty(AccordoServizioParteComune aspc, String nomePortType, String azione,
+			String propertyName) throws ProtocolException {
+		String actionProperty = null;
+		String payloadProfile = null;
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+			for (Resource resource : aspc.getResourceList()) {
+				if(resource.getNome().equals(azione)) {
+					actionProperty = AS4PropertiesUtils.getRequiredStringValue(resource.getProtocolPropertyList(), 
+							AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION);
+					payloadProfile = AS4PropertiesUtils.getOptionalStringValue(resource.getProtocolPropertyList(), 
+							AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE);
+					break;
+				}
+			}
+		}
+		else {
+			if(nomePortType!=null) {
+				for (PortType pt : aspc.getPortTypeList()) {
+					if(pt.getNome().equals(nomePortType)) {
+						for (Operation op : pt.getAzioneList()) {
+							if(op.getNome().equals(azione)) {
+								actionProperty = AS4PropertiesUtils.getRequiredStringValue(op.getProtocolPropertyList(), 
+										AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION);
+								payloadProfile = AS4PropertiesUtils.getOptionalStringValue(op.getProtocolPropertyList(), 
+										AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE);
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+			else {
+				for (Azione azioneAccordo : aspc.getAzioneList()) {
+					if(azioneAccordo.getNome().equals(azione)) {
+						actionProperty = AS4PropertiesUtils.getRequiredStringValue(azioneAccordo.getProtocolPropertyList(), 
+								AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION);
+						payloadProfile = AS4PropertiesUtils.getOptionalStringValue(azioneAccordo.getProtocolPropertyList(), 
+								AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE);
+						break;
+					}
+				}
+			}
+		}
+		if(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION.equals(propertyName)) {
+			return actionProperty;
+		}
+		else if(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE.equals(propertyName)) {
+			return payloadProfile;
+		}
+		return null;
+	}
+	
+	public static PayloadProfiles readPayloadProfiles(Translator t, 
 			AccordoServizioParteComune as,IDAccordo id, boolean loadDefault) throws ProtocolException {
 		PayloadProfiles pps = null;
 		
@@ -81,7 +144,6 @@ public class AS4PayloadProfilesUtils {
 		if(pps==null) {
 			pps = new PayloadProfiles();
 		}
-		Translator t = new Translator(registryReader, protocolFactory);
 		List<Payload> original = new ArrayList<Payload>();
 		for (Payload payload : pps.getPayloadList()) {
 			original.add(payload);

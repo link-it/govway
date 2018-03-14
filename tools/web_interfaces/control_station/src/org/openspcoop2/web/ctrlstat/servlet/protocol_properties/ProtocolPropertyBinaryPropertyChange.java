@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
+import org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -164,6 +165,13 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 			label = binaryConsoleItem.getLabel();
 			
+			boolean readOnly = false;
+			BinaryConsoleItem b = null;
+			if(binaryConsoleItem instanceof BinaryConsoleItem) {
+				b = (BinaryConsoleItem) binaryConsoleItem;
+				readOnly = b.isReadOnly();
+			}
+			
 			// Preparo il menu
 			ppHelper.makeMenu();
 
@@ -182,6 +190,14 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
 			byte[] oldValue =  oldContenutoDocumento.getValue() ;
+			if(readOnly && oldValue==null) {
+				// il valore deve essere preso da default value
+				oldValue = b.getDefaultValue();
+				oldContenutoDocumento.setValue(oldValue);
+				if(oldContenutoDocumento.getFilename()==null) {
+					oldContenutoDocumento.setFilename(binaryConsoleItem.getLabel());
+				}
+			}
 			String errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuffer);
 			
 			// Parametri Barra titolo TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO
@@ -202,7 +218,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						oldContenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
+						oldContenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
 
 				pd.setDati(dati);
 
@@ -257,7 +273,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						oldContenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
+						oldContenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
 				
 				pd.setDati(dati);
 				
@@ -303,7 +319,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
 
 			dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-					this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
+					this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
 
 			pd.setDati(dati);
 			

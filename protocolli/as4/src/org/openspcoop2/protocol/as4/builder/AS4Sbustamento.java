@@ -20,7 +20,9 @@
 
 package org.openspcoop2.protocol.as4.builder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.mail.BodyPart;
 import javax.mail.internet.InternetHeaders;
@@ -29,10 +31,14 @@ import javax.xml.soap.AttachmentPart;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -40,12 +46,17 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
+import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
+import org.openspcoop2.protocol.as4.pmode.Translator;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
@@ -55,6 +66,11 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.w3c.dom.Element;
+
+import eu.domibus.configuration.Payload;
+import eu.domibus.configuration.PayloadProfile;
+import eu.domibus.configuration.PayloadProfiles;
 
 /**
  * AS4Sbustamento
@@ -69,7 +85,7 @@ public class AS4Sbustamento {
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseSbustamento faseSbustamento, 
 			ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration,
-			IRegistryReader registryReader) throws ProtocolException {
+			IRegistryReader registryReader, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		try{
 			
 			Object o = msg.getContextProperty(AS4Costanti.AS4_CONTEXT_USER_MESSAGE);
@@ -91,16 +107,130 @@ public class AS4Sbustamento {
 			@SuppressWarnings("unchecked")
 			HashMap<String, byte[]> content = (HashMap<String, byte[]>) oContent;
 			
-			PartInfo partInfoRoot = userMessage.getPayloadInfo().getPartInfo(0);
+			boolean multipart = userMessage.getPayloadInfo().sizePartInfoList()>1;
+			List<PartInfo> listPartInfo = new ArrayList<PartInfo>();
+			
+			// Raccolgo profile binding per comprensione xml root
+			// Serve solamente se gli i contenuti sono piu' di uno
+			if(!multipart) {
+				listPartInfo = userMessage.getPayloadInfo().getPartInfoList();
+			}
+			else {
+			
+				PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, protocolFactory); 
+				Translator t = new Translator(pModeRegistryReader);
+				
+				IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
+				IDSoggetto idSoggettoDestinatario = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
+				IDSoggetto idSoggettoErogatore = null;
+				if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
+					idSoggettoErogatore = idSoggettoDestinatario;
+				}
+				else{
+					idSoggettoErogatore = idSoggettoMittente;
+				}
+				
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+						idSoggettoErogatore, busta.getVersioneServizio());
+				AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
+				
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo);
+				
+				String azione = busta.getAzione();
+				String nomePortType = asps.getPortType();
+				String actionProperty = AS4BuilderUtils.readPropertyInfoAction(aspc, nomePortType, azione);
+				String payloadProfile = AS4BuilderUtils.readPropertyPayloadProfile(aspc, nomePortType, azione);
+				if(actionProperty==null) {
+					throw new ProtocolException("Action '"+azione+"' not found");
+				}
+				if(payloadProfile==null) {
+					payloadProfile = t.translatePayloadProfileDefault().get(0).getName();
+				}
+				
+				PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, aspc, idAccordo, true);
+				
+				String payLoadRootMessageName = null;
+				for (PayloadProfile p : pps.getPayloadProfileList()) {
+					if(p.getName().equals(payloadProfile)) {
+						payLoadRootMessageName = p.getAttachment(0).getName();
+						break;
+					}
+				}
+				if(payLoadRootMessageName==null) {
+					throw new ProtocolException("Action '"+azione+"' with payload profile '"+payloadProfile+"' unknown (search payload name failed)");
+				}
+				
+				String cidRootMessage = null;
+				for (Payload p : pps.getPayloadList()) {
+					if(p.getName().equals(payLoadRootMessageName)) {
+						cidRootMessage = p.getCid();
+						break;
+					}
+				}
+				if(cidRootMessage==null) {
+					throw new ProtocolException("Action '"+azione+"' with payload profile '"+payloadProfile+"' with payload '"+payLoadRootMessageName+"' unknown");
+				}
+				
+				// inserisco prima root message
+				for (PartInfo partInfo : userMessage.getPayloadInfo().getPartInfoList()) {
+					if(partInfo.getHref().equals(cidRootMessage)) {
+						listPartInfo.add(partInfo);
+						break;
+					}
+				}
+				// inserisco poi gli altri
+				for (PartInfo partInfo : userMessage.getPayloadInfo().getPartInfoList()) {
+					if(!partInfo.getHref().equals(cidRootMessage)) {
+						listPartInfo.add(partInfo);
+						break;
+					}
+				}
+			}
+			
+			PartInfo partInfoRoot = listPartInfo.get(0);
 			String mimeTypeRoot = this.getMimeType(partInfoRoot);
+			byte[] contentRoot = content.get(partInfoRoot.getHref());
+			String contentIdRoot = partInfoRoot.getHref();
+			if(contentIdRoot.startsWith("cid:")) {
+				contentIdRoot = contentIdRoot .substring("cid:".length());
+			}
 			
 			OpenSPCoop2Message newMessage = null;
 			MessageType messageType = serviceBindingConfiguration.
 				getMessageType(integrationServiceBinding, MessageRole.REQUEST, msg.getTransportRequestContext(), mimeTypeRoot, null);
-			OpenSPCoop2MessageParseResult result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
-					mimeTypeRoot, content.get(partInfoRoot.getHref()));
-			newMessage = result.getMessage_throwParseThrowable();
+			
 			if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
+				
+				// ----- checkEnvelopePerSOAP12 ----
+				if(MessageType.SOAP_11.equals(messageType)) {
+					
+					// verifico che l'envelope non sia 1.2
+					Element envelope = XMLUtils.getInstance().newElement(contentRoot);
+					String namespace = envelope.getNamespaceURI();
+					if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(namespace)) {
+						// correggo message type
+						messageType = MessageType.SOAP_12;		
+						mimeTypeRoot = HttpConstants.CONTENT_TYPE_SOAP_1_2; 
+						// altrimenti se continuo ad utilizzare originale text/xml da errore: 
+						// Caused by: com.sun.xml.messaging.saaj.soap.SOAPVersionMismatchException: Cannot create message: incorrect content-type for SOAP version. Got: text/xml Expected: application/soap+xml
+				        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.init(MessageImpl.java:403) ~[saaj-impl-1.3.25.jar:?]
+				        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.<init>(MessageImpl.java:320) ~[saaj-impl-1.3.25.jar:?]
+				        //  at com.sun.xml.messaging.saaj.soap.ver1_2.Message1_2Impl.<init>(Message1_2Impl.java:74) ~[saaj-impl-1.3.25.jar:?]
+				        //  at org.openspcoop2.message.soap.Message1_2_FIX_Impl.<init>(Message1_2_FIX_Impl.java:79) ~[openspcoop2_message_BUILD-13647.jar:?]
+				        //  at org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl.<init>(OpenSPCoop2Message_saaj_12_impl.java:59)
+					}
+				}
+				
+			}
+			
+			OpenSPCoop2MessageParseResult result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
+					mimeTypeRoot, contentRoot);
+			newMessage = result.getMessage_throwParseThrowable();
+			
+			if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
+							
+				// ----- checkSOAPAction ----
 				
 				String soapAction = CostantiPdD.OPENSPCOOP2;
 				
@@ -131,16 +261,16 @@ public class AS4Sbustamento {
 			}
 			
 			
-			boolean multipart = userMessage.getPayloadInfo().sizePartInfoList()>1;
 			if(multipart) {
-				for (int i = 1; i < userMessage.getPayloadInfo().sizePartInfoList(); i++) {
-					PartInfo partInfoAttach = userMessage.getPayloadInfo().getPartInfo(1);
+				for (int i = 1; i < listPartInfo.size(); i++) {
+					PartInfo partInfoAttach = listPartInfo.get(i);
 					byte[] c = content.get(partInfoAttach.getHref()); 
 					String mimeType = this.getMimeType(partInfoAttach);
 					String contentId = partInfoAttach.getHref();
 					if(contentId.startsWith("cid:")) {
 						contentId = contentId .substring("cid:".length());
 					}
+					contentId = "<"+contentId+">";
 					if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
 						OpenSPCoop2SoapMessage soapMsg = newMessage.castAsSoap();
 						AttachmentPart ap = soapMsg.createAttachmentPart();
@@ -156,6 +286,11 @@ public class AS4Sbustamento {
 						BodyPart bodyPart = restMsg.getContent().createBodyPart(headers, c);
 						restMsg.getContent().addBodyPart(bodyPart);
 					}
+				}
+				
+				if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
+					OpenSPCoop2SoapMessage soapMsg = newMessage.castAsSoap();
+					soapMsg.getSOAPPart().addMimeHeader(HttpConstants.CONTENT_ID, "<"+contentIdRoot+">");
 				}
 			}
 			

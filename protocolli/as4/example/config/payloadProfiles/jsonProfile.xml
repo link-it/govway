@@ -1,0 +1,21 @@
+                <payloadProfiles>
+			<payload name="businessContentPayloadJson"
+                                        cid="cid:json" 
+                                        required="true"
+                                        mimeType="text/json"/>
+                        <payload name="businessContentAttachment1asJson"
+                                        cid="cid:attachmentJson1" 
+                                        required="false"
+                                        mimeType="text/json"/>
+			<payload name="businessContentAttachment2asBinary"
+                                        cid="cid:attachmentBinary2" 
+                                        required="false"
+                                        mimeType="application/octet-stream"/>
+			<payloadProfile name="JsonProfile" 
+                                        maxSize="40894464">
+                                <attachment name="businessContentPayloadJson"/>
+                                <attachment name="businessContentAttachment1asJson"/>
+				<attachment name="businessContentAttachment2asBinary"/>
+                        </payloadProfile>
+                </payloadProfiles>
+

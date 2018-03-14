@@ -6,35 +6,77 @@
     <soggetto tipo="as4" nome="Blue">
         
         <!-- Esempio SOAP -->
-        <porta-applicativa nome="SoapExample/testXml" stateless="abilitato">
-            <servizio tipo="as4" nome="SoapExample"/>
+        <porta-applicativa nome="SoapExample/1/test" stateless="abilitato">
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="test"/>
+            <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa nome="SoapExample/1/testCompress" stateless="abilitato">
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="testCompress"/>
+            <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa nome="SoapExample/1/testXml" stateless="abilitato">
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="testXml"/>
             <servizio-applicativo nome="TRACE"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa nome="SoapExample/test" stateless="abilitato">
-            <servizio tipo="as4" nome="SoapExample"/>
+
+        <!-- Esempio REST v1 -->
+        <porta-applicativa nome="RestExample/1/test" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="test"/>
+            <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa nome="RestExample/1/testCompress" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testCompress"/>
+            <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+	<porta-applicativa nome="RestExample/1/testJson" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testJson"/>
             <servizio-applicativo nome="TRACE"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
         </porta-applicativa>
 
-        <!-- Esempio REST -->
-        <porta-applicativa nome="RestExample/test" stateless="abilitato">
-            <servizio tipo="as4" nome="RestExample"/>
+        <!-- Esempio REST v2 -->
+        <porta-applicativa nome="RestExample/2/test" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="test"/>
             <servizio-applicativo nome="TRACE"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa nome="RestExample/test2" stateless="abilitato">
-            <servizio tipo="as4" nome="RestExample"/>
-            <azione nome="test2"/>
+        <porta-applicativa nome="RestExample/2/testCompress" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testCompress"/>
+            <servizio-applicativo nome="TRACE"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+	<porta-applicativa nome="RestExample/2/testJson" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testJson"/>
             <servizio-applicativo nome="TRACE"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>

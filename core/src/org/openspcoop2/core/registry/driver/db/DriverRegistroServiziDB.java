@@ -15049,14 +15049,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addSelectField("nome_servizio");
 			sqlQueryObject.addSelectField("tipo_servizio");
+			sqlQueryObject.addSelectField("versione_servizio");
 			sqlQueryObject.addSelectField("id_soggetto");	
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			if (!search.equals("")) { // con search
 				sqlQueryObject.addWhereLikeCondition("nome_servizio", search, true, true);
 			} 
 
-			sqlQueryObject.addOrderBy("tipo_servizio");
 			sqlQueryObject.addOrderBy("nome_servizio");
+			sqlQueryObject.addOrderBy("versione_servizio");
+			sqlQueryObject.addOrderBy("tipo_servizio");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
@@ -19180,6 +19182,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 			sqlQueryObject.addSelectField("nome_servizio");
 			sqlQueryObject.addSelectField("tipo_servizio");
+			sqlQueryObject.addSelectField("versione_servizio");
 			sqlQueryObject.addSelectField("nome_soggetto");
 			sqlQueryObject.addSelectField("tipo_soggetto");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -20818,6 +20821,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesPortType(), tabella);
 		}
 	}
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaResources filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesResources(), tabella);
+		}
+	}
 	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaAccordi filtroRicerca, String tabella) throws SQLQueryObjectException{
 		if(filtroRicerca!=null){
 			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesAccordo(), tabella);
@@ -20917,6 +20925,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaPortTypes filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(filtroRicerca!=null){
 			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesPortType(), proprietario);
+		}
+	}
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaResources filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesResources(), proprietario);
 		}
 	}
 	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaAccordi filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{

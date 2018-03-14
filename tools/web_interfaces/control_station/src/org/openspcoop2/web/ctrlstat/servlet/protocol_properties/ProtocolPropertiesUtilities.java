@@ -66,7 +66,9 @@ public class ProtocolPropertiesUtilities {
 		return ConsoleInterfaceType.AVANZATA;
 	}
 
-	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,BaseConsoleItem item, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
+	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,BaseConsoleItem item, Object defaultItemValue,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
+			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
 		if(item == null)
 			return dati;
 
@@ -75,7 +77,7 @@ public class ProtocolPropertiesUtilities {
 			AbstractConsoleItem<?> abItem = (AbstractConsoleItem<?>) item;
 			switch (abItem.getType()) {
 			case CHECKBOX:
-				dati = getCheckbox(dati,abItem, size);
+				dati = getCheckbox(dati,abItem, defaultItemValue, size);
 				break;
 			case CRYPT:
 				dati = getText(dati,abItem, size, DataElementType.CRYPT);
@@ -87,7 +89,7 @@ public class ProtocolPropertiesUtilities {
 				dati = getHidden(dati,abItem, size);
 				break;
 			case SELECT:
-				dati = getSelect(dati,abItem,size);
+				dati = getSelect(dati,abItem, defaultItemValue, size);
 				break;
 			case TEXT:
 				dati = getText(dati,abItem, size, DataElementType.TEXT);
@@ -242,7 +244,50 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
-	public static Vector<DataElement> getCheckbox(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
+	private static Boolean getSelectedValue(BooleanConsoleItem booleanItem, Object defaultItemValue) {
+		Boolean selectedBooleanValue = null;
+		if(booleanItem.getDefaultValue() != null) {
+			selectedBooleanValue = booleanItem.getDefaultValue();
+		}
+		else if(defaultItemValue!=null && defaultItemValue instanceof Boolean) {
+			selectedBooleanValue = (Boolean) defaultItemValue;
+		}
+		else {
+			selectedBooleanValue = false;
+		}
+		return selectedBooleanValue;
+	}
+	private static String getSelectedValue(NumberConsoleItem numberItem, Object defaultItemValue) {
+		String selectedNumberValue = null;
+		if(numberItem.getDefaultValue()!=null) {
+			selectedNumberValue = numberItem.getDefaultValue() + "";
+		}
+		else if(defaultItemValue!=null && defaultItemValue instanceof Long) {
+			selectedNumberValue = ((Long) defaultItemValue) + "";
+		}
+		else if(defaultItemValue!=null && defaultItemValue instanceof Integer) {
+			selectedNumberValue = ((Integer) defaultItemValue) + "";
+		}
+		else {
+			selectedNumberValue = null;
+		}
+		return selectedNumberValue;
+	}
+	private static String getSelectedValue(StringConsoleItem stringItem, Object defaultItemValue) {
+		String selectedStringValue = null;
+		if(stringItem.getDefaultValue()!=null) {
+			selectedStringValue = stringItem.getDefaultValue();
+		}
+		else if(defaultItemValue!=null && defaultItemValue instanceof String) {
+			selectedStringValue = ((String) defaultItemValue);
+		}
+		else {
+			selectedStringValue = null;
+		}
+		return selectedStringValue;
+	}
+	
+	public static Vector<DataElement> getCheckbox(Vector<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.CHECKBOX);
@@ -257,15 +302,18 @@ public class ProtocolPropertiesUtilities {
 		// [TODO] controllare casi che ci possono essere
 		case BOOLEAN:
 			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
-			de.setSelected(booleanItem.getDefaultValue() != null ?  booleanItem.getDefaultValue() : false);
+			Boolean selectedBooleanValue = getSelectedValue(booleanItem, defaultItemValue);
+			de.setSelected(selectedBooleanValue);
 			break;
 		case NUMBER:
 			NumberConsoleItem numberItem = (NumberConsoleItem) item;
-			de.setSelected(numberItem.getDefaultValue() + "");
+			String selectedNumberValue = getSelectedValue(numberItem, defaultItemValue);
+			de.setSelected(selectedNumberValue);
 			break;
 		case STRING:
 			StringConsoleItem stringItem = (StringConsoleItem) item;
-			de.setSelected(stringItem.getDefaultValue());
+			String selectedStringValue = getSelectedValue(stringItem, defaultItemValue);
+			de.setSelected(selectedStringValue);
 			break;
 		case BINARY: // non supportato 
 		default:
@@ -314,7 +362,7 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
-	public static Vector<DataElement> getSelect(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
+	public static Vector<DataElement> getSelect(Vector<DataElement> dati ,AbstractConsoleItem<?> item, Object defaultItemValue, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.SELECT);
@@ -332,7 +380,8 @@ public class ProtocolPropertiesUtilities {
 		// [TODO] controllare casi che ci possono essere
 		case BOOLEAN:
 			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
-			de.setSelected(booleanItem.getDefaultValue() + "");
+			Boolean selectedBooleanValue = getSelectedValue(booleanItem, defaultItemValue);
+			de.setSelected(selectedBooleanValue);
 
 			Map<String, Boolean> booleanMapLabelValues = booleanItem.getMapLabelValues();
 			for (String key : booleanMapLabelValues.keySet()) {
@@ -342,7 +391,8 @@ public class ProtocolPropertiesUtilities {
 			break;
 		case NUMBER:
 			NumberConsoleItem numberItem = (NumberConsoleItem) item;
-			de.setSelected(numberItem.getDefaultValue() + "");
+			String selectedNumberValue = getSelectedValue(numberItem, defaultItemValue);
+			de.setSelected(selectedNumberValue);
 
 			Map<String, Long> numberMapLabelValues = numberItem.getMapLabelValues();
 			for (String key : numberMapLabelValues.keySet()) {
@@ -352,7 +402,8 @@ public class ProtocolPropertiesUtilities {
 			break;
 		case STRING:
 			StringConsoleItem stringItem = (StringConsoleItem) item;
-			de.setSelected(stringItem.getDefaultValue());
+			String selectedStringValue = getSelectedValue(stringItem, defaultItemValue);
+			de.setSelected(selectedStringValue);
 
 			Map<String, String> stringMapLabelValues = stringItem.getMapLabelValues();
 			for (String key : stringMapLabelValues.keySet()) {

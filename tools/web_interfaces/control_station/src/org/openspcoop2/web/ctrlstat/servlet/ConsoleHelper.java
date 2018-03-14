@@ -2738,11 +2738,18 @@ public class ConsoleHelper {
 			ConsoleInterfaceType consoleInterfaceType, ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
-			// imposto il default value
+			// imposto nel default value il valore attuale.
+			// Mi tengo cmq il default value attuale per le opzioni di selected
+			Object defaultItemValue = null;
+			if(item instanceof AbstractConsoleItem<?> ) {
+				AbstractConsoleItem<?> itemConsole = (AbstractConsoleItem<?>) item;
+				defaultItemValue = itemConsole.getDefaultValue();
+			}
 			ProtocolPropertiesUtils.setDefaultValue(item, property); 
 
 			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(item.getId(), listaProtocolPropertiesDaDB); 
-			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,item,  consoleOperationType, consoleInterfaceType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,item, defaultItemValue,
+					consoleOperationType, consoleInterfaceType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
 		}
 
 		// Imposto il flag per indicare che ho caricato la configurazione

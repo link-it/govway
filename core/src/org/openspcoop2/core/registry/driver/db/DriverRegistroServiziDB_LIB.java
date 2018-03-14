@@ -1867,6 +1867,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("nome_servizio = ?");
 				sqlQueryObject.addWhereCondition("tipo_servizio = ?");
+				sqlQueryObject.addWhereCondition("versione_servizio = ?");
 				sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				updateQuery = sqlQueryObject.createSQLQuery();
@@ -1874,7 +1875,8 @@ public class DriverRegistroServiziDB_LIB {
 
 				updateStmt.setString(1, nomeServizio);
 				updateStmt.setString(2, tipoServizio);
-				updateStmt.setLong(3, idSoggetto);
+				updateStmt.setInt(3, versioneServizio);
+				updateStmt.setLong(4, idSoggetto);
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica recupero l'id del servizio appena creato : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nomeServizio, tipoServizio, idSoggetto));
 				updateRS = updateStmt.executeQuery();

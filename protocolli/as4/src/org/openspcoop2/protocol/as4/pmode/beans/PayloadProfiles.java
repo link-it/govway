@@ -32,7 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 /**
  * @author Bussu Giovanni (bussu@link.it)
  * @author  $Author$
@@ -44,25 +43,16 @@ public class PayloadProfiles {
 	private List<Payload> payloads;
 	private List<PayloadProfile> payloadProfiles;
 	
-	public static List<String> payloadsProfilesDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
-	static {
-		payloadsProfilesDefault.add("MessageProfile");
-	}
-	
-	public static List<String> payloadsDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
-	static {
-		payloadsDefault.add("businessContentPayload");
-		payloadsDefault.add("businessContentAttachment");
-	}
-	
-	public PayloadProfiles(List<byte[]> contents) throws Exception {
+	public PayloadProfiles(List<byte[]> contents, 
+			List<eu.domibus.configuration.Payload> listPayloadDefault,
+			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
 
 		this.payloads = new ArrayList<>();
 		this.payloadProfiles = new ArrayList<>();
 		
 		Map<String, Payload> payloadsMap = new HashMap<>();
 		Map<String, PayloadProfile> payloadProfilesMap = new HashMap<>();
-
+		
 		for(byte[] content: contents) {
 			
 			Document doc = XMLUtils.getInstance().newDocument(content);
@@ -72,9 +62,15 @@ public class PayloadProfiles {
 			for (int temp = 0; temp < payloadList.getLength(); temp++) {
 				Node node = payloadList.item(temp);
 				Payload payload = new Payload(node);
-				if(payloadsDefault.contains(payload.getName())) {
-					throw new Exception("Il payload con nome ["+payload.getName()+"] è già presente nella configurazione di default; modificare il nome");
+				
+				if(listPayloadDefault!=null && listPayloadDefault.size()>0) {
+					for (eu.domibus.configuration.Payload payloadDefault : listPayloadDefault) {
+						if(payloadDefault.getName().equals(payload.getName())) {
+							throw new Exception("Il payload con nome ["+payload.getName()+"] è già presente nella configurazione di default; modificare il nome");
+						}
+					}
 				}
+				
 				if(payloadsMap.containsKey(payload.getName())) {
 					if(!payloadsMap.get(payload.getName()).equals(payload)) {
 						throw new Exception("Payload con nome ["+payload.getName()+"] risulta utilizzato su più accordi");
@@ -87,9 +83,15 @@ public class PayloadProfiles {
 			for (int temp = 0; temp < payloadProfileList.getLength(); temp++) {
 				Node node = payloadProfileList.item(temp);
 				PayloadProfile payloadProfile = new PayloadProfile(node);
-				if(payloadsProfilesDefault.contains(payloadProfile.getName())) {
-					throw new Exception("Il payload-profile con nome ["+payloadProfile.getName()+"] è già presente nella configurazione di default; modificare il nome");
+
+				if(listPayloadProfileDefault!=null && listPayloadProfileDefault.size()>0) {
+					for (eu.domibus.configuration.PayloadProfile payloadProfileDefault : listPayloadProfileDefault) {
+						if(payloadProfileDefault.getName().equals(payloadProfile.getName())) {
+							throw new Exception("Il payload-profile con nome ["+payloadProfile.getName()+"] è già presente nella configurazione di default; modificare il nome");
+						}
+					}
 				}
+				
 				if(payloadProfilesMap.containsKey(payloadProfile.getName())) {
 					if(!payloadProfilesMap.get(payloadProfile.getName()).equals(payloadProfile)) {
 						throw new Exception("Payload-profile con nome ["+payloadProfile.getName()+"] risulta utilizzato su più accordi");

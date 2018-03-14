@@ -93,7 +93,8 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 			IRegistryReader registryReader = this.protocolFactory.getCachedRegistryReader(this.state);
 			
 			return sbustamento.buildMessage(this.state, msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
-					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration, registryReader);
+					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration, 
+					registryReader, this.protocolFactory);
 		
 		}
 		else {

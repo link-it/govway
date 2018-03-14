@@ -47,19 +47,23 @@ public class Azione {
 	private String ebmsActionPayloadProfile;
 	private Boolean ebmsActionCompressPayload;
 	
-	public Azione(org.openspcoop2.core.registry.Azione base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
+	public Azione(org.openspcoop2.core.registry.Azione base, String id, PayloadProfiles payloadProfiles,
+			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles, listPayloadProfileDefault);
 		this.baseAzione = base;
 	}
-	public Azione(Operation base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
+	public Azione(Operation base, String id, PayloadProfiles payloadProfiles,
+			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles, listPayloadProfileDefault);
 		this.baseOperation = base;
 	}
-	public Azione(org.openspcoop2.core.registry.Resource base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
+	public Azione(org.openspcoop2.core.registry.Resource base, String id, PayloadProfiles payloadProfiles,
+			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles, listPayloadProfileDefault);
 		this.baseResource = base;
 	}
-	private Azione(List<ProtocolProperty> list, String id, String nomeAzione, PayloadProfiles payloadProfiles) throws Exception {
+	private Azione(List<ProtocolProperty> list, String id, String nomeAzione, PayloadProfiles payloadProfiles, 
+			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
 		
 		this.id = id;
 		for(ProtocolProperty prop: list) {
@@ -70,7 +74,17 @@ public class Azione {
 				
 				this.ebmsActionPayloadProfile = prop.getValue();
 				
-				if(PayloadProfiles.payloadsProfilesDefault.contains(this.ebmsActionPayloadProfile)) {
+				boolean isDefault = false;
+				if(listPayloadProfileDefault!=null && listPayloadProfileDefault.size()>0) {
+					for (eu.domibus.configuration.PayloadProfile payloadProfileDefault : listPayloadProfileDefault) {
+						if(payloadProfileDefault.getName().equals(this.ebmsActionPayloadProfile)) {
+							isDefault = true;
+							break;
+						}
+					}
+				}
+				
+				if(isDefault) {
 					continue;
 				}
 				
@@ -91,8 +105,9 @@ public class Azione {
 		if(this.ebmsUserMessageCollaborationInfoActionName == null)
 			throw new Exception("Property ["+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION+"] non definita per l'azione ["+nomeAzione+"]");
 		
-		if(this.ebmsActionPayloadProfile == null)
-			this.ebmsActionPayloadProfile = PayloadProfiles.payloadsProfilesDefault.get(0);
+		if(this.ebmsActionPayloadProfile == null) {
+			this.ebmsActionPayloadProfile = listPayloadProfileDefault.get(0).getName();
+		}
 		
 		if(this.ebmsActionCompressPayload == null)
 			this.ebmsActionCompressPayload = true;

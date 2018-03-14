@@ -59,7 +59,7 @@ public class AS4ConsoleCostanti {
 	public static final String AS4_SOGGETTI_PARTY_ENDPOINT_LABEL = "Party Endpoint";
 	public static final String AS4_SOGGETTI_PARTY_ENDPOINT_ID = "as4SoggettiPartyEndpointSubTitleId";
 	
-	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL = "Endpoint";
+	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL = "URL";
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ENDPOINT;
 	
 	public static final String AS4_SOGGETTO_USER_MESSAGE_PARTY_COMMON_NAME_LABEL = "Common Name";
@@ -69,32 +69,46 @@ public class AS4ConsoleCostanti {
 	
 	// API
 	
-	public static final String AS4_TITLE_ACCORDO_LABEL = AS4_PREFIX_TITLE_LABEL+"Service Info";
+	public static final String AS4_TITLE_ACCORDO_LABEL = AS4_TITLE_LABEL;
 	public static final String AS4_TITLE_ACCORDO_ID = "as4ApiTitleId";
 	
-	public static final String AS4_ACCORDO_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE_ID_LABEL = "Service Type";
+	public static final String AS4_TITLE_ACCORDO_SERVICE_LABEL = "Service Info";
+	public static final String AS4_TITLE_ACCORDO_SERVICE_ID = "as4ApiServiceSubTitleId";
+	
+	public static final String AS4_ACCORDO_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE_ID_LABEL = "Type";
 	public static final String AS4_ACCORDO_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE;
 	
-	public static final String AS4_ACCORDO_USER_MESSAGE_COLLABORATION_INFO_SERVICE_NAME_ID_LABEL = "Service Name";
+	public static final String AS4_ACCORDO_USER_MESSAGE_COLLABORATION_INFO_SERVICE_NAME_ID_LABEL = "Name";
 	public static final String AS4_ACCORDO_USER_MESSAGE_COLLABORATION_INFO_SERVICE_NAME_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE;
 
-	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL = "Payload Profile";
+	public static final String AS4_TITLE_ACCORDO_PAYLOAD_LABEL = "Payload";
+	public static final String AS4_TITLE_ACCORDO_PAYLOAD_ID = "as4ApiPayloadSubTitleId";
+	
+	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL = "Profile";
 	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE;
-
+	
+	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_LABEL = " Profile Default";
+	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_ID = "ebmsServicePayloadProfileDefault"; // usato solo in grafica per consultazione
 	
 	
 	// Azioni
 	
-	public static final String AS4_TITLE_AZIONE_LABEL = AS4_PREFIX_TITLE_LABEL+"Action Info";
+	public static final String AS4_TITLE_AZIONE_LABEL = AS4_TITLE_LABEL;
 	public static final String AS4_TITLE_AZIONE_ID = "as4AzioneTitleId";
 	
-	public static final String AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID_LABEL = "Action Name";
-	public static final String AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION;
+	public static final String AS4_TITLE_AZIONE_ACTION_LABEL = "Action Info";
+	public static final String AS4_TITLE_AZIONE_ACTION_ID = "as4AzioneActionSubTitleId";
 	
-	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL = "Payload Profile";
+	public static final String AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID_LABEL = "Name";
+	public static final String AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION;
+		
+	public static final String AS4_TITLE_AZIONE_PAYLOAD_LABEL = "Payload";
+	public static final String AS4_TITLE_AZIONE_PAYLOAD_ID = "as4AzionePayloadSubTitleId";
+	
+	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL = "Profile";
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_PROFILE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE;
 	
-	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_LABEL = "Payload Compress";
+	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_LABEL = "Compress";
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD;
 	public static final Boolean AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_DEFAULT = true;
 	

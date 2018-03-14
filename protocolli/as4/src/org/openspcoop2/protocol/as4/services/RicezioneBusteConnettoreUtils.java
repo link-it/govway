@@ -171,7 +171,11 @@ public class RicezioneBusteConnettoreUtils {
 			PartInfo partInfo = new PartInfo();
 			
 			String contentIdKey = AS4Costanti.JMS_PAYLOAD_PREFIX+index+AS4Costanti.JMS_PAYLOAD_MIME_CONTENT_ID_SUFFIX;
-			partInfo.setHref("cid:"+this.getPropertyJms(map, contentIdKey, true));
+			String hrefCid = this.getPropertyJms(map, contentIdKey, true);
+			if(hrefCid.startsWith("cid:")==false) {
+				hrefCid = "cid:" + hrefCid;
+			}
+			partInfo.setHref(hrefCid);
 			
 			PartProperties partProperties = new PartProperties();
 			Property property = new Property();

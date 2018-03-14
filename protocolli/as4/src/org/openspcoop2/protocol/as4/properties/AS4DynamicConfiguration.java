@@ -33,7 +33,7 @@ import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.protocol.as4.builder.AS4PayloadProfilesUtils;
+import org.openspcoop2.protocol.as4.builder.AS4BuilderUtils;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BaseConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
 import org.openspcoop2.protocol.sdk.properties.BooleanConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
@@ -156,8 +157,8 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		configuration.addConsoleItem(userMessagePartyTypeValueItem);
 		
 		BaseConsoleItem subTitleEndpoint = ProtocolPropertiesFactory.newSubTitleItem(
-				AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_ID, 
-				AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ENDPOINT_LABEL);
+				AS4ConsoleCostanti.AS4_SOGGETTI_PARTY_ENDPOINT_ID, 
+				AS4ConsoleCostanti.AS4_SOGGETTI_PARTY_ENDPOINT_LABEL);
 		configuration.addConsoleItem(subTitleEndpoint );
 		
 		StringConsoleItem userMessagePartyEndpointItem = (StringConsoleItem)
@@ -257,7 +258,12 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
 				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_ID, 
 				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_LABEL);
-		configuration.addConsoleItem(titolo );
+		configuration.addConsoleItem(titolo);
+		
+		BaseConsoleItem subTitleService = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_SERVICE_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_SERVICE_LABEL);
+		configuration.addConsoleItem(subTitleService);
 		
 		AbstractConsoleItem<?> serviceTypeItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
@@ -277,6 +283,11 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		serviceNameItem.setRequired(true);
 		configuration.addConsoleItem(serviceNameItem);
 		
+		BaseConsoleItem subTitlePayload = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PAYLOAD_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PAYLOAD_LABEL);
+		configuration.addConsoleItem(subTitlePayload);
+		
 		AbstractConsoleItem<?> payloadProfileItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
 						ConsoleItemValueType.BINARY,
@@ -285,6 +296,22 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 						AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL);
 		payloadProfileItem.setRequired(false);
 		configuration.addConsoleItem(payloadProfileItem);
+		
+		if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
+			AbstractConsoleItem<?> payloadProfileDefaultItem = 
+					ProtocolPropertiesFactory.newConsoleItem(
+							ConsoleItemValueType.BINARY,
+							ConsoleItemType.FILE,
+							AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_ID, 
+							AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_LABEL);
+			PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, this.protocolFactory); 
+			Translator t = new Translator(pModeRegistryReader);
+			byte[] defaultValue = t.translatePayloadProfileDefaultAsCompleteXml();
+			BinaryConsoleItem binary = (BinaryConsoleItem) payloadProfileDefaultItem;
+			binary.setDefaultValue(defaultValue);
+			binary.setReadOnly(true);
+			configuration.addConsoleItem(payloadProfileDefaultItem);
+		}
 		
 		return configuration;
 	}
@@ -515,14 +542,21 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Impossibile recuperare l'accordo con id ["+id+"]: "+e.getMessage(),e);
 		}	
 		
-		PayloadProfiles pps = AS4PayloadProfilesUtils.read(registryReader,this.getProtocolFactory(),
-				as, id, false);
+		PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, this.protocolFactory); 
+		Translator t = new Translator(pModeRegistryReader);
+		
+		PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, as, id, false);
 		List<String> profiles = new ArrayList<>();
 		if(pps!=null && pps.sizePayloadProfileList()>0) {
 			for (PayloadProfile pp : pps.getPayloadProfileList()) {
 				profiles.add(pp.getName());
 			}
 		}
+		
+		BaseConsoleItem subTitleAction = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_AZIONE_ACTION_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_AZIONE_ACTION_LABEL);
+		configuration.addConsoleItem(subTitleAction );
 		
 		AbstractConsoleItem<?> actionTypeItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
@@ -533,6 +567,11 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		actionTypeItem.setRequired(true);
 		configuration.addConsoleItem(actionTypeItem);
 		
+		BaseConsoleItem subTitlePayload = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_AZIONE_PAYLOAD_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_AZIONE_PAYLOAD_LABEL);
+		configuration.addConsoleItem(subTitlePayload );
+		
 		if(profiles.size()>0) {
 			StringConsoleItem actionPayloadProfile = (StringConsoleItem) 
 					ProtocolPropertiesFactory.newConsoleItem(
@@ -540,11 +579,21 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 							ConsoleItemType.SELECT,
 							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_ID, 
 							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL);
-			Translator t = new Translator(registryReader, this.protocolFactory);
-			String defaultProfile = t.translatePayloadProfileDefault().get(0).getName();
-			if(profiles.contains(defaultProfile)==false) {
-				actionPayloadProfile.addLabelValue(defaultProfile, defaultProfile);
+			
+			List<PayloadProfile> listDefault = t.translatePayloadProfileDefault();
+			String defaultProfile = null;
+			if(listDefault!=null && listDefault.size()>0) {
+				for (PayloadProfile payloadProfileDefault : listDefault) {
+					String defaultProfileL = payloadProfileDefault.getName();
+					if(defaultProfile==null) {
+						defaultProfile = defaultProfileL;
+					}
+					if(profiles.contains(defaultProfileL)==false) {
+						actionPayloadProfile.addLabelValue(defaultProfileL, defaultProfileL);
+					}
+				}
 			}
+			
 			for (String p : profiles) {
 				actionPayloadProfile.addLabelValue(p, p);
 			}
