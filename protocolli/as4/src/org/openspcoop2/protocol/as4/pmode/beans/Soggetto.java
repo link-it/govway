@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ProtocolProperty;
@@ -64,10 +63,6 @@ public class Soggetto  {
 			} else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_COMMON_NAME)) {
 				this.ebmsUserMessagePartyCN = prop.getValue();
 			}
-		}
-
-		if(base.getConnettore() == null || TipiConnettore.DISABILITATO.getNome().equals(base.getConnettore().getTipo())) {
-			throw getException("Connettore non definito",base);
 		}
 
 		if(this.ebmsUserMessagePartyIdTypeName == null)

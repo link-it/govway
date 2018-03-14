@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
@@ -284,6 +285,14 @@ public class UtilitiesMappingFruizioneErogazione  {
 														IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByServiceType(idServizio.getTipo());
 														Implementation implementation = p.createProtocolIntegrationConfiguration().createDefaultImplementation(serviceBinding, idServizio);
 														PortaApplicativa paDefault = implementation.getPortaApplicativa();
+														
+														// associo sa erogatore della pa di partenza
+														if(pa.sizeServizioApplicativoList()>0) {
+															for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+																paDefault.addServizioApplicativo(paSA);
+															}
+														}
+														
 														MappingErogazionePortaApplicativa mapping = implementation.getMapping();
 														IDPortaApplicativa idPADefault = mapping.getIdPortaApplicativa();
 														nomePortaDefault = idPADefault.getNome();

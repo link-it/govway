@@ -46,6 +46,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordoAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaFruizioniServizio;
@@ -333,6 +334,29 @@ public class CachedRegistryReader implements IRegistryReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioParteComuneSoap(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema) throws RegistryNotFound,RegistryException{
+		try{
+			return this.registroServiziManager.getWsdlAccordoServizio(idService, infoWsdlSource, buildSchema);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema) throws RegistryNotFound,RegistryException{
+		try{
+			return this.registroServiziManager.getRestAccordoServizio(idService, infoWsdlSource, buildSchema);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	

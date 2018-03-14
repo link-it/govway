@@ -98,8 +98,11 @@ public class RichiestaDelegata implements java.io.Serializable {
 			String idModulo,ProprietaErroreApplicativo fault,IDSoggetto dominio){
 		this.idPortaDelegata = idPD;
 		this.servizioApplicativo = aServizioApplicativo;
-		this.idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore();
-		this.idServizio = idPD.getIdentificativiFruizione().getIdServizio();
+		if(idPD!=null && idPD.getIdentificativiFruizione()!=null) {{
+				this.idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore();
+				this.idServizio = idPD.getIdentificativiFruizione().getIdServizio();
+			}
+		}
 		this.idModuloInAttesa = idModulo;
 		this.fault = fault;
 		this.dominio = dominio;

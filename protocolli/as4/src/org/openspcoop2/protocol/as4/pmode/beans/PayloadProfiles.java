@@ -41,23 +41,26 @@ import org.w3c.dom.NodeList;
  */
 public class PayloadProfiles {
 
-	List<Payload> payloads;
-	List<PayloadProfile> payloadProfiles;
+	private List<Payload> payloads;
+	private List<PayloadProfile> payloadProfiles;
+	
+	public static List<String> payloadsProfilesDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
+	static {
+		payloadsProfilesDefault.add("MessageProfile");
+	}
+	
+	public static List<String> payloadsDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
+	static {
+		payloadsDefault.add("businessContentPayload");
+		payloadsDefault.add("businessContentAttachment");
+	}
 	
 	public PayloadProfiles(List<byte[]> contents) throws Exception {
 
 		this.payloads = new ArrayList<>();
 		this.payloadProfiles = new ArrayList<>();
 		
-		List<String> payloadsDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
-		payloadsDefault.add("businessContentPayload");
-		payloadsDefault.add("businessContentAttachment");
-		
 		Map<String, Payload> payloadsMap = new HashMap<>();
-		
-		List<String> payloadsProfilesDefault = new ArrayList<String>(); // presenti nel file pmode-template.xml
-		payloadsProfilesDefault.add("MessageProfile");
-		
 		Map<String, PayloadProfile> payloadProfilesMap = new HashMap<>();
 
 		for(byte[] content: contents) {

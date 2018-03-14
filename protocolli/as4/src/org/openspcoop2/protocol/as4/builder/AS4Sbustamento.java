@@ -29,6 +29,11 @@ import javax.xml.soap.AttachmentPart;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -38,13 +43,16 @@ import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
+import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -60,7 +68,8 @@ public class AS4Sbustamento {
 	public ProtocolMessage buildMessage(IState state, OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseSbustamento faseSbustamento, 
-			ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException {
+			ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration,
+			IRegistryReader registryReader) throws ProtocolException {
 		try{
 			
 			Object o = msg.getContextProperty(AS4Costanti.AS4_CONTEXT_USER_MESSAGE);
@@ -92,7 +101,33 @@ public class AS4Sbustamento {
 					mimeTypeRoot, content.get(partInfoRoot.getHref()));
 			newMessage = result.getMessage_throwParseThrowable();
 			if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
-				newMessage.castAsSoap().setSoapAction("TODO_CAPIRE_DA_WSDL");
+				
+				String soapAction = CostantiPdD.OPENSPCOOP2;
+				
+				if(busta.getAzione()!=null) {
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+							busta.getTipoDestinatario(),busta.getDestinatario(), busta.getVersioneServizio());
+					AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
+					if(asps.getPortType()!=null) {
+						org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper asWrapper = registryReader.getAccordoServizioParteComuneSoap(idServizio, InformationApiSource.SAFE_SPECIFIC_REGISTRY, false);
+						if(asWrapper!=null) {
+							PortType pt = asWrapper.getPortType(asps.getPortType());
+							if(pt!=null) {
+								for (Operation op : pt.getAzioneList()) {
+									if(op.getNome().equals(busta.getAzione())) {
+										soapAction = op.getSoapAction();
+										if(soapAction==null) {
+											soapAction = "";
+										}
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				newMessage.castAsSoap().setSoapAction(soapAction);
 			}
 			
 			

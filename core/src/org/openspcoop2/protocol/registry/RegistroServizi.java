@@ -83,6 +83,7 @@ import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
+import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -420,6 +421,39 @@ public class RegistroServizi  {
 			this.log.error(msg);
 			if(alogConsole!=null)
 				alogConsole.info(msg);
+			throw new DriverRegistroServiziException("Riscontrato errore durante l'inizializzazione del registro: "+e.getMessage());
+		}
+
+		if( this.driverRegistroServizi.size() == 0 )
+			throw new DriverRegistroServiziException("Non e' stato possibile inizializzare nessuna sorgente di lettura per un Registro dei Servizi");
+	}
+	
+	// Costruttore per implementare classe org.openspcoop2.protocol.basic.registry.RegistryReader
+	public RegistroServizi(IDriverRegistroServiziGet driverRegistroServiziGET, Logger alog, boolean readObjectStatoBozza, String tipoRegistro)throws DriverRegistroServiziException{
+
+		try{ 
+			this.driverRegistroServizi = new java.util.Hashtable<String,IDriverRegistroServiziGet>();
+			this.registriXML = new ArrayList<DriverRegistroServiziXML>();
+
+			if(alog!=null)
+				this.log = alog;
+			else
+				this.log = LoggerWrapperFactory.getLogger(RegistroServizi.class);
+
+			this.raggiungibilitaTotale = true;
+
+			this.readObjectStatoBozza = readObjectStatoBozza;
+			
+			IDriverRegistroServiziGet driver = driverRegistroServiziGET;
+			String nomeRegistro = "Registro_"+tipoRegistro;
+			
+			this.mappingNomeRegistroToTipiDatabase.put(nomeRegistro, tipoRegistro);
+			this.mappingNomeRegistroToUseConnectionPdD.put(nomeRegistro, false);
+			this.driverRegistroServizi.put(nomeRegistro,driver);
+
+		}catch(Exception e){
+			String msg = "Riscontrato errore durante l'inizializzazione del registro: "+e.getMessage();
+			this.log.error(msg);
 			throw new DriverRegistroServiziException("Riscontrato errore durante l'inizializzazione del registro: "+e.getMessage());
 		}
 

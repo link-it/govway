@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.registry;
+package org.openspcoop2.protocol.sdk.constants;
 
 /**
  * InformationWsdlSource
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13576 $, $Date: 2018-01-26 12:39:34 +0100 (Fri, 26 Jan 2018) $
  */
 public enum InformationApiSource {
 

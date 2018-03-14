@@ -197,8 +197,8 @@ public class AS4Imbustamento {
 				payloadProfile = t.translatePayloadProfileDefault().get(0).getName();
 			}
 			List<Payload> payloadConfig = new ArrayList<>();
+			boolean foundP = false;
 			for (PayloadProfile p : pps.getPayloadProfileList()) {
-				boolean foundP = false;
 				if(p.getName().equals(payloadProfile)) {
 					for (Attachment a : p.getAttachmentList()) {
 						boolean found = false;
@@ -216,9 +216,9 @@ public class AS4Imbustamento {
 					foundP = true;
 					break;
 				}
-				if(!foundP) {
-					throw new ProtocolException("Action '"+azione+"' with payload profile '"+payloadProfile+"' unknown");
-				}
+			}
+			if(!foundP) {
+				throw new ProtocolException("Action '"+azione+"' with payload profile '"+payloadProfile+"' unknown");
 			}
 			
 			

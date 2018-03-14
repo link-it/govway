@@ -70,6 +70,10 @@ public class Azione {
 				
 				this.ebmsActionPayloadProfile = prop.getValue();
 				
+				if(PayloadProfiles.payloadsProfilesDefault.contains(this.ebmsActionPayloadProfile)) {
+					continue;
+				}
+				
 				boolean exists = false;
 				for(PayloadProfile prof: payloadProfiles.getPayloadProfiles()) {
 					if(prof.getName().equals(this.ebmsActionPayloadProfile))
@@ -88,7 +92,7 @@ public class Azione {
 			throw new Exception("Property ["+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION+"] non definita per l'azione ["+nomeAzione+"]");
 		
 		if(this.ebmsActionPayloadProfile == null)
-			this.ebmsActionPayloadProfile = "MessageProfile";
+			this.ebmsActionPayloadProfile = PayloadProfiles.payloadsProfilesDefault.get(0);
 		
 		if(this.ebmsActionCompressPayload == null)
 			this.ebmsActionCompressPayload = true;

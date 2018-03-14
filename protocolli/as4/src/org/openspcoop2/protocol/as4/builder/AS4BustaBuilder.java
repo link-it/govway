@@ -37,6 +37,7 @@ import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
@@ -89,8 +90,10 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 		
 			AS4Sbustamento sbustamento = new AS4Sbustamento();
 			
+			IRegistryReader registryReader = this.protocolFactory.getCachedRegistryReader(this.state);
+			
 			return sbustamento.buildMessage(this.state, msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
-					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration);
+					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration, registryReader);
 		
 		}
 		else {

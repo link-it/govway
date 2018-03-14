@@ -52,6 +52,7 @@ import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RispostaAsincrona;
@@ -977,6 +978,14 @@ public class XMLDataConverter {
 								ServiceBinding serviceBinding = readServiceBinding(idServizio, con);
 								Implementation implementation = XMLDataConverter.getImplementationDefault(serviceBinding, idServizio);
 								PortaApplicativa paDefault = implementation.getPortaApplicativa();
+								
+								// associo sa erogatore della pa di partenza
+								if(pa.sizeServizioApplicativoList()>0) {
+									for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+										paDefault.addServizioApplicativo(paSA);
+									}
+								}
+								
 								MappingErogazionePortaApplicativa mapping = implementation.getMapping();
 								idPADefault = mapping.getIdPortaApplicativa();
 								if(this.gestoreCRUD.existsPortaApplicativa(idPADefault) == false) {

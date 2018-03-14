@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.basic.registry;
 
 import java.util.List;
 
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -48,6 +49,8 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.protocol.registry.RegistroServizi;
+import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordoAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaFruizioniServizio;
@@ -73,7 +76,9 @@ public class RegistryReader implements IRegistryReader {
 
 	private IDriverRegistroServiziGet driverRegistroServiziGET;
 	private IDriverRegistroServiziCRUD driverRegistroServiziCRUD;
-	@SuppressWarnings("unused")
+	
+	private RegistroServizi registroServiziWithoutCache; // serve per implementare metodi di lettura delle interfacce API
+	
 	private Logger log;
 	public RegistryReader(IDriverRegistroServiziGet driverRegistroServizi, Logger log) throws Exception{
 		this.driverRegistroServiziGET = driverRegistroServizi;
@@ -82,6 +87,23 @@ public class RegistryReader implements IRegistryReader {
 		}
 		
 		this.log = log;
+	}
+	
+	private synchronized void initRegistroServiziWithoutCache() throws RegistryException {
+		try {
+			if(this.registroServiziWithoutCache==null) {
+				this.registroServiziWithoutCache = new RegistroServizi(this.driverRegistroServiziGET, this.log, true, CostantiConfigurazione.REGISTRO_DB.getValue());
+			}
+		}catch(Exception e) {
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	public RegistroServizi getRegistroServiziWithoutCache() throws RegistryException {
+		if(this.registroServiziWithoutCache==null) {
+			this.initRegistroServiziWithoutCache();
+		}
+		return this.registroServiziWithoutCache;
 	}
 	
 	
@@ -375,6 +397,31 @@ public class RegistryReader implements IRegistryReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioParteComuneSoap(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema) throws RegistryNotFound,RegistryException{
+		try {
+			 RegistroServizi registro = getRegistroServiziWithoutCache();
+			 return registro.getWsdlAccordoServizio(null, null, idService, infoWsdlSource, buildSchema);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema) throws RegistryNotFound,RegistryException{
+		try {
+			 RegistroServizi registro = getRegistroServiziWithoutCache();
+			 return registro.getRestAccordoServizio(null, null, idService, infoWsdlSource, buildSchema);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	

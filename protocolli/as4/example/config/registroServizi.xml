@@ -5,7 +5,7 @@
 
     <accordo-servizio-parte-comune nome="SoapExample" profilo-collaborazione="oneway"
         utilizzo-senza-azione="false" versione="1" service-binding="soap">
-	<soggetto-referente tipo="AS4" nome="Blue" />
+	<soggetto-referente tipo="as4" nome="Blue" />
         <port-type nome="GestioneFileSOAP" profilo-collaborazione="oneway">
             <azione nome="testXml">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:testXml"/>
@@ -24,7 +24,7 @@
 
     <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
         utilizzo-senza-azione="false" versione="1" service-binding="rest">
-	<soggetto-referente tipo="AS4" nome="Blue" />
+	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
 		<protocol-property name="ebmsActionCompressPayload" value="false"/>
@@ -39,7 +39,7 @@
 
 
     <!-- Soggetto Mittente degli esempi -->
-    <soggetto tipo="AS4" nome="Red">
+    <soggetto tipo="as4" nome="Red">
 
 	<protocol-property name="ebmsUserMessagePartyId" value="domibus-red" />
 	<protocol-property name="ebmsUserMessagePartyIdTypeName" value="partyTypeUrn" />
@@ -51,7 +51,7 @@
 
 
     <!-- Soggetto Destinatario degli esempi -->
-    <soggetto tipo="AS4" nome="Blue" >
+    <soggetto tipo="as4" nome="Blue" >
 
 	<protocol-property name="ebmsUserMessagePartyId" value="domibus-blue" />
 	<protocol-property name="ebmsUserMessagePartyIdTypeName" value="partyTypeUrn" />
@@ -59,16 +59,16 @@
 	<protocol-property name="ebmsUserMessagePartyEndpoint" value="http://Blue:8080/domibus/services/msh"/>
 	<protocol-property name="ebmsUserMessagePartyCommonName" value="blue_gw" />
 
-        <accordo-servizio-parte-specifica tipo="AS4" nome="SoapExample"
-            accordo-servizio-parte-comune="AS4/Blue:SoapExample:1"
+        <accordo-servizio-parte-specifica tipo="as4" nome="SoapExample"
+            accordo-servizio-parte-comune="as4/Blue:SoapExample:1"
 	    port-type="GestioneFileSOAP">
-            <fruitore tipo="AS4" nome="Red"/>
+            <fruitore tipo="as4" nome="Red"/>
 	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy" />
         </accordo-servizio-parte-specifica>
 
-	<accordo-servizio-parte-specifica tipo="AS4" nome="RestExample"
-            accordo-servizio-parte-comune="AS4/Blue:RestExample:1">
-            <fruitore tipo="AS4" nome="Red"/>
+	<accordo-servizio-parte-specifica tipo="as4" nome="RestExample"
+            accordo-servizio-parte-comune="as4/Blue:RestExample:1">
+            <fruitore tipo="as4" nome="Red"/>
 	    <protocol-property name="ebmsSecurityProfile" value="eSensPolicy" />
         </accordo-servizio-parte-specifica>
 

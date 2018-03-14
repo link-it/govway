@@ -45,6 +45,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -913,6 +914,22 @@ public class RicezioneContenutiApplicativi {
 
 		// Raccolgo dati
 		IDSoggetto soggettoFruitore = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
+		try {
+			soggettoFruitore.setCodicePorta(configurazionePdDReader.getIdentificativoPorta(soggettoFruitore, protocolFactory));
+		} catch (Exception e) {
+			msgDiag.logErroreGenerico(e,"getIdentificativoPorta");
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR, 
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PORTA), e,null)));
+			}
+			return;
+		}
+		if(identificativoPortaDelegata.getIdentificativiFruizione()==null) {
+			identificativoPortaDelegata.setIdentificativiFruizione(new IdentificativiFruizione());
+		}
+		identificativoPortaDelegata.getIdentificativiFruizione().setSoggettoFruitore(soggettoFruitore);
 		identitaPdD = soggettoFruitore; // la PdD Assume l'identita del soggetto
 		this.msgContext.getProtocol().setDominio(identitaPdD);
 		this.msgContext.setIdentitaPdD(identitaPdD);
