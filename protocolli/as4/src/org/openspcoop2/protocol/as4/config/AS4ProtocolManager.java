@@ -74,7 +74,7 @@ public class AS4ProtocolManager extends BasicManager {
 	public AS4ProtocolManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 		this.logger = this.getProtocolFactory().getLogger();
-		this.as4Properties = AS4Properties.getInstance(this.logger);
+		this.as4Properties = AS4Properties.getInstance();
 	}
 	
 	

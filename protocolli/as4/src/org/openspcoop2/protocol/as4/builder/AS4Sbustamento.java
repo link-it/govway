@@ -53,8 +53,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
-import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
-import org.openspcoop2.protocol.as4.pmode.Translator;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -117,8 +116,7 @@ public class AS4Sbustamento {
 			}
 			else {
 			
-				PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, protocolFactory); 
-				Translator t = new Translator(pModeRegistryReader);
+				TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
 				
 				IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
 				IDSoggetto idSoggettoDestinatario = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
@@ -145,7 +143,7 @@ public class AS4Sbustamento {
 					throw new ProtocolException("Action '"+azione+"' not found");
 				}
 				if(payloadProfile==null) {
-					payloadProfile = t.translatePayloadProfileDefault().get(0).getName();
+					payloadProfile = t.getListPayloadProfileDefault().get(0).getName();
 				}
 				
 				PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, aspc, idAccordo, true);
@@ -202,24 +200,30 @@ public class AS4Sbustamento {
 			
 			if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
 				
-				// ----- checkEnvelopePerSOAP12 ----
-				if(MessageType.SOAP_11.equals(messageType)) {
-					
-					// verifico che l'envelope non sia 1.2
-					Element envelope = XMLUtils.getInstance().newElement(contentRoot);
-					String namespace = envelope.getNamespaceURI();
-					if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(namespace)) {
-						// correggo message type
-						messageType = MessageType.SOAP_12;		
-						mimeTypeRoot = HttpConstants.CONTENT_TYPE_SOAP_1_2; 
-						// altrimenti se continuo ad utilizzare originale text/xml da errore: 
-						// Caused by: com.sun.xml.messaging.saaj.soap.SOAPVersionMismatchException: Cannot create message: incorrect content-type for SOAP version. Got: text/xml Expected: application/soap+xml
-				        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.init(MessageImpl.java:403) ~[saaj-impl-1.3.25.jar:?]
-				        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.<init>(MessageImpl.java:320) ~[saaj-impl-1.3.25.jar:?]
-				        //  at com.sun.xml.messaging.saaj.soap.ver1_2.Message1_2Impl.<init>(Message1_2Impl.java:74) ~[saaj-impl-1.3.25.jar:?]
-				        //  at org.openspcoop2.message.soap.Message1_2_FIX_Impl.<init>(Message1_2_FIX_Impl.java:79) ~[openspcoop2_message_BUILD-13647.jar:?]
-				        //  at org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl.<init>(OpenSPCoop2Message_saaj_12_impl.java:59)
-					}
+				// Non ci si puo' basare sul content-type per capire se siamo in soap11 o soap12.
+				// Dobbiamo usare il namespace
+				
+				// ----- checkEnvelope----
+				Element envelope = XMLUtils.getInstance().newElement(contentRoot);
+				String namespace = envelope.getNamespaceURI();
+				if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(namespace)) {
+					// correggo message type
+					messageType = MessageType.SOAP_12;		
+					mimeTypeRoot = HttpConstants.CONTENT_TYPE_SOAP_1_2; 
+					// altrimenti se continuo ad utilizzare originale text/xml da errore: 
+					// Caused by: com.sun.xml.messaging.saaj.soap.SOAPVersionMismatchException: Cannot create message: incorrect content-type for SOAP version. Got: text/xml Expected: application/soap+xml
+			        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.init(MessageImpl.java:403) ~[saaj-impl-1.3.25.jar:?]
+			        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.<init>(MessageImpl.java:320) ~[saaj-impl-1.3.25.jar:?]
+			        //  at com.sun.xml.messaging.saaj.soap.ver1_2.Message1_2Impl.<init>(Message1_2Impl.java:74) ~[saaj-impl-1.3.25.jar:?]
+			        //  at org.openspcoop2.message.soap.Message1_2_FIX_Impl.<init>(Message1_2_FIX_Impl.java:79) ~[openspcoop2_message_BUILD-13647.jar:?]
+			        //  at org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl.<init>(OpenSPCoop2Message_saaj_12_impl.java:59)
+				}
+				else if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(namespace)) {
+					messageType = MessageType.SOAP_11;		
+					mimeTypeRoot = HttpConstants.CONTENT_TYPE_SOAP_1_1; 
+				}
+				else {
+					throw new Exception("Namespace ["+namespace+"] unknown per integrazione SOAP");
 				}
 				
 			}

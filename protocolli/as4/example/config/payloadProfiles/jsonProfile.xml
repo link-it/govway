@@ -1,21 +1,19 @@
                 <payloadProfiles>
-			<payload name="businessContentPayloadJson"
-                                        cid="cid:json" 
-                                        required="true"
-                                        mimeType="text/json"/>
-                        <payload name="businessContentAttachment1asJson"
+                        <payload name="JsonTestAttachment1asJson"
                                         cid="cid:attachmentJson1" 
                                         required="true"
                                         mimeType="text/json"/>
-			<payload name="businessContentAttachment2asBinary"
+			<payload name="JsonTestAttachment2asBinary"
                                         cid="cid:attachmentBinary2" 
                                         required="false"
                                         mimeType="application/octet-stream"/>
-			<payloadProfile name="JsonProfile" 
+
+			<payloadProfile name="JsonTestProfile" 
                                         maxSize="40894464">
-                                <attachment name="businessContentPayloadJson"/>
-                                <attachment name="businessContentAttachment1asJson"/>
-				<attachment name="businessContentAttachment2asBinary"/>
+                                <attachment name="defaultJsonContentPayload"/>
+                                <attachment name="JsonTestAttachment1asJson"/>
+				<attachment name="JsonTestAttachment2asBinary"/>
                         </payloadProfile>
+
                 </payloadProfiles>
 

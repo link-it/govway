@@ -45,7 +45,7 @@ public class InitHandler implements org.openspcoop2.pdd.core.handlers.InitHandle
 		
 		try {
 			Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-			AS4Properties as4Properties = AS4Properties.getInstance(log);
+			AS4Properties as4Properties = AS4Properties.getInstance();
 			
 			gestoreMessaggi = new GestoreRunnable("AS4MessageReceiver", as4Properties.getDomibusGatewayJMS_threadsPoolSize(), 
 					new RicezioneBusteConnector_GestoreThreads(), ProtocolFactoryManager.getInstance().getProtocolFactoryByName(AS4Costanti.PROTOCOL_NAME).getProtocolLogger());

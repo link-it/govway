@@ -32,7 +32,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
-import org.openspcoop2.protocol.as4.pmode.Translator;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
 import org.openspcoop2.protocol.as4.utils.AS4PropertiesUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
@@ -108,10 +108,8 @@ public class AS4BuilderUtils {
 		return null;
 	}
 	
-	public static PayloadProfiles readPayloadProfiles(Translator t, 
+	public static PayloadProfiles readPayloadProfiles(TranslatorPayloadProfilesDefault t, 
 			AccordoServizioParteComune as,IDAccordo id, boolean loadDefault) throws ProtocolException {
-		PayloadProfiles pps = null;
-		
 		byte[] profilesBytes = null;
 		try {
 			for (ProtocolProperty pp : as.getProtocolPropertyList()) {
@@ -123,6 +121,12 @@ public class AS4BuilderUtils {
 		}catch(Exception e) {
 			throw new ProtocolException("Impossibile recuperare la configurazione del payloadProfile dall'accordo con id ["+id+"]: "+e.getMessage(),e);
 		}
+		return readPayloadProfiles(t, profilesBytes, id, loadDefault);
+	}
+	public static PayloadProfiles readPayloadProfiles(TranslatorPayloadProfilesDefault t, 
+			byte[] profilesBytes, IDAccordo id, boolean loadDefault) throws ProtocolException {
+		PayloadProfiles pps = null;
+		
 		
 		try {
 			if(profilesBytes!=null) {
@@ -148,7 +152,7 @@ public class AS4BuilderUtils {
 		for (Payload payload : pps.getPayloadList()) {
 			original.add(payload);
 		}
-		List<Payload> payloadsDefault = t.translatePayloadDefault();
+		List<Payload> payloadsDefault = t.getListPayloadDefault();
 		for (Payload payloadDefault : payloadsDefault) {
 			boolean found = false;
 			for (Payload payload : original) {
@@ -165,7 +169,7 @@ public class AS4BuilderUtils {
 		for (PayloadProfile payloadProfile : pps.getPayloadProfileList()) {
 			originalP.add(payloadProfile);
 		}
-		List<PayloadProfile> payloadProfilesDefault = t.translatePayloadProfileDefault();
+		List<PayloadProfile> payloadProfilesDefault = t.getListPayloadProfileDefault();
 		for (PayloadProfile payloadProfileDefault : payloadProfilesDefault) {
 			boolean found = false;
 			for (PayloadProfile payloadProfile : originalP) {

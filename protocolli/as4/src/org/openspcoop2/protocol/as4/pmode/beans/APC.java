@@ -56,7 +56,7 @@ public class APC {
 				else {			
 					File fCheck = new File(prop.getFile());
 					if(fCheck.exists()==false) {
-						fCheck = new File(AS4Properties.getInstance(log).getPModeTranslatorPayloadProfilesFolder(), prop.getFile());
+						fCheck = new File(AS4Properties.getInstance().getPModeTranslatorPayloadProfilesFolder(), prop.getFile());
 					}
 					this.ebmsServicePayloadProfile = FileSystemUtilities.readBytesFromFile(fCheck);
 				}

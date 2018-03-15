@@ -27,6 +27,7 @@ import java.util.List;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
@@ -47,23 +48,22 @@ public class Azione {
 	private String ebmsActionPayloadProfile;
 	private Boolean ebmsActionCompressPayload;
 	
-	public Azione(org.openspcoop2.core.registry.Azione base, String id, PayloadProfiles payloadProfiles,
-			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles, listPayloadProfileDefault);
+	public Azione(org.openspcoop2.core.registry.Azione base, String id, PayloadProfiles payloadProfiles) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
 		this.baseAzione = base;
 	}
-	public Azione(Operation base, String id, PayloadProfiles payloadProfiles,
-			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles, listPayloadProfileDefault);
+	public Azione(Operation base, String id, PayloadProfiles payloadProfiles) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
 		this.baseOperation = base;
 	}
-	public Azione(org.openspcoop2.core.registry.Resource base, String id, PayloadProfiles payloadProfiles,
-			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles, listPayloadProfileDefault);
+	public Azione(org.openspcoop2.core.registry.Resource base, String id, PayloadProfiles payloadProfiles) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
 		this.baseResource = base;
 	}
-	private Azione(List<ProtocolProperty> list, String id, String nomeAzione, PayloadProfiles payloadProfiles, 
-			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
+	private Azione(List<ProtocolProperty> list, String id, String nomeAzione, PayloadProfiles payloadProfiles) throws Exception {
+		
+		TranslatorPayloadProfilesDefault translator = TranslatorPayloadProfilesDefault.getTranslator();
+		List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault = translator.getListPayloadProfileDefault();
 		
 		this.id = id;
 		for(ProtocolProperty prop: list) {

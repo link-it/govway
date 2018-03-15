@@ -120,7 +120,7 @@ public class AS4Properties {
 	 * @throws Exception 
 	 * 
 	 */
-	public static AS4Properties getInstance(Logger log) throws ProtocolException{
+	public static AS4Properties getInstance() throws ProtocolException{
 
 		if(AS4Properties.as4Properties==null)
 			throw new ProtocolException("AS4Properties not initialized (use init method in factory)");
@@ -139,6 +139,8 @@ public class AS4Properties {
 			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 			
+			getPayloadProfilesDefaultPayloads();
+			getPayloadProfilesDefaultPayloadProfiles();
 			File f = this.getSecurityPoliciesFolder();
 			File[] list = f.listFiles();
 			if(list==null || list.length<=0) {
@@ -312,7 +314,7 @@ public class AS4Properties {
     	return AS4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
     
-	private File getFile(String fileName) throws Exception {
+	private File getDirectory(String fileName) throws Exception {
 		File file = new File(fileName);
 		
 		if(!file.exists()) {
@@ -331,11 +333,71 @@ public class AS4Properties {
 		return file;
 	}
 	
+	private File getFile(String fileName) throws Exception {
+		File file = new File(fileName);
+		
+		if(!file.exists()) {
+			throw new Exception("File ["+fileName+"] non esiste");
+		}
+		
+		if(!file.isFile())
+			throw new Exception("File ["+fileName+"] non e' un semplice file");
+		
+		if(!file.canRead())
+			throw new Exception("File ["+fileName+"] non puo' essere letto");
+		
+		return file;
+	}
+	
 	
 	
 	
 	
 	/* **** Domibus Configuration **** */
+	
+	private static byte[] payloadProfilesDefaultPayloads;
+	private static Boolean payloadProfilesDefaultPayloadsRead;
+	public byte[] getPayloadProfilesDefaultPayloads() throws ProtocolException {
+		if(AS4Properties.payloadProfilesDefaultPayloadsRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloads"); 
+				if (value != null){
+					value = value.trim();
+					File f  = this.getFile(value);
+					payloadProfilesDefaultPayloads = FileSystemUtilities.readBytesFromFile(f);
+				}
+				
+				payloadProfilesDefaultPayloadsRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloads', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.payloadProfilesDefaultPayloads;
+	}
+	
+	private static byte[] payloadProfilesDefaultPayloadProfiles;
+	private static Boolean payloadProfilesDefaultPayloadProfilesRead;
+	public byte[] getPayloadProfilesDefaultPayloadProfiles() throws ProtocolException {
+		if(AS4Properties.payloadProfilesDefaultPayloadProfilesRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloadProfiles"); 
+				if (value != null){
+					value = value.trim();
+					File f  = this.getFile(value);
+					payloadProfilesDefaultPayloadProfiles = FileSystemUtilities.readBytesFromFile(f);
+				}
+				
+				payloadProfilesDefaultPayloadProfilesRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloadProfiles', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.payloadProfilesDefaultPayloadProfiles;
+	}
 	
 	private static File securityPoliciesFolder;
 	public File getSecurityPoliciesFolder() throws ProtocolException {
@@ -345,7 +407,7 @@ public class AS4Properties {
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.securityPoliciesFolder = this.getFile(value);
+					AS4Properties.securityPoliciesFolder = this.getDirectory(value);
 				}else{
 					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.securityPolicies.folder' non impostata");
 				}
@@ -389,7 +451,7 @@ public class AS4Properties {
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.pModeTranslatorPayloadProfilesFolder = this.getFile(value);
+					AS4Properties.pModeTranslatorPayloadProfilesFolder = this.getDirectory(value);
 				}else{
 					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.pModeTranslatorPayloadProfilesFolder' non impostata");
 				}

@@ -23,7 +23,6 @@
 package org.openspcoop2.protocol.as4.pmode.beans;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.registry.constants.ServiceBinding;
@@ -41,8 +40,7 @@ public class API {
 	private String id;
 	private Map<String, Azione> actions;
 	
-	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, int indiceInizialeAzione, PayloadProfiles payloadProfiles,
-			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
+	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, int indiceInizialeAzione, PayloadProfiles payloadProfiles) throws Exception {
 		this.base = base;
 		this.id = id;
 		
@@ -51,7 +49,7 @@ public class API {
 			if(base.sizeAzioneList()>0) {
 				for (org.openspcoop2.core.registry.Azione az : base.getAzioneList()) {
 					String idAzione = "AzioneAccordo_" + indiceInizialeAzione++;
-					this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, listPayloadProfileDefault));
+					this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles));
 				}
 			}
 			if(base.sizePortTypeList()>0) {
@@ -59,7 +57,7 @@ public class API {
 					if(pt.sizeAzioneList()>0) {
 						for (org.openspcoop2.core.registry.Operation az : pt.getAzioneList()) {
 							String idAzione = "Azione_" + indiceInizialeAzione++;
-							this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, listPayloadProfileDefault));
+							this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles));
 						}
 					}
 				}
@@ -69,7 +67,7 @@ public class API {
 			if(base.sizeResourceList()>0) {
 				for (org.openspcoop2.core.registry.Resource resource : base.getResourceList()) {
 					String idAzione = "Resource_" + indiceInizialeAzione++;
-					this.actions.put(idAzione, new Azione(resource, idAzione, payloadProfiles, listPayloadProfileDefault));
+					this.actions.put(idAzione, new Azione(resource, idAzione, payloadProfiles));
 				}
 			}
 		}

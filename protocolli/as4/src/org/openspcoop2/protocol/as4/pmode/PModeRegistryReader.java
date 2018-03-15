@@ -61,26 +61,15 @@ public class PModeRegistryReader {
 	private IRegistryReader registryReader;
 	private String tipo;
 	private Logger log;
+	private AS4Properties as4Properties;
 	
 	public PModeRegistryReader(IRegistryReader registryReader, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.registryReader = registryReader;
 		this.tipo = protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault();
 		this.log = LoggerWrapperFactory.getLogger(PModeRegistryReader.class);
+		this.as4Properties = AS4Properties.getInstance();
 	}
 
-	private Translator translatorInstance;
-	private synchronized void initTranslator() throws ProtocolException {
-		if(this.translatorInstance==null) {
-			this.translatorInstance = new Translator(this);
-		}
-	}
-	private Translator getTranslator() throws ProtocolException {
-		if(this.translatorInstance==null) {
-			this.initTranslator();
-		}
-		return this.translatorInstance;
-	}
-	
 	public List<APC> findAllAPC() throws Exception {
 		
 		List<APC> apcList = new ArrayList<>();
@@ -107,15 +96,13 @@ public class PModeRegistryReader {
 				contents.add(apc.getEbmsServicePayloadProfile());
 		}
 		
-		return new PayloadProfiles(contents, 
-				this.getTranslator().translatePayloadDefault(),
-				this.getTranslator().translatePayloadProfileDefault());
+		return new PayloadProfiles(contents);
 	}
 	
 	public List<Policy> findAllPolicies() throws Exception {
 		List<Policy> policies = new ArrayList<>();
 		
-		String[] list = AS4Properties.getInstance(this.log).getSecurityPoliciesFolder().list();
+		String[] list = this.as4Properties.getSecurityPoliciesFolder().list();
 		
 		for(String file: list) {
 			Policy policy = new Policy();
@@ -139,12 +126,11 @@ public class PModeRegistryReader {
 		
 		List<Soggetto> soggetti = new ArrayList<>();
 		
-		AS4Properties props = AS4Properties.getInstance(this.log);
 		String defaultGW = null;
 		List<String> customGW = new ArrayList<>();
-		if(props.isDomibusGatewayRegistry()) {
-			defaultGW = props.getDomibusGatewayRegistrySoggettoDefault();
-			customGW = props.getDomibusGatewayRegistrySoggettoCustomList();
+		if(this.as4Properties.isDomibusGatewayRegistry()) {
+			defaultGW = this.as4Properties.getDomibusGatewayRegistrySoggettoDefault();
+			customGW = this.as4Properties.getDomibusGatewayRegistrySoggettoCustomList();
 		}
 		
 		int legId = 1;
@@ -231,8 +217,7 @@ public class PModeRegistryReader {
 		for(IDAccordo idAccordo: allId) {
 			AccordoServizioParteComune apc = this.registryReader.getAccordoServizioParteComune(idAccordo);
 			String nomeApc = "Servizio_" + i++;
-			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile, 
-					this.getTranslator().translatePayloadProfileDefault()));
+			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile));
 			if(ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
 				if(apc.sizeAzioneList()>0) {
 					indexAzione+= apc.sizeAzioneList();

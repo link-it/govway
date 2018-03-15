@@ -9,6 +9,7 @@
         <port-type nome="GestioneFileSOAP" profilo-collaborazione="oneway">
 	    <azione nome="test" soap-action="http://test">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:test"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="DefaultXmlProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
 	    </azione>
 	    <azione nome="testCompress" soap-action="http://testCompress">
@@ -17,7 +18,7 @@
 	    </azione>
             <azione nome="testXml" soap-action="http://testXml">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:testXml"/>
-		<protocol-property name="ebmsActionPayloadProfile" value="XmlProfile"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="XmlTestProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
 	    </azione>
         </port-type>
@@ -31,6 +32,7 @@
 	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="DefaultJsonProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>
         <resource nome="testCompress" path="testCompress">
@@ -52,6 +54,7 @@
 	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="DefaultJsonProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>
         <resource nome="testCompress" path="testCompress">
@@ -60,7 +63,7 @@
         </resource>
 	<resource nome="testJson" path="testJson" method="POST">
         	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:testJson"/>
-		<protocol-property name="ebmsActionPayloadProfile" value="JsonProfile"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="JsonTestProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />

@@ -52,7 +52,7 @@ public class AS4ProtocolVersionManager extends BasicVersionManager {
 		super(protocolFactory);
 		this.versione = versione;
 		this.logger = this.getProtocolFactory().getLogger();
-		this.as4Properties = AS4Properties.getInstance(this.logger);
+		this.as4Properties = AS4Properties.getInstance();
 		this.protocolManager = (AS4ProtocolManager) protocolFactory.createProtocolManager();
 	}
 	

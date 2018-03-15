@@ -37,7 +37,7 @@ import org.openspcoop2.protocol.as4.builder.AS4BuilderUtils;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
-import org.openspcoop2.protocol.as4.pmode.Translator;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -65,6 +65,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 
+import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfile;
 import eu.domibus.configuration.PayloadProfiles;
 
@@ -304,9 +305,8 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 							ConsoleItemType.FILE,
 							AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_ID, 
 							AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_LABEL);
-			PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, this.protocolFactory); 
-			Translator t = new Translator(pModeRegistryReader);
-			byte[] defaultValue = t.translatePayloadProfileDefaultAsCompleteXml();
+			TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
+			byte[] defaultValue = t.getPayloadProfilesDefaultAsCompleteXml();
 			BinaryConsoleItem binary = (BinaryConsoleItem) payloadProfileDefaultItem;
 			binary.setDefaultValue(defaultValue);
 			binary.setReadOnly(true);
@@ -380,6 +380,39 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			}catch(Exception e) {
 				throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+"', presenta una struttura non valida: "+e.getMessage(),e);
 			}	
+			
+			TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
+			PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, payloadProfileItem.getValue(), id, false);
+			if(pps==null) {
+				throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+"', presenta una struttura vuota ?");
+			}
+			if(pps.sizePayloadList()<=0 && pps.sizePayloadProfileList()<=0) {
+				throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+"', presenta una struttura senza payload o profile");
+			}
+			if(pps.sizePayloadList()>0) {
+				List<Payload> l = t.getListPayloadDefault();
+				for (int i = 0; i < pps.sizePayloadList(); i++) {
+					Payload p = pps.getPayload(i);
+					for (Payload payloadDefault : l) {
+						if(p.getName().equals(payloadDefault.getName())) {
+							throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+
+									"', presenta un payload '"+p.getName()+"' con un nome utilizzato tra i payload di default");
+						}
+					}
+				}
+			}
+			if(pps.sizePayloadProfileList()>0) {
+				List<PayloadProfile> l = t.getListPayloadProfileDefault();
+				for (int i = 0; i < pps.sizePayloadProfileList(); i++) {
+					PayloadProfile p = pps.getPayloadProfile(i);
+					for (PayloadProfile payloadProfileDefault : l) {
+						if(p.getName().equals(payloadProfileDefault.getName())) {
+							throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+
+									"', presenta un payload profile '"+p.getName()+"' con un nome utilizzato tra i payload di default");
+						}
+					}
+				}
+			}
 		}
 		
 	}
@@ -542,8 +575,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Impossibile recuperare l'accordo con id ["+id+"]: "+e.getMessage(),e);
 		}	
 		
-		PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, this.protocolFactory); 
-		Translator t = new Translator(pModeRegistryReader);
+		TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
 		
 		PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, as, id, false);
 		List<String> profiles = new ArrayList<>();
@@ -552,6 +584,8 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 				profiles.add(pp.getName());
 			}
 		}
+		
+		List<PayloadProfile> listDefault = t.getListPayloadProfileDefault();
 		
 		BaseConsoleItem subTitleAction = ProtocolPropertiesFactory.newSubTitleItem(
 				AS4ConsoleCostanti.AS4_TITLE_AZIONE_ACTION_ID, 
@@ -572,7 +606,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 				AS4ConsoleCostanti.AS4_TITLE_AZIONE_PAYLOAD_LABEL);
 		configuration.addConsoleItem(subTitlePayload );
 		
-		if(profiles.size()>0) {
+		if(profiles.size()>0 || listDefault.size()>1) {
 			StringConsoleItem actionPayloadProfile = (StringConsoleItem) 
 					ProtocolPropertiesFactory.newConsoleItem(
 							ConsoleItemValueType.STRING,
@@ -580,7 +614,6 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_ID, 
 							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_PROFILE_LABEL);
 			
-			List<PayloadProfile> listDefault = t.translatePayloadProfileDefault();
 			String defaultProfile = null;
 			if(listDefault!=null && listDefault.size()>0) {
 				for (PayloadProfile payloadProfileDefault : listDefault) {
@@ -645,7 +678,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		for (Policy policy : listPolicy) {
 			securityProfileItem.addLabelValue(policy.getName(),policy.getName());
 		}
-		AS4Properties props = AS4Properties.getInstance(this.log);
+		AS4Properties props = AS4Properties.getInstance();
 		if(props.getSecurityPolicyDefault()!=null) {
 			securityProfileItem.setDefaultValue(props.getSecurityPolicyDefault());
 		}

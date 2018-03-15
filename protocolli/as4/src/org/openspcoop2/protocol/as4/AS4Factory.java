@@ -64,7 +64,7 @@ public class AS4Factory extends BasicFactory<SOAPElement> {
 	public void init(Logger log,String protocol,ConfigurazionePdD configPdD,Openspcoop2 manifest) throws ProtocolException{
 		super.init(log,protocol,configPdD,manifest);
 		AS4Properties.initialize(configPdD.getConfigurationDir(),log);
-		AS4Properties properties = AS4Properties.getInstance(log);
+		AS4Properties properties = AS4Properties.getInstance();
 		properties.validaConfigurazione(configPdD.getLoader());
 	}
 	

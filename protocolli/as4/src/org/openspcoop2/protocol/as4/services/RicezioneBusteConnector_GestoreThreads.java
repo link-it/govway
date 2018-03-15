@@ -37,6 +37,7 @@ import org.openspcoop2.utils.threads.RunnableLogger;
  */
 public class RicezioneBusteConnector_GestoreThreads implements IGestoreRunnableInstance{
 
+	@SuppressWarnings("unused")
 	private RunnableLogger log;
 	private AS4Properties asProperties;
 	
@@ -56,7 +57,7 @@ public class RicezioneBusteConnector_GestoreThreads implements IGestoreRunnableI
 //		}  
 		
 		try {
-			this.asProperties = AS4Properties.getInstance(this.log.getLog());
+			this.asProperties = AS4Properties.getInstance();
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}

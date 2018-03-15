@@ -67,8 +67,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.as4.AS4RawContent;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
-import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
-import org.openspcoop2.protocol.as4.pmode.Translator;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
 import org.openspcoop2.protocol.as4.utils.AS4PropertiesUtils;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -137,9 +136,8 @@ public class AS4Imbustamento {
 			
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo);
-				
-			PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, protocolFactory); 
-			Translator t = new Translator(pModeRegistryReader);
+			
+			TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
 			
 			String azione = busta.getAzione();
 			String nomePortType = asps.getPortType();
@@ -149,7 +147,7 @@ public class AS4Imbustamento {
 				throw new ProtocolException("Action '"+azione+"' not found");
 			}
 			if(payloadProfile==null) {
-				payloadProfile = t.translatePayloadProfileDefault().get(0).getName();
+				payloadProfile = t.getListPayloadProfileDefault().get(0).getName();
 			}
 			
 			PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, aspc, idAccordo, true);
@@ -527,31 +525,38 @@ public class AS4Imbustamento {
 				}
 			}
 			
-			Source streamSource = null;
-			DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
-			if(dchManager.readMimeTypesContentHandler().containsKey(contentTypeUtilizzato)) {
-				// Se è non registrato un content handler per text/xml
-				// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
-				// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
-				// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
-				//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
-				//System.out.println("XML (DOMSource)");
-				streamSource = new DOMSource(XMLUtils.getInstance().newElement(xml));
+			String ctBase = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeUtilizzato);
+			if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(ctBase)) {
+				Source streamSource = null;
+				DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
+				if(dchManager.readMimeTypesContentHandler().containsKey(contentTypeUtilizzato)) {
+					// Se è non registrato un content handler per text/xml
+					// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
+					// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
+					// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
+					//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+					//System.out.println("XML (DOMSource)");
+					streamSource = new DOMSource(XMLUtils.getInstance().newElement(xml));
+				}
+				else {
+					// Se è registrato un content handler per text/xml
+					// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
+					// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
+					//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
+					//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
+					//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+					//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
+					//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
+					//System.out.println("XML (StreamSource)");
+					streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(xml));
+				}
+				apBody = as4Message.createAttachmentPart();
+				apBody.setContent(streamSource, contentTypeUtilizzato);
 			}
 			else {
-				// Se è registrato un content handler per text/xml
-				// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
-				// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
-				//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
-				//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
-				//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
-				//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
-				//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
-				//System.out.println("XML (StreamSource)");
-				streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(xml));
+				InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, xml);
+				apBody = as4Message.createAttachmentPart(new DataHandler(isSource));
 			}
-			apBody = as4Message.createAttachmentPart();
-			apBody.setContent(streamSource, contentTypeUtilizzato);
 			
 			String contentID = as4Message.createContentID(AS4Costanti.AS4_NAMESPACE_CID_MESSAGGIO);
 			apBody.setContentId(contentID);
@@ -737,7 +742,7 @@ public class AS4Imbustamento {
 				ap.setContent(restMessage.castAsRestJson().getContent(), contentTypeUtilizzato);
 			}
 			else {
-				InputStreamDataSource isSource = new InputStreamDataSource("RestBinary", contentTypeUtilizzato, restMessage.castAsRestBinary().getContent());
+				InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, restMessage.castAsRestBinary().getContent());
 				ap = as4Message.createAttachmentPart(new DataHandler(isSource));
 			}
 

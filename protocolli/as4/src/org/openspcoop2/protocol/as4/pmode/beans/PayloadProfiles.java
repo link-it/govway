@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -43,12 +44,14 @@ public class PayloadProfiles {
 	private List<Payload> payloads;
 	private List<PayloadProfile> payloadProfiles;
 	
-	public PayloadProfiles(List<byte[]> contents, 
-			List<eu.domibus.configuration.Payload> listPayloadDefault,
-			List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault) throws Exception {
+	public PayloadProfiles(List<byte[]> contents) throws Exception {
 
 		this.payloads = new ArrayList<>();
 		this.payloadProfiles = new ArrayList<>();
+
+		TranslatorPayloadProfilesDefault translator = TranslatorPayloadProfilesDefault.getTranslator();
+		List<eu.domibus.configuration.Payload> listPayloadDefault = translator.getListPayloadDefault();
+		List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault = translator.getListPayloadProfileDefault();
 		
 		Map<String, Payload> payloadsMap = new HashMap<>();
 		Map<String, PayloadProfile> payloadProfilesMap = new HashMap<>();

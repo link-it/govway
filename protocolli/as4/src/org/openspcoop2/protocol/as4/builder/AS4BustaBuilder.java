@@ -53,7 +53,7 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 	private AS4Properties as4Properties;
 	public AS4BustaBuilder(IProtocolFactory<?> factory, IState state) throws ProtocolException {
 		super(factory, state);
-		this.as4Properties = AS4Properties.getInstance(factory.getLogger());
+		this.as4Properties = AS4Properties.getInstance();
 	}
 
 	@Override

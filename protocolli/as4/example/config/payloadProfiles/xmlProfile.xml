@@ -1,17 +1,23 @@
                 <payloadProfiles>
-                        <payload name="businessContentAttachmentXml"
+                        <payload name="XmlTestAttachmentAsXml"
                                         cid="cid:attachment" 
                                         required="true"
                                         mimeType="text/xml"/>
-			<payloadProfile name="XmlProfile" 
+			<payload name="OctectTestAttachmentAsBinary"
+                                        cid="cid:attachment" 
+                                        required="true"
+                                        mimeType="text/xml"/>
+
+			<payloadProfile name="XmlTestProfile" 
                                         maxSize="40894464">
-                                <attachment name="businessContentPayload"/>
-                                <attachment name="businessContentAttachmentXml"/>
+                                <attachment name="defaultXmlContentPayload"/>
+                                <attachment name="XmlTestAttachmentAsXml"/>
                         </payloadProfile>
-                        <payloadProfile name="OctectProfile" 
+
+                        <payloadProfile name="OctectTestProfile" 
                                         maxSize="40894464">
-                                <attachment name="businessContentPayload"/>
-                                <attachment name="businessContentAttachment"/>
+                                <attachment name="defaultBinaryContentPayload"/>
+                                <attachment name="OctectTestAttachmentAsBinary"/>
                         </payloadProfile>
                 </payloadProfiles>
 
