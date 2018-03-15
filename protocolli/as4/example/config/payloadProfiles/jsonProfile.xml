@@ -5,7 +5,7 @@
                                         mimeType="text/json"/>
                         <payload name="businessContentAttachment1asJson"
                                         cid="cid:attachmentJson1" 
-                                        required="false"
+                                        required="true"
                                         mimeType="text/json"/>
 			<payload name="businessContentAttachment2asBinary"
                                         cid="cid:attachmentBinary2" 

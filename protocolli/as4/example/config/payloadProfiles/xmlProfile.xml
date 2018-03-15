@@ -1,7 +1,7 @@
                 <payloadProfiles>
                         <payload name="businessContentAttachmentXml"
                                         cid="cid:attachment" 
-                                        required="false"
+                                        required="true"
                                         mimeType="text/xml"/>
 			<payloadProfile name="XmlProfile" 
                                         maxSize="40894464">

@@ -411,8 +411,8 @@ public class AS4Imbustamento {
 		
 		boolean reOrderAttachments = false; // se abilitato gli attachments li riaggiungo dopo per averli dopo il body element
 		
-		
-		if(as4Message.countAttachments()>0){
+		int countAttach = as4Message.countAttachments();
+		if(countAttach>0){
 			
 			_listPartInfoUserMessage = new ArrayList<PartInfo>();
 			_listPayload = new ArrayList<PayloadType>();
@@ -477,10 +477,22 @@ public class AS4Imbustamento {
 				
 				index++;
 			}
-			
+						
 			if(reOrderAttachments) {
 				as4Message.removeAllAttachments(); 
 			}
+		}
+		
+		int attachRequired = 0;
+		// inizio da 1, ignoro il primo payload
+		for (int i = 1; i < payloadConfig.size(); i++) {
+			Payload payload = payloadConfig.get(i);
+			if(payload.isRequired()) {
+				attachRequired++;
+			}
+		}
+		if(countAttach<attachRequired) {
+			throw new ProtocolException("Il payload profile '"+payloadProfile+"' richiede la presenza obbligatoria di "+attachRequired+" attachments mentre ne sono stati riscontrati "+countAttach+".");
 		}
 		
 		
@@ -605,14 +617,21 @@ public class AS4Imbustamento {
 		if(MessageType.MIME_MULTIPART.equals(restMessage.getMessageType())){
 					
 			OpenSPCoop2RestMimeMultipartMessage msgMime = restMessage.castAsRestMimeMultipart();
+			
+			int countAttach = msgMime.getContent().countBodyParts();
+			int attachRequired = 0;
+			
 			int index = 1;
-			for (int i = 0; i < msgMime.getContent().countBodyParts(); i++) {
+			for (int i = 0; i < countAttach; i++) {
 				BodyPart bodyPart = msgMime.getContent().getBodyPart(i);
 				
 				if(payloadConfig.size()<(i+1)) {
 					throw new ProtocolException("Attachment-"+index+" non previsto in payload profile '"+payloadProfile+"'");
 				}
 				Payload payload = payloadConfig.get(i);
+				if(payload.isRequired()) {
+					attachRequired++;
+				}
 				
 				String contentID = msgMime.getContent().getContentID(bodyPart);
 				if(contentID==null){
@@ -663,6 +682,9 @@ public class AS4Imbustamento {
 				index++;
 			}
 			
+			if(countAttach<attachRequired) {
+				throw new ProtocolException("Il payload profile '"+payloadProfile+"' richiede la presenza obbligatoria di "+attachRequired+" attachments mentre ne sono stati riscontrati "+countAttach+".");
+			}
 		}
 		else{
 		
