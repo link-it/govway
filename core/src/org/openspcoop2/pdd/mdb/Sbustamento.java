@@ -399,30 +399,33 @@ public class Sbustamento extends GenericLib{
 			
 			// ------------- Controllo funzionalita di protocollo richieste siano compatibili con il protocollo -----------------------------
 			try{
+				
+				// NOTA: Usare getIntegrationServiceBinding poichè le funzionalità si riferiscono al tipo di integrazione scelta
+				
 				IProtocolConfiguration protocolConfiguration = protocolFactory.createProtocolConfiguration();
 				if(bustaRichiesta.getProfiloDiCollaborazione()!=null && 
 						!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.UNKNOWN.equals(bustaRichiesta.getProfiloDiCollaborazione())){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),bustaRichiesta.getProfiloDiCollaborazione())==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),bustaRichiesta.getProfiloDiCollaborazione())==false){
 						throw new Exception("Profilo di Collaborazione ["+bustaRichiesta.getProfiloDiCollaborazione().getEngineValue()+"]");
 					}
 				}
 				if(imbustamentoFiltroDuplicatiAbilitato){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
 						throw new Exception(FunzionalitaProtocollo.FILTRO_DUPLICATI.getEngineValue());
 					}
 				}
 				if(consegnaAffidabile){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.CONFERMA_RICEZIONE)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.CONFERMA_RICEZIONE)==false){
 						throw new Exception(FunzionalitaProtocollo.CONFERMA_RICEZIONE.getEngineValue());
 					}
 				}
 				if(idCollaborazione){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.COLLABORAZIONE)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.COLLABORAZIONE)==false){
 						throw new Exception(FunzionalitaProtocollo.COLLABORAZIONE.getEngineValue());
 					}
 				}
 				if(consegnaInOrdine){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)==false){
 						throw new Exception(FunzionalitaProtocollo.CONSEGNA_IN_ORDINE.getEngineValue());
 					}
 				}				

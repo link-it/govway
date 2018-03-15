@@ -327,8 +327,20 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 		if(ServiceBinding.REST.equals(serviceBinding)) {
 			if(this.bindingManifest.getRest()!=null) {
 				profilo = new CollaborationProfile();
-				profilo.setInputOutput(true);
-				profilo.setOneway(false);
+				if(this.bindingManifest.getRest().getProfile()!=null) {
+					if(this.bindingManifest.getRest().getProfile().isOneway()) {
+						profilo.setInputOutput(false);
+						profilo.setOneway(true);
+					}
+					else {
+						profilo.setInputOutput(true);
+						profilo.setOneway(false);
+					}
+				}
+				else {
+					profilo.setInputOutput(true);
+					profilo.setOneway(false);
+				}
 				profilo.setAsyncInputOutput(false);
 				profilo.setPolledInputOutput(false);
 			}

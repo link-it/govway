@@ -66,17 +66,19 @@ public class ApiUtilities extends BaseBean {
 
 	}
 	
-	private static ApiOperation getOperation(String[] url, Api api, HttpRequestMethod httpMethod, boolean exactlyLength) throws ProcessingException{
-
+	private static ApiOperation getOperation(List<ApiOperation> list, String[] url, HttpRequestMethod httpMethod, boolean exactlyLength) throws ProcessingException{
 		int levelExactlyMatch = -1;
 		int levelDinamicMatch = -1;
 		ApiOperation apiOpExactlyMatch = null; 
 		ApiOperation apiOpDynamicMatch = null; 
-		for(int i = 0; i< api.sizeOperations(); i++) {
+		for(int i = 0; i< list.size(); i++) {
 			
-			ApiOperation apiOp = api.getOperation(i);
-			if(!apiOp.getHttpMethod().equals(httpMethod)){
-				continue;
+			ApiOperation apiOp = list.get(i);
+			
+			if(apiOp.getHttpMethod()!=null) {
+				if(!apiOp.getHttpMethod().equals(httpMethod)){
+					continue;
+				}
 			}
 			if(url.length<apiOp.sizePath()){
 				continue;
@@ -133,7 +135,44 @@ public class ApiUtilities extends BaseBean {
 				return apiOpDynamicMatch;
 			}
 		}
+	}
+	
+	private static ApiOperation getOperation(String[] url, Api api, HttpRequestMethod httpMethod, boolean exactlyLength) throws ProcessingException{
+
+		// Prima cerco operazioni con method specifico e path specifico
+		// L'interfaccia non permette la creazione di risorse con un metodo preciso e qualsiasi path
+		List<ApiOperation> listMethodAndPath = new ArrayList<>();
+		List<ApiOperation> listQualsiasiMethodAndPath = new ArrayList<>();
+		List<ApiOperation> listQualsiasi = new ArrayList<>();
+		for (ApiOperation apiOperation : api.getOperations()) {
+			if(apiOperation.getHttpMethod()!=null && apiOperation.getPath()!=null) {
+				listMethodAndPath.add(apiOperation);
+			}
+			else if(apiOperation.getPath()!=null) {
+				listQualsiasiMethodAndPath.add(apiOperation);
+			}
+			else {
+				listQualsiasi.add(apiOperation);
+			}
+		}
 		
+		ApiOperation op = getOperation(listMethodAndPath, url, httpMethod, exactlyLength);
+		if(op==null) {
+			op = getOperation(listQualsiasiMethodAndPath, url, httpMethod, exactlyLength);
+		}
+		
+		if(op!=null) {
+			return op;
+		}
+		
+		if(listQualsiasi.size()>1) {
+			throw new ProcessingException("Found more resource with httpMethod '*' and path '*'");
+		}
+		else if(listQualsiasi.size()==1) {
+			return  listQualsiasi.get(0);
+		}
+		
+		return null;
 	}
 	
 }

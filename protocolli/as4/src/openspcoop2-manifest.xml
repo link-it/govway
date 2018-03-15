@@ -178,6 +178,7 @@
     			<specification type="swagger2" />
     			<specification type="openApi3" />
     		</interfaces>
+    		<profile oneway="true" />
     	</rest>
     </binding>
 

@@ -292,12 +292,19 @@
 
        <!-- Rest Configuration -->
       
+       <!-- Indicazione se le comunicazioni REST devono essere gestite in modalità oneway o inputOutput (Fa differenza per le tracce) -->
+       <xsd:complexType name="RestCollaborationProfile">
+              <xsd:attribute name="oneway" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+      
        <xsd:complexType name="RestConfiguration">
               <xsd:sequence>
                      <xsd:element name="integration" type="Integration" />
                      <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
                      <xsd:element name="mediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
                      <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
+                     <xsd:element name="profile" type="RestCollaborationProfile" minOccurs="0"/>
+                     <xsd:element name="functionality" type="Functionality" minOccurs="0"/> <!-- Al momento inutilizzato -->
               </xsd:sequence>
               <xsd:attribute name="xml" type="xsd:boolean" use="required" />
               <xsd:attribute name="json" type="xsd:boolean" use="required" />

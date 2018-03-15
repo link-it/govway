@@ -52,13 +52,15 @@ public class ApiOperation extends BaseBean {
 	}
 	
 	private void normalizePath(){
-		if(this.path.startsWith("/")==false){
-			this.path = "/"+this.path;
-		}
-		while(this.path.contains("${")){
-			// in wadl viene usato ${xx}
-			// in swagger {xx}
-			this.path = this.path.replace("${", "{");
+		if(this.path!=null) {
+			if(this.path.startsWith("/")==false){
+				this.path = "/"+this.path;
+			}
+			while(this.path.contains("${")){
+				// in wadl viene usato ${xx}
+				// in swagger {xx}
+				this.path = this.path.replace("${", "{");
+			}
 		}
 	}
 	

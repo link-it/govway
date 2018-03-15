@@ -44,6 +44,8 @@ public class RestConfigurationModel extends AbstractModel<RestConfiguration> {
 		this.INTEGRATION_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel(new Field("integrationError",org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration.class,"RestConfiguration",RestConfiguration.class));
 		this.MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new Field("mediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"RestConfiguration",RestConfiguration.class));
 		this.INTERFACES = new org.openspcoop2.protocol.manifest.model.InterfacesConfigurationModel(new Field("interfaces",org.openspcoop2.protocol.manifest.InterfacesConfiguration.class,"RestConfiguration",RestConfiguration.class));
+		this.PROFILE = new org.openspcoop2.protocol.manifest.model.RestCollaborationProfileModel(new Field("profile",org.openspcoop2.protocol.manifest.RestCollaborationProfile.class,"RestConfiguration",RestConfiguration.class));
+		this.FUNCTIONALITY = new org.openspcoop2.protocol.manifest.model.FunctionalityModel(new Field("functionality",org.openspcoop2.protocol.manifest.Functionality.class,"RestConfiguration",RestConfiguration.class));
 		this.XML = new Field("xml",boolean.class,"RestConfiguration",RestConfiguration.class);
 		this.JSON = new Field("json",boolean.class,"RestConfiguration",RestConfiguration.class);
 		this.BINARY = new Field("binary",boolean.class,"RestConfiguration",RestConfiguration.class);
@@ -59,6 +61,8 @@ public class RestConfigurationModel extends AbstractModel<RestConfiguration> {
 		this.INTEGRATION_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorConfigurationModel(new ComplexField(father,"integrationError",org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration.class,"RestConfiguration",RestConfiguration.class));
 		this.MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new ComplexField(father,"mediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"RestConfiguration",RestConfiguration.class));
 		this.INTERFACES = new org.openspcoop2.protocol.manifest.model.InterfacesConfigurationModel(new ComplexField(father,"interfaces",org.openspcoop2.protocol.manifest.InterfacesConfiguration.class,"RestConfiguration",RestConfiguration.class));
+		this.PROFILE = new org.openspcoop2.protocol.manifest.model.RestCollaborationProfileModel(new ComplexField(father,"profile",org.openspcoop2.protocol.manifest.RestCollaborationProfile.class,"RestConfiguration",RestConfiguration.class));
+		this.FUNCTIONALITY = new org.openspcoop2.protocol.manifest.model.FunctionalityModel(new ComplexField(father,"functionality",org.openspcoop2.protocol.manifest.Functionality.class,"RestConfiguration",RestConfiguration.class));
 		this.XML = new ComplexField(father,"xml",boolean.class,"RestConfiguration",RestConfiguration.class);
 		this.JSON = new ComplexField(father,"json",boolean.class,"RestConfiguration",RestConfiguration.class);
 		this.BINARY = new ComplexField(father,"binary",boolean.class,"RestConfiguration",RestConfiguration.class);
@@ -75,6 +79,10 @@ public class RestConfigurationModel extends AbstractModel<RestConfiguration> {
 	public org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel MEDIA_TYPE_COLLECTION = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.InterfacesConfigurationModel INTERFACES = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.RestCollaborationProfileModel PROFILE = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.FunctionalityModel FUNCTIONALITY = null;
 	 
 	public IField XML = null;
 	 

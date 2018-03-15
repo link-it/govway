@@ -248,6 +248,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RestCollaborationProfile }
+     */
+    public RestCollaborationProfile createRestCollaborationProfile() {
+        return new RestCollaborationProfile();
+    }
+
+    /**
      * Create an instance of {@link RestMediaTypeCollection }
      */
     public RestMediaTypeCollection createRestMediaTypeCollection() {

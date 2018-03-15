@@ -88,6 +88,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.slf4j.Logger;
 
 
@@ -2960,6 +2961,50 @@ public class RegistroServizi  {
 			}
 		}
 		
+		// merge API
+		if(asAwrapper.getApi()==null) {
+			asAwrapper.setApi(asBwrapper.getApi());
+		}
+		else {
+			if(asBwrapper.getApi()!=null) {
+				for (int i = 0; i < asBwrapper.getApi().sizeOperations(); i++) {
+					ApiOperation apiOpB = asBwrapper.getApi().getOperation(i);
+					boolean exists = false;
+					for (int j = 0; j < asAwrapper.getApi().sizeOperations(); j++) {
+						ApiOperation apiOpA = asAwrapper.getApi().getOperation(j);
+						
+						if(apiOpA.getPath()==null) {
+							if(apiOpB.getPath()!=null) {
+								continue;
+							}
+						}
+						else if(!apiOpA.getPath().equals(apiOpB.getPath())) {
+							continue;
+						}
+						
+						if(apiOpA.getHttpMethod()==null) {
+							if(apiOpB.getHttpMethod()!=null) {
+								continue;
+							}
+						}
+						else {
+							if(apiOpB.getHttpMethod()==null) {
+								continue;
+							}
+							if(!apiOpA.getHttpMethod().equals(apiOpB.getHttpMethod())) {
+								continue;
+							}
+						}
+						exists = true;
+						break;
+					}
+					if(!exists){
+						//System.out.println("ADD OP ["+apiOpB.getHttpMethod()+"] ["+apiOpB.getPath()+"]");
+						asAwrapper.getApi().addOperation(apiOpB);
+					}
+				}
+			}
+		}
 	}
 	
 	

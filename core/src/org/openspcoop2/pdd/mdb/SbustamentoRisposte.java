@@ -411,9 +411,11 @@ public class SbustamentoRisposte extends GenericLib {
 			
 			// ------------- Controllo funzionalita di protocollo richieste siano compatibili con il protocollo -----------------------------
 			try{
+				// NOTA: Usare getIntegrationServiceBinding poichè le funzionalità si riferiscono al tipo di integrazione scelta
+				
 				IProtocolConfiguration protocolConfiguration = protocolFactory.createProtocolConfiguration();
 				if(imbustamentoFiltroDuplicatiAbilitato){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
 						throw new Exception(FunzionalitaProtocollo.FILTRO_DUPLICATI.getEngineValue());
 					}
 				}				

@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -438,12 +439,17 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.descr = "";
 					this.filtrodup = "yes";
 					this.idcoll = "";
-					this.profcoll = "oneway";
+					this.profcoll = "sincrono";
 					
 					if(this.serviceBinding != null) {
 						switch(this.serviceBinding) {
 						case REST:
-							this.profcoll = "sincrono";
+							if( this.protocolFactory.createProtocolConfiguration().isSupportato(this.serviceBinding, ProfiloDiCollaborazione.ONEWAY)) {
+								this.profcoll = "oneway"; // es. as4
+							}
+							else {
+								this.profcoll = "sincrono";
+							}
 							break;
 						case SOAP:
 						default:

@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.as4.builder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import javax.mail.BodyPart;
 import javax.mail.internet.InternetHeaders;
@@ -38,6 +39,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -54,6 +56,7 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
+import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -64,6 +67,7 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
 
@@ -109,6 +113,26 @@ public class AS4Sbustamento {
 			boolean multipart = userMessage.getPayloadInfo().sizePartInfoList()>1;
 			List<PartInfo> listPartInfo = new ArrayList<PartInfo>();
 			
+			IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
+			IDSoggetto idSoggettoDestinatario = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
+			IDSoggetto idSoggettoErogatore = null;
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
+				idSoggettoErogatore = idSoggettoDestinatario;
+			}
+			else{
+				idSoggettoErogatore = idSoggettoMittente;
+			}
+			
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+					idSoggettoErogatore, busta.getVersioneServizio());
+			AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
+			
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo);
+			
+			String azione = busta.getAzione();
+			String nomePortType = asps.getPortType();
+			
 			// Raccolgo profile binding per comprensione xml root
 			// Serve solamente se gli i contenuti sono piu' di uno
 			if(!multipart) {
@@ -118,25 +142,6 @@ public class AS4Sbustamento {
 			
 				TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
 				
-				IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
-				IDSoggetto idSoggettoDestinatario = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
-				IDSoggetto idSoggettoErogatore = null;
-				if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
-					idSoggettoErogatore = idSoggettoDestinatario;
-				}
-				else{
-					idSoggettoErogatore = idSoggettoMittente;
-				}
-				
-				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
-						idSoggettoErogatore, busta.getVersioneServizio());
-				AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
-				
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo);
-				
-				String azione = busta.getAzione();
-				String nomePortType = asps.getPortType();
 				String actionProperty = AS4BuilderUtils.readPropertyInfoAction(aspc, nomePortType, azione);
 				String payloadProfile = AS4BuilderUtils.readPropertyPayloadProfile(aspc, nomePortType, azione);
 				if(actionProperty==null) {
@@ -223,13 +228,58 @@ public class AS4Sbustamento {
 					mimeTypeRoot = HttpConstants.CONTENT_TYPE_SOAP_1_1; 
 				}
 				else {
-					throw new Exception("Namespace ["+namespace+"] unknown per integrazione SOAP");
+					throw new Exception("Namespace ["+namespace+"] sconosciuto per integrazione SOAP");
 				}
 				
 			}
 			
-			OpenSPCoop2MessageParseResult result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
-					mimeTypeRoot, contentRoot);
+			TransportRequestContext transportRequestContext = msg.getTransportRequestContext();
+			transportRequestContext.setFunction(URLProtocolContext.PA_FUNCTION);
+			if(ServiceBinding.REST.equals(integrationServiceBinding)) {
+				Resource resourceInvoke = null;
+				for (Resource r : aspc.getResourceList()) {
+					if(r.getNome().equals(azione)) {
+						resourceInvoke = r;
+						break;
+					}
+				}
+				if(resourceInvoke==null) {
+					throw new Exception("Risorsa ["+azione+"] sconosciuta per integrazione REST");
+				}
+				
+				String interfaceName = transportRequestContext.getInterfaceName();
+				if(resourceInvoke.getPath()!=null) {
+					String p = interfaceName;
+					if(interfaceName.endsWith("/")) {
+						p = interfaceName.substring(0, (interfaceName.length()-1));
+					}
+					if(resourceInvoke.getPath().startsWith("/")==false) {
+						p = p + "/";
+					}
+					p = resourceInvoke.getPath();
+					transportRequestContext.setFunctionParameters(p);
+				}
+				else {
+					transportRequestContext.setFunctionParameters(interfaceName);
+				}
+				
+				if(resourceInvoke.getMethod()==null) {
+					transportRequestContext.setRequestType( org.openspcoop2.core.registry.constants.HttpMethod.POST.getValue()); // DEFAULT
+				}
+				else {
+					transportRequestContext.setRequestType(resourceInvoke.getMethod().getValue());
+				}
+			}
+			if(transportRequestContext.getParametersTrasporto()==null) {
+				transportRequestContext.setParametersTrasporto(new Properties());
+			}
+			transportRequestContext.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
+			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, mimeTypeRoot);
+			
+			OpenSPCoop2MessageParseResult result = null;
+			result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, contentRoot);
+//			result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
+//					mimeTypeRoot, contentRoot);
 			newMessage = result.getMessage_throwParseThrowable();
 			
 			if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
@@ -238,11 +288,8 @@ public class AS4Sbustamento {
 				
 				String soapAction = CostantiPdD.OPENSPCOOP2;
 				
-				if(busta.getAzione()!=null) {
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
-							busta.getTipoDestinatario(),busta.getDestinatario(), busta.getVersioneServizio());
-					AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
-					if(asps.getPortType()!=null) {
+				if(azione!=null) {
+					if(nomePortType!=null) {
 						org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper asWrapper = registryReader.getAccordoServizioParteComuneSoap(idServizio, InformationApiSource.SAFE_SPECIFIC_REGISTRY, false);
 						if(asWrapper!=null) {
 							PortType pt = asWrapper.getPortType(asps.getPortType());

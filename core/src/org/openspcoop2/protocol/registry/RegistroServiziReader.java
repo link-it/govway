@@ -1031,7 +1031,16 @@ public class RegistroServiziReader {
 			}
 		}
 		
-		infoServizio.setProfiloDiCollaborazione(ProfiloDiCollaborazione.SINCRONO);
+		if(as.getProfiloCollaborazione()!=null) {
+			if(org.openspcoop2.core.registry.constants.ProfiloCollaborazione.ONEWAY.equals(as.getProfiloCollaborazione())) {
+				infoServizio.setProfiloDiCollaborazione(ProfiloDiCollaborazione.ONEWAY);
+			}
+			else {
+				infoServizio.setProfiloDiCollaborazione(ProfiloDiCollaborazione.SINCRONO);
+			}
+		}else {
+			infoServizio.setProfiloDiCollaborazione(ProfiloDiCollaborazione.SINCRONO);
+		}
 		infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
 		infoServizio.setCollaborazione(false);
 		infoServizio.setConfermaRicezione(false);

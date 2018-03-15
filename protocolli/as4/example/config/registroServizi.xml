@@ -6,7 +6,7 @@
     <accordo-servizio-parte-comune nome="SoapExample" profilo-collaborazione="oneway"
         utilizzo-senza-azione="false" versione="1" service-binding="soap">
 	<soggetto-referente tipo="as4" nome="Blue" />
-        <port-type nome="GestioneFileSOAP" profilo-collaborazione="oneway">
+        <port-type nome="GestioneFileSOAP">
 	    <azione nome="test" soap-action="http://test">
 		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:test"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="DefaultXmlProfile"/>
@@ -27,7 +27,7 @@
 	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/xmlProfile.xml"/>
     </accordo-servizio-parte-comune>
 
-    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="sincrono"
+    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
         utilizzo-senza-azione="false" versione="1" service-binding="rest">
 	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
@@ -49,7 +49,7 @@
 	Inoltre su questa versione, nell'implementazione, viene utilizzato il 'eSensPolicy'.
 	Infine in questa versione viene definito una nuova operazione Json che utilizza il profilo payload JsonProfile
     -->    
-    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="sincrono"
+    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
         utilizzo-senza-azione="false" versione="2" service-binding="rest">
 	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
@@ -103,13 +103,13 @@
 	<accordo-servizio-parte-specifica tipo="as4" nome="RestExample"
             accordo-servizio-parte-comune="as4/Blue:RestExample:1">
             <fruitore tipo="as4" nome="Red"/>
-	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy" />
+	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy_noSignature" />
         </accordo-servizio-parte-specifica>
 
 	<accordo-servizio-parte-specifica tipo="as4" nome="RestExample"
             accordo-servizio-parte-comune="as4/Blue:RestExample:2" versione="2">
             <fruitore tipo="as4" nome="Red"/>
-	    <protocol-property name="ebmsSecurityProfile" value="eSensPolicy" />
+	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy_noSignature" />
         </accordo-servizio-parte-specifica>
 
     </soggetto>

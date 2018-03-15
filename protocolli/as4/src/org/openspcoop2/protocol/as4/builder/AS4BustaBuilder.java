@@ -26,7 +26,10 @@ import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
@@ -62,9 +65,18 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		
-		AS4Imbustamento imbustamento = new AS4Imbustamento();
-		return imbustamento.buildASMessage(msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
-				this.getProtocolFactory().getCachedRegistryReader(this.state), this.getProtocolFactory());
+		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
+			AS4Imbustamento imbustamento = new AS4Imbustamento();
+			return imbustamento.buildASMessage(msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
+					this.getProtocolFactory().getCachedRegistryReader(this.state), this.getProtocolFactory());
+		}
+		else {
+			OpenSPCoop2Message soapMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, MessageRole.RESPONSE);
+			ProtocolMessage response = new ProtocolMessage();
+			response.setMessage(soapMsg);
+			//return super.imbustamento(soapMsg, busta, ruoloMessaggio, proprietaManifestAttachments);
+			return response;
+		}
 		
 	}
 	

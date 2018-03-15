@@ -69,7 +69,10 @@ public class RegistryAPI extends Api {
 			
 			if(aspc.sizeResourceList()>0) {
 				for (Resource resource : aspc.getResourceList()) {
-					HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(resource.getMethod().getValue());
+					HttpRequestMethod httpMethod = null;
+					if(resource.getMethod()!=null) {
+						httpMethod = HttpRequestMethod.valueOf(resource.getMethod().getValue());
+					}
 					ApiOperation apiOp = new ApiOperation(httpMethod, resource.getPath());
 					apiOp.setDescription(resource.getDescrizione());
 					
@@ -103,6 +106,8 @@ public class RegistryAPI extends Api {
 							}
 						}
 					}
+					
+					this.addOperation(apiOp);
 				}
 			}
 			

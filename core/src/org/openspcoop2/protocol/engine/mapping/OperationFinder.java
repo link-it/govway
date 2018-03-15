@@ -322,9 +322,34 @@ public class OperationFinder {
 				// Il path nella 'ApiOperation è normalizzato come sul registro
 				for (int i = 0; i < wrapper.getAccordoServizio().sizeResourceList(); i++) {
 					Resource r = wrapper.getAccordoServizio().getResource(i);
-					if(r.getMethod().name().equals(op.getHttpMethod().name()) && r.getPath().equals(op.getPath())){
-						return r.getNome();
+					
+					if(r.getMethod()==null) {
+						if(op.getHttpMethod()!=null) {
+							continue;
+						}
 					}
+					else {
+						if(op.getHttpMethod()==null) {
+							continue;
+						}
+						if(!r.getMethod().name().equals(op.getHttpMethod().name())){
+							continue;
+						}
+					}
+					
+					if(r.getPath()==null) {
+						if(op.getPath()!=null) {
+							continue;
+						}
+					}
+					else {
+						if(!r.getPath().equals(op.getPath())){
+							continue;
+						}
+					}
+					
+					return r.getNome();
+					
 				}
 			}
 		}catch(Exception e) {

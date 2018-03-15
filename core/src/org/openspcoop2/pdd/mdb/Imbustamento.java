@@ -372,37 +372,40 @@ public class Imbustamento extends GenericLib{
 					
 			// ------------- Controllo funzionalita di protocollo richieste siano compatibili con il protocollo -----------------------------
 			try{
+				
+				// NOTA: Usare getIntegrationServiceBinding poichè le funzionalità si riferiscono al tipo di integrazione scelta
+				
 				IProtocolConfiguration protocolConfiguration = protocolFactory.createProtocolConfiguration();
-				if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),infoServizio.getProfiloDiCollaborazione())==false){
+				if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),infoServizio.getProfiloDiCollaborazione())==false){
 					throw new Exception("Profilo di Collaborazione ["+infoServizio.getProfiloDiCollaborazione().getEngineValue()+"]");
 				}
 				if(busta.getInoltro()!=null && Inoltro.SENZA_DUPLICATI.equals(busta.getInoltro())){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.FILTRO_DUPLICATI)==false){
 						throw new Exception(FunzionalitaProtocollo.FILTRO_DUPLICATI.getEngineValue());
 					}
 				}
 				if(consegnaAffidabile){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.CONFERMA_RICEZIONE)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.CONFERMA_RICEZIONE)==false){
 						throw new Exception(FunzionalitaProtocollo.CONFERMA_RICEZIONE.getEngineValue());
 					}
 				}
 				if(idCollaborazione){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.COLLABORAZIONE)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.COLLABORAZIONE)==false){
 						throw new Exception(FunzionalitaProtocollo.COLLABORAZIONE.getEngineValue());
 					}
 				}
 				if(consegnaInOrdine){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)==false){
 						throw new Exception(FunzionalitaProtocollo.CONSEGNA_IN_ORDINE.getEngineValue());
 					}
 				}
 				if(infoServizio.getScadenza()!=null){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.SCADENZA)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.SCADENZA)==false){
 						throw new Exception(FunzionalitaProtocollo.SCADENZA.getEngineValue());
 					}
 				}
 				if(configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory)){
-					if(protocolConfiguration.isSupportato(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)==false){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)==false){
 						throw new Exception(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS.getEngineValue());
 					}
 				}			

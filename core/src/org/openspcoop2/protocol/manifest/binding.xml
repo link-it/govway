@@ -180,7 +180,17 @@
     <value name="asyncInputOutput" field="asyncInputOutput" default="false" usage="optional" style="attribute"/>
     <value name="polledInputOutput" field="polledInputOutput" default="false" usage="optional" style="attribute"/>
   </mapping>
-  <mapping name="functionality" class="org.openspcoop2.protocol.manifest.Functionality">
+  <mapping name="functionality" class="org.openspcoop2.protocol.manifest.Functionality" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="duplicateFilter" field="duplicateFilter" default="false" usage="optional" style="attribute"/>
+    <value name="acknowledgement" field="acknowledgement" default="false" usage="optional" style="attribute"/>
+    <value name="conversationIdentifier" field="conversationIdentifier" default="false" usage="optional" style="attribute"/>
+    <value name="deliveryOrder" field="deliveryOrder" default="false" usage="optional" style="attribute"/>
+    <value name="expiration" field="expiration" default="false" usage="optional" style="attribute"/>
+    <value name="manifestAttachments" field="manifestAttachments" default="false" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Functionality_Type" class="org.openspcoop2.protocol.manifest.Functionality" abstract="true">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <value name="duplicateFilter" field="duplicateFilter" default="false" usage="optional" style="attribute"/>
     <value name="acknowledgement" field="acknowledgement" default="false" usage="optional" style="attribute"/>
@@ -196,7 +206,7 @@
     <structure name="mediaTypeCollection" field="mediaTypeCollection" usage="optional" map-as="_SoapMediaTypeCollection_Type"/>
     <structure name="interfaces" field="interfaces" usage="optional" map-as="_InterfacesConfiguration_Type"/>
     <structure field="profile" usage="optional" map-as="org.openspcoop2.protocol.manifest.CollaborationProfile"/>
-    <structure field="functionality" usage="optional" map-as="org.openspcoop2.protocol.manifest.Functionality"/>
+    <structure name="functionality" field="functionality" usage="optional" map-as="_Functionality_Type"/>
     <structure field="soapHeaderBypassMustUnderstand" usage="optional" map-as="org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand"/>
     <value name="soap11" field="soap11" usage="required" style="attribute"/>
     <value name="soap11_withAttachments" field="soap11WithAttachments" default="true" usage="optional" style="attribute"/>
@@ -247,12 +257,18 @@
     <value name="localName" field="localName" usage="required"/>
     <value name="namespace" field="namespace" usage="required"/>
   </mapping>
+  <mapping name="profile" class="org.openspcoop2.protocol.manifest.RestCollaborationProfile">
+    <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
+    <value name="oneway" field="oneway" default="false" usage="optional" style="attribute"/>
+  </mapping>
   <mapping name="rest" class="org.openspcoop2.protocol.manifest.RestConfiguration">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure name="integration" field="integration" usage="required" map-as="_Integration_Type"/>
     <structure name="integrationError" field="integrationError" usage="required" map-as="_IntegrationErrorConfiguration_Type"/>
     <structure name="mediaTypeCollection" field="mediaTypeCollection" usage="optional" map-as="_RestMediaTypeCollection_Type"/>
     <structure name="interfaces" field="interfaces" usage="optional" map-as="_InterfacesConfiguration_Type"/>
+    <structure field="profile" usage="optional" map-as="org.openspcoop2.protocol.manifest.RestCollaborationProfile"/>
+    <structure name="functionality" field="functionality" usage="optional" map-as="_Functionality_Type"/>
     <value name="xml" field="xml" usage="required" style="attribute"/>
     <value name="json" field="json" usage="required" style="attribute"/>
     <value name="binary" field="binary" usage="required" style="attribute"/>
