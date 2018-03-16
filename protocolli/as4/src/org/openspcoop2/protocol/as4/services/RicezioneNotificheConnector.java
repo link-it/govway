@@ -53,8 +53,6 @@ public class RicezioneNotificheConnector extends AbstractRicezioneConnector{
 			throw new Exception("Tipo di messaggio ["+mapParam.getClass().getName()+"] non atteso");
 		}
 		
-		System.out.println("AAAAAAAAAAAAAAAAAAAAAA ["+textMsg.getText()+"]");
-		
 		RicezioneNotificheConnettoreUtils utils = new RicezioneNotificheConnettoreUtils(this.log, this.asProperties);
 		
 		utils.updateTraccia(textMsg);

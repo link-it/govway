@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.as4.properties.SecurityPolicyXSDValidator;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -205,9 +204,7 @@ public class AS4Properties {
 					throw new Exception("Datasource non definito per il tracing delle notifiche di ack");
 				}
 				this.getAckTraceDatasource_jndiContext();
-				if(this.getAckTraceTipoDatabase()==null) {
-					throw new Exception("TipoDatabase non definito per il tracing delle notifiche di ack");
-				}
+				this.getAckTraceTipoDatabase();
 			}
 
 		}catch(java.lang.Exception e) {
@@ -1034,9 +1031,6 @@ public class AS4Properties {
 				if (value != null){
 					value = value.trim();
 					AS4Properties.ackTraceTipoDatabase = value;
-				}
-				else {
-					AS4Properties.ackTraceTipoDatabase = OpenSPCoop2Properties.getInstance().getDatabaseType();
 				}
 				
 			}catch(java.lang.Exception e) {

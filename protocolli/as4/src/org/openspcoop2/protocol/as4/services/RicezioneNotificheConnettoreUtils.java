@@ -31,6 +31,7 @@ import javax.jms.TextMessage;
 import javax.sql.DataSource;
 
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -63,6 +64,9 @@ public class RicezioneNotificheConnettoreUtils extends BaseConnettoreUtils {
 		String datasource = this.properties.getAckTraceDatasource();
 		Properties datasourceJndiContext = this.properties.getAckTraceDatasource_jndiContext();
 		String tipoDatabase = this.properties.getAckTraceTipoDatabase();
+		if(tipoDatabase==null) {
+			tipoDatabase = OpenSPCoop2Properties.getInstance().getDatabaseType();
+		}
 		
 		GestoreJNDI gestoreJNDI = new GestoreJNDI(datasourceJndiContext);
 		DataSource ds = (DataSource) gestoreJNDI.lookup(datasource);
