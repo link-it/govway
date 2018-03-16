@@ -88,7 +88,7 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 			SoapMessage msgCtx = new SoapMessage(new MessageImpl());
 			Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
-			msgCtx.setContent(SOAPMessage.class, message);
+			msgCtx.setContent(SOAPMessage.class, message.getSOAPMessage());
 	        setIncomingProperties(wssContext,inHandler,msgCtx);
 	        
 	        

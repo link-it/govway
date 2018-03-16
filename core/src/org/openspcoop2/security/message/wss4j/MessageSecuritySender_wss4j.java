@@ -79,7 +79,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        SoapMessage msgCtx = new SoapMessage(new MessageImpl());
 	        Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
-	        msgCtx.setContent(SOAPMessage.class, message);
+	        msgCtx.setContent(SOAPMessage.class, message.getSOAPMessage());
 	        List<?> results = new ArrayList<Object>();
 	        msgCtx.put(WSHandlerConstants.RECV_RESULTS, results);
 	        
