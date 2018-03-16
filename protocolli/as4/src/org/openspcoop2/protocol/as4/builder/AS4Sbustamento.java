@@ -187,7 +187,6 @@ public class AS4Sbustamento {
 				for (PartInfo partInfo : userMessage.getPayloadInfo().getPartInfoList()) {
 					if(!partInfo.getHref().equals(cidRootMessage)) {
 						listPartInfo.add(partInfo);
-						break;
 					}
 				}
 			}
