@@ -20846,7 +20846,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addWhereCondition(aliasTabella+".tipo_proprietario=?");
 				sqlQueryObject.addWhereCondition(aliasTabella+".id_proprietario="+tabella+".id");
 				FiltroRicercaProtocolProperty f = list.get(i);
-				
+								
 				if(f.getName()!=null){
 					if(conditions[i]!=null){
 						conditions[i] = conditions[i] + " AND ";
@@ -20896,6 +20896,28 @@ IDriverWS ,IMonitoraggioRisorsa{
 					conditions[i] = conditions[i] + " " + aliasTabella+".value_number is null";
 					conditions[i] = conditions[i] + " AND ";
 					conditions[i] = conditions[i] + " " + aliasTabella+".value_boolean is null";
+				}
+				
+				// casoSpecialeValoreNull
+				ISQLQueryObject sqlQueryObjectPropertyNotExists = null;
+				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
+				// 1) Passando via pddConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
+				// 2) Passando via pddLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
+				if(f.getValueAsString()==null && f.getValueAsLong()==null && f.getValueAsBoolean()==null){
+					
+					ISQLQueryObject sqlQueryObjectPropertyNotExistsInternal = sqlQueryObject.newSQLQueryObject();
+					String aliasTabellaNotExists =  "not_exists_"+aliasTabella;
+					sqlQueryObjectPropertyNotExistsInternal.addFromTable(CostantiDB.PROTOCOL_PROPERTIES, aliasTabellaNotExists);
+					sqlQueryObjectPropertyNotExistsInternal.addSelectField(aliasTabellaNotExists, "id");
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".id_proprietario="+aliasTabella+".id_proprietario");
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".tipo_proprietario="+aliasTabella+".tipo_proprietario");
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+".name=?");
+					sqlQueryObjectPropertyNotExistsInternal.setANDLogicOperator(true);
+					
+					sqlQueryObjectPropertyNotExists = sqlQueryObject.newSQLQueryObject();
+					sqlQueryObjectPropertyNotExists.addWhereExistsCondition(true, sqlQueryObjectPropertyNotExistsInternal);
+
+					conditions[i] = "( " + conditions[i] + " ) OR ( " + sqlQueryObjectPropertyNotExists.createSQLConditions() + " )";
 				}
 			}
 			sqlQueryObject.addWhereCondition(true, conditions);
@@ -20974,6 +20996,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 				else if(f.getValueAsBoolean()!=null){
 					this.log.debug("FiltroRicercaProtocolProperty["+i+"] ValueAsBoolean stmt.setBoolean("+f.getValueAsBoolean()+")");
 					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsBoolean(), Boolean.class);
+				}
+				
+				// casoSpecialeValoreNull
+				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
+				// 1) Passando via pddConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
+				// 2) Passando via pddLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
+				if(f.getValueAsString()==null && f.getValueAsLong()==null && f.getValueAsBoolean()==null){
+					this.log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");
+					stmt.setString(index++, f.getName());
 				}
 			}
 		}

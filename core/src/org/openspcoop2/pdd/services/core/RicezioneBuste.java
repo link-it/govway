@@ -1071,6 +1071,8 @@ public class RicezioneBuste {
 				
 			}catch(Exception e){
 				
+				logCore.debug(e.getMessage(),e); // lascio come debug puo' essere utile
+				
 //				boolean checkAsSecondaFaseAsincrono = false;
 //				try{
 //					if(idServizio!=null){
@@ -1375,7 +1377,7 @@ public class RicezioneBuste {
 		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Identificazione PA specifica per azione del servizio ...");
 		
 		msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
-		if(idServizio.getAzione()!=null && pa!=null) {
+		if(idServizio!=null && idServizio.getAzione()!=null && pa!=null) {
 			// verifico se esiste una porta applicativa piu' specifica
 			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(logCore, protocolFactory, openspcoopstate.getStatoRichiesta(), pa);
 			String action = idServizio.getAzione();
