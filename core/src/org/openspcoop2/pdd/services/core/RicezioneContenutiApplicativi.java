@@ -383,7 +383,7 @@ public class RicezioneContenutiApplicativi {
 				return;
 			}
 		}
-		connettore.setFromLocation(this.msgContext.getFromLocation());
+		connettore.setFromLocation(this.msgContext.getSourceLocation());
 		inRequestContext.setConnettore(connettore);
 		// Data accettazione richiesta
 		inRequestContext.setDataAccettazioneRichiesta(this.msgContext.getDataAccettazioneRichiesta());

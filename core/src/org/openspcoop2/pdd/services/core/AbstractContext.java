@@ -103,7 +103,7 @@ public abstract class AbstractContext implements java.io.Serializable{
 	/** Credenziali */
 	private Credenziali credenziali ;
 	/** LocationSource */
-	private String fromLocation;
+	protected String fromLocation;
 	/** Informazioni protocollo */
 	private ProtocolContext protocol;
 	/** Informazioni di integrazione */
@@ -224,21 +224,12 @@ public abstract class AbstractContext implements java.io.Serializable{
 		this.gestioneRisposta = gestioneRisposta;
 	}
 
-	/**
-	 * @return the fromLocation
-	 */
-	public String getFromLocation() {
-		return this.fromLocation;
+	public String getSourceLocation() {
+		return this.requestInfo!=null && 
+				this.requestInfo.getProtocolContext()!=null ? 
+					this.requestInfo.getProtocolContext().getSource(): null;
 	}
-
-	/**
-	 * @param fromLocation the fromLocation to set
-	 */
-	public void setFromLocation(String fromLocation) {
-		this.fromLocation = fromLocation;
-	}
-
-
+	
 	public MsgDiagnostico getMsgDiagnostico() {
 		return this.msgDiagnostico;
 	}

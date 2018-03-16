@@ -218,6 +218,9 @@ public class OperationFinder {
 								azione = idServizio.getAzione();
 							}
 							else{
+								if(message==null){
+									throw new DriverConfigurazioneNotFound("Messaggio non fornito");
+								}
 								Busta busta = protocolFactory.createValidazioneSintattica(null).getBusta_senzaControlli(message);
 								if(busta!=null){
 									azione = busta.getAzione();

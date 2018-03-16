@@ -338,7 +338,7 @@ public class RicezioneBuste {
 	
 	/** Contesto della richiesta */
 	private RicezioneBusteContext msgContext;
-
+	
 	public RicezioneBuste(RicezioneBusteContext context,
 			RicezioneBusteExternalErrorGenerator generatoreErrore){
 		this.msgContext = context;
@@ -421,7 +421,7 @@ public class RicezioneBuste {
 				return;
 			}
 		}
-		connettore.setFromLocation(this.msgContext.getFromLocation());
+		connettore.setFromLocation(this.msgContext.getSourceLocation());
 		inRequestContext.setConnettore(connettore);
 		// Data accettazione richiesta
 		inRequestContext.setDataAccettazioneRichiesta(this.msgContext.getDataAccettazioneRichiesta());
@@ -1648,7 +1648,7 @@ public class RicezioneBuste {
 					
 					// Tracciamento Busta Ricevuta
 					tracciamento.registraRichiesta(requestMessage,null,validatore.getHeaderProtocollo_senzaControlli(),erroreIntestazione,esitoTraccia,
-							Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 							correlazioneApplicativa);
 					
 					// Riaggiungo eccezioni riscontrate per tracciare risposta
@@ -2018,7 +2018,7 @@ public class RicezioneBuste {
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("gestoreCredenziali.errore"));
 						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-								Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 								correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
@@ -2181,7 +2181,7 @@ public class RicezioneBuste {
 										EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione ["
 											+ tipoAutenticazione + "] fallito");
 								tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-										Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+										Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 										correlazioneApplicativa);
 							}
 							
@@ -2384,7 +2384,7 @@ public class RicezioneBuste {
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(esito);
 				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-						Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 						correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
@@ -2433,7 +2433,7 @@ public class RicezioneBuste {
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("ProtocolManager.updateOpenSPCoop2Message, non riuscito: "+e.getMessage());
 				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-						Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 						correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
@@ -2519,7 +2519,7 @@ public class RicezioneBuste {
 							EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 									EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(motivoErrore);
 							tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-									Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+									Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 									correlazioneApplicativa);
 						}
 						if(this.msgContext.isGestioneRisposta()){
@@ -2559,7 +2559,7 @@ public class RicezioneBuste {
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Controllo presenza richieste/ricevuteRichieste ancora in gestione " +
 										"correlate alla risposta/richiesta-stato asincrona simmetrica/asimmetrica arrivata, non riuscito: "+e.getMessage());
 						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-								Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 								correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
@@ -2687,7 +2687,7 @@ public class RicezioneBuste {
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante la ricerca dell'implementazione della porta di dominio dei soggetti: "+e.getMessage());
 				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-						Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 						correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
@@ -2758,7 +2758,7 @@ public class RicezioneBuste {
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante la lettura della porta applicativa/delegata per la gestione ManifestAttachments: "+e.getMessage());
 						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-								Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 								correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
@@ -2849,7 +2849,7 @@ public class RicezioneBuste {
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("protocolli.funzionalita.unsupported"));
 				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-						Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 						correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
@@ -3114,7 +3114,7 @@ public class RicezioneBuste {
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la lettura delle proprieta' di MTOM / SecurityMessage: "+e.getMessage());
 					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-							Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 							correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
@@ -3151,7 +3151,7 @@ public class RicezioneBuste {
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione MTOM(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+"): "+e.getMessage());
 					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-							Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 							correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
@@ -3196,7 +3196,7 @@ public class RicezioneBuste {
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione NormalizeRequestToSaajImpl: "+e.getMessage());
 						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-								Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 								correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
@@ -3278,7 +3278,7 @@ public class RicezioneBuste {
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita"));
 					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-							Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 							correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
@@ -3313,7 +3313,7 @@ public class RicezioneBuste {
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione MTOM(AfterSec-"+mtomProcessor.getMTOMProcessorType()+"): "+e.getMessage());
 					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-							Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 							correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
@@ -3414,7 +3414,7 @@ public class RicezioneBuste {
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la correlazione applicativa ["+bustaRichiesta.getID()+"]: "+e.getMessage());
 					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-							Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 							correlazioneApplicativa);
 				}
 				
@@ -3490,7 +3490,7 @@ public class RicezioneBuste {
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione dell'Header di Integrazione("+tipiIntegrazionePA[i]+"): "+e.getMessage());
 						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
-								Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 								correlazioneApplicativa);
 					}
 					
@@ -3655,7 +3655,7 @@ public class RicezioneBuste {
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBusta.bustaNonCorretta"));
 				tracciamento.registraRichiesta(requestMessage,securityInfoRequest,soapHeaderElement,bustaRichiesta,esitoTraccia,
-						Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 						correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
@@ -3773,7 +3773,7 @@ public class RicezioneBuste {
 			
 			// Tracciamento Busta Ricevuta
 			tracciamento.registraRichiesta(requestMessage,securityInfoRequest,headerProtocolloRichiesta,bustaRichiesta,esitoTraccia,
-					Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+					Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
 					correlazioneApplicativa);
 		}
 
@@ -5876,7 +5876,7 @@ public class RicezioneBuste {
 						}
 					}
 					tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerBustaRisposta,bustaRisposta,esitoTraccia,
-							Tracciamento.createLocationString(false,this.msgContext.getFromLocation()),
+							Tracciamento.createLocationString(false,this.msgContext.getSourceLocation()),
 							correlazioneApplicativa,idCorrelazioneApplicativaRisposta);
 				}
 				IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori(openspcoopstate.getStatoRichiesta());
@@ -6310,7 +6310,7 @@ public class RicezioneBuste {
 						parametriGenerazioneBustaErrore.getLogCore(), protocolFactory);
 				tracciamento.registraRisposta(responseErrorMessage,securityInfoResponse,
 						v.getHeaderProtocollo_senzaControlli(), parametriGenerazioneBustaErrore.getBusta(),esitoTraccia,
-						Tracciamento.createLocationString(false,this.msgContext.getFromLocation()),
+						Tracciamento.createLocationString(false,this.msgContext.getSourceLocation()),
 						parametriGenerazioneBustaErrore.getCorrelazioneApplicativa(),
 						parametriGenerazioneBustaErrore.getCorrelazioneApplicativaRisposta());
 			}
@@ -7370,7 +7370,7 @@ public class RicezioneBuste {
 						log, protocolFactory);
 				tracciamento.registraRisposta(msg,securityInfoResponse,
 						v.getHeaderProtocollo_senzaControlli(), bustaHTTPReply,esitoTraccia,
-						Tracciamento.createLocationString(false,this.msgContext.getFromLocation()),
+						Tracciamento.createLocationString(false,this.msgContext.getSourceLocation()),
 						idCorrelazioneApplicativa,
 						null);
 			}

@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.connector.RicezioneBusteConnector;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
+import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -121,6 +122,8 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			urlProtocolContext.setWebContext("/openspcoop2");
 			
 			urlProtocolContext.setFunctionParameters(this.functionParameters);
+			
+			urlProtocolContext.setSource("domibus/jmsQueue/"+AS4Properties.getInstance().getDomibusGatewayJMS_queueReceiver());
 			
 			this.requestInfo = ConnectorUtils.getRequestInfo(this.protocolFactory, urlProtocolContext);
 			

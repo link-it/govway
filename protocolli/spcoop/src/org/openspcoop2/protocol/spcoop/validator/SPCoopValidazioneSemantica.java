@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.Trasmissione;
+import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -878,8 +879,11 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 
 	private void validazioneLineeGuida11() throws ProtocolException{
 		
+		ITraduttore traduttore = this.protocolFactory.createTraduttore();
+		String valoreEngine = traduttore.toRegistryOrganizationType(SPCoopCostanti.SERVIZIO_SPC);
+		
 		//	  mittente
-		if(SPCoopCostanti.SERVIZIO_SPC.equals(this.busta.getTipoMittente())==false){
+		if(valoreEngine.equals(this.busta.getTipoMittente())==false){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_MITTENTE_NON_VALIDO);
@@ -889,7 +893,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 		}
 		
 		//	  destinatario
-		if(SPCoopCostanti.SERVIZIO_SPC.equals(this.busta.getTipoDestinatario())==false){
+		if(valoreEngine.equals(this.busta.getTipoDestinatario())==false){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_DESTINATARIO_NON_VALIDO);
@@ -917,7 +921,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 		}
 		
 		//		  servizio
-		if(SPCoopCostanti.SERVIZIO_SPC.equals(this.busta.getTipoServizio())==false){
+		if(valoreEngine.equals(this.busta.getTipoServizio())==false){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_SERVIZIO_NON_VALIDO);
@@ -990,7 +994,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 				
 		for(int i=0; i<this.busta.sizeListaTrasmissioni(); i++){
 			Trasmissione tr = this.busta.getTrasmissione(i);
-			if(SPCoopCostanti.SERVIZIO_SPC.equals(tr.getTipoOrigine())==false){
+			if(valoreEngine.equals(tr.getTipoOrigine())==false){
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.TRASMISSIONE_TIPO_ORIGINE_NON_VALIDA);
@@ -998,7 +1002,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 				ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_LISTA_TRASMISSIONI_NON_VALIDA_POSIZIONE_TRASMISSIONE_ORIGINE_IDENTIFICATIVO_PARTE_TIPO.toString());
 				this.erroriValidazione.add(ecc);
 			}
-			if(SPCoopCostanti.SERVIZIO_SPC.equals(tr.getTipoDestinazione())==false){
+			if(valoreEngine.equals(tr.getTipoDestinazione())==false){
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.TRASMISSIONE_TIPO_DESTINAZIONE_NON_VALIDA);
