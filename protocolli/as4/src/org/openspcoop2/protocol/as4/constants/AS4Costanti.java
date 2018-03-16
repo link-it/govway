@@ -110,6 +110,8 @@ public class AS4Costanti {
 	public static final String JMS_PAYLOAD_MIME_CONTENT_ID_SUFFIX = "_mimeContentId";
 	public static final String JMS_PAYLOAD_MIME_TYPE_SUFFIX = "_mimeType";
 	
+	public static final String JMS_NOTIFICA_MESSAGE_ID = "MESSAGE_ID";
+	public static final String JMS_NOTIFICA_NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
 	
 	
 	public final static String AS4_CONTEXT_USER_MESSAGE = "AS4_CONTEXT_USER_MESSAGE";

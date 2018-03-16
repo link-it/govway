@@ -20,8 +20,6 @@
 
 package org.openspcoop2.protocol.as4.services;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -50,64 +48,12 @@ import org.openspcoop2.utils.threads.RunnableLogger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RicezioneBusteConnettoreUtils {
+public class RicezioneBusteConnettoreUtils extends BaseConnettoreUtils {
 
-	private RunnableLogger log;
 	public RicezioneBusteConnettoreUtils(RunnableLogger log) {
-		this.log = log;
+		super(log);
 	}
 	
-	public void debug(MapMessage map) throws Exception {
-		Enumeration<?> mapNames = map.getMapNames();
-		while (mapNames.hasMoreElements()) {
-			Object name = (Object) mapNames.nextElement();
-			if(name instanceof String) {
-				String key = (String) name;
-				Object value = map.getObjectProperty(key);
-				if(value!=null) {
-					this.log.debug("\t-Map["+key+"]("+value.getClass().getName()+"): "+value);
-				}
-				else {
-					byte[] bytes = map.getBytes(key);
-					if(bytes!=null) {
-						File f = File.createTempFile("content", ".bin");
-						FileOutputStream fos =new FileOutputStream(f);
-						fos.write(bytes);
-						fos.flush();
-						fos.close();
-						this.log.debug("\t-Map["+key+"] scritto in "+f.getAbsolutePath());
-					}
-					else {
-						this.log.debug("\t-Map["+key+"]: "+value);
-					}
-				}
-			}
-			else {
-				this.log.debug("\t-Map con key diverso dal tipo String: "+name);
-			}
-		}
-		
-		this.log.debug("Ricevuto msg: "+map.getJMSMessageID());
-		this.log.debug("Ricevuto msg: "+map.getClass().getName());
-		Enumeration<?> en = map.getPropertyNames();
-		while (en.hasMoreElements()) {
-			Object name = (Object) en.nextElement();
-			if(name instanceof String) {
-				String key = (String) name;
-				Object value = map.getObjectProperty(key);
-				if(value!=null) {
-					this.log.debug("\t-Property["+key+"]("+value.getClass().getName()+"): "+value);
-				}
-				else {
-					this.log.debug("\t-Property["+key+"]: "+value);
-				}
-			}
-			else {
-				this.log.debug("\t-Property con key diverso dal tipo String: "+name);
-			}
-		}
-	}
-
 	
 	public void fillUserMessage(MapMessage map, UserMessage userMessage,HashMap<String, byte[]> content) throws Exception {
 		// PartyInfo
@@ -232,35 +178,5 @@ public class RicezioneBusteConnettoreUtils {
 		
 		userMessage.setMessageProperties(messageProperties);
 		
-	}
-	private String getPropertyJms(MapMessage map, String property, boolean required) throws Exception {
-		Object value = map.getObjectProperty(property);
-		if(value==null) {
-			if(required) {
-				throw new Exception("Property '"+property+"' not found");
-			}
-			else {
-				return null;
-			}
-		}
-		if(!(value instanceof String)) {
-			throw new Exception("Property '"+property+"' with wrong type (expected:String found:"+value.getClass().getName()+")");
-		}
-		return (String) value;
-	}
-	private Integer getIntPropertyJms(MapMessage map, String property, boolean required) throws Exception {
-		Object value = map.getObjectProperty(property);
-		if(value==null) {
-			if(required) {
-				throw new Exception("Property '"+property+"' not found");
-			}
-			else {
-				return null;
-			}
-		}
-		if(!(value instanceof Integer)) {
-			throw new Exception("Property '"+property+"' with wrong type (expected:Integer found:"+value.getClass().getName()+")");
-		}
-		return (Integer) value;
 	}
 }

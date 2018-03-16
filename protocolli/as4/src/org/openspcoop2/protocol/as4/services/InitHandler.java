@@ -38,7 +38,8 @@ import org.slf4j.Logger;
  */
 public class InitHandler implements org.openspcoop2.pdd.core.handlers.InitHandler {
 
-	public static GestoreRunnable gestoreMessaggi; 
+	public static GestoreRunnable gestoreThreads_roleReceiver_receiveMessages; 
+	public static GestoreRunnable gestoreThreads_roleSender_receiveAcks; 
 	
 	@Override
 	public void invoke(InitContext context) throws HandlerException {
@@ -47,10 +48,20 @@ public class InitHandler implements org.openspcoop2.pdd.core.handlers.InitHandle
 			Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			AS4Properties as4Properties = AS4Properties.getInstance();
 			
-			gestoreMessaggi = new GestoreRunnable("AS4MessageReceiver", as4Properties.getDomibusGatewayJMS_threadsPoolSize(), 
+			gestoreThreads_roleReceiver_receiveMessages = new GestoreRunnable("AS4MessageReceiver", as4Properties.getDomibusGatewayJMS_threadsPoolSize(), 
 					new RicezioneBusteConnector_GestoreThreads(), ProtocolFactoryManager.getInstance().getProtocolFactoryByName(AS4Costanti.PROTOCOL_NAME).getProtocolLogger());
-			gestoreMessaggi.start();
+			gestoreThreads_roleReceiver_receiveMessages.start();
 			log.info("AS4MessageReceiver avviato correttamente");
+			
+			if(as4Properties.isAckTraceEnabled()) {
+				gestoreThreads_roleSender_receiveAcks = new GestoreRunnable("AS4AckReceiver", as4Properties.getDomibusGatewayJMS_threadsPoolSize(), 
+						new RicezioneNotificheConnector_GestoreThreads(), ProtocolFactoryManager.getInstance().getProtocolFactoryByName(AS4Costanti.PROTOCOL_NAME).getProtocolLogger());
+				gestoreThreads_roleSender_receiveAcks.start();
+				log.info("AS4AckReceiver avviato correttamente");
+			}
+			else {
+				log.info("AS4AckReceiver disabilitato");
+			}
 			
 		}catch(Exception e) {
 			throw new HandlerException(e.getMessage(),e);

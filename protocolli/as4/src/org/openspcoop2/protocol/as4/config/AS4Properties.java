@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.as4.properties.SecurityPolicyXSDValidator;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -197,6 +198,17 @@ public class AS4Properties {
 			this.getDomibusGatewayJMS_queueReceiver();
 			this.getDomibusGatewayJMS_queueSender();
 			this.getDomibusGatewayJMS_jndiContextForAck();
+			
+			// ack trace
+			if(this.isAckTraceEnabled()) {
+				if(this.getAckTraceDatasource()==null) {
+					throw new Exception("Datasource non definito per il tracing delle notifiche di ack");
+				}
+				this.getAckTraceDatasource_jndiContext();
+				if(this.getAckTraceTipoDatabase()==null) {
+					throw new Exception("TipoDatabase non definito per il tracing delle notifiche di ack");
+				}
+			}
 
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo as4, "+e.getMessage();
@@ -957,5 +969,100 @@ public class AS4Properties {
 			
     	}
 		return AS4Properties.domibusGatewayJMS_jndiContextForAck;
+	}
+	
+	
+	
+	
+	
+	
+	
+	/* **** Tracciamento delle Notifiche **** */
+	
+	private static Boolean isAckTraceEnabled= null;
+    public Boolean isAckTraceEnabled(){
+    	if(AS4Properties.isAckTraceEnabled==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.enabled"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.isAckTraceEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.enabled' non impostata, viene utilizzato il default=true");
+					AS4Properties.isAckTraceEnabled = true;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				AS4Properties.isAckTraceEnabled = true;
+			}
+    	}
+    	
+    	return AS4Properties.isAckTraceEnabled;
+	}
+    
+    private static Boolean ackTraceDatasource_read;
+	private static String ackTraceDatasource;
+	public String getAckTraceDatasource() throws ProtocolException {
+		if(AS4Properties.ackTraceDatasource_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.ackTraceDatasource = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.dataSource', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				ackTraceDatasource_read = true;
+			}
+    	}
+		return AS4Properties.ackTraceDatasource;
+	}
+	
+	private static Boolean ackTraceTipoDatabase_read;
+	private static String ackTraceTipoDatabase;
+	public String getAckTraceTipoDatabase() throws ProtocolException {
+		if(AS4Properties.ackTraceTipoDatabase_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.tipoDatabase"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.ackTraceTipoDatabase = value;
+				}
+				else {
+					AS4Properties.ackTraceTipoDatabase = OpenSPCoop2Properties.getInstance().getDatabaseType();
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.tipoDatabase', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				ackTraceTipoDatabase_read = true;
+			}
+    	}
+		return AS4Properties.ackTraceTipoDatabase;
+	}
+	
+	private static Properties ackTraceDatasource_jndiContext = null;
+	public Properties getAckTraceDatasource_jndiContext() throws ProtocolException {
+		if(AS4Properties.ackTraceDatasource_jndiContext==null){
+	    	try{  
+	    		AS4Properties.ackTraceDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.trace.dataSource.property.");
+	    		if (AS4Properties.ackTraceDatasource_jndiContext == null || AS4Properties.ackTraceDatasource_jndiContext.size()<0){
+	    			AS4Properties.ackTraceDatasource_jndiContext = new Properties(); // context jndi vuoto
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.trace.dataSource.property.*', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.ackTraceDatasource_jndiContext;
 	}
 }

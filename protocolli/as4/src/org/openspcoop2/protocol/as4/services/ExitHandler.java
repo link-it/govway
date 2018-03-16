@@ -36,9 +36,19 @@ public class ExitHandler implements org.openspcoop2.pdd.core.handlers.ExitHandle
 	public void invoke(ExitContext context) {
 		
 		try {
-			InitHandler.gestoreMessaggi.setStop(true);
-			context.getLogCore().info("AS4MessageReceiver richiesto stop");
+			if(InitHandler.gestoreThreads_roleReceiver_receiveMessages!=null) {
+				InitHandler.gestoreThreads_roleReceiver_receiveMessages.setStop(true);
+				context.getLogCore().info("AS4MessageReceiver richiesto stop");
+			}
+		}catch(Exception e) {
 			
+		}
+		
+		try {
+			if(InitHandler.gestoreThreads_roleSender_receiveAcks!=null) {
+				InitHandler.gestoreThreads_roleSender_receiveAcks.setStop(true);
+				context.getLogCore().info("AS4AckReceiver richiesto stop");
+			}
 		}catch(Exception e) {
 			
 		}
