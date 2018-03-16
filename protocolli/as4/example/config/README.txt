@@ -103,5 +103,8 @@
 =====================
 7) Test
 
+Creare la directory '/var/tmp/as4' utilizzata per salvare i messaggi di test ricevuti sulla porta applicativa.
+E' la configurazione definita nel file config_blue.xml
+
 Utilizzare il client 'example/pdd/client/Benchmark' tramite la configurazione che si trova in Benchmark_config/Client.properties
 che permette di verificare tutti i test definiti nei files caricati precedentemente

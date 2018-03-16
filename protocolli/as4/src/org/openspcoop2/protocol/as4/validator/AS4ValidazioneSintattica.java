@@ -660,6 +660,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 								idServizio = listServizi.get(0);
 								busta.setTipoServizio(idServizio.getTipo());
 								busta.setServizio(idServizio.getNome());
+								busta.setVersioneServizio(idServizio.getVersione());
 								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_BASE, userMessage.getCollaborationInfo().getService().getBase());
 								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_TYPE, userMessage.getCollaborationInfo().getService().getType());
 							}

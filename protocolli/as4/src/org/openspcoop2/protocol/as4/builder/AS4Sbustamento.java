@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.as4.builder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,6 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.Costanti;
@@ -67,6 +67,7 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
@@ -236,6 +237,11 @@ public class AS4Sbustamento {
 			TransportRequestContext transportRequestContext = msg.getTransportRequestContext();
 			transportRequestContext.setFunction(URLProtocolContext.PA_FUNCTION);
 			if(ServiceBinding.REST.equals(integrationServiceBinding)) {
+				
+				if(multipart) {
+					messageType = MessageType.MIME_MULTIPART;		
+				}
+				
 				Resource resourceInvoke = null;
 				for (Resource r : aspc.getResourceList()) {
 					if(r.getNome().equals(azione)) {
@@ -277,10 +283,12 @@ public class AS4Sbustamento {
 			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, mimeTypeRoot);
 			
 			OpenSPCoop2MessageParseResult result = null;
-			result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, contentRoot);
-//			result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
-//					mimeTypeRoot, contentRoot);
-			newMessage = result.getMessage_throwParseThrowable();
+			if(MessageType.MIME_MULTIPART.equals(messageType)==false) {
+				result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, contentRoot);
+	//			result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
+	//					mimeTypeRoot, contentRoot);
+				newMessage = result.getMessage_throwParseThrowable();
+			}
 			
 			if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
 							
@@ -313,6 +321,18 @@ public class AS4Sbustamento {
 			
 			
 			if(multipart) {
+				
+				MimeMultipart mm = null;
+				if(MessageType.MIME_MULTIPART.equals(messageType)) {
+					mm = new MimeMultipart(HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+					
+					InternetHeaders headers = new InternetHeaders();
+					headers.addHeader(HttpConstants.CONTENT_ID, "<"+contentIdRoot+">");
+					headers.addHeader(HttpConstants.CONTENT_TYPE, mimeTypeRoot);
+					BodyPart bodyPart = mm.createBodyPart(headers, contentRoot);
+					mm.addBodyPart(bodyPart);
+				}
+				
 				for (int i = 1; i < listPartInfo.size(); i++) {
 					PartInfo partInfoAttach = listPartInfo.get(i);
 					byte[] c = content.get(partInfoAttach.getHref()); 
@@ -329,14 +349,24 @@ public class AS4Sbustamento {
 						ap.setContentId(contentId);
 						soapMsg.addAttachmentPart(ap);
 					}
-					else {
-						OpenSPCoop2RestMimeMultipartMessage restMsg = newMessage.castAsRestMimeMultipart();
+					else {						
 						InternetHeaders headers = new InternetHeaders();
 						headers.addHeader(HttpConstants.CONTENT_ID, contentId);
 						headers.addHeader(HttpConstants.CONTENT_TYPE, mimeType);
-						BodyPart bodyPart = restMsg.getContent().createBodyPart(headers, c);
-						restMsg.getContent().addBodyPart(bodyPart);
+						BodyPart bodyPart = mm.createBodyPart(headers, c);
+						mm.addBodyPart(bodyPart);
 					}
+				}
+				
+				if(MessageType.MIME_MULTIPART.equals(messageType)) {
+					transportRequestContext.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
+					transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, mm.getContentType());
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					mm.writeTo(bout);
+					bout.flush();
+					bout.close();
+					result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, bout.toByteArray());
+					newMessage = result.getMessage_throwParseThrowable();
 				}
 				
 				if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {

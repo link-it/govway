@@ -32,6 +32,12 @@
             <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="test"/>
         </porta-delegata>
+	<porta-delegata nome="RestExample/1/testXml" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testXml"/>
+        </porta-delegata>
         <porta-delegata nome="RestExample/1/testCompress" autenticazione="none" autorizzazione="none"
             integrazione="trasporto,urlBased" stateless="abilitato">
             <soggetto-erogatore tipo="as4" nome="Blue"/>
@@ -51,6 +57,12 @@
             <soggetto-erogatore tipo="as4" nome="Blue"/>
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="test"/>
+        </porta-delegata>
+	<porta-delegata nome="RestExample/2/testXml" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testXml"/>
         </porta-delegata>
         <porta-delegata nome="RestExample/2/testCompress" autenticazione="none" autorizzazione="none"
             integrazione="trasporto,urlBased" stateless="abilitato">

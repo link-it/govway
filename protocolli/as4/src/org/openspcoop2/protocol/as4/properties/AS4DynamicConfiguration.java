@@ -463,6 +463,34 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato all'interno dell'accordo per l'azione: "+bfExc.toString()); // dovrebbe essere uno solo
 			}
 		}
+		
+		// FIX: Domibus utilizza i nomi delle azioni globalmente, quindi non possono essere utilizzati due nomi uguali su due accordi differenti.
+		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
+		// Nota: Lascio comunque il controllo sopra per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
+		filtroAccordi.setNome(null);
+		filtroAccordi.setSoggetto(null);
+		filtroAccordi.setVersione(null);
+		try{
+			idAccordiAzioniList = registryReader.findIdAzioneAccordo(filtroAccordi);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+			StringBuffer bfExc = new StringBuffer();
+			for (IDAccordoAzione idAccordoAzione : idAccordiAzioniList) {
+				if(id.equals(idAccordoAzione)==false) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append("api:"+idAccordoAzione.getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdAccordo().getVersione()+" azione:"+ idAccordoAzione.getNome());
+				}
+			}
+			if(bfExc.length()>0) {
+				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra azione: "+bfExc.toString()); // dovrebbe essere uno solo
+			}
+		}
 	}
 	
 	@Override
@@ -510,6 +538,36 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			}
 		}
 		
+		// FIX: Domibus utilizza i nomi delle azioni globalmente, quindi non possono essere utilizzati due nomi uguali su due accordi differenti.
+		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
+		// Nota: Lascio comunque il controllo sopra per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
+		filtroAccordi.setNome(null);
+		filtroAccordi.setSoggetto(null);
+		filtroAccordi.setVersione(null);
+		filtroAccordi.setNomePortType(null);
+		try{
+			idAccordiAzioniList = registryReader.findIdAzionePortType(filtroAccordi);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+			StringBuffer bfExc = new StringBuffer();
+			for (IDPortTypeAzione idAccordoAzione : idAccordiAzioniList) {
+				if(id.equals(idAccordoAzione)==false) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append("api:"+idAccordoAzione.getIdPortType().getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdPortType().getIdAccordo().getVersione()+
+							" servizio:"+idAccordoAzione.getIdPortType().getNome()+" azione:"+ idAccordoAzione.getNome());
+				}
+			}
+			if(bfExc.length()>0) {
+				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra azione: "+bfExc.toString()); // dovrebbe essere uno solo
+			}
+		}
+		
 	}
 	
 	@Override
@@ -553,6 +611,34 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			if(bfExc.length()>0) {
 				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
 						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato all'interno dell'accordo per la risorsa: "+bfExc.toString()); // dovrebbe essere uno solo
+			}
+		}
+		
+		// FIX: Domibus utilizza i nomi delle azioni globalmente, quindi non possono essere utilizzati due nomi uguali su due accordi differenti.
+		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
+		// Nota: Lascio comunque il controllo sopra per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
+		filtroAccordi.setNome(null);
+		filtroAccordi.setSoggetto(null);
+		filtroAccordi.setVersione(null);
+		try{
+			idAccordiAzioniList = registryReader.findIdResourceAccordo(filtroAccordi);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di risorse di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+			StringBuffer bfExc = new StringBuffer();
+			for (IDResource idAccordoAzione : idAccordiAzioniList) {
+				if(id.equals(idAccordoAzione)==false) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append("api:"+idAccordoAzione.getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdAccordo().getVersione()+" azione:"+ idAccordoAzione.getNome());
+				}
+			}
+			if(bfExc.length()>0) {
+				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra risorsa: "+bfExc.toString()); // dovrebbe essere uno solo
 			}
 		}
 		

@@ -8,16 +8,16 @@
 	<soggetto-referente tipo="as4" nome="Blue" />
         <port-type nome="GestioneFileSOAP">
 	    <azione nome="test" soap-action="http://test">
-		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:test"/>
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:1:test"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="DefaultXmlProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
 	    </azione>
 	    <azione nome="testCompress" soap-action="http://testCompress">
-		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:testCompress"/>
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:1:testCompress"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="true"/>
 	    </azione>
             <azione nome="testXml" soap-action="http://testXml">
-		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:testXml"/>
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:1:testXml"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="XmlTestProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
 	    </azione>
@@ -31,12 +31,17 @@
         utilizzo-senza-azione="false" versione="1" service-binding="rest">
 	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
-		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:1:test"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="DefaultJsonProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>
+	<resource nome="testXml" path="testXml">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:1:testXml"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="DefaultXmlProfile"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
+        </resource>
         <resource nome="testCompress" path="testCompress">
-        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:testCompress"/>
+        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:1:testCompress"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="true"/>
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
@@ -53,16 +58,21 @@
         utilizzo-senza-azione="false" versione="2" service-binding="rest">
 	<soggetto-referente tipo="as4" nome="Blue" />
         <resource nome="test">
-		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:test"/>
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:2:test"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="DefaultJsonProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>
+	<resource nome="testXml" path="testXml">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:2:testXml"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="DefaultXmlProfile"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
+        </resource>
         <resource nome="testCompress" path="testCompress">
-        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:testCompress"/>
+        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:2:testCompress"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="true"/>
         </resource>
 	<resource nome="testJson" path="testJson" method="POST">
-        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:testJson"/>
+        	<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:2:testJson"/>
 		<protocol-property name="ebmsActionPayloadProfile" value="JsonTestProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>

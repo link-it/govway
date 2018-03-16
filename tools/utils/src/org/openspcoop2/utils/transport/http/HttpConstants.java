@@ -97,7 +97,17 @@ public class HttpConstants {
 	public final static String CONTENT_TYPE_PARAMETER_CHARSET = "charset";
 	
 	/** Multipart Content Type */
-	public final static String CONTENT_TYPE_MULTIPART = "multipart/related";
+	
+	public final static String CONTENT_TYPE_MULTIPART_TYPE = "multipart";
+	public final static String CONTENT_TYPE_MULTIPART_ALTERNATIVE_SUBTYPE = "alternative";
+	public final static String CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE = "mixed";
+	public final static String CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE = "related";
+	
+	public final static String CONTENT_TYPE_MULTIPART_ALTERNATIVE = CONTENT_TYPE_MULTIPART_TYPE+"/"+CONTENT_TYPE_MULTIPART_ALTERNATIVE_SUBTYPE;
+	public final static String CONTENT_TYPE_MULTIPART_MIXED = CONTENT_TYPE_MULTIPART_TYPE+"/"+CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE;
+	public final static String CONTENT_TYPE_MULTIPART_RELATED = CONTENT_TYPE_MULTIPART_TYPE+"/"+CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE;
+	
+	public final static String CONTENT_TYPE_MULTIPART = CONTENT_TYPE_MULTIPART_RELATED;
 	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY = "boundary";
 	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_TYPE = "type";
 	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_START = "start";

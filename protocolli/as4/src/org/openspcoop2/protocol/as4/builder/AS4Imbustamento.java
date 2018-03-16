@@ -619,12 +619,13 @@ public class AS4Imbustamento {
 			throw new Exception("Messaggio non contiene dati da inoltrare");
 		}
 		
+		int countAttach = 0;
+		
 		if(MessageType.MIME_MULTIPART.equals(restMessage.getMessageType())){
 					
 			OpenSPCoop2RestMimeMultipartMessage msgMime = restMessage.castAsRestMimeMultipart();
 			
-			int countAttach = msgMime.getContent().countBodyParts();
-			int attachRequired = 0;
+			countAttach = msgMime.getContent().countBodyParts();
 			
 			int index = 1;
 			for (int i = 0; i < countAttach; i++) {
@@ -634,10 +635,7 @@ public class AS4Imbustamento {
 					throw new ProtocolException("Attachment-"+index+" non previsto in payload profile '"+payloadProfile+"'");
 				}
 				Payload payload = payloadConfig.get(i);
-				if(payload.isRequired()) {
-					attachRequired++;
-				}
-				
+
 				String contentID = msgMime.getContent().getContentID(bodyPart);
 				if(contentID==null){
 					throw new ProtocolException("BodyPart without ContentID");
@@ -687,9 +685,6 @@ public class AS4Imbustamento {
 				index++;
 			}
 			
-			if(countAttach<attachRequired) {
-				throw new ProtocolException("Il payload profile '"+payloadProfile+"' richiede la presenza obbligatoria di "+attachRequired+" attachments mentre ne sono stati riscontrati "+countAttach+".");
-			}
 		}
 		else{
 		
@@ -707,35 +702,43 @@ public class AS4Imbustamento {
 				contentTypeUtilizzato = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
 			}
 			
-			if(MessageType.XML.equals(restMessage.getMessageType())){
-				// solo text/xml può essere costruito con DOMSource
-
+			if(MessageType.XML.equals(restMessage.getMessageType())){		
+				
+				String ctBase = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeUtilizzato);
 				byte [] xml = restMessage.getAsByte(restMessage.castAsRestXml().getContent(), true);
-				Source streamSource = null;
-				DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
-				if(dchManager.readMimeTypesContentHandler().containsKey(contentTypeUtilizzato)) {
-					// Se è non registrato un content handler per text/xml
-					// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
-					// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
-					// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
-					//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
-					//System.out.println("XML (DOMSource)");
-					streamSource = new DOMSource(XMLUtils.getInstance().newElement(xml));
+				if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(ctBase)) {
+				
+					// solo text/xml può essere costruito con DOMSource
+					Source streamSource = null;
+					DataContentHandlerManager dchManager = new DataContentHandlerManager(log);
+					if(dchManager.readMimeTypesContentHandler().containsKey(contentTypeUtilizzato)) {
+						// Se è non registrato un content handler per text/xml
+						// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
+						// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
+						// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
+						//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+						//System.out.println("XML (DOMSource)");
+						streamSource = new DOMSource(XMLUtils.getInstance().newElement(xml));
+					}
+					else {
+						// Se è registrato un content handler per text/xml
+						// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
+						// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
+						//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
+						//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
+						//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+						//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
+						//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
+						//System.out.println("XML (StreamSource)");
+						streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(xml));
+					}
+					ap = as4Message.createAttachmentPart();
+					ap.setContent(streamSource, contentTypeUtilizzato);
 				}
 				else {
-					// Se è registrato un content handler per text/xml
-					// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
-					// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
-					//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
-					//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
-					//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
-					//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
-					//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
-					//System.out.println("XML (StreamSource)");
-					streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(xml));
+					InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, xml);
+					ap = as4Message.createAttachmentPart(new DataHandler(isSource));
 				}
-				ap = as4Message.createAttachmentPart();
-				ap.setContent(streamSource, contentTypeUtilizzato);
 			}
 			else if(MessageType.JSON.equals(restMessage.getMessageType())){
 				ap = as4Message.createAttachmentPart();
@@ -776,6 +779,24 @@ public class AS4Imbustamento {
 			pBodyInfo.setContentType(contentTypeUtilizzato);
 			sendRequest.addPayload(pBodyInfo);
 
+		}
+		
+		int attachRequired = 0;
+		// inizio da 1, ignoro il primo payload
+		for (int i = 1; i < payloadConfig.size(); i++) {
+			Payload payload = payloadConfig.get(i);
+			if(payload.isRequired()) {
+				attachRequired++;
+			}
+		}
+		if(attachRequired>0) {
+			int attachTrovati = 0;
+			if(countAttach>1) { // maggiore di 1 perche' salto il payload
+				attachTrovati = countAttach-1;
+			}
+			if(attachTrovati<attachRequired) {
+				throw new ProtocolException("Il payload profile '"+payloadProfile+"' richiede la presenza obbligatoria di "+attachRequired+" attachments mentre ne sono stati riscontrati "+attachTrovati+".");
+			}
 		}
 	}
 }

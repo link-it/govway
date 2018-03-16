@@ -36,9 +36,17 @@
     <servlet-name>EchoService</servlet-name>
     <url-pattern>/echo</url-pattern>
   </servlet-mapping>
+    <servlet-mapping>
+    <servlet-name>EchoService</servlet-name>
+    <url-pattern>/echo/*</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>PingService</servlet-name>
     <url-pattern>/ping</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+    <servlet-name>PingService</servlet-name>
+    <url-pattern>/ping/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Soap11StresstestService</servlet-name>

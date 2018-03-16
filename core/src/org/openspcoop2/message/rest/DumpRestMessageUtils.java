@@ -47,14 +47,16 @@ public class DumpRestMessageUtils {
 	public static String dumpMessage(OpenSPCoop2RestMessage<?> msg,boolean dumpAllBodyParts) throws MessageException{
 		try{
 			StringBuffer out = new StringBuffer();
-			if(msg.hasContent()){
+			boolean hasContent = msg.hasContent();
+			if(hasContent){
 				out.append("------ Content ("+msg.getMessageType()+") ------\n");
-				out.append(msg.getContentAsString());
+				// La registrazione su log dello stream completo non e' una funzionalita' simmetrica rispetto al dump fatto su soap
+				//out.append(msg.getContentAsString());
 			}
 			else{
 				out.append("------ No-Content ("+msg.getMessageType()+") ------\n");
 			}
-			if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
+			if(hasContent && MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
 				OpenSPCoop2RestMimeMultipartMessage msgMime = msg.castAsRestMimeMultipart();
 				for (int i = 0; i < msgMime.getContent().countBodyParts(); i++) {
 					BodyPart bodyPart = msgMime.getContent().getBodyPart(i);

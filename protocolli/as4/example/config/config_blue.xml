@@ -9,7 +9,7 @@
         <porta-applicativa nome="SoapExample/1/test" stateless="abilitato">
             <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="test"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="SoapExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -17,7 +17,7 @@
         <porta-applicativa nome="SoapExample/1/testCompress" stateless="abilitato">
             <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="testCompress"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="SoapExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -25,7 +25,7 @@
         <porta-applicativa nome="SoapExample/1/testXml" stateless="abilitato">
             <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="testXml"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="SoapExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -35,7 +35,15 @@
         <porta-applicativa nome="RestExample/1/test" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="test"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="RestExample/1"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+	<porta-applicativa nome="RestExample/1/testXml" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testXml"/>
+            <servizio-applicativo nome="RestExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -43,7 +51,7 @@
         <porta-applicativa nome="RestExample/1/testCompress" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="testCompress"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="RestExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -51,7 +59,7 @@
 	<porta-applicativa nome="RestExample/1/testJson" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="testJson"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="RestExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -61,7 +69,15 @@
         <porta-applicativa nome="RestExample/2/test" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="test"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="RestExample/2"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+	<porta-applicativa nome="RestExample/2/testXml" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testXml"/>
+            <servizio-applicativo nome="RestExample/2"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -69,7 +85,7 @@
         <porta-applicativa nome="RestExample/2/testCompress" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="testCompress"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="RestExample/2"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
@@ -77,14 +93,28 @@
 	<porta-applicativa nome="RestExample/2/testJson" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="testJson"/>
-            <servizio-applicativo nome="TRACE"/>
+            <servizio-applicativo nome="RestExample/2"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
         </porta-applicativa>
         
         
-        <servizio-applicativo nome="TRACE">
+        <servizio-applicativo nome="SoapExample/1">
+            <invocazione-servizio>
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location" valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/as4"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+	<servizio-applicativo nome="RestExample/1">
+            <invocazione-servizio>
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location" valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/as4"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+	<servizio-applicativo nome="RestExample/2">
             <invocazione-servizio>
                 <connettore tipo="http" nome="connettore di test">
                     <property nome="location" valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/as4"/>

@@ -48,7 +48,7 @@ public class API {
 		if(ServiceBinding.SOAP.equals(base.getServiceBinding())) {
 			if(base.sizeAzioneList()>0) {
 				for (org.openspcoop2.core.registry.Azione az : base.getAzioneList()) {
-					String idAzione = "AzioneAccordo_" + indiceInizialeAzione++;
+					String idAzione = this.id+"_"+ "AzioneAccordo_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
 					this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles));
 				}
 			}
@@ -56,7 +56,7 @@ public class API {
 				for (org.openspcoop2.core.registry.PortType pt : base.getPortTypeList()) {
 					if(pt.sizeAzioneList()>0) {
 						for (org.openspcoop2.core.registry.Operation az : pt.getAzioneList()) {
-							String idAzione = "Azione_" + indiceInizialeAzione++;
+							String idAzione = this.id+"_"+"Azione_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
 							this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles));
 						}
 					}
@@ -66,7 +66,7 @@ public class API {
 		else {
 			if(base.sizeResourceList()>0) {
 				for (org.openspcoop2.core.registry.Resource resource : base.getResourceList()) {
-					String idAzione = "Resource_" + indiceInizialeAzione++;
+					String idAzione = this.id+"_"+"Resource_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
 					this.actions.put(idAzione, new Azione(resource, idAzione, payloadProfiles));
 				}
 			}
