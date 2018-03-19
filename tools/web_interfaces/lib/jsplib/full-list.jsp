@@ -84,7 +84,7 @@ if (
 							<td class="titoloSezione" id="searchFormHeader">
 								<span class="history">Filtri di Ricerca</span>
 							</td>
-							<td align="right" class="titoloSezione">
+							<td align="right" class="titoloSezione titoloSezione-right">
 								<span class="icon-up-white" id="iconaPanelLista"></span>
 							</td>
 						</tr>

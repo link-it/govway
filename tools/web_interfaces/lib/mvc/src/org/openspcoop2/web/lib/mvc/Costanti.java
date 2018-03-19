@@ -187,6 +187,10 @@ public class Costanti {
 	public final static MessageType MESSAGE_TYPE_INFO = MessageType.INFO;
 	public final static MessageType MESSAGE_TYPE_CONFIRM = MessageType.CONFIRM;
 	
+	public final static String MESSAGE_TYPE_ERROR_TITLE = "Messaggio di Errore";
+	public final static String MESSAGE_TYPE_INFO_TITLE = "Messaggio Informativo";
+	public final static String MESSAGE_TYPE_CONFIRM_TITLE = "Conferma Azione";
+	
 	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";
 	public final static String INPUT_CSS_CLASS = "inputLink";

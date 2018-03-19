@@ -178,6 +178,20 @@ public class PageData {
 	public void setMessageType(String messageType) {
 		this.messageType = messageType;
 	}
+	
+	public String getMessageTitle() {
+		MessageType mT = MessageType.fromValue(this.messageType);
+		switch (mT) {
+		case CONFIRM:
+			return Costanti.MESSAGE_TYPE_CONFIRM_TITLE;
+		case ERROR:
+			return Costanti.MESSAGE_TYPE_ERROR_TITLE;
+		case INFO:
+			return Costanti.MESSAGE_TYPE_INFO_TITLE;
+		}
+		
+		return Costanti.MESSAGE_TYPE_ERROR_TITLE;
+	}
 
 	public void setPage(String s) {
 		this.page = s;

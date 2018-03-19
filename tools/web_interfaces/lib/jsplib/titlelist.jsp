@@ -45,11 +45,12 @@ Vector<?> v = pd.getDati();
 String message = pd.getMessage();
 String messageType = pd.getMessageType();
 String pageDescription = pd.getPageDescription();
+String messageTitle = pd.getMessageTitle();
 %>
 <table style="width:100%;">
 	<tbody>
 		<tr>
-			<td>
+			<td colspan="2">
 				<div id="breadcrumb-ct">
 					<%
 						Vector<GeneralLink> titlelist = pd.getTitleList();
@@ -109,7 +110,7 @@ String pageDescription = pd.getPageDescription();
 		if (!pageDescription.equals("")) {
 		  %>
 			<tr>
-				<td>
+				<td colspan="2">
 		  			<div class="pageDescription">
 		  				<%= pageDescription %>
 		  			</div>
@@ -123,10 +124,19 @@ String pageDescription = pd.getPageDescription();
 		if (!message.equals("") && !messageType.equals(MessageType.CONFIRM.toString())) {
 		  %>
 		  	<tr>
-				<td>
+				<td style="width: 50%;">
 		  			<div class="messages-<%=messageType %>">
-		  				<%= message %>
+			  			<div class="messages-title">
+			  				<span class="messages-<%=messageType %>-title-icon">&nbsp;&nbsp;</span>
+			  				<span class="messages-title-text"><%= messageTitle %></span>
+			  			</div>
+			  			<div class="messages-<%=messageType %>-text">
+			  				<span ><%= message %></span>
+			  			</div>
 		  			</div>
+		  		</td>
+		  		<td style="width: 50%;">
+		  			&nbsp;&nbsp;
 		  		</td>
 			</tr>
 		  <%

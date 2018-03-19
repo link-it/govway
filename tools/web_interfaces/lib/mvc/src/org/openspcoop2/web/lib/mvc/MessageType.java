@@ -42,4 +42,14 @@ public enum MessageType {
 	public String toString(){
 		return this.value;
 	}
+	
+	public static MessageType fromValue(String mT) {
+		for (MessageType message : values()) {
+			if(message.toString().equals(mT))
+				return message;
+		}
+		
+		return null;
+	}
+	
 }

@@ -257,6 +257,16 @@ a.td2PageHeader:visited {
 	padding: 8px;
 }
 
+.titoloSezione-right {
+	width: 20px;
+	border-left: 1px solid ${body.background.color};
+}
+
+.titoloSezione-right:hover {
+	cursor: pointer;
+	background: ${menu.element.hover.background.color};
+}
+
 .titoloSezione span{
 	padding-left: 8px;
     font-size: 14px;
@@ -594,12 +604,11 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 /* Messaggi */
 
 div.messages-errors {
-	margin: 0 40px 20px 40px;
+	margin: 0 40px 20px 16px;
 	padding: 10px 20px;
 	border: ${messages.error.border.color} 1px solid;
 	background-color: ${messages.error.background.color};
 	color: ${messages.error.color};
-	border-radius: 8px;
 }
 
 div.messages-errors a {
@@ -614,13 +623,20 @@ div.messages-errors a:hover {
 	text-decoration: none;
 }
 
+div.messages-errors-text {
+	padding: 8px 4px 8px 0px;
+}
+
+.messages-errors-text p {
+	margin: 0px;
+}
+
 div.messages-info {
-	margin: 0 40px 20px 40px;
+	margin: 0 40px 20px 16px;
 	padding: 10px 20px;
 	border: ${messages.info.border.color} 1px solid;
 	background-color: ${messages.info.background.color};
 	color: ${messages.info.color};
-	border-radius: 8px;
 }
 
 div.messages-info a {
@@ -633,6 +649,61 @@ div.messages-info a {
 div.messages-info a:hover {
 	color: ${a.hover.color};
 	text-decoration: none;
+}
+
+
+div.messages-info-text {
+	padding: 8px 4px 8px 0px;
+}
+
+.messages-info-text p {
+	margin: 0px;
+}
+
+div.messages-title {
+	font-weight: bold;
+	padding: 8px 4px 8px 0px;
+}
+
+.messages-title-text{
+	font-size: 14px;
+	vertical-align: middle;
+}
+
+.messages-info-title-icon{
+	background-image: url(../images/tema_link/info_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: left center;
+	width: 20px;
+    height: 20px;
+    padding: 0px 8px 0px 10px;
+}
+
+.messages-errors-title-icon{
+	background-image: url(../images/tema_link/alarm_red.png) ! important;
+	background-repeat: no-repeat;
+	background-position: left center;
+	width: 20px;
+    height: 20px;
+    padding: 0px 8px 0px 10px;
+}
+
+.messages-errors-title-icon-red{
+	background-image: url(../images/tema_link/alarm_red.png) ! important;
+	background-repeat: no-repeat;
+	background-position: left center;
+	width: 20px;
+    height: 20px;
+    padding: 0px 8px 0px 10px;
+}
+
+.messages-errors-title-icon-alt{
+	background-image: url(../images/tema_link/alarm_alt.png) ! important;
+	background-repeat: no-repeat;
+	background-position: left center;
+	width: 20px;
+    height: 20px;
+    padding: 0px 8px 0px 10px;
 }
 
 
