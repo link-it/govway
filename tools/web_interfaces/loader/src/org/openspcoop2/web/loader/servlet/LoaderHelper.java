@@ -35,6 +35,7 @@ import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.MenuEntry;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
@@ -131,12 +132,12 @@ public class LoaderHelper {
 
 		// Campi obbligatori
 		if (login.equals("")) {
-			this.pd.setMessage(Costanti.LABEL_LOGIN_DATI_INCOMPLETI_LOGIN);
+			this.pd.setMessage(Costanti.LABEL_LOGIN_DATI_INCOMPLETI_LOGIN,MessageType.ERROR_SINTETICO);
 			return false;
 		}
 		if (verificaPassword) {
 			if (password.equals("")) {
-				this.pd.setMessage(Costanti.LABEL_LOGIN_DATI_INCOMPLETI_PASSWORD);
+				this.pd.setMessage(Costanti.LABEL_LOGIN_DATI_INCOMPLETI_PASSWORD,MessageType.ERROR_SINTETICO);
 				return false;
 			}
 		}
@@ -172,15 +173,15 @@ public class LoaderHelper {
 
 		if (!trovato) {
 			if (verificaPassword==false) {
-				this.pd.setMessage(Costanti.LABEL_LOGIN_ERRATO);
+				this.pd.setMessage(Costanti.LABEL_LOGIN_ERRATO,MessageType.ERROR_SINTETICO);
 			} else {
-				this.pd.setMessage(Costanti.LABEL_LOGIN_CON_PASSWORD_ERRATO);
+				this.pd.setMessage(Costanti.LABEL_LOGIN_CON_PASSWORD_ERRATO,MessageType.ERROR_SINTETICO);
 			}
 			return false;
 		}
 
 		if(u.getPermessi().isServizi()==false){
-			this.pd.setMessage(Costanti.LABEL_LOGIN_PERMESSI_NON_SUFFICENTI);
+			this.pd.setMessage(Costanti.LABEL_LOGIN_PERMESSI_NON_SUFFICENTI,MessageType.ERROR_SINTETICO);
 			return false;
 		}
 		

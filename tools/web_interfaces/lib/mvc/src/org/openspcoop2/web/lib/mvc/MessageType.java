@@ -30,8 +30,10 @@ package org.openspcoop2.web.lib.mvc;
 public enum MessageType {
 
 	INFO("info"),
+	INFO_SINTETICO("info-sintetico"),
 	CONFIRM("confirm"),
-	ERROR("errors");
+	ERROR("errors"),
+	ERROR_SINTETICO("errors-sintetico");
 	
 	private String value;
 	MessageType(String value){

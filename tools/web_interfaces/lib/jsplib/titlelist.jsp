@@ -130,9 +130,16 @@ String messageTitle = pd.getMessageTitle();
 			  				<span class="messages-<%=messageType %>-title-icon">&nbsp;&nbsp;</span>
 			  				<span class="messages-title-text"><%= messageTitle %></span>
 			  			</div>
-			  			<div class="messages-<%=messageType %>-text">
-			  				<span ><%= message %></span>
-			  			</div>
+			  			<%
+						// messaggio in cima alla pagina solo se non e' un messaggio di conferma
+						if (!messageType.equals(MessageType.INFO_SINTETICO.toString()) && !messageType.equals(MessageType.ERROR_SINTETICO.toString())) {
+						  %>
+				  			<div class="messages-<%=messageType %>-text">
+				  				<span ><%= message %></span>
+				  			</div>
+			  			  <%
+							}
+							%>
 		  			</div>
 		  		</td>
 		  		<td style="width: 50%;">

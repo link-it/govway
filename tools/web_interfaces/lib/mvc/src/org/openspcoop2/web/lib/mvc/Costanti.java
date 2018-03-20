@@ -184,7 +184,9 @@ public class Costanti {
 	/** PAGE DATA TITLE */
 	
 	public final static MessageType MESSAGE_TYPE_ERROR = MessageType.ERROR;
+	public final static MessageType MESSAGE_TYPE_ERROR_SINTETICO = MessageType.ERROR_SINTETICO;
 	public final static MessageType MESSAGE_TYPE_INFO = MessageType.INFO;
+	public final static MessageType MESSAGE_TYPE_INFO_SINTETICO = MessageType.INFO_SINTETICO;
 	public final static MessageType MESSAGE_TYPE_CONFIRM = MessageType.CONFIRM;
 	
 	public final static String MESSAGE_TYPE_ERROR_TITLE = "Messaggio di Errore";

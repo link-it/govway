@@ -49,6 +49,7 @@ public class PageData {
 	String mode;
 	String message;
 	String messageType;
+	String messageTitle;
 	Vector<GeneralLink> titlelist;
 	Vector<?> dati;
 	Vector<?> menu;
@@ -77,6 +78,7 @@ public class PageData {
 		this.mode = "";
 		this.message = "";
 		this.messageType = MessageType.ERROR.toString();
+		this.messageTitle = "";
 		this.page = "";
 		this.op = "";
 		this.titlelist = new Vector<GeneralLink>();
@@ -162,9 +164,30 @@ public class PageData {
 	public void setMessage(String s) {
 		this.setMessage(s, MessageType.ERROR); 
 	}
+	
 	public void setMessage(String s,MessageType type) {
+		setMessage(s, null, type);
+	}
+	public void setMessage(String s, String title, MessageType type) {
 		this.message = s;
 		this.messageType = type.toString();
+		this.messageTitle = title;
+		if(this.messageTitle == null) {
+			switch (type) {
+			case CONFIRM:
+				this.messageTitle = Costanti.MESSAGE_TYPE_CONFIRM_TITLE;
+				break;
+			case ERROR:
+				this.messageTitle = Costanti.MESSAGE_TYPE_ERROR_TITLE;
+				break;
+			case INFO:
+				this.messageTitle = Costanti.MESSAGE_TYPE_INFO_TITLE;
+				break;
+			case INFO_SINTETICO:
+			case ERROR_SINTETICO:
+				this.messageTitle = this.message;
+			}
+		}
 	}
 
 	public String getMessage() {
@@ -180,17 +203,7 @@ public class PageData {
 	}
 	
 	public String getMessageTitle() {
-		MessageType mT = MessageType.fromValue(this.messageType);
-		switch (mT) {
-		case CONFIRM:
-			return Costanti.MESSAGE_TYPE_CONFIRM_TITLE;
-		case ERROR:
-			return Costanti.MESSAGE_TYPE_ERROR_TITLE;
-		case INFO:
-			return Costanti.MESSAGE_TYPE_INFO_TITLE;
-		}
-		
-		return Costanti.MESSAGE_TYPE_ERROR_TITLE;
+		return this.messageTitle;
 	}
 
 	public void setPage(String s) {

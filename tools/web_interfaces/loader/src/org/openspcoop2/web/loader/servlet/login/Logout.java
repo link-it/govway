@@ -67,7 +67,7 @@ public final class Logout extends Action {
 
 			ServletUtils.removeUserLoginFromSession(session);
 
-			pd.setMessage(Costanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,MessageType.INFO);
+			pd.setMessage(Costanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,MessageType.INFO_SINTETICO);
 
 			// Inizializzo di nuovo GeneralData, dopo aver rimosso
 			// dalla sessione la login dell'utente

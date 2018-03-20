@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.loader.core.Costanti;
@@ -84,7 +85,7 @@ public final class AuthorisationFilter implements Filter {
 						this.setErrorMsg(generalHelper, session, request, response, Costanti.LOGIN_JSP,null);
 					}
 					else{
-						this.setErrorMsg(generalHelper, session, request, response, Costanti.LOGIN_JSP, Costanti.LABEL_LOGIN_SESSIONE_SCADUTA);
+						this.setErrorMsg(generalHelper, session, request, response, Costanti.LOGIN_JSP, Costanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO);
 					}
 					
 					// return so that we do not chain to other filters
@@ -116,6 +117,16 @@ public final class AuthorisationFilter implements Filter {
 	
 	public void setErrorMsg(GeneralHelper gh,HttpSession session,
 			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore) throws IOException,ServletException {
+		setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, MessageType.ERROR); 
+	}
+	
+	public void setErrorMsg(GeneralHelper gh,HttpSession session,
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, MessageType messageType) throws IOException,ServletException {
+		setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, messageType); 
+	}
+	
+	public void setErrorMsg(GeneralHelper gh,HttpSession session,
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, String msgErroreTitle, MessageType messageType) throws IOException,ServletException {
 		
 		// Inizializzo PageData
 		PageData pd = gh.initPageData();
@@ -124,7 +135,7 @@ public final class AuthorisationFilter implements Filter {
 		GeneralData gd = gh.initGeneralData(request,Costanti.SERVLET_NAME_LOGIN);
 		
 		if(msgErrore!=null)
-			pd.setMessage(msgErrore);
+			pd.setMessage(msgErrore,msgErroreTitle,messageType);
 		
 		// se l'utente e' loggato faccio vedere il menu'
 		String userLogin = ServletUtils.getUserLoginFromSession(session);

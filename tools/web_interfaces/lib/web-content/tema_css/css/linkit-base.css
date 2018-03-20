@@ -268,14 +268,14 @@ a.td2PageHeader:visited {
 }
 
 .titoloSezione span{
-	padding-left: 8px;
+	padding-left: 16px;
     font-size: 14px;
     font-weight: bold;
 }
 
 .voceMenu {
 	color: ${menu.label.color};
-	padding-left: 8px;
+	padding-left: 12px;
     padding-top: 6px;
     padding-bottom: 6px;
 }
@@ -283,9 +283,9 @@ a.td2PageHeader:visited {
 div.voceMenu:hover {
 	background: ${menu.element.hover.background.color};
 	color: ${menu.element.hover.color};
-	border-left: 4px solid ${menu.element.hover.border.color};
+	border-left: 8px solid ${menu.element.hover.border.color};
 	padding-left: 4px;
-    	padding-top: 6px;
+    padding-top: 6px;
    	padding-bottom: 6px;
 }
 
@@ -603,7 +603,8 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 
 /* Messaggi */
 
-div.messages-errors {
+div.messages-errors,
+div.messages-errors-sintetico {
 	margin: 0 40px 20px 16px;
 	padding: 10px 20px;
 	border: ${messages.error.border.color} 1px solid;
@@ -611,27 +612,32 @@ div.messages-errors {
 	color: ${messages.error.color};
 }
 
-div.messages-errors a {
+div.messages-errors a,
+div.messages-errors-sintetico a {
 	cursor: pointer;
 	font-family: 'Roboto';
 	text-decoration: underline;
 	color: ${messages.error.color};
 }
 
-div.messages-errors a:hover {
+div.messages-errors a:hover,
+div.messages-errors-sintetico a:hover{
 	color: ${messages.error.color};
 	text-decoration: none;
 }
 
-div.messages-errors-text {
+div.messages-errors-text,
+div.messages-errors-sintetico-text {
 	padding: 8px 4px 8px 0px;
 }
 
-.messages-errors-text p {
+.messages-errors-text p,
+.messages-errors-sintetico-text p {
 	margin: 0px;
 }
 
-div.messages-info {
+div.messages-info,
+div.messages-info-sintetico {
 	margin: 0 40px 20px 16px;
 	padding: 10px 20px;
 	border: ${messages.info.border.color} 1px solid;
@@ -639,24 +645,28 @@ div.messages-info {
 	color: ${messages.info.color};
 }
 
-div.messages-info a {
+div.messages-info a,
+div.messages-info-sintetico a {
 	cursor: pointer;
 	font-family: 'Roboto';
 	text-decoration: underline;
 	color: ${messages.info.color};
 }
 
-div.messages-info a:hover {
+div.messages-info a:hover,
+div.messages-info-sintetico a:hover {
 	color: ${a.hover.color};
 	text-decoration: none;
 }
 
 
-div.messages-info-text {
+div.messages-info-text,
+div.messages-info-sintetico-text {
 	padding: 8px 4px 8px 0px;
 }
 
-.messages-info-text p {
+.messages-info-text p,
+.messages-info-sintetico-text p {
 	margin: 0px;
 }
 
@@ -670,7 +680,8 @@ div.messages-title {
 	vertical-align: middle;
 }
 
-.messages-info-title-icon{
+.messages-info-title-icon,
+.messages-info-sintetico-title-icon{
 	background-image: url(../images/tema_link/info_white.png) ! important;
 	background-repeat: no-repeat;
 	background-position: left center;
@@ -679,7 +690,8 @@ div.messages-title {
     padding: 0px 8px 0px 10px;
 }
 
-.messages-errors-title-icon{
+.messages-errors-title-icon,
+.messages-errors-sintetico-title-icon{
 	background-image: url(../images/tema_link/alarm_red.png) ! important;
 	background-repeat: no-repeat;
 	background-position: left center;
@@ -687,25 +699,6 @@ div.messages-title {
     height: 20px;
     padding: 0px 8px 0px 10px;
 }
-
-.messages-errors-title-icon-red{
-	background-image: url(../images/tema_link/alarm_red.png) ! important;
-	background-repeat: no-repeat;
-	background-position: left center;
-	width: 20px;
-    height: 20px;
-    padding: 0px 8px 0px 10px;
-}
-
-.messages-errors-title-icon-alt{
-	background-image: url(../images/tema_link/alarm_alt.png) ! important;
-	background-repeat: no-repeat;
-	background-position: left center;
-	width: 20px;
-    height: 20px;
-    padding: 0px 8px 0px 10px;
-}
-
 
 /* Menu Utente */
 
