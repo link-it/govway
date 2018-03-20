@@ -211,7 +211,7 @@ public final class UtenteChange extends Action {
 			// se ho cliccato sul link cambia modalita interfaccia
 			if(changeGui != null) {
 				// provengo dal link presente nell'header della pagina a dx.
-				pd.setMessage("Passaggio all'interfaccia '"+interfaceType.toString().toLowerCase()+"' effettuato con successo.", Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage("Passaggio all'interfaccia '"+interfaceType.toString().toLowerCase()+"' effettuato con successo.", Costanti.MESSAGE_TYPE_INFO_SINTETICO);
 
 				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 
