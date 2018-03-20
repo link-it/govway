@@ -162,6 +162,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_TIPO_ACCORDO = "tipoAccordo";
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_ID_PROVIDER = "provider";
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA = "proprietaConnettoreCustom";
+	public final static String PARAMETRO_CONNETTORE_MODALITA = "modCon";
 	
 	
 	/* LABEL PARAMETRI */
@@ -237,9 +238,16 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE = "Valore";
 	
+	public final static String LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO = "ridefinito";
+	public final static String LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT = "default";
+	public final static String LABEL_PARAMETRO_CONNETTORE_MODALITA = "Modalit&agrave;";
+	
 	
 	/* DEFAULT VALUE PARAMETRI */
 
+	public final static String VALUE_PARAMETRO_MODALITA_CONNETTORE_DEFAULT = "default";
+	public final static String VALUE_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO = "ridefinito";
+	
 	public final static  String[] TIPI_CODE_JMS = { "queue", "topic" };
 	
 	public final static String DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT = "default";

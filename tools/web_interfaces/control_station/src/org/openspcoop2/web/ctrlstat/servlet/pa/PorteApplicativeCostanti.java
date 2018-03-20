@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazio
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -77,6 +78,12 @@ public class PorteApplicativeCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE = "porteApplicativeAbilitazione";
 	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "porteApplicativeConnettoreDefault";
+	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_DEFAULT = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "porteApplicativeConnettoreRidefinito";
+	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_RIDEFINITO = ForwardParams.OTHER("");
 	
 	/* SERVLET NAME */
 	
@@ -241,6 +248,9 @@ public class PorteApplicativeCostanti {
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI+".do";
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE +".do";
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT +".do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO +".do";
 
 	/* LABEL GENERALI */
 	
@@ -310,6 +320,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = "abilita";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
 	
 	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
@@ -351,6 +362,10 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = "Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI = "Connettore di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = "Connettore Default";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT_DI = "Connettore Default di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "Connettore Ridefinito";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO_DI = "Connettore Ridefinito di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
@@ -431,6 +446,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = "register-input";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = "header-based";
@@ -483,6 +500,16 @@ public class PorteApplicativeCostanti {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "nuova";
+	
+	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
+	public final static String VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
+	
+	/* MESSAGGI */
+	
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA ="Si sta abilitando la configurazione relativa alle azioni:{0}Procedere?"; 
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_PORTA_DEFAULT ="Si sta abilitando la configurazione di default, procedere?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA ="Si sta disabilitando la configurazione relativa alle azioni:{0}Procedere?";
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT ="Si sta disabilitando la configurazione di default, procedere?";
 	
 
 	/* MESSAGGI ERRORE */

@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -74,6 +75,12 @@ public class PorteDelegateCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE = "porteDelegateAbilitazione";
 	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT = "porteApplicativeConnettoreDefault";
+	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_DEFAULT = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = "porteApplicativeConnettoreRidefinito";
+	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_RIDEFINITO = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */
 
@@ -230,6 +237,9 @@ public class PorteDelegateCostanti {
 		PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST);
 	}
 	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT +".do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO +".do";
+	
 	/* LABEL GENERALI */
 
 	public final static String LABEL_PORTE_DELEGATE = "Porte Delegate";
@@ -321,7 +331,7 @@ public class PorteDelegateCostanti {
 	public final static int ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO;
 	public final static int ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
 	
-	
+	public final static String PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
 	
 	
 	/* LABEL PARAMETRI */
@@ -352,6 +362,10 @@ public class PorteDelegateCostanti {
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazioni Applicative per la risposta di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Regole della Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Regole della Risposta";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DEFAULT = "Connettore Default";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DEFAULT_DI = "Connettore Default di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = "Connettore Ridefinito";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_RIDEFINITO_DI = "Connettore Ridefinito di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO;
@@ -436,6 +450,9 @@ public class PorteDelegateCostanti {
 
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
 
 	
 	/* DEFAULT VALUE PARAMETRI */
@@ -488,6 +505,9 @@ public class PorteDelegateCostanti {
 
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "eredita";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "nuova";
+	
+	public final static String VALUE_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
+	public final static String VALUE_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
 		
 	// Messaggi Errora
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_ALLA_PORTA_DELEGATA_DEI_SERVIZI_APPLICATIVI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati alla porta delegata dei servizi applicativi non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
