@@ -44,7 +44,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.wsdl.WSDLException;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
@@ -203,7 +202,7 @@ public class WSDLValidator {
 	 * Validazione xsd
 	 * 
 	 * @param isRichiesta Indicazione sul tipo di messaggio applicativo da gestire
-	 * @throws ValidatoreMessaggiApplicativiException (contiene codice e msg di errore)
+	 * @throws WSDLException (contiene codice e msg di errore)
 	 */
 	public void validateAgainstXSDSchema(boolean isRichiesta,String operationName) throws WSDLException,WSDLValidatorException{
 		this.validateAgainstXSDSchema(isRichiesta, operationName, this.ptWsdlConformanceCheck, this.opWsdlConformanceCheck);
