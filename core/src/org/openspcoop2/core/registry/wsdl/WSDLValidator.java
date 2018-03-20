@@ -41,8 +41,10 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.wsdl.WSDLException;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
@@ -74,16 +76,18 @@ public class WSDLValidator {
 	public static final String XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE = "type";
 	private static final String PREFIX_RPC_AGGIUNTO = "op2RPC";
 	
+	/** OpenSPCoop2Message */
+	private OpenSPCoop2Message openspcoop2Message;
 	/** SOAPVersion */
-	MessageType messageType;
+	private MessageType messageType;
 	/** Element */
-	Element element;
+	private Element element;
 	/** WSDL Associato al servizio */
-	AccordoServizioWrapper accordoServizioWrapper = null;
+	private AccordoServizioWrapper accordoServizioWrapper = null;
 	/** Logger */
-	Logger logger = null;
+	private Logger logger = null;
 	/** XMLUtils */
-	AbstractXMLUtils xmlUtils = null;
+	private AbstractXMLUtils xmlUtils = null;
 	
 	/** Nodo xsiType Aggiunto */
 	private boolean gestioneXsiType_rpcLiteral;
@@ -99,7 +103,36 @@ public class WSDLValidator {
 	
 	
 	/* ------ Costruttore -------------- */
-	public WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
+	private static Element _getEnvelopeCatchException(OpenSPCoop2Message msg) throws WSDLException {
+		try {
+			if(MessageType.SOAP_11.equals(msg.getMessageType()) || MessageType.SOAP_12.equals(msg.getMessageType())) {
+				if(msg.castAsSoap().getSOAPPart()==null){
+					throw new WSDLException("Messaggio (SOAPPArt) non fornito");
+				}
+				SOAPEnvelope envelope = msg.castAsSoap().getSOAPPart().getEnvelope();
+				if(envelope==null){
+					throw new WSDLException("Envelope non fornita");
+				}
+				return envelope;
+			}
+			else if (MessageType.XML.equals(msg.getMessageType())){
+				if(msg.castAsRestXml().hasContent()) {
+					return msg.castAsRestXml().getContent();
+				}
+			}
+			return null;
+		}catch(Exception e){
+			throw new WSDLException(e.getMessage(),e);
+		}
+	}
+	public WSDLValidator(OpenSPCoop2Message msg,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
+			boolean gestioneXsiType_rpcLiteral)throws WSDLException{
+		this(msg.getMessageType(), _getEnvelopeCatchException(msg), xmlUtils, accordoServizioWrapper, log, gestioneXsiType_rpcLiteral);
+		this.openspcoop2Message = msg;
+	}
+	// Il costruttore sottostante non puo' sfruttare la funzionalita' addNamespaceXSITypeIfNotExists
+	// per questo e' stato reso privato, poiche' tale funzionalita' richiede openspcoop2Message
+	private WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
 			boolean gestioneXsiType_rpcLiteral)throws WSDLException{
 		
 		this.messageType = messageType;
@@ -260,6 +293,12 @@ public class WSDLValidator {
 					n = nodeList.get(i);
 					nomeElemento = n.getLocalName();
 					namespaceElemento = n.getNamespaceURI();
+					
+					// Bug Fix: OPPT-784: Validazione fallisce in presenza di xsi:type e normalizzazione da axiom
+					if(this.openspcoop2Message!=null) {
+						this.openspcoop2Message.addNamespaceXSITypeIfNotExists(n, this.element);
+					}
+					
 					validatoreBodyApplicativo.valida(n,true);
 				}catch(Exception e){
 					if(errorMsgValidazioneXSD.length()==0){
@@ -397,10 +436,22 @@ public class WSDLValidator {
 										continue;
 									}
 									nChild = nlChilds.item(j);
+									
+									// Bug Fix: OPPT-784: Validazione fallisce in presenza di xsi:type e normalizzazione da axiom
+									if(this.openspcoop2Message!=null) {
+										this.openspcoop2Message.addNamespaceXSITypeIfNotExists(nChild, this.element);
+									}
+									
 									validatoreBodyApplicativo.valida(nChild,true);
 								}
 							}else{
 								this.logger.debug("Validazione XSD con style["+style+"] e use["+use+"] Document Validation...");
+								
+								// Bug Fix: OPPT-784: Validazione fallisce in presenza di xsi:type e normalizzazione da axiom
+								if(this.openspcoop2Message!=null) {
+									this.openspcoop2Message.addNamespaceXSITypeIfNotExists(nodo, this.element);
+								}
+								
 								validatoreBodyApplicativo.valida(nodo,true);
 							}
 							

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -50,6 +51,7 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.utils.TransportUtilities;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
@@ -58,6 +60,7 @@ import org.openspcoop2.utils.serialization.JavaSerializer;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.w3c.dom.Node;
 
 /**
@@ -105,6 +108,9 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	
 	/* Stream */
 	public NotifierInputStream notifierInputStream;
+	
+	/* Indicazione se la normalizzazione dei namespace per gli attributi xsi:type deve essere effettuata */
+	public boolean normalizeNamespaceXSIType = false;
 	
 
 	
@@ -841,6 +847,31 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} 
+	}
+	
+	@Override
+	public void addNamespaceXSITypeIfNotExists(Node element, Node root) throws MessageException {
+		try {
+			if(this.normalizeNamespaceXSIType) {
+				DynamicNamespaceContext dnc = null;
+				DynamicNamespaceContextFactory dncFactory = DynamicNamespaceContextFactory.getInstance();
+				if(root instanceof javax.xml.soap.SOAPEnvelope) {
+					javax.xml.soap.SOAPEnvelope soapEnvelope = (javax.xml.soap.SOAPEnvelope) root;
+					if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(soapEnvelope.getNamespaceURI())) {
+						dnc = dncFactory.getNamespaceContextFromSoapEnvelope12(soapEnvelope);
+					}
+					else {
+						dnc = dncFactory.getNamespaceContextFromSoapEnvelope11(soapEnvelope);
+					}
+				}
+				else {
+					dnc = dncFactory.getNamespaceContext(root);
+				}
+				XMLUtils.getInstance().addNamespaceXSITypeIfNotExists(element, dnc, true);
+			}
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}
 	}
 	
 	

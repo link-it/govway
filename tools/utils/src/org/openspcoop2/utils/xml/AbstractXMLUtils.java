@@ -889,6 +889,57 @@ public abstract class AbstractXMLUtils {
 		return namespaces;
 	}
 	
+	public String findNamespaceByPrefix(String prefix,Node node) {
+		return this.findNamespaceByPrefix(prefix, node, node);
+	}
+	public String findNamespaceByPrefix(String prefix,Node node, Node parentNode) {
+		if(node==null) {
+			return null;
+		}
+		
+//		System.out.println("[{"+node.getNamespaceURI()+"}"+node.getLocalName()+"] CERCO NAMESPACE ...");
+		
+		// cerco tra le definizioni del nodo
+		NamedNodeMap nn = node.getAttributes();
+		if(nn!=null && nn.getLength()>0) {
+			for (int k = 0; k < nn.getLength(); k++) {
+				Node nAttr = nn.item(k);
+				if(nAttr instanceof Attr) {
+					Attr attr = (Attr) nAttr;
+					String prefixAttr = attr.getName();
+					if(prefixAttr!=null && (prefixAttr.startsWith("xmlns") || prefix.equals("prefixAttr"))){
+						if(prefixAttr.contains(":")){
+							prefixAttr = prefixAttr.split(":")[1];
+						}
+						else{
+							prefixAttr = "";
+						}
+					}
+//					System.out.println("\t CONFRONTO ["+prefix+"]==["+prefixAttr+"] ["+attr.getName()+"] ["+attr.getLocalName()+"] ["+attr.getValue()+"] ["+attr.getNamespaceURI()+"] ...");
+					if(prefix.equals(prefixAttr)) {
+//						System.out.println("TROVATO PREFIX ["+prefix+"] in node [{"+node.getNamespaceURI()+"}"+node.getLocalName()+
+//								"], namespace is ["+attr.getNamespaceURI()+"]["+attr.getValue()+"]");
+						// TROVATO PREFIX [ns10] in node [{http://www.xxxx}ElementName], namespace is [http://www.w3.org/2000/xmlns/][http://namespaceApplicativo]
+						return attr.getValue();
+					}
+				}
+			}
+		}
+		
+		// Sono al padre non salgo ulteriormente
+		if(node.isSameNode(parentNode)) {
+//			System.out.println("\tRicerca ["+prefix+"] RAGGIUNTO IL PADRE [{"+parentNode.getNamespaceURI()+"}"+parentNode.getLocalName()+"]");
+			return null;
+		}
+		// cerco nel padre a meno che non ho raggiunto il parentNode
+		Node p = node.getParentNode();
+		if(p==null) {
+			return null;
+		}
+
+		return this.findNamespaceByPrefix(prefix, p, parentNode);
+	}
+	
 	public void addNamespaceDeclaration(Hashtable<String, String> namespace, Element destNode){
 		if(namespace!=null && namespace.size()>0){
 			Hashtable<String, String> declarationNamespacesDestNode = this.getNamespaceDeclaration(destNode);
@@ -931,6 +982,95 @@ public abstract class AbstractXMLUtils {
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	// NAMESPACE XSI TYPE
+	
+	private static final String XMLSCHEMA_INSTANCE_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+	private static final String XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE = "type";
+	
+	public void addNamespaceXSITypeIfNotExists(Node node, DynamicNamespaceContext dnc, boolean deep) {
+		this.addNamespaceXSITypeIfNotExists(node, dnc, deep, node);
+	}
+	private void addNamespaceXSITypeIfNotExists(Node node, DynamicNamespaceContext dnc, boolean deep, Node parentNode) {
+		
+		if(node==null) {
+			return;
+		}
+		
+		
+		
+		// Gestisco attributi
+		if(node instanceof Element) {
+			Element element = (Element) node;
+			NamedNodeMap nn = element.getAttributes();
+			if(nn!=null && nn.getLength()>0) {
+				List<String> prefixXSIType = new ArrayList<>();
+				for (int k = 0; k < nn.getLength(); k++) {
+					Node nAttr = nn.item(k);
+					//System.out.println("ATTR ["+nAttr.getClass().getName()+"]");
+					if(nAttr instanceof Attr) {
+						Attr attr = (Attr) nAttr;
+						//System.out.println("\t name["+attr.getName()+"] value["+attr.getValue()+"] namespace["+attr.getNamespaceURI()+"] prefix["+attr.getPrefix()+"]");
+						// name[xsi:type] value[ns10:XXXXType] namespace[http://www.w3.org/2001/XMLSchema-instance] prefix[xsi]
+						if(XMLSCHEMA_INSTANCE_NAMESPACE.equals(attr.getNamespaceURI())) {
+							String prefix = attr.getPrefix();
+							String nameAtteso = prefix+":"+XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE;
+							if(prefix==null || "".equals(prefix)) {
+								nameAtteso = XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE;
+							}
+							if(nameAtteso.equals(attr.getName())) {
+								if(attr.getValue()!=null && attr.getValue().contains(":")) {
+									prefixXSIType.add(attr.getValue());
+								}
+							}
+						}
+					}
+				}
+				if(prefixXSIType.size()>0) {
+					for (String prefixValue : prefixXSIType) {
+						String [] tmp = prefixValue.split(":");
+						if(tmp!=null && tmp.length==2) {
+							String prefix = tmp[0];
+							//String localName = tmp[1];
+							
+//							System.out.println("\n\n\n =============================================================");
+//							System.out.println("[{"+node.getNamespaceURI()+"}"+node.getLocalName()+"] prefix ["+prefix+"]");
+//							System.out.println("=============================================================\n");
+							
+							//System.out.println("VERIFICO PRESENZA NAMESPACE PER ["+prefixValue+"] prefix["+prefix+"] localName["+localName+"]");
+							String namespaceEsistente = this.findNamespaceByPrefix(prefix, element, parentNode);
+							boolean foundNamespace = namespaceEsistente!=null;
+							if(!foundNamespace) {
+								String namespace = dnc.getNamespaceURI(prefix);
+//								System.out.println("[{"+node.getNamespaceURI()+"}"+node.getLocalName()+"] NAMESPACE AGGIUNTO PERCHE' NON TROVATO per ["+prefix+"]=["+namespace+"]");
+								element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:"+prefix, namespace);
+							}
+//							else {
+//								System.out.println("[{"+node.getNamespaceURI()+"}"+node.getLocalName()+"] ESISTE NAMESPACE ["+namespaceEsistente+"] PER PREFIX: "+prefix);
+//							}
+						}
+					}
+				}
+			}
+		}
+		
+		// Vado in ricorsione sugli elementi figli
+		if(deep) {
+			List<Node> childList = this.getNotEmptyChildNodes(node, false);
+			if(childList!=null && childList.size()>0) {
+				for (Node child : childList) {
+					this.addNamespaceXSITypeIfNotExists(child, dnc, deep, parentNode);
+				}
+			}
+		}
+	}
+	
+
 	
 	
 	

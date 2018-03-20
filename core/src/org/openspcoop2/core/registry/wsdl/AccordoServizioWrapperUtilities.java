@@ -33,7 +33,6 @@ import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPHeaderFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Message;
@@ -45,7 +44,6 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -628,16 +626,7 @@ public class AccordoServizioWrapperUtilities {
 		
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
 				
-				OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
-			
-				if(message.getSOAPPart()==null){
-					throw new DriverRegistroServiziException("Messaggio (SOAPPArt) non fornito");
-				}
-				SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
-				if(envelope==null){
-					throw new DriverRegistroServiziException("Envelope non fornita");
-				}
-				WSDLValidator wsdlValidator = new WSDLValidator(message.getMessageType(),envelope, this.xmlUtils, this.accordoServizioWrapper, this.logger, false);
+				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, false);
 				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
 					PortType pt = this.accordoServizioWrapper.getPortType(i);
 					if(portType!=null){

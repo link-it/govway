@@ -64,8 +64,9 @@ public class ValidatoreMessaggiApplicativi {
 	private RegistroServiziManager registroServiziManager;
 	/** Identificativo del Servizio */
 	private IDServizio idServizio;
-	/** SOAPEnvelope */
+	/** OpenSPCoop2Message */
 	private OpenSPCoop2Message message;
+	/** SOAPEnvelope */
 	private Element element;
 	/** WSDL Associato al servizio */
 	private AccordoServizioWrapper accordoServizioWrapper = null;
@@ -216,7 +217,7 @@ public class ValidatoreMessaggiApplicativi {
 		}
 		
 		try{
-			this.wsdlValidator = new WSDLValidator(this.message.getMessageType(), this.element, this.xmlUtils, this.accordoServizioWrapper, this.logger, gestioneXsiType_rpcLiteral);
+			this.wsdlValidator = new WSDLValidator(this.message, this.xmlUtils, this.accordoServizioWrapper, this.logger, gestioneXsiType_rpcLiteral);
 		}catch(Exception e){
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 

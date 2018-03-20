@@ -145,6 +145,7 @@ public interface OpenSPCoop2Message {
 	
 	public String getAsString(Node ele, boolean consume);
 	public byte[] getAsByte(Node ele, boolean consume);
+	public void addNamespaceXSITypeIfNotExists(Node element, Node root) throws MessageException;
 	
 
 	/* Errors */
