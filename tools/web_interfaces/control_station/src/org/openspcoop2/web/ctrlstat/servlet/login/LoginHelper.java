@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -48,12 +49,12 @@ public class LoginHelper extends ConsoleHelper {
 
 			// Campi obbligatori
 			if (login.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare una Login");
+				this.pd.setMessage("Dati incompleti. E' necessario indicare una Login",MessageType.ERROR_SINTETICO);
 				return false;
 			}
 			if (tipoCheck.equals(LoginTipologia.WITH_PASSWORD)) {
 				if (password.equals("")) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare una Password");
+					this.pd.setMessage("Dati incompleti. E' necessario indicare una Password",MessageType.ERROR_SINTETICO);
 					return false;
 				}
 			}
@@ -74,9 +75,9 @@ public class LoginHelper extends ConsoleHelper {
 
 			if (!trovato) {
 				if (tipoCheck.equals(LoginTipologia.WITHOUT_PASSWORD)) {
-					this.pd.setMessage("Login inesistente!");
+					this.pd.setMessage("Login inesistente!",MessageType.ERROR_SINTETICO);
 				} else {
-					this.pd.setMessage("Login o password errata!");
+					this.pd.setMessage("Login o password errata!",MessageType.ERROR_SINTETICO);
 				}
 				return false;
 			}

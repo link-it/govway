@@ -75,7 +75,7 @@ public final class Logout extends Action {
 			
 			LoginSessionUtilities.cleanLoginParametersSession(session);
 	
-			pd.setMessage(LoginCostanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO); 
+			pd.setMessage(LoginCostanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO); 
 			
 			// Controllo CooKies
 //			Cookie[] cookies = request.getCookies();

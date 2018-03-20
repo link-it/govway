@@ -102,7 +102,7 @@ public final class LoginAsSu extends Action {
 			// Preparo il menu
 			loginHelper.makeMenu();
 	
-			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
 	
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
 	

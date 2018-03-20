@@ -244,13 +244,14 @@ public final class UtenteChange extends Action {
 				
 				//String labelProt = protocolloSelezionatoUtente != null ?  ConsoleHelper.getLabelProtocollo(protocolloSelezionatoUtente) : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
 				String pdMsg = "";
+				String pdMsgTitle= "Passaggio alla Modalit&agrave; Gateway selezionata effettuato con successo.";
 				if(protocolloSelezionatoUtente == null) {
-					pdMsg = "<p>Passaggio alla Modalit&agrave; Gateway selezionata effettuato con successo.<p/>" + sbProtocolli.toString();
+					pdMsg = "<p>Modalit&agrave; disponibili:<p/>" + sbProtocolli.toString();
 				} else {
-					pdMsg = "<p>Passaggio alla Modalit&agrave; Gateway selezionata effettuato con successo.<p/>" + sbProtocolli.toString();
+					pdMsg = "<p>Modalit&agrave; attuale:<p/>" + sbProtocolli.toString();
 				}
 				
-				pd.setMessage(pdMsg, Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage(pdMsg, pdMsgTitle, Costanti.MESSAGE_TYPE_INFO);
 				
 				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 

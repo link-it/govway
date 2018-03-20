@@ -41,6 +41,7 @@ import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.slf4j.Logger;
@@ -113,7 +114,7 @@ public final class AuthorisationFilter implements Filter {
 						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP,null);
 					}
 					else{
-						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA);
+						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO);
 					}
 					
 					// return so that we do not chain to other filters
@@ -147,7 +148,7 @@ public final class AuthorisationFilter implements Filter {
 							if (!LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
 								if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper)==false){
 									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
-									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA);
+									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO);
 									// return so that we do not chain to other filters
 									return;
 								}
@@ -173,7 +174,7 @@ public final class AuthorisationFilter implements Filter {
 							&& urlRichiesta.indexOf("/"+ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER) == -1
 							&& urlRichiesta.indexOf("/"+ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT) == -1) {
 
-						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA);
+						this.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO);
 						// return so that we do not chain to other filters
 						return;
 					}
@@ -217,6 +218,16 @@ public final class AuthorisationFilter implements Filter {
 	
 	public void setErrorMsg(GeneralHelper gh,HttpSession session,
 			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore) throws IOException,ServletException {
+		setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, MessageType.ERROR); 
+	}
+	
+	public void setErrorMsg(GeneralHelper gh,HttpSession session,
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, MessageType messageType) throws IOException,ServletException {
+		setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, messageType); 
+	}
+	
+	public void setErrorMsg(GeneralHelper gh,HttpSession session,
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, String msgErroreTitle, MessageType messageType) throws IOException,ServletException {
 		
 		// Inizializzo PageData
 		PageData pd = gh.initPageData();
@@ -236,7 +247,7 @@ public final class AuthorisationFilter implements Filter {
 		}
 		
 		if(msgErrore!=null)
-			pd.setMessage(msgErrore);
+			pd.setMessage(msgErrore,msgErroreTitle,messageType);
 		
 		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
 
