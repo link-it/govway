@@ -283,6 +283,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 			}
 			
+			boolean viewOnlyConnettore = gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD);
+			
 			boolean accessoDaListaAPS = false;
 			String accessoDaAPSParametro = null;
 			if(gestioneFruitori) {
@@ -465,12 +467,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 			}
 
+			Parameter pIdSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE,idSoggettoFruitore); 
 			Parameter pMyId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idServizioFruitoreInt+"");
 			Parameter pMyTipo = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_TIPO, myTipo);
 			Parameter pMyNome = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_NOME, myNome);
 			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio);
 			Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio);
-			Parameter urlChange = new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pMyId, pId, pIdSoggettoErogatore,pMyTipo,pMyNome);
+			Parameter urlChange = new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pMyId, pId, pIdSoggettoErogatore,pMyTipo,pMyNome,pIdSoggettoFruitore);
 			
 			String fruitoreLabel = apsHelper.getLabelNomeSoggetto(protocollo, tipofru , nomefru);
 			Properties propertiesProprietario = new Properties();
@@ -490,7 +493,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			//List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(parentPD, idSoggettoFruitore,idServizio, idServizioFruitore);
 			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, idSoggettoFruitore,idServizio, idServizioFruitore);
 
-			if(gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD)) {
+			if(viewOnlyConnettore) {
 								
 				String labelPerPorta = null;
 				if(accessoDaListaAPS) {
@@ -742,7 +745,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+					if(!viewOnlyConnettore)
+						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
@@ -779,7 +783,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							listExtendedConnettore, forceEnableConnettore);
 
 					// aggiunta campi custom
-					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					if(!viewOnlyConnettore)
+						dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 					pd.setDati(dati);
 
@@ -814,7 +819,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					listExtendedConnettore);
 
 			// Validazione base dei parametri custom 
-			if(isOk){
+			if(isOk && !viewOnlyConnettore){
 				try{
 					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 				}catch(ProtocolException e){
@@ -825,7 +830,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			}
 
 			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
-			if(isOk){
+			if(isOk && !viewOnlyConnettore){
 				try{
 					//validazione campi dinamici
 					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idFruizione);
@@ -846,7 +851,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+				if(!viewOnlyConnettore)
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
@@ -882,7 +888,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						listExtendedConnettore, forceEnableConnettore);
 
 				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				if(!viewOnlyConnettore)
+					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -904,7 +911,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+					if(!viewOnlyConnettore)
+						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 					
@@ -970,7 +978,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati.addElement(de);
 
 					// aggiunta campi custom
-					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					if(!viewOnlyConnettore)
+						dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 					String msg = "&Egrave; stato richiesto di ripristinare lo stato dell soggetto fruitore [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
 				
@@ -1097,7 +1106,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					// update della configurazione 
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+					if(!viewOnlyConnettore)
+						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
@@ -1138,7 +1148,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 //					}
 
 					// aggiunta campi custom
-					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					if(!viewOnlyConnettore)
+						dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 					pd.setDati(dati);
 

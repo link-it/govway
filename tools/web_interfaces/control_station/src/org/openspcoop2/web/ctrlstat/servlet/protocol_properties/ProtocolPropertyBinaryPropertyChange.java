@@ -201,16 +201,13 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			String errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuffer);
 			
 			// Parametri Barra titolo TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO
-			List<Parameter> lstParam = new ArrayList<Parameter>();
-			lstParam.add(new Parameter(ProtocolPropertiesUtilities.getLabelTipoProprietario(this.tipoProprietario,this.tipoAccordo),null));
-			// Escape della url del link, risolve il problema di autorizzazione
-			lstParam.add(new Parameter(this.nomeProprietario,URLDecoder.decode(this.urlChange,"UTF-8")));
+			List<Parameter> lstParam = ppHelper.getTitolo(oggettoProprietario, this.tipoProprietario,  this.id, this.nome, this.idProprietario, this.nomeProprietario,this.nomeParentProprietario,this.urlChange, this.tipoAccordo);
 			lstParam.add(new Parameter(label,null));
 
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO			
-				ServletUtils.setPageDataTitle(pd, lstParam);
+				ServletUtils.setPageDataTitle(pd,lstParam);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
