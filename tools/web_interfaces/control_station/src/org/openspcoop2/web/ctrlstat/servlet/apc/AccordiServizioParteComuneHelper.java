@@ -4346,6 +4346,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			
+			boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+			
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 			boolean showServiceBinding = true;
 			boolean showResources = true;
@@ -4427,7 +4429,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// setto le label delle colonne
-			int totEl = 2;
+			int totEl = 1;
 
 			//Accordo cooperazione
 			if(showColonnaAccordiCooperazione)
@@ -4461,6 +4463,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			// protocolli
 			if( showProtocolli ) {
+				totEl++;
+			}
+			
+			// erogatore++
+			if(multiTenant) {
 				totEl++;
 			}
 			
@@ -4511,8 +4518,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				index++;
 			}
 			
-			labels[index] = AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI;
-			index++;
+			if(multiTenant) {
+				labels[index] = AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI;
+				index++;
+			}
 
 			if(showAccordiCooperazione && showColonnaServizioComponenti){
 				labels[index] = AccordiServizioParteComuneCostanti.LABEL_SERVIZI_COMPONENTI;
@@ -4693,22 +4702,24 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					}
 					
 					// erogatori
-					de = new DataElement();
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST,
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoServizio.getId()+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-					if (contaListe) {
-						// BugFix OP-674
-						//List<org.openspcoop2.core.registry.Soggetto> tmpLista = this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), new Search(true));
-						Search searchForCount = new Search(true,1);
-						this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), searchForCount);
-						//int num = tmpLista.size();
-						int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
-						ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					e.addElement(de);
+					if(multiTenant) {
+						de = new DataElement();
+						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST,
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, accordoServizio.getId()+""),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, accordoServizio.getNome()),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
+						if (contaListe) {
+							// BugFix OP-674
+							//List<org.openspcoop2.core.registry.Soggetto> tmpLista = this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), new Search(true));
+							Search searchForCount = new Search(true,1);
+							this.apcCore.accordiErogatoriList(accordoServizio.getId().intValue(), searchForCount);
+							//int num = tmpLista.size();
+							int num = searchForCount.getNumEntries(Liste.ACCORDI_EROGATORI);
+							ServletUtils.setDataElementVisualizzaLabel(de,(long)num);
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+						e.addElement(de);
+					}
 
 					if (showAccordiCooperazione && showColonnaServizioComponenti){
 						de = new DataElement();
