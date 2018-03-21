@@ -46,10 +46,12 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.protocol.basic.archive.APIUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -876,6 +878,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					Long idRs = newResource.getId();
 					for(Resource resource: apcr.getResourceList()){
 						if(resource.getNome().equals(newResource.getNome())){
+//							labelProprietario =  APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(resource.get_value_method()), resource.getPath());
 							labelProprietario = resource.getNome();
 							idRs = resource.getId();
 							break;
