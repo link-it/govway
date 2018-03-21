@@ -141,8 +141,10 @@ public final class UtenteChange extends Action {
 			modalitaGatewayDisponibili = sb.toString();
 
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitle(pd, 
+			if(changeGui == null && changeModalita==null) {
+				ServletUtils.setPageDataTitle(pd, 
 					new Parameter(UtentiCostanti.LABEL_UTENTE, null));
+			}
 
 			User myS = null;
 			// Se idhid != null, modifico i dati della porta di dominio nel db
@@ -221,7 +223,7 @@ public final class UtenteChange extends Action {
 			} else if(changeModalita != null) { // clic sul link cambia modalita gateway 
 				// messaggio di cambiamento del protocollo:
 				List<String> protocolli = utentiCore.getProtocolli(session);
-				StringBuilder sbProtocolli = new StringBuilder();
+				StringBuilder sbProtocolli = new StringBuilder("<ul>");
 				for (String protocollo : protocolli) {
 					String descrizioneProtocollo = utentiHelper.getDescrizioneProtocollo(protocollo);
 					String webSiteProtocollo = utentiHelper.getWebSiteProtocollo(protocollo);
@@ -231,16 +233,23 @@ public final class UtenteChange extends Action {
 //						sbProtocolli.append("<br/>");
 					
 					sbProtocolli.append("</br>");
+					sbProtocolli.append("<li style=\"list-style-type:disc; margin-left:12px;\">");
+					sbProtocolli.append("<p><i>");
+					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\">"+labelProtocollo+"</a>";
+					sbProtocolli.append(linkSito);
+					//sbProtocolli.append(""+labelProtocollo+": ");
+					sbProtocolli.append("</i></p>");
 					sbProtocolli.append("<p>");
-					
-					sbProtocolli.append(""+labelProtocollo+": ");
 					sbProtocolli.append(descrizioneProtocollo);
-					sbProtocolli.append("</br>");
-					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\">"+webSiteProtocollo+"</a>";
-					sbProtocolli.append("Sito: ").append(linkSito).append(""); 
+//					sbProtocolli.append(" (");
+//					String linkSito = "<a href=\""+webSiteProtocollo+"\" target=\"_blank\">"+webSiteProtocollo+"</a>";
+//					sbProtocolli.append(linkSito);
+//					sbProtocolli.append(")");
+					sbProtocolli.append("</p>");
 					
-					sbProtocolli.append("<p/>");
+				sbProtocolli.append("</li>");
 				}
+				sbProtocolli.append("</ul>");
 				
 				//String labelProt = protocolloSelezionatoUtente != null ?  ConsoleHelper.getLabelProtocollo(protocolloSelezionatoUtente) : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
 				String pdMsg = "";
