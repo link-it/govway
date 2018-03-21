@@ -1309,6 +1309,26 @@
             <forward name="porteDelegateProprietaProtocolloDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateProprietaProtocolloError" path="/jsplib/info.jsp"/>
         </action>
+        
+       	<!--  Porte Delegate (Connettore Default) -->
+
+        <action path="/porteDelegateConnettoreDefault" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateConnettoreDefault"
+            scope="request" validate="true">
+            <forward name="porteDelegateConnettoreDefaultForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateConnettoreDefaultOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateConnettoreDefaultError" path="/jsplib/info.jsp"/>
+            <forward name="porteDelegateConnettoreDefaultCheckError" path="/jsplib/addElement.jsp"/>
+        </action>
+        
+      	<!--  Porte Delegate (Connettore Ridefinito) -->
+
+        <action path="/porteDelegateConnettoreRidefinito" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateConnettoreRidefinito"
+            scope="request" validate="true">
+            <forward name="porteDelegateConnettoreRidefinitoForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateConnettoreRidefinitoOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateConnettoreRidefinitoError" path="/jsplib/info.jsp"/>
+            <forward name="porteDelegateConnettoreRidefinitoCheckError" path="/jsplib/addElement.jsp"/>
+        </action>
     
     
     	<!--  Porte Applicative -->
@@ -1691,6 +1711,26 @@
             scope="request" validate="true">
             <forward name="porteApplicativeAbilitazioneOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeAbilitazioneError" path="/jsplib/info.jsp"/>
+        </action>
+        
+       	<!--  Porte Applicative (Connettore Default) -->
+
+        <action path="/porteApplicativeConnettoreDefault" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoreDefault"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoreDefaultForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoreDefaultOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoreDefaultError" path="/jsplib/info.jsp"/>
+            <forward name="porteApplicativeConnettoreDefaultCheckError" path="/jsplib/addElement.jsp"/>
+        </action>
+        
+      	<!--  Porte Applicative (Connettore Ridefinito) -->
+
+        <action path="/porteApplicativeConnettoreRidefinito" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoreRidefinito"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoreRidefinitoForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoreRidefinitoOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoreRidefinitoError" path="/jsplib/info.jsp"/>
+            <forward name="porteApplicativeConnettoreRidefinitoCheckError" path="/jsplib/addElement.jsp"/>
         </action>
     
     

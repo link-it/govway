@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -2754,6 +2755,45 @@ public class ConnettoriHelper extends ConsoleHelper {
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL+" o "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL+" o "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public Vector<DataElement> addConnettoreDefaultRidefinitoToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String modalita, String[] modalitaValues, String[] modalitaLabels, boolean servletRidefinito, String servletConnettore, Parameter[] parametriServletConnettore) {
+		DataElement de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_MODALITA);
+		de.setType(DataElementType.SELECT);
+		de.setValues(modalitaValues);
+		de.setLabels(modalitaLabels);
+		de.setPostBack(true);
+		de.setSelected(modalita);
+		dati.addElement(de);
+		
+		// link visualizza
+		if(servletRidefinito && modalita.equals(ConnettoriCostanti.VALUE_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO)) {
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
+			de.setUrl(servletConnettore, parametriServletConnettore);
+			ServletUtils.setDataElementVisualizzaLabel(de);
+			dati.addElement(de);	
+		}
+		
+		return dati;
+	}
+	
+	public boolean connettoreDefaultRidefinitoCheckData(TipoOperazione tipoOp, String modalita) throws Exception{
+		
+		if (StringUtils.isEmpty(modalita)) {
+			this.pd.setMessage("Il campo "+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_MODALITA+" non pu&ograve; essere vuoto");
 			return false;
 		}
 		

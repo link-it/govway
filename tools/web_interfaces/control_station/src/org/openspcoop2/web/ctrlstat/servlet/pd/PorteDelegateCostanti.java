@@ -76,10 +76,10 @@ public class PorteDelegateCostanti {
 	public final static String OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE = "porteDelegateAbilitazione";
 	public final static ForwardParams TIPO_OPERAZIONE_ABILITAZIONE = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT = "porteApplicativeConnettoreDefault";
+	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT = "porteDelegateConnettoreDefault";
 	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_DEFAULT = ForwardParams.OTHER("");
 	
-	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = "porteApplicativeConnettoreRidefinito";
+	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = "porteDelegateConnettoreRidefinito";
 	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_RIDEFINITO = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */

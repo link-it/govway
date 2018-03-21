@@ -74,9 +74,9 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -95,7 +95,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PorteApplicativeHelper extends ConsoleHelper {
+public class PorteApplicativeHelper extends ConnettoriHelper {
 
 	public PorteApplicativeHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
