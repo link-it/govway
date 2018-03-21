@@ -235,6 +235,11 @@ public class SSLUtilities {
 			// Autenticazione CLIENT
 			if(sslConfig.getKeyStoreLocation()!=null){
 				bfLog.append("Gestione keystore...\n");
+				bfLog.append("\tKeystore type["+sslConfig.getKeyStoreType()+"]\n");
+				bfLog.append("\tKeystore location["+sslConfig.getKeyStoreLocation()+"]\n");
+				//bfLog.append("\tKeystore password["+sslConfig.getKeyStorePassword()+"]\n");
+				bfLog.append("\tKeystore keyManagementAlgorithm["+sslConfig.getKeyManagementAlgorithm()+"]\n");
+				//bfLog.append("\tKeystore keyPassword["+sslConfig.getKeyPassword()+"]\n");
 				KeyStore keystore = KeyStore.getInstance(sslConfig.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
 				finKeyStore = new FileInputStream(sslConfig.getKeyStoreLocation());
 				keystore.load(finKeyStore, sslConfig.getKeyStorePassword().toCharArray());
@@ -248,6 +253,10 @@ public class SSLUtilities {
 			// Autenticazione SERVER
 			if(sslConfig.getTrustStoreLocation()!=null){
 				bfLog.append("Gestione truststore...\n");
+				bfLog.append("\tTruststore type["+sslConfig.getTrustStoreType()+"]\n");
+				bfLog.append("\tTruststore location["+sslConfig.getTrustStoreLocation()+"]\n");
+				//bfLog.append("\tTruststore password["+sslConfig.getTrustStorePassword()+"]\n");
+				bfLog.append("\tTruststore trustManagementAlgorithm["+sslConfig.getTrustManagementAlgorithm()+"]\n");
 				KeyStore truststore = KeyStore.getInstance(sslConfig.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
 				finTrustStore = new FileInputStream(sslConfig.getTrustStoreLocation());
 				truststore.load(finTrustStore, sslConfig.getTrustStorePassword().toCharArray());
@@ -258,8 +267,10 @@ public class SSLUtilities {
 			}
 	
 			// Creo contesto SSL
+			bfLog.append("Init SSLContext type["+sslConfig.getSslType()+"] ...\n");
 			sslContext = SSLContext.getInstance(sslConfig.getSslType());
 			sslContext.init(km, tm, null);	
+			bfLog.append("Init SSLContext type["+sslConfig.getSslType()+"] effettuato\n");
 			
 			return sslContext;
 			
