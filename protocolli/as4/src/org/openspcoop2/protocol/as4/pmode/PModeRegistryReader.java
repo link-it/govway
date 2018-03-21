@@ -37,6 +37,7 @@ import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
 import org.openspcoop2.protocol.as4.pmode.beans.API;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
+import org.openspcoop2.protocol.as4.pmode.beans.Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -97,6 +98,18 @@ public class PModeRegistryReader {
 		}
 		
 		return new PayloadProfiles(contents);
+	}
+	
+	public Properties findProperties(List<APC> apcList) throws Exception {
+		
+		List<byte[]> contents = new ArrayList<byte[]>();
+		for(APC apc: apcList) {
+			
+			if(apc.getEbmsServiceProperties() != null)
+				contents.add(apc.getEbmsServiceProperties());
+		}
+		
+		return new Properties(contents);
 	}
 	
 	public List<Policy> findAllPolicies() throws Exception {
@@ -204,7 +217,7 @@ public class PModeRegistryReader {
 		}
 	}
 
-	public Map<IDAccordo, API> findAllAccordi(PayloadProfiles findPayloadProfile) throws Exception {
+	public Map<IDAccordo, API> findAllAccordi(PayloadProfiles findPayloadProfile,Properties findProperties) throws Exception {
 		
 		FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
 		filtroRicerca.setSoggetto(new IDSoggetto(this.tipo,null));
@@ -217,7 +230,7 @@ public class PModeRegistryReader {
 		for(IDAccordo idAccordo: allId) {
 			AccordoServizioParteComune apc = this.registryReader.getAccordoServizioParteComune(idAccordo);
 			String nomeApc = "Servizio_" + i++;
-			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile));
+			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile,findProperties));
 			if(ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
 				if(apc.sizeAzioneList()>0) {
 					indexAzione+= apc.sizeAzioneList();

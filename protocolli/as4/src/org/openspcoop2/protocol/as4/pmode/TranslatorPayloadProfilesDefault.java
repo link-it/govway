@@ -86,7 +86,7 @@ public class TranslatorPayloadProfilesDefault {
 
 	// PAYLOAD DEFAULT
 	
-	private String getPayloadDefault() throws ProtocolException {
+	public String getPayloadDefault() throws ProtocolException {
 		try {
 			if(this.payloadDefault==null) {
 				Map<String, Object> map = new HashMap<String, Object>();
@@ -136,7 +136,7 @@ public class TranslatorPayloadProfilesDefault {
 	
 	// PAYLOAD PROFILE DEFAULT
 	
-	private String getPayloadProfileDefault() throws ProtocolException {
+	public String getPayloadProfileDefault() throws ProtocolException {
 		try {
 			if(this.payloadProfileDefault==null) {
 				Map<String, Object> map = new HashMap<String, Object>();
@@ -187,7 +187,7 @@ public class TranslatorPayloadProfilesDefault {
 	
 	// PAYLOAD PROFILES DEFAULT COMPLETE
 	
-	public byte[] getPayloadProfilesDefaultAsCompleteXml() throws ProtocolException {
+	public String getAsStringPayloadProfilesDefaultAsCompleteXml() throws ProtocolException {
 		try {
 			StringBuffer bf = new StringBuffer();
 			
@@ -202,7 +202,15 @@ public class TranslatorPayloadProfilesDefault {
 			bf.append("\n\n");
 			bf.append("\t</payloadProfiles>");
 			
-			return bf.toString().getBytes();
+			return bf.toString();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	public byte[] getPayloadProfilesDefaultAsCompleteXml() throws ProtocolException {
+		try {
+			return getAsStringPayloadProfilesDefaultAsCompleteXml().getBytes();
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}

@@ -60,12 +60,28 @@
 
 
 =====================
-4) JMS Configuration
+4) Properties
 
-4.1) Accedere alla console di Domibus ('http://red:8180/domibus/') e verificare tramite la sezione 'Message Filter' di avere il plugin 'Jms' come prima voce
+4.1) Le proprietà di default sono definite nel prodotto all'interno dell'archivio del protocollo as4,
+     e definiscono quali sono le proprietà che devono viaggiare in AS4 (tutte opzionali).
+     Si possono trovare in protocolli/as4/src in:
+     - org.openspcoop2.protocol.as4.pmode.pmode-propertyDefault.ftl
+     - org.openspcoop2.protocol.as4.pmode.pmode-propertySetDefault.ftl
+     Se si desidera ridefinire questi default si deve creare dei nuovi file ed indicarli nelle proprietà
+     'org.openspcoop2.protocol.as4.properties.defaultProperty' e
+     'org.openspcoop2.protocol.as4.properties.defaultPropertySet' nel file 'as4_local.properties'.
+
+4.2) Alcuni propertySet, utili per i test, vengono ridefiniti all'interno dei files presenti nella directory 'properties'.
+     Copiare la directory in /etc/openspcoop2/as4 poichè tali files vengono indirizzati dalle configurazioni definite dal file registroServizi.xml
+
+
+=====================
+5) JMS Configuration
+
+5.1) Accedere alla console di Domibus ('http://red:8180/domibus/') e verificare tramite la sezione 'Message Filter' di avere il plugin 'Jms' come prima voce
      e che lo stato 'Persisted' sia abilitato.
 
-4.2) Configurare l'accesso al broker JMS di Domibus da parte della PdD tramite il file as4_local.properties come segue.
+5.2) Configurare l'accesso al broker JMS di Domibus da parte della PdD tramite il file as4_local.properties come segue.
      - org.openspcoop2.protocol.as4.domibusJms.jndi.*: configurazione jndi per accedere al broker
      - org.openspcoop2.protocol.as4.domibusJms.connectionFactory: connecton factory per accedere al broker
      - org.openspcoop2.protocol.as4.domibusJms.username e org.openspcoop2.protocol.as4.domibusJms.password: credenziali di accesso al broker
@@ -78,30 +94,30 @@
 
 
 =====================
-5) Caricamento Configurazioni sulla PdD
+6) Caricamento Configurazioni sulla PdD
 
-5.1) Caricare il file 'registroServizi.xml' tramite la console pddLoader
+6.1) Caricare il file 'registroServizi.xml' tramite la console pddLoader
 
-5.2) Accedere alla pddConsole ed impostare il dominio 'interno' per i soggetti che si desidera gestire sui domibus a propria disposizione.
+6.2) Accedere alla pddConsole ed impostare il dominio 'interno' per i soggetti che si desidera gestire sui domibus a propria disposizione.
      NOTA: Se si desidera utilizzare entrambi i soggetti, utilizzare la modalità multi-tenant dei soggetti
      NOTA2: Fino al termine del caricamento delle configurazioni (voce successiva) la sezione 'Erogazioni' della pddConsole non funziona
 
-5.3) Caricare le configurazioni dei soggetti resi 'interni' al punto precedente tramite la console pddLoader.
+6.3) Caricare le configurazioni dei soggetti resi 'interni' al punto precedente tramite la console pddLoader.
      Le configurazioni sono rispettivamente 'config_red.xml' e 'config_blue.xml'  per i soggetto Red e Blue.
 
 
 =====================
-6) Caricamento configurazione PMode
+7) Caricamento configurazione PMode
 
-6.1) Effetture l'export della configurazione in pmode tramite l'elenco dei soggetti, cliccando su export sul soggetto desiderato ed 
+7.1) Effetture l'export della configurazione in pmode tramite l'elenco dei soggetti, cliccando su export sul soggetto desiderato ed 
      utilizzando la tipologia archivio 'Domibus pmode (single-xml-configuration)'.
 
-6.2) Caricare la configurazione PMODE del soggetto tramite la console di domibus all'indirizzo 'http://red:8180/domibus/' tramite la sezione pmode.
+7.2) Caricare la configurazione PMODE del soggetto tramite la console di domibus all'indirizzo 'http://red:8180/domibus/' tramite la sezione pmode.
 
 
 
 =====================
-7) Test
+8) Test
 
 Creare la directory '/var/tmp/as4' utilizzata per salvare i messaggi di test ricevuti sulla porta applicativa.
 E' la configurazione definita nel file config_blue.xml

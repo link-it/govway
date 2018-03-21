@@ -113,8 +113,32 @@
       <structure map-as="eu.domibus.configuration.PropertySet"/>
     </collection>
   </mapping>
+  <mapping name="url" class="eu.domibus.configuration.Url">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="pattern" field="pattern" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="header" class="eu.domibus.configuration.Header">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="pattern" field="pattern" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="value" class="eu.domibus.configuration.PropertyValue">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <structure field="url" usage="optional" map-as="eu.domibus.configuration.PropertyValueUrl"/>
+    <structure field="header" usage="optional" map-as="eu.domibus.configuration.PropertyValueHeader"/>
+  </mapping>
+  <mapping name="url" class="eu.domibus.configuration.PropertyValueUrl">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="pattern" field="pattern" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="header" class="eu.domibus.configuration.PropertyValueHeader">
+    <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="pattern" field="pattern" usage="optional" style="attribute"/>
+  </mapping>
   <mapping name="property" class="eu.domibus.configuration.Property">
     <namespace uri="http://www.domibus.eu/configuration" default="elements"/>
+    <structure field="value" usage="optional" map-as="eu.domibus.configuration.PropertyValue"/>
     <value name="name" field="name" usage="required" style="attribute"/>
     <value name="key" field="key" usage="required" style="attribute"/>
     <value name="datatype" field="datatype" usage="required" style="attribute"/>

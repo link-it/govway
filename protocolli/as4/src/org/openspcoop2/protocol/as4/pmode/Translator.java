@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.as4.pmode.beans.APC;
 import org.openspcoop2.protocol.as4.pmode.beans.API;
 import org.openspcoop2.protocol.as4.pmode.beans.APS;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
+import org.openspcoop2.protocol.as4.pmode.beans.Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.resources.TemplateUtils;
@@ -106,7 +107,9 @@ public class Translator {
 		map.put("apcList", apcList);
 		PayloadProfiles findPayloadProfile = this.reader.findPayloadProfile(apcList);
 		map.put("payloadProfiles", findPayloadProfile);
-		Map<IDAccordo, API> accordi = this.reader.findAllAccordi(findPayloadProfile);
+		Properties findProperties = this.reader.findProperties(apcList);
+		map.put("properties", findProperties);
+		Map<IDAccordo, API> accordi = this.reader.findAllAccordi(findPayloadProfile,findProperties);
 		map.put("apis", accordi);
 		List<Soggetto> soggetti = this.reader.findAllSoggetti(accordi);
 		for (Soggetto soggetto : soggetti) {

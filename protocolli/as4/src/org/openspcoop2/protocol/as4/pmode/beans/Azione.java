@@ -28,6 +28,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPropertiesDefault;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
@@ -47,23 +48,31 @@ public class Azione {
 	private String ebmsUserMessageCollaborationInfoActionName;
 	private String ebmsActionPayloadProfile;
 	private Boolean ebmsActionCompressPayload;
+	private String ebmsActionPropertySet;
 	
-	public Azione(org.openspcoop2.core.registry.Azione base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
+	public Azione(org.openspcoop2.core.registry.Azione base, String id, 
+			PayloadProfiles payloadProfiles, Properties properties) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles,properties);
 		this.baseAzione = base;
 	}
-	public Azione(Operation base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
+	public Azione(Operation base, String id, 
+			PayloadProfiles payloadProfiles, Properties properties) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles,properties);
 		this.baseOperation = base;
 	}
-	public Azione(org.openspcoop2.core.registry.Resource base, String id, PayloadProfiles payloadProfiles) throws Exception {
-		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles);
+	public Azione(org.openspcoop2.core.registry.Resource base, String id, 
+			PayloadProfiles payloadProfiles, Properties properties) throws Exception {
+		this(base.getProtocolPropertyList(),id,base.getNome(),payloadProfiles,properties);
 		this.baseResource = base;
 	}
-	private Azione(List<ProtocolProperty> list, String id, String nomeAzione, PayloadProfiles payloadProfiles) throws Exception {
+	private Azione(List<ProtocolProperty> list, String id, String nomeAzione, 
+			PayloadProfiles payloadProfiles, Properties properties) throws Exception {
+				
+		TranslatorPayloadProfilesDefault translatorPayloadProfiles = TranslatorPayloadProfilesDefault.getTranslator();
+		List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault = translatorPayloadProfiles.getListPayloadProfileDefault();
 		
-		TranslatorPayloadProfilesDefault translator = TranslatorPayloadProfilesDefault.getTranslator();
-		List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault = translator.getListPayloadProfileDefault();
+		TranslatorPropertiesDefault translatorProperties = TranslatorPropertiesDefault.getTranslator();
+		List<eu.domibus.configuration.PropertySet> listPropertySetDefault = translatorProperties.getListPropertySetDefault();
 		
 		this.id = id;
 		for(ProtocolProperty prop: list) {
@@ -73,7 +82,7 @@ public class Azione {
 			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE)) {
 				
 				this.ebmsActionPayloadProfile = prop.getValue();
-				
+								
 				boolean isDefault = false;
 				if(listPayloadProfileDefault!=null && listPayloadProfileDefault.size()>0) {
 					for (eu.domibus.configuration.PayloadProfile payloadProfileDefault : listPayloadProfileDefault) {
@@ -97,7 +106,36 @@ public class Azione {
 				if(!exists)
 					throw new Exception("PayloadProfile ["+this.ebmsActionPayloadProfile+"] non dichiarato");
 
-			} else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD)) {
+			} 
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PROPERTY_SET)) {
+				
+				this.ebmsActionPropertySet = prop.getValue();
+								
+				boolean isDefault = false;
+				if(listPropertySetDefault!=null && listPropertySetDefault.size()>0) {
+					for (eu.domibus.configuration.PropertySet propertySetDefault : listPropertySetDefault) {
+						if(propertySetDefault.getName().equals(this.ebmsActionPropertySet)) {
+							isDefault = true;
+							break;
+						}
+					}
+				}
+				
+				if(isDefault) {
+					continue;
+				}
+				
+				boolean exists = false;
+				for(PropertySet prof: properties.getPropertySet()) {
+					if(prof.getName().equals(this.ebmsActionPropertySet))
+						exists = true;
+				}
+
+				if(!exists)
+					throw new Exception("Insieme di proprietà (property-set) ["+this.ebmsActionPropertySet+"] non dichiarato");
+
+			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD)) {
 				this.ebmsActionCompressPayload = Boolean.parseBoolean(prop.getValue());
 			}
 		}
@@ -107,6 +145,10 @@ public class Azione {
 		
 		if(this.ebmsActionPayloadProfile == null) {
 			this.ebmsActionPayloadProfile = listPayloadProfileDefault.get(0).getName();
+		}
+		
+		if(this.ebmsActionPropertySet == null) {
+			this.ebmsActionPropertySet = listPropertySetDefault.get(0).getName();
 		}
 		
 		if(this.ebmsActionCompressPayload == null)
@@ -155,5 +197,11 @@ public class Azione {
 	}
 	public void setEbmsActionPayloadProfile(String ebmsActionPayloadProfile) {
 		this.ebmsActionPayloadProfile = ebmsActionPayloadProfile;
+	}
+	public String getEbmsActionPropertySet() {
+		return this.ebmsActionPropertySet;
+	}
+	public void setEbmsActionPropertySet(String ebmsActionPropertySet) {
+		this.ebmsActionPropertySet = ebmsActionPropertySet;
 	}
 }

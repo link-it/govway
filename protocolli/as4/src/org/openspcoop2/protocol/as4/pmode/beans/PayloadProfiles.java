@@ -41,15 +41,22 @@ import org.w3c.dom.NodeList;
  */
 public class PayloadProfiles {
 
+	private String payloadDefault;
 	private List<Payload> payloads;
+	
+	private String payloadProfileDefault;
 	private List<PayloadProfile> payloadProfiles;
 	
 	public PayloadProfiles(List<byte[]> contents) throws Exception {
 
+		TranslatorPayloadProfilesDefault translator = TranslatorPayloadProfilesDefault.getTranslator();
+		
+		this.payloadDefault = translator.getPayloadDefault();
+		this.payloadProfileDefault = translator.getPayloadProfileDefault();
+		
 		this.payloads = new ArrayList<>();
 		this.payloadProfiles = new ArrayList<>();
 
-		TranslatorPayloadProfilesDefault translator = TranslatorPayloadProfilesDefault.getTranslator();
 		List<eu.domibus.configuration.Payload> listPayloadDefault = translator.getListPayloadDefault();
 		List<eu.domibus.configuration.PayloadProfile> listPayloadProfileDefault = translator.getListPayloadProfileDefault();
 		
@@ -119,5 +126,18 @@ public class PayloadProfiles {
 	}
 	public void setPayloadProfiles(List<PayloadProfile> payloadProfiles) {
 		this.payloadProfiles = payloadProfiles;
+	}
+	
+	public String getPayloadDefault() {
+		return this.payloadDefault;
+	}
+	public void setPayloadDefault(String payloadDefault) {
+		this.payloadDefault = payloadDefault;
+	}
+	public String getPayloadProfileDefault() {
+		return this.payloadProfileDefault;
+	}
+	public void setPayloadProfileDefault(String payloadProfileDefault) {
+		this.payloadProfileDefault = payloadProfileDefault;
 	}
 }

@@ -3,11 +3,11 @@
 
 <!-- 
 	Estratto dallo schema domibus-pmode.xsd serve a far effettuare la validazione del payload profile 
-	L'xml deve tutto essere interamente non qualificato, per poterlo poi inserire correttamente dentro la configurazione di domibus
 -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
           attributeFormDefault="unqualified" elementFormDefault="unqualified">
+    <!-- NOTA: L'xml deve tutto essere interamente non qualificato (unqualified), per poterlo poi inserire correttamente dentro la configurazione di domibus -->
     
     <xs:element name="payloadProfiles">
         <xs:complexType>

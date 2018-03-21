@@ -68,6 +68,7 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.as4.AS4RawContent;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPropertiesDefault;
 import org.openspcoop2.protocol.as4.utils.AS4PropertiesUtils;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -79,6 +80,9 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.dch.DataContentHandlerManager;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -90,6 +94,11 @@ import eu.domibus.configuration.Attachment;
 import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfile;
 import eu.domibus.configuration.PayloadProfiles;
+import eu.domibus.configuration.PropertySet;
+import eu.domibus.configuration.PropertyValueHeader;
+import eu.domibus.configuration.PropertyValueUrl;
+import eu.domibus.configuration.Properties;
+import eu.domibus.configuration.PropertyRef;
 
 /**
  * AS4Imbustamento
@@ -137,20 +146,25 @@ public class AS4Imbustamento {
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo);
 			
-			TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
+			TranslatorPayloadProfilesDefault tPayloadProfiles = TranslatorPayloadProfilesDefault.getTranslator();
+			TranslatorPropertiesDefault tProperties = TranslatorPropertiesDefault.getTranslator();
 			
 			String azione = busta.getAzione();
 			String nomePortType = asps.getPortType();
 			String actionProperty = AS4BuilderUtils.readPropertyInfoAction(aspc, nomePortType, azione);
 			String payloadProfile = AS4BuilderUtils.readPropertyPayloadProfile(aspc, nomePortType, azione);
+			String propertySet = AS4BuilderUtils.readPropertyPropertySet(aspc, nomePortType, azione);
 			if(actionProperty==null) {
 				throw new ProtocolException("Action '"+azione+"' not found");
 			}
 			if(payloadProfile==null) {
-				payloadProfile = t.getListPayloadProfileDefault().get(0).getName();
+				payloadProfile = tPayloadProfiles.getListPayloadProfileDefault().get(0).getName();
+			}
+			if(propertySet==null) {
+				propertySet = tProperties.getListPropertySetDefault().get(0).getName();
 			}
 			
-			PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, aspc, idAccordo, true);
+			PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(tPayloadProfiles, aspc, idAccordo, true);
 			
 			List<Payload> payloadConfig = new ArrayList<>();
 			boolean foundP = false;
@@ -177,6 +191,33 @@ public class AS4Imbustamento {
 				throw new ProtocolException("Action '"+azione+"' with payload profile '"+payloadProfile+"' unknown");
 			}
 			
+			Properties properties = AS4BuilderUtils.readProperties(tProperties, aspc, idAccordo, true);
+			
+			List<eu.domibus.configuration.Property> propertyConfig = new ArrayList<eu.domibus.configuration.Property>();
+			foundP = false;
+			for (PropertySet p : properties.getPropertySetList()) {
+				if(p.getName().equals(propertySet)) {
+					for (PropertyRef a : p.getPropertyRefList()) {
+						boolean found = false;
+						for (eu.domibus.configuration.Property property : properties.getPropertyList()) {
+							if(property.getName().equals(a.getProperty())) {
+								propertyConfig.add(property);
+								found = true;
+								break;
+							}
+						}
+						if(!found) {
+							throw new ProtocolException("Action '"+azione+"' (propertySet '"+propertySet+"') with property '"+a.getProperty()+"' unknown");
+						}
+					}
+					foundP = true;
+					break;
+				}
+			}
+			if(!foundP) {
+				throw new ProtocolException("Action '"+azione+"' with propertySet '"+propertySet+"' unknown");
+			}
+			
 			
 			
 			// **** Prepare *****
@@ -186,6 +227,9 @@ public class AS4Imbustamento {
 			Messaging ebmsV3_0Messagging = this.buildEbmsV3_0Messagging(ruoloMessaggio,busta,
 					soggettoMittente, soggettoDestinatario, aspc, actionProperty,
 					asps.getPortType(), msg.getServiceBinding());
+			
+			// Properties
+			this.addMessageProperties(ebmsV3_0Messagging, busta, msg, propertyConfig);
 			
 			// PayloadInfo
 			PayloadInfo payloadInfo = new PayloadInfo();
@@ -343,28 +387,97 @@ public class AS4Imbustamento {
 			
 		collaborationInfo.setAction(actionProperty);
 		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION, actionProperty);
+				
+		return ebmsV3_0Messagging;
+	}
+	
+	private void addMessageProperties(Messaging ebmsV3_0Messagging, Busta busta, OpenSPCoop2Message message, List<eu.domibus.configuration.Property> propertyConfig) throws Exception {
+		
+		UserMessage userMessage = ebmsV3_0Messagging.getUserMessage(0);
+		
+		TransportRequestContext transport = message.getTransportRequestContext();
+		if(transport==null) {
+			throw new Exception("TransportRequestContext undefined");	
+		}
 		
 		// MessageProperties
 		
-		// TODO DINAMICHE RISPETTO AD UN FILE CHE DEFINISCE COME ESTRARLE
-		MessageProperties messageProperties = new MessageProperties();
-		userMessage.setMessageProperties(messageProperties);
+		MessageProperties messageProperties = null;
 		
-		Property propertyOriginalSender = new Property();
-		propertyOriginalSender.setName("originalSender");
-		propertyOriginalSender.setBase("urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1");
-		messageProperties.addProperty(propertyOriginalSender);
-		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX+"originalSender", 
-				"urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1");
+		if(propertyConfig!=null && propertyConfig.size()>0) {
+			for (eu.domibus.configuration.Property property : propertyConfig) {
+				
+				if(property.getValue()==null) {
+					throw new Exception("Found property '"+property.getName()+"' without value configuration");
+				}
+				PropertyValueHeader hdr = property.getValue().getHeader();
+				PropertyValueUrl url = property.getValue().getUrl();
+				if(hdr==null && url==null) {
+					throw new Exception("Found property '"+property.getName()+"' without value configuration (both url and header undefined)");	
+				}
+				
+				String value = null;
+				StringBuffer bfErrore = new StringBuffer();
+				if(hdr!=null) {
+					value = transport.getParameterTrasporto(hdr.getName());
+					if(value==null) {
+						bfErrore.append("Header http '"+hdr.getName()+"' not found");
+					}
+					else {
+						if(hdr.getPattern()!=null) {
+							try {
+								String newValue = RegularExpressionEngine.getStringMatchPattern(value, hdr.getPattern());
+								if(newValue!=null) {
+									value = newValue;
+								}
+							}
+							catch(RegExpNotFoundException notFound) {}
+							catch(Exception e) {
+								bfErrore.append("\n\t");
+								bfErrore.append("(Header http '"+hdr.getName()+"' value '"+value+"') Valuate regularExpr '"+hdr.getPattern()+"' error: "+e.getMessage());
+							}
+						}
+					}
+				}
+				if(url!=null) {
+					String urlInvocazionePD = transport.getUrlInvocazione_formBased();
+					try {
+						String newValue = RegularExpressionEngine.getStringMatchPattern(urlInvocazionePD, url.getPattern());
+						if(newValue!=null) {
+							value = newValue;
+						}
+					}
+					catch(RegExpNotFoundException notFound) {}
+					catch(Exception e) {
+						bfErrore.append("\n\t");
+						bfErrore.append("- (URL '"+urlInvocazionePD+"') Valuate regularExpr '"+url.getPattern()+"' error: "+e.getMessage());
+					}
+				}
+				if(property.isRequired()) {
+					if(value==null) {
+						throw new Exception("It's not possible to extract a value from the request context for required property '"+property.getName()+"'. "+bfErrore.toString());	
+					}
+				}
+				
+				if(value!=null) {
+					if(messageProperties==null) {
+						messageProperties = new MessageProperties();
+						userMessage.setMessageProperties(messageProperties);
+					}
+					
+					Property propertyOriginalSender = new Property();
+					propertyOriginalSender.setName(property.getKey());
+					propertyOriginalSender.setBase(value);
+					messageProperties.addProperty(propertyOriginalSender);
+					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX+property.getKey(), 
+							value);
+				}
+				
+				
+
+			}
+		}
 		
-		Property propertyFinalRecipient = new Property();
-		propertyFinalRecipient.setName("finalRecipient");
-		propertyFinalRecipient.setBase("urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4");
-		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX+"finalRecipient", 
-				"urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4");
-		messageProperties.addProperty(propertyFinalRecipient);
-		
-		return ebmsV3_0Messagging;
 	}
 	
 	private void fillSoap12fromSoap11(OpenSPCoop2SoapMessage soapMessage12, OpenSPCoop2SoapMessage soapMessage11) throws Exception{

@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.pmode.PModeRegistryReader;
 import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
+import org.openspcoop2.protocol.as4.pmode.TranslatorPropertiesDefault;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -68,6 +69,9 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfile;
 import eu.domibus.configuration.PayloadProfiles;
+import eu.domibus.configuration.Property;
+import eu.domibus.configuration.PropertySet;
+import eu.domibus.configuration.Properties;
 
 /**
  * TrasparenteTestsuiteDynamicConfiguration
@@ -284,17 +288,25 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		serviceNameItem.setRequired(true);
 		configuration.addConsoleItem(serviceNameItem);
 		
+		String labelSubTitlePayload = AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PAYLOAD_LABEL;
+		if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
+			labelSubTitlePayload = AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PAYLOAD_PROFILES_LABEL;
+		}
 		BaseConsoleItem subTitlePayload = ProtocolPropertiesFactory.newSubTitleItem(
 				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PAYLOAD_ID, 
-				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PAYLOAD_LABEL);
+				labelSubTitlePayload);
 		configuration.addConsoleItem(subTitlePayload);
 		
+		String labelPayloadProfileItem = AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL;
+		if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
+			labelPayloadProfileItem = "";
+		}
 		AbstractConsoleItem<?> payloadProfileItem = 
 				ProtocolPropertiesFactory.newConsoleItem(
 						ConsoleItemValueType.BINARY,
 						ConsoleItemType.FILE,
 						AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_ID, 
-						AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL);
+						labelPayloadProfileItem);
 		payloadProfileItem.setRequired(false);
 		configuration.addConsoleItem(payloadProfileItem);
 		
@@ -311,6 +323,39 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			binary.setDefaultValue(defaultValue);
 			binary.setReadOnly(true);
 			configuration.addConsoleItem(payloadProfileDefaultItem);
+		}
+		
+		BaseConsoleItem subTitleProperties = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PROPERTIES_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_ACCORDO_PROPERTIES_LABEL);
+		configuration.addConsoleItem(subTitleProperties);
+		
+		String labelPropertiesItem = AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_LABEL;
+		if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
+			labelPropertiesItem = "";
+		}
+		AbstractConsoleItem<?> propertiesItem = 
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.BINARY,
+						ConsoleItemType.FILE,
+						AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_ID, 
+						labelPropertiesItem);
+		propertiesItem.setRequired(false);
+		configuration.addConsoleItem(propertiesItem);
+		
+		if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
+			AbstractConsoleItem<?> propertiesDefaultItem = 
+					ProtocolPropertiesFactory.newConsoleItem(
+							ConsoleItemValueType.BINARY,
+							ConsoleItemType.FILE,
+							AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_DEFAULT_ID, 
+							AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_DEFAULT_LABEL);
+			TranslatorPropertiesDefault t = TranslatorPropertiesDefault.getTranslator();
+			byte[] defaultValue = t.getPropertiesDefaultAsCompleteXml(false);
+			BinaryConsoleItem binary = (BinaryConsoleItem) propertiesDefaultItem;
+			binary.setDefaultValue(defaultValue);
+			binary.setReadOnly(true);
+			configuration.addConsoleItem(propertiesDefaultItem);
 		}
 		
 		return configuration;
@@ -396,7 +441,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 					for (Payload payloadDefault : l) {
 						if(p.getName().equals(payloadDefault.getName())) {
 							throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+
-									"', presenta un payload '"+p.getName()+"' con un nome utilizzato tra i payload di default");
+									"', presenta un payload '"+p.getName()+"' con un nome già utilizzato tra i payload di default");
 						}
 					}
 				}
@@ -408,7 +453,51 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 					for (PayloadProfile payloadProfileDefault : l) {
 						if(p.getName().equals(payloadProfileDefault.getName())) {
 							throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL+
-									"', presenta un payload profile '"+p.getName()+"' con un nome utilizzato tra i payload di default");
+									"', presenta un payload profile '"+p.getName()+"' con un nome già utilizzato tra i payload di default");
+						}
+					}
+				}
+			}
+		}
+		
+		// PropertySet
+		BinaryProperty propertiesItem = (BinaryProperty) 
+				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_ID);
+		if(propertiesItem!=null && propertiesItem.getValue()!=null) {
+			try {
+				eu.domibus.configuration.utils.PropertiesXSDValidator.getXSDValidator(this.log).valida(new ByteArrayInputStream(propertiesItem.getValue()));
+			}catch(Exception e) {
+				throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_LABEL+"', presenta una struttura non valida: "+e.getMessage(),e);
+			}	
+			
+			TranslatorPropertiesDefault t = TranslatorPropertiesDefault.getTranslator();
+			Properties pps = AS4BuilderUtils.readProperties(t, propertiesItem.getValue(), id, false);
+			if(pps==null) {
+				throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_LABEL+"', presenta una struttura vuota ?");
+			}
+			if(pps.sizePropertyList()<=0 && pps.sizePropertySetList()<=0) {
+				throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_LABEL+"', presenta una struttura senza property o propertySet");
+			}
+			if(pps.sizePropertyList()>0) {
+				List<Property> l = t.getListPropertyDefault();
+				for (int i = 0; i < pps.sizePropertyList(); i++) {
+					Property p = pps.getProperty(i);
+					for (Property pDefault : l) {
+						if(p.getName().equals(pDefault.getName())) {
+							throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_LABEL+
+									"', presenta una proprietà '"+p.getName()+"' con un nome già utilizzato tra le proprietà di default");
+						}
+					}
+				}
+			}
+			if(pps.sizePropertySetList()>0) {
+				List<PropertySet> l = t.getListPropertySetDefault();
+				for (int i = 0; i < pps.sizePropertySetList(); i++) {
+					PropertySet p = pps.getPropertySet(i);
+					for (PropertySet psDefault : l) {
+						if(p.getName().equals(psDefault.getName())) {
+							throw new ProtocolException("File caricato nel parametro '"+AS4ConsoleCostanti.AS4_ACCORDO_SERVICE_PROPERTIES_LABEL+
+									"', presenta un insieme di proprietà (property-set) '"+p.getName()+"' con un nome già utilizzato tra gli insiemi di default");
 						}
 					}
 				}
@@ -661,18 +750,8 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Impossibile recuperare l'accordo con id ["+id+"]: "+e.getMessage(),e);
 		}	
 		
-		TranslatorPayloadProfilesDefault t = TranslatorPayloadProfilesDefault.getTranslator();
-		
-		PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(t, as, id, false);
-		List<String> profiles = new ArrayList<>();
-		if(pps!=null && pps.sizePayloadProfileList()>0) {
-			for (PayloadProfile pp : pps.getPayloadProfileList()) {
-				profiles.add(pp.getName());
-			}
-		}
-		
-		List<PayloadProfile> listDefault = t.getListPayloadProfileDefault();
-		
+
+
 		BaseConsoleItem subTitleAction = ProtocolPropertiesFactory.newSubTitleItem(
 				AS4ConsoleCostanti.AS4_TITLE_AZIONE_ACTION_ID, 
 				AS4ConsoleCostanti.AS4_TITLE_AZIONE_ACTION_LABEL);
@@ -687,10 +766,25 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		actionTypeItem.setRequired(true);
 		configuration.addConsoleItem(actionTypeItem);
 		
+		
+		
+		
 		BaseConsoleItem subTitlePayload = ProtocolPropertiesFactory.newSubTitleItem(
 				AS4ConsoleCostanti.AS4_TITLE_AZIONE_PAYLOAD_ID, 
 				AS4ConsoleCostanti.AS4_TITLE_AZIONE_PAYLOAD_LABEL);
 		configuration.addConsoleItem(subTitlePayload );
+		
+		TranslatorPayloadProfilesDefault tPayload = TranslatorPayloadProfilesDefault.getTranslator();
+		
+		PayloadProfiles pps = AS4BuilderUtils.readPayloadProfiles(tPayload, as, id, false);
+		List<String> profiles = new ArrayList<>();
+		if(pps!=null && pps.sizePayloadProfileList()>0) {
+			for (PayloadProfile pp : pps.getPayloadProfileList()) {
+				profiles.add(pp.getName());
+			}
+		}
+		
+		List<PayloadProfile> listDefault = tPayload.getListPayloadProfileDefault();
 		
 		if(profiles.size()>0 || listDefault.size()>1) {
 			StringConsoleItem actionPayloadProfile = (StringConsoleItem) 
@@ -730,6 +824,59 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		actionCompressPayloadItem.setRequired(false);
 		actionCompressPayloadItem.setDefaultValue(AS4ConsoleCostanti.AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_DEFAULT);
 		configuration.addConsoleItem(actionCompressPayloadItem);
+		
+		
+		
+
+		
+		TranslatorPropertiesDefault tProperties = TranslatorPropertiesDefault.getTranslator();
+		
+		Properties properties = AS4BuilderUtils.readProperties(tProperties, as, id, false);
+		List<String> propertySetList = new ArrayList<>();
+		if(properties!=null && properties.sizePropertySetList()>0) {
+			for (PropertySet pp : properties.getPropertySetList()) {
+				propertySetList.add(pp.getName());
+			}
+		}
+		
+		List<PropertySet> listPropertySetDefault = tProperties.getListPropertySetDefault();
+		
+		if(propertySetList.size()>0 || listPropertySetDefault.size()>1) {
+			
+			
+			BaseConsoleItem subTitleProperties = ProtocolPropertiesFactory.newSubTitleItem(
+					AS4ConsoleCostanti.AS4_TITLE_AZIONE_PROPERTIES_ID, 
+					AS4ConsoleCostanti.AS4_TITLE_AZIONE_PROPERTIES_LABEL);
+			configuration.addConsoleItem(subTitleProperties );
+			
+			
+			StringConsoleItem actionPropertySet = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(
+							ConsoleItemValueType.STRING,
+							ConsoleItemType.SELECT,
+							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PROPERTY_SET_ID, 
+							AS4ConsoleCostanti.AS4_AZIONE_ACTION_PROPERTY_SET_LABEL);
+			
+			String defaultPropertySet = null;
+			if(listPropertySetDefault!=null && listPropertySetDefault.size()>0) {
+				for (PropertySet propertySetDefault : listPropertySetDefault) {
+					String defaultPropertySetL = propertySetDefault.getName();
+					if(defaultPropertySet==null) {
+						defaultPropertySet = defaultPropertySetL;
+					}
+					if(propertySetList.contains(defaultPropertySetL)==false) {
+						actionPropertySet.addLabelValue(defaultPropertySetL, defaultPropertySetL);
+					}
+				}
+			}
+			
+			for (String p : propertySetList) {
+				actionPropertySet.addLabelValue(p, p);
+			}
+			actionPropertySet.setDefaultValue(defaultPropertySet);
+			actionPropertySet.setRequired(false);
+			configuration.addConsoleItem(actionPropertySet);
+		}
 		
 		return configuration;
 	}

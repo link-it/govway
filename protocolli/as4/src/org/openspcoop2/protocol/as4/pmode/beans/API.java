@@ -40,7 +40,8 @@ public class API {
 	private String id;
 	private Map<String, Azione> actions;
 	
-	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, int indiceInizialeAzione, PayloadProfiles payloadProfiles) throws Exception {
+	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, int indiceInizialeAzione, 
+			PayloadProfiles payloadProfiles, Properties properties) throws Exception {
 		this.base = base;
 		this.id = id;
 		
@@ -49,7 +50,7 @@ public class API {
 			if(base.sizeAzioneList()>0) {
 				for (org.openspcoop2.core.registry.Azione az : base.getAzioneList()) {
 					String idAzione = this.id+"_"+ "AzioneAccordo_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
-					this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles));
+					this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, properties));
 				}
 			}
 			if(base.sizePortTypeList()>0) {
@@ -57,7 +58,7 @@ public class API {
 					if(pt.sizeAzioneList()>0) {
 						for (org.openspcoop2.core.registry.Operation az : pt.getAzioneList()) {
 							String idAzione = this.id+"_"+"Azione_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
-							this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles));
+							this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, properties));
 						}
 					}
 				}
@@ -67,7 +68,7 @@ public class API {
 			if(base.sizeResourceList()>0) {
 				for (org.openspcoop2.core.registry.Resource resource : base.getResourceList()) {
 					String idAzione = this.id+"_"+"Resource_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
-					this.actions.put(idAzione, new Azione(resource, idAzione, payloadProfiles));
+					this.actions.put(idAzione, new Azione(resource, idAzione, payloadProfiles, properties));
 				}
 			}
 		}

@@ -22,6 +22,7 @@ package eu.domibus.configuration;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -33,6 +34,9 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="property">
+ * 		&lt;sequence>
+ * 			&lt;element name="value" type="{http://www.domibus.eu/configuration}PropertyValue" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
  * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
  * 		&lt;attribute name="key" type="{http://www.domibus.eu/configuration}string" use="required"/>
  * 		&lt;attribute name="datatype" type="{http://www.domibus.eu/configuration}string" use="required"/>
@@ -47,12 +51,24 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "property")
+@XmlType(name = "property", 
+  propOrder = {
+  	"value"
+  }
+)
 
 @XmlRootElement(name = "property")
 
 public class Property extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Property() {
+  }
+
+  public PropertyValue getValue() {
+    return this.value;
+  }
+
+  public void setValue(PropertyValue value) {
+    this.value = value;
   }
 
   public java.lang.String getName() {
@@ -94,6 +110,9 @@ public class Property extends org.openspcoop2.utils.beans.BaseBean implements Se
   private static final long serialVersionUID = 1L;
 
 
+
+  @XmlElement(name="value",required=false,nillable=false)
+  protected PropertyValue value;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)

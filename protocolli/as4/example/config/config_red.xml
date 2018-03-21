@@ -24,6 +24,12 @@
             <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="testXml"/>
         </porta-delegata>
+	<porta-delegata nome="SoapExample/1/testRequiredProperties" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="testRequiredProperties"/>
+        </porta-delegata>
 
         <!-- Esempio REST v1 -->
         <porta-delegata nome="RestExample/1/test" autenticazione="none" autorizzazione="none"
@@ -75,6 +81,12 @@
             <soggetto-erogatore tipo="as4" nome="Blue"/>
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="testJson"/>
+        </porta-delegata>
+        <porta-delegata nome="RestExample/2/testDemoPropertySet" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testDemoPropertySet"/>
         </porta-delegata>
          
     </soggetto>

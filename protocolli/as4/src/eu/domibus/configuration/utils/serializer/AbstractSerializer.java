@@ -38,6 +38,7 @@ import eu.domibus.configuration.PartyIdType;
 import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfiles;
 import eu.domibus.configuration.PayloadProfile;
+import eu.domibus.configuration.PropertyValue;
 import eu.domibus.configuration.Property;
 import eu.domibus.configuration.Security;
 import eu.domibus.configuration.PartyIdTypes;
@@ -45,8 +46,10 @@ import eu.domibus.configuration.Parties;
 import eu.domibus.configuration.Party;
 import eu.domibus.configuration.Properties;
 import eu.domibus.configuration.PropertySet;
+import eu.domibus.configuration.PropertyValueHeader;
 import eu.domibus.configuration.ReceptionAwareness;
 import eu.domibus.configuration.As4;
+import eu.domibus.configuration.PropertyValueUrl;
 import eu.domibus.configuration.Role;
 import eu.domibus.configuration.Roles;
 import eu.domibus.configuration.Configuration;
@@ -61,9 +64,11 @@ import eu.domibus.configuration.Agreement;
 import eu.domibus.configuration.InitiatorParty;
 import eu.domibus.configuration.Action;
 import eu.domibus.configuration.Identifier;
+import eu.domibus.configuration.Header;
 import eu.domibus.configuration.ErrorHandling;
 import eu.domibus.configuration.Legs;
 import eu.domibus.configuration.Attachment;
+import eu.domibus.configuration.Url;
 import eu.domibus.configuration.InitiatorParties;
 import eu.domibus.configuration.ResponderParties;
 import eu.domibus.configuration.ResponderParty;
@@ -1929,6 +1934,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: PropertyValue
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>propertyValue</var>
+	 * @param propertyValue Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PropertyValue propertyValue) throws SerializerException {
+		this.objToXml(fileName, PropertyValue.class, propertyValue, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>propertyValue</var>
+	 * @param propertyValue Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PropertyValue propertyValue,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, PropertyValue.class, propertyValue, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param file Xml file to serialize the object <var>propertyValue</var>
+	 * @param propertyValue Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PropertyValue propertyValue) throws SerializerException {
+		this.objToXml(file, PropertyValue.class, propertyValue, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param file Xml file to serialize the object <var>propertyValue</var>
+	 * @param propertyValue Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PropertyValue propertyValue,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, PropertyValue.class, propertyValue, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param out OutputStream to serialize the object <var>propertyValue</var>
+	 * @param propertyValue Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PropertyValue propertyValue) throws SerializerException {
+		this.objToXml(out, PropertyValue.class, propertyValue, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param out OutputStream to serialize the object <var>propertyValue</var>
+	 * @param propertyValue Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PropertyValue propertyValue,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, PropertyValue.class, propertyValue, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param propertyValue Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PropertyValue propertyValue) throws SerializerException {
+		return this.objToXml(PropertyValue.class, propertyValue, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param propertyValue Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PropertyValue propertyValue,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PropertyValue.class, propertyValue, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param propertyValue Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PropertyValue propertyValue) throws SerializerException {
+		return this.objToXml(PropertyValue.class, propertyValue, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>propertyValue</var> of type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param propertyValue Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PropertyValue propertyValue,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PropertyValue.class, propertyValue, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: property
 	 =================================================================================
 	*/
@@ -2755,6 +2878,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: PropertyValueHeader
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>propertyValueHeader</var>
+	 * @param propertyValueHeader Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PropertyValueHeader propertyValueHeader) throws SerializerException {
+		this.objToXml(fileName, PropertyValueHeader.class, propertyValueHeader, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>propertyValueHeader</var>
+	 * @param propertyValueHeader Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PropertyValueHeader propertyValueHeader,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, PropertyValueHeader.class, propertyValueHeader, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param file Xml file to serialize the object <var>propertyValueHeader</var>
+	 * @param propertyValueHeader Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PropertyValueHeader propertyValueHeader) throws SerializerException {
+		this.objToXml(file, PropertyValueHeader.class, propertyValueHeader, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param file Xml file to serialize the object <var>propertyValueHeader</var>
+	 * @param propertyValueHeader Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PropertyValueHeader propertyValueHeader,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, PropertyValueHeader.class, propertyValueHeader, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param out OutputStream to serialize the object <var>propertyValueHeader</var>
+	 * @param propertyValueHeader Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PropertyValueHeader propertyValueHeader) throws SerializerException {
+		this.objToXml(out, PropertyValueHeader.class, propertyValueHeader, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param out OutputStream to serialize the object <var>propertyValueHeader</var>
+	 * @param propertyValueHeader Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PropertyValueHeader propertyValueHeader,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, PropertyValueHeader.class, propertyValueHeader, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param propertyValueHeader Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PropertyValueHeader propertyValueHeader) throws SerializerException {
+		return this.objToXml(PropertyValueHeader.class, propertyValueHeader, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param propertyValueHeader Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PropertyValueHeader propertyValueHeader,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PropertyValueHeader.class, propertyValueHeader, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param propertyValueHeader Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PropertyValueHeader propertyValueHeader) throws SerializerException {
+		return this.objToXml(PropertyValueHeader.class, propertyValueHeader, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>propertyValueHeader</var> of type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param propertyValueHeader Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PropertyValueHeader propertyValueHeader,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PropertyValueHeader.class, propertyValueHeader, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: receptionAwareness
 	 =================================================================================
 	*/
@@ -2985,6 +3226,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(As4 as4,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(As4.class, as4, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: PropertyValueUrl
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>propertyValueUrl</var>
+	 * @param propertyValueUrl Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PropertyValueUrl propertyValueUrl) throws SerializerException {
+		this.objToXml(fileName, PropertyValueUrl.class, propertyValueUrl, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>propertyValueUrl</var>
+	 * @param propertyValueUrl Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PropertyValueUrl propertyValueUrl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, PropertyValueUrl.class, propertyValueUrl, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param file Xml file to serialize the object <var>propertyValueUrl</var>
+	 * @param propertyValueUrl Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PropertyValueUrl propertyValueUrl) throws SerializerException {
+		this.objToXml(file, PropertyValueUrl.class, propertyValueUrl, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param file Xml file to serialize the object <var>propertyValueUrl</var>
+	 * @param propertyValueUrl Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PropertyValueUrl propertyValueUrl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, PropertyValueUrl.class, propertyValueUrl, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param out OutputStream to serialize the object <var>propertyValueUrl</var>
+	 * @param propertyValueUrl Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PropertyValueUrl propertyValueUrl) throws SerializerException {
+		this.objToXml(out, PropertyValueUrl.class, propertyValueUrl, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param out OutputStream to serialize the object <var>propertyValueUrl</var>
+	 * @param propertyValueUrl Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PropertyValueUrl propertyValueUrl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, PropertyValueUrl.class, propertyValueUrl, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param propertyValueUrl Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PropertyValueUrl propertyValueUrl) throws SerializerException {
+		return this.objToXml(PropertyValueUrl.class, propertyValueUrl, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param propertyValueUrl Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PropertyValueUrl propertyValueUrl,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PropertyValueUrl.class, propertyValueUrl, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param propertyValueUrl Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PropertyValueUrl propertyValueUrl) throws SerializerException {
+		return this.objToXml(PropertyValueUrl.class, propertyValueUrl, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>propertyValueUrl</var> of type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param propertyValueUrl Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PropertyValueUrl propertyValueUrl,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PropertyValueUrl.class, propertyValueUrl, prettyPrint).toString();
 	}
 	
 	
@@ -4643,6 +5002,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: header
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>header</var>
+	 * @param header Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Header header) throws SerializerException {
+		this.objToXml(fileName, Header.class, header, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>header</var>
+	 * @param header Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Header header,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Header.class, header, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param file Xml file to serialize the object <var>header</var>
+	 * @param header Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Header header) throws SerializerException {
+		this.objToXml(file, Header.class, header, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param file Xml file to serialize the object <var>header</var>
+	 * @param header Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Header header,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Header.class, header, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param out OutputStream to serialize the object <var>header</var>
+	 * @param header Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Header header) throws SerializerException {
+		this.objToXml(out, Header.class, header, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param out OutputStream to serialize the object <var>header</var>
+	 * @param header Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Header header,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Header.class, header, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param header Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Header header) throws SerializerException {
+		return this.objToXml(Header.class, header, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param header Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Header header,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Header.class, header, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param header Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Header header) throws SerializerException {
+		return this.objToXml(Header.class, header, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>header</var> of type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param header Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Header header,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Header.class, header, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: errorHandling
 	 =================================================================================
 	*/
@@ -4991,6 +5468,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Attachment attachment,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Attachment.class, attachment, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: url
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>url</var>
+	 * @param url Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Url url) throws SerializerException {
+		this.objToXml(fileName, Url.class, url, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>url</var>
+	 * @param url Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Url url,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Url.class, url, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param file Xml file to serialize the object <var>url</var>
+	 * @param url Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Url url) throws SerializerException {
+		this.objToXml(file, Url.class, url, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param file Xml file to serialize the object <var>url</var>
+	 * @param url Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Url url,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Url.class, url, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param out OutputStream to serialize the object <var>url</var>
+	 * @param url Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Url url) throws SerializerException {
+		this.objToXml(out, Url.class, url, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param out OutputStream to serialize the object <var>url</var>
+	 * @param url Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Url url,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Url.class, url, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param url Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Url url) throws SerializerException {
+		return this.objToXml(Url.class, url, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param url Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Url url,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Url.class, url, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param url Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Url url) throws SerializerException {
+		return this.objToXml(Url.class, url, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>url</var> of type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param url Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Url url,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Url.class, url, prettyPrint).toString();
 	}
 	
 	

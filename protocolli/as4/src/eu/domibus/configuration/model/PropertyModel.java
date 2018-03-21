@@ -40,6 +40,7 @@ public class PropertyModel extends AbstractModel<Property> {
 	
 		super();
 	
+		this.VALUE = new eu.domibus.configuration.model.PropertyValueModel(new Field("value",eu.domibus.configuration.PropertyValue.class,"property",Property.class));
 		this.NAME = new Field("name",java.lang.String.class,"property",Property.class);
 		this.KEY = new Field("key",java.lang.String.class,"property",Property.class);
 		this.DATATYPE = new Field("datatype",java.lang.String.class,"property",Property.class);
@@ -51,6 +52,7 @@ public class PropertyModel extends AbstractModel<Property> {
 	
 		super(father);
 	
+		this.VALUE = new eu.domibus.configuration.model.PropertyValueModel(new ComplexField(father,"value",eu.domibus.configuration.PropertyValue.class,"property",Property.class));
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"property",Property.class);
 		this.KEY = new ComplexField(father,"key",java.lang.String.class,"property",Property.class);
 		this.DATATYPE = new ComplexField(father,"datatype",java.lang.String.class,"property",Property.class);
@@ -60,6 +62,8 @@ public class PropertyModel extends AbstractModel<Property> {
 	
 	
 
+	public eu.domibus.configuration.model.PropertyValueModel VALUE = null;
+	 
 	public IField NAME = null;
 	 
 	public IField KEY = null;

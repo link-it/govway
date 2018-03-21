@@ -36,6 +36,7 @@ import eu.domibus.configuration.PartyIdType;
 import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfiles;
 import eu.domibus.configuration.PayloadProfile;
+import eu.domibus.configuration.PropertyValue;
 import eu.domibus.configuration.Property;
 import eu.domibus.configuration.Security;
 import eu.domibus.configuration.PartyIdTypes;
@@ -43,8 +44,10 @@ import eu.domibus.configuration.Parties;
 import eu.domibus.configuration.Party;
 import eu.domibus.configuration.Properties;
 import eu.domibus.configuration.PropertySet;
+import eu.domibus.configuration.PropertyValueHeader;
 import eu.domibus.configuration.ReceptionAwareness;
 import eu.domibus.configuration.As4;
+import eu.domibus.configuration.PropertyValueUrl;
 import eu.domibus.configuration.Role;
 import eu.domibus.configuration.Roles;
 import eu.domibus.configuration.Configuration;
@@ -59,9 +62,11 @@ import eu.domibus.configuration.Agreement;
 import eu.domibus.configuration.InitiatorParty;
 import eu.domibus.configuration.Action;
 import eu.domibus.configuration.Identifier;
+import eu.domibus.configuration.Header;
 import eu.domibus.configuration.ErrorHandling;
 import eu.domibus.configuration.Legs;
 import eu.domibus.configuration.Attachment;
+import eu.domibus.configuration.Url;
 import eu.domibus.configuration.InitiatorParties;
 import eu.domibus.configuration.ResponderParties;
 import eu.domibus.configuration.ResponderParty;
@@ -1078,6 +1083,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: PropertyValue
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValue}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValue}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValue readPropertyValue(String fileName) throws DeserializerException {
+		return (PropertyValue) this.xmlToObj(fileName, PropertyValue.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValue}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValue}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValue readPropertyValue(File file) throws DeserializerException {
+		return (PropertyValue) this.xmlToObj(file, PropertyValue.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValue}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValue}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValue readPropertyValue(InputStream in) throws DeserializerException {
+		return (PropertyValue) this.xmlToObj(in, PropertyValue.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValue}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValue}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValue readPropertyValue(byte[] in) throws DeserializerException {
+		return (PropertyValue) this.xmlToObj(in, PropertyValue.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValue}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValue}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValue}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValue readPropertyValueFromString(String in) throws DeserializerException {
+		return (PropertyValue) this.xmlToObj(in.getBytes(), PropertyValue.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: property
 	 =================================================================================
 	*/
@@ -1519,6 +1587,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: PropertyValueHeader
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueHeader readPropertyValueHeader(String fileName) throws DeserializerException {
+		return (PropertyValueHeader) this.xmlToObj(fileName, PropertyValueHeader.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueHeader readPropertyValueHeader(File file) throws DeserializerException {
+		return (PropertyValueHeader) this.xmlToObj(file, PropertyValueHeader.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueHeader readPropertyValueHeader(InputStream in) throws DeserializerException {
+		return (PropertyValueHeader) this.xmlToObj(in, PropertyValueHeader.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueHeader readPropertyValueHeader(byte[] in) throws DeserializerException {
+		return (PropertyValueHeader) this.xmlToObj(in, PropertyValueHeader.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueHeader readPropertyValueHeaderFromString(String in) throws DeserializerException {
+		return (PropertyValueHeader) this.xmlToObj(in.getBytes(), PropertyValueHeader.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: receptionAwareness
 	 =================================================================================
 	*/
@@ -1639,6 +1770,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public As4 readAs4FromString(String in) throws DeserializerException {
 		return (As4) this.xmlToObj(in.getBytes(), As4.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: PropertyValueUrl
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueUrl readPropertyValueUrl(String fileName) throws DeserializerException {
+		return (PropertyValueUrl) this.xmlToObj(fileName, PropertyValueUrl.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueUrl readPropertyValueUrl(File file) throws DeserializerException {
+		return (PropertyValueUrl) this.xmlToObj(file, PropertyValueUrl.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueUrl readPropertyValueUrl(InputStream in) throws DeserializerException {
+		return (PropertyValueUrl) this.xmlToObj(in, PropertyValueUrl.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueUrl readPropertyValueUrl(byte[] in) throws DeserializerException {
+		return (PropertyValueUrl) this.xmlToObj(in, PropertyValueUrl.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @return Object type {@link eu.domibus.configuration.PropertyValueUrl}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PropertyValueUrl readPropertyValueUrlFromString(String in) throws DeserializerException {
+		return (PropertyValueUrl) this.xmlToObj(in.getBytes(), PropertyValueUrl.class);
 	}	
 	
 	
@@ -2527,6 +2721,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: header
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.Header}
+	 * @return Object type {@link eu.domibus.configuration.Header}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Header readHeader(String fileName) throws DeserializerException {
+		return (Header) this.xmlToObj(fileName, Header.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.Header}
+	 * @return Object type {@link eu.domibus.configuration.Header}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Header readHeader(File file) throws DeserializerException {
+		return (Header) this.xmlToObj(file, Header.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link eu.domibus.configuration.Header}
+	 * @return Object type {@link eu.domibus.configuration.Header}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Header readHeader(InputStream in) throws DeserializerException {
+		return (Header) this.xmlToObj(in, Header.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link eu.domibus.configuration.Header}
+	 * @return Object type {@link eu.domibus.configuration.Header}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Header readHeader(byte[] in) throws DeserializerException {
+		return (Header) this.xmlToObj(in, Header.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link eu.domibus.configuration.Header}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link eu.domibus.configuration.Header}
+	 * @return Object type {@link eu.domibus.configuration.Header}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Header readHeaderFromString(String in) throws DeserializerException {
+		return (Header) this.xmlToObj(in.getBytes(), Header.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: errorHandling
 	 =================================================================================
 	*/
@@ -2710,6 +2967,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public Attachment readAttachmentFromString(String in) throws DeserializerException {
 		return (Attachment) this.xmlToObj(in.getBytes(), Attachment.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: url
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.Url}
+	 * @return Object type {@link eu.domibus.configuration.Url}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Url readUrl(String fileName) throws DeserializerException {
+		return (Url) this.xmlToObj(fileName, Url.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link eu.domibus.configuration.Url}
+	 * @return Object type {@link eu.domibus.configuration.Url}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Url readUrl(File file) throws DeserializerException {
+		return (Url) this.xmlToObj(file, Url.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link eu.domibus.configuration.Url}
+	 * @return Object type {@link eu.domibus.configuration.Url}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Url readUrl(InputStream in) throws DeserializerException {
+		return (Url) this.xmlToObj(in, Url.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link eu.domibus.configuration.Url}
+	 * @return Object type {@link eu.domibus.configuration.Url}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Url readUrl(byte[] in) throws DeserializerException {
+		return (Url) this.xmlToObj(in, Url.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link eu.domibus.configuration.Url}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link eu.domibus.configuration.Url}
+	 * @return Object type {@link eu.domibus.configuration.Url}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Url readUrlFromString(String in) throws DeserializerException {
+		return (Url) this.xmlToObj(in.getBytes(), Url.class);
 	}	
 	
 	

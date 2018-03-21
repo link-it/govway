@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://ec.europa.eu/cefdigital/code/projects/EDELIVERY/repos/domibus/browse/Domibus-MSH/src/main/resources/schemas/domibus-pmode.xsd -->
+
+<!-- 
+	Estratto dallo schema domibus-pmode.xsd serve a definire le proprieta' che devono viaggiare.
+	Ogni 'property' è stata arricchita di un elemento interno 'value' che regola l'estrazione del valore della proprietà dal contesto della richiesta in essere
+	se la PdD funge da fruitore. Le modalità di estrazione del valore possono essere:
+	- url: il valore viene estratto dalla url di invocazione della porta, applicando l'espressione regolare indicata nell'attributo 'pattern'.
+	- header: il valore viene estratto dall'header http con nome 'name'. Se viene indicato un valore anche nell'attributo 'pattern', l'espressione indicata viene applicata al valore dell'header.
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    attributeFormDefault="unqualified" elementFormDefault="unqualified"> 
+    <!-- NOTA: L'xml deve tutto essere interamente non qualificato (unqualified), per poterlo poi inserire correttamente dentro la configurazione di domibus -->
+    
+    <xs:element name="properties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="property">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="value">
+                                <xs:complexType>
+                                    <xs:choice minOccurs="1" maxOccurs="2">
+                                        <xs:element name="url">
+                                            <xs:complexType>
+                                                <xs:attribute name="pattern" type="max255-non-empty-string" use="required"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="header">
+                                            <xs:complexType>
+                                                <xs:attribute name="name" type="max255-non-empty-string" use="required"/>
+                                                <xs:attribute name="pattern" type="max255-non-empty-string" use="optional"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:choice>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" use="required"
+                            type="max255-non-empty-string"/>
+                        <xs:attribute name="key" type="max255-non-empty-string"
+                            use="required"/>
+                        <xs:attribute form="unqualified" name="datatype"
+                            use="required" type="max255-non-empty-string"/>
+                        <xs:attribute name="required" type="xs:boolean"
+                            use="required"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" name="propertySet">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded"
+                                name="propertyRef">
+                                <xs:complexType>
+                                    <xs:attribute name="property" type="max255-non-empty-string"
+                                        use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="max255-non-empty-string"
+                            use="required"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:simpleType name="max255-non-empty-string">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="255"/>
+        </xs:restriction>
+    </xs:simpleType>
+                            
+</xs:schema>

@@ -1,0 +1,69 @@
+                <properties>
+			<property name="originalSenderRequiredProperty" 
+					key="originalSender" 
+					datatype="string" 
+					required="true">
+				<value>
+					<url pattern=".+originalSender=([^&amp;]*).*" />
+					<header name="X-AS4-OriginalSender" />
+				</value>
+			</property>
+			<property name="finalRecipientRequiredProperty" 
+					key="finalRecipient" 
+					datatype="string" 
+					required="true">
+				<value>
+					<url pattern=".+finalRecipient=([^&amp;]*).*" />
+					<header name="X-AS4-FinalRecipient" />
+				</value>
+			</property>
+
+                        <property name="demoOptionalProperty" 
+                                        key="demoOptional" 
+                                        datatype="string" 
+                                        required="false">
+				<value>
+					<url pattern=".+demoOptionalProperty=([^&amp;]*).*" />
+					<header name="X-AS4-DemoOptionalProperty" />
+				</value>
+			</property>
+                        <property name="demoRequiredProperty" 
+                                        key="demoRequired" 
+                                        datatype="string" 
+                                        required="true">
+				<value>
+					<url pattern=".+demoRequiredProperty=([^&amp;]*).*" />
+					<header name="X-AS4-DemoRequiredProperty" />
+				</value>
+			</property>
+                        <property name="demoOptionalUrlProperty" 
+                                        key="demoOptionalUrl" 
+                                        datatype="string" 
+                                        required="false">
+				<value>
+					<url pattern=".+demoOptionalUrlProperty=([^&amp;]*).*" />
+				</value>
+			</property>
+                        <property name="demoOptionalHeaderProperty" 
+                                        key="demoOptionalHeader" 
+                                        datatype="string" 
+                                        required="false">
+				<value>
+					<header name="X-AS4-DemoOptionalHeaderProperty" />
+				</value>
+			</property>
+
+                        <propertySet name="ecodexRequiredPropertySet">
+                                <propertyRef property="finalRecipientRequiredProperty"/>
+                                <propertyRef property="originalSenderRequiredProperty"/>
+                        </propertySet>
+
+                        <propertySet name="demoPropertySet">
+                                <propertyRef property="finalRecipientProperty"/>
+                                <propertyRef property="originalSenderProperty"/>
+				<propertyRef property="demoOptionalProperty"/>
+				<propertyRef property="demoRequiredProperty"/>
+				<propertyRef property="demoOptionalUrlProperty"/>
+				<propertyRef property="demoOptionalHeaderProperty"/>
+                        </propertySet>
+                </properties>

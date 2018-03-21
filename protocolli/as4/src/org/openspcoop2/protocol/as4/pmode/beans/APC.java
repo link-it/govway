@@ -41,6 +41,7 @@ public class APC {
 
 	private AccordoServizioParteComune base;
 	private byte[] ebmsServicePayloadProfile;
+	private byte[] ebmsServiceProperties;
 	private String ebmsUserMessageCollaborationInfoServiceName;
 	private String ebmsUserMessageCollaborationInfoServiceType;
 	private String id;
@@ -60,9 +61,23 @@ public class APC {
 					}
 					this.ebmsServicePayloadProfile = FileSystemUtilities.readBytesFromFile(fCheck);
 				}
-			}else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE)) {
+			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SERVICE_PROPERTIES)) {
+				if(prop.getByteFile()!=null) {
+					this.ebmsServiceProperties = prop.getByteFile();
+				}
+				else {			
+					File fCheck = new File(prop.getFile());
+					if(fCheck.exists()==false) {
+						fCheck = new File(AS4Properties.getInstance().getPModeTranslatorPropertiesFolder(), prop.getFile());
+					}
+					this.ebmsServiceProperties = FileSystemUtilities.readBytesFromFile(fCheck);
+				}
+			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE)) {
 				this.ebmsUserMessageCollaborationInfoServiceType = prop.getValue();
-			}else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE)) {
+			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE)) {
 				this.ebmsUserMessageCollaborationInfoServiceName = prop.getValue();
 			}
 		}
@@ -109,5 +124,13 @@ public class APC {
 
 	public void setEbmsServicePayloadProfile(byte[] ebmsServicePayloadProfile) {
 		this.ebmsServicePayloadProfile = ebmsServicePayloadProfile;
+	}
+	
+	public byte[] getEbmsServiceProperties() {
+		return this.ebmsServiceProperties;
+	}
+
+	public void setEbmsServiceProperties(byte[] ebmsServiceProperties) {
+		this.ebmsServiceProperties = ebmsServiceProperties;
 	}
 }

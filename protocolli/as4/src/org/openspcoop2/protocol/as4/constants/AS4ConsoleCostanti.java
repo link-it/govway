@@ -82,13 +82,23 @@ public class AS4ConsoleCostanti {
 	public static final String AS4_ACCORDO_USER_MESSAGE_COLLABORATION_INFO_SERVICE_NAME_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE;
 
 	public static final String AS4_TITLE_ACCORDO_PAYLOAD_LABEL = "Payload";
+	public static final String AS4_TITLE_ACCORDO_PAYLOAD_PROFILES_LABEL = "Payload Profiles";
 	public static final String AS4_TITLE_ACCORDO_PAYLOAD_ID = "as4ApiPayloadSubTitleId";
 	
-	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL = "Profile";
+	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_LABEL = "API Profiles";
 	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE;
 	
-	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_LABEL = " Profile Default";
+	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_LABEL = " Default Profiles";
 	public static final String AS4_ACCORDO_SERVICE_PAYLOAD_PROFILE_DEFAULT_ID = "ebmsServicePayloadProfileDefault"; // usato solo in grafica per consultazione
+	
+	public static final String AS4_TITLE_ACCORDO_PROPERTIES_LABEL = "Properties";
+	public static final String AS4_TITLE_ACCORDO_PROPERTIES_ID = "as4ApiPropertiesSubTitleId";
+	
+	public static final String AS4_ACCORDO_SERVICE_PROPERTIES_LABEL = "API Properties";
+	public static final String AS4_ACCORDO_SERVICE_PROPERTIES_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_SERVICE_PROPERTIES;
+	
+	public static final String AS4_ACCORDO_SERVICE_PROPERTIES_DEFAULT_LABEL = " Default Properties";
+	public static final String AS4_ACCORDO_SERVICE_PROPERTIES_DEFAULT_ID = "ebmsServicePropertiesDefault"; // usato solo in grafica per consultazione
 	
 	
 	// Azioni
@@ -111,6 +121,12 @@ public class AS4ConsoleCostanti {
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_LABEL = "Compress";
 	public static final String AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD;
 	public static final Boolean AS4_AZIONE_ACTION_PAYLOAD_COMPRESS_DEFAULT = true;
+	
+	public static final String AS4_TITLE_AZIONE_PROPERTIES_LABEL = "Properties";
+	public static final String AS4_TITLE_AZIONE_PROPERTIES_ID = "as4AzionePropertiesSubTitleId";
+	
+	public static final String AS4_AZIONE_ACTION_PROPERTY_SET_LABEL = "PropertySet";
+	public static final String AS4_AZIONE_ACTION_PROPERTY_SET_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PROPERTY_SET;
 	
 	
 	

@@ -141,6 +141,10 @@ public class AS4Properties {
 			
 			getPayloadProfilesDefaultPayloads();
 			getPayloadProfilesDefaultPayloadProfiles();
+			
+			getPropertiesDefault();
+			getPropertiesSetDefault();
+			
 			File f = this.getSecurityPoliciesFolder();
 			File[] list = f.listFiles();
 			if(list==null || list.length<=0) {
@@ -173,6 +177,7 @@ public class AS4Properties {
 			
 			// Per versione xml
 			this.getPModeTranslatorPayloadProfilesFolder();
+			this.getPModeTranslatorPropertiesFolder();
 			
 			// connettore
 			if(this.isDomibusGatewayRegistry()) {
@@ -408,6 +413,50 @@ public class AS4Properties {
 		return AS4Properties.payloadProfilesDefaultPayloadProfiles;
 	}
 	
+	private static byte[] propertiesDefaultProperty;
+	private static Boolean propertiesDefaultPropertyRead;
+	public byte[] getPropertiesDefault() throws ProtocolException {
+		if(AS4Properties.propertiesDefaultPropertyRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultProperty"); 
+				if (value != null){
+					value = value.trim();
+					File f  = this.getFile(value);
+					propertiesDefaultProperty = FileSystemUtilities.readBytesFromFile(f);
+				}
+				
+				propertiesDefaultPropertyRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.properties.defaultProperty', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.propertiesDefaultProperty;
+	}
+	
+	private static byte[] propertiesDefaultPropertySet;
+	private static Boolean propertiesDefaultPropertySetRead;
+	public byte[] getPropertiesSetDefault() throws ProtocolException {
+		if(AS4Properties.propertiesDefaultPropertySetRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.properties.defaultPropertySet"); 
+				if (value != null){
+					value = value.trim();
+					File f  = this.getFile(value);
+					propertiesDefaultPropertySet = FileSystemUtilities.readBytesFromFile(f);
+				}
+				
+				propertiesDefaultPropertySetRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.properties.defaultPropertySet', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.propertiesDefaultPropertySet;
+	}
+	
 	private static File securityPoliciesFolder;
 	public File getSecurityPoliciesFolder() throws ProtocolException {
 		if(AS4Properties.securityPoliciesFolder==null){
@@ -471,6 +520,27 @@ public class AS4Properties {
 			}
     	}
 		return AS4Properties.pModeTranslatorPayloadProfilesFolder;
+	}
+	
+	private static File pModeTranslatorPropertiesFolder;
+	public File getPModeTranslatorPropertiesFolder() throws ProtocolException {
+		if(AS4Properties.pModeTranslatorPropertiesFolder==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pmode.pModeTranslatorPropertiesFolder"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.pModeTranslatorPropertiesFolder = this.getDirectory(value);
+				}else{
+					throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.pModeTranslatorPropertiesFolder' non impostata");
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pmode.pModeTranslatorPropertiesFolder', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.pModeTranslatorPropertiesFolder;
 	}
 
 

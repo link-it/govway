@@ -37,21 +37,26 @@
 			<binding name="pushAndPush" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push-and-push"/>
 		</meps>
 		<properties>
-			<property name="originalSenderProperty" 
-					key="originalSender" 
-					datatype="string" 
-					required="false"/>
-			<property name="finalRecipientProperty" 
-					key="finalRecipient" 
-					datatype="string" 
-					required="false"/>
-			<propertySet name="ecodexPropertySet">
-				<propertyRef property="finalRecipientProperty"/>
-				<propertyRef property="originalSenderProperty"/>
+${properties.propertyDefault}
+
+			<#list properties.property as p>
+			<property name="${p.name}" 
+					key="${p.key}" 
+					datatype="${p.datatype}" 
+					required="${p.required?c}"/> 
+			</#list>
+${properties.propertySetDefault}
+			
+			<#list properties.propertySet as p>
+			<propertySet name="${p.name}">
+			<#list p.propertyRef as pName>
+				<propertyRef property="${pName}"/>
+			</#list>			
 			</propertySet>
+			</#list>
 		</properties>				
 		<payloadProfiles>
-			<#include "pmode-payloadDefault.ftl">
+${payloadProfiles.payloadDefault}
 
 			<#list payloadProfiles.payloads as payload>
 			<payload name="${payload.name}"
@@ -62,7 +67,7 @@
 					<#if payload.maxSize?has_content>maxSize="${payload.maxSize}"</#if> 
 					<#if payload.mimeType?has_content>mimeType="${payload.mimeType}"/></#if> 
 			</#list>
-			<#include "pmode-payloadProfileDefault.ftl">
+${payloadProfiles.payloadProfileDefault}
 			
 			<#list payloadProfiles.payloadProfiles as payloadProfile>
 			<payloadProfile name="${payloadProfile.name}" 
@@ -119,7 +124,7 @@
 					reliability="AS4Reliability" 
 					security="${aps.ebmsSecurityProfile}"
 					receptionAwareness="receptionAwareness" 
-					propertySet="ecodexPropertySet"
+					propertySet="${azione.ebmsActionPropertySet}"
 					payloadProfile="${azione.ebmsActionPayloadProfile}"
 					errorHandling="demoErrorHandling"
 					compressPayloads="${azione.ebmsActionCompressPayload?c}"/>

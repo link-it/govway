@@ -205,8 +205,39 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <!-- Aggiunto per regolare l'estrazione dei valori -->
+    <xs:element name="url">
+        <xs:complexType>
+            <xs:attribute name="pattern" type="max255-non-empty-string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="header">
+        <xs:complexType>
+            <xs:attribute name="name" type="max255-non-empty-string" use="required"/>
+            <xs:attribute name="pattern" type="max255-non-empty-string" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="PropertyValue">
+        <xs:sequence>
+            <xs:element name="url" type="PropertyValueUrl" minOccurs="0"/>
+            <xs:element name="header" type="PropertyValueHeader" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PropertyValueUrl">
+        <xs:attribute name="pattern" type="max255-non-empty-string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="PropertyValueHeader">
+        <xs:attribute name="name" type="max255-non-empty-string" use="required"/>
+        <xs:attribute name="pattern" type="max255-non-empty-string" use="optional"/>
+    </xs:complexType>
+    <!-- Aggiunto per regolare l'estrazione dei valori -->
     <xs:element name="property">
         <xs:complexType>
+            <!-- Aggiunto per regolare l'estrazione dei valori -->
+            <xs:sequence>
+                <xs:element name="value" type="PropertyValue" minOccurs="0" /> <!-- non esiste nel pmode reale -->
+            </xs:sequence>
+            <!-- Aggiunto per regolare l'estrazione dei valori -->
             <xs:attribute name="name" use="required"
                 type="max255-non-empty-string"/>
             <xs:attribute name="key" type="max255-non-empty-string"

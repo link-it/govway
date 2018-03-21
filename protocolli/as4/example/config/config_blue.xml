@@ -30,6 +30,14 @@
 		<soggetto tipo="as4" nome="Red"/>
 	    </soggetti>
         </porta-applicativa>
+        <porta-applicativa nome="SoapExample/1/testRequiredProperties" stateless="abilitato">
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="testRequiredProperties"/>
+            <servizio-applicativo nome="SoapExample/1"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
 
         <!-- Esempio REST v1 -->
         <porta-applicativa nome="RestExample/1/test" stateless="abilitato">
@@ -93,6 +101,14 @@
 	<porta-applicativa nome="RestExample/2/testJson" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="testJson"/>
+            <servizio-applicativo nome="RestExample/2"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+	<porta-applicativa nome="RestExample/2/testDemoPropertySet" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testDemoPropertySet"/>
             <servizio-applicativo nome="RestExample/2"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>

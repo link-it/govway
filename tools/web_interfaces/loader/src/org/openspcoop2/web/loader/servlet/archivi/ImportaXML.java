@@ -96,7 +96,6 @@ public final class ImportaXML extends Action {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(Costanti.LABEL_CONFIGURAZIONI_XML, null),
 						new Parameter(Costanti.LABEL_IMPORTA, Costanti.SERVLET_NAME_ARCHIVI_IMPORTA_XML));
 				
 				// preparo i campi
@@ -123,7 +122,6 @@ public final class ImportaXML extends Action {
 				
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(Costanti.LABEL_CONFIGURAZIONI_XML, null),
 						new Parameter(Costanti.LABEL_IMPORTA, Costanti.SERVLET_NAME_ARCHIVI_IMPORTA_XML));
 				
 				// preparo i campi
@@ -212,7 +210,6 @@ public final class ImportaXML extends Action {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(Costanti.LABEL_CONFIGURAZIONI_XML, null),
 					new Parameter(Costanti.LABEL_IMPORTA, Costanti.SERVLET_NAME_ARCHIVI_IMPORTA_XML));
 
 			// preparo i campi

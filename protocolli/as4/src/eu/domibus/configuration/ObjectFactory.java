@@ -66,6 +66,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PropertyValueUrl }
+     */
+    public PropertyValueUrl createPropertyValueUrl() {
+        return new PropertyValueUrl();
+    }
+
+    /**
      * Create an instance of {@link ErrorHandling }
      */
     public ErrorHandling createErrorHandling() {
@@ -133,6 +140,13 @@ public class ObjectFactory {
      */
     public Legs createLegs() {
         return new Legs();
+    }
+
+    /**
+     * Create an instance of {@link PropertyValue }
+     */
+    public PropertyValue createPropertyValue() {
+        return new PropertyValue();
     }
 
     /**
@@ -290,6 +304,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Url }
+     */
+    public Url createUrl() {
+        return new Url();
+    }
+
+    /**
      * Create an instance of {@link PropertySet }
      */
     public PropertySet createPropertySet() {
@@ -318,6 +339,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Header }
+     */
+    public Header createHeader() {
+        return new Header();
+    }
+
+    /**
      * Create an instance of {@link Leg }
      */
     public Leg createLeg() {
@@ -336,6 +364,13 @@ public class ObjectFactory {
      */
     public As4 createAs4() {
         return new As4();
+    }
+
+    /**
+     * Create an instance of {@link PropertyValueHeader }
+     */
+    public PropertyValueHeader createPropertyValueHeader() {
+        return new PropertyValueHeader();
     }
 
     /**

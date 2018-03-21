@@ -21,10 +21,17 @@
 		<protocol-property name="ebmsActionPayloadProfile" value="XmlTestProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
 	    </azione>
+	    <azione nome="testRequiredProperties" soap-action="http://testRequiredProperties">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.soap:1:testRequiredProperties"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="DefaultXmlProfile"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
+		<protocol-property name="ebmsActionPropertySet" value="ecodexRequiredPropertySet"/>
+	    </azione>
         </port-type>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
 	<protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-SOAP" />
 	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/xmlProfile.xml"/>
+	<protocol-property name="ebmsServiceProperties" file="/etc/openspcoop2/as4/properties/requiredProperties.xml"/>
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
@@ -76,9 +83,16 @@
 		<protocol-property name="ebmsActionPayloadProfile" value="JsonTestProfile"/>
 		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
         </resource>
+        <resource nome="testDemoPropertySet" path="testDemoPropertySet">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="bdx:action.rest:2:testDemoPropertySet"/>
+		<protocol-property name="ebmsActionPayloadProfile" value="DefaultJsonProfile"/>
+		<protocol-property name="ebmsActionCompressPayload" boolean-value="false"/>
+		<protocol-property name="ebmsActionPropertySet" value="demoPropertySet"/>
+        </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
 	<!-- <protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-REST" /> -->
 	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/jsonProfile.xml"/>
+	<protocol-property name="ebmsServiceProperties" file="/etc/openspcoop2/as4/properties/requiredProperties.xml"/>
     </accordo-servizio-parte-comune>
 
 
