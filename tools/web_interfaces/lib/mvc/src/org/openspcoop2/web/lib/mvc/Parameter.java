@@ -22,6 +22,7 @@ package org.openspcoop2.web.lib.mvc;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,4 +105,36 @@ public class Parameter {
 		return sb.toString();
 	}
 
+	public static String estraiPathDaUrl(String url) {
+		if(url.contains("?")) {
+			return url.substring(0, url.indexOf("?"));
+		} else 
+			return url;
+	}
+	
+	public static List<Parameter> estraiParametriDaUrl(String url) {
+		List<Parameter> lista = new ArrayList<Parameter>();
+		if(url.contains("?")) {
+			String queryString = url.substring(url.indexOf("?")+1);
+			
+			String [] pair = queryString.split("&");
+			
+			if(pair != null && pair.length > 0) {
+				for (String pairTmp : pair) {
+					String [] coppia = pairTmp.split("=");
+					if(coppia != null && coppia.length > 0) {
+						String key = coppia[0];
+						String val = "";
+						if(coppia.length == 2) {
+							val = coppia[1];
+						}
+						lista.add(new Parameter(key, val));
+					}
+				}
+			}
+		}
+		
+		return lista;
+	}
+	
 }

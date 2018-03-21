@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
-import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -293,7 +291,11 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			
 			// mostro la visualizzazione del file
 			
-			// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO			
+			// setto la barra del titolo	TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO	
+			// Aggiorno la barra perche' possono essere cambiati gli id delle breadcrumbs a seconda del proprietario
+			lstParam = ppHelper.getTitolo(oggettoProprietario, this.tipoProprietario,  this.id, this.nome, this.idProprietario, this.nomeProprietario,this.nomeParentProprietario,this.urlChange, this.tipoAccordo,true);
+			lstParam.add(new Parameter(label,null));
+			
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
