@@ -1,3 +1,9 @@
+2018-03-22  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloAS4]
+	Aggiunta funzionalità OP-564
+	Aggiunta implementazione del protocollo AS4 e integrato il protocollo con Domibus al fine di implementare il protocollo di eDelivery.
+
 2018-01-24  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
