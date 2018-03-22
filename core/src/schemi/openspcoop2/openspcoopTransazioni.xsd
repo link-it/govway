@@ -1,0 +1,1519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/transazioni"
+	targetNamespace="http://www.openspcoop2.org/core/transazioni" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="transazioni">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="true" binding-soap-11="true" binding-soap-12="true" search="true" crud="false" all="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:jdbc generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="true">
+							<linkit:sql-table-list>
+								<linkit:sql-comment><![CDATA[TRANSAZIONI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="transazione"
+									object-type="transazione"/>
+								<linkit:sql-comment><![CDATA[DUMP - DATI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="dump-messaggio"
+									object-type="dump-messaggio"/>
+								<linkit:sql-table object-name="dump-allegato"
+									object-type="dump-allegato"/>
+								<linkit:sql-table object-name="dump-header-trasporto"
+									object-type="dump-header-trasporto"/>										
+							</linkit:sql-table-list>
+						</linkit:sql-script>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="false" check-tables-order-list="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+	<!-- ********* TRANSAZIONI ************* -->
+
+	<xsd:element name="transazione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="xsd:string">
+						<linkit:ws-interface search="true" crud="false" all="false" >
+							<linkit:ws-search-method-interface inUse="false" find="false" />
+							<linkit:ws-filter orCondition="false"/>
+						</linkit:ws-interface>
+					</linkit:interface>
+				    <linkit:sql-table-mapping name="transazioni" sequence-cycle="true"
+				    	comment="Contiene le principali informazioni di una transazione gestita sulla Porta">
+						<!-- primary key e' il l'uuid di tipo stringa, la tabella transazioni non possiede l'id long -->
+						<linkit:sql-table-primary-key generate-id="false">
+							<linkit:sql-table-pk-field name="id-transazione"/>
+						</linkit:sql-table-primary-key>
+				    	<!-- 
+				    		Indice per ottimizzare l'accesso diretto alla tabella
+				    		Questo indice non dovrebbe servire poichè tutti i database creano un indice associato alla chiave primaria
+				    		NOTA: attenzione che se viene disabilitata la chiave primaria, viene normalmente disabilitato anche l'indice
+				    	-->
+				    	<!--
+				    	<linkit:sql-table-index name="INDEX_TR_ID">
+				    		<linkit:sql-table-index-field name="id-transazione"/>
+				    	</linkit:sql-table-index>
+				    	-->
+						<!-- 
+							I dati nello storico delle transazioni  sono inizialmente scremati grazie alla data di ingresso.
+							Inizialmente si pensava che bastava quindi un indice con la sola data di ingresso per avere prestazioni accettabili.
+							Si pensava questo poichè anche se si utilizzava indici composti (cioè con più di una colonna), le successive colonne
+							erano tutte disordinate rispetto alla prima colonna.
+							Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) 
+							è comunque molto più efficente che usare una tabella.
+							Inoltre si è constatato che il doppio accesso indice-tabella è inefficente, a volte è più performante fare uno scan sulla tabella.
+							Per risolvere tutte le problematiche di performance bisogna usare indici che contengono tutte le colonne, anche quelle usate nelle select list,
+							in modo da non dover proprio accedere alla tabella (su cui si accede solo per l'eventuale dettaglio della singola transazione), 
+							e in modo da poter effettuare una 'full index scan' che risulta efficente.
+							Inoltre su Oracle, è stato rilevato che è utile forzare l'utilizzo di un indice, poichè a volte oracle sembra non effettuare la scelta di indice corretta.
+							
+							Quanto premesso sopra, la soluzione ideale sarebbe creare due indici ad hoc per la ricerca (INDEX_TR_SEARCH) e per le statistiche (INDEX_TR_STATS).
+							Questi indici conterrebbero tutte le colonne necessarie e verrebbero forzati il loro utilizzo per Oracle.
+							Putroppo questi indici hanno una lunghezza eccessiva che molti DBA o tipi di database non permettono di creare.
+							Per questo motivo vengono generati tutta una serie di indici che caso per caso possono essere utilizzati dove viene concesso la loro creazione.
+														
+							Gli indici vengono forniti in due possibilità (scegliere solamente una delle due possibilità)
+							1) Unico indice per ricerche e statistiche. Deve essere scelto UNO dei seguenti indici 
+							(a seconda di quanto il DBA permette di avere lungo un indice):
+							- INDEX_TR_ENTRY: colonne minime che permettono di effettuare un buon livello di filtro rispetto ai record nelle tabelle
+							- INDEX_TR_MEDIUM: utile per ottimizzare la generazione delle statistiche e per la ricerca per lo storico.
+							                   Per quanto concerne la ricerca non indicizza tutte le colonne su cui è possibile effettuare ricerca (WHERE)
+							- INDEX_TR_FULL: utile per ottimizzare la generazione delle statistiche e per la ricerca per lo storico. 
+							                 Contiene tutte le colonne su cui è possibile effettuare la ricerca (WHERE)
+							2) Due indici progettati in maniera specifica per la ricerca (INDEX_TR_SEARCH) e per la generazione delle statistiche (INDEX_TR_STATS).
+							Questi indici presentano la 'qualità' di possedere tutti i campi nell'indice stesso, anche quelli utilizzati nelle select field 
+							(compresi quelli su cui viene applicata una funzioni). Questa caratteristica permette alla query di essere eseguita tramite una 'full index scan'.
+							
+							Analisi dei tipi di database:
+							- postgresql: consente qualsiasi indice
+							- oracle: consente qualsiasi indice
+							- mysql: (verificato su mysql  Ver 15.1 Distrib 10.1.24-MariaDB) 
+							          non consente la creazione degli indici 'INDEX_TR_ADVANCED','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'. 
+							          Errore: Specified key was too long; max key length is 3072 bytes
+							- hsql: consente qualsiasi indice
+							- sqlserver: (verificato su sqlserver 2008)
+										  non consente la creazione degli indici 'INDEX_TR_ADVANCED','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'.
+										  Errore: The maximum limit for index or statistics key column list is 16.
+										  Mentre crea l'indice 'INDEX_TR_MEDIUM' però segnala un warning che l'indice potrebbe non funzionare e quindi dare errore:
+										  Warning! The maximum key length is 900 bytes. The index 'INDEX_TR_MEDIUM' has maximum length of 1997 bytes. 
+										  For some combination of large values, the insert/update operation will fail.
+						-->	
+				    	<linkit:sql-table-index name="INDEX_TR_ENTRY">
+				    		<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="esito"/>
+				    		<linkit:sql-table-index-field name="esito-contesto"/>
+				    		<linkit:sql-table-index-field name="pdd-ruolo"/>
+				    		<linkit:sql-table-index-field name="pdd-codice"/>
+				    		<linkit:sql-table-index-field name="tipo-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="tipo-servizio"/>
+				    		<linkit:sql-table-index-field name="nome-servizio"/>
+				    	</linkit:sql-table-index>
+				    	<linkit:sql-table-index name="INDEX_TR_MEDIUM">
+				    		<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="esito"/>
+				    		<linkit:sql-table-index-field name="esito-contesto"/>
+				    		<linkit:sql-table-index-field name="pdd-ruolo"/>
+				    		<linkit:sql-table-index-field name="pdd-codice"/>
+				    		<linkit:sql-table-index-field name="tipo-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="tipo-servizio"/>
+				    		<linkit:sql-table-index-field name="nome-servizio"/>
+				    		<linkit:sql-table-index-field name="azione"/>
+				    		<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
+				    		<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
+				    		<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
+				    		<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+				    		<linkit:sql-table-index-field name="stato"/>
+				    	</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_TR_FULL">
+							<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="esito"/>
+							<linkit:sql-table-index-field name="esito-contesto"/>
+							<linkit:sql-table-index-field name="pdd-ruolo"/>
+							<linkit:sql-table-index-field name="pdd-codice"/>
+							<linkit:sql-table-index-field name="tipo-soggetto-erogatore"/>
+							<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
+							<linkit:sql-table-index-field name="tipo-servizio"/>
+							<linkit:sql-table-index-field name="nome-servizio"/>
+							<linkit:sql-table-index-field name="azione"/>
+							<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
+							<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
+							<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
+							<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+							<linkit:sql-table-index-field name="id-correlazione-applicativa"/>
+							<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
+							<linkit:sql-table-index-field name="stato"/>
+							<linkit:sql-table-index-field name="protocollo"/>
+							<linkit:sql-table-index-field name="eventi-gestione"/>
+							<linkit:sql-table-index-field name="cluster-id"/>
+						</linkit:sql-table-index>
+				    	<linkit:sql-table-index name="INDEX_TR_SEARCH">
+				    		<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="esito"/>
+				    		<linkit:sql-table-index-field name="esito-contesto"/>
+				    		<linkit:sql-table-index-field name="pdd-ruolo"/>
+				    		<linkit:sql-table-index-field name="pdd-codice"/>
+				    		<linkit:sql-table-index-field name="tipo-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="tipo-servizio"/>
+				    		<linkit:sql-table-index-field name="nome-servizio"/>
+				    		<linkit:sql-table-index-field name="azione"/>
+				    		<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
+				    		<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
+				    		<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
+				    		<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+				    		<linkit:sql-table-index-field name="id-correlazione-applicativa"/>
+				    		<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
+				    		<linkit:sql-table-index-field name="stato"/>
+				    		<linkit:sql-table-index-field name="protocollo"/>
+				    		<linkit:sql-table-index-field name="eventi-gestione"/>
+				    		<linkit:sql-table-index-field name="cluster-id"/>
+				    		<linkit:sql-table-index-field name="id-transazione"/>
+				    		<linkit:sql-table-index-field name="data-uscita-richiesta" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="data-ingresso-risposta" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="data-uscita-risposta" ignoreTypeCompatibility="true"/>
+				    	</linkit:sql-table-index>
+				    	<linkit:sql-table-index name="INDEX_TR_STATS">
+				    		<linkit:sql-table-index-field name="data-ingresso-richiesta" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="pdd-ruolo"/>
+				    		<linkit:sql-table-index-field name="pdd-codice"/>
+				    		<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
+				    		<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
+				    		<linkit:sql-table-index-field name="tipo-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="nome-soggetto-erogatore"/>
+				    		<linkit:sql-table-index-field name="tipo-servizio"/>
+				    		<linkit:sql-table-index-field name="nome-servizio"/>
+				    		<linkit:sql-table-index-field name="azione"/>
+				    		<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
+				    		<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+				    		<linkit:sql-table-index-field name="esito"/>
+				    		<linkit:sql-table-index-field name="esito-contesto"/>
+				    		<linkit:sql-table-index-field name="stato"/>
+				    		<linkit:sql-table-index-field name="data-uscita-richiesta" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="data-ingresso-risposta" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="data-uscita-risposta" ignoreTypeCompatibility="true"/>
+				    		<linkit:sql-table-index-field name="richiesta-ingresso-bytes" />
+				    		<linkit:sql-table-index-field name="richiesta-uscita-bytes"/>
+				    		<linkit:sql-table-index-field name="risposta-ingresso-bytes"/>
+				    		<linkit:sql-table-index-field name="risposta-uscita-bytes"/>
+				    	</linkit:sql-table-index>
+						<!-- Indici per ottimizzare le ricerche in base a id e id porta -->
+						<linkit:sql-table-index name="INDEX_TR_FILTROD_REQ">
+							<linkit:sql-table-index-field name="id-messaggio-richiesta"/>
+						    <linkit:sql-table-index-field name="pdd-ruolo"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_TR_FILTROD_RES">
+							<linkit:sql-table-index-field name="id-messaggio-risposta"/>
+						    <linkit:sql-table-index-field name="pdd-ruolo"/>
+						</linkit:sql-table-index>
+						<!-- Indici per ottimizzare le ricerche in base a data contenuta all'interno dell'id -->
+						<linkit:sql-table-index name="INDEX_TR_FILTROD_REQ_2">
+							<!-- <linkit:sql-table-index-field name="data-id-msg-richiesta" order="DESC" ignoreTypeCompatibility="true"/> -->
+							<linkit:sql-table-index-field name="data-id-msg-richiesta" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="id-messaggio-richiesta"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_TR_FILTROD_RES_2">
+							<!-- <linkit:sql-table-index-field name="data-id-msg-risposta" order="DESC" ignoreTypeCompatibility="true"/> -->
+							<linkit:sql-table-index-field name="data-id-msg-risposta" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="id-messaggio-risposta"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id" varchar="36"/> <!-- uuid max length: 36 -->
+								<linkit:sql-column-comment><![CDATA[Identificativo di transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment>Identificativo unico della transazione</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+			    <!-- Stato di una transazione (marca la transazione con uno stato tramite la configurazione plugin) -->
+			    <xsd:element name="stato" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                	<linkit:sql-column-mapping varchar="100"/>
+			                    <linkit:sql-column-comment><![CDATA[Stato della Transazione]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment>Stato della transazione</linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>			    
+			    
+			    <!-- Ruolo della Transazione -->
+			    <xsd:element name="ruolo-transazione" type="xsd:int">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-comment><![CDATA[Ruolo della transazione
+sconosciuto (-1)
+invocazioneOneway (1)
+invocazioneSincrona (2)
+invocazioneAsincronaSimmetrica (3)
+rispostaAsincronaSimmetrica (4)
+invocazioneAsincronaAsimmetrica (5)
+richiestaStatoAsincronaAsimmetrica (6)
+integrationManager (7)]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Ruolo della transazione
+sconosciuto (-1)
+invocazioneOneway (1)
+invocazioneSincrona (2)
+invocazioneAsincronaSimmetrica (3)
+rispostaAsincronaSimmetrica (4)
+invocazioneAsincronaAsimmetrica (5)
+richiestaStatoAsincronaAsimmetrica (6)
+integrationManager (7)]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    
+			    <!-- Esito di una transazione -->
+			    <xsd:element name="esito" type="xsd:int" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+				
+				<!-- Contesto di una transazione -->
+				<xsd:element name="esito-contesto" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Contesto della Transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>	
+				</xsd:element>
+								    
+			    <!-- Protocollo della transazione -->
+			    <xsd:element name="protocollo" type="xsd:string" >
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                	<linkit:sql-column-mapping varchar="20"/>
+			                    <linkit:sql-column-comment><![CDATA[Protocollo utilizzato per la transazione]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Protocollo utilizzato per la transazione]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    
+				<!-- Tempi di latenza -->
+				<xsd:element name="data-accettazione-richiesta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Tempi di latenza]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui la richiesta è pervenuta (connessione instaurata) sulla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-ingresso-richiesta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è ricevuto dalla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-uscita-richiesta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-accettazione-risposta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui la risposta è pervenuta (connessione instaurata) sulla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-ingresso-risposta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta è ricevuto dalla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-uscita-risposta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di risposta è stato inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- Dimensione messaggi gestiti -->
+				<xsd:element name="richiesta-ingresso-bytes" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Dimensione messaggi gestiti]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Dimensione del messaggio di richiesta ricevuto sulla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="richiesta-uscita-bytes" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Dimensione messaggi gestiti]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Dimensione del messaggio di richiesta inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="risposta-ingresso-bytes" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Dimensione messaggi gestiti]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Dimensione del messaggio di risposta ricevuto sulla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="risposta-uscita-bytes" type="xsd:unsignedLong" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Dimensione messaggi gestiti]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Dimensione del messaggio di risposta inoltrato dalla Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- Dati PdD -->
+				<xsd:element name="pdd-codice" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Dati Porta di Dominio]]></linkit:sql-column-comment>
+								<linkit:sql-column-mapping varchar="110"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo porta del soggetto che ha gestito la transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="pdd-tipo-soggetto" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo del soggetto che ha gestito la transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="pdd-nome-soggetto" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="80"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome del soggetto che ha gestito la transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="pdd-ruolo" type="pdd-ruolo" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Ruolo della porta durante la gestione della transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    		    
+				<!-- Eventuale FAULT Applicativo -->
+				<xsd:element name="fault-integrazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-text="true"/>
+								<linkit:sql-column-comment><![CDATA[Eventuali FAULT]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Fault di integrazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="fault-cooperazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Fault di cooperazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- Soggetto Fruitore -->
+				<xsd:element name="tipo-soggetto-fruitore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-column-comment><![CDATA[Soggetto Fruitore]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo del soggetto mittente che ha effettuato la richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome-soggetto-fruitore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="80"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome del soggetto mittente che ha effettuato la richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="idporta-soggetto-fruitore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="110"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo Porta del soggetto mittente che ha effettuato la richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element> 
+				<xsd:element name="indirizzo-soggetto-fruitore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indirizzo del soggetto mittente che ha effettuato la richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- Soggetto Erogatore -->
+				<xsd:element name="tipo-soggetto-erogatore" type="xsd:string" minOccurs="0">
+				    <xsd:annotation>
+				        <xsd:appinfo>
+				            <linkit:generator
+				                xmlns:linkit="http://www.link.it/project_generator">
+				            	<linkit:sql-column-mapping varchar="20"/>
+				                <linkit:sql-column-comment><![CDATA[Soggetto Erogatore]]></linkit:sql-column-comment>
+				            	<linkit:sql-ddl-column-comment><![CDATA[Tipo del soggetto destinatario della richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+				            </linkit:generator>
+				        </xsd:appinfo>
+				    </xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome-soggetto-erogatore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="80"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Nome del soggetto destinatario della richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="idporta-soggetto-erogatore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="110"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo Porta del soggetto destinatario della richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="indirizzo-soggetto-erogatore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="110"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indirizzo del soggetto destinatario della richiesta gestita nella transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- Identificativi Messaggi -->
+				<xsd:element name="id-messaggio-richiesta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_messaggio_richiesta"/>
+								<linkit:sql-column-comment><![CDATA[Identificativi Messaggi]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo del messaggio di richiesta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-messaggio-risposta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_messaggio_risposta"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo del messaggio di risposta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-id-msg-richiesta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+							    <linkit:sql-column-mapping name="data_id_msg_richiesta"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Data interna all'identificativo del messaggio di richiesta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-id-msg-risposta" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+							    <linkit:sql-column-mapping name="data_id_msg_risposta"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Data interna all'identificativo del messaggio di risposta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- altre informazioni -->
+				<xsd:element name="profilo-collaborazione-op2" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Altre informazioni di protocollo]]></linkit:sql-column-comment>
+							    <linkit:sql-column-mapping name="profilo_collaborazione_op2"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Profilo di collaborazione codificato nell'engine della Porta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="profilo-collaborazione-prot" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Profilo di collaborazione all'interno della specifica del protocollo]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-collaborazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo di Collaborazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="uri-accordo-servizio" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Accordo di Servizio Parte Comune]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo del Servizio]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Nome del Servizio]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="versione-servizio" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Versione del Servizio]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="azione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Identificazione dell'azione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- Identificativo asincrono se utilizzato come riferimento messaggio nella richiesta (2 fase asincrona) -->
+				<xsd:element name="id-asincrono" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Identificativo asincrono se utilizzato come riferimento messaggio nella richiesta (2 fase asincrona)
+e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo asincrono se utilizzato come riferimento messaggio nella richiesta (2 fase asincrona)
+e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-servizio-correlato" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo del Servizio Correlato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome-servizio-correlato" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Nome del Servizio Correlato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    
+				<!-- info protocollo -->
+				<xsd:element name="header-protocollo-richiesta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-text="true"/>
+								<linkit:sql-column-comment><![CDATA[Header Protocollo richiesta/risposta]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Header Protocollo della richiesta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="digest-richiesta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Digest della richiesta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    <xsd:element name="protocollo-ext-info-richiesta" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping medium-text="true" name="prot_ext_info_richiesta"/>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Informazioni ulteriori di protocollo della richiesta]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+				<xsd:element name="header-protocollo-risposta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Header Protocollo della risposta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="digest-risposta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Digest della risposta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    <xsd:element name="protocollo-ext-info-risposta" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping medium-text="true" name="prot_ext_info_risposta"/>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Informazioni ulteriori di protocollo della risposta]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    
+				<!-- ottimizzazione tracce -->
+			    <xsd:element name="traccia-richiesta" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping text="true" />
+			                    <linkit:sql-column-comment><![CDATA[Tracciatura e Diagnostica emessa dalla PdD]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Informazioni sulla traccia della richiesta]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+				<xsd:element name="traccia-risposta" type="xsd:string" minOccurs="0">
+				    <xsd:annotation>
+				        <xsd:appinfo>
+				            <linkit:generator
+				                xmlns:linkit="http://www.link.it/project_generator">
+				                <linkit:sql-column-mapping text="true" />
+				            	<linkit:sql-ddl-column-comment><![CDATA[Informazioni sulla traccia della risposta]]></linkit:sql-ddl-column-comment>
+				            </linkit:generator>
+				        </xsd:appinfo>
+				    </xsd:annotation>
+				</xsd:element>
+			    
+			    <!-- ottimizzazione diagnostici -->
+			    <xsd:element name="diagnostici" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping text="true" />
+			                	<linkit:sql-ddl-column-comment><![CDATA[Informazioni sui diagnostici emessi]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="diagnostici-list1" type="xsd:string" minOccurs="0">
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment><![CDATA[Informazioni avanzate sui diagnostici emessi]]></linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="diagnostici-list2" type="xsd:string" minOccurs="0" >
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-column-mapping text="true" />
+			    				<linkit:sql-ddl-column-comment><![CDATA[Informazioni avanzate sui diagnostici emessi]]></linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+				<xsd:element name="diagnostici-list-ext" type="xsd:string" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping text="true" />
+								<linkit:sql-ddl-column-comment><![CDATA[Informazioni avanzate sui diagnostici emessi]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="diagnostici-ext" type="xsd:string" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping text="true" />
+								<linkit:sql-ddl-column-comment><![CDATA[Informazioni avanzate sui diagnostici emessi]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+				<!-- informazioni di integrazione -->
+				<xsd:element name="id-correlazione-applicativa" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[informazioni di integrazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo di correlazione applicativa della richiesta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-correlazione-applicativa-risposta" type="xsd:string"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_correlazione_risposta"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo di correlazione applicativa della risposta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="servizio-applicativo-fruitore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo fruitore]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo erogatore]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="operazione-im" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Operazione effettuata tramite il servizio Integration Manager]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="location-richiesta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Location della traccia di richiesta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="location-risposta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Location della traccia di risposta]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    <xsd:element name="nome-porta" type="xsd:string" minOccurs="0">
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-column-mapping varchar="4000" />
+			    				<linkit:sql-ddl-column-comment><![CDATA[Nome della Porta Invocata]]></linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="credenziali" type="xsd:string" minOccurs="0">
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment><![CDATA[Credenziali utilizzate dall'applicativo client]]></linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="location-connettore" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping text="true" />
+			                	<linkit:sql-ddl-column-comment><![CDATA[Endpoint di inoltro del messaggio]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="url-invocazione" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping text="true" />
+			                	<linkit:sql-ddl-column-comment><![CDATA[URL di Invocazione della Porta utilizzata dal client]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    
+				<!-- filtro duplicati (0=originale,-1=duplicata,<0=quanti duplicati esistono) -->
+				<xsd:element name="duplicati-richiesta" type="xsd:int" minOccurs="0" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[filtro duplicati (0=originale,-1=duplicata,N=quanti duplicati esistono)]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Duplicati della richiesta (0=originale,-1=duplicata,N=quanti duplicati esistono)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="duplicati-risposta" type="xsd:int" minOccurs="0" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Duplicati della risposta (0=originale,-1=duplicata,N=quanti duplicati esistono)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+
+			    <!-- Cluster ID -->
+			    <xsd:element name="cluster-id" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                	<linkit:sql-column-mapping name="cluster_id" varchar="100" />
+			                    <linkit:sql-column-comment><![CDATA[Cluster ID]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Cluster ID]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>			        
+			    </xsd:element>
+				
+				<!-- Indirizzo IP -->
+				<xsd:element name="socket-client-address" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="socket_client_address" varchar="255" />
+								<linkit:sql-column-comment><![CDATA[Indirizzo IP client letto dal socket]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Indirizzo IP client letto dal socket]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
+				</xsd:element>
+				<xsd:element name="transport-client-address" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="transport_client_address" varchar="255" />
+								<linkit:sql-column-comment><![CDATA[Indirizzo IP client letto dall'header di trasporto]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Indirizzo IP client letto dall'header di trasporto]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
+				</xsd:element>
+
+			    <!-- eventi emessi sulla gestione della transazione -->
+			    <xsd:element name="eventi-gestione" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping varchar="1000" />
+			                    <linkit:sql-column-comment><![CDATA[Eventi emessi durante la gestione della transazione]]></linkit:sql-column-comment>
+			                	<linkit:sql-ddl-column-comment><![CDATA[Eventi emessi durante la gestione della transazione]]></linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+
+				<!-- Dump Messaggi -->
+				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="2">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping object-name="dump-messaggio" object-type="dump-messaggio"
+									relationship="none"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<!-- Extended Info -->
+				<xsd:element ref="transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/>
+					
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="transazione-extended-info">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface generate="false"/>
+					<linkit:sql-table-mapping generate-sql="false"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string"/>
+				<xsd:element name="valore" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+
+
+	<!-- ********* DUMP ************* -->
+
+	<xsd:element name="dump-messaggio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-dump-messaggio">
+						<linkit:ws-interface search="true" crud="false" all="false" >
+							<linkit:ws-search-method-interface inUse="false" find="false" />
+							<linkit:ws-filter orCondition="false"/>
+						</linkit:ws-interface>
+					</linkit:interface>
+				    <linkit:sql-table-mapping name="dump_messaggi" sequence-cycle="true"
+				    	comment="Dump dei messaggi transitati nella Porta di Dominio">
+						<!-- Indici per ottimizzare le ricerche basate sull'id della trasazione -->
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-field name="id-transazione"/>
+						</linkit:sql-table-index>
+					    <!-- Indici per il post process -->
+					    <linkit:sql-table-index>
+					        <linkit:sql-table-index-field name="post-processed"/>
+					    	<linkit:sql-table-index-field name="post-process-timestamp" ignoreTypeCompatibility="true"/>
+					    </linkit:sql-table-index>
+					    <linkit:sql-table-index>
+					        <linkit:sql-table-index-column name="post_process_config_id"/>
+					    </linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>Identificativo della transazione a cui appartiene il messaggio</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>Ruolo del messaggio all'interno della transazione</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="body" type="xsd:hexBinary" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping long-binary="true"/>
+								<linkit:sql-ddl-column-comment>Body del messaggio (es. Envelope in SOAP)</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="allegato" type="dump-allegato" minOccurs="0"
+					maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_messaggio" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo del messaggio (FK verso dump_messaggi(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="header-trasporto" type="dump-header-trasporto" minOccurs="0"
+					maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_messaggio" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo del messaggio (FK verso dump_messaggi(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    <xsd:element name="dump-timestamp"  type="xsd:dateTime" >
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment>Data in cui è stato salvato il messaggio</linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			    <!-- Dump non real-time -->
+			    <xsd:element name="post-process-content-type" type="xsd:string" minOccurs="0">
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment>ContentType del Messaggio (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="post-process-header" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping name="post_process_header" medium-text="true"/>
+			                	<linkit:sql-ddl-column-comment>Header del Messaggio (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="post-process-filename" type="xsd:string" minOccurs="0">
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment>Filename del Messaggio, in caso di salvataggio su file (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="post-process-content" type="xsd:hexBinary" minOccurs="0">
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment>Stream Content del Messaggio, in caso di salvataggio su db (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+				<xsd:element name="post-process-config-id" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="4000"/>
+								<linkit:sql-ddl-column-comment>Nome della porta delegata o applicativa se la configurazione utilizzata era definita nella porta, oppure null se e' la configurazione utilizzata era quella di default (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    <xsd:element name="post-process-timestamp"  type="xsd:dateTime" minOccurs="0">
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment>Data di salvataggio dello stream (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="post-processed" type="xsd:int" minOccurs="0" default="1" >
+			    	<xsd:annotation>
+			    		<xsd:appinfo>
+			    			<linkit:generator
+			    				xmlns:linkit="http://www.link.it/project_generator">
+			    				<linkit:sql-ddl-column-comment>Indicazione se l'elaborazione PostProcess è stata effettuata (0/1 o -2 in casi speciali di SDK processing)</linkit:sql-ddl-column-comment>
+			    			</linkit:generator>
+			    		</xsd:appinfo>
+			    	</xsd:annotation>
+			    </xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="dump-allegato">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				    <linkit:sql-table-mapping name="dump_allegati" sequence-cycle="true"
+				    	comment="Dump degli allegati associati ai messaggi transitati nella Porta di Dominio">
+						<!-- Indici per ottimizzare le ricerche basate sull'id del messaggio -->
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_messaggio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="id-allegato" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo univoco dell'allegato</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="location" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Location dell'allegato</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="mimetype" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Media Type dell'allegato</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="allegato" type="xsd:hexBinary" minOccurs="0">
+			    <xsd:annotation>
+			        <xsd:appinfo>
+			            <linkit:generator
+			                xmlns:linkit="http://www.link.it/project_generator">
+			                <linkit:sql-column-mapping long-binary="true"/>
+			            	<linkit:sql-ddl-column-comment>Contenuto binario dell'allegato</linkit:sql-ddl-column-comment>
+			            </linkit:generator>
+			        </xsd:appinfo>
+			    </xsd:annotation>
+			</xsd:element>
+		    <xsd:element name="dump-timestamp"  type="xsd:dateTime" >
+		    	<xsd:annotation>
+		    		<xsd:appinfo>
+		    			<linkit:generator
+		    				xmlns:linkit="http://www.link.it/project_generator">
+		    				<linkit:sql-ddl-column-comment>Data di registrazione dell'allegato</linkit:sql-ddl-column-comment>
+		    			</linkit:generator>
+		    		</xsd:appinfo>
+		    	</xsd:annotation>
+		    </xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="dump-header-trasporto">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				    <linkit:sql-table-mapping sequence-cycle="true"
+				    	comment="Dump degli header di trasporto associati ai messaggi transitati nella Porta di Dominio">
+						<linkit:sql-table-unique>
+							<linkit:sql-table-unique-column name="id"/>
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+						<!-- Indici per ottimizzare le ricerche basate sull'id del messaggio -->
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_messaggio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Nome dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="valore" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping medium-text="true"/>
+							<linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		    <xsd:element name="dump-timestamp"  type="xsd:dateTime" >
+		    	<xsd:annotation>
+		    		<xsd:appinfo>
+		    			<linkit:generator
+		    				xmlns:linkit="http://www.link.it/project_generator">
+		    				<linkit:sql-ddl-column-comment>Data di registrazione dell'header</linkit:sql-ddl-column-comment>
+		    			</linkit:generator>
+		    		</xsd:appinfo>
+		    	</xsd:annotation>
+		    </xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+
+	<!-- ********* DUMP (Identificativi e Enumeration) ************* -->
+
+	<!-- Vincoli per riuscire ad utilizzare funzioni di group by -->
+	<xsd:simpleType name="string-max-4000">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="id-dump-messaggio">
+		<xsd:sequence>
+			<xsd:element name="id-transazione" type="xsd:string"/>
+			<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Enumeration -->
+
+	<xsd:simpleType name="tipo-messaggio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="RichiestaIngresso"/>
+			<xsd:enumeration value="RichiestaUscita"/>
+			<xsd:enumeration value="RispostaIngresso"/>
+			<xsd:enumeration value="RispostaUscita"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="pdd-ruolo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delegata"/>
+			<xsd:enumeration value="applicativa"/>
+			<xsd:enumeration value="router"/>
+			<xsd:enumeration value="integrationManager"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+	<!-- TABELLA DI SERVIZIO PER POTER COSTRUIRE LA FOREIGN KEY -->
+	<xsd:element name="dump-configurazione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="xsd:string"/>
+					<linkit:sql-table-mapping name="dump_config">
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tabella_di_servizio" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+</xsd:schema>
