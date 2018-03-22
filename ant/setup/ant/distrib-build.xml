@@ -109,6 +109,25 @@
 		      <include name="*.xml"/>
 		    </fileset>
 		</copy>
+
+		<!-- Cfg -->
+		<mkdir dir="${dist}/cfg"/>
+		<copy todir="${dist}/cfg">
+		    <fileset dir="${tmp_cfg}" />
+		</copy>
+                <fileset dir="${dist}/cfg" id="distCFG.txt">
+                        <include name="*"/>
+                </fileset>
+		<pathconvert pathsep=" " property="distCFG_list.txt" refid="distCFG.txt">
+                        <map from="${dist}/cfg" to=""/>
+                </pathconvert>
+		<echo message="LIST CFG [${distCFG_list.txt}]"/>
+		<if>
+			<equals arg1="${distCFG_list.txt}" arg2=""/>
+			<then>
+				<delete dir="${dist}/cfg"/>
+			</then>
+		</if>
 		
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>

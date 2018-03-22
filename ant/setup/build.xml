@@ -30,6 +30,7 @@
 	<property name="tmp_archivi" location="${build}/archivi" />
 	<property name="tmp_sql" location="${build}/sql" />
 	<property name="tmp_ds" location="${build}/ds" />
+	<property name="tmp_cfg" location="${build}/cfg" />
 	
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
@@ -44,6 +45,7 @@
 		<mkdir dir="${tmp_sql}" />
 		<mkdir dir="${tmp_ds}" />
 		<mkdir dir="${tmp_archivi}" />
+		<mkdir dir="${tmp_cfg}" />
 		<mkdir dir="${dist}" />
 	</target>
 	
@@ -204,8 +206,44 @@
 	    	</else>
 		</if>	
 		
+		<!-- Impostazione AS4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<antcall target="setup_as4"/>
+			</then>
+		</if>
+
 	</target>
 		
+	<target name="setup_as4" depends="_setup_as4"/>
+	<target name="_setup_as4">
+		<mkdir dir="${tmp_cfg}/as4"/>
+		<mkdir dir="${tmp_cfg}/as4/securityPolicies"/>
+		<copy todir="${tmp_cfg}/securityPolicies">
+			<fileset dir="${deploy_resources}/protocolli/as4/securityPolicies"/>
+		</copy>
+		<copy file="${deploy_resources}/protocolli/as4/as4_local.properties" tofile="${tmp_cfg}"/>
+
+		<!-- impostazione workDir in as4.properties -->
+                <fileset dir="${deploy_sw}" id="archiveAS4.txt">
+                        <include name="openspcoop2_as4-protocol_*.jar"/>
+			<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+                </fileset>
+		<pathconvert pathsep=" " property="archiveAS4_name.txt" refid="archiveAS4.txt">
+                        <map from="${deploy_sw}/" to=""/>
+                </pathconvert>
+		<!-- <echo message="FILE_NAME [${archiveAS4_name.txt}]"/> -->
+                
+		<unzip src="${deploy_sw}/${archiveAS4_name.txt}" dest="${tmp_cfg}/JAR_AS4"/>
+		<concat destfile="${tmp_cfg}/JAR_AS4/as4.properties" append="yes">
+<![CDATA[# WorkDir
+org.openspcoop2.protocol.as4.confDirectory=${work_dir}]]></concat>
+		<delete file="${deploy_sw}/${archiveAS4_name.txt}"/>
+		<jar destfile="${deploy_sw}/${archiveAS4_name.txt}" basedir="${tmp_cfg}/JAR_AS4"/>
+
+	</target>
+
 	<target name="setup_pdd" depends="_setup_pdd"/>
 	<target name="_setup_pdd">
 		<if>

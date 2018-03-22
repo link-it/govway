@@ -1,0 +1,24 @@
+# -------- Domibus Configuration -----
+
+# SecurityPolicy Folder
+org.openspcoop2.protocol.as4.securityPolicies.folder=/etc/openspcoop2/as4/securityPolicies
+# org.openspcoop2.protocol.as4.securityPolicies.folder=DOMIBUS_DIR/conf/domibus/policies
+
+
+
+# --- Comunicazione HTTP verso Gateway -----
+
+# Configurazione dell'indirizzamento verso il domibusGateway
+org.openspcoop2.protocol.as4.domibusGateway.config.default.url=http://DOMIBUS-HOST:8080/domibus/services/backend
+
+
+
+# --- Comunicazione JMS verso Broker -----
+
+# URLBroker JMS
+org.openspcoop2.protocol.as4.domibusJms.jndi.java.naming.provider.url=tcp://DOMIBUS-HOST:61616
+
+# Credenziali
+org.openspcoop2.protocol.as4.domibusJms.username=admin
+org.openspcoop2.protocol.as4.domibusJms.password=123456
+

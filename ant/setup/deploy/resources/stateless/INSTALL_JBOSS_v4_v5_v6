@@ -18,5 +18,8 @@ Per completare il processo di installazione si devono effettuare i seguenti pass
 
    7. Installare il DriverJDBC, relativo al tipo di RDBMS indicato in fase di setup, nella directory <JBOSS_HOME>/server/default/lib
 
-   8. Avviare JBoss (ad esempio su Linux con il comando <JBOSS_HOME>/bin/run.sh oppure utilizzando il relativo service)
+   8. Se il setup ha una directory cfg, copiarne il contenuto nella directory di lavoro indicato durante la fase di setup.
+      Es. cp -r dist/cfg/* /etc/openspcoop2/
+
+   9. Avviare JBoss (ad esempio su Linux con il comando <JBOSS_HOME>/bin/run.sh oppure utilizzando il relativo service)
 

@@ -22,6 +22,7 @@
 	<property name="deploy_sw_openspcoop2_jars" location="deploy/sw/openspcoop2" />
 	<property name="deploy_sql" location="deploy/sql" />
 	<property name="deploy_jms" location="deploy/jms" />
+	<property name="deploy_resources" location="deploy/resources" />
 	<property name="code_jms_pdd" location="../../core/deploy/code_jms" />
 
 	<target name="prepare_software" depends="clean_prepare,init_prepare">

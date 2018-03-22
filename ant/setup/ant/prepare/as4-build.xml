@@ -33,6 +33,14 @@
 		<delete dir="backend"/>
 
 		<copy file="${stub_as4}/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar" todir="${deploy_sw}"/>
+
+		<mkdir dir="${deploy_resources}/protocolli"/>
+		<mkdir dir="${deploy_resources}/protocolli/as4"/>
+		<copy file="${as4}/deploy/resources/properties/as4_local.properties_minimal" tofile="${deploy_resources}/protocolli/as4/as4_local.properties"/>
+		<mkdir dir="${deploy_resources}/protocolli/as4/securityPolicies"/>
+		<copy todir="${deploy_resources}/protocolli/as4/securityPolicies">
+			<fileset dir="${as4}/deploy/resources/securityPolicies"/>
+		</copy>
 		
 	</target>
 	
