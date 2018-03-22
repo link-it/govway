@@ -220,10 +220,11 @@
 	<target name="_setup_as4">
 		<mkdir dir="${tmp_cfg}/as4"/>
 		<mkdir dir="${tmp_cfg}/as4/securityPolicies"/>
-		<copy todir="${tmp_cfg}/securityPolicies">
+		<copy todir="${tmp_cfg}/as4/securityPolicies">
 			<fileset dir="${deploy_resources}/protocolli/as4/securityPolicies"/>
 		</copy>
-		<copy file="${deploy_resources}/protocolli/as4/as4_local.properties" tofile="${tmp_cfg}"/>
+		<copy file="${deploy_resources}/protocolli/as4/as4_local.properties" todir="${tmp_cfg}"/>
+		<replace file="${tmp_cfg}/as4_local.properties" token="WORK_DIR" value="${work_dir}"/>
 
 		<!-- impostazione workDir in as4.properties -->
                 <fileset dir="${deploy_sw}" id="archiveAS4.txt">
@@ -241,6 +242,7 @@
 org.openspcoop2.protocol.as4.confDirectory=${work_dir}]]></concat>
 		<delete file="${deploy_sw}/${archiveAS4_name.txt}"/>
 		<jar destfile="${deploy_sw}/${archiveAS4_name.txt}" basedir="${tmp_cfg}/JAR_AS4"/>
+		<delete dir="${tmp_cfg}/JAR_AS4"/>
 
 	</target>
 
