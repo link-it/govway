@@ -1,0 +1,71 @@
+<project name="openspcoop2-stub-fromwsdl-wstransazioni">
+    <description>
+        Produzione degli stub relativi al package org.openspcoop2.core.transazioni.ws.client dal wsdl
+    </description>
+	
+	<import file="openspcoop2-wstransazioni-stub.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	
+	<target name="-build_stub_cxf_from_wsdl">
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="Transazione"/>
+			<param name="stubVariableEntity" value="transazione"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_transazioni_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.transazioni.ws.client.transazione.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/TransazioneSearch_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_transazioni_ws_client}/org/openspcoop2/core/transazioni/ws/client/transazione/search"/>
+			<param name="stubJavaClassNameClient" value="Transazione_TransazionePortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="Transazione"/>
+			<param name="stubVariableEntity" value="transazione"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_transazioni_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.transazioni.ws.client.transazione.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/TransazioneSearch_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_transazioni_ws_client}/org/openspcoop2/core/transazioni/ws/client/transazione/search"/>
+			<param name="stubJavaClassNameClient" value="Transazione_TransazionePortSoap12_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="DumpMessaggio"/>
+			<param name="stubVariableEntity" value="dumpMessaggio"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_transazioni_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.transazioni.ws.client.dumpmessaggio.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/DumpMessaggioSearch_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_transazioni_ws_client}/org/openspcoop2/core/transazioni/ws/client/dumpmessaggio/search"/>
+			<param name="stubJavaClassNameClient" value="DumpMessaggio_DumpMessaggioPortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="DumpMessaggio"/>
+			<param name="stubVariableEntity" value="dumpMessaggio"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_transazioni_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.transazioni.ws.client.dumpmessaggio.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/DumpMessaggioSearch_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_transazioni_ws_client}/org/openspcoop2/core/transazioni/ws/client/dumpmessaggio/search"/>
+			<param name="stubJavaClassNameClient" value="DumpMessaggio_DumpMessaggioPortSoap12_Client.java"/>
+		</antcall>
+		
+		
+			
+	</target>
+	
+	
+</project>

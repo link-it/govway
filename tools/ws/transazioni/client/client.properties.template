@@ -1,0 +1,16 @@
+transazione.soap11.url=http://127.0.0.1:8080/openspcoop2Transazioni/Transazione/Soap11
+#transazione.soap11.username=INSERIRE_USERNAME
+#transazione.soap11.password=INSERIRE_PASSWORD
+
+transazione.soap12.url=http://127.0.0.1:8080/openspcoop2Transazioni/Transazione/Soap12
+#transazione.soap12.username=INSERIRE_USERNAME
+#transazione.soap12.password=INSERIRE_PASSWORD
+
+dumpMessaggio.soap11.url=http://127.0.0.1:8080/openspcoop2Transazioni/DumpMessaggio/Soap11
+#dumpMessaggio.soap11.username=INSERIRE_USERNAME
+#dumpMessaggio.soap11.password=INSERIRE_PASSWORD
+
+dumpMessaggio.soap12.url=http://127.0.0.1:8080/openspcoop2Transazioni/DumpMessaggio/Soap12
+#dumpMessaggio.soap12.username=INSERIRE_USERNAME
+#dumpMessaggio.soap12.password=INSERIRE_PASSWORD
+
