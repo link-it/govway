@@ -20,14 +20,12 @@
 
 package org.openspcoop2.utils.json;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.openspcoop2.utils.UtilsException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -44,71 +42,107 @@ public class JSONUtils {
 	private ObjectMapper mapper;
 	private ObjectWriter writer;
 
-	public JSONUtils() {
+	public JSONUtils() throws UtilsException {
 		this(false);
 	}
 	
-	public JSONUtils(boolean prettyPrint) {
-		this.mapper = new ObjectMapper();
-		this.writer =  (prettyPrint) ? this.mapper.writer().withDefaultPrettyPrinter() : this.mapper.writer();
+	public JSONUtils(boolean prettyPrint) throws UtilsException {
+		try {
+			this.mapper = new ObjectMapper();
+			this.writer =  (prettyPrint) ? this.mapper.writer().withDefaultPrettyPrinter() : this.mapper.writer();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 	
 	// GET AS
 	
-	public JsonNode getAsDocument(String jsonString) throws IOException {
-		return this.mapper.readTree(jsonString);
+	public JsonNode getAsNode(String jsonString) throws UtilsException {
+		try {
+			return this.mapper.readTree(jsonString);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
-	public JsonNode getAsDocument(byte[] jsonBytes) throws IOException {
-		return this.mapper.readTree(jsonBytes);
+	public JsonNode getAsNode(byte[] jsonBytes) throws UtilsException {
+		try {
+			return this.mapper.readTree(jsonBytes);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
-	public JsonNode getAsDocument(InputStream jsonStream) throws IOException {
-		return this.mapper.readTree(jsonStream);
+	public JsonNode getAsNode(InputStream jsonStream) throws UtilsException {
+		try {
+			return this.mapper.readTree(jsonStream);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
-	public JsonNode getAsDocument(Reader jsonReader) throws IOException {
-		return this.mapper.readTree(jsonReader);
+	public JsonNode getAsNode(Reader jsonReader) throws UtilsException {
+		try {
+			return this.mapper.readTree(jsonReader);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 	// NEW DOCUMENT
 
-	public JsonNode newDocument() {
-		return this.mapper.createObjectNode();
+	public JsonNode newNode() throws UtilsException {
+		try {
+			return this.mapper.createObjectNode();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 
 	// TO BYTE ARRAY
 
-	public byte[] toByteArray(JsonNode doc) throws JsonProcessingException {
-		return this.writer.writeValueAsBytes(doc);
+	public byte[] toByteArray(JsonNode doc) throws UtilsException {
+		try {
+			return this.writer.writeValueAsBytes(doc);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 	// TO STRING
 
-	public String toString(JsonNode doc) throws JsonProcessingException {
-		return this.writer.writeValueAsString(doc);
+	public String toString(JsonNode doc) throws UtilsException {
+		try {
+			return this.writer.writeValueAsString(doc);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 	// WRITE TO
 
-	public void writeTo(JsonNode doc, OutputStream os) throws JsonGenerationException, JsonMappingException, IOException {
-		this.writer.writeValue(os, doc);
+	public void writeTo(JsonNode doc, OutputStream os) throws UtilsException {
+		try {
+			this.writer.writeValue(os, doc);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 	
 	// IS
 	
-	public boolean isDocument(byte[]jsonBytes){
+	public boolean isJson(byte[]jsonBytes){
 		try {
-			getAsDocument(jsonBytes);
+			getAsNode(jsonBytes);
 			return true;
-		} catch(IOException e) {
+		} catch(Throwable e) {
 			return false;
 		}
 	}
 	
-	public boolean isDocument(String jsonString){
+	public boolean isJson(String jsonString){
 		try {
-			getAsDocument(jsonString);
+			getAsNode(jsonString);
 			return true;
-		} catch(IOException e) {
+		} catch(Throwable e) {
 			return false;
 		}
 	}
