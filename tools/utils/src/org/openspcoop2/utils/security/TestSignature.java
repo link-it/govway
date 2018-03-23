@@ -21,14 +21,10 @@
 package org.openspcoop2.utils.security;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Properties;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.openspcoop2.utils.security.KeyStore;
-import org.openspcoop2.utils.security.Signature;
-import org.openspcoop2.utils.security.VerifySignature;
-import org.openspcoop2.utils.security.VerifyXmlSignature;
-import org.openspcoop2.utils.security.XmlSignature;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.w3c.dom.Element;
@@ -106,6 +102,61 @@ public class TestSignature {
 			System.out.println("2. XmlSignature Verify (clean): "+xmlVerify.verify(node, true));
 			System.out.println("2. XmlSignature Verify (clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
+			// 3. Esempio Signature JSON
+			
+			System.out.println("\n\n ================================");
+			System.out.println("2. Example XmlSignature \n");
+			
+			System.out.println("\n\n ================================");
+			System.out.println("3. Example JsonSignature \n");
+
+			String jsonInput = "{VALORE}";
+
+			// Firma
+			Properties signatureProps = new Properties();
+			InputStream is = TestSignature.class.getResourceAsStream("jws.signature.properties");
+			signatureProps.load(is);
+			signatureProps.put("rs.security.keystore.file", fKeystore.getPath());
+
+			Properties verifySignatureProps = new Properties();
+			InputStream verifySignaturePropsis = TestSignature.class.getResourceAsStream("jws.verify.signature.properties");
+			verifySignatureProps.load(verifySignaturePropsis);
+			verifySignatureProps.put("rs.security.keystore.file", fTruststore.getPath());
+			
+			
+			// 3a. Signature Attached 
+			JsonSignature jsonAttachedSignature = new JsonSignature(signatureProps, JOSERepresentation.SELF_CONTAINED);
+			String attachSign = jsonAttachedSignature.sign(jsonInput);
+			
+			System.out.println("3a. JsonSelfContainedSignature Signed: "+attachSign);
+			
+			// Verifica
+			JsonVerifySignature jsonAttachedVerify = new JsonVerifySignature(verifySignatureProps,JOSERepresentation.SELF_CONTAINED);
+			System.out.println("3a. JsonSelfContainedSignature Verify: "+jsonAttachedVerify.verify(attachSign));
+			
+			// 3b. Signature Compact
+			JsonSignature jsonCompactSignature = new JsonSignature(signatureProps, JOSERepresentation.COMPACT);
+			String compactSign = jsonCompactSignature.sign(jsonInput);
+			
+			System.out.println("3b. JsonCompactSignature Signed: "+compactSign);
+			
+			// Verifica
+			JsonVerifySignature jsonCompactVerify = new JsonVerifySignature(verifySignatureProps, JOSERepresentation.COMPACT);
+			System.out.println("3b. JsonCompactSignature Verify: "+jsonCompactVerify.verify(compactSign));
+
+			// 3c. Signature Detached
+			JsonSignature jsonDetachedSignature = new JsonSignature(signatureProps, JOSERepresentation.DETACHED);
+			String detachedSign = jsonDetachedSignature.sign(jsonInput);
+			
+			System.out.println("3c. JsonDetachedSignature Signed: "+detachedSign);
+			
+			// Verifica
+			JsonVerifySignature jsonDetachedVerify = new JsonVerifySignature(verifySignatureProps, JOSERepresentation.DETACHED);
+			System.out.println("3c. JsonDetachedSignature Verify: "+jsonDetachedVerify.verify(detachedSign, jsonInput));
+
+			System.out.println("\n\n ================================");
+			System.out.println("3. Example JsonSignature \n");
+
 		}finally{
 			try{
 				if(isKeystore!=null){

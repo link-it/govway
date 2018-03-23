@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.security;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Properties;
 
 import javax.crypto.SecretKey;
 
@@ -155,6 +156,59 @@ public class TestEncrypt {
 			xmlDecrypt = new XmlDecrypt(keystore,alias,passwordChiavePrivata);
 			xmlDecrypt.decrypt(node);
 			System.out.println("2c. XmlSignature Decrypted (Private): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+			System.out.println("\n\n ================================");
+			System.out.println("3. Example JsonEncrypt \n");
+			
+			String jsonInput = "{VALORE}";
+
+			// Firma
+			Properties encryptProps = new Properties();
+			InputStream encryptPropsis = TestSignature.class.getResourceAsStream("jws.encrypt.properties");
+			encryptProps.load(encryptPropsis);
+			encryptProps.put("rs.security.keystore.file", fKeystore.getPath());
+			
+			Properties decryptProps = new Properties();
+			InputStream decryptPropsis = TestSignature.class.getResourceAsStream("jws.decrypt.properties");
+			decryptProps.load(decryptPropsis);
+			decryptProps.put("rs.security.keystore.file", fKeystore.getPath());
+			
+			
+			// 3a. Signature Attached 
+			JsonEncrypt jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
+			String attachSign = jsonAttachedEncrypt.encrypt(jsonInput);
+			
+			System.out.println("3a. JsonAttachedEncrypt Encrypted: "+attachSign);
+			
+			// Verifica
+			JsonDecrypt jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
+			System.out.println("3a. JsonAttachedEncrypt Verify: "+jsonAttachedVerify.decrypt(attachSign));
+			
+			// 3b. Encrypt Compact
+			JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
+			String compactSign = jsonCompactEncrypt.encrypt(jsonInput);
+			
+			System.out.println("3b. JsonCompactEncrypt Encrypted: "+compactSign);
+			
+			// Verifica
+			JsonDecrypt jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
+			System.out.println("3b. JsonCompactEncrypt Verify: "+jsonCompactVerify.decrypt(compactSign));
+
+			// 3c. Encrypt Detached
+			JsonEncrypt jsonDetachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.DETACHED);
+			String detachedSign = jsonDetachedEncrypt.encrypt(jsonInput);
+//			String payload = jsonDetachedEncrypt.getPayload(jsonInput);
+			
+			System.out.println("3c. JsonDetachedEncrypt Encrypted: "+detachedSign);
+//			System.out.println("3c. JsonDetachedEncrypt Payload: "+payload);
+			
+			// Verifica
+			JsonDecrypt jsonDetachedVerify = new JsonDecrypt(decryptProps, JOSERepresentation.DETACHED);
+			System.out.println("3c. JsonDetachedEncrypt Verify: "+jsonDetachedVerify.decrypt(detachedSign));
+
+			System.out.println("\n\n ================================");
+			System.out.println("3. Example JsonEncrypt \n");
+
 			
 			
 		}finally{
