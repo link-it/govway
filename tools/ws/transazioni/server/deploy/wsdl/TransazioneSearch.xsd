@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tns="http://www.openspcoop2.org/core/transazioni/management" 
+			xmlns:api="http://www.openspcoop2.org/core/transazioni" 
+			attributeFormDefault="unqualified" 
+			elementFormDefault="qualified" 
+			targetNamespace="http://www.openspcoop2.org/core/transazioni/management">
+			
+ 	<xsd:import schemaLocation="openspcoopTransazioni.xsd" namespace="http://www.openspcoop2.org/core/transazioni"/>
+
+	<!-- FILTRI -->
+
+	<xsd:element name="search-filter-transazione" type="tns:search-filter-transazione" />
+	<xsd:complexType name="search-filter-transazione">
+		<xsd:sequence>
+ 			<xsd:element name="id-transazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="stato" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="esito" type="xsd:int" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="esito-contesto" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-accettazione-richiesta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-accettazione-richiesta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-richiesta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-richiesta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-richiesta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-richiesta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-accettazione-risposta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-accettazione-risposta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-risposta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-ingresso-risposta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-risposta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-uscita-risposta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="richiesta-ingresso-bytes-min" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="richiesta-ingresso-bytes-max" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="richiesta-uscita-bytes-min" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="richiesta-uscita-bytes-max" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="risposta-ingresso-bytes-min" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="risposta-ingresso-bytes-max" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="risposta-uscita-bytes-min" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="risposta-uscita-bytes-max" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="pdd-codice" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="pdd-tipo-soggetto" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="pdd-nome-soggetto" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="pdd-ruolo" type="api:pdd-ruolo" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-soggetto-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-soggetto-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="idporta-soggetto-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="indirizzo-soggetto-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="idporta-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="indirizzo-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="id-messaggio-richiesta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="id-messaggio-risposta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="profilo-collaborazione-op2" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="profilo-collaborazione-prot" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="id-collaborazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="uri-accordo-servizio" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="versione-servizio" type="xsd:int" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="azione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="id-asincrono" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-servizio-correlato" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-servizio-correlato" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="id-correlazione-applicativa" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="id-correlazione-applicativa-risposta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="servizio-applicativo-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="operazione-im" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="location-richiesta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="location-risposta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="credenziali" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="location-connettore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="url-invocazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="cluster-id" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="socket-client-address" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="transport-client-address" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="descOrder" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+	<!-- EXCEPTION -->
+	<xsd:element name="transazioni-service-exception" type="tns:transazioni-service-exception"/>
+	<xsd:complexType name="transazioni-service-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="transazioni-not-found-exception" type="tns:transazioni-not-found-exception"/>
+	<xsd:complexType name="transazioni-not-found-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="transazioni-multiple-result-exception" type="tns:transazioni-multiple-result-exception"/>
+	<xsd:complexType name="transazioni-multiple-result-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="transazioni-not-implemented-exception" type="tns:transazioni-not-implemented-exception"/>
+	<xsd:complexType name="transazioni-not-implemented-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="transazioni-not-authorized-exception" type="tns:transazioni-not-authorized-exception"/>
+	<xsd:complexType name="transazioni-not-authorized-exception">
+		<xsd:sequence>
+			<xsd:element name="methodName" type="xsd:string"/>
+			<xsd:element name="objectId" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorMessage" type="xsd:string"/>
+			<xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="errorStackTrace" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<!-- WRAPPED ELEMENT -->
+
+	<xsd:element name="findAll" type="tns:findAll" />
+	<xsd:complexType name="findAll">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-transazione" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findAllResponse" type="tns:findAllResponse" />
+	<xsd:complexType name="findAllResponse">
+		<xsd:sequence>
+			<xsd:element ref="api:transazione" minOccurs="0" maxOccurs="unbounded"  />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="find" type="tns:find" />
+	<xsd:complexType name="find">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-transazione" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findResponse" type="tns:findResponse" />
+	<xsd:complexType name="findResponse">
+		<xsd:sequence>
+			<xsd:element ref="api:transazione" minOccurs="1" maxOccurs="1"  />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="count" type="tns:count" />
+	<xsd:complexType name="count">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-transazione" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="countResponse" type="tns:countResponse" />
+	<xsd:complexType name="countResponse">
+		<xsd:sequence>
+			<xsd:element name="count" type="xsd:long" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="get" type="tns:get" />
+	<xsd:complexType name="get">
+		<xsd:sequence>
+			<xsd:element name="idTransazione" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="getResponse" type="tns:getResponse" />
+	<xsd:complexType name="getResponse">
+		<xsd:sequence>
+			<xsd:element ref="api:transazione" minOccurs="1" maxOccurs="1"  />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="exists" type="tns:exists" />
+	<xsd:complexType name="exists">
+		<xsd:sequence>
+			<xsd:element name="idTransazione" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="existsResponse" type="tns:existsResponse" />
+	<xsd:complexType name="existsResponse">
+		<xsd:sequence>
+			<xsd:element name="exists" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="findAllIds" type="tns:findAllIds" />
+	<xsd:complexType name="findAllIds">
+		<xsd:sequence>
+			<xsd:element name="filter" type="tns:search-filter-transazione" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="findAllIdsResponse" type="tns:findAllIdsResponse" />
+	<xsd:complexType name="findAllIdsResponse">
+		<xsd:sequence>
+			<xsd:element name="idTransazione" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+</xsd:schema>

@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/transazioni" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/transazioni">
+
+	
+
+
+
+	<!-- ********* TRANSAZIONI ************* -->
+
+	<xsd:element name="transazione">
+		
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string">
+					
+				</xsd:element>
+			    
+			    <!-- Stato di una transazione (marca la transazione con uno stato tramite la configurazione plugin) -->
+			    <xsd:element minOccurs="0" name="stato" type="xsd:string">
+			        
+			    </xsd:element>			    
+			    
+			    <!-- Ruolo della Transazione -->
+			    <xsd:element name="ruolo-transazione" type="xsd:int">
+			        
+			    </xsd:element>
+			    
+			    <!-- Esito di una transazione -->
+			    <xsd:element minOccurs="0" name="esito" type="xsd:int">
+			        
+			    </xsd:element>
+				
+				<!-- Contesto di una transazione -->
+				<xsd:element minOccurs="0" name="esito-contesto" type="xsd:string">
+						
+				</xsd:element>
+								    
+			    <!-- Protocollo della transazione -->
+			    <xsd:element name="protocollo" type="xsd:string">
+			        
+			    </xsd:element>
+			    
+				<!-- Tempi di latenza -->
+				<xsd:element minOccurs="0" name="data-accettazione-richiesta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-ingresso-richiesta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-uscita-richiesta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-accettazione-risposta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-ingresso-risposta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-uscita-risposta" type="xsd:dateTime">
+					
+				</xsd:element>
+			    
+				<!-- Dimensione messaggi gestiti -->
+				<xsd:element minOccurs="0" name="richiesta-ingresso-bytes" type="xsd:unsignedLong">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="richiesta-uscita-bytes" type="xsd:unsignedLong">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="risposta-ingresso-bytes" type="xsd:unsignedLong">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="risposta-uscita-bytes" type="xsd:unsignedLong">
+					
+				</xsd:element>
+			    
+				<!-- Dati PdD -->
+				<xsd:element minOccurs="0" name="pdd-codice" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="pdd-tipo-soggetto" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="pdd-nome-soggetto" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="pdd-ruolo" type="pdd-ruolo">
+					
+				</xsd:element>
+			    		    
+				<!-- Eventuale FAULT Applicativo -->
+				<xsd:element minOccurs="0" name="fault-integrazione" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="fault-cooperazione" type="xsd:string">
+					
+				</xsd:element>
+			    
+				<!-- Soggetto Fruitore -->
+				<xsd:element minOccurs="0" name="tipo-soggetto-fruitore" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="nome-soggetto-fruitore" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="idporta-soggetto-fruitore" type="xsd:string">
+					
+				</xsd:element> 
+				<xsd:element minOccurs="0" name="indirizzo-soggetto-fruitore" type="xsd:string">
+					
+				</xsd:element>
+			    
+				<!-- Soggetto Erogatore -->
+				<xsd:element minOccurs="0" name="tipo-soggetto-erogatore" type="xsd:string">
+				    
+				</xsd:element>
+				<xsd:element minOccurs="0" name="nome-soggetto-erogatore" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="idporta-soggetto-erogatore" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="indirizzo-soggetto-erogatore" type="xsd:string">
+					
+				</xsd:element>
+			    
+				<!-- Identificativi Messaggi -->
+				<xsd:element minOccurs="0" name="id-messaggio-richiesta" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="id-messaggio-risposta" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-id-msg-richiesta" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-id-msg-risposta" type="xsd:dateTime">
+					
+				</xsd:element>
+			    
+				<!-- altre informazioni -->
+				<xsd:element minOccurs="0" name="profilo-collaborazione-op2" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="profilo-collaborazione-prot" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="id-collaborazione" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="uri-accordo-servizio" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="tipo-servizio" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="nome-servizio" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="versione-servizio" type="xsd:int">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="azione" type="xsd:string">
+					
+				</xsd:element>
+			    
+				<!-- Identificativo asincrono se utilizzato come riferimento messaggio nella richiesta (2 fase asincrona) -->
+				<xsd:element minOccurs="0" name="id-asincrono" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="tipo-servizio-correlato" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="nome-servizio-correlato" type="xsd:string">
+					
+				</xsd:element>
+			    
+				<!-- info protocollo -->
+				<xsd:element minOccurs="0" name="header-protocollo-richiesta" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="digest-richiesta" type="xsd:string">
+					
+				</xsd:element>
+			    <xsd:element minOccurs="0" name="protocollo-ext-info-richiesta" type="xsd:string">
+			        
+			    </xsd:element>
+				<xsd:element minOccurs="0" name="header-protocollo-risposta" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="digest-risposta" type="xsd:string">
+					
+				</xsd:element>
+			    <xsd:element minOccurs="0" name="protocollo-ext-info-risposta" type="xsd:string">
+			        
+			    </xsd:element>
+			    
+				<!-- ottimizzazione tracce -->
+			    <xsd:element minOccurs="0" name="traccia-richiesta" type="xsd:string">
+			        
+			    </xsd:element>
+				<xsd:element minOccurs="0" name="traccia-risposta" type="xsd:string">
+				    
+				</xsd:element>
+			    
+			    <!-- ottimizzazione diagnostici -->
+			    <xsd:element minOccurs="0" name="diagnostici" type="xsd:string">
+			        
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="diagnostici-list1" type="xsd:string">
+			    	
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="diagnostici-list2" type="xsd:string">
+			    	
+			    </xsd:element>
+				<xsd:element minOccurs="0" name="diagnostici-list-ext" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="diagnostici-ext" type="xsd:string">
+					
+				</xsd:element>
+
+				<!-- informazioni di integrazione -->
+				<xsd:element minOccurs="0" name="id-correlazione-applicativa" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="id-correlazione-applicativa-risposta" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="servizio-applicativo-fruitore" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="servizio-applicativo-erogatore" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="operazione-im" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="location-richiesta" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="location-risposta" type="xsd:string">
+					
+				</xsd:element>
+			    <xsd:element minOccurs="0" name="nome-porta" type="xsd:string">
+			    	
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="credenziali" type="xsd:string">
+			    	
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="location-connettore" type="xsd:string">
+			        
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="url-invocazione" type="xsd:string">
+			        
+			    </xsd:element>
+			    
+				<!-- filtro duplicati (0=originale,-1=duplicata,<0=quanti duplicati esistono) -->
+				<xsd:element default="0" minOccurs="0" name="duplicati-richiesta" type="xsd:int">
+					
+				</xsd:element>
+				<xsd:element default="0" minOccurs="0" name="duplicati-risposta" type="xsd:int">
+					
+				</xsd:element>
+
+			    <!-- Cluster ID -->
+			    <xsd:element minOccurs="0" name="cluster-id" type="xsd:string">
+			        			        
+			    </xsd:element>
+				
+				<!-- Indirizzo IP -->
+				<xsd:element minOccurs="0" name="socket-client-address" type="xsd:string">
+								        
+				</xsd:element>
+				<xsd:element minOccurs="0" name="transport-client-address" type="xsd:string">
+								        
+				</xsd:element>
+
+			    <!-- eventi emessi sulla gestione della transazione -->
+			    <xsd:element minOccurs="0" name="eventi-gestione" type="xsd:string">
+			        
+			    </xsd:element>
+
+				<!-- Dump Messaggi -->
+				<xsd:element maxOccurs="2" minOccurs="0" ref="dump-messaggio">
+					
+				</xsd:element>
+				
+				<!-- Extended Info -->
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="transazione-extended-info"/>
+					
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- transazione-extended-info: serve ad estendere la tabella transazioni su progetti specifici (es. pdc) -->
+	<xsd:element name="transazione-extended-info">
+		
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string"/>
+				<xsd:element name="valore" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+
+
+	<!-- ********* DUMP ************* -->
+
+	<xsd:element name="dump-messaggio">
+		
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-transazione" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="body" type="xsd:hexBinary">
+					
+				</xsd:element>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="allegato" type="dump-allegato">
+					
+				</xsd:element>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="contenuto" type="dump-contenuto">
+					
+				</xsd:element>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="header-trasporto" type="dump-header-trasporto">
+					
+				</xsd:element>
+			    <xsd:element name="dump-timestamp" type="xsd:dateTime">
+			    	
+			    </xsd:element>
+			    <!-- Dump non real-time -->
+			    <xsd:element minOccurs="0" name="post-process-content-type" type="xsd:string">
+			    	
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="post-process-header" type="xsd:string">
+			        
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="post-process-filename" type="xsd:string">
+			    	
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="post-process-content" type="xsd:hexBinary">
+			    	
+			    </xsd:element>
+				<xsd:element minOccurs="0" name="post-process-config-id" type="xsd:string">
+					
+				</xsd:element>
+			    <xsd:element minOccurs="0" name="post-process-timestamp" type="xsd:dateTime">
+			    	
+			    </xsd:element>
+			    <xsd:element default="1" minOccurs="0" name="post-processed" type="xsd:int">
+			    	
+			    </xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="dump-allegato">
+		
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="id-allegato" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="location" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="mimetype" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="allegato" type="xsd:hexBinary">
+			    
+			</xsd:element>
+		    <xsd:element name="dump-timestamp" type="xsd:dateTime">
+		    	
+		    </xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="dump-contenuto">
+		
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element name="valore" type="string-max-4000">
+				<!--
+					con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping medium-text="true"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+				-->
+				
+			</xsd:element>
+		    <xsd:element minOccurs="0" name="valore-as-bytes" type="xsd:base64Binary">
+		        
+		    </xsd:element>
+		    <xsd:element name="dump-timestamp" type="xsd:dateTime">
+		    	
+		    </xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="dump-header-trasporto">
+		
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="valore" type="xsd:string">
+				
+			</xsd:element>
+		    <xsd:element name="dump-timestamp" type="xsd:dateTime">
+		    	
+		    </xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+
+	<!-- ********* DUMP (Identificativi e Enumeration) ************* -->
+
+	<!-- Vincoli per riuscire ad utilizzare funzioni di group by -->
+	<xsd:simpleType name="string-max-4000">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="id-dump-messaggio">
+		<xsd:sequence>
+			<xsd:element name="id-transazione" type="xsd:string"/>
+			<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Enumeration -->
+
+	<xsd:simpleType name="tipo-messaggio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="RichiestaIngresso"/>
+			<xsd:enumeration value="RichiestaUscita"/>
+			<xsd:enumeration value="RispostaIngresso"/>
+			<xsd:enumeration value="RispostaUscita"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="pdd-ruolo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delegata"/>
+			<xsd:enumeration value="applicativa"/>
+			<xsd:enumeration value="router"/>
+			<xsd:enumeration value="integrationManager"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+</xsd:schema>

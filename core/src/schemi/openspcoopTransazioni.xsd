@@ -140,6 +140,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+	<!-- transazione-extended-info: serve ad estendere la tabella transazioni su progetti specifici (es. pdc) -->
 	<xsd:element name="transazione-extended-info">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -160,6 +161,7 @@
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
 				<xsd:element name="body" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="allegato" type="dump-allegato" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="contenuto" type="dump-contenuto" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element name="header-trasporto" type="dump-header-trasporto" minOccurs="0" maxOccurs="unbounded"/>
 			    <xsd:element name="dump-timestamp"  type="xsd:dateTime" />
 			    <!-- Dump non real-time -->
@@ -181,6 +183,15 @@
 			<xsd:element name="mimetype" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="allegato" type="xsd:hexBinary" minOccurs="0"/>
 		    <xsd:element name="dump-timestamp"  type="xsd:dateTime" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="dump-contenuto">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="valore" type="string-max-4000" />
+			<xsd:element name="valore-as-bytes" type="xsd:base64Binary" minOccurs="0"/>
+			<xsd:element name="dump-timestamp"  type="xsd:dateTime" />
 		</xsd:sequence>
 	</xsd:complexType>
 

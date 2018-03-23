@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="transazione" class="org.openspcoop2.core.transazioni.Transazione">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="id-transazione" field="idTransazione" usage="required"/>
+    <value name="stato" field="stato" usage="optional"/>
+    <value name="ruolo-transazione" field="ruoloTransazione" usage="required"/>
+    <value name="esito" field="esito" usage="optional"/>
+    <value name="esito-contesto" field="esitoContesto" usage="optional"/>
+    <value name="protocollo" field="protocollo" usage="required"/>
+    <value name="data-accettazione-richiesta" field="dataAccettazioneRichiesta" usage="optional"/>
+    <value name="data-ingresso-richiesta" field="dataIngressoRichiesta" usage="optional"/>
+    <value name="data-uscita-richiesta" field="dataUscitaRichiesta" usage="optional"/>
+    <value name="data-accettazione-risposta" field="dataAccettazioneRisposta" usage="optional"/>
+    <value name="data-ingresso-risposta" field="dataIngressoRisposta" usage="optional"/>
+    <value name="data-uscita-risposta" field="dataUscitaRisposta" usage="optional"/>
+    <value name="richiesta-ingresso-bytes" field="richiestaIngressoBytes" usage="optional"/>
+    <value name="richiesta-uscita-bytes" field="richiestaUscitaBytes" usage="optional"/>
+    <value name="risposta-ingresso-bytes" field="rispostaIngressoBytes" usage="optional"/>
+    <value name="risposta-uscita-bytes" field="rispostaUscitaBytes" usage="optional"/>
+    <value name="pdd-codice" field="pddCodice" usage="optional"/>
+    <value name="pdd-tipo-soggetto" field="pddTipoSoggetto" usage="optional"/>
+    <value name="pdd-nome-soggetto" field="pddNomeSoggetto" usage="optional"/>
+    <value name="pdd-ruolo" field="pddRuolo" usage="optional" enum-value-method="toString"/>
+    <value name="fault-integrazione" field="faultIntegrazione" usage="optional"/>
+    <value name="fault-cooperazione" field="faultCooperazione" usage="optional"/>
+    <value name="tipo-soggetto-fruitore" field="tipoSoggettoFruitore" usage="optional"/>
+    <value name="nome-soggetto-fruitore" field="nomeSoggettoFruitore" usage="optional"/>
+    <value name="idporta-soggetto-fruitore" field="idportaSoggettoFruitore" usage="optional"/>
+    <value name="indirizzo-soggetto-fruitore" field="indirizzoSoggettoFruitore" usage="optional"/>
+    <value name="tipo-soggetto-erogatore" field="tipoSoggettoErogatore" usage="optional"/>
+    <value name="nome-soggetto-erogatore" field="nomeSoggettoErogatore" usage="optional"/>
+    <value name="idporta-soggetto-erogatore" field="idportaSoggettoErogatore" usage="optional"/>
+    <value name="indirizzo-soggetto-erogatore" field="indirizzoSoggettoErogatore" usage="optional"/>
+    <value name="id-messaggio-richiesta" field="idMessaggioRichiesta" usage="optional"/>
+    <value name="id-messaggio-risposta" field="idMessaggioRisposta" usage="optional"/>
+    <value name="data-id-msg-richiesta" field="dataIdMsgRichiesta" usage="optional"/>
+    <value name="data-id-msg-risposta" field="dataIdMsgRisposta" usage="optional"/>
+    <value name="profilo-collaborazione-op2" field="profiloCollaborazioneOp2" usage="optional"/>
+    <value name="profilo-collaborazione-prot" field="profiloCollaborazioneProt" usage="optional"/>
+    <value name="id-collaborazione" field="idCollaborazione" usage="optional"/>
+    <value name="uri-accordo-servizio" field="uriAccordoServizio" usage="optional"/>
+    <value name="tipo-servizio" field="tipoServizio" usage="optional"/>
+    <value name="nome-servizio" field="nomeServizio" usage="optional"/>
+    <value name="versione-servizio" field="versioneServizio" usage="optional"/>
+    <value name="azione" field="azione" usage="optional"/>
+    <value name="id-asincrono" field="idAsincrono" usage="optional"/>
+    <value name="tipo-servizio-correlato" field="tipoServizioCorrelato" usage="optional"/>
+    <value name="nome-servizio-correlato" field="nomeServizioCorrelato" usage="optional"/>
+    <value name="header-protocollo-richiesta" field="headerProtocolloRichiesta" usage="optional"/>
+    <value name="digest-richiesta" field="digestRichiesta" usage="optional"/>
+    <value name="protocollo-ext-info-richiesta" field="protocolloExtInfoRichiesta" usage="optional"/>
+    <value name="header-protocollo-risposta" field="headerProtocolloRisposta" usage="optional"/>
+    <value name="digest-risposta" field="digestRisposta" usage="optional"/>
+    <value name="protocollo-ext-info-risposta" field="protocolloExtInfoRisposta" usage="optional"/>
+    <value name="traccia-richiesta" field="tracciaRichiesta" usage="optional"/>
+    <value name="traccia-risposta" field="tracciaRisposta" usage="optional"/>
+    <value name="diagnostici" field="diagnostici" usage="optional"/>
+    <value name="diagnostici-list1" field="diagnosticiList1" usage="optional"/>
+    <value name="diagnostici-list2" field="diagnosticiList2" usage="optional"/>
+    <value name="diagnostici-list-ext" field="diagnosticiListExt" usage="optional"/>
+    <value name="diagnostici-ext" field="diagnosticiExt" usage="optional"/>
+    <value name="id-correlazione-applicativa" field="idCorrelazioneApplicativa" usage="optional"/>
+    <value name="id-correlazione-applicativa-risposta" field="idCorrelazioneApplicativaRisposta" usage="optional"/>
+    <value name="servizio-applicativo-fruitore" field="servizioApplicativoFruitore" usage="optional"/>
+    <value name="servizio-applicativo-erogatore" field="servizioApplicativoErogatore" usage="optional"/>
+    <value name="operazione-im" field="operazioneIm" usage="optional"/>
+    <value name="location-richiesta" field="locationRichiesta" usage="optional"/>
+    <value name="location-risposta" field="locationRisposta" usage="optional"/>
+    <value name="nome-porta" field="nomePorta" usage="optional"/>
+    <value name="credenziali" field="credenziali" usage="optional"/>
+    <value name="location-connettore" field="locationConnettore" usage="optional"/>
+    <value name="url-invocazione" field="urlInvocazione" usage="optional"/>
+    <value name="duplicati-richiesta" field="duplicatiRichiesta" default="0" usage="optional"/>
+    <value name="duplicati-risposta" field="duplicatiRisposta" default="0" usage="optional"/>
+    <value name="cluster-id" field="clusterId" usage="optional"/>
+    <value name="socket-client-address" field="socketClientAddress" usage="optional"/>
+    <value name="transport-client-address" field="transportClientAddress" usage="optional"/>
+    <value name="eventi-gestione" field="eventiGestione" usage="optional"/>
+    <collection field="dumpMessaggio" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.DumpMessaggio"/>
+    </collection>
+    <collection field="transazioneExtendedInfo" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.TransazioneExtendedInfo"/>
+    </collection>
+  </mapping>
+  <mapping name="transazione-extended-info" class="org.openspcoop2.core.transazioni.TransazioneExtendedInfo">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="required"/>
+  </mapping>
+  <mapping name="dump-messaggio" class="org.openspcoop2.core.transazioni.DumpMessaggio">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="id-transazione" field="idTransazione" usage="required"/>
+    <value name="tipo-messaggio" field="tipoMessaggio" usage="required" enum-value-method="toString"/>
+    <value name="body" field="body" usage="optional"/>
+    <collection field="allegato" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.DumpAllegato"/>
+    </collection>
+    <collection field="contenuto" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.DumpContenuto"/>
+    </collection>
+    <collection field="headerTrasporto" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.DumpHeaderTrasporto"/>
+    </collection>
+    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
+    <value name="post-process-content-type" field="postProcessContentType" usage="optional"/>
+    <value name="post-process-header" field="postProcessHeader" usage="optional"/>
+    <value name="post-process-filename" field="postProcessFilename" usage="optional"/>
+    <value name="post-process-content" field="postProcessContent" usage="optional"/>
+    <value name="post-process-config-id" field="postProcessConfigId" usage="optional"/>
+    <value name="post-process-timestamp" field="postProcessTimestamp" usage="optional"/>
+    <value name="post-processed" field="postProcessed" default="1" usage="optional"/>
+  </mapping>
+  <mapping name="allegato" class="org.openspcoop2.core.transazioni.DumpAllegato">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="id-allegato" field="idAllegato" usage="optional"/>
+    <value name="location" field="location" usage="optional"/>
+    <value name="mimetype" field="mimetype" usage="optional"/>
+    <value name="allegato" field="allegato" usage="optional"/>
+    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
+  </mapping>
+  <mapping name="contenuto" class="org.openspcoop2.core.transazioni.DumpContenuto">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="required"/>
+    <value name="valore-as-bytes" field="valoreAsBytes" usage="optional"/>
+    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
+  </mapping>
+  <mapping name="header-trasporto" class="org.openspcoop2.core.transazioni.DumpHeaderTrasporto">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="optional"/>
+    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
+  </mapping>
+  <mapping name="id-dump-messaggio" class="org.openspcoop2.core.transazioni.IdDumpMessaggio">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="id-transazione" field="idTransazione" usage="required"/>
+    <value name="tipo-messaggio" field="tipoMessaggio" usage="required" enum-value-method="toString"/>
+  </mapping>
+</binding>
