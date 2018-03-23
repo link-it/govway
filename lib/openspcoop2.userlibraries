@@ -28,10 +28,14 @@
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-databinding-jaxb-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-frontend-simple-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-frontend-jaxws-3.1.7.jar" />
+	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-frontend-jaxrs-3.1.7.jar" />
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-security-3.1.7.jar" />
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-security-saml-3.1.7.jar" />
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-transports-http-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-transports-http-jetty-3.1.7.jar"/>
+	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-rs-json-basic-3.1.7.jar"/>
+	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-rs-security-jose-3.1.7.jar"/>
+	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-rs-security-jose-jaxrs-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-wsdl-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-ws-policy-3.1.7.jar" />
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-ws-security-3.1.7.jar"/>
@@ -73,6 +77,7 @@
 	<archive path="/op2_3.0.dev/lib/jackson/jackson-module-jaxb-annotations-2.9.2.jar"/>
 	<archive path="/op2_3.0.dev/lib/jackson/jackson-module-jsonSchema-2.9.2.jar"/>
 	<!-- javax -->
+	<archive path="/op2_3.0.dev/lib/javax/javax.annotation-api-1.2.jar"/>
         <archive path="/op2_3.0.dev/lib/javax/javax.el.jar"/>
         <archive path="/op2_3.0.dev/lib/javax/javax.xml.jar"/>
         <archive path="/op2_3.0.dev/lib/javax/javax.transaction.jar"/>

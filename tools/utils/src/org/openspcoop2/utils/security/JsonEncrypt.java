@@ -23,6 +23,8 @@ package org.openspcoop2.utils.security;
 
 import java.util.Properties;
 
+import org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm;
+import org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm;
 import org.apache.cxf.rs.security.jose.jwe.JweEncryptionProvider;
 import org.apache.cxf.rs.security.jose.jwe.JweHeaders;
 import org.apache.cxf.rs.security.jose.jwe.JweJsonProducer;
@@ -41,38 +43,57 @@ public class JsonEncrypt {
 	private JweEncryptionProvider provider;
 	private JOSERepresentation representation;
 	
+	private ContentAlgorithm contentAlgorithm;
+	private KeyAlgorithm keyAlgorithm;
+	
 	public JsonEncrypt(Properties props, JOSERepresentation representation) throws UtilsException{
-		this.provider = JweUtils.loadEncryptionProvider(props, new JweHeaders(), false);
-		this.representation=representation;
+		try {
+			this.provider = JweUtils.loadEncryptionProvider(props, new JweHeaders(), false);
+			this.representation=representation;
+			
+			if(JOSERepresentation.SELF_CONTAINED.equals(representation)) {
+				this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
+				this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
+				if(this.keyAlgorithm==null) {
+					throw new Exception("KeyAlgorithm undefined");
+				}
+			}
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
 	}
 
 
 	public String encrypt(String jsonString) throws UtilsException{
-
-		switch(this.representation) {
-		case SELF_CONTAINED: return encryptSelfContained(jsonString);
-		case COMPACT: return encryptCompact(jsonString);
-		case DETACHED:  return encryptDetached(jsonString);
-		default: throw new UtilsException();
+		try {
+			switch(this.representation) {
+				case SELF_CONTAINED: return encryptSelfContained(jsonString);
+				case COMPACT: return encryptCompact(jsonString);
+				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+			}
 		}
-
-	}
-
-
-	private String encryptDetached(String jsonString) {
-		JweJsonProducer producer = new JweJsonProducer(new JweHeaders(), jsonString.getBytes());
-		return producer.encryptWith(this.provider);
+		catch(UtilsException t) {
+			throw t;
+		}
+		catch(Throwable t) {
+			throw new UtilsException("Error occurs during encrypt (representation "+this.representation+"): "+t.getMessage(),t);
+		}
 	}
 
 
 	private String encryptCompact(String jsonString) {
-		JweJsonProducer producer = new JweJsonProducer(new JweHeaders(), jsonString.getBytes());
-		return producer.encryptWith(this.provider);
+		return this.provider.encrypt(jsonString.getBytes(), new JweHeaders());
 	}
 
 
 	private String encryptSelfContained(String jsonString) {
-		JweJsonProducer producer = new JweJsonProducer(new JweHeaders(), jsonString.getBytes());
+		
+		JweHeaders sharedUnprotectedHeaders = new JweHeaders();
+		sharedUnprotectedHeaders.setKeyEncryptionAlgorithm(this.keyAlgorithm);
+
+		JweHeaders protectedHeaders = new JweHeaders(this.contentAlgorithm);
+		
+		JweJsonProducer producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, jsonString.getBytes());
 		return producer.encryptWith(this.provider);
 	}
 

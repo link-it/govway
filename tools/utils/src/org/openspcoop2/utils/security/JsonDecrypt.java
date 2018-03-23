@@ -40,43 +40,84 @@ import org.openspcoop2.utils.UtilsException;
 public class JsonDecrypt {
 
 	private JweDecryptionProvider provider;
+	
 	private JOSERepresentation representation;
 	
+//	private org.apache.cxf.rs.security.jose.jwe.KeyDecryptionProvider keyDecriptionProvider;
+//	private org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgorithm;
+//	private org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgorithm;
+//	private java.security.PrivateKey privateKey;
+	
+	private String decodedPayload;
+	private byte[] decodedPayloadAsByte;
+	
 	public JsonDecrypt(Properties props, JOSERepresentation representation) throws UtilsException{
-		this.provider = JweUtils.loadDecryptionProvider(props, new JweHeaders(), false);
-		this.representation=representation;
+		try {
+			this.provider = JweUtils.loadDecryptionProvider(props, new JweHeaders(), false);
+			this.representation=representation;
+			
+//			if(JOSERepresentation.SELF_CONTAINED.equals(representation)) {
+//				this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.A256GCM);
+//				this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
+//				java.security.PrivateKey privateKey = org.apache.cxf.rs.security.jose.common.KeyManagementUtils.loadPrivateKey(null, props, org.apache.cxf.rs.security.jose.jwk.KeyOperation.DECRYPT);
+//				if(this.keyAlgorithm==null) {
+//					if (privateKey instanceof java.security.interfaces.RSAPrivateKey) {
+//						this.keyAlgorithm = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.RSA_OAEP;
+//					} else if (privateKey instanceof java.security.interfaces.ECPrivateKey) {
+//						this.keyAlgorithm = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.ECDH_ES_A128KW;
+//					}
+//					else {
+//						throw new UtilsException("Unsupported Private Key ["+privateKey+"]");
+//					}
+//				}
+//				this.keyDecriptionProvider = JweUtils.getPrivateKeyDecryptionProvider(privateKey, this.keyAlgorithm);
+//			}
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
 	}
 
 
-	public String decrypt(String jsonString) throws UtilsException{
-		switch(this.representation) {
-		case SELF_CONTAINED: return decryptSelfContained(jsonString);
-		case COMPACT: return decryptCompact(jsonString);
-		case DETACHED:  return decryptDetached(jsonString);
-		default: throw new UtilsException();
+	public void decrypt(String jsonString) throws UtilsException{
+		try {
+			switch(this.representation) {
+				case SELF_CONTAINED: decryptSelfContained(jsonString); break;
+				case COMPACT: decryptCompact(jsonString); break;
+				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+			}
 		}
-
+		catch(UtilsException t) {
+			throw t;
+		}
+		catch(Throwable t) {
+			throw new UtilsException("Error occurs during decrypt (representation "+this.representation+"): "+t.getMessage(),t);
+		}
 	}
 	
-	private String decryptDetached(String jsonString) {
-		JweJsonConsumer consumer = new JweJsonConsumer(jsonString);
-		JweDecryptionOutput decryptWith = consumer.decryptWith(this.provider);
-		return decryptWith.getContentText();
+
+	private void decryptCompact(String jsonString) throws Exception {
+		JweDecryptionOutput output =  this.provider.decrypt(jsonString);
+		this.decodedPayload = output.getContentText();
+		this.decodedPayloadAsByte = output.getContent();
 	}
 
 
-	private String decryptCompact(String jsonString) {
+	private void decryptSelfContained(String jsonString) throws Exception {
+		
 		JweJsonConsumer consumer = new JweJsonConsumer(jsonString);
-		JweDecryptionOutput decryptWith = consumer.decryptWith(this.provider);
-		return decryptWith.getContentText();
+		//JweJsonEncryptionEntry entry = consumer.getRecipients().get(0);
+		//return consumer.decryptWith(this.provider, entry).getContentText();
+		JweDecryptionOutput output = consumer.decryptWith(this.provider);
+		this.decodedPayload = output.getContentText();
+		this.decodedPayloadAsByte = output.getContent();
+		
 	}
 
-
-	private String decryptSelfContained(String jsonString) {
-		JweJsonConsumer consumer = new JweJsonConsumer(jsonString);
-		JweDecryptionOutput decryptWith = consumer.decryptWith(this.provider);
-		return decryptWith.getContentText();
+	public String getDecodedPayload() {
+		return this.decodedPayload;
 	}
 
-
+	public byte[] getDecodedPayloadAsByte() {
+		return this.decodedPayloadAsByte;
+	}
 }

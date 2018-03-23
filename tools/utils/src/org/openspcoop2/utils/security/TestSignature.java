@@ -102,15 +102,17 @@ public class TestSignature {
 			System.out.println("2. XmlSignature Verify (clean): "+xmlVerify.verify(node, true));
 			System.out.println("2. XmlSignature Verify (clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
+			
+			
+			
+			
+			
 			// 3. Esempio Signature JSON
-			
-			System.out.println("\n\n ================================");
-			System.out.println("2. Example XmlSignature \n");
-			
+						
 			System.out.println("\n\n ================================");
 			System.out.println("3. Example JsonSignature \n");
 
-			String jsonInput = "{VALORE}";
+			String jsonInput = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"value2\"\n}";
 
 			// Firma
 			Properties signatureProps = new Properties();
@@ -124,38 +126,68 @@ public class TestSignature {
 			verifySignatureProps.put("rs.security.keystore.file", fTruststore.getPath());
 			
 			
+			System.out.println("\n");
+			
 			// 3a. Signature Attached 
 			JsonSignature jsonAttachedSignature = new JsonSignature(signatureProps, JOSERepresentation.SELF_CONTAINED);
 			String attachSign = jsonAttachedSignature.sign(jsonInput);
 			
-			System.out.println("3a. JsonSelfContainedSignature Signed: "+attachSign);
+			System.out.println("3a. JsonSelfContainedSignature Signed: \n"+attachSign);
 			
 			// Verifica
 			JsonVerifySignature jsonAttachedVerify = new JsonVerifySignature(verifySignatureProps,JOSERepresentation.SELF_CONTAINED);
-			System.out.println("3a. JsonSelfContainedSignature Verify: "+jsonAttachedVerify.verify(attachSign));
+			System.out.println("3a. JsonSelfContainedSignature Verify ("+jsonAttachedVerify.verify(attachSign)+") payload: "+jsonAttachedVerify.getDecodedPayload());
+			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			if(jsonAttachedVerify.verify(attachSign.replace("payload\":\"", "payload\":\"CORROMPO"))!=false) {
+				throw new Exception("Expected validation error");
+			}
+			
+			System.out.println("\n\n");
 			
 			// 3b. Signature Compact
 			JsonSignature jsonCompactSignature = new JsonSignature(signatureProps, JOSERepresentation.COMPACT);
 			String compactSign = jsonCompactSignature.sign(jsonInput);
 			
-			System.out.println("3b. JsonCompactSignature Signed: "+compactSign);
+			System.out.println("3b. JsonCompactSignature Signed: \n"+compactSign);
 			
 			// Verifica
 			JsonVerifySignature jsonCompactVerify = new JsonVerifySignature(verifySignatureProps, JOSERepresentation.COMPACT);
-			System.out.println("3b. JsonCompactSignature Verify: "+jsonCompactVerify.verify(compactSign));
+			System.out.println("3b. JsonCompactSignature Verify ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
+			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
+				throw new Exception("Expected validation error");
+			}
 
+			
+			System.out.println("\n\n");
+			
 			// 3c. Signature Detached
 			JsonSignature jsonDetachedSignature = new JsonSignature(signatureProps, JOSERepresentation.DETACHED);
 			String detachedSign = jsonDetachedSignature.sign(jsonInput);
 			
-			System.out.println("3c. JsonDetachedSignature Signed: "+detachedSign);
+			System.out.println("3c. JsonDetachedSignature Signed: \n"+detachedSign);
 			
 			// Verifica
 			JsonVerifySignature jsonDetachedVerify = new JsonVerifySignature(verifySignatureProps, JOSERepresentation.DETACHED);
-			System.out.println("3c. JsonDetachedSignature Verify: "+jsonDetachedVerify.verify(detachedSign, jsonInput));
+			System.out.println("3c. JsonDetachedSignature Verify ("+jsonDetachedVerify.verify(detachedSign, jsonInput)+") payload:"+jsonDetachedVerify.getDecodedPayload());
+			if(jsonDetachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			String jsonInputCorretto = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"valueCORROMPO\"\n}";
+			if(jsonDetachedVerify.verify(detachedSign, jsonInputCorretto)!=false) {
+				throw new Exception("Expected validation error");
+			}
+			
+			
+			
+			
+			
+			System.out.println("Testsuite terminata");
 
-			System.out.println("\n\n ================================");
-			System.out.println("3. Example JsonSignature \n");
 
 		}finally{
 			try{

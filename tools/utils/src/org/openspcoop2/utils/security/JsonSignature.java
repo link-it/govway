@@ -43,17 +43,29 @@ public class JsonSignature {
 	private JOSERepresentation representation;
 	
 	public JsonSignature(Properties props, JOSERepresentation representation) throws UtilsException{
-		this.provider = JwsUtils.loadSignatureProvider(props, new JwsHeaders(props));
-		this.representation=representation;
+		try {
+			this.provider = JwsUtils.loadSignatureProvider(props, new JwsHeaders(props));
+			this.representation=representation;
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
 	}
 
 
 	public String sign(String jsonString) throws UtilsException{
-		switch(this.representation) {
-		case SELF_CONTAINED: return signSelfContained(jsonString);
-		case COMPACT: return signCompact(jsonString);
-		case DETACHED:  return signDetached(jsonString);
-		default: return null;
+		try {
+			switch(this.representation) {
+				case SELF_CONTAINED: return signSelfContained(jsonString);
+				case COMPACT: return signCompact(jsonString);
+				case DETACHED:  return signDetached(jsonString);
+				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+			}
+		}
+		catch(UtilsException t) {
+			throw t;
+		}
+		catch(Throwable t) {
+			throw new UtilsException("Error occurs during sign (representation "+this.representation+"): "+t.getMessage(),t);
 		}
 	}
 

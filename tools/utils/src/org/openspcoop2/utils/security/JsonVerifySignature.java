@@ -42,47 +42,84 @@ public class JsonVerifySignature {
 
 	private JwsSignatureVerifier provider;
 	private JOSERepresentation representation;
+	
+	private String decodedPayload;
+	private byte[] decodedPayloadAsByte;
 
 	public JsonVerifySignature(Properties props, JOSERepresentation representation) throws UtilsException{
-		this.provider = JwsUtils.loadSignatureVerifier(props, new JwsHeaders());
-		this.representation = representation;
+		try {
+			this.provider = JwsUtils.loadSignatureVerifier(props, new JwsHeaders());
+			this.representation = representation;
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
 	}
 
 
 	public boolean verify(String jsonString) throws UtilsException{
-		switch(this.representation) {
-		case SELF_CONTAINED: return verifySelfContained(jsonString);
-		case COMPACT: return verifyCompact(jsonString);
-		case DETACHED:   throw new UtilsException("Usare il metodo verify(String, String)");
-		default: throw new UtilsException();
+		try {
+			switch(this.representation) {
+				case SELF_CONTAINED: return verifySelfContained(jsonString);
+				case COMPACT: return verifyCompact(jsonString);
+				case DETACHED:   throw new UtilsException("Use method verify(String, String) with representation ["+this.representation+"]");
+				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+			}
+		}
+		catch(UtilsException t) {
+			throw t;
+		}
+		catch(Throwable t) {
+			throw new UtilsException("Error occurs during validation (representation "+this.representation+"): "+t.getMessage(),t);
 		}
 	}
 
 	public boolean verify(String jsonDetachedSignature, String jsonDetachedPayload) throws UtilsException{
-		switch(this.representation) {
-		case SELF_CONTAINED: throw new UtilsException("Usare il metodo verify(String)");
-		case COMPACT: throw new UtilsException("Usare il metodo verify(String)");
-		case DETACHED:  return verifyDetached(jsonDetachedSignature, jsonDetachedPayload);
-		default: throw new UtilsException();
+		try {
+			switch(this.representation) {
+				case SELF_CONTAINED: throw new UtilsException("Use method verify(String) with representation ["+this.representation+"]");
+				case COMPACT: throw new UtilsException("UUse method verify(String) with representation ["+this.representation+"]");
+				case DETACHED:  return verifyDetached(jsonDetachedSignature, jsonDetachedPayload);
+				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+			}
+		}
+		catch(UtilsException t) {
+			throw t;
+		}
+		catch(Throwable t) {
+			throw new UtilsException("Error occurs during validation (representation "+this.representation+"): "+t.getMessage(),t);
 		}
 	}
 
 	private boolean verifyDetached(String jsonDetachedSignature, String jsonDetachedPayload) {
 		JwsJsonProducer producer = new JwsJsonProducer(jsonDetachedPayload);
-		
 		JwsJsonConsumer consumer = new JwsJsonConsumer(jsonDetachedSignature, producer.getUnsignedEncodedPayload());
-		return consumer.verifySignatureWith(this.provider);
+		return this._verify(consumer);
 	}
-
-	private boolean verifyCompact(String jsonString) {
-		JwsCompactConsumer producer = new JwsCompactConsumer(jsonString);
-		return producer.verifySignatureWith(this.provider);
-	}
-
-
 	private boolean verifySelfContained(String jsonString) {
-		JwsJsonConsumer producer = new JwsJsonConsumer(jsonString);
-		return producer.verifySignatureWith(this.provider);
+		JwsJsonConsumer consumer = new JwsJsonConsumer(jsonString);
+		return this._verify(consumer);
+	}	
+	private boolean _verify(JwsJsonConsumer consumer) {
+		boolean result = consumer.verifySignatureWith(this.provider);
+		this.decodedPayload = consumer.getDecodedJwsPayload();
+		this.decodedPayloadAsByte = consumer.getDecodedJwsPayloadBytes();
+		return result;
 	}
 
+	
+	private boolean verifyCompact(String jsonString) {
+		JwsCompactConsumer consumer = new JwsCompactConsumer(jsonString);
+		boolean result = consumer.verifySignatureWith(this.provider);
+		this.decodedPayload = consumer.getDecodedJwsPayload();
+		this.decodedPayloadAsByte = consumer.getDecodedJwsPayloadBytes();
+		return result;
+	}
+	
+	public String getDecodedPayload() {
+		return this.decodedPayload;
+	}
+
+	public byte[] getDecodedPayloadAsByte() {
+		return this.decodedPayloadAsByte;
+	}
 }
