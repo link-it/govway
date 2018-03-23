@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 public class ObjectFactory {
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.tracciamento
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.config
      * 
      */
     public ObjectFactory() {
