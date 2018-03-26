@@ -35,10 +35,11 @@
 		<copy file="${stub_as4}/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar" todir="${deploy_sw}"/>
 
 		<!-- inizializza directory jarsDir (se non esiste) -->
+		<var name="jarsDir" value="${deploy_sw}/jars" />
 		<mkdir dir="${jarsDir}" />
 		<copy todir="${jarsDir}">
 			<fileset dir="${jms_lib_as4}">
-				<exclude name="*.jar"/>
+				<include name="*.jar"/>
 			</fileset>
 		</copy>
 

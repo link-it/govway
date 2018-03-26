@@ -248,9 +248,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -329,9 +326,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -601,9 +595,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check inizio correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
 
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco)==false);
 			}
 			
 			// Check correlazione in tracciamento
@@ -760,10 +751,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
-				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
+
 			}
 			
 			// Check correlazione in tracciamento
@@ -841,9 +829,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -1145,9 +1130,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check inizio correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco)==false);
 			}
 			
 			// Check correlazione in tracciamento
@@ -1302,9 +1284,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"BEGIN-ID_"+idUnivoco+"_END-ID"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("BEGIN-ID_"+idUnivoco+"_END-ID"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -1381,9 +1360,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta) == false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"BEGIN-ID_"+idUnivoco+"_END-ID"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("BEGIN-ID_"+idUnivoco+"_END-ID"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -1549,9 +1525,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"BEGIN-ID_"+"_END-ID"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("BEGIN-ID_"+"_END-ID"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -1703,9 +1676,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"BEGIN-ID_"+idUnivoco+"_END-ID"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("BEGIN-ID_"+idUnivoco+"_END-ID"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -1783,9 +1753,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"BEGIN-ID_"+idUnivoco+"_END-ID"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("BEGIN-ID_"+idUnivoco+"_END-ID"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -2032,9 +1999,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -2111,9 +2075,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -2276,9 +2237,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check inizio correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco)==false);
 			}
 			
 			// Check correlazione in tracciamento
@@ -2428,9 +2386,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -2505,10 +2460,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
-				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
+
 			}
 			
 			// Check correlazione in tracciamento
@@ -2670,9 +2622,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -2747,10 +2696,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
-				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
+
 			}
 			
 			// Check correlazione in tracciamento
@@ -2921,9 +2867,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -2999,9 +2942,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -3272,9 +3212,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco)==false);
 			}
 			
 			// Check correlazione in tracciamento
@@ -3445,9 +3382,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"NOME1_"+idUnivoco+"_NOME1"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("NOME1_"+idUnivoco+"_NOME1"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -3677,9 +3611,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"NOME2_"+idUnivoco+"_NOME2"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("NOME2_"+idUnivoco+"_NOME2"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -3835,9 +3766,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check inizio correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco)==false);
 			}
 			
 			// Check correlazione in tracciamento
@@ -3990,9 +3918,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+idUnivoco+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco)==false);
 			}
 			
 			// Check correlazione in tracciamento
@@ -4131,9 +4056,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"NOMEXPATH1_"+idUnivoco+"_NOMEXPATH1"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("NOMEXPATH1_"+idUnivoco+"_NOMEXPATH1"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -4365,9 +4287,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esiste");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"NOME5_"+idUnivoco+"_NOME5"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("NOME5_"+idUnivoco+"_NOME5"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -4600,9 +4519,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
 				
-				// check correlazione 
-				Reporter.log("Check correlazione ["+"ALL_"+idUnivoco+"_ALL"+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione("ALL_"+idUnivoco+"_ALL"));
 			}
 			
 			// Check correlazione in tracciamento
@@ -4869,18 +4785,11 @@ public class IntegrazioneCorrelazioneApplicativa {
 				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
 				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta));
-				
-				
-				// check correlazione PD
-				Reporter.log("Check correlazione PD ["+idUnivocoPD+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivocoPD));
+
 				
 			}else{
 				dataMsgDiagErogatore = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
 				
-				// check correlazione PA
-				Reporter.log("Check correlazione PA ["+idUnivocoPA+"]");
-				Assert.assertTrue(dataMsgDiagErogatore.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivocoPA));
 			}
 			
 			// Check correlazione in tracciamento
@@ -5183,9 +5092,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Check inizio correlazione ["+msgCorrelazioneAvvenuta+"]");
 				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgRicerca));
 
-				// check correlazione
-				Reporter.log("Check correlazione ["+idUnivoco+"]");
-				Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 			}
 			
 			// Check correlazione in tracciamento
@@ -5321,13 +5227,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 					null);
 			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
-			
-			// check correlazione richiesta
-			Reporter.log("Check correlazione ["+idUnivoco+"]");
-			Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
-			// check correlazione risposta
-			Reporter.log("Check correlazione risposta ["+idUnivoco+"]");
-			Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 									
 			// Check correlazione richiesta in tutte le tracce
 			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
@@ -5457,13 +5356,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 					null);
 			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
-			
-			// check correlazione richiesta
-			Reporter.log("Check correlazione ["+idUnivoco+"]");
-			Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
-			// check correlazione risposta
-			Reporter.log("Check correlazione risposta ["+idUnivoco+"]");
-			Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(idUnivoco));
 									
 			// Check correlazione richiesta in tutte le tracce
 			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
@@ -5585,23 +5477,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 					null);
 			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
-			
-			// check correlazione richiesta
-			Reporter.log("Check correlazione ["+idUnivoco+"]");
-			Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
-			if(checkServizioApplicativo){
-				// porta applicativa
-				// check correlazione risposta
-				boolean v = dataMsgDiag.existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(id, false);
-				Reporter.log("Check correlazione risposta presente (atteso:true trovato:"+v+")");
-				Assert.assertTrue(v);
-			}else{
-				// porta delegata
-				// check correlazione risposta non presente
-				boolean v = dataMsgDiag.existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(id, true);
-				Reporter.log("Check correlazione risposta presente (atteso:false trovato:"+v+")");
-				Assert.assertTrue(v==false);
-			}
 									
 			// Check correlazione richiesta in tutte le tracce
 			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
@@ -5753,23 +5628,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 					null);
 			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
-			
-			// check correlazione richiesta
-			Reporter.log("Check correlazione ["+idUnivoco+"]");
-			Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
-			if(checkServizioApplicativo){
-				// porta applicativa
-				// check correlazione risposta
-				boolean v = dataMsgDiag.existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(id, false);
-				Reporter.log("Check correlazione risposta presente (atteso:true trovato:"+v+")");
-				Assert.assertTrue(v);
-			}else{
-				// porta delegata
-				// check correlazione risposta non presente
-				boolean v = dataMsgDiag.existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(id, true);
-				Reporter.log("Check correlazione risposta presente (atteso:false trovato:"+v+")");
-				Assert.assertTrue(v==false);
-			}
 									
 			// Check correlazione richiesta in tutte le tracce
 			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
@@ -5921,23 +5779,6 @@ public class IntegrazioneCorrelazioneApplicativa {
 					null);
 			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
-			
-			// check correlazione richiesta
-			Reporter.log("Check correlazione ["+idUnivoco+"]");
-			Assert.assertTrue(dataMsgDiag.isTracedCorrelazioneApplicativaIntoMsgDiagnosticiCorrelazione(idUnivoco));
-			if(checkServizioApplicativo){
-				// porta applicativa
-				// check correlazione risposta
-				boolean v = dataMsgDiag.existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(id, false);
-				Reporter.log("Check correlazione risposta presente (atteso:true trovato:"+v+")");
-				Assert.assertTrue(v);
-			}else{
-				// porta delegata
-				// check correlazione risposta non presente
-				boolean v = dataMsgDiag.existsCorrelazioneApplicativaRispostaIntoMsgDiagnosticiCorrelazione(id, true);
-				Reporter.log("Check correlazione risposta presente (atteso:false trovato:"+v+")");
-				Assert.assertTrue(v==false);
-			}
 									
 			// Check correlazione richiesta in tutte le tracce
 			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
